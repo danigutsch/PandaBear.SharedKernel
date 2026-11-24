@@ -13,7 +13,7 @@ internal static class TestMethodNameRename
     public static async Task<string> Apply(string methodName, ImmutableDictionary<string, string?>? properties)
     {
         var workspace = CodeFixTestWorkspace.Create(TestMethodNameTestSource.Create(methodName));
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(TestingDiagnosticIds.XunitTestMethodNaming, methodName + "()", properties).ConfigureAwait(false);
         var codeAction = (await workspace.GetCodeActions(provider, diagnostic).ConfigureAwait(false)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction).ConfigureAwait(false);

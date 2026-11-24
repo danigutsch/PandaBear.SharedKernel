@@ -24,7 +24,7 @@ public sealed class AssertionInvocationCodeFixTests
         var source = AssertionDiagnosticTestSource.Create(body);
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(diagnosticId, marker);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -48,7 +48,7 @@ public sealed class AssertionInvocationCodeFixTests
         var source = AssertionDiagnosticTestSource.Create($"holder = null; {assertion};");
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKTEST014", assertion);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var actions = await workspace.GetCodeActions(provider, diagnostic);
         await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
         var updated = await workspace.GetDocumentText();
@@ -80,7 +80,7 @@ public sealed class AssertionInvocationCodeFixTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKTEST012", "values.Single()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -97,7 +97,7 @@ public sealed class AssertionInvocationCodeFixTests
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(AssertionDiagnosticTestSource.Create(assertion + ";"));
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKTEST014", assertion);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);

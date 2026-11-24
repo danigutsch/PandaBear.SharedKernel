@@ -23,7 +23,7 @@ public sealed class UnboundedIoCodeFixTests
             """;
         var workspace = CodeFixWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, expression);
-        var provider = new SharedKernelStyleCodeFixProvider();
+        var provider = new StyleCodeFixProvider();
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);

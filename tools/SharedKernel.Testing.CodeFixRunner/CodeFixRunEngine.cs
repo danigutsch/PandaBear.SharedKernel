@@ -17,9 +17,9 @@ namespace PandaBear.Testing.CodeFixRunner;
 internal static class CodeFixRunEngine
 {
     private static readonly ImmutableArray<DiagnosticAnalyzer> Analyzers =
-        [new testinganalyzers::PandaBear.Testing.Analyzers.SharedKernelTestingAnalyzer()];
+        [new testinganalyzers::PandaBear.Testing.Analyzers.TestingAnalyzer()];
 
-    private static readonly SharedKernelTestingCodeFixProvider CodeFixProvider = new();
+    private static readonly TestingCodeFixProvider CodeFixProvider = new();
 
     private static readonly Lock MSBuildRegistrationLock = new();
 

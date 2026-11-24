@@ -44,7 +44,7 @@ public sealed class TestMethodKeywordTests
         var source = $"public sealed class SampleTests {{ [Fact] public void {original}() {{ }} }}";
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKTEST002", original);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);

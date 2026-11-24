@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace PandaBear.Mediator.GeneratorTests;
 
-/// <summary>Builds compilations and runs SharedKernelMediatorGenerator over them for the mediator generator tests, and emits or loads the compiled result.</summary>
+/// <summary>Builds compilations and runs MediatorGenerator over them for the mediator generator tests, and emits or loads the compiled result.</summary>
 internal static class GeneratorTestHarness
 {
     private const string DefaultUsings = """
@@ -82,7 +82,7 @@ internal static class GeneratorTestHarness
         bool trackIncrementalGeneratorSteps)
     {
         var driver = SharedHarness.CreateDriver(
-            [new SharedKernelMediatorGenerator()],
+            [new MediatorGenerator()],
             (CSharpParseOptions?)compilation.SyntaxTrees.FirstOrDefault()?.Options,
             globalOptions,
             trackIncrementalGeneratorSteps);

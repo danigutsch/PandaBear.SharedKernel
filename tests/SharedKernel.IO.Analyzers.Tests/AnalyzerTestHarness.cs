@@ -6,7 +6,7 @@ using PandaBear.Testing.Roslyn;
 namespace PandaBear.IO.Analyzers.Tests;
 
 /// <summary>
-/// Builds in-memory compilations and runs SharedKernelIOAnalyzer over them for the IO analyzer tests.
+/// Builds in-memory compilations and runs IOAnalyzer over them for the IO analyzer tests.
 /// </summary>
 internal static class AnalyzerTestHarness
 {
@@ -39,7 +39,7 @@ internal static class AnalyzerTestHarness
     }
 
     /// <summary>
-    /// Compiles the given source and returns the diagnostics reported by SharedKernelIOAnalyzer.
+    /// Compiles the given source and returns the diagnostics reported by IOAnalyzer.
     /// Diagnostics that are disabled by default run only when listed in <paramref name="enabledDiagnostics"/>.
     /// </summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
@@ -61,7 +61,7 @@ internal static class AnalyzerTestHarness
             throw new InvalidOperationException("Test source does not compile: " + string.Join("; ", errors.Select(static d => d.ToString())));
         }
 
-        var analyzer = new SharedKernelIOAnalyzer();
+        var analyzer = new IOAnalyzer();
         return await AnalyzerRun.GetDiagnostics(compilation, analyzer).ConfigureAwait(false);
     }
 

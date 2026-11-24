@@ -16,7 +16,7 @@ public sealed class CurrentTimeCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKSTYLE014", expression);
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new StyleCodeFixProvider(), diagnostic);
         await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
         var changed = await workspace.GetDocumentText();
         var diagnostics = await workspace.GetCompilationDiagnostics();
@@ -40,7 +40,7 @@ public sealed class CurrentTimeCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKSTYLE014", expression);
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new StyleCodeFixProvider(), diagnostic);
 
         // Assert
         actions.ShouldBeEmpty();
@@ -67,7 +67,7 @@ public sealed class CurrentTimeCodeFixTests
             }
             """);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKSTYLE014", "DateTimeOffset.UtcNow");
-        var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new StyleCodeFixProvider(), diagnostic);
         actions.Count.ShouldBe(expected ? 1 : 0);
         if (expected)
         {

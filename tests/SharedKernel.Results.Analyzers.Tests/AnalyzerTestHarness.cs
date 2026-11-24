@@ -20,7 +20,7 @@ internal static class AnalyzerTestHarness
 
         """;
 
-    /// <summary>Compiles the source and returns the diagnostics reported by SharedKernelResultsAnalyzer, throwing when the source has compile errors.</summary>
+    /// <summary>Compiles the source and returns the diagnostics reported by ResultsAnalyzer, throwing when the source has compile errors.</summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(string source) =>
         await Analyze(CreateCompilation(source, withResultsReference: true)).ConfigureAwait(false);
 
@@ -46,7 +46,7 @@ internal static class AnalyzerTestHarness
 
     private static async Task<ImmutableArray<Diagnostic>> Analyze(CSharpCompilation compilation)
     {
-        return await AnalyzerRun.GetDiagnostics(compilation, new SharedKernelResultsAnalyzer()).ConfigureAwait(false);
+        return await AnalyzerRun.GetDiagnostics(compilation, new ResultsAnalyzer()).ConfigureAwait(false);
     }
 
     private static CSharpCompilation CreateCompilation(string source, bool withResultsReference)

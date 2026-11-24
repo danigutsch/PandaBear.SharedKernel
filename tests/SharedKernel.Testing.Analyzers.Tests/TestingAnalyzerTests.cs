@@ -1,0 +1,1817 @@
+using System.Collections.Immutable;
+
+namespace PandaBear.Testing.Analyzers.Tests;
+
+/// <summary>Tests the SKTEST001 to SKTEST009 xUnit test conventions enforced by TestingAnalyzer.</summary>
+public sealed class TestingAnalyzerTests
+{
+    [Fact]
+    public void Supported_diagnostics_match_testing_descriptor_contract()
+    {
+        // Arrange
+        var analyzer = new TestingAnalyzer();
+        string[] expectedDiagnosticIds =
+        [
+            TestingDiagnosticIds.TestMethodWarningSuppression,
+            TestingDiagnosticIds.XunitTestMethodNaming,
+            TestingDiagnosticIds.XunitTestMethodRequiredTrait,
+            TestingDiagnosticIds.XunitTestClassHelperMethod,
+            TestingDiagnosticIds.XunitSerialCollectionJustification,
+            TestingDiagnosticIds.XunitAssertionWrapper,
+            TestingDiagnosticIds.XunitArrangeActAssertMarkers,
+            TestingDiagnosticIds.XunitTryFinallyCleanup,
+            TestingDiagnosticIds.XunitTraitConstantUsage,
+            TestingDiagnosticIds.AssertionDelegateInlining,
+            TestingDiagnosticIds.LinqSingleAssertion,
+            TestingDiagnosticIds.ParenthesizedAssertion,
+            TestingDiagnosticIds.ConditionalAssertion,
+            TestingDiagnosticIds.PlaywrightAssertion,
+            TestingDiagnosticIds.ActivityListenerSourceIdentity,
+            TestingDiagnosticIds.SutConstructionInAct,
+            TestingDiagnosticIds.AssertionUserMessageOverload,
+            TestingDiagnosticIds.XunitTestScope,
+            TestingDiagnosticIds.PlaywrightUrlWait,
+            TestingDiagnosticIds.InvalidAdditionalAllowedSegment,
+            TestingDiagnosticIds.StringWriterNewLine,
+        ];
+
+        // Act
+        var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).OrderBy(static id => id, StringComparer.Ordinal);
+
+        // Assert
+        diagnosticIds.ShouldBe(expectedDiagnosticIds.OrderBy(static id => id, StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public async Task Generated_files_do_not_report_testing_diagnostics()
+    {
+        // Arrange
+        const string source = """
+            public sealed class SampleTests
+            {
+                [Fact]
+                public void Uses_direct_assertion()
+                {
+                    Xunit.Assert.True(true);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: "Generated.g.cs");
+
+        // Assert
+        diagnostics.ShouldBeEmpty();
+    }
+
+    private const string WarningSuppressionDiagnosticId = TestingDiagnosticIds.TestMethodWarningSuppression;
+    private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
+    private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
+    private const string XunitHelperMethodDiagnosticId = TestingDiagnosticIds.XunitTestClassHelperMethod;
+    private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
+    private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
+    private const string XunitArrangeActAssertDiagnosticId = TestingDiagnosticIds.XunitArrangeActAssertMarkers;
+    private const string XunitTryStatementDiagnosticId = TestingDiagnosticIds.XunitTryFinallyCleanup;
+    private const string XunitTraitConstantUsageDiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
+
+    [Fact]
+    public async Task Direct_xUnit_assertion_reports_SKTEST006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Uses_direct_xunit_assertion()
+                {
+                    Assert.True(true);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Repository_assertion_wrapper_does_not_report_SKTEST006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public static class ShouldAssertions
+            {
+                public static void True(bool condition)
+                {
+                }
+            }
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Uses_repository_assertion_wrapper()
+                {
+                    (true).ShouldBeTrue();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Pragma_warning_disable_inside_fact_method_reports_SKTEST001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Uses_local_warning_suppression()
+                {
+                    #pragma warning disable CA1822
+                    var value = 42;
+                    #pragma warning restore CA1822
+                    Assert.Equal(42, value);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Pragma_warning_disable_outside_test_method_does_not_report_SKTEST001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            #pragma warning disable CA1822
+            public sealed class TourLoader
+            {
+                public void Execute()
+                {
+                }
+            }
+            #pragma warning restore CA1822
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == WarningSuppressionDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Pragma_warning_disable_inside_non_test_method_does_not_report_SKTEST001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public void Execute()
+                {
+                    #pragma warning disable CA1822
+                    var value = 42;
+                    #pragma warning restore CA1822
+                    _ = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == WarningSuppressionDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Pragma_warning_disable_inside_theory_method_reports_SKTEST001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Theory]
+                [InlineData(42)]
+                public void Uses_local_warning_suppression(int value)
+                {
+                    #pragma warning disable CA1822
+                    Assert.Equal(42, value);
+                    #pragma warning restore CA1822
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Test_naming_without_underscores_reports_SKTEST002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void UsesLocalWarningSuppression()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Default_test_naming_with_underscores_does_not_report_SKTEST002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Uses_local_warning_suppression()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_with_title_cased_later_segment_reports_SKTEST002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_Title()
+                {
+                }
+            }
+            """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_with_uppercase_later_segment_reports_SKTEST002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_TITLE()
+                {
+                }
+            }
+            """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_with_mixed_case_later_segment_reports_SKTEST002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_titleCase()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_with_sentence_style_segments_does_not_report_SKTEST002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_title()
+                {
+                }
+            }
+            """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_allows_configured_acronym_and_xUnit_segments()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Reports_SKTEST004_for_xUnit_helper()
+                {
+                }
+            }
+            """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_allows_known_type_and_framework_segments()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Returns_ValueTask_from_HttpClient_with_OpenApi_ProblemDetails()
+                {
+                }
+
+                [Fact]
+                public void Renders_QuickGrid_with_EditContext_and_DataAnnotationsValidator()
+                {
+                }
+
+                [Fact]
+                public void Renders_NavMenu_with_NavLinks_and_error_UI()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Test_naming_with_strict_casing_disabled_allows_title_cased_later_segments_during_migration()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_Title()
+                {
+                }
+            }
+            """;
+
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_strict_test_method_casing", " false ");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Fact_attribute_form_without_underscores_reports_SKTEST002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [FactAttribute]
+                public void UsesLocalWarningSuppression()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_trait_config_missing_from_test_method_reports_SKTEST003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Absent_required_trait_config_does_not_report_SKTEST003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_trait_config_already_on_method_does_not_report_SKTEST003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                [Trait("Category", "Smoke")]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_trait_config_already_on_class_does_not_report_SKTEST003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [Trait("Category", "Smoke")]
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_trait_config_already_on_assembly_does_not_report_SKTEST003()
+    {
+        // Arrange
+        const string source = """
+            [assembly: global::Xunit.Trait("Category", "Smoke")]
+
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_trait_config_multiple_missing_traits_reports_once_per_trait()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke;Scope=Integration");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        diagnostics.Count(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Trait_name_literal_reports_SKTEST009_when_shared_constant_exists()
+    {
+        // Arrange
+        const string source = """
+            namespace PandaBear.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string CategoryName = "Category";
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait("Category", "Smoke")]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+        var sourceTree = diagnostic.Location.SourceTree.ShouldNotBeNull();
+        var sourceText = await sourceTree.GetTextAsync(TestContext.Current.CancellationToken);
+        var reportedText = sourceText.ToString(diagnostic.Location.SourceSpan);
+
+        reportedText.ShouldBe("\"Category\"");
+        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
+    }
+
+    [Fact]
+    public async Task Trait_value_literal_reports_SKTEST009_when_local_constant_exists()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public static class TestTraits
+            {
+                public const string SmokeCategory = "Smoke";
+            }
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                [Trait("Category", "Smoke")]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId
+            && candidate.Properties["Replacement"] == "global::Demo.TestTraits.SmokeCategory");
+        var sourceTree = diagnostic.Location.SourceTree.ShouldNotBeNull();
+        var sourceText = await sourceTree.GetTextAsync(TestContext.Current.CancellationToken);
+        var reportedText = sourceText.ToString(diagnostic.Location.SourceSpan);
+
+        reportedText.ShouldBe("\"Smoke\"");
+        diagnostic.Properties["Replacement"].ShouldBe("global::Demo.TestTraits.SmokeCategory");
+    }
+
+    [Fact]
+    public async Task Trait_name_literal_prefers_shared_name_constant_over_local_value_constant()
+    {
+        // Arrange
+        const string source = """
+            namespace PandaBear.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string CategoryName = "Category";
+                }
+            }
+
+            namespace Demo
+            {
+                public static class TestTraits
+                {
+                    public const string LocalCategoryValue = "Category";
+                }
+
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait("Category", "Smoke")]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+
+        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
+    }
+
+    [Fact]
+    public async Task Trait_constant_arguments_do_not_report_SKTEST009()
+    {
+        // Arrange
+        const string source = """
+            namespace PandaBear.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string CategoryName = "Category";
+                }
+            }
+
+            namespace Demo
+            {
+                public static class TestTraits
+                {
+                    public const string SmokeCategory = "Smoke";
+                }
+
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait(global::PandaBear.Testing.TestTraitNames.CategoryName, TestTraits.SmokeCategory)]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Ambiguous_trait_literal_replacement_does_not_report_SKTEST009()
+    {
+        // Arrange
+        const string source = """
+            namespace PandaBear.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string FirstCategoryName = "Category";
+                    public const string SecondCategoryName = "Category";
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait("Category", "Smoke")]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Reused_private_static_helper_method_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                [Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Reused_internal_static_helper_method_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                [Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                internal static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Single_use_internal_static_helper_method_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                internal static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Public_helper_method_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                public static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Private_static_helper_method_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Private_instance_helper_method_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                private int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Implicit_private_helper_method_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Private_method_in_non_test_class_does_not_report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Expression_bodied_local_helper_function_in_xUnit_test_method_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+
+                    static int CreateTourId() => 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Block_bodied_local_helper_function_in_xUnit_test_method_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+
+                    static int CreateTourId()
+                    {
+                        return 42;
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Local_function_in_non_test_method_does_not_report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public int CreateTour()
+                {
+                    return CreateTourId();
+
+                    static int CreateTourId()
+                    {
+                        return 42;
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Private_nested_helper_class_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                private sealed class TourBuilder
+                {
+                    private static int CreateTourId()
+                    {
+                        return 42;
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task Implicit_private_nested_helper_class_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                sealed class TourBuilder
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task Private_nested_helper_record_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                private sealed record TourBuilder(int Id);
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task Public_nested_helper_class_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                public sealed class TourBuilder
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task Private_nested_class_in_non_test_class_does_not_report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                private sealed class TourBuilder
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Disposable_lifecycle_method_does_not_report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests : System.IDisposable
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                void System.IDisposable.Dispose()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Async_lifetime_initialize_method_does_not_report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests : IAsyncLifetime
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                public global::System.Threading.Tasks.ValueTask InitializeAsync()
+                {
+                    return global::System.Threading.Tasks.ValueTask.CompletedTask;
+                }
+
+                public global::System.Threading.Tasks.ValueTask DisposeAsync()
+                {
+                    return global::System.Threading.Tasks.ValueTask.CompletedTask;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Private_dispose_helper_method_in_xUnit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests : System.IDisposable
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    Dispose();
+                }
+
+                [Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    Dispose();
+                }
+
+                private static void Dispose()
+                {
+                }
+
+                void System.IDisposable.Dispose()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Async_disposable_lifecycle_method_does_not_report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests : System.IAsyncDisposable
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                public System.Threading.Tasks.ValueTask DisposeAsync()
+                {
+                    return System.Threading.Tasks.ValueTask.CompletedTask;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Serial_collection_without_justification_reports_SKTEST005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed class SerialDatabaseCollection
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Serial_collection_with_justification_does_not_report_SKTEST005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [SerialTestJustification("Shared database reset must not overlap with other tests.")]
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed class SerialDatabaseCollection
+            {
+            }
+
+            [System.AttributeUsage(System.AttributeTargets.Class)]
+            internal sealed class SerialTestJustificationAttribute(string reason) : System.Attribute
+            {
+                public string Reason { get; } = reason;
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Serial_collection_with_whitespace_justification_reports_SKTEST005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [SerialTestJustification("   ")]
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed class SerialDatabaseCollection
+            {
+            }
+
+            [System.AttributeUsage(System.AttributeTargets.Class)]
+            internal sealed class SerialTestJustificationAttribute(string reason) : System.Attribute
+            {
+                public string Reason { get; } = reason;
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Parallel_collection_without_justification_does_not_report_SKTEST005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [global::Xunit.CollectionDefinition("Parallel database")]
+            public sealed class ParallelDatabaseCollection
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Complete_arrange_act_assert_markers_do_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Arrange
+                    var value = 42;
+
+                    // Act
+                    var actual = value;
+
+                    // Assert
+                    _ = actual;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Repeated_ordered_arrange_act_assert_markers_do_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Arrange
+                    var value = 42;
+
+                    // Act
+                    var actual = value;
+
+                    // Assert
+                    _ = actual;
+
+                    // Assert
+                    _ = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Partial_arrange_act_assert_markers_do_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Arrange
+                    var value = 42;
+
+                    // Assert
+                    _ = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Incomplete_three_marker_set_does_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Act
+                    var value = 42;
+
+                    // Arrange
+                    _ = value;
+
+                    // Arrange
+                    var actual = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Out_of_order_arrange_act_assert_markers_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Arrange
+                    var value = 42;
+
+                    // Assert
+                    _ = value;
+
+                    // Act
+                    var actual = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Tests_without_arrange_act_assert_markers_do_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var value = 42;
+                    _ = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Try_finally_inside_fact_method_reports_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    try
+                    {
+                        var value = 42;
+                        _ = value;
+                    }
+                    finally
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Try_finally_inside_theory_method_reports_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Theory]
+                [InlineData(42)]
+                public void Creates_a_tour_when_the_request_is_valid(int value)
+                {
+                    try
+                    {
+                        _ = value;
+                    }
+                    finally
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Try_catch_inside_fact_method_reports_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    try
+                    {
+                        var value = 42;
+                        _ = value;
+                    }
+                    catch (System.InvalidOperationException)
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Try_finally_inside_non_test_method_does_not_report_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public void Execute()
+                {
+                    try
+                    {
+                        var value = 42;
+                        _ = value;
+                    }
+                    finally
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Try_finally_inside_xUnit_helper_method_does_not_report_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                public void Execute()
+                {
+                    try
+                    {
+                        var value = 42;
+                        _ = value;
+                    }
+                    finally
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
+    }
+}

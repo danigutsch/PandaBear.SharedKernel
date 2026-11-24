@@ -2,8 +2,8 @@
 const PandaBear.IO.Analyzers.IODiagnosticIds.HandRolledCopyLoop = "SKIO002" -> string!
 const PandaBear.IO.Analyzers.IODiagnosticIds.UnboundedBuffering = "SKIO001" -> string!
 PandaBear.IO.Analyzers.IODiagnosticIds
-PandaBear.IO.Analyzers.SharedKernelIOAnalyzer
-PandaBear.IO.Analyzers.SharedKernelIOAnalyzer.SharedKernelIOAnalyzer() -> void
-override PandaBear.IO.Analyzers.SharedKernelIOAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
-override PandaBear.IO.Analyzers.SharedKernelIOAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+PandaBear.IO.Analyzers.IOAnalyzer
+PandaBear.IO.Analyzers.IOAnalyzer.IOAnalyzer() -> void
+override PandaBear.IO.Analyzers.IOAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override PandaBear.IO.Analyzers.IOAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
 const PandaBear.IO.Analyzers.IODiagnosticIds.MissingRequestSizeLimit = "SKIO003" -> string!

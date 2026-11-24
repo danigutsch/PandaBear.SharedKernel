@@ -42,7 +42,7 @@ public sealed class UnboundedIoAnalyzerTests
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
 
         // Act
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelStyleAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new StyleAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -82,7 +82,7 @@ public sealed class UnboundedIoAnalyzerTests
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
 
         // Act
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelStyleAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new StyleAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -109,11 +109,11 @@ public sealed class UnboundedIoAnalyzerTests
                 new Dictionary<string, ReportDiagnostic> { [DiagnosticId] = severity }));
         }
 
-        new SharedKernelStyleAnalyzer().SupportedDiagnostics.ShouldHaveSingleItem(static diagnostic => diagnostic.Id == DiagnosticId)
+        new StyleAnalyzer().SupportedDiagnostics.ShouldHaveSingleItem(static diagnostic => diagnostic.Id == DiagnosticId)
             .IsEnabledByDefault.ShouldBeFalse();
 
         // Act
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelStyleAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new StyleAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -136,7 +136,7 @@ public sealed class UnboundedIoAnalyzerTests
             new Dictionary<string, ReportDiagnostic> { [DiagnosticId] = ReportDiagnostic.Warn }));
 
         // Act
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelStyleAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new StyleAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -164,7 +164,7 @@ public sealed class UnboundedIoAnalyzerTests
             new Dictionary<string, ReportDiagnostic> { [DiagnosticId] = ReportDiagnostic.Warn }));
 
         // Act
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelStyleAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new StyleAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -199,7 +199,7 @@ public sealed class UnboundedIoAnalyzerTests
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
 
         // Act
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelStyleAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new StyleAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert

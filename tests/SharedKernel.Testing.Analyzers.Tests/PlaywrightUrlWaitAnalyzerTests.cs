@@ -50,7 +50,7 @@ public sealed class PlaywrightUrlWaitAnalyzerTests
     public void The_rule_is_a_warning_with_a_help_link()
     {
         // Arrange
-        var analyzer = new SharedKernelTestingAnalyzer();
+        var analyzer = new TestingAnalyzer();
 
         // Act
         var descriptor = analyzer.SupportedDiagnostics.ShouldHaveSingleItem(static rule => rule.Id == DiagnosticId);

@@ -3,7 +3,7 @@ PandaBear.Domain.Analyzers.DomainDiagnosticIds
 const PandaBear.Domain.Analyzers.DomainDiagnosticIds.AmbientClock = "SKDOM003" -> string!
 const PandaBear.Domain.Analyzers.DomainDiagnosticIds.MutableCollectionExposure = "SKDOM002" -> string!
 const PandaBear.Domain.Analyzers.DomainDiagnosticIds.NonPrivateSetter = "SKDOM001" -> string!
-PandaBear.Domain.Analyzers.SharedKernelDomainAnalyzer
-PandaBear.Domain.Analyzers.SharedKernelDomainAnalyzer.SharedKernelDomainAnalyzer() -> void
-override PandaBear.Domain.Analyzers.SharedKernelDomainAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
-override PandaBear.Domain.Analyzers.SharedKernelDomainAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+PandaBear.Domain.Analyzers.DomainAnalyzer
+PandaBear.Domain.Analyzers.DomainAnalyzer.DomainAnalyzer() -> void
+override PandaBear.Domain.Analyzers.DomainAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override PandaBear.Domain.Analyzers.DomainAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

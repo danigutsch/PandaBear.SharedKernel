@@ -8,7 +8,7 @@ public sealed class BusyFlagAnalyzerTests
     public void Supported_diagnostics_match_the_descriptor_contract()
     {
         // Arrange
-        var analyzer = new SharedKernelBlazorAnalyzer();
+        var analyzer = new BlazorAnalyzer();
 
         // Act
         var ids = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).ToArray();

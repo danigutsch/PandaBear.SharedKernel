@@ -35,7 +35,7 @@ The naming fix preserves canonical keywords and diagnostic identifiers. See
 
 ## Assertion code-fix scope
 
-The decision for the xUnit assertion analyzer is: the `SKTEST006` analyzer is the enforcement mechanism, and the code fix covers only the one-to-one rewrites listed above. No further rewrites are added. The measurement behind it counts direct `Assert.*` calls under `tests/`: the only occurrences are 40 calls inside the source strings of four analyzer and code-fix fixture files (`SharedKernelTestingAnalyzerTests`, `SharedKernelTestingCodeFixProviderTests`, `CodeFixRunnerTestProject`, `CodeFixRunEngineTests`), and the repository's own test code contains none. The remaining unmapped call, `Assert.Multiple`, needs a semantic choice and stays a manual migration. Revisit the scope when a consuming repository reports repeated direct assertions that the current rewrites do not cover.
+The decision for the xUnit assertion analyzer is: the `SKTEST006` analyzer is the enforcement mechanism, and the code fix covers only the one-to-one rewrites listed above. No further rewrites are added. The measurement behind it counts direct `Assert.*` calls under `tests/`: the only occurrences are 40 calls inside the source strings of four analyzer and code-fix fixture files (`TestingAnalyzerTests`, `TestingCodeFixProviderTests`, `CodeFixRunnerTestProject`, `CodeFixRunEngineTests`), and the repository's own test code contains none. The remaining unmapped call, `Assert.Multiple`, needs a semantic choice and stays a manual migration. Revisit the scope when a consuming repository reports repeated direct assertions that the current rewrites do not cover.
 
 ## Suppression policy
 

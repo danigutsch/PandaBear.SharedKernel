@@ -16,11 +16,11 @@ internal static class AnalyzerTestHarness
 
         """;
 
-    /// <summary>Compiles the source and returns the diagnostics reported by SharedKernelBlazorAnalyzer, throwing when the source has compile errors.</summary>
+    /// <summary>Compiles the source and returns the diagnostics reported by BlazorAnalyzer, throwing when the source has compile errors.</summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(string source)
     {
         var compilation = CreateCompilation(source);
-        return await AnalyzerRun.GetDiagnostics(compilation, new SharedKernelBlazorAnalyzer()).ConfigureAwait(false);
+        return await AnalyzerRun.GetDiagnostics(compilation, new BlazorAnalyzer()).ConfigureAwait(false);
     }
 
     /// <summary>Returns the full source line on which the diagnostic starts, throwing when the diagnostic has no source location.</summary>

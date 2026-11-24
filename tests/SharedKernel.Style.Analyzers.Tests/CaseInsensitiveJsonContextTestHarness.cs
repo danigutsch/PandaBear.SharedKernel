@@ -37,7 +37,7 @@ internal static class CaseInsensitiveJsonContextTestHarness
                 new Dictionary<string, ReportDiagnostic> { [DiagnosticId] = ReportDiagnostic.Warn }));
         }
 
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelStyleAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new StyleAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
         return [.. diagnostics.Where(static candidate => candidate.Id == DiagnosticId)];
     }

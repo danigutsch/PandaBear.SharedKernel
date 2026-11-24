@@ -98,7 +98,7 @@ internal static class CodeFixTestWorkspace
     {
         var compilation = (CSharpCompilation?)await workspace.Project.GetCompilationAsync().ConfigureAwait(false);
         _ = compilation.ShouldNotBeNull();
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(new SharedKernelMediatorGenerator());
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(new MediatorGenerator());
         driver = driver.RunGenerators(compilation);
         return driver.GetRunResult().Results.Single();
     }

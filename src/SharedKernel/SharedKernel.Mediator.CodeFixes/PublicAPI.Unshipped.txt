@@ -1,6 +1,6 @@
 #nullable enable
-PandaBear.Mediator.CodeFixes.SharedKernelMediatorCodeFixProvider
-PandaBear.Mediator.CodeFixes.SharedKernelMediatorCodeFixProvider.SharedKernelMediatorCodeFixProvider() -> void
-override PandaBear.Mediator.CodeFixes.SharedKernelMediatorCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override PandaBear.Mediator.CodeFixes.SharedKernelMediatorCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
-override PandaBear.Mediator.CodeFixes.SharedKernelMediatorCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+PandaBear.Mediator.CodeFixes.MediatorCodeFixProvider
+PandaBear.Mediator.CodeFixes.MediatorCodeFixProvider.MediatorCodeFixProvider() -> void
+override PandaBear.Mediator.CodeFixes.MediatorCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override PandaBear.Mediator.CodeFixes.MediatorCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
+override PandaBear.Mediator.CodeFixes.MediatorCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!

@@ -42,7 +42,7 @@ document compatibility and keep the runtime and abstractions packages marked `Is
 ## Build-Time Timing Baseline
 
 Use the sample consumer project when profiling generator execution. Building the generator project itself does not
-exercise `SharedKernelMediatorGenerator` as an analyzer.
+exercise `MediatorGenerator` as an analyzer.
 
 ### Baseline command
 
@@ -62,7 +62,7 @@ dotnet build samples/Mediator/Mediator.Sample/Mediator.Sample.csproj /t:Rebuild 
 - Command run on 2026-06-14:
   `dotnet build samples/Mediator/Mediator.Sample/Mediator.Sample.csproj /t:Rebuild /p:ReportAnalyzer=true /bl:mediator-sample.binlog -v:detailed`
 - Total analyzer execution time: `0.589` seconds
-- `SharedKernel.Mediator.SourceGenerator.SharedKernelMediatorGenerator`: `0.084` seconds (`93%` of generator time)
+- `SharedKernel.Mediator.SourceGenerator.MediatorGenerator`: `0.084` seconds (`93%` of generator time)
 
 Treat this as a local reference point rather than a CI budget. Hardware, warm caches, and concurrent analyzer load
 can shift absolute timings, so compare trends more than raw milliseconds.

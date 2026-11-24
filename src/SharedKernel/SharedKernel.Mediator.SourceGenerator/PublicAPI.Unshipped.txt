@@ -1,4 +1,4 @@
 #nullable enable
-PandaBear.Mediator.SourceGenerator.SharedKernelMediatorGenerator
-PandaBear.Mediator.SourceGenerator.SharedKernelMediatorGenerator.SharedKernelMediatorGenerator() -> void
-PandaBear.Mediator.SourceGenerator.SharedKernelMediatorGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
+PandaBear.Mediator.SourceGenerator.MediatorGenerator
+PandaBear.Mediator.SourceGenerator.MediatorGenerator.MediatorGenerator() -> void
+PandaBear.Mediator.SourceGenerator.MediatorGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void

@@ -106,7 +106,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             includeDefaultUsings: false,
             documentationMode: DocumentationMode.Diagnose);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -114,7 +114,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
         await workspace.ApplyCodeAction(action);
         var updated = await workspace.GetDocumentText();
         var compilation = await workspace.Workspace.CurrentSolution.Projects.ShouldHaveSingleItem().GetCompilationAsync(TestContext.Current.CancellationToken);
-        var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new SharedKernelTestingAnalyzer(), DiagnosticId);
+        var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new TestingAnalyzer(), DiagnosticId);
 
         // Assert
         action.Title.ShouldBe("Add userMessage overload");
@@ -156,7 +156,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             """);
         var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldBeKind<T>(this");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -189,7 +189,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
                 where T : class => (T)actual!;
             """);
         var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var readyActions = await workspace.GetCodeActions(provider, await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldBeReady<T>(this"));
@@ -219,7 +219,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             """).ReplaceLineEndings("\r\n");
         var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false, documentationMode: DocumentationMode.Diagnose);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldBeProblem(this");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -282,7 +282,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             includeDefaultUsings: false,
             documentationMode: DocumentationMode.Diagnose);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -352,7 +352,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             includeDefaultUsings: false,
             documentationMode: DocumentationMode.Diagnose);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldInclude(this");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -472,7 +472,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
         var expectedStart = source[..source.IndexOf("\n}\n", StringComparison.Ordinal)] + "\n\n" + expectedOverload.ReplaceLineEndings("\n") + "\n}\n";
         var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -585,7 +585,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
         ArgumentNullException.ThrowIfNull(members);
         var workspace = CodeFixTestWorkspace.Create(AssertionUserMessageOverloadCodeFixTestSource.Create(members), includeDefaultUsings: false);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -621,7 +621,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
         ArgumentNullException.ThrowIfNull(helper);
         var workspace = CodeFixTestWorkspace.Create(AssertionUserMessageOverloadCodeFixTestSource.Create(members, helper), includeDefaultUsings: false);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -658,7 +658,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             """);
         var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldHaveItem<T>(this");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -687,7 +687,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             """);
         var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldBeReady(this");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);

@@ -1,0 +1,490 @@
+namespace PandaBear.Aspire.Analyzers.Tests;
+
+/// <summary>
+/// Tests that AspireAnalyzer reports the image tag and digest diagnostic for incomplete or malformed Aspire image pin chains.
+/// </summary>
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
+public sealed class AspireAnalyzerTests
+{
+    [Fact]
+    public void Supported_diagnostics_match_aspire_descriptor_contract()
+    {
+        // Arrange
+        var analyzer = new AspireAnalyzer();
+
+        // Act
+        var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id);
+
+        // Assert
+        diagnosticIds.ShouldHaveSingleItem().ShouldBe(AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Generated_files_do_not_report_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddPostgres("database").WithImageTag("18.4");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: "Generated.g.cs");
+
+        // Assert
+        diagnostics.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task With_image_tag_without_with_image_sha256_reports_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddPostgres("database").WithImageTag("18.4");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("WithImageTag", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task With_image_tag_with_with_image_sha256_does_not_report_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddPostgres("database")
+                        .WithImageTag("18.4")
+                        .WithImageSHA256("4aabea78cf39b90e834caf3af7d602a18565f6fe2508705c8d01aa63245c2e20");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Publish_as_dockerfile_container_image_tag_does_not_require_static_digest()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, string imageTag)
+                {
+                    project.PublishAsDockerFile(container => container.WithImageTag(imageTag));
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Publish_as_dockerfile_container_image_tag_chain_does_not_require_static_digest()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, string imageTag, string registry)
+                {
+                    project.PublishAsDockerFile(container => container
+                        .WithImageRegistry(registry)
+                        .WithImageTag(imageTag));
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Publish_as_dockerfile_exemption_does_not_apply_to_other_resource_builders_in_the_lambda()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, dynamic builder, string imageTag)
+                {
+                    project.PublishAsDockerFile(container =>
+                    {
+                        container.WithImageTag(imageTag);
+                        builder.AddRedis("cache").WithImageTag("8.8");
+                    });
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("WithImageTag", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task With_image_sha256_without_with_image_tag_reports_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageSHA256("2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("WithImageSHA256", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task With_image_sha256_value_with_sha256_prefix_reports_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageTag("8.8")
+                        .WithImageSHA256("sha256:2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("bare 64-character digest", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf3")]
+    [InlineData("2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32ff")]
+    [InlineData("2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf3x")]
+    public async Task With_image_sha256_value_that_is_not_bare_64_character_hex_reports_ska_spire001(string digest)
+    {
+        // Arrange
+        var source = $$"""
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageTag("8.8")
+                        .WithImageSHA256("{{digest}}");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("bare 64-character digest", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task With_image_sha256_const_value_that_is_not_bare_64_character_hex_reports_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                private const string RedisImageDigest = "not-a-digest";
+
+                public void Configure(dynamic builder)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageTag("8.8")
+                        .WithImageSHA256(RedisImageDigest);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("bare 64-character digest", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task With_image_sha256_null_value_reports_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageTag("8.8")
+                        .WithImageSHA256(null);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("bare 64-character digest", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task With_image_sha256_uppercase_hex_value_does_not_report_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageTag("8.8")
+                        .WithImageSHA256("2838D5524559494F6F1CD66E97E76B200D64A633A8614200620755ED395DAF32");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task With_image_sha256_non_constant_value_does_not_report_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder, string redisImageDigest)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageTag("8.8")
+                        .WithImageSHA256(redisImageDigest);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Companion_resource_image_pins_are_analyzed_independently()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddPostgres("database")
+                        .WithImageTag("18.4")
+                        .WithImageSHA256("4aabea78cf39b90e834caf3af7d602a18565f6fe2508705c8d01aa63245c2e20")
+                        .WithPgWeb(pgweb => pgweb.WithImageSHA256("a5256d416e2e8b92d69a4459058e3eca33a9f075d8325491644411d0bc3bd70b"));
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("WithImageSHA256", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Postgre_SQL_redis_and_companion_image_pins_with_tags_do_not_report_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddPostgres("database")
+                        .WithImageTag("18.4")
+                        .WithImageSHA256("4aabea78cf39b90e834caf3af7d602a18565f6fe2508705c8d01aa63245c2e20")
+                        .WithPgWeb(pgweb => pgweb
+                            .WithImageTag("0.17.0")
+                            .WithImageSHA256("a5256d416e2e8b92d69a4459058e3eca33a9f075d8325491644411d0bc3bd70b"));
+
+                    builder.AddRedis("cache")
+                        .WithImageTag("8.8")
+                        .WithImageSHA256("2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32")
+                        .WithRedisInsight(redisInsight => redisInsight
+                            .WithImageTag("3.6")
+                            .WithImageSHA256("aa21bbd198455b4ad964f76782db951155aa0d712321f599972d1525f031f0e6"));
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task With_image_sha256_before_with_image_tag_does_not_report_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageSHA256("2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32")
+                        .WithImageTag("8.8");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Complete_image_pin_chain_with_additional_calls_does_not_report_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddPostgres("database")
+                        .WithImageTag("18.4")
+                        .WithImageSHA256("4aabea78cf39b90e834caf3af7d602a18565f6fe2508705c8d01aa63245c2e20")
+                        .WithDataVolume();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Multiple_incomplete_image_pin_chains_report_one_diagnostic_per_chain()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddPostgres("database").WithImageTag("18.4");
+                    builder.AddRedis("cache").WithImageSHA256("2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.Count(static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest).ShouldBe(2);
+    }
+}

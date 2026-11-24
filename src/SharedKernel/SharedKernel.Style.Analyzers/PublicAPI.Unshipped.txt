@@ -5,10 +5,10 @@ const PandaBear.Style.Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix = "SKST
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.NonSourceGeneratedLogging = "SKSTYLE007" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.OptionalResultMethod = "SKSTYLE010" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod = "SKSTYLE009" -> string!
-PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer
-PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer.SharedKernelStyleAnalyzer() -> void
-override PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
-override PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+PandaBear.Style.Analyzers.StyleAnalyzer
+PandaBear.Style.Analyzers.StyleAnalyzer.StyleAnalyzer() -> void
+override PandaBear.Style.Analyzers.StyleAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override PandaBear.Style.Analyzers.StyleAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
 PandaBear.Style.Analyzers.StyleDiagnosticIds
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!

@@ -11,7 +11,7 @@ public sealed class RenameFileCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.FileNameMismatch, "public sealed class Tour");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new StyleCodeFixProvider(), diagnostic);
         var action = actions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
 
@@ -30,7 +30,7 @@ public sealed class RenameFileCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.FileNameMismatch, "public sealed class Box<T>");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new StyleCodeFixProvider(), diagnostic);
         var action = actions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
 
@@ -48,7 +48,7 @@ public sealed class RenameFileCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.FileNameMismatch, "public sealed class Tour");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new StyleCodeFixProvider(), diagnostic);
 
         // Assert
         actions.ShouldBeEmpty();

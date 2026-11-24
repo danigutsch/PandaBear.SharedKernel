@@ -27,13 +27,13 @@ internal static class AnalyzerTestHarness
             assemblyName);
     }
 
-    /// <summary>Runs SharedKernelMediatorAnalyzer over the source with optional global analyzer config options and returns the reported diagnostics.</summary>
+    /// <summary>Runs MediatorAnalyzer over the source with optional global analyzer config options and returns the reported diagnostics.</summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         ImmutableDictionary<string, string>? globalOptions = null)
     {
         var compilation = CreateCompilation(source);
-        var analyzer = new SharedKernelMediatorAnalyzer();
+        var analyzer = new MediatorAnalyzer();
         return await AnalyzerRun.GetDiagnostics(compilation, analyzer, globalOptions).ConfigureAwait(false);
     }
 
