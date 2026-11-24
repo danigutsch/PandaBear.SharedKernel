@@ -8,7 +8,7 @@ internal static class GeneratorTelemetryBehaviorTestsHelpers
     /// <summary>Creates and registers an ActivityListener that records every sample of the mediator activity source and adds each stopped activity with the given trace id to the list.</summary>
     public static ActivityListener CreateCapturingListener(List<Activity> stopped, ActivityTraceId traceId)
     {
-        var expectedSource = SharedKernelMediatorActivitySource.Source;
+        var expectedSource = MediatorActivitySource.Source;
         var listener = new ActivityListener
         {
             ShouldListenTo = source => ReferenceEquals(source, expectedSource),

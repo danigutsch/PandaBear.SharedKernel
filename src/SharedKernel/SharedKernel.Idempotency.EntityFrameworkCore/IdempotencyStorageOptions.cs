@@ -13,7 +13,7 @@ public sealed class IdempotencyStorageOptions
     /// <summary>
     /// Gets or sets the schema containing the idempotency table.
     /// </summary>
-    public string Schema { get; set; } = SharedKernelSchemas.Messaging;
+    public string Schema { get; set; } = DatabaseSchemas.Messaging;
 
     /// <summary>
     /// Gets or sets the idempotency table name.

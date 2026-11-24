@@ -11,9 +11,9 @@ PandaBear.Mediator.AppMediatorInstrumentation.NotificationsTotal.get -> System.D
 PandaBear.Mediator.AppMediatorInstrumentation.RequestsDuration.get -> System.Diagnostics.Metrics.Histogram<double>!
 PandaBear.Mediator.AppMediatorInstrumentation.RequestsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
 PandaBear.Mediator.AppMediatorInstrumentation.StreamsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
-PandaBear.Mediator.SharedKernelMediatorActivitySource
-static PandaBear.Mediator.SharedKernelMediatorActivitySource.ActivitySourceName.get -> string!
-static PandaBear.Mediator.SharedKernelMediatorActivitySource.Source.get -> System.Diagnostics.ActivitySource!
+PandaBear.Mediator.MediatorActivitySource
+static PandaBear.Mediator.MediatorActivitySource.ActivitySourceName.get -> string!
+static PandaBear.Mediator.MediatorActivitySource.Source.get -> System.Diagnostics.ActivitySource!
 PandaBear.Mediator.ScopedSender
 PandaBear.Mediator.ScopedSender.ScopedSender(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory, System.IServiceProvider! callerServices, System.Func<System.IServiceProvider!, System.IServiceProvider!, System.Threading.Tasks.ValueTask>? scopeInitializer = null) -> void
 PandaBear.Mediator.ScopedSender.Send<TResponse>(PandaBear.Mediator.IRequest<TResponse>! request) -> System.Threading.Tasks.ValueTask<TResponse>
