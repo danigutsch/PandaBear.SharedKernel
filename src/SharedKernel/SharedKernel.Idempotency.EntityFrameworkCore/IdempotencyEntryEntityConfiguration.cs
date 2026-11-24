@@ -14,7 +14,7 @@ internal sealed class IdempotencyEntryEntityConfiguration : IEntityTypeConfigura
 
     /// <summary>Creates a configuration that maps to the default schema and table.</summary>
     public IdempotencyEntryEntityConfiguration()
-        : this(SharedKernelSchemas.Messaging, IdempotencyStorageOptions.DefaultTableName)
+        : this(DatabaseSchemas.Messaging, IdempotencyStorageOptions.DefaultTableName)
     {
     }
 

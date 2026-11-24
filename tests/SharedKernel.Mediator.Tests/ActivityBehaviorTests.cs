@@ -14,12 +14,12 @@ public sealed class ActivityBehaviorTests
         // Arrange
         var activities = new List<Activity>();
         using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(activities);
-        using var impostor = new ActivitySource(SharedKernelMediatorActivitySource.ActivitySourceName);
+        using var impostor = new ActivitySource(MediatorActivitySource.ActivitySourceName);
         var predicate = listener.ShouldListenTo.ShouldNotBeNull();
 
         // Act
         var acceptsImpostor = predicate(impostor);
-        var acceptsExpected = predicate(SharedKernelMediatorActivitySource.Source);
+        var acceptsExpected = predicate(MediatorActivitySource.Source);
 
         // Assert
         acceptsImpostor.ShouldBeFalse();
@@ -33,8 +33,8 @@ public sealed class ActivityBehaviorTests
         var expectedName = MediatorTelemetry.Name;
 
         // Act
-        var activitySourceName = SharedKernelMediatorActivitySource.ActivitySourceName;
-        var sourceName = SharedKernelMediatorActivitySource.Source.Name;
+        var activitySourceName = MediatorActivitySource.ActivitySourceName;
+        var sourceName = MediatorActivitySource.Source.Name;
 
         // Assert
         activitySourceName.ShouldBe(expectedName);
@@ -88,7 +88,7 @@ public sealed class ActivityBehaviorTests
         response.ShouldBe(43);
         var activity = stoppedActivities.ShouldHaveSingleItem();
         activity.OperationName.ShouldBe(nameof(ActivityTestQuery));
-        activity.Source.Name.ShouldBe(SharedKernelMediatorActivitySource.ActivitySourceName);
+        activity.Source.Name.ShouldBe(MediatorActivitySource.ActivitySourceName);
         activity.Status.ShouldBe(ActivityStatusCode.Ok);
         activity.Tags.ShouldContain(static tag => tag.Key == MediatorTelemetry.TagRequestType && tag.Value == typeof(ActivityTestQuery).FullName);
         activity.Tags.ShouldContain(static tag => tag.Key == MediatorTelemetry.TagResponseType && tag.Value == typeof(int).FullName);

@@ -13,7 +13,7 @@ internal static class ActivityBehaviorTestsHelpers
     /// <param name="stoppedActivities">The list that receives every activity as it stops.</param>
     public static ActivityListener CreateCapturingListener(List<Activity> stoppedActivities)
     {
-        var expectedSource = SharedKernelMediatorActivitySource.Source;
+        var expectedSource = MediatorActivitySource.Source;
         var listener = new ActivityListener
         {
             ShouldListenTo = source => ReferenceEquals(source, expectedSource),

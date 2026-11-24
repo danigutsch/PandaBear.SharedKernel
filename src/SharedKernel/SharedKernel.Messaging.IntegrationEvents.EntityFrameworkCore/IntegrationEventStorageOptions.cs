@@ -15,7 +15,7 @@ public sealed class IntegrationEventStorageOptions
     /// <summary>
     /// Gets or sets the default schema used when a table-specific schema is not configured.
     /// </summary>
-    public string Schema { get; set; } = SharedKernelSchemas.Messaging;
+    public string Schema { get; set; } = DatabaseSchemas.Messaging;
 
     /// <summary>
     /// Gets or sets the optional outbox schema override. When null, <see cref="Schema" /> is used.

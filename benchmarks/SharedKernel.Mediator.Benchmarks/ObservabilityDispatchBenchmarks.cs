@@ -95,7 +95,7 @@ public class ObservabilityDispatchBenchmarks
     {
         return new ActivityListener
         {
-            ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
+            ShouldListenTo = static source => source.Name == MediatorActivitySource.ActivitySourceName,
             Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
             SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
         };

@@ -14,7 +14,7 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
 
     /// <summary>Creates a configuration that maps to the default schema and outbox table.</summary>
     public IntegrationEventOutboxMessageConfiguration()
-        : this(SharedKernelSchemas.Messaging, IntegrationEventStorageOptions.DefaultOutboxTableName)
+        : this(DatabaseSchemas.Messaging, IntegrationEventStorageOptions.DefaultOutboxTableName)
     {
     }
 

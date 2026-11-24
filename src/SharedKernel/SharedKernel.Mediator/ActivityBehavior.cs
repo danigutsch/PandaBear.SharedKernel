@@ -14,7 +14,7 @@ public sealed class ActivityBehavior<TRequest, TResponse> : IPipelineBehavior<TR
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(next);
 
-        using var activity = SharedKernelMediatorActivitySource.StartRequestActivity<TRequest>();
+        using var activity = MediatorActivitySource.StartRequestActivity<TRequest>();
         if (activity is not null)
         {
             activity.SetTag(MediatorTelemetry.TagRequestType, request.GetType().FullName ?? typeof(TRequest).FullName ?? typeof(TRequest).Name);
