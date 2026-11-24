@@ -1,7 +1,7 @@
 #nullable enable
 const PandaBear.AspNetCore.WebAnalytics.PageViewOptions.MaximumQueueCapacity = 100000 -> int
 const PandaBear.AspNetCore.WebAnalytics.UmamiPageViewBuilderExtensions.DefaultConnectionName = "umami" -> string!
-const PandaBear.AspNetCore.WebAnalytics.UmamiPageViewBuilderExtensions.HttpClientName = "PandaBear.AspNetCore.WebAnalytics.Umami" -> string!
+const PandaBear.AspNetCore.WebAnalytics.UmamiPageViewBuilderExtensions.HttpClientName = "SharedKernel.AspNetCore.WebAnalytics.Umami" -> string!
 const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.DroppedPageViewsCounterName = "sharedkernel.web_analytics.page_views.dropped" -> string!
 const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.MeterName = "SharedKernel.AspNetCore.WebAnalytics" -> string!
 const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.PageViewsOffEventId = 4205 -> int

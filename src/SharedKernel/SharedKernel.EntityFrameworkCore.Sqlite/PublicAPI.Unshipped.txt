@@ -4,7 +4,7 @@ PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser
 PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser.SqliteUniqueViolationParser() -> void
 PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser.TryParse(Microsoft.EntityFrameworkCore.DbUpdateException! exception, out PandaBear.EntityFrameworkCore.UniqueViolation! violation) -> bool
 static PandaBear.EntityFrameworkCore.Sqlite.SqliteServiceCollectionExtensions.AddSqliteUniqueViolationParser(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-const PandaBear.EntityFrameworkCore.Sqlite.SearchFold.FunctionName = "pandabear_search_fold" -> string!
+const PandaBear.EntityFrameworkCore.Sqlite.SearchFold.FunctionName = "sharedkernel_search_fold" -> string!
 PandaBear.EntityFrameworkCore.Sqlite.SearchFold
 PandaBear.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions
 PandaBear.EntityFrameworkCore.Sqlite.SearchFoldModelBuilderExtensions

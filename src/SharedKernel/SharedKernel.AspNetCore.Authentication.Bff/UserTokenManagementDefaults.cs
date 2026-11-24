@@ -13,5 +13,5 @@ public static class UserTokenManagementDefaults
     /// Additional handlers such as retry policies are removed from it, because a replayed refresh_token grant can revoke a
     /// rotated refresh token.
     /// </remarks>
-    public const string IdentityProviderHttpClientName = "PandaBear.Bff.IdentityProvider";
+    public const string IdentityProviderHttpClientName = "SharedKernel.AspNetCore.Authentication.Bff.IdentityProvider";
 }

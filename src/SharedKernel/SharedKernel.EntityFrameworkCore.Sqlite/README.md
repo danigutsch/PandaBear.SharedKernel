@@ -17,7 +17,7 @@ services.AddSqliteUniqueViolationParser();   // registers IUniqueViolationParser
 ## Accent- and case-insensitive search
 
 SQLite's `LIKE`, `lower()` and `NOCASE` fold only ASCII letters, so `ESLOVÊNIA` does not find `Eslovênia`. `SearchFold` compares
-search keys instead: `SearchFold.Of(text)` is the key, computed in SQL by the deterministic scalar function `pandabear_search_fold`
+search keys instead: `SearchFold.Of(text)` is the key, computed in SQL by the deterministic scalar function `sharedkernel_search_fold`
 (`SearchFold.FunctionName`), and `SearchFold.ContainsPattern(input)` turns the user's input into a `LIKE` pattern.
 
 The key is `SearchKey.Of` of `PandaBear.SharedKernel.BuildingBlocks`, a host-agnostic fold you can also use in memory: lone

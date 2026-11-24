@@ -19,7 +19,7 @@ namespace PandaBear.EntityFrameworkCore.Sqlite;
 public static class SearchFold
 {
     /// <summary>The name of the SQLite scalar function that computes the key in SQL.</summary>
-    public const string FunctionName = "pandabear_search_fold";
+    public const string FunctionName = "sharedkernel_search_fold";
 
     /// <summary>The escape character of the patterns <see cref="ContainsPattern"/> builds; pass it to <c>EF.Functions.Like</c>.</summary>
     public const string EscapeCharacter = "\\";

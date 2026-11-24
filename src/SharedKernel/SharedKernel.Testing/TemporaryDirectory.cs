@@ -4,7 +4,7 @@ namespace PandaBear.Testing;
 public sealed class TemporaryDirectory : IDisposable
 {
     /// <summary>Creates a directory using the platform temporary directory.</summary>
-    public TemporaryDirectory() => Path = Directory.CreateTempSubdirectory("pandabear-").FullName;
+    public TemporaryDirectory() => Path = Directory.CreateTempSubdirectory("sharedkernel-").FullName;
 
     /// <summary>Gets the absolute directory path.</summary>
     public string Path { get; }

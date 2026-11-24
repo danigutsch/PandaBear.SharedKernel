@@ -6,7 +6,7 @@ namespace PandaBear.EntityFrameworkCore;
 public static class UniqueRuleIndexBuilderExtensions
 {
     /// <summary>The model annotation that stores the rule name on an index.</summary>
-    public const string AnnotationName = "PandaBear:UniqueRule";
+    public const string AnnotationName = "SharedKernel:UniqueRule";
 
     /// <summary>Marks a unique index with the application rule it enforces, so violations can be reported by rule.</summary>
     /// <param name="builder">The index builder.</param>
