@@ -11,4 +11,24 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(PackCompilerOutputs)' == 'true'">
+        <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackCompilerOutputs</TargetsForTfmSpecificContentInPackage>
+    </PropertyGroup>
+
+    <Target Name="PackCompilerOutputs" DependsOnTargets="PrepareProjectReferences">
+        <ItemGroup>
+            <_CompilerPackageReference Include="@(_MSBuildProjectReferenceExistent->WithMetadataValue('PackCompilerOutput', 'true'))" />
+        </ItemGroup>
+        <MSBuild Projects="@(_CompilerPackageReference)"
+                 Targets="GetTargetPath"
+                 Properties="%(_CompilerPackageReference.SetConfiguration);%(_CompilerPackageReference.SetPlatform);%(_CompilerPackageReference.SetTargetFramework)"
+                 RemoveProperties="%(_CompilerPackageReference.GlobalPropertiesToRemove)$(_GlobalPropertiesToRemoveFromProjectReferences)">
+            <Output TaskParameter="TargetOutputs" ItemName="_CompilerPackageOutput" />
+        </MSBuild>
+        <ItemGroup>
+            <TfmSpecificPackageFile Include="@(_CompilerPackageOutput)" PackagePath="analyzers/dotnet/cs/" />
+            <TfmSpecificPackageFile Include="$(TargetPath)" PackagePath="analyzers/dotnet/cs/" Condition="'$(PackOwnCompilerOutput)' == 'true'" />
+        </ItemGroup>
+    </Target>
+
 </Project>

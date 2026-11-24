@@ -49,11 +49,14 @@ internal static class VersioningCommandLineRunner
     /// <summary>
     /// Invokes the command line in process with unwrapped help, capturing exit code, output, and error.
     /// </summary>
-    public static async Task<CommandLineInvocation> Invoke(string[] args, TextReader input, TimeProvider timeProvider, CancellationToken ct)
+    public static Task<CommandLineInvocation> Invoke(string[] args, TextReader input, TimeProvider timeProvider, CancellationToken ct) =>
+        Invoke(VersioningCommandLine.Create(input, timeProvider), args, ct);
+
+    /// <summary>Invokes a command tree built with the test's process runner.</summary>
+    internal static async Task<CommandLineInvocation> Invoke(RootCommand command, string[] args, CancellationToken ct)
     {
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
-        var command = VersioningCommandLine.Create(input, timeProvider);
 
         // Help wraps at the width of the terminal running the tests; unwrapped help keeps assertions independent of it.
         var help = (HelpAction)command.Options.OfType<HelpOption>().First().Action!;

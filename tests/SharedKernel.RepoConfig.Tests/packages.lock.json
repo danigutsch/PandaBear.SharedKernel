@@ -290,6 +290,9 @@
           "PandaBear.SharedKernel.Repositories": "[0.1.0-alpha.0, )"
         }
       },
+      "sharedkernel.testing.packaging": {
+        "type": "Project"
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",
         "requested": "[11.0.0, )",

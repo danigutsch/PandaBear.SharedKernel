@@ -12,11 +12,9 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <Nullable>enable</Nullable>
-        <AuditTrailSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">$(MSBuildProjectDirectory)/bin/$(Configuration)/netstandard2.0/$(AssemblyName).dll</AuditTrailSourceGeneratorPackageFile>
-        <AuditTrailSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\$(MSBuildProjectName)\$(Configuration)\netstandard2.0\$(AssemblyName).dll</AuditTrailSourceGeneratorPackageFile>
         <NuspecFile>SharedKernel.AuditTrail.SourceGenerator.nuspec</NuspecFile>
         <NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
-        <NuspecProperties>packageVersion=$(PackageVersion);analyzerFile=$(AuditTrailSourceGeneratorPackageFile);targetFramework=$(RepositoryTargetFramework)</NuspecProperties>
+        <NuspecProperties>packageVersion=$(PackageVersion);targetFramework=$(RepositoryTargetFramework)</NuspecProperties>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
@@ -29,10 +27,10 @@
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
-    <!-- Custom nuspec tokens must be populated after the SDK reads source control metadata. -->
-    <Target Name="SetAuditTrailRepositoryMetadata" BeforeTargets="GenerateNuspec" DependsOnTargets="InitializeSourceControlInformation">
+    <!-- Use the evaluated build output path and initialized source control metadata for the custom nuspec. -->
+    <Target Name="SetAuditTrailNuspecProperties" BeforeTargets="GenerateNuspec" DependsOnTargets="InitializeSourceControlInformation">
         <PropertyGroup>
-            <NuspecProperties>$(NuspecProperties);repositoryUrl=$(RepositoryUrl);repositoryCommit=$(SourceRevisionId)</NuspecProperties>
+            <NuspecProperties>$(NuspecProperties);analyzerFile=$(TargetPath);repositoryUrl=$(RepositoryUrl);repositoryCommit=$(SourceRevisionId)</NuspecProperties>
         </PropertyGroup>
     </Target>
 

@@ -6,6 +6,47 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class ChildProcessEnvironmentTests
 {
     [Fact]
+    public async Task Repository_command_keeps_its_private_git_home_out_of_the_parent_process()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        timeout.CancelAfter(TimeSpan.FromSeconds(25));
+        await repository.Initialize(timeout.Token);
+        repository.WriteText("valid.json", "{}");
+        await repository.Stage("valid.json", timeout.Token);
+        var ready = Path.Combine(repository.RootPath, "git-ready");
+        var release = Path.Combine(repository.RootPath, "git-release");
+        var homeLog = Path.Combine(repository.RootPath, "git-home");
+        var parentHome = Environment.GetEnvironmentVariable("HOME");
+        Dictionary<string, string?> environment = new(StringComparer.Ordinal)
+        {
+            ["PATH"] = repository.CreateGitShim(),
+            ["TEXT_ENCODING_GIT_SHIM_HOME_LOG"] = homeLog,
+            ["TEXT_ENCODING_GIT_SHIM_READY"] = ready,
+            ["TEXT_ENCODING_GIT_SHIM_RELEASE"] = release,
+        };
+
+        // Act
+        var command = repository.RunCommand(["verify-json", "--root", repository.RootPath], timeout.Token,
+            environment: environment);
+        var observedHome = await TemporaryGitRepository.ReadParentHomeWhileGitWaits(command, ready, release, timeout.Token);
+        var result = await command;
+        var childHome = await File.ReadAllTextAsync(homeLog, timeout.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.StandardError);
+        File.Exists(ready).ShouldBeTrue("The test observes the parent while the Git child is waiting.");
+        childHome.ShouldBe(Path.Combine(repository.RootPath, ".home"));
+        observedHome.ShouldBe(parentHome);
+    }
+
+    [Fact]
     public async Task Verify_podman_dns_starts_processes_without_github_tokens()
     {
         // Arrange

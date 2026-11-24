@@ -15,13 +15,18 @@ public static class LocalFeed
     /// <param name="version">Expected package version.</param>
     /// <returns>Sorted package IDs.</returns>
     /// <exception cref="ArgumentException">Thrown when package metadata is missing or invalid.</exception>
-    public static string[] ReadPackageIds(string[] packages, string version)
+    public static string[] ReadPackageIds(string[] packages, string version) =>
+        ReadPackagePaths(packages, version).Keys.Order(StringComparer.Ordinal).ToArray();
+
+    /// <summary>Maps validated package identifiers to their original archive paths.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="packages"/> is null.</exception>
+    /// <exception cref="ArgumentException">The package metadata or version is invalid.</exception>
+    internal static Dictionary<string, string> ReadPackagePaths(string[] packages, string version)
     {
         ArgumentNullException.ThrowIfNull(packages);
         ArgumentException.ThrowIfNullOrWhiteSpace(version);
 
-        var packageIds = new List<string>();
-        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var packagePaths = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var package in packages)
         {
             using var archive = ZipFile.OpenRead(package);
@@ -50,15 +55,13 @@ public static class LocalFeed
                 }
             }
 
-            if (!seen.Add(packageId))
+            if (!packagePaths.TryAdd(packageId, package))
             {
                 throw new ArgumentException("duplicate packages: " + packageId);
             }
-
-            packageIds.Add(packageId);
         }
 
-        return packageIds.Order(StringComparer.Ordinal).ToArray();
+        return packagePaths;
     }
 
     /// <summary>

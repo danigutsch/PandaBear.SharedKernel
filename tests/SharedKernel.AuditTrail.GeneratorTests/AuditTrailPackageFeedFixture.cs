@@ -49,11 +49,12 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
         RepositoryRoot = Testing.RepositoryRoot.Locate("SharedKernel.slnx");
         FeedPath = Path.Combine(RootPath, "feed");
         Directory.CreateDirectory(FeedPath);
+        var artifacts = Path.Combine(RootPath, "artifacts");
 
         foreach (var relativeProjectPath in PackageProjects)
         {
             var projectPath = Path.Combine(RepositoryRoot, relativeProjectPath);
-            _ = await DotNetCli.Pack(RepositoryRoot, projectPath, PackageVersion, FeedPath);
+            _ = await DotNetCli.Pack(RepositoryRoot, projectPath, PackageVersion, FeedPath, artifacts);
         }
     }
 

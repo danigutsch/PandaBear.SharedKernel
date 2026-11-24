@@ -72,6 +72,7 @@ dotnet release pack [--version <version>] [--assembly-version <version>] [--file
 dotnet release pack-dev --feed <path> [--version <version>] [--repo-root <path>] [<project>...]
 dotnet release prepare-release --version <version> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes
 dotnet release create-candidate [--version <version>] [--baseline-version <version>]
+dotnet release compare-candidates --baseline <candidate.json> --candidate <candidate.json> --apicompat <path> --output <file>
 dotnet release validate-candidate [--version <version>] [--baseline-version <version>] [--aot] [--framework <tfm>]...
 dotnet release consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot] [--framework <tfm>]...
 dotnet release consume-packages --feed <path> --version <version> [--aot]
@@ -79,8 +80,8 @@ dotnet release merge-evidence --candidate <path> --evidence <path>... [--output 
 dotnet release verify-consumer --candidate <file> [--solution <file>] [--output <file>] -- <command>...
 ```
 
-Every command except `classify-commit` and `compute` accepts `--repo-root <path>`, which defaults to the current
-directory. `dotnet release <command> --help` describes each option. A command line that starts with
+Commands that operate on a checkout take `--repo-root <path>`, which defaults to the current directory.
+`dotnet release <command> --help` describes each option. A command line that starts with
 `[diagram]` prints how it parses without running the command, and exits 1 when it does not parse.
 
 ### Versions
@@ -256,6 +257,27 @@ candidate manifest. The command exits 0 only when the result is `passed`. Ctrl+C
 process tree and writes no evidence, so a canceled run never records a result. The scratch directory is deleted in
 every case.
 
+### Compare archived candidates
+
+Stage each exact candidate manifest beside its archives in a separate directory. Specify the baseline explicitly and
+use a new output file. The comparison verifies each file named by both manifests and rejects unlisted archives, then
+runs Microsoft ApiCompat package validation against the same verified bytes. It pairs packages by NuGet ID. Install
+the tested [Microsoft ApiCompat release](https://www.nuget.org/packages/Microsoft.DotNet.ApiCompat.Tool/11.0.100)
+into a dedicated local tool directory.
+
+```sh
+dotnet tool install Microsoft.DotNet.ApiCompat.Tool --version 11.0.100 --tool-path .local/api-compat
+dotnet release compare-candidates --baseline prior/candidate.json --candidate current/candidate.json --apicompat .local/api-compat/apicompat --output current/api-comparison.json
+```
+
+On Windows, pass the installed `apicompat.exe` path. Exit 0 means the comparison completed with no differences.
+Exit 3 means it completed and found differences, including a removed package ID. Both write the JSON report.
+Missing or invalid evidence and failed tool execution exit 2 without producing a report. The report carries both
+manifest hashes, revisions, versions and package hashes, the ApiCompat version, and each package's diagnostics and
+status. A new package is listed as added. A common package without a baseline assembly under `lib`, `ref`, or
+runtime-specific `lib` is listed separately from checked packages. Verify tool commands, generator output, and consumer
+builds through their existing validation lanes.
+
 ## Output and exit codes
 
 Results such as versions, JSON, and report or package paths go to standard output. Errors go to standard error, as
@@ -267,7 +289,7 @@ and `validate-candidate` run, and of the command that `verify-consumer` runs.
 | `0` | Success. |
 | `1` | Invalid command line, cancellation, or an unexpected internal error. |
 | `2` | The command failed: invalid input, a failed check, or a failed `git`, `dotnet`, or tool process. |
-| `3` | `has-breaking-change-marker` found no breaking-change marker in the range. |
+| `3` | `has-breaking-change-marker` found no marker, or `compare-candidates` reported API differences. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
 Ctrl+C or SIGTERM stops the running `git`, `dotnet`, tool, or sample process tree. A process that fails after the tool

@@ -152,14 +152,34 @@ internal static partial class PackagingConventionTestFiles
             ? assemblyName + ".dll"
             : Path.GetFileNameWithoutExtension(projectPath) + ".dll";
 
-        return document.Descendants().Any(element =>
-            element.Name.LocalName == "None"
-            && string.Equals(element.Attribute("Pack")?.Value, "true", StringComparison.OrdinalIgnoreCase)
-            && string.Equals(element.Attribute("PackagePath")?.Value, "analyzers/dotnet/cs", StringComparison.Ordinal)
-            && (string.Equals(element.Attribute("Link")?.Value, expectedAnalyzerDllName, StringComparison.Ordinal)
-                || (element.Attribute("Include")?.Value.EndsWith(expectedAnalyzerDllName, StringComparison.Ordinal) ?? false)
-                || (string.Equals(expectedAnalyzerDllName, selfDllName, StringComparison.Ordinal)
-                    && string.Equals(element.Attribute("Include")?.Value, "$(OutputPath)$(AssemblyName).dll", StringComparison.Ordinal))));
+        return PacksCompilerTargetPath(document, expectedAnalyzerDllName, selfDllName)
+            || document.Descendants().Any(element =>
+                element.Name.LocalName == "None"
+                && string.Equals(element.Attribute("Pack")?.Value, "true", StringComparison.OrdinalIgnoreCase)
+                && string.Equals(element.Attribute("PackagePath")?.Value, "analyzers/dotnet/cs", StringComparison.Ordinal)
+                && (string.Equals(element.Attribute("Link")?.Value, expectedAnalyzerDllName, StringComparison.Ordinal)
+                    || (element.Attribute("Include")?.Value.EndsWith(expectedAnalyzerDllName, StringComparison.Ordinal) ?? false)
+                    || (string.Equals(expectedAnalyzerDllName, selfDllName, StringComparison.Ordinal)
+                        && string.Equals(element.Attribute("Include")?.Value, "$(OutputPath)$(AssemblyName).dll", StringComparison.Ordinal))));
+    }
+
+    private static bool PacksCompilerTargetPath(XDocument document, string expectedDllName, string selfDllName)
+    {
+        if (!string.Equals(GetProperty(document, "PackCompilerOutputs"), "true", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (string.Equals(expectedDllName, selfDllName, StringComparison.Ordinal)
+            && string.Equals(GetProperty(document, "PackOwnCompilerOutput"), "true", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return document.Descendants("ProjectReference").Any(reference =>
+            string.Equals(reference.Attribute("PackCompilerOutput")?.Value, "true", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Path.GetFileNameWithoutExtension(reference.Attribute("Include")?.Value.Replace('\\', '/')) + ".dll",
+                expectedDllName, StringComparison.Ordinal));
     }
 
     private static IEnumerable<string> GetPackedLibDlls(XDocument document)

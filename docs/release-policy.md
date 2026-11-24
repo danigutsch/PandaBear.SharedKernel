@@ -20,6 +20,15 @@ CI appends workflow run number and attempt as an ordered prerelease identifier. 
 
 Build once per version and retain exact packages, symbol archives, candidate manifest, revision, and SHA-256 hashes. Never overwrite an existing package version. Validate ordinary packages through isolated restore/locked restore/build/run checks and tools through installation. The Windows job consumes the same artifacts produced on Linux; keep platform and NativeAOT evidence separate and mark unavailable evidence pending. A manual dispatch with `candidate_version` stages that version from its GitHub prerelease and consumes it unchanged on Linux and Windows, uploading a `consumption.json` per platform. A consumer records those results in its pin with `dotnet release merge-evidence --candidate <pin> --evidence <consumption.json>...` instead of editing the pin by hand; the release manifest stays unchanged.
 
+When reviewing an upgrade between previews, supply both `candidate_version` and `baseline_candidate_version` to the
+manual validation workflow. Choose different versions for the baseline and candidate. The workflow compares the exact
+published archives with [`dotnet release compare-candidates`](../tools/SharedKernel.Versioning.Tool/README.md#compare-archived-candidates)
+and retains `api-comparison.json` as a separate artifact. The report names both candidates and lists any differences for
+consumer review. A comparison with differences is complete. Missing archives, an invalid manifest, or comparison tool
+failure fails the requested comparison and retains a separate failure status. Link the report in release notes beside
+the build, CLI, generator and consumer validation evidence. Stable promotion continues to use its own API baseline and
+authorization.
+
 CI calculates only prerelease candidates, including on manual dispatch; there is no stable-preparation input. Do not create stable packages, tags, or releases now. Generic CLI stable-version capabilities remain available for future separately authorized work. A future stable identity needs its own artifacts and validation; never relabel a prerelease archive.
 
 ## Channels, promotion, and support

@@ -27,6 +27,19 @@ public sealed class CandidateValidator
         _timeProvider = timeProvider;
     }
 
+    /// <summary>Compares the verified archives of two candidates and writes a separate API comparison report.</summary>
+    /// <param name="baselineManifest">The baseline manifest path.</param>
+    /// <param name="candidateManifest">The candidate manifest path.</param>
+    /// <param name="apiCompatPath">The Microsoft ApiCompat executable path.</param>
+    /// <param name="outputPath">A new report file path.</param>
+    /// <param name="ct">Cancels the comparison and ends a running child process.</param>
+    /// <returns>Whether the comparison completed with no compatibility differences.</returns>
+    /// <exception cref="ArgumentException">Candidate evidence or a path is invalid.</exception>
+    /// <exception cref="IOException">An input cannot be read or the report cannot be created.</exception>
+    /// <exception cref="InvalidOperationException">The tool could not start or could not complete a comparison.</exception>
+    public Task<bool> CompareApi(string baselineManifest, string candidateManifest, string apiCompatPath, string outputPath, CancellationToken ct) =>
+        CandidateApiComparison.Run(_commands, baselineManifest, candidateManifest, apiCompatPath, outputPath, ct);
+
     /// <summary>Creates the candidate, then consumes its packages on this platform and records the result in its manifest.</summary>
     /// <param name="options">The checkout, versions, and NativeAOT choice.</param>
     /// <param name="output">Receives the result lines.</param>
@@ -176,7 +189,7 @@ public sealed class CandidateValidator
         var version = evidence["packageVersion"]!.GetValue<string>();
         _ = SemanticVersion.Parse(version);
         var feed = Path.GetDirectoryName(manifest)!;
-        RequireListedPackagesOnly(feed, evidence["packageSha256"]!.AsObject());
+        CandidateManifest.RequireListedPackagesOnly(feed, evidence["packageSha256"]!.AsObject());
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
         var frameworks = options.Frameworks ?? RepositoryFrameworks.Read(root);
         var consumed = new JsonArray([.. frameworks.Select(static framework => JsonValue.Create(framework))]);
@@ -205,25 +218,5 @@ public sealed class CandidateValidator
         }
 
         new CandidateManifest(evidence).Save(destination);
-    }
-
-    /// <summary>
-    /// Requires the file name of every package in <paramref name="feed" /> to be a key of <paramref name="hashes" />,
-    /// compared ordinally. Consumption installs every tool package in the directory and restores from it, and NuGet can
-    /// restore an unlisted package instead of a listed one whose file name differs only in case.
-    /// </summary>
-    /// <exception cref="ArgumentException">The directory holds a package that the manifest does not list.</exception>
-    private static void RequireListedPackagesOnly(string feed, JsonObject hashes)
-    {
-        var listed = hashes.Select(static hash => hash.Key).ToHashSet(StringComparer.Ordinal);
-        var unlisted = Directory.GetFiles(feed, "*.nupkg")
-            .Select(static package => Path.GetFileName(package))
-            .Where(name => !listed.Contains(name))
-            .Order(StringComparer.Ordinal)
-            .ToArray();
-        if (unlisted.Length != 0)
-        {
-            throw new ArgumentException($"Candidate directory {feed} holds packages that the manifest does not list: {string.Join(", ", unlisted)}.");
-        }
     }
 }

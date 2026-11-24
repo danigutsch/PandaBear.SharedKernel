@@ -305,6 +305,7 @@ PandaBear.Versioning.CandidateOptions.Version.init -> void
 PandaBear.Versioning.CandidateValidator
 PandaBear.Versioning.CandidateValidator.CandidateValidator(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver, System.TimeProvider! timeProvider) -> void
 PandaBear.Versioning.CandidateValidator.Consume(PandaBear.Versioning.CandidateConsumptionOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Versioning.CandidateValidator.CompareApi(string! baselineManifest, string! candidateManifest, string! apiCompatPath, string! outputPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
 PandaBear.Versioning.CandidateValidator.Create(PandaBear.Versioning.CandidateOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
 PandaBear.Versioning.CandidateValidator.Validate(PandaBear.Versioning.CandidateOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
 PandaBear.Versioning.ConsumerVerificationOptions

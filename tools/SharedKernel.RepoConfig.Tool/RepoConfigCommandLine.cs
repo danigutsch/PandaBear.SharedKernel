@@ -662,9 +662,87 @@ internal static class RepoConfigCommandLine
         return new Command("dependency", "Generate, submit, and verify repository dependency metadata.")
         {
             snapshot,
+            CreateRestoreGraphComparisonCommand(environment, root),
+            CreateNuGetUpgradeTrialCommand(environment, root),
+            CreatePinInspectionCommand(environment, root),
             CreateDependencySubmitCommand(environment, root),
             CreateVerifyLicenseExceptionsCommand(environment, root),
         };
+    }
+
+    private static Command CreatePinInspectionCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<string> package = new("--package")
+        {
+            Required = true,
+            Description = "NuGet package ID to inspect."
+        };
+        Command command = new("inspect-pin", "Report the requested and resolved paths for a selected NuGet package.")
+        {
+            root, package,
+        };
+        SetGuardedAction(command, (parseResult, output, error, cancellationToken) => NuGetPinInspection.Run(
+            ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(package), output, error, cancellationToken));
+        return command;
+    }
+
+    private static Command CreateRestoreGraphComparisonCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        var candidate = CreatePathOption("--candidate", "Candidate Git checkout. Relative to the baseline root.");
+        candidate.Required = true;
+        var destination = CreatePathOption("--output", "New comparison JSON file within the baseline checkout.");
+        destination.Required = true;
+        var baselineVerification = new Option<string?>("--baseline-verification") { Description = "Optional CI manifest in the baseline checkout." };
+        var candidateVerification = new Option<string?>("--candidate-verification") { Description = "Optional CI manifest in the candidate checkout." };
+        Command command = new("compare-restore", "Compare the selected package graphs of two restored checkouts.")
+        {
+            root, candidate, destination, baselineVerification, candidateVerification,
+        };
+        SetGuardedAction(command, (parseResult, output, error, cancellationToken) => NuGetRestoreGraphComparison.Run(
+            new NuGetRestoreGraphComparisonOptions(
+                ResolveRoot(parseResult, root, environment),
+                parseResult.GetRequiredValue(candidate),
+                parseResult.GetRequiredValue(destination),
+                parseResult.GetValue(baselineVerification),
+                parseResult.GetValue(candidateVerification)),
+            output,
+            error,
+            cancellationToken));
+        return command;
+    }
+
+    private static Command CreateNuGetUpgradeTrialCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        var plan = CreatePathOption("--plan", "New patch path, with a JSON receipt at that path plus .json. Relative to the root.");
+        plan.Required = true;
+        Option<string> props = new("--props")
+        {
+            Description = "Central .props file owning the selected declarations. Relative to the root.",
+            DefaultValueFactory = _ => "Directory.Packages.props",
+        };
+        Option<string?> remove = new("--remove-pin") { Description = "Package ID of the transitive declaration to remove." };
+        Option<string[]> updates = new("--update") { Description = "Exact central update in package@version form. Repeat for a family." };
+        Option<bool> propose = new("--propose") { Description = "Ask the SDK to update direct owners of the selected pin." };
+        Option<string[]> coordinate = new("--coordinate") { Description = "Include an additional direct package in the pin or audit proposal. Repeat for a family." };
+        Option<string[]> sources = new("--copy-local-source") { Description = "Relative local source whose package archives are needed in the trial. Repeat as needed." };
+        Option<bool> vulnerable = new("--vulnerable") { Description = "Find a minimum verified upgrade for known advisories." };
+        Option<bool> build = new("--build") { Description = "Validate the candidate with the Release solution build." };
+        Option<bool> test = new("--test") { Description = "Build and test the candidate solution in Release." };
+        Command command = new("trial-upgrade", "Trial a NuGet upgrade and produce a reviewable props and lockfile patch.")
+        {
+            root, plan, props, remove, updates, propose, coordinate, sources, vulnerable, build, test,
+        };
+        SetGuardedAction(command, (parseResult, output, error, ct) => NuGetUpgradeTrial.Run(
+            new NuGetUpgradeTrialOptions(
+                ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(plan), parseResult.GetRequiredValue(props),
+                parseResult.GetValue(remove), parseResult.GetValue(updates) ?? [], parseResult.GetValue(vulnerable),
+                parseResult.GetValue(sources) ?? [], parseResult.GetValue(build), parseResult.GetValue(test))
+            {
+                ProposePinUpdates = parseResult.GetValue(propose),
+                CoordinatedPackages = parseResult.GetValue(coordinate) ?? [],
+            },
+            output, error, ct));
+        return command;
     }
 
     private static Command CreateDependencySubmitCommand(RepoConfigToolEnvironment environment, Option<string> root)

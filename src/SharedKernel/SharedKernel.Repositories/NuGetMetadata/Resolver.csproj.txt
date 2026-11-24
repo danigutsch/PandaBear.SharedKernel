@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>SDK_TARGET</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="NuGet.Common" HintPath="$(MSBuildSDKsPath)/../NuGet.Common.dll" />
+        <Reference Include="NuGet.Configuration" HintPath="$(MSBuildSDKsPath)/../NuGet.Configuration.dll" />
+        <Reference Include="NuGet.Credentials" HintPath="$(MSBuildSDKsPath)/../NuGet.Credentials.dll" />
+        <Reference Include="NuGet.Frameworks" HintPath="$(MSBuildSDKsPath)/../NuGet.Frameworks.dll" />
+        <Reference Include="NuGet.Packaging" HintPath="$(MSBuildSDKsPath)/../NuGet.Packaging.dll" />
+        <Reference Include="NuGet.Protocol" HintPath="$(MSBuildSDKsPath)/../NuGet.Protocol.dll" />
+        <Reference Include="NuGet.Versioning" HintPath="$(MSBuildSDKsPath)/../NuGet.Versioning.dll" />
+        <Reference Include="Newtonsoft.Json" HintPath="$(MSBuildSDKsPath)/../Newtonsoft.Json.dll" />
+        <Reference Include="System.Security.Cryptography.ProtectedData" HintPath="$(MSBuildSDKsPath)/../System.Security.Cryptography.ProtectedData.dll" />
+    </ItemGroup>
+</Project>

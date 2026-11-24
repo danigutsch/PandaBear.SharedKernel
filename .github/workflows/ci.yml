@@ -12,6 +12,10 @@ on:
         description: Published prerelease to consume unchanged on Linux and Windows; leave empty for normal validation.
         required: false
         type: string
+      baseline_candidate_version:
+        description: Earlier published prerelease for an API comparison. Requires candidate_version.
+        required: false
+        type: string
 permissions:
   contents: read
 concurrency:
@@ -19,7 +23,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   selection:
-    if: ${{ (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') && inputs.candidate_version == '' }}
+    if: ${{ (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') && inputs.candidate_version == '' && inputs.baseline_candidate_version == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
@@ -299,7 +303,7 @@ jobs:
         run: dotnet run --project tools/SharedKernel.Documentation.Tool -c Release --no-build --no-restore -- verify --config docs/architecture/generated-diagrams.json
 
   published-candidate-consumption:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.candidate_version != '' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.candidate_version != '' && inputs.candidate_version != inputs.baseline_candidate_version }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     strategy:
@@ -307,36 +311,16 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - name: Read the published prerelease manifest
         id: candidate
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-          CANDIDATE_VERSION: ${{ inputs.candidate_version }}
-        run: |
-          $ErrorActionPreference = 'Stop'
-          if ($env:CANDIDATE_VERSION -cnotmatch '^[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*$') {
-            throw 'A prerelease package version is required.'
-          }
-          $releaseJson = gh release view "v$env:CANDIDATE_VERSION" --repo $env:GITHUB_REPOSITORY --json isPrerelease,assets
-          if ($LASTEXITCODE -ne 0) { throw 'Could not read the published prerelease.' }
-          $release = $releaseJson | ConvertFrom-Json
-          if ($release.isPrerelease -ne $true) { throw 'The release must remain prerelease.' }
-          $directory = Join-Path $env:RUNNER_TEMP 'published-candidate'
-          New-Item -ItemType Directory -Path $directory | Out-Null
-          gh release download "v$env:CANDIDATE_VERSION" --repo $env:GITHUB_REPOSITORY --dir $directory --pattern candidate.json
-          if ($LASTEXITCODE -ne 0) { throw 'Could not download the candidate manifest.' }
-          $candidate = Get-Content -Raw (Join-Path $directory 'candidate.json') | ConvertFrom-Json
-          if ($candidate.packageVersion -cne $env:CANDIDATE_VERSION -or $candidate.libraryDirty -ne $false) {
-            throw 'The candidate must identify the requested version and a clean library revision.'
-          }
-          $expectedAssets = @($candidate.packageSha256.PSObject.Properties.Name | Sort-Object)
-          $actualAssets = @($release.assets.name | Where-Object { $_ -like '*.nupkg' } | Sort-Object)
-          if ($expectedAssets.Count -eq 0 -or (Compare-Object $expectedAssets $actualAssets -CaseSensitive)) {
-            throw 'The release packages must exactly match the manifest.'
-          }
-          if ($candidate.libraryRevision -cnotmatch '^[0-9a-f]{40}$') { throw 'Invalid candidate source revision.' }
-          "library_revision=$($candidate.libraryRevision)" >> $env:GITHUB_OUTPUT
+        uses: ./.github/actions/read-published-candidate
+        with:
+          version: ${{ inputs.candidate_version }}
+          directory: published-candidate
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ steps.candidate.outputs.library_revision }}
@@ -371,9 +355,102 @@ jobs:
             ${{ runner.temp }}/published-candidate/consumption.json
           if-no-files-found: ignore
 
+  published-candidate-comparison:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.candidate_version != '' && inputs.baseline_candidate_version != '' && inputs.candidate_version != inputs.baseline_candidate_version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Read the published baseline manifest
+        id: baseline
+        uses: ./.github/actions/read-published-candidate
+        with:
+          version: ${{ inputs.baseline_candidate_version }}
+          directory: published-api-comparison/baseline
+      - name: Read the published candidate manifest
+        id: candidate
+        uses: ./.github/actions/read-published-candidate
+        with:
+          version: ${{ inputs.candidate_version }}
+          directory: published-api-comparison/candidate
+      - uses: ./.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.CI.Tool
+      - uses: ./.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.Versioning.Tool
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ steps.baseline.outputs.library_revision }}
+          path: comparison-baseline-source
+          persist-credentials: false
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ steps.candidate.outputs.library_revision }}
+          path: comparison-candidate-source
+          persist-credentials: false
+      - name: Stage both immutable prereleases after checking their source revisions
+        id: stage
+        shell: bash
+        run: |
+          for role in baseline candidate; do
+            directory="${RUNNER_TEMP}/published-api-comparison/${role}"
+            source="${GITHUB_WORKSPACE}/comparison-${role}-source"
+            dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- stage-candidate \
+              --root "${source}" --library-root "${source}" --pin "${directory}/candidate.json" \
+              --output "${directory}/feed" --repository "$GITHUB_REPOSITORY"
+          done
+      - name: Install the pinned ApiCompat tool
+        shell: bash
+        run: |
+          dotnet tool install Microsoft.DotNet.ApiCompat.Tool --version 11.0.100 \
+            --tool-path "${RUNNER_TEMP}/published-api-comparison/apicompat"
+      - name: Compare the published candidates
+        id: compare
+        shell: bash
+        run: |
+          directory="${RUNNER_TEMP}/published-api-comparison"
+          report="${directory}/api-comparison.json"
+          if dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- compare-candidates --baseline "${directory}/baseline/feed/candidate.json" --candidate "${directory}/candidate/feed/candidate.json" --apicompat "${directory}/apicompat/apicompat" --output "${report}"
+          then
+            status=0
+          else
+            status=$?
+          fi
+          case "${status}" in
+            0|3) test -s "${report}" ;;
+            *) exit "${status}" ;;
+          esac
+      - name: Record comparison failure status
+        if: failure()
+        shell: bash
+        env:
+          BASELINE_RESULT: ${{ steps.baseline.outcome }}
+          CANDIDATE_RESULT: ${{ steps.candidate.outcome }}
+          STAGING_RESULT: ${{ steps.stage.outcome }}
+          COMPARISON_RESULT: ${{ steps.compare.outcome }}
+        run: |
+          directory="${RUNNER_TEMP}/published-api-comparison"
+          mkdir -p "${directory}"
+          printf 'Baseline manifest %s\nCandidate manifest %s\nArchive staging %s\nAPI comparison %s\n' \
+            "${BASELINE_RESULT}" "${CANDIDATE_RESULT}" "${STAGING_RESULT}" "${COMPARISON_RESULT}" \
+            > "${directory}/comparison-failure.txt"
+      - name: Retain the API comparison evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: published-candidate-api-comparison
+          path: |
+            ${{ runner.temp }}/published-api-comparison/api-comparison.json
+            ${{ runner.temp }}/published-api-comparison/comparison-failure.txt
+          if-no-files-found: ignore
+
   validation-summary:
     name: ${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && 'Ignored label event' || 'SharedKernel Validation' }}
-    needs: [selection, validate, coverage-gate, source-build, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption]
+    needs: [selection, validate, coverage-gate, source-build, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption, published-candidate-comparison]
     if: ${{ always() && (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -381,7 +458,9 @@ jobs:
       - name: Require every applicable validation result
         env:
           PUBLISHED_CANDIDATE_VERSION: ${{ inputs.candidate_version }}
+          PUBLISHED_BASELINE_VERSION: ${{ inputs.baseline_candidate_version }}
           PUBLISHED_CANDIDATE_RESULT: ${{ needs.published-candidate-consumption.result }}
+          PUBLISHED_COMPARISON_RESULT: ${{ needs.published-candidate-comparison.result }}
           SELECTION_RESULT: ${{ needs.selection.result }}
           QUALITY_RESULT: ${{ needs.repository-quality.result }}
           BUILD_REQUIRED: ${{ needs.selection.outputs.build_required }}
@@ -394,9 +473,20 @@ jobs:
           LINUX_RESULT: ${{ needs.linux-package-consumption.result }}
           WINDOWS_RESULT: ${{ needs.windows-package-consumption.result }}
         run: |
+          if [[ -n "$PUBLISHED_BASELINE_VERSION" && -z "$PUBLISHED_CANDIDATE_VERSION" ]]; then
+            echo "baseline_candidate_version requires candidate_version." >&2
+            exit 1
+          fi
+          if [[ -n "$PUBLISHED_BASELINE_VERSION" && "$PUBLISHED_BASELINE_VERSION" == "$PUBLISHED_CANDIDATE_VERSION" ]]; then
+            echo "Select different baseline_candidate_version and candidate_version values." >&2
+            exit 1
+          fi
           if [[ -n "$PUBLISHED_CANDIDATE_VERSION" ]]; then
-            test "$PUBLISHED_CANDIDATE_RESULT" = success
-            exit $?
+            test "$PUBLISHED_CANDIDATE_RESULT" = success || exit 1
+            if [[ -n "$PUBLISHED_BASELINE_VERSION" ]]; then
+              test "$PUBLISHED_COMPARISON_RESULT" = success || exit 1
+            fi
+            exit 0
           fi
           test "$SELECTION_RESULT" = success
           test "$QUALITY_RESULT" = success

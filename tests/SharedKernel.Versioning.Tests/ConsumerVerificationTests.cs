@@ -239,8 +239,10 @@ public sealed class ConsumerVerificationTests
         using var scope = new ConsumerVerificationScope();
         await scope.Commit(ct);
         var marker = Path.Combine(scope.CandidateDirectory, "started.txt");
+        // Publish the marker after closing the file so Windows readers can open it.
+        const string publishAndWait = """alias.wait=!publish() { pwd > "$1.pending" && mv "$1.pending" "$1" && sleep 60; }; publish""";
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        var run = scope.Verify(["git", "-c", "alias.wait=!pwd > '" + marker.Replace('\\', '/') + "'; sleep 60", "wait"], cancellation.Token);
+        var run = scope.Verify(["git", "-c", publishAndWait, "wait", marker.Replace('\\', '/')], cancellation.Token);
         for (var attempt = 0; attempt < 600 && (!File.Exists(marker) || new FileInfo(marker).Length == 0) && !run.IsCompleted; attempt++)
         {
             await Task.Delay(50, ct);
