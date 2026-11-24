@@ -1,3 +1,5 @@
+using PandaBear.Processes;
+
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Tests how the dev pack turns its options into pack invocations.</summary>
@@ -5,6 +7,7 @@ namespace PandaBear.Versioning.Tests;
 public static class DevPackTests
 {
     private const string Version = "0.1.0-dev.local";
+    private static readonly ExecutableMap UsrBin = new(static command => "/usr/bin/" + command);
 
     /// <summary>A relative repository root yields an absolute working directory and project path that exist.</summary>
     [Fact]
@@ -37,6 +40,35 @@ public static class DevPackTests
 
         // Assert
         line.ShouldBe("Kept   PandaBear.SharedKernel.Results (stale: sources changed after it was packed; name it to repack)");
+    }
+
+    /// <summary>
+    /// Without a configured cache, a run asks <c>dotnet</c> for the global packages folder, packs the named project into the feed,
+    /// evicts the stale cached copy of the package and reports both.
+    /// </summary>
+    /// <returns>A task that completes when the run has been checked.</returns>
+    [Fact]
+    public static async Task A_run_packs_the_named_project_into_the_feed_and_evicts_its_cached_copy()
+    {
+        // Arrange
+        using var repository = new DevPackRepository();
+        repository.AddProject("SharedKernel.Results", "PandaBear.SharedKernel.Results");
+        var cache = Path.Combine(repository.Root, "nuget-packages");
+        var cached = Directory.CreateDirectory(Path.Combine(cache, "pandabear.sharedkernel.results", Version)).FullName;
+        var runner = ScriptedProcessRunner.Answering(run => new ProcessOutput(
+            0,
+            run.Arguments.SequenceEqual(["nuget", "locals", "global-packages", "--list"]) ? "global-packages: " + cache + "\n" : string.Empty));
+        var options = new DevPackOptions(repository.Feed, Version, repository.Root, ["SharedKernel.Results"], repository.Root, NuGetPackages: null);
+        using var output = new InvariantStringWriter();
+
+        // Act
+        var feed = await DevPack.Run(new ExternalCommands(runner, UsrBin), options, output, TestContext.Current.CancellationToken);
+
+        // Assert
+        feed.ShouldBe(repository.Feed);
+        runner.Runs.Select(static run => run.Arguments[0]).ShouldBe(["nuget", "pack"]);
+        Directory.Exists(cached).ShouldBeFalse();
+        output.ToString().ShouldContain("Packed PandaBear.SharedKernel.Results " + Version + " (evicted from " + cache + ")", StringComparison.Ordinal);
     }
 
     /// <summary>A current kept step keeps the plain report line.</summary>

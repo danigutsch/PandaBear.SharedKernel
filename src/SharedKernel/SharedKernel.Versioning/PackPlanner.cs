@@ -3,7 +3,7 @@ namespace PandaBear.Versioning;
 /// <summary>
 /// Plans SharedKernel package commands and validates package output folders.
 /// </summary>
-public static class SharedKernelPackagePlanner
+public static class PackPlanner
 {
     private static readonly string[] ConsumerSupportProjects =
         ["SharedKernel.Testing.Contracts", "SharedKernel.MalwareScanning.ClamAv.Testing", "SharedKernel.Npgsql.Testing"];
@@ -26,7 +26,7 @@ public static class SharedKernelPackagePlanner
     /// <param name="options">The package options.</param>
     /// <returns>The package directory.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
-    public static string ResolvePackageDirectory(SharedKernelPackageOptions options)
+    public static string ResolvePackageDirectory(PackOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
 
@@ -90,7 +90,7 @@ public static class SharedKernelPackagePlanner
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     public static string[] CreatePackArguments(
         string project,
-        SharedKernelPackageOptions options,
+        PackOptions options,
         string packageDirectory,
         string? enablePackageValidation = null,
         string? baselineVersion = null)

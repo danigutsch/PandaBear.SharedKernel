@@ -34,7 +34,7 @@ internal static class ToolPackageCheck
         CancellationToken ct)
     {
         var tools = packages.Where(IsToolPackage)
-            .Select(package => (Id: SharedKernelLocalFeed.ReadPackageIds([package], version).Single(), Commands: ReadCommandNames(package)))
+            .Select(package => (Id: LocalFeed.ReadPackageIds([package], version).Single(), Commands: ReadCommandNames(package)))
             .OrderBy(static tool => tool.Id, StringComparer.Ordinal)
             .ToArray();
         if (tools.Length == 0)
@@ -102,7 +102,7 @@ internal static class ToolPackageCheck
         CancellationToken ct)
     {
         var audits = packages.Where(IsToolPackage)
-            .Select(package => (Id: SharedKernelLocalFeed.ReadPackageIds([package], version).Single(), Frameworks: ReadCarriedPackages(package)))
+            .Select(package => (Id: LocalFeed.ReadPackageIds([package], version).Single(), Frameworks: ReadCarriedPackages(package)))
             .OrderBy(static tool => tool.Id, StringComparer.Ordinal)
             .SelectMany(static tool => tool.Frameworks
                 .Where(static framework => framework.Packages.Length > 0)
@@ -119,7 +119,7 @@ internal static class ToolPackageCheck
             await File.WriteAllTextAsync(Path.Combine(directory, name), "<Project />" + Environment.NewLine, ct).ConfigureAwait(false);
         }
 
-        await SharedKernelLocalFeed.WriteNuGetConfig(directory, feed, SharedKernelLocalFeed.ReadPackageIds([.. packages], version), nuGetSource).ConfigureAwait(false);
+        await LocalFeed.WriteNuGetConfig(directory, feed, LocalFeed.ReadPackageIds([.. packages], version), nuGetSource).ConfigureAwait(false);
         for (var index = 0; index < audits.Length; index++)
         {
             var (id, framework, carried) = audits[index];

@@ -1,7 +1,7 @@
 namespace PandaBear.Repository.Tests.Conventions;
 
 /// <summary>Guards that every packable SharedKernel project is covered by a test project, apart from reviewed exceptions.</summary>
-public static class SharedKernelTestOwnershipConventionTests
+public static class TestOwnershipConventionTests
 {
     // Reviewed exceptions: a packable project with no test project in its reference closure, and the reason.
     private static readonly Dictionary<string, string> ReviewedExceptions = new(StringComparer.Ordinal);
@@ -10,7 +10,7 @@ public static class SharedKernelTestOwnershipConventionTests
     public static void Every_packable_source_project_is_reached_by_a_test_project_or_has_a_reviewed_exception()
     {
         // Arrange
-        var unreached = SharedKernelTestOwnershipFiles.FindUnreachedPackableProjects();
+        var unreached = TestOwnershipFiles.FindUnreachedPackableProjects();
 
         // Act
         var unowned = unreached
@@ -25,7 +25,7 @@ public static class SharedKernelTestOwnershipConventionTests
     public static void Reviewed_exceptions_name_packable_projects_that_no_test_project_reaches()
     {
         // Arrange
-        var unreached = SharedKernelTestOwnershipFiles.FindUnreachedPackableProjects();
+        var unreached = TestOwnershipFiles.FindUnreachedPackableProjects();
 
         // Act
         var stale = ReviewedExceptions.Keys

@@ -32,7 +32,7 @@ internal static class VersioningCommandLine
         ArgumentNullException.ThrowIfNull(processRunner);
         ArgumentNullException.ThrowIfNull(executableResolver);
 
-        var packager = new SharedKernelPackager(processRunner, executableResolver);
+        var packager = new Packager(processRunner, executableResolver);
         var candidates = new CandidateValidator(processRunner, executableResolver, timeProvider);
         var history = new ReleaseHistory(processRunner, executableResolver);
         return new RootCommand("Calculates SharedKernel versions, validates, packs, and consumes SharedKernel packages, and verifies consumers against candidates.")
@@ -224,7 +224,7 @@ internal static class VersioningCommandLine
         return command;
     }
 
-    private static Command CreateCheckApiCompatibility(SharedKernelPackager packager, TimeProvider timeProvider)
+    private static Command CreateCheckApiCompatibility(Packager packager, TimeProvider timeProvider)
     {
         var version = new Option<string>("--version") { Description = "Package version. Default: 0.1.0-alpha.local.<UTC timestamp>.", HelpName = "version" };
         var releasePhase = new Option<string>("--release-phase")
@@ -264,7 +264,7 @@ internal static class VersioningCommandLine
         return command;
     }
 
-    private static Command CreatePackSharedKernel(SharedKernelPackager packager, TimeProvider timeProvider)
+    private static Command CreatePackSharedKernel(Packager packager, TimeProvider timeProvider)
     {
         var version = new Option<string>("--version") { Description = "Package version. Default: 0.1.0-alpha.local.<UTC timestamp>.", HelpName = "version" };
         var assemblyVersion = new Option<string>("--assembly-version") { Description = "Assembly version.", HelpName = "version" };
@@ -289,7 +289,7 @@ internal static class VersioningCommandLine
             repoRoot,
         };
         SetAction(command, (parseResult, output, ct) => packager.Pack(
-            new SharedKernelPackageOptions(
+            new PackOptions(
                 parseResult.GetValue(version) ?? LocalAlphaVersion(timeProvider),
                 parseResult.GetRequiredValue(outputRoot),
                 parseResult.GetRequiredValue(repoRoot),
@@ -302,7 +302,7 @@ internal static class VersioningCommandLine
         return command;
     }
 
-    private static Command CreatePackDev(SharedKernelPackager packager)
+    private static Command CreatePackDev(Packager packager)
     {
         var projects = new Argument<string[]>("project")
         {
@@ -538,7 +538,7 @@ internal static class VersioningCommandLine
         return command;
     }
 
-    private static Command CreateConsumePackages(SharedKernelPackager packager)
+    private static Command CreateConsumePackages(Packager packager)
     {
         var feed = new Option<string>("--feed") { Description = "Directory containing the packages.", HelpName = "path", Required = true };
         var version = SemanticVersionOption("--version", "Package version.");

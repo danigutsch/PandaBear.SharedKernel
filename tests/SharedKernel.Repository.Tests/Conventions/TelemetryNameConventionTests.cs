@@ -10,7 +10,7 @@ public sealed class TelemetryNameConventionTests
     public void Every_declared_meter_and_activity_source_name_has_a_registered_prefix()
     {
         // Arrange
-        var sourceRoot = Path.Combine(SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel");
+        var sourceRoot = Path.Combine(PackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel");
 
         // Act
         var names = TelemetryNameScanner.DeclaredTelemetryNames(sourceRoot);

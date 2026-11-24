@@ -10,7 +10,7 @@ public sealed class RepositoryToolCallerTests
     public void Every_repository_tool_command_line_in_workflows_and_the_tool_readme_parses()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var command = RepositoryToolInvocation.CreateCommand(root);
 
         // Act
@@ -29,7 +29,7 @@ public sealed class RepositoryToolCallerTests
     public void Ci_selection_passes_the_base_revision_on_one_command_line()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
 
         // Act
         var selections = RepositoryToolCallers.Find(root)
@@ -45,7 +45,7 @@ public sealed class RepositoryToolCallerTests
     public void Tool_readme_runs_the_installed_tool_and_the_project()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
 
         // Act
         var readmeCallers = RepositoryToolCallers.Find(root)
@@ -102,7 +102,7 @@ public sealed class RepositoryToolCallerTests
     public void Callers_invoke_the_repository_tool_command(string file, string commandName)
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var command = RepositoryToolInvocation.CreateCommand(root);
 
         // Act

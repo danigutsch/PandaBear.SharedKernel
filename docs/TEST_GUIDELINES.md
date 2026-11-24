@@ -126,7 +126,7 @@ Every packable project under `src/SharedKernel` has a test project in its refere
 references `xunit.v3.mtp-v2` and reaches the source project through `ProjectReference` items. Application-level execution
 never substitutes for that coverage. The convention tests in `tests/SharedKernel.Repository.Tests/Conventions` fail when a
 packable project has no such test project and no entry in the reviewed exception list of
-`SharedKernelTestOwnershipConventionTests`, and when an exception names a project that a test project reaches.
+`TestOwnershipConventionTests`, and when an exception names a project that a test project reaches.
 
 | Kind | Direct owner | Also required |
 | --- | --- | --- |
@@ -139,4 +139,4 @@ packable project has no such test project and no entry in the reviewed exception
 
 A generator that ships inside another package, such as the results generator inside `PandaBear.SharedKernel.Results`, is not
 packable and keeps its own `GeneratorTests` project. A packable project with no test project in its reference closure needs a
-reviewed exception, with its reason beside the exception in `SharedKernelTestOwnershipConventionTests`.
+reviewed exception, with its reason beside the exception in `TestOwnershipConventionTests`.

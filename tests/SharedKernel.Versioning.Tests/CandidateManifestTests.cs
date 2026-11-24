@@ -23,8 +23,8 @@ public static class CandidateManifestTests
         // Act
         var packageVersion = CandidateManifest.Load(manifest).Evidence["packageVersion"]!.GetValue<string>();
         Directory.CreateDirectory(temporary.OutputDirectory);
-        var ids = SharedKernelLocalFeed.ReadPackageIds([package], "1.0.0");
-        await SharedKernelLocalFeed.WriteNuGetConfig(temporary.OutputDirectory, temporary.PackageDirectory, ids, new Uri("https://example.test/v3/index.json"));
+        var ids = LocalFeed.ReadPackageIds([package], "1.0.0");
+        await LocalFeed.WriteNuGetConfig(temporary.OutputDirectory, temporary.PackageDirectory, ids, new Uri("https://example.test/v3/index.json"));
         var config = XDocument.Load(Path.Combine(temporary.OutputDirectory, "NuGet.config"));
 
         // Assert

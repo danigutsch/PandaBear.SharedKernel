@@ -16,11 +16,11 @@ internal static class DevPack
         Directory.CreateDirectory(feed);
 
         var consumerDirectory = options.ConsumerDirectory;
-        var cache = await SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(
+        var cache = await DevPackPlanner.ResolveGlobalPackagesDirectory(
             consumerDirectory,
             explicitDirectory: null,
             options.NuGetPackages,
-            async token => SharedKernelDevPackPlanner.ParseGlobalPackagesListing(
+            async token => DevPackPlanner.ParseGlobalPackagesListing(
                 await commands.RunOrDefault("dotnet", ["nuget", "locals", "global-packages", "--list"], consumerDirectory, token).ConfigureAwait(false)),
             ct).ConfigureAwait(false);
 
@@ -33,7 +33,7 @@ internal static class DevPack
             }
 
             await commands.Run("dotnet", invocation.Arguments, invocation.WorkingDirectory, ct).ConfigureAwait(false);
-            var evicted = SharedKernelDevPackPlanner.EvictFromGlobalPackages(invocation.Step.PackageId, resolved.Version, cache);
+            var evicted = DevPackPlanner.EvictFromGlobalPackages(invocation.Step.PackageId, resolved.Version, cache);
             await output.WriteLineAsync(
                 ("Packed " + invocation.Step.PackageId + " " + options.Version + (evicted ? " (evicted from " + cache + ")" : " (no cached copy in " + cache + ")")).AsMemory(),
                 CancellationToken.None).ConfigureAwait(false);
@@ -58,12 +58,12 @@ internal static class DevPack
     internal static IReadOnlyList<DevPackInvocation> CreateInvocations(DevPackOptions options, string feed)
     {
         var repoRoot = Path.GetFullPath(options.RepoRoot);
-        var steps = SharedKernelDevPackPlanner.Plan(repoRoot, options.Projects, feed, options.Version);
-        var packageOptions = new SharedKernelPackageOptions(options.Version, feed, repoRoot);
+        var steps = DevPackPlanner.Plan(repoRoot, options.Projects, feed, options.Version);
+        var packageOptions = new PackOptions(options.Version, feed, repoRoot);
         return [.. steps
             .Select(step => new DevPackInvocation(
                 step,
-                SharedKernelPackagePlanner.CreatePackArguments(step.ProjectPath, packageOptions, feed),
+                PackPlanner.CreatePackArguments(step.ProjectPath, packageOptions, feed),
                 repoRoot))];
     }
 }

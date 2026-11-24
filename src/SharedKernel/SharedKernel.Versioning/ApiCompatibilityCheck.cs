@@ -11,11 +11,11 @@ internal static class ApiCompatibilityCheck
     {
         PublicApiBaselineChecker.EnsureBaselinesPresent(options.RepoRoot);
         var reportPath = await ApiCompatibilityReport.Initialize(options).ConfigureAwait(false);
-        var packageOptions = new SharedKernelPackageOptions(options.Version, Path.Combine(options.OutputRoot, "packages"), options.RepoRoot);
+        var packageOptions = new PackOptions(options.Version, Path.Combine(options.OutputRoot, "packages"), options.RepoRoot);
         try
         {
             using var writer = new StringWriter();
-            await SharedKernelPack.Run(
+            await ReleasePack.Run(
                 commands,
                 packageOptions,
                 verifyRestore: string.IsNullOrWhiteSpace(options.BaselineVersion),

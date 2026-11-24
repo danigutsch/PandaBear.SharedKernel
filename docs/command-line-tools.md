@@ -12,7 +12,7 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
 - Executable tools live under `tools/` and libraries, analyzers, and generators under `src/SharedKernel`, whatever they
   do and whoever consumes them. `SharedKernel.Testing.CodeFixRunner` is a `PackAsTool` project, so it stays in `tools/`
   beside the analyzers it applies; its test project is `tests/SharedKernel.Testing.CodeFixRunner.Tests`.
-- Candidates pack the tools named in `SharedKernelPackagePlanner.PackagedTools`. A convention test requires every
+- Candidates pack the tools named in `PackPlanner.PackagedTools`. A convention test requires every
   `PackAsTool` project in that list, except `SharedKernel.VaultManager.Tool`, which candidates do not ship.
 - `SharedKernel.CI.Tool` and `SharedKernel.RepoConfig.Tool` also run from source before a candidate exists. CI builds
   each from a cone sparse checkout of `src` and `tools` on Linux and Windows, then runs it from outside the checkout, as
@@ -258,7 +258,7 @@ incrementally. Each wrapped tool and the libraries it wraps:
    with the packaging properties above, the `sharedkernel-<name>` command name, the
    `PandaBear.SharedKernel.<Name>.Tool` package ID, and a `ProjectReference` to the engine. Add them and
    `tests/SharedKernel.<Name>.Tool.Tests` to `SharedKernel.slnx`.
-2. Add the project to `SharedKernelPackagePlanner.PackagedTools`, so candidates pack it and candidate consumption
+2. Add the project to `PackPlanner.PackagedTools`, so candidates pack it and candidate consumption
    installs it and runs `sharedkernel-<name> --help` on Linux and Windows.
 3. Add System.CommandLine's `DiagramDirective` to the root command, so consumer caller tests can parse command lines
    with `[diagram]` without running them.

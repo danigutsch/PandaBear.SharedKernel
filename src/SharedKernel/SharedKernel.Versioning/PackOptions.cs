@@ -9,7 +9,7 @@ namespace PandaBear.Versioning;
 /// <param name="AssemblyVersion">The optional assembly version.</param>
 /// <param name="FileVersion">The optional file version.</param>
 /// <param name="InformationalVersion">The optional informational version.</param>
-public sealed record SharedKernelPackageOptions(
+public sealed record PackOptions(
     string Version,
     string OutputRoot,
     string RepoRoot,

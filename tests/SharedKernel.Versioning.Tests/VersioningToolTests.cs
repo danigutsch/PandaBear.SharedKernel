@@ -12,7 +12,7 @@ namespace PandaBear.Versioning.Tests;
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersioningToolTests
 {
-    private static readonly SharedKernelPackager SystemPackager = new(new SystemProcessRunner(), PathExecutableResolver.Default);
+    private static readonly Packager SystemPackager = new(new SystemProcessRunner(), PathExecutableResolver.Default);
 
     [Fact]
     public static void Tool_project_is_packaged_as_dotnet_tool()
@@ -449,7 +449,7 @@ public static class VersioningToolTests
             Path.Combine(packageDirectory, fileName),
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
-        var options = new SharedKernelPackageOptions("1.2.3", temporaryDirectory.PackageDirectory, temporaryDirectory.Root);
+        var options = new PackOptions("1.2.3", temporaryDirectory.PackageDirectory, temporaryDirectory.Root);
 
         // Act
         Func<Task> act = () => SystemPackager.Pack(options, verifyRestore: false, TextWriter.Null, TestContext.Current.CancellationToken);
@@ -466,7 +466,7 @@ public static class VersioningToolTests
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
 
         // Act
-        Action action = () => SharedKernelPackagePlanner.FindProjects(temporaryDirectory.Root);
+        Action action = () => PackPlanner.FindProjects(temporaryDirectory.Root);
 
         // Assert
         var exception = action.ShouldThrow<ArgumentException>();
@@ -479,7 +479,7 @@ public static class VersioningToolTests
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         Directory.CreateDirectory(Path.Combine(temporaryDirectory.Root, "src", "SharedKernel"));
-        var options = new SharedKernelPackageOptions("1.2.3", "artifacts", temporaryDirectory.Root);
+        var options = new PackOptions("1.2.3", "artifacts", temporaryDirectory.Root);
 
         // Act
         Func<Task> act = () => SystemPackager.Pack(options, verifyRestore: false, TextWriter.Null, TestContext.Current.CancellationToken);

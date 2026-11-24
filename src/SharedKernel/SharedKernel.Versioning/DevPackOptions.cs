@@ -1,6 +1,6 @@
 namespace PandaBear.Versioning;
 
-/// <summary>What <see cref="SharedKernelPackager.PackDev"/> packs, where, and which NuGet cache it evicts the packages from.</summary>
+/// <summary>What <see cref="Packager.PackDev"/> packs, where, and which NuGet cache it evicts the packages from.</summary>
 /// <param name="Feed">The feed directory that receives the packages; created when missing.</param>
 /// <param name="Version">The package version, such as <see cref="DefaultVersion"/>.</param>
 /// <param name="RepoRoot">The SharedKernel repository root.</param>

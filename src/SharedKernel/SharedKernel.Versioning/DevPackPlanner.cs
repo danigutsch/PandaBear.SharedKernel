@@ -7,7 +7,7 @@ namespace PandaBear.Versioning;
 /// Plans a fast, incremental local pack of SharedKernel for a consumer that develops against uncommitted library changes:
 /// the named projects are always rebuilt, their project-reference dependencies only when the feed does not hold them yet.
 /// </summary>
-public static class SharedKernelDevPackPlanner
+public static class DevPackPlanner
 {
     /// <summary>Decides which projects to pack, dependencies first.</summary>
     /// <param name="repoRoot">The SharedKernel repository root.</param>
@@ -24,7 +24,7 @@ public static class SharedKernelDevPackPlanner
         ArgumentException.ThrowIfNullOrWhiteSpace(feedDirectory);
         ArgumentException.ThrowIfNullOrWhiteSpace(version);
 
-        var projectsByName = SharedKernelPackagePlanner.FindProjects(repoRoot)
+        var projectsByName = PackPlanner.FindProjects(repoRoot)
             .ToDictionary(path => Path.GetFileNameWithoutExtension(path), StringComparer.OrdinalIgnoreCase);
         var roots = requested.Count == 0 ? projectsByName.Keys.Order(StringComparer.Ordinal).ToList() : ResolveRequested(requested, projectsByName);
         var forced = new HashSet<string>(roots, StringComparer.OrdinalIgnoreCase);

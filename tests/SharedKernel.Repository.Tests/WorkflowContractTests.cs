@@ -11,7 +11,7 @@ public sealed class WorkflowContractTests
     public void Documentation_only_validation_avoids_bootstrap_tests_and_full_solution_formatting()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
@@ -33,7 +33,7 @@ public sealed class WorkflowContractTests
     public void Source_build_builds_each_source_runnable_tool_from_the_src_and_tools_cone_and_runs_it_from_outside()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
         var buildProperties = XDocument.Load(Path.Combine(root, "Directory.Build.props"));
 
@@ -76,7 +76,7 @@ public sealed class WorkflowContractTests
     public void Selection_feeds_one_validate_job_per_slice_with_selected_test_projects()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
@@ -96,7 +96,7 @@ public sealed class WorkflowContractTests
     public void Coverage_gate_verifies_the_changed_code_of_pull_requests_and_the_summary_requires_it()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
@@ -119,7 +119,7 @@ public sealed class WorkflowContractTests
     public void Every_build_checks_governed_literals_after_the_full_solution_build_of_repository_quality()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
@@ -139,7 +139,7 @@ public sealed class WorkflowContractTests
     public void Repository_quality_verifies_lock_coverage_after_restoring_and_building_the_whole_solution()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
@@ -159,7 +159,7 @@ public sealed class WorkflowContractTests
     public void Validation_summary_requires_the_source_build_whenever_a_candidate_is_required()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
@@ -195,7 +195,7 @@ public sealed class WorkflowContractTests
     public void Active_ci_delegates_repository_operations_to_existing_dotnet_tools(string project, string command)
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
 
         // Act
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"))
@@ -212,7 +212,7 @@ public sealed class WorkflowContractTests
     public void Reusable_workflows_take_no_secrets_declare_job_permissions_and_keep_inputs_out_of_scripts()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var files = Directory.GetFiles(Path.Combine(root, ".github", "workflows"), "*-reusable.yml");
 
         // Act
@@ -269,7 +269,7 @@ public sealed class WorkflowContractTests
     public void Pull_request_metadata_reaches_the_ci_tool_only_through_the_event_file()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata-reusable.yml"));
         var caller = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata.yml"));
 
@@ -290,7 +290,7 @@ public sealed class WorkflowContractTests
     public void Prerelease_pruning_runs_only_on_dispatch_previews_by_default_and_grants_write_only_to_its_job()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "prune-prereleases.yml")).Replace("\r\n", "\n", StringComparison.Ordinal);
 
         // Act
@@ -315,7 +315,7 @@ public sealed class WorkflowContractTests
     public void Published_candidate_dispatch_consumes_exact_artifacts_on_both_platforms_without_repacking()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
@@ -353,7 +353,7 @@ public sealed class WorkflowContractTests
     public void Workflows_name_no_framework_or_runtime_version()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var files = Directory.GetFiles(Path.Combine(root, ".github", "workflows"), "*.yml");
 
         // Act
@@ -372,7 +372,7 @@ public sealed class WorkflowContractTests
     public void The_setup_action_installs_the_runtime_of_an_older_framework()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var action = File.ReadAllText(Path.Combine(root, ".github", "actions", "setup-dotnet-tool", "action.yml")).Replace("\r\n", "\n", StringComparison.Ordinal);
 
         // Act
@@ -394,7 +394,7 @@ public sealed class WorkflowContractTests
     public void The_preview_workflow_is_manual_and_scheduled_and_not_required()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "dotnet-preview.yml")).Replace("\r\n", "\n", StringComparison.Ordinal);
         var pins = File.ReadAllText(Path.Combine(root, ".github", "action-pins.json"));
 

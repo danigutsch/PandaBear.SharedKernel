@@ -6,7 +6,7 @@ namespace PandaBear.Mediator.PackageConsumptionTests;
 /// <param name="packageFeed">The fixture that supplies the local package feed shared by these tests.</param>
 [Collection(MediatorPackageFeedSharing.Name)]
 [Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
-public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
+public sealed class MediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
 {
     private const string GeneratedAsyncScopeCreation =
         "await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);";

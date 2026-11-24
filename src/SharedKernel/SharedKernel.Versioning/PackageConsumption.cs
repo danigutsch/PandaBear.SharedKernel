@@ -26,7 +26,7 @@ internal static class PackageConsumption
             throw new ArgumentException("Candidate feed contains no packages.");
         }
 
-        var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
+        var packageIds = LocalFeed.ReadPackageIds(packages, version);
         await ToolPackageCheck.Run(root, feed, version, packages, NuGetSource, processes, error, ct).ConfigureAwait(false);
         var central = XDocument.Load(Path.Combine(root, "Directory.Packages.props"));
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));
@@ -103,7 +103,7 @@ internal static class PackageConsumption
             new XDocument(new XElement("Project", new XElement("PropertyGroup", new XElement("ManagePackageVersionsCentrally", "true")),
                 new XElement("ItemGroup", versions.Select(pair => new XElement("PackageVersion", new XAttribute("Include", pair.Key), new XAttribute("Version", pair.Value))))))
                 .Save(Path.Combine(target, "Directory.Packages.props"));
-            await SharedKernelLocalFeed.WriteNuGetConfig(target, feed, packageIds, NuGetSource).ConfigureAwait(false);
+            await LocalFeed.WriteNuGetConfig(target, feed, packageIds, NuGetSource).ConfigureAwait(false);
             var config = Path.Combine(target, "NuGet.config");
             var cache = Path.Combine(scratch, "packages-" + Path.GetFileName(relative));
             string[][] commands = [

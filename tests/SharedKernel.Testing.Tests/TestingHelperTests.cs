@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 namespace PandaBear.Testing.Tests;
 
 /// <summary>Tests the shared testing helpers for unique IDs, HTTP responses, snapshots, bUnit, Playwright, Roslyn options, and the Should assertion wrappers.</summary>
-public sealed class SharedKernelTestingHelperTests
+public sealed class TestingHelperTests
 {
     [Fact]
     public static void Test_unique_ID_creates_prefixed_values()

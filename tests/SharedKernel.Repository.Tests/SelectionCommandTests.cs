@@ -391,7 +391,7 @@ public static class SelectionCommandTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         using var scratch = new RepositoryTestScope();
         var selection = Path.Combine(scratch.Root, "plan");
         var githubOutput = Path.Combine(scratch.Root, "github-output.txt");
@@ -413,7 +413,7 @@ public static class SelectionCommandTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var graph = SolutionGraph.Load(root, (await CiConfigurationFile.Read(root, ct)).Solution);
         using var scratch = new RepositoryTestScope();
         var selection = Path.Combine(scratch.Root, "plan");
@@ -436,7 +436,7 @@ public static class SelectionCommandTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         using var scratch = new RepositoryTestScope();
         var selection = Path.Combine(scratch.Root, "plan");
 

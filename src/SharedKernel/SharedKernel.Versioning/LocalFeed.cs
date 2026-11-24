@@ -6,7 +6,7 @@ namespace PandaBear.Versioning;
 /// <summary>
 /// Builds and validates local package-feed assets for SharedKernel package sets.
 /// </summary>
-public static class SharedKernelLocalFeed
+public static class LocalFeed
 {
     /// <summary>
     /// Reads package IDs from NuGet package files and validates their SharedKernel dependency versions.

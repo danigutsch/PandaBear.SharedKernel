@@ -9,7 +9,7 @@ namespace PandaBear.Versioning;
 /// <param name="processRunner">Runs <c>dotnet</c> and the packed tools and samples, such as <see cref="SystemProcessRunner"/>.</param>
 /// <param name="executableResolver">Finds <c>dotnet</c>, such as <see cref="PathExecutableResolver.Default"/>.</param>
 /// <exception cref="ArgumentNullException">Thrown when <paramref name="processRunner"/> or <paramref name="executableResolver"/> is <see langword="null"/>.</exception>
-public sealed class SharedKernelPackager(IProcessRunner processRunner, IExecutableResolver executableResolver)
+public sealed class Packager(IProcessRunner processRunner, IExecutableResolver executableResolver)
 {
     private readonly ExternalCommands _commands = new(processRunner, executableResolver);
 
@@ -25,11 +25,11 @@ public sealed class SharedKernelPackager(IProcessRunner processRunner, IExecutab
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> or <paramref name="output"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">The version already exists in the folder, no SharedKernel project exists, or a package did not restore.</exception>
     /// <exception cref="InvalidOperationException"><c>dotnet</c> could not start or failed.</exception>
-    public Task<string> Pack(SharedKernelPackageOptions options, bool verifyRestore, TextWriter output, CancellationToken ct)
+    public Task<string> Pack(PackOptions options, bool verifyRestore, TextWriter output, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(output);
-        return SharedKernelPack.Run(_commands, options, verifyRestore, baselineVersion: null, output, ct);
+        return ReleasePack.Run(_commands, options, verifyRestore, baselineVersion: null, output, ct);
     }
 
     /// <summary>
