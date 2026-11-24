@@ -1,4 +1,6 @@
 #nullable enable
+PandaBear.AspNetCore.NamedEndpointPathExtensions
+static PandaBear.AspNetCore.NamedEndpointPathExtensions.GetRequiredPathByName(this Microsoft.AspNetCore.Routing.LinkGenerator! generator, Microsoft.AspNetCore.Http.HttpContext! context, string! endpointName, Microsoft.AspNetCore.Routing.RouteValueDictionary? values = null) -> string!
 const PandaBear.AspNetCore.ImmutableFileEndpointExtensions.CacheControl = "public, max-age=31536000, immutable" -> string!
 PandaBear.AspNetCore.ImmutableFileEndpointExtensions
 PandaBear.AspNetCore.PermanentRedirect

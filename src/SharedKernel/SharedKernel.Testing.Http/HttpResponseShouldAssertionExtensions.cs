@@ -188,6 +188,28 @@ public static class HttpResponseShouldAssertionExtensions
         throw new Xunit.Sdk.XunitException($"Expected link relation '{rel}'.");
     }
 
+    /// <summary>Verifies that the payload links to the expected target for the relation with HTTP GET.</summary>
+    /// <param name="actual">The parsed payload object.</param>
+    /// <param name="rel">The case-sensitive link relation.</param>
+    /// <param name="href">The exact link target.</param>
+    public static void ShouldHaveGetLink(this JsonElement actual, string rel, string href)
+    {
+        var link = actual.ShouldHaveLink(rel);
+        link.GetProperty("href").GetString().ShouldBe(href);
+        var method = GetRequiredProperty(link, "method");
+        method.ValueKind.ShouldBe(JsonValueKind.String);
+        method.GetString().ShouldBe(HttpMethod.Get.Method);
+    }
+
+    /// <summary>Verifies that the payload links to the expected target for the relation with HTTP GET.</summary>
+    /// <param name="actual">The parsed payload object.</param>
+    /// <param name="rel">The case-sensitive link relation.</param>
+    /// <param name="href">The exact link target.</param>
+    /// <param name="userMessage">Why the test expects the link; the failure message starts with it.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="userMessage"/> is null.</exception>
+    public static void ShouldHaveGetLink(this JsonElement actual, string rel, string href, string userMessage) =>
+        WithUserMessage(userMessage, () => actual.ShouldHaveGetLink(rel, href));
+
     /// <summary>Verifies that a nonempty payload array has the link relation on every item.</summary>
     /// <param name="actual">The parsed payload array.</param>
     /// <param name="rel">The case-sensitive link relation, such as <c>self</c>.</param>

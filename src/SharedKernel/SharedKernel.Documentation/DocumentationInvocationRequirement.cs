@@ -15,6 +15,9 @@ internal sealed class DocumentationInvocationRequirement
     /// <summary>Name of the invoked method to count.</summary>
     public string InvokedMethodName { get; set; } = string.Empty;
 
+    /// <summary>Optional exact C# receiver expression for an explicit member invocation.</summary>
+    public string? Receiver { get; set; }
+
     /// <summary>Number of invocations of the invoked method that must be found.</summary>
     public int ExpectedCount { get; set; } = 1;
 

@@ -37,6 +37,7 @@ public sealed class RepositoryCommandLineTests
         "--configuration <name>",
         "[default: Release]",
         "--coverage",
+        "--coverage-evidence",
         "--install-playwright",
         "--playwright-dependencies",
         "--exclude-trait <name=value>",
@@ -57,7 +58,8 @@ public sealed class RepositoryCommandLineTests
     [InlineData("openapi", "generate", "refresh")]
     [InlineData("openapi generate", "--target <name>", "--root <path>")]
     [InlineData("openapi refresh", "--target <name>", "--root <path>")]
-    [InlineData("coverage", "record-symbols", "verify")]
+    [InlineData("coverage", "measure-staged", "record-symbols", "verify")]
+    [InlineData("coverage measure-staged", "--report <path>", "--evidence <file>", "--root <path>", "--base <object-id>")]
     [InlineData("coverage record-symbols", "--output <file>", "[default: TestResults/symbol-evidence.json]", "--root <path>")]
     [InlineData(
         "coverage verify",

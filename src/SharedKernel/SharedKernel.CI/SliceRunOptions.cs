@@ -13,4 +13,8 @@ public sealed record SliceRunOptions(
     bool Coverage,
     bool InstallPlaywright,
     bool PlaywrightDependencies,
-    IReadOnlyList<string> ExcludeTraits);
+    IReadOnlyList<string> ExcludeTraits)
+{
+    /// <summary>Gets whether coverage must be freshly built and collected for a matching Git index tree.</summary>
+    public bool CoverageEvidence { get; init; }
+}

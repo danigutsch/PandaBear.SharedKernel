@@ -81,6 +81,10 @@ PandaBear.CI.CoverageConfiguration.ThresholdPercent.get -> int
 PandaBear.CI.CoverageConfiguration.ThresholdPercent.init -> void
 PandaBear.CI.CoverageVerifier
 PandaBear.CI.CoverageVerifier.CoverageVerifier(PandaBear.CI.CiMachine! machine) -> void
+PandaBear.CI.CoverageVerifier.MeasureStaged(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.CoverageVerifier.MeasureStaged(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, string? baseRevision, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.CoverageVerifier.MeasureStagedWithEvidence(string! root, System.Collections.Generic.IReadOnlyList<string!>! evidence, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.CoverageVerifier.MeasureStagedWithEvidence(string! root, System.Collections.Generic.IReadOnlyList<string!>! evidence, string? baseRevision, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 PandaBear.CI.CoverageVerifier.RecordSymbols(string! root, string! evidencePath, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 PandaBear.CI.CoverageVerifier.Verify(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, string! baseRevision, string! symbolEvidencePath, string! gateEvidencePath, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 PandaBear.CI.IReleaseAssets
@@ -266,6 +270,8 @@ PandaBear.CI.SliceRunOptions.Configuration.get -> string!
 PandaBear.CI.SliceRunOptions.Configuration.init -> void
 PandaBear.CI.SliceRunOptions.Coverage.get -> bool
 PandaBear.CI.SliceRunOptions.Coverage.init -> void
+PandaBear.CI.SliceRunOptions.CoverageEvidence.get -> bool
+PandaBear.CI.SliceRunOptions.CoverageEvidence.init -> void
 PandaBear.CI.SliceRunOptions.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Slices, out string! Configuration, out bool Coverage, out bool InstallPlaywright, out bool PlaywrightDependencies, out System.Collections.Generic.IReadOnlyList<string!>! ExcludeTraits) -> void
 PandaBear.CI.SliceRunOptions.Equals(PandaBear.CI.SliceRunOptions? other) -> bool
 PandaBear.CI.SliceRunOptions.ExcludeTraits.get -> System.Collections.Generic.IReadOnlyList<string!>!

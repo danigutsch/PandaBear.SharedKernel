@@ -1,4 +1,5 @@
 using PandaBear.DevContainers;
+using PandaBear.Processes;
 using PandaBear.Repositories;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -26,9 +27,14 @@ internal sealed record RepoConfigToolEnvironment(string WorkingDirectory)
     public RoadmapGitRepository? GitRepository { get; init; }
 
     /// <summary>
-    /// Gets the host that <c>verify-podman-dns</c> inspects, or <see langword="null"/> for the current machine.
+    /// Gets the host for Podman commands, or <see langword="null"/> for the current machine.
     /// </summary>
     public PodmanDnsHost? PodmanHost { get; init; }
+
+    /// <summary>
+    /// Gets the runner for the isolated test command, or <see langword="null"/> for the default bounded runner.
+    /// </summary>
+    public IProcessRunner? IsolatedPodmanCommandRunner { get; init; }
 
     /// <summary>
     /// Gets the host that <c>verify-devcontainer</c> uses, or <see langword="null"/> for the current machine.

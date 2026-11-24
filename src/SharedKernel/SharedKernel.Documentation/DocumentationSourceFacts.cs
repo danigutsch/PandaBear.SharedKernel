@@ -34,22 +34,14 @@ internal static class DocumentationSourceFacts
     public static string[] ReadTopLevelInvocationIdentifiers(string sourcePath)
     {
         var syntaxRoot = ParseSource(File.ReadAllText(sourcePath), sourcePath);
-        var invocations = syntaxRoot.DescendantNodes()
-            .OfType<GlobalStatementSyntax>()
-            .SelectMany(statement => statement.DescendantNodes().OfType<InvocationExpressionSyntax>());
-
-        return ReadInvocationIdentifiers(invocations);
+        return ReadInvocationIdentifiers(TopLevelInvocations(syntaxRoot));
     }
 
     /// <summary>Returns the identifiers registered through generic registration calls in the top-level statements of a source file.</summary>
     public static string[] ReadTopLevelRegistrationIdentifiers(string sourcePath)
     {
         var syntaxRoot = ParseSource(File.ReadAllText(sourcePath), sourcePath);
-        var invocations = syntaxRoot.DescendantNodes()
-            .OfType<GlobalStatementSyntax>()
-            .SelectMany(statement => statement.DescendantNodes().OfType<InvocationExpressionSyntax>());
-
-        return ReadRegistrationIdentifiers(invocations);
+        return ReadRegistrationIdentifiers(TopLevelInvocations(syntaxRoot));
     }
 
     /// <summary>Returns the identifiers invoked inside the selected method.</summary>
@@ -85,6 +77,36 @@ internal static class DocumentationSourceFacts
             })
             .SelectMany(invocation => invocation.ArgumentList.Arguments)
             .Select(argument => argument.NormalizeWhitespace().ToString())
+            .ToArray();
+    }
+
+    /// <summary>Returns one normalized argument list per invocation with the selected syntactic receiver and name.</summary>
+    /// <param name="sourcePath">The C# source file.</param>
+    /// <param name="methodName">The caller method name, or empty to search top-level statements.</param>
+    /// <param name="parameterCount">The parameter count that identifies the caller overload.</param>
+    /// <param name="invokedMethodName">The method identifier required on the member access.</param>
+    /// <param name="receiver">The C# receiver expression required on the member access.</param>
+    /// <returns>The argument lists in source order, including an empty list for a call without arguments.</returns>
+    /// <exception cref="InvalidOperationException">The selected source, method, or configured receiver expression is invalid.</exception>
+    public static string[][] ReadQualifiedInvocationArguments(
+        string sourcePath, string methodName, int parameterCount, string invokedMethodName, string receiver)
+    {
+        var expectedReceiver = SyntaxFactory.ParseExpression(receiver);
+        if (expectedReceiver.ContainsDiagnostics)
+        {
+            throw new InvalidOperationException($"Invocation receiver '{receiver}' is not a valid C# expression in '{sourcePath}'.");
+        }
+
+        var syntaxRoot = ParseSource(File.ReadAllText(sourcePath), sourcePath);
+        var invocations = string.IsNullOrWhiteSpace(methodName)
+            ? TopLevelInvocations(syntaxRoot)
+            : ReadMethod(syntaxRoot, sourcePath, methodName, parameterCount).DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+        return invocations
+            .Where(invocation => invocation.Expression is MemberAccessExpressionSyntax member
+                && member.Name.Identifier.ValueText == invokedMethodName
+                && SyntaxFactory.AreEquivalent(member.Expression, expectedReceiver))
+            .Select(invocation => invocation.ArgumentList.Arguments.Select(argument => argument.NormalizeWhitespace().ToString()).ToArray())
             .ToArray();
     }
 
@@ -203,6 +225,11 @@ internal static class DocumentationSourceFacts
 
         return methods[0];
     }
+
+    private static IEnumerable<InvocationExpressionSyntax> TopLevelInvocations(SyntaxNode syntaxRoot) =>
+        syntaxRoot.DescendantNodes()
+            .OfType<GlobalStatementSyntax>()
+            .SelectMany(statement => statement.DescendantNodes().OfType<InvocationExpressionSyntax>());
 
     private static string[] ReadInvocationIdentifiers(IEnumerable<InvocationExpressionSyntax> invocations) =>
         invocations

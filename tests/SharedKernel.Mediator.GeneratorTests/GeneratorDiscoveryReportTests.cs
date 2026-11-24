@@ -1,5 +1,6 @@
-using System.Globalization;
 using System.Collections.Immutable;
+using System.Globalization;
+using System.Text.Json;
 
 namespace PandaBear.Mediator.GeneratorTests;
 
@@ -65,6 +66,60 @@ public sealed class GeneratorDiscoveryReportTests
         json.ShouldContain("\"request\": \"global::Demo.CreateTour\"", StringComparison.Ordinal);
         json.ShouldContain("\"dispatch\": \"parallel\"", StringComparison.Ordinal);
         json.ShouldContain("\"request\": \"global::Demo.StreamTours\"", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Call_graph_has_a_versioned_schema_and_stable_request_kinds()
+    {
+        // Arrange
+        var command = TestSources.CreateTourWithHandler + TestSources.CreateTourValidationBehavior;
+        var query = TestSources.GetTourWithHandler;
+        const string otherKinds = """
+
+            public sealed record DeleteTour(int Id) : ICommand;
+            public sealed record LookupTour(int Id) : IRequest<string>;
+            """;
+        var first = TestSources.ModuleHeader + command + query + otherKinds;
+        var reordered = TestSources.ModuleHeader + otherKinds + query + command;
+        var options = ImmutableDictionary<string, string>.Empty.Add("sharedkernel_mediator_emit_call_graph_json", bool.TrueString);
+
+        // Act
+        var firstRun = GeneratorTestHarness.RunGeneratorDriver(first, globalOptions: options);
+        var reorderedRun = GeneratorTestHarness.RunGeneratorDriver(reordered, globalOptions: options);
+        var generated = GeneratorTestHarness.GetGeneratedSource(firstRun, GeneratedHintNames.CallGraph);
+        var reorderedGenerated = GeneratorTestHarness.GetGeneratedSource(reorderedRun, GeneratedHintNames.CallGraph);
+        var json = GeneratorDiscoveryReportTestsHelpers.LoadGeneratedCallGraphJson(first, generated);
+        using var document = JsonDocument.Parse(json);
+
+        // Assert
+        reorderedGenerated.ShouldBe(generated);
+        document.RootElement.GetProperty("schemaVersion").GetInt32().ShouldBe(1);
+        var kinds = document.RootElement.GetProperty("requests").EnumerateArray()
+            .Select(static request => request.GetProperty("kind").GetString());
+        kinds.ShouldBe(["command-with-response", "command", "query", "request"]);
+    }
+
+    [Theory]
+    [InlineData("true", "false", true)]
+    [InlineData("false", "true", false)]
+    [InlineData("invalid", "true", true)]
+    [InlineData("", "false", false)]
+    public void Call_graph_accepts_the_build_property_with_an_analyzer_option_fallback(
+        string buildValue, string analyzerValue, bool expected)
+    {
+        // Arrange
+        var source = TestSources.DemoHeader + TestSources.GetTourWithHandler;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("build_property.SharedKernelMediatorEmitCallGraphJson", buildValue)
+            .Add("sharedkernel_mediator_emit_call_graph_json", analyzerValue);
+
+        // Act
+        var run = GeneratorTestHarness.RunGeneratorDriver(source, globalOptions: options);
+        var emitted = run.Results.ShouldHaveSingleItem().GeneratedSources.Any(
+            static output => string.Equals(output.HintName, GeneratedHintNames.CallGraph, StringComparison.Ordinal));
+
+        // Assert
+        emitted.ShouldBe(expected);
     }
 
     [Fact]

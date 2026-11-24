@@ -1,0 +1,5 @@
+#nullable enable
+PandaBear.AspNetCore.Analyzers.RuntimeEndpointBindingAnalyzer
+PandaBear.AspNetCore.Analyzers.RuntimeEndpointBindingAnalyzer.RuntimeEndpointBindingAnalyzer() -> void
+override PandaBear.AspNetCore.Analyzers.RuntimeEndpointBindingAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override PandaBear.AspNetCore.Analyzers.RuntimeEndpointBindingAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

@@ -219,6 +219,7 @@
           "PandaBear.SharedKernel.Forgejo": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.GitHub": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Repositories": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Repositories.Forgejo": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Repositories.GitHub": "[0.1.0-alpha.0, )",

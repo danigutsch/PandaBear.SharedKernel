@@ -22,7 +22,7 @@ same operations.
 Git and the .NET SDK pinned in `global.json`. `select` reads `.config/sharedkernel-ci.json` and the solution it names in a
 Git checkout, and `run` reads the configuration and the plan that `select` wrote; `openapi` reads the configuration;
 `local-check` reads the configuration in a Git work tree and runs `git`, `dotnet`, and the built test executables, and needs no socket;
-`coverage` reads the configuration in a Git checkout with the history of `--base`;
+`coverage` reads the configuration in a Git checkout; `coverage verify` also needs the history of `--base`;
 `install-playwright`, and `run --install-playwright`, need PowerShell (`pwsh`);
 `run` for a slice with a `service` starts the service's project with `dotnet run`, so it needs whatever that project
 needs, such as a container runtime;
@@ -409,9 +409,36 @@ when the output has no `playwright.ps1`.
 ### coverage
 
 ```text
+dotnet tool run ci -- coverage measure-staged --report TestResults/selection
 dotnet tool run ci -- coverage record-symbols
 dotnet tool run ci -- coverage verify --report artifacts --base "$BASE_SHA" --symbols TestResults/symbol-evidence.json
 ```
+
+`coverage measure-staged` measures the added lines in `git diff --cached HEAD` after you stage the changes and
+collect fresh Cobertura reports. It uses the repository's `coverage.include` and `coverage.exclude` patterns. Each
+`--report` names a Cobertura file or a directory searched recursively for `*.cobertura*.xml`. Repeat the option to combine
+reports. The command prints per-file executable line and condition counts and the combined count. A file absent from
+the reports counts as zero executable lines and conditions when a local Release PDB matches its source hash and maps no
+executable code to it. Rebuild with `-c Release` to refresh those symbols. The command rejects other missing files and
+tracked files that differ from the Git index. Use `coverage verify` to enforce the committed gate.
+
+For a staged stack, pass `--base <object-id>` with the full Git commit or tree ID of the parent you want to
+compare directly against the staged changes. Before applying the upper layer, `git write-tree` prints the ID
+of a staged parent. The option works with both `--report` and `--evidence` and defaults to `HEAD`.
+
+For a verified local staged measurement, stage the intended source, then use the same tree to collect and measure:
+
+```sh
+dotnet tool run ci -- run --slice library --coverage --coverage-evidence
+dotnet tool run ci -- coverage measure-staged --evidence TestResults/selection/execution-library/results/coverage-evidence.json
+```
+
+The capture performs a non-incremental slice build, checks that tracked files match the index and the index tree
+stays the same from before the build to after the tests, and writes report hashes beside the fresh results. Keep
+the evidence file with its reports. Repeat `--evidence` for captures from separate directories of the same tree.
+Measurement diffs the verified tree object and rejects another tree or altered report bytes before producing
+counts. For other report producers, use `--report` with reports rebuilt from the same source. The verified local
+mode and `--report` are separate options.
 
 `coverage record-symbols` runs after a Release build. It writes `HEAD` and the SHA-256 hash of every `*.pdb` in a
 `bin/Release` directory under the `coverage.symbolDirectories` to `--output` (default

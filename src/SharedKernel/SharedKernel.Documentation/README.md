@@ -9,12 +9,14 @@ Reusable documentation automation primitives for Markdown generated blocks and M
 ## Scope
 
 - generated Markdown block replacement by marker name and configured target
+- tables of contents from headings within a Markdown document
 - config-driven Mermaid flowchart blocks
 - project-reference diagrams from SDK-style project references
 - simple GitHub Actions workflow diagrams
 - simple .NET Aspire AppHost runtime-resource diagrams for local orchestration docs
 - Minimal API endpoint inventories
 - integration-event contract and handler inventories
+- mediator request, pipeline, stream, and notification diagrams from generated call graphs
 - machine-readable documentation fact checks against configured C# switches and registrations
 
 Keep application-specific labels, trust boundaries, actors, and data classifications in config files
@@ -49,8 +51,21 @@ file supplies repository-specific inputs and generated block definitions. The ge
 | `apphost-resources` | AppHost source path plus labels | Local Aspire runtime wiring diagrams. |
 | `endpoint-routes` | Minimal API source tree plus configured route prefixes | Endpoint inventory tables. |
 | `integration-events` | Integration-event source tree | Contract, mapping, registration, and handler tables. |
+| `markdown-toc` | Headings in the target Markdown file | Link to headings from a generated table of contents. |
+| `mediator-topology` | Generated `SharedKernel.Mediator.Generated.CallGraph.g.cs` | Request and stream pipeline chains and notification fan-out. |
 | `github-actions-jobs` | one workflow file | Job dependency diagrams. |
 | `github-actions-workflows` | workflow directory | Workflow inventory diagrams. |
+
+For `mediator-topology`, build the owning project with call graph emission and compiler-generated
+files enabled, then configure `sourcePath` to the generated call graph file. The renderer reads
+schema version 1 from the generated C# string literal without loading the consumer assembly.
+Build the producer before running `generate` or `verify`.
+
+For `markdown-toc`, put a generated marker pair in the target Markdown document. The optional
+`minHeadingLevel` and `maxHeadingLevel` settings default to 2 and 3. Both must be between 1 and 6,
+and the minimum must be at most the maximum. The renderer reads hash-prefixed headings outside
+fenced code and generated blocks, using the same anchor rules as the repository link verifier. The normal
+`generate` and `verify` commands refresh or check the table after headings change.
 
 ## Conformance checks
 
@@ -61,9 +76,15 @@ matching surrounding prose. A conformance config can compare a fact block with:
 - event types handled by configured C# switch methods
 - filtered registrations from configured top-level statements or methods
 
-Registration checks can also require exact runtime invocation counts and arguments. Diagnostics name
-the configured document or source path. Run the checks with `dotnet docs check --config <path>`;
-shell wrappers should only invoke that command.
+Registration checks can also require exact C# invocation counts and arguments. Set the optional
+`receiver` on an invocation requirement to distinguish same-named methods, for example
+`"receiver": "PostgreSqlEventSourcingSchema"` with `"invokedMethodName": "Initialize"`. Counts and
+arguments then use the same explicit member calls. Receiver matching compares C# syntax and
+ignores trivia. It does not resolve aliases or infer receivers for unqualified or conditional
+member calls. Omitting the field retains the existing name-based behavior.
+
+Diagnostics name the configured document or source path. Run the checks with
+`dotnet docs check --config <path>`. Shell wrappers should invoke that command.
 
 Checks can also associate facts with governed content blocks:
 
@@ -91,6 +112,32 @@ configuration block can supply `endpointNameMethods`, `sourceAudiences` (source 
 `routeAudiences` (regular expressions), and `defaultAudience`. Source matches precede route matches;
 method and mapping order determines the first match. Application metadata conventions and audience
 labels belong in the consumer configuration rather than this engine.
+
+For inherited authorization, opt into operation-level security from stock-generated OpenAPI JSON.
+Set `openApiAuthorizationDocuments` on an `endpoint-routes` block:
+
+```json
+"openApiAuthorizationDocuments": {
+  "Admin.Api/": "src/Admin.Contracts.Http/OpenApi/v1.openapi.json",
+  "Catalog.Api/": "src/Catalog.Contracts.Http/OpenApi/catalog.openapi.json"
+}
+```
+
+The keys are directory prefixes relative to the block's `sourcePath`. Use one authoritative
+repository-relative document per API scope. The renderer requires a single matching scope and
+one explicitly named operation with the same HTTP verb and rendered route template. If a
+generator strips constraints from a template, the differing path keeps the source classification.
+
+When source authorization is undeclared, a matching operation can show `required` if each
+of its explicit security alternatives requires a declared scheme. Empty or anonymous alternatives,
+undeclared schemes, operation-level security omissions, response status codes, and unresolved
+references leave the existing source classification. Explicit source declarations retain
+precedence. The table reports the requirement without assigning an application policy name.
+
+In CI, generate the configured OpenAPI artifacts from the same application source and package
+candidate as the route inventory. Check the stock OpenAPI snapshots before checking generated
+Markdown. A stable operation identity alone cannot establish artifact freshness.
+[OpenAPI security requirements](https://spec.openapis.org/oas/v3.2.0.html#security-requirement-object)
 
 ## Package identity and availability
 

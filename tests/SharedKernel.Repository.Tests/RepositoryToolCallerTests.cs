@@ -68,8 +68,11 @@ public sealed class RepositoryToolCallerTests
                 "run --slice library --coverage --install-playwright --playwright-dependencies --github-summary $GITHUB_STEP_SUMMARY",
                 "local-check --base origin/main",
                 "local-check --base origin/main --strict -- --filter-not-trait Category=Slow",
+                "coverage measure-staged --report TestResults/selection",
                 "coverage record-symbols",
                 "coverage verify --report artifacts --base $BASE_SHA --symbols TestResults/symbol-evidence.json",
+                "run --slice library --coverage --coverage-evidence",
+                "coverage measure-staged --evidence TestResults/selection/execution-library/results/coverage-evidence.json",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
                     + " --repository danigutsch/PandaBear.SharedKernel",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"

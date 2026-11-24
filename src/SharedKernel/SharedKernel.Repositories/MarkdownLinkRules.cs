@@ -1,7 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using PandaBear.Markdown;
 
 namespace PandaBear.Repositories;
 
@@ -66,22 +66,7 @@ internal static partial class MarkdownLinkRules
     /// Returns the one-based number and content of each line outside fenced code. Fence lines are left out.
     /// </summary>
     public static IEnumerable<(int Number, string Line)> NonFencedLines(IReadOnlyList<string> lines)
-    {
-        var inFence = false;
-        var fenceMarker = string.Empty;
-        for (var index = 0; index < lines.Count; index++)
-        {
-            if (IsFence(lines[index], ref inFence, ref fenceMarker))
-            {
-                continue;
-            }
-
-            if (!inFence)
-            {
-                yield return (index + 1, lines[index]);
-            }
-        }
-    }
+        => MarkdownHeadings.NonFencedLines(lines);
 
     /// <summary>
     /// Returns the anchors of the headings in <paramref name="text"/>. Every line outside fenced code that starts with
@@ -90,33 +75,8 @@ internal static partial class MarkdownLinkRules
     /// as <c>_</c>, spaces, and <c>-</c>, and each space becomes <c>-</c>. HTML tags drop, and so do underscores that
     /// delimit emphasis outside code spans. A repeated slug gets the suffix <c>-1</c>, <c>-2</c>, and so on.
     /// </summary>
-    public static HashSet<string> Anchors(string text)
-    {
-        HashSet<string> anchors = new(StringComparer.Ordinal);
-        Dictionary<string, int> counts = new(StringComparer.Ordinal);
-        var inFence = false;
-        var fenceMarker = string.Empty;
-        foreach (var line in SplitLines(text))
-        {
-            var stripped = TrimStartSpace(line);
-            if (IsFence(line, ref inFence, ref fenceMarker) || inFence || !stripped.StartsWith('#', StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            var heading = TrimSpace(stripped.TrimStart('#'));
-            if (heading.Length == 0)
-            {
-                continue;
-            }
-
-            var slug = Slugify(heading);
-            var count = counts[slug] = counts.GetValueOrDefault(slug) + 1;
-            anchors.Add(count == 1 ? slug : string.Create(CultureInfo.InvariantCulture, $"{slug}-{count - 1}"));
-        }
-
-        return anchors;
-    }
+    public static HashSet<string> Anchors(string text) =>
+        MarkdownHeadings.Read(SplitLines(text)).Select(static heading => heading.Anchor).ToHashSet(StringComparer.Ordinal);
 
     /// <summary>
     /// Returns the issue and pull request reference findings of a line outside fenced code.
@@ -246,9 +206,7 @@ internal static partial class MarkdownLinkRules
     /// <summary>
     /// Lowercases as Python's <c>str.lower</c> does, including the two-character lowercase of U+0130.
     /// </summary>
-    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Anchors are lowercase, as the Python linter lowercases them; they are compared ordinally.")]
-    public static string Lower(string value) =>
-        value.Replace("\u0130", "i\u0307", StringComparison.Ordinal).ToLowerInvariant();
+    public static string Lower(string value) => MarkdownHeadings.Lower(value);
 
     /// <summary>
     /// Returns the suffix of the last path component as <c>pathlib</c> does: from its last <c>.</c>, unless that dot
@@ -260,73 +218,6 @@ internal static partial class MarkdownLinkRules
         var dot = name.LastIndexOf('.', StringComparison.Ordinal);
         return dot > 0 && dot < name.Length - 1 ? name[dot..] : string.Empty;
     }
-
-    private static bool IsFence(string line, ref bool inFence, ref string fenceMarker)
-    {
-        var stripped = TrimStartSpace(line);
-        if (!stripped.StartsWith("```", StringComparison.Ordinal) && !stripped.StartsWith("~~~", StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        var marker = stripped[..3];
-        if (!inFence)
-        {
-            inFence = true;
-            fenceMarker = marker;
-        }
-        else if (marker == fenceMarker)
-        {
-            inFence = false;
-        }
-
-        return true;
-    }
-
-    private static string Slugify(string heading)
-    {
-        var slug = new StringBuilder(heading.Length);
-        foreach (var rune in Lower(HeadingText(HtmlTagPattern().Replace(heading, string.Empty))).EnumerateRunes())
-        {
-            if (rune.Value == ' ')
-            {
-                slug.Append('-');
-            }
-            else if (rune.Value == '-' || IsAnchorCategory(Rune.GetUnicodeCategory(rune)))
-            {
-                slug.Append(rune);
-            }
-        }
-
-        return slug.ToString();
-    }
-
-    private static string HeadingText(string heading)
-    {
-        // Code spans render their content literally; elsewhere a pair of underscore runs around text is emphasis.
-        var text = new StringBuilder(heading.Length);
-        var start = 0;
-        foreach (Match span in CodeSpanPattern().Matches(heading))
-        {
-            text.Append(EmphasisUnderscorePattern().Replace(heading[start..span.Index], "$2")).Append(span.Value);
-            start = span.Index + span.Length;
-        }
-
-        return text.Append(EmphasisUnderscorePattern().Replace(heading[start..], "$2")).ToString();
-    }
-
-    private static bool IsAnchorCategory(UnicodeCategory category) => category
-        is UnicodeCategory.UppercaseLetter
-        or UnicodeCategory.LowercaseLetter
-        or UnicodeCategory.TitlecaseLetter
-        or UnicodeCategory.ModifierLetter
-        or UnicodeCategory.OtherLetter
-        or UnicodeCategory.NonSpacingMark
-        or UnicodeCategory.SpacingCombiningMark
-        or UnicodeCategory.EnclosingMark
-        or UnicodeCategory.DecimalDigitNumber
-        or UnicodeCategory.LetterNumber
-        or UnicodeCategory.ConnectorPunctuation;
 
     private static bool IsDigits(string value)
     {
@@ -415,15 +306,6 @@ internal static partial class MarkdownLinkRules
 
     [GeneratedRegex(Boundary + "(?:Unicode Standard Annex|UAX)[" + Space + @"]+#\d+" + Boundary, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex NonTrackerNumericHashPattern();
-
-    [GeneratedRegex("<[^>]+>")]
-    private static partial Regex HtmlTagPattern();
-
-    [GeneratedRegex("(`+)(?!`).*?(?<!`)\\1(?!`)")]
-    private static partial Regex CodeSpanPattern();
-
-    [GeneratedRegex(@"(?<![\p{L}\p{N}])(_+)(?![\s_])(.+?)(?<![\s_])\1(?![\p{L}\p{N}])")]
-    private static partial Regex EmphasisUnderscorePattern();
 
     [GeneratedRegex("(?:%[0-9a-fA-F]{2})+")]
     private static partial Regex PercentEscapesPattern();

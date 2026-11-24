@@ -1,7 +1,9 @@
 {
+  "schemaVersion": 1,
   "requests": [
     {
       "request": "global::Demo.CreateTour",
+      "kind": "command-with-response",
       "response": "int",
       "handler": "global::Demo.CreateTourHandler",
       "pipelines": [

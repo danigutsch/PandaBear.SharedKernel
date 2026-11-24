@@ -62,6 +62,8 @@ dotnet repo new --root ./example-repo --language dotnet
 dotnet repo new --root ./example-repo --language dotnet --feature readme --feature signed-commits --force
 dotnet repo automation publish-result --force
 dotnet repo verify-podman-dns --verbosity quiet
+dotnet repo run-isolated-podman --image-store /absolute/path/to/overlay/store \
+    --network-helper slirp4netns -- dotnet test --project tests/Example.Tests
 dotnet repo verify-json
 dotnet repo verify-line-endings
 dotnet repo verify-links
@@ -95,6 +97,7 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request; see [Roadmap publication](#roadmap-publication). |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
+| `run-isolated-podman` | Runs a trusted test command with private local rootless Podman storage and networking. |
 | `verify-json` | Fails when the working-tree content of a `*.json` file in the Git index is missing, not UTF-8, or not JSON. Comments, trailing commas, and a UTF-8 byte order mark are allowed. Each failure names the path, line, and byte. |
 | `verify-line-endings` | Fails when a file in the Git index has CRLF or mixed line endings, staged or in the working tree, while its attributes set `eol=lf`, or LF or mixed line endings in the working tree while they set `eol=crlf`. |
 | `verify-links [<path>...]` | Fails on a broken local link or Markdown anchor, a link that leaves the repository, or an issue or pull request reference in documentation files; see [Documentation links](#documentation-links). |
@@ -111,7 +114,8 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 `github` commands, `baseline apply`, `automation publish-result`, and `dependency submit` preview their changes unless
 `--force` is given. Lines that describe previewed changes start with `preview:`. The `publish-result`
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
-the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` and `github link-subissue` takes `--root <path>`,
+the snapshot, its size, and the endpoint. Every command except `verify-podman-dns`, `run-isolated-podman`, and
+`github link-subissue` takes `--root <path>`,
 which defaults to the current directory; relative `--snapshot`, `--github-output`, `--log-directory`,
 `--devcontainer-cli`, and `verify-links` paths resolve against it. Run `dotnet repo <command> --help` for the
 options of each command.
@@ -570,6 +574,52 @@ default-branch commit moved while it was read.
 | `ROADMAP_PLAN_DIGEST`, `ROADMAP_ARTIFACT_DIGEST`, `ROADMAP_RESULT_DIGEST` | `automation` steps after planning, as each step requires. |
 | `GITHUB_OUTPUT`, `GITHUB_STEP_SUMMARY` | `automation plan-github`, `seal-result`, and `publish-result --force`. |
 
+## Isolated Podman test runs
+
+`run-isolated-podman` is an opt-in wrapper for trusted commands that use the local Podman CLI.
+It requires Linux rootless Podman with netavark, overlay storage, and an existing additional image
+store. Find the normal rootless overlay store with
+`podman --remote=false info --format '{{.Store.GraphRoot}}'` or supply a separately provisioned store.
+Podman reads the supplied image store through its read-only `additionalimagestores` configuration.
+Each invocation creates its writable graph, runtime, engine state, and networks under its own temporary directory.
+On a host that restricts the rootless network helper to the user runtime directory, set
+`--runtime-parent "$XDG_RUNTIME_DIR"` while keeping `TMPDIR` on disk. The wrapper creates an
+owner-only runtime directory under the supplied existing absolute directory for the runroot,
+network configuration, and transient libpod state. The graph, volumes, static libpod state and
+the child's temporary path stay under the caller's normal disk-backed temporary location.
+The caller's runtime parent is preserved, and the engine checks and cleans up both private roots.
+The child inherits the user runtime directory and session bus and receives `ASPIRE_CONTAINER_RUNTIME=podman`.
+Ambient Docker and Podman endpoint overrides and forge tokens are removed from the child environment.
+The rootless network helper defaults to Pasta. On a host where the packaged security policy prevents
+Podman from stopping Pasta during teardown, use `--network-helper slirp4netns` if that helper is installed.
+Pass `--` before the child executable so the wrapper forwards the remaining arguments verbatim.
+The child runs in the current directory and has a default timeout of 1,800 seconds. Use
+`--timeout-seconds` to change the timeout. The wrapper captures bounded output and returns the child's exit code.
+
+For a verbose test run, redirect both streams inside the trusted child to a file in an existing ext4 directory
+outside the private Podman directories. The wrapper limits each captured stream to 8,388,608 characters and stops
+the child when it exceeds that limit. Redirecting the wrapper's own output still applies the capture limit.
+
+```bash
+test_log=$(mktemp /absolute/path/on/ext4/example-tests.log.XXXXXXXX)
+printf 'Test log: %s\n' "$test_log"
+dotnet repo run-isolated-podman --image-store /absolute/path/to/overlay/store \
+    -- bash -c 'log=$1; shift; exec "$@" >"$log" 2>&1' bash "$test_log" \
+    dotnet test --project tests/Example.Tests
+```
+
+The `exec` in this example keeps the test process under the wrapper's timeout and preserves its exit status.
+The log remains available after the wrapper cleans up its private Podman directories.
+
+The wrapper verifies engine ownership and DNS before the child starts. After the child exits or is
+canceled, it verifies ownership again, removes resources in the private engine, and checks empty
+container and network state and healthy DNS. Podman removes writable images from the verified
+private store before the wrapper deletes its temporary directory. The shared image store stays
+read-only. If the second ownership check or teardown fails, the wrapper
+reports the retained private directories and returns a failure. It only removes resources from the
+verified private engine. The wrapper allows up to two minutes for cleanup and up to three minutes to
+shut down after Ctrl+C or SIGTERM. Tests using a Docker API socket need a separate setup.
+
 ## Limits
 
 - `verify-podman-dns` inspects only local rootless Podman on Linux and fails closed for remote services.
@@ -599,7 +649,9 @@ default-branch commit moved while it was read.
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
 | 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, Gherkin, or target framework finding, a license exception finding, baseline drift or a baseline conflict (also in a preview), stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
-| 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
+| 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within its shutdown window. |
+
+`run-isolated-podman` also returns any nonzero child exit code.
 
 ## Security
 

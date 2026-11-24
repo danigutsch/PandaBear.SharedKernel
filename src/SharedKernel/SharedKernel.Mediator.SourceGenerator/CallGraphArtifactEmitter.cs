@@ -29,13 +29,14 @@ internal static class CallGraphArtifactEmitter
 
         builder.AppendLine("        \"\"\";");
         builder.AppendLine("}");
-        return builder.ToString();
+        return builder.ToString().Replace("\r\n", "\n");
     }
 
     private static string BuildJson(DiscoveryModel model)
     {
         var builder = new StringBuilder();
         builder.AppendLine("{");
+        builder.AppendLine("  \"schemaVersion\": 1,");
         AppendNamedObjectArray(
             builder,
             "requests",
@@ -60,6 +61,14 @@ internal static class CallGraphArtifactEmitter
         var builder = new StringBuilder();
         builder.AppendLine("    {");
         AppendProperty(builder, "request", request.MetadataName, trailingComma: true);
+        AppendProperty(builder, "kind", request.Kind switch
+        {
+            RequestKind.Request => "request",
+            RequestKind.Command => "command",
+            RequestKind.CommandWithResponse => "command-with-response",
+            RequestKind.Query => "query",
+            _ => throw new ArgumentOutOfRangeException(nameof(request)),
+        }, trailingComma: true);
         AppendProperty(builder, "response", request.Response.MetadataName, trailingComma: true);
         AppendProperty(builder, "handler", request.Handlers.Length == 1 ? request.Handlers[0].MetadataName : "<none>", trailingComma: true);
         AppendNamedStringArray(builder, "pipelines", request.Pipelines.Select(static pipeline => pipeline.MetadataName), trailingComma: true);

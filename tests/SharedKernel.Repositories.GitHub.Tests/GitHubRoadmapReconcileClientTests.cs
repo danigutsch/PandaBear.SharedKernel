@@ -7,6 +7,67 @@ namespace PandaBear.Repositories.GitHub.Tests;
 public sealed class GitHubRoadmapReconcileClientTests
 {
     [Fact]
+    public async Task Snapshot_reads_multiple_supplemental_issues_in_one_request()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        var openIssue = GitHubRoadmapSnapshotTestOperations.Issue(18, "Open work", "OPEN");
+        var closedIssues = Enumerable.Range(1, 17)
+            .Select(number => GitHubRoadmapSnapshotTestOperations.Issue(number, "Closed work", "CLOSED"))
+            .ToArray();
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse([openIssue]));
+        GitHubRoadmapSnapshotTestOperations.EnqueueSupplementalIssues(handler, closedIssues[..16]);
+        GitHubRoadmapSnapshotTestOperations.EnqueueSupplementalIssues(handler, closedIssues[16..]);
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateRepositoryCommitResponse());
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubRoadmapReconcileClient(httpClient);
+        var requiredIssueNumbers = Enumerable.Range(1, 18).Reverse().Append(9).ToArray();
+
+        // Act
+        var snapshot = await client.ReadSnapshot("owner/repository", requiredIssueNumbers, TestContext.Current.CancellationToken);
+
+        // Assert
+        snapshot.Issues.Select(issue => issue.Number).ShouldBe(Enumerable.Range(1, 18));
+        handler.Requests.Count.ShouldBe(4);
+        var firstBatch = handler.Requests[1].Body.ShouldNotBeNull();
+        firstBatch.ShouldContain("supplemental0:issueOrPullRequest(number:1)", StringComparison.Ordinal);
+        firstBatch.ShouldContain("supplemental15:issueOrPullRequest(number:16)", StringComparison.Ordinal);
+        firstBatch.ShouldNotContain("number:17", StringComparison.Ordinal);
+        var lastBatch = handler.Requests[2].Body.ShouldNotBeNull();
+        lastBatch.ShouldContain("supplemental0:issueOrPullRequest(number:17)", StringComparison.Ordinal);
+        lastBatch.ShouldNotContain("number:18", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(null, "GitHub issue lookup is unavailable; resolving its current repository location.")]
+    [InlineData(10, "GitHub reconciliation response contains inconsistent issue metadata.")]
+    public async Task Snapshot_rejects_incomplete_or_inconsistent_supplemental_metadata(int? number, string expectedMessage)
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse([]));
+        var unexpectedIssue = number is int unexpectedNumber
+            ? GitHubRoadmapSnapshotTestOperations.Issue(unexpectedNumber, "Unexpected issue", "CLOSED")
+            : null;
+        GitHubRoadmapSnapshotTestOperations.EnqueueSupplementalIssues(
+            handler,
+            [GitHubRoadmapSnapshotTestOperations.Issue(9, "Closed work", "CLOSED"), unexpectedIssue]);
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubRoadmapReconcileClient(httpClient);
+
+        // Act
+        Func<Task> action = async () => _ = await client.ReadSnapshot(
+            "owner/repository",
+            [9, 12],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await action.ShouldThrowAssignableTo<InvalidOperationException>();
+        exception.Message.ShouldBe(expectedMessage);
+        handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
     public async Task Snapshot_rejects_default_branch_movement_between_issue_pages()
     {
         // Arrange

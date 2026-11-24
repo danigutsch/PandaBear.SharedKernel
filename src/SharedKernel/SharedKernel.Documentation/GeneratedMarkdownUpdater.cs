@@ -20,12 +20,13 @@ internal sealed class GeneratedMarkdownUpdater(string rootPath, string docsRelat
     /// Updates generated blocks and returns repository-relative files whose content changed.
     /// </summary>
     /// <param name="checkOnly">Whether to detect drift without writing files.</param>
-    /// <param name="replacements">Generated block names, target paths, and replacement content.</param>
+    /// <param name="replacements">Generated block names, target paths, and renderers that receive the validated target text.</param>
     /// <returns>Repository-relative file paths changed or stale.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="replacements"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">A replacement contains a generated marker.</exception>
     public List<string> Update(
         bool checkOnly,
-        IReadOnlyList<(string Name, string TargetPath, string Replacement)> replacements)
+        IReadOnlyList<(string Name, string TargetPath, Func<string, string> Render)> replacements)
     {
         ArgumentNullException.ThrowIfNull(replacements);
         ValidateDocsPath();
@@ -37,12 +38,6 @@ internal sealed class GeneratedMarkdownUpdater(string rootPath, string docsRelat
         var blocks = replacements
             .Select(replacement =>
             {
-                if (replacement.Replacement.Contains("<!-- generated:", StringComparison.Ordinal))
-                {
-                    throw new InvalidOperationException(
-                        $"Generated block '{replacement.Name}' replacement content must not contain generated markers.");
-                }
-
                 var targetPath = ResolveTargetPath(replacement.Name, replacement.TargetPath);
                 if (!documents.ContainsKey(targetPath))
                 {
@@ -51,7 +46,7 @@ internal sealed class GeneratedMarkdownUpdater(string rootPath, string docsRelat
                         + "must be an existing Markdown file within docsPath.");
                 }
 
-                return (replacement.Name, TargetPath: targetPath, replacement.Replacement);
+                return (replacement.Name, TargetPath: targetPath, replacement.Render);
             })
             .ToArray();
 
@@ -66,10 +61,19 @@ internal sealed class GeneratedMarkdownUpdater(string rootPath, string docsRelat
                      .OrderBy(group => group.Key, PathComparer))
         {
             var original = documents[targetBlocks.Key];
+            var source = targetBlocks.Aggregate(original,
+                (markdown, block) => ReplaceGeneratedBlock(markdown, block.Name, string.Empty));
             var updated = original;
             foreach (var block in targetBlocks)
             {
-                updated = ReplaceGeneratedBlock(updated, block.Name, block.Replacement);
+                var replacement = block.Render(source);
+                if (replacement.Contains("<!-- generated:", StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        $"Generated block '{block.Name}' replacement content must not contain generated markers.");
+                }
+
+                updated = ReplaceGeneratedBlock(updated, block.Name, replacement);
             }
 
             proposedDocuments[targetBlocks.Key] = updated;

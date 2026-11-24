@@ -24,15 +24,7 @@ internal static class SymbolEvidence
         string root, CoverageConfiguration coverage, string output, Func<string, string[], string, CancellationToken, Task<string>> run, TextWriter standardOutput, CancellationToken ct)
     {
         var revision = (await run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
-        var paths = coverage.SymbolDirectories
-            .Select(directory => RepositoryPath.Parse(directory).ResolveUnder(root))
-            .Where(Directory.Exists)
-            .SelectMany(static directory => Directory.EnumerateFiles(directory, "*.pdb", SearchOption.AllDirectories))
-            .Select(file => Path.GetRelativePath(root, file).Replace('\\', '/'))
-            .Where(static path => path.Contains(ReleaseSegment, StringComparison.Ordinal))
-            .Distinct(StringComparer.Ordinal)
-            .Order(StringComparer.Ordinal)
-            .ToArray();
+        var paths = FindReleaseFiles(root, coverage);
         if (paths.Length == 0)
         {
             throw new InvalidOperationException("No Release portable PDB exists under " + string.Join(", ", coverage.SymbolDirectories) + "; build with -c Release first.");
@@ -51,6 +43,17 @@ internal static class SymbolEvidence
             .ConfigureAwait(false);
         await standardOutput.WriteLineAsync(("Recorded " + paths.Length + " Release symbol files of " + revision + " in " + output + ".").AsMemory(), CancellationToken.None).ConfigureAwait(false);
     }
+
+    /// <summary>Finds the repository-relative Release PDBs under the configured symbol directories.</summary>
+    internal static string[] FindReleaseFiles(string root, CoverageConfiguration coverage) => coverage.SymbolDirectories
+        .Select(directory => RepositoryPath.Parse(directory).ResolveUnder(root))
+        .Where(Directory.Exists)
+        .SelectMany(static directory => Directory.EnumerateFiles(directory, "*.pdb", SearchOption.AllDirectories))
+        .Select(file => Path.GetRelativePath(root, file).Replace('\\', '/'))
+        .Where(static path => path.Contains(ReleaseSegment, StringComparison.Ordinal))
+        .Distinct(StringComparer.Ordinal)
+        .Order(StringComparer.Ordinal)
+        .ToArray();
 
     /// <summary>
     /// Requires the evidence to record <paramref name="revision"/>, and each file it names to be a Release portable PDB

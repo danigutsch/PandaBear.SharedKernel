@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -13,6 +14,7 @@ internal sealed class GitHubRoadmapReconcileClient
     private const string DefaultBranchMovedMessage = "GitHub reconciliation default branch changed while reading the snapshot.";
     private const int MaxResponseBytes = 8 * 1024 * 1024;
     private const int MaxSupplementalIssues = 2000;
+    private const int SupplementalIssueBatchSize = 16;
     private const string ReconcileQuery = """
         query($owner:String!,$name:String!,$after:String){
           repository(owner:$owner,name:$name){
@@ -37,7 +39,18 @@ internal sealed class GitHubRoadmapReconcileClient
         }
         """;
 
-    private const string IssueQuery = "query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){issueOrPullRequest(number:$number){__typename ... on Issue{id number title state stateReason labels(first:100){nodes{name}pageInfo{hasNextPage endCursor}} parent{number state repository{nameWithOwner}} subIssues(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blockedBy(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blocking(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}}}}}";
+    private const string IssueLookupSelection = """
+        {__typename ... on Issue{
+          id number title state stateReason
+          labels(first:100){nodes{name}pageInfo{hasNextPage endCursor}}
+          parent{number state repository{nameWithOwner}}
+          subIssues(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}
+          blockedBy(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}
+          blocking(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}
+        }}
+        """;
+
+    private const string IssueQuery = "query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){issueOrPullRequest(number:$number)" + IssueLookupSelection + "}}";
     private const string RepositoryCommitQuery = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){defaultBranchRef{target{oid}}}}";
     private static readonly TimeSpan SnapshotTimeout = TimeSpan.FromMinutes(2);
     private readonly HttpClient _httpClient;
@@ -293,6 +306,20 @@ internal sealed class GitHubRoadmapReconcileClient
             throw new InvalidOperationException("GitHub reconciliation response exceeded the supplemental issue limit.");
         }
 
+        if (project is null)
+        {
+            var pendingIssueNumbers = orderedIssueNumbers.Where(number => !issuesByNumber.ContainsKey(number)).ToArray();
+            if (pendingIssueNumbers.Length > 1)
+            {
+                foreach (var batch in pendingIssueNumbers.Chunk(SupplementalIssueBatchSize))
+                {
+                    await AddSupplementalIssueBatch(owner, name, batch, issuesByNumber, cancellationToken).ConfigureAwait(false);
+                }
+
+                return;
+            }
+        }
+
         foreach (var issueNumber in orderedIssueNumbers)
         {
             if (issuesByNumber.ContainsKey(issueNumber))
@@ -323,10 +350,51 @@ internal sealed class GitHubRoadmapReconcileClient
                 issue = await ReadIssueByNumber(owner, name, resolution.Number, cancellationToken).ConfigureAwait(false);
             }
 
-            if (issue.Number != expectedIssueNumber || !issuesByNumber.TryAdd(issue.Number, issue))
+            AddSupplementalIssue(issuesByNumber, expectedIssueNumber, issue);
+        }
+    }
+
+    private async Task AddSupplementalIssueBatch(
+        string owner,
+        string name,
+        int[] issueNumbers,
+        Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber,
+        CancellationToken cancellationToken)
+    {
+        var query = new StringBuilder("query($owner:String!,$name:String!){repository(owner:$owner,name:$name){");
+        for (var index = 0; index < issueNumbers.Length; index++)
+        {
+            query.Append(CultureInfo.InvariantCulture, $"supplemental{index}:issueOrPullRequest(number:{issueNumbers[index]})");
+            query.Append(IssueLookupSelection);
+        }
+
+        query.Append("}}");
+        using var document = await Send(
+            query.ToString(),
+            writer =>
             {
-                throw new InvalidOperationException("GitHub reconciliation response contains inconsistent issue metadata.");
-            }
+                writer.WriteString("owner", owner);
+                writer.WriteString("name", name);
+            },
+            cancellationToken).ConfigureAwait(false);
+        var repository = GetRepository(document.RootElement);
+        for (var index = 0; index < issueNumbers.Length; index++)
+        {
+            var propertyName = string.Create(CultureInfo.InvariantCulture, $"supplemental{index}");
+            var node = GetRequiredLookupNode(repository, propertyName);
+            var issue = await ReadIssue(node, owner, name, cancellationToken).ConfigureAwait(false);
+            AddSupplementalIssue(issuesByNumber, issueNumbers[index], issue);
+        }
+    }
+
+    private static void AddSupplementalIssue(
+        Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber,
+        int expectedIssueNumber,
+        GitHubRoadmapReconcileIssue issue)
+    {
+        if (issue.Number != expectedIssueNumber || !issuesByNumber.TryAdd(issue.Number, issue))
+        {
+            throw new InvalidOperationException("GitHub reconciliation response contains inconsistent issue metadata.");
         }
     }
 
@@ -350,14 +418,18 @@ internal sealed class GitHubRoadmapReconcileClient
                 writer.WriteNumber("number", issueNumber);
             },
             cancellationToken).ConfigureAwait(false);
-        var repository = GetRepository(document.RootElement);
-        if (repository.TryGetProperty("issueOrPullRequest", out var candidate) && candidate.ValueKind == JsonValueKind.Null)
+        var node = GetRequiredLookupNode(GetRepository(document.RootElement), "issueOrPullRequest");
+        return await ReadIssue(node, owner, name, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static JsonElement GetRequiredLookupNode(JsonElement repository, string propertyName)
+    {
+        if (repository.TryGetProperty(propertyName, out var candidate) && candidate.ValueKind == JsonValueKind.Null)
         {
             throw new GitHubIssueLookupUnavailableException();
         }
 
-        var node = GetRequiredObject(repository, "issueOrPullRequest");
-        return await ReadIssue(node, owner, name, cancellationToken).ConfigureAwait(false);
+        return GetRequiredObject(repository, propertyName);
     }
 
     private async Task<string?> ReadCurrentRepositoryCommit(

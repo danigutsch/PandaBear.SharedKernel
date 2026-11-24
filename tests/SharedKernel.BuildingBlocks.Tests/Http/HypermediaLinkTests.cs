@@ -7,6 +7,19 @@ namespace PandaBear.BuildingBlocks.Tests;
 public sealed class HypermediaLinkTests
 {
     [Fact]
+    public void A_read_link_serializes_with_the_expected_wire_shape()
+    {
+        // Arrange
+        var link = HypermediaLink.CreateGet("self", "/items/42");
+
+        // Act
+        var json = JsonSerializer.Serialize(link, HypermediaLinkTestsJsonContext.Default.HypermediaLink);
+
+        // Assert
+        json.ShouldBe("""{"rel":"self","href":"/items/42","method":"GET"}""");
+    }
+
+    [Fact]
     public void Create_withvalidvalues_returnslink()
     {
         // Act

@@ -1,4 +1,6 @@
 #nullable enable
+PandaBear.OpenApi.LocationResponseEndpointExtensions
+static PandaBear.OpenApi.LocationResponseEndpointExtensions.WithLocationResponseHeader<TBuilder>(this TBuilder builder, string? description = null, int statusCode = 201) -> TBuilder
 const PandaBear.OpenApi.OpenApiAuthenticationDefaults.BearerSecuritySchemeName = "Bearer" -> string!
 const PandaBear.OpenApi.OpenApiGenerationMode.HostEnvironmentName = "OpenApiGeneration" -> string!
 PandaBear.OpenApi.BearerSecurityDocumentTransformer

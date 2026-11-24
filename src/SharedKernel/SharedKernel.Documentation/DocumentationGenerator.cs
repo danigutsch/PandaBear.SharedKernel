@@ -7,6 +7,8 @@ namespace PandaBear.Documentation;
 /// </summary>
 public static class DocumentationGenerator
 {
+    private const string MarkdownTocKind = "markdown-toc";
+
     /// <summary>
     /// Runs documentation generation from a JSON config file.
     /// </summary>
@@ -24,7 +26,7 @@ public static class DocumentationGenerator
         ValidateConfig(config, configPath);
 
         var replacements = config.Blocks
-            .Select(block => (block.Name, block.TargetPath, Replacement: GenerateBlock(fullRootPath, block)))
+            .Select(block => (block.Name, block.TargetPath, Render: CreateRenderer(fullRootPath, block)))
             .ToList();
         var updater = new GeneratedMarkdownUpdater(fullRootPath, config.DocsPath, config.GeneratorName);
         return new DocumentationGenerationResult(updater.Update(checkOnly, replacements));
@@ -56,7 +58,7 @@ public static class DocumentationGenerator
 
         var replacement = DataOwnershipMermaidDiagram.Build(diagram);
         var updater = new GeneratedMarkdownUpdater(Path.GetFullPath(rootPath), docsPath, generatorName);
-        return new DocumentationGenerationResult(updater.Update(checkOnly, [(blockName, targetPath, replacement)]));
+        return new DocumentationGenerationResult(updater.Update(checkOnly, [(blockName, targetPath, _ => replacement)]));
     }
 
     private static void ValidateConfig(DocumentationGeneratorConfig config, string configPath)
@@ -78,10 +80,13 @@ public static class DocumentationGenerator
 
         for (var blockIndex = 0; blockIndex < config.Blocks.Count; blockIndex++)
         {
-            if (config.Blocks[blockIndex] is null)
+            var block = config.Blocks[blockIndex] ?? throw new InvalidOperationException(
+                $"Block at index {blockIndex} in documentation generator config '{configPath}' must not be null.");
+
+            if (block.Kind == MarkdownTocKind && (block.MinHeadingLevel < 1 || block.MaxHeadingLevel > 6 || block.MinHeadingLevel > block.MaxHeadingLevel))
             {
                 throw new InvalidOperationException(
-                    $"Block at index {blockIndex} in documentation generator config '{configPath}' must not be null.");
+                    $"Generated block '{block.Name}' requires minHeadingLevel and maxHeadingLevel from 1 through 6 in ascending order.");
             }
         }
 
@@ -98,13 +103,26 @@ public static class DocumentationGenerator
         }
     }
 
+    private static Func<string, string> CreateRenderer(string rootPath, DocumentationGeneratorBlock block)
+    {
+        if (block.Kind == MarkdownTocKind)
+        {
+            return markdown => MarkdownTableOfContents.Build(markdown, block.MinHeadingLevel, block.MaxHeadingLevel);
+        }
+
+        var replacement = GenerateBlock(rootPath, block);
+        return _ => replacement;
+    }
+
     private static string GenerateBlock(string rootPath, DocumentationGeneratorBlock block) => block.Kind switch
     {
         "mermaid-flowchart" => MermaidDiagram.Build(block.Flowchart, block.Lines),
         "project-references" => ProjectReferenceMermaidDiagram.Build(rootPath, block.SourcePath, ProjectFilter(block.ProjectFilter)),
         "apphost-resources" => AppHostMermaidDiagram.Build(Path.Combine(rootPath, block.SourcePath), block.Labels),
-        "endpoint-routes" => EndpointRouteMarkdownTable.Build(Path.Combine(rootPath, block.SourcePath), block),
+        "endpoint-routes" => EndpointRouteMarkdownTable.Build(Path.Combine(rootPath, block.SourcePath), block,
+            OpenApiRouteAuthorization.Load(rootPath, block.OpenApiAuthorizationDocuments)),
         "integration-events" => IntegrationEventMarkdownTable.Build(Path.Combine(rootPath, block.SourcePath)),
+        "mediator-topology" => MediatorTopologyMermaidDiagram.Build(Path.Combine(rootPath, block.SourcePath)),
         "github-actions-jobs" => GitHubActionsMermaidDiagram.BuildJobs(Path.Combine(rootPath, block.SourcePath), block.TriggerLabel),
         "github-actions-workflows" => GitHubActionsMermaidDiagram.BuildWorkflowInventory(Path.Combine(rootPath, block.SourcePath), block.RootLabel, block.ExcludedWorkflowFileName),
         _ => throw new InvalidOperationException($"Unknown generated documentation block kind: {block.Kind}"),

@@ -1,8 +1,10 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
+using System.Diagnostics;
 using System.Globalization;
 using PandaBear.DevContainers;
 using PandaBear.Forgejo;
+using PandaBear.Processes;
 using PandaBear.Repositories;
 using PandaBear.Repositories.GitHub;
 
@@ -13,6 +15,9 @@ namespace PandaBear.RepoConfig.Tool;
 /// </summary>
 internal static class RepoConfigCommandLine
 {
+    /// <summary>The opt-in command that needs time to clean up its private engine after a shutdown signal.</summary>
+    internal const string IsolatedPodmanCommandName = "run-isolated-podman";
+
     private const int DefaultLimit = 10;
 
     private static readonly string[] GetQueries =
@@ -63,6 +68,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyTestTaxonomyCommand(environment, root),
             CreateVerifyTargetFrameworksCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
+            CreateRunIsolatedPodmanCommand(environment),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
             CreateVerifyDevcontainerCommand(environment, root),
@@ -542,6 +548,72 @@ internal static class RepoConfigCommandLine
             output,
             error,
             ct));
+        return command;
+    }
+
+    private static Command CreateRunIsolatedPodmanCommand(RepoConfigToolEnvironment environment)
+    {
+        const int maxTimeoutSeconds = 4_294_967;
+        Option<string> imageStore = new("--image-store")
+        {
+            Description = "Absolute path to an existing read-only additional overlay image store.",
+            HelpName = "directory",
+            Required = true,
+        };
+        Option<int> timeout = new("--timeout-seconds")
+        {
+            Description = "Maximum duration of the test command, in seconds.",
+            DefaultValueFactory = _ => 1_800,
+        };
+        timeout.Validators.Add(result =>
+        {
+            if (result.GetValueOrDefault<int>() is <= 0 or > maxTimeoutSeconds)
+            {
+                result.AddError($"--timeout-seconds must be between 1 and {maxTimeoutSeconds.ToString(CultureInfo.InvariantCulture)}.");
+            }
+        });
+        Option<string> networkHelper = new("--network-helper")
+        {
+            Description = "Installed rootless network helper. Defaults to pasta.",
+            DefaultValueFactory = _ => "pasta",
+        };
+        networkHelper.AcceptOnlyFromAmong("pasta", "slirp4netns");
+        Option<string?> runtimeParent = new("--runtime-parent")
+        {
+            Description = "Existing absolute directory for private transient engine state. The graph and volumes stay under TMPDIR.",
+            HelpName = "directory",
+        };
+        Argument<string[]> child = new("command")
+        {
+            Arity = ArgumentArity.OneOrMore,
+            Description = "Trusted test executable and arguments. Put '--' before the executable to forward its options.",
+        };
+        Command command = new(IsolatedPodmanCommandName, "Run a test command with its own local rootless Podman engine.")
+        {
+            imageStore, timeout, networkHelper, runtimeParent, child
+        };
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+        {
+            var arguments = parseResult.GetRequiredValue(child);
+            var executable = PathExecutableResolver.Default.Resolve(arguments[0]);
+            var startInfo = new ProcessStartInfo(executable) { WorkingDirectory = environment.WorkingDirectory };
+            foreach (var argument in arguments.Skip(1))
+            {
+                startInfo.ArgumentList.Add(argument);
+            }
+            var runner = environment.IsolatedPodmanCommandRunner
+                ?? new BoundedProcessRunner(TimeSpan.FromSeconds(parseResult.GetRequiredValue(timeout)));
+            return IsolatedPodman.Run(
+                environment.PodmanHost ?? PodmanDnsHost.Current(),
+                parseResult.GetRequiredValue(imageStore),
+                parseResult.GetRequiredValue(networkHelper),
+                parseResult.GetValue(runtimeParent),
+                startInfo,
+                runner,
+                output,
+                error,
+                ct);
+        });
         return command;
     }
 

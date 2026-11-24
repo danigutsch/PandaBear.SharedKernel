@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IsAotCompatible>false</IsAotCompatible>
+        <PackageId>PandaBear.SharedKernel.AspNetCore.CodeFixes</PackageId>
+        <Description>Code fixes for reviewed ASP.NET Core Minimal API runtime binding fallbacks.</Description>
+        <RootNamespace>PandaBear.AspNetCore.CodeFixes</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>aspnetcore;code-fixes;aot;shared-kernel</PackageTags>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="../SharedKernel.AspNetCore.Analyzers/RuntimeEndpointDiagnostics.cs" Link="RuntimeEndpointDiagnostics.cs" />
+        <AdditionalFiles Include="../SharedKernel.AspNetCore.Analyzers/AnalyzerReleases.Unshipped.md" Link="AnalyzerReleases.Unshipped.md" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
+        <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
+</Project>

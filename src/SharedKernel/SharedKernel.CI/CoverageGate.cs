@@ -82,10 +82,9 @@ internal static class CoverageGate
             // The symbols decide which uncovered files count as having no executable code, so they are checked first.
             var symbolFiles = await SymbolEvidence.Verify(root, coverage, Path.GetFullPath(symbols, root), revision, ct).ConfigureAwait(false);
             var patch = await run("git", [.. DiffArguments, baseRevision + "...HEAD", "--"], root, ct).ConfigureAwait(false);
-            bool Included(string path) => ProjectSelector.Match(coverage.Include, path) is not null && ProjectSelector.Match(coverage.Exclude, path) is null;
-            var changes = ChangedLines.Parse(patch, Included);
+            var changes = ChangedLines.Parse(patch, coverage.Includes);
             files = CoberturaReport.Find(root, reports);
-            var report = CoberturaReport.Read(root, files, Included);
+            var report = CoberturaReport.Read(root, files, coverage.Includes);
             foreach (var (path, changedLines) in changes.OrderBy(static change => change.Key, StringComparer.Ordinal))
             {
                 if (!report.TryGetValue(path, out var lines))
@@ -98,14 +97,9 @@ internal static class CoverageGate
                     throw new InvalidDataException("The changed source file " + path + " is in no coverage report, and the symbols do not show it without executable code.");
                 }
 
-                foreach (var number in changedLines)
-                {
-                    if (lines.TryGetValue(number, out var line))
-                    {
-                        total += 1L + line.Branches;
-                        covered += (line.Hit ? 1L : 0L) + line.CoveredBranches;
-                    }
-                }
+                var counts = LineCoverage.CountChanged(changedLines, lines);
+                total += counts.Lines + counts.Conditions;
+                covered += counts.HitLines + counts.HitConditions;
             }
 
             passed = total == 0 || covered * 100 >= total * threshold;

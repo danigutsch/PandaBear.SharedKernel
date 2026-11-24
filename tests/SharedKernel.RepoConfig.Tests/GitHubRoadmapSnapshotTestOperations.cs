@@ -177,7 +177,21 @@ internal static class GitHubRoadmapSnapshotTestOperations
         writer.WriteEndObject();
     }
 
+    /// <summary>Queues the GraphQL response for a batch of supplemental issue lookups.</summary>
+    public static void EnqueueSupplementalIssues(TestHttpMessageHandler handler, IReadOnlyList<GitHubRoadmapReconcileIssue?> issues)
+    {
+        EnqueueIssueLookups(handler, issues, useAliases: true);
+    }
+
     private static void EnqueueIssue(TestHttpMessageHandler handler, GitHubRoadmapReconcileIssue issue)
+    {
+        EnqueueIssueLookups(handler, [issue], useAliases: false);
+    }
+
+    private static void EnqueueIssueLookups(
+        TestHttpMessageHandler handler,
+        IReadOnlyList<GitHubRoadmapReconcileIssue?> issues,
+        bool useAliases)
     {
         using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(stream))
@@ -187,8 +201,21 @@ internal static class GitHubRoadmapSnapshotTestOperations
             writer.WriteStartObject();
             writer.WritePropertyName("repository");
             writer.WriteStartObject();
-            writer.WritePropertyName("issueOrPullRequest");
-            WriteIssue(writer, issue);
+            for (var index = 0; index < issues.Count; index++)
+            {
+                writer.WritePropertyName(useAliases
+                    ? string.Create(System.Globalization.CultureInfo.InvariantCulture, $"supplemental{index}")
+                    : "issueOrPullRequest");
+                if (issues[index] is { } issue)
+                {
+                    WriteIssue(writer, issue);
+                }
+                else
+                {
+                    writer.WriteNullValue();
+                }
+            }
+
             writer.WriteEndObject();
             writer.WriteEndObject();
             writer.WriteEndObject();

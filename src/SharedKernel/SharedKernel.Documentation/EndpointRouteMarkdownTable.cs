@@ -9,6 +9,8 @@ namespace PandaBear.Documentation;
 internal static partial class EndpointRouteMarkdownTable
 {
     private const int MaximumEndpointChainLineCount = 128;
+    private const string RequiredAuthorization = "required";
+    private const string NoDeclaredAuthorization = "not declared";
     private static readonly UTF8Encoding Utf8NoBom = new(false);
 
     /// <summary>
@@ -16,13 +18,17 @@ internal static partial class EndpointRouteMarkdownTable
     /// </summary>
     /// <exception cref="ArgumentException">Thrown when <paramref name="sourcePath"/> is <see langword="null"/>, empty, or white-space.</exception>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="configuration"/> is <see langword="null"/>.</exception>
-    public static string Build(string sourcePath, DocumentationGeneratorBlock configuration)
+    /// <param name="sourcePath">The folder containing the Minimal API source files.</param>
+    /// <param name="configuration">The endpoint inventory settings.</param>
+    /// <param name="openApiAuthorization">Optional generated authorization evidence scoped to source directories.</param>
+    /// <returns>The rendered endpoint Markdown table.</returns>
+    public static string Build(string sourcePath, DocumentationGeneratorBlock configuration, OpenApiRouteAuthorization? openApiAuthorization = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
         ArgumentNullException.ThrowIfNull(configuration);
 
         var rows = SourceFiles(sourcePath)
-            .SelectMany(file => RoutesFromFile(sourcePath, file, configuration))
+            .SelectMany(file => RoutesFromFile(sourcePath, file, configuration, openApiAuthorization))
             .OrderBy(route => route.Path, StringComparer.Ordinal)
             .ThenBy(route => route.Method, StringComparer.Ordinal)
             .ThenBy(route => route.Name, StringComparer.Ordinal)
@@ -41,7 +47,8 @@ internal static partial class EndpointRouteMarkdownTable
     private static IEnumerable<(string Method, string Path, string Name, string Audience, string Auth, string Source)> RoutesFromFile(
         string sourcePath,
         FileInfo file,
-        DocumentationGeneratorBlock configuration)
+        DocumentationGeneratorBlock configuration,
+        OpenApiRouteAuthorization? openApiAuthorization)
     {
         var lines = File.ReadAllLines(file.FullName, Utf8NoBom);
         var routePrefixes = new Dictionary<string, string>(configuration.RoutePrefixes, StringComparer.Ordinal);
@@ -61,7 +68,16 @@ internal static partial class EndpointRouteMarkdownTable
             var chain = EndpointChain(lines, index);
             var handler = match.Groups[4].Value.Trim();
             var source = Path.GetRelativePath(sourcePath, file.FullName).Replace(Path.DirectorySeparatorChar, '/');
-            yield return (method, path, EndpointName(chain, handler, configuration.EndpointNameMethods), Audience(path, source, configuration), AuthMetadata(chain), source);
+            var declaredName = DeclaredEndpointName(chain, configuration.EndpointNameMethods);
+            var name = declaredName ?? (handler.Contains("=>", StringComparison.Ordinal) ? "inline" : handler);
+            var authorization = AuthMetadata(chain);
+            if (authorization == NoDeclaredAuthorization && declaredName is not null
+                && openApiAuthorization?.RequiresAuthorization(source, declaredName, method, path) == true)
+            {
+                authorization = RequiredAuthorization;
+            }
+
+            yield return (method, path, name, Audience(path, source, configuration), authorization, source);
         }
     }
 
@@ -134,7 +150,7 @@ internal static partial class EndpointRouteMarkdownTable
         return length;
     }
 
-    private static string EndpointName(string chain, string handler, IEnumerable<string> methods)
+    private static string? DeclaredEndpointName(string chain, IEnumerable<string> methods)
     {
         foreach (var method in methods)
         {
@@ -146,7 +162,7 @@ internal static partial class EndpointRouteMarkdownTable
             }
         }
 
-        return handler.Contains("=>", StringComparison.Ordinal) ? "inline" : handler;
+        return null;
     }
 
     private static string Audience(string path, string source, DocumentationGeneratorBlock configuration)
@@ -174,10 +190,10 @@ internal static partial class EndpointRouteMarkdownTable
     {
         if (chain.Contains(".RequireAuthorization", StringComparison.Ordinal))
         {
-            return "required";
+            return RequiredAuthorization;
         }
 
-        return chain.Contains(".AllowAnonymous", StringComparison.Ordinal) ? "anonymous" : "not declared";
+        return chain.Contains(".AllowAnonymous", StringComparison.Ordinal) ? "anonymous" : NoDeclaredAuthorization;
     }
 
     private static string Escape(string value) => value.Replace("|", "\\|", StringComparison.Ordinal);
