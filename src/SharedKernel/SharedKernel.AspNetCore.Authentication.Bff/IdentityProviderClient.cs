@@ -236,7 +236,8 @@ internal sealed partial class IdentityProviderClient
         }
         catch (TaskCanceledException exception) when (!ct.IsCancellationRequested)
         {
-            LogUnavailable(_logger, operation, ((Exception?)(exception.InnerException as TimeoutException) ?? exception).GetType().FullName ?? exception.GetType().Name);
+            Exception failure = exception.InnerException is TimeoutException timeout ? timeout : exception;
+            LogUnavailable(_logger, operation, failure.GetType().FullName ?? failure.GetType().Name);
             return TokenEndpointOutcome.Unavailable();
         }
     }
