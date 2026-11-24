@@ -7,7 +7,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;assertions;xunit;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>
-        <EnableSharedKernelTestingAnalyzers>true</EnableSharedKernelTestingAnalyzers>
+        <EnableTestingAnalyzers>true</EnableTestingAnalyzers>
     </PropertyGroup>
 
     <ItemGroup>

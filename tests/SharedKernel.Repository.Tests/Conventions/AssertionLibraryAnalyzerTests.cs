@@ -5,7 +5,7 @@ namespace PandaBear.Repository.Tests.Conventions;
 /// <summary>Guards the build wiring that makes the testing analyzers run in the assertion libraries.</summary>
 public static class AssertionLibraryAnalyzerTests
 {
-    private const string OptInCondition = "'$(EnableSharedKernelTestingAnalyzers)' == 'true'";
+    private const string OptInCondition = "'$(EnableTestingAnalyzers)' == 'true'";
     private const string PropsDirectory = "$(MSBuildThisFileDirectory)";
 
     [Theory]
@@ -20,7 +20,7 @@ public static class AssertionLibraryAnalyzerTests
 
         // Act
         var enablesTestingAnalyzers = PackagingConventionTestFiles.GetProperty(
-            Path.Combine(projectDirectory, projectName + ".csproj"), "EnableSharedKernelTestingAnalyzers");
+            Path.Combine(projectDirectory, projectName + ".csproj"), "EnableTestingAnalyzers");
         var editorConfigLines = File.ReadAllLines(Path.Combine(projectDirectory, ".editorconfig"));
 
         // Assert

@@ -1,6 +1,6 @@
 ---
 name: dotnet-multi-targeting
-description: Use when moving the repository to another .NET version, changing the global.json SDK or SharedKernelTargetFramework, when verify-target-frameworks reports a framework name outside Directory.Build.props, when a consuming repository must build more than one .NET version (TargetFrameworks, per-framework package versions, dotnet release --framework), or for NETSDK1045, NU1004, NU1510, CP0002, CA1307 on char overloads, or "Your project targets multiple frameworks" errors.
+description: Use when moving the repository to another .NET version, changing the global.json SDK or RepositoryTargetFramework, when verify-target-frameworks reports a framework name outside Directory.Build.props, when a consuming repository must build more than one .NET version (TargetFrameworks, per-framework package versions, dotnet release --framework), or for NETSDK1045, NU1004, NU1510, CP0002, CA1307 on char overloads, or "Your project targets multiple frameworks" errors.
 license: See repository LICENSE.txt
 ---
 
@@ -15,9 +15,9 @@ framework restores, builds, runs, and publishes NativeAOT. Read the touched flow
 
 A change that moves the version contains each of these, or says why one does not apply:
 
-1. **Setting**: `SharedKernelTargetFramework` in the root `Directory.Build.props` is the only place that names the
+1. **Setting**: `RepositoryTargetFramework` in the root `Directory.Build.props` is the only place that names the
    framework. Never write a moniker in a project, props, targets, nuspec, workflow, action, script, or the policy file;
-   use `$(SharedKernelTargetFramework)`. `-p:SharedKernelTargetFramework=…` builds another version without touching the
+   use `$(RepositoryTargetFramework)`. `-p:RepositoryTargetFramework=…` builds another version without touching the
    `netstandard2.0` analyzers.
 2. **SDK**: `global.json` major at least the framework's (NETSDK1045 otherwise); keep `rollForward: disable`.
 3. **Packages**: move the packages with one line per .NET version to the new line, unless a dependency blocks it (the
@@ -58,7 +58,7 @@ Use the tools' multi-framework support rather than new scripts:
 
 | Mistake | Fix |
 | --- | --- |
-| Writing `net11.0` in a project, workflow, or test template | Use `$(SharedKernelTargetFramework)`, or in a test the framework it was built for (`TestTargetFramework.Moniker`) |
+| Writing `net11.0` in a project, workflow, or test template | Use `$(RepositoryTargetFramework)`, or in a test the framework it was built for (`TestTargetFramework.Moniker`) |
 | Moving EF Core to a new major before Npgsql's EF provider supports it | Keep the EF family on the old line; EF Core 11 breaks code built against EF Core 10 |
 | Shipping a dependency on a release candidate | Wait for the stable release |
 | Guessing the latest SDK or package version | Check the dotnet/core release notes and nuget.org; cite them |

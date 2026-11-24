@@ -18,7 +18,7 @@ dotnet codefix --version
 
 ## Prerequisites
 
-The tool runs on the newest installed .NET runtime, at least the repository's .NET version (`SharedKernelTargetFramework`, .NET 11), and loads the target through MSBuildLocator and MSBuildWorkspace. Each starts from
+The tool runs on the newest installed .NET runtime, at least the repository's .NET version (`RepositoryTargetFramework`, .NET 11), and loads the target through MSBuildLocator and MSBuildWorkspace. Each starts from
 the .NET SDK that `dotnet` selects for a directory, honoring `global.json`:
 
 - An SDK of the tool's .NET version or later. MSBuildLocator loads MSBuild into the tool from the SDK selected for the

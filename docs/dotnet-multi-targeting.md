@@ -11,8 +11,8 @@ The [target framework agent skill](../.agents/skills/dotnet-multi-targeting/SKIL
 The root `Directory.Build.props` names the framework once:
 
 ```xml
-<SharedKernelTargetFramework>net11.0</SharedKernelTargetFramework>
-<TargetFramework>$(SharedKernelTargetFramework)</TargetFramework>
+<RepositoryTargetFramework>net11.0</RepositoryTargetFramework>
+<TargetFramework>$(RepositoryTargetFramework)</TargetFramework>
 ```
 
 Libraries, tests, samples, and tools inherit it. Analyzers, code fixes, and generators set `netstandard2.0`, which is not
@@ -24,7 +24,7 @@ a later runtime is installed.
 The setting is the only place that names a .NET framework. `dotnet repo verify-target-frameworks` enforces it:
 
 - The `targetFrameworks` policy in `.config/sharedkernel-repo.json` names `"frameworkProperties": "Directory.Build.props"`, and its rules say
-  `"frameworks": ["$(SharedKernelTargetFramework)"]` instead of a moniker.
+  `"frameworks": ["$(RepositoryTargetFramework)"]` instead of a moniker.
 - It reports a .NET framework name anywhere else in a tracked project, props, targets, nuspec, workflow, action, or
   script file, or in the policy file.
 - `dotnet release` consumes packed candidates as the repository's framework unless `--framework` is given.
@@ -36,7 +36,7 @@ The setting is the only place that names a .NET framework. `dotnet repo verify-t
 ## Moving to the next .NET version
 
 1. Pin the new SDK in `global.json`.
-2. Change `SharedKernelTargetFramework`.
+2. Change `RepositoryTargetFramework`.
 3. Move the packages that ship one line per .NET version to the new line, except those blocked by a dependency (see
    Packages).
 4. Run `dotnet restore SharedKernel.slnx --force-evaluate` to regenerate the lock files, then build, test, and run

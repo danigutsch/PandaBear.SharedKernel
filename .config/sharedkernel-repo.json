@@ -139,9 +139,9 @@
       {"include": "src/SharedKernel/*.Analyzers/*.csproj", "frameworks": ["netstandard2.0"]},
       {"include": "src/SharedKernel/*.CodeFixes/*.csproj", "frameworks": ["netstandard2.0"]},
       {"include": "src/SharedKernel/*.SourceGenerator/*.csproj", "frameworks": ["netstandard2.0"]},
-      {"include": "tools/SharedKernel.Testing.CodeFixRunner/*.csproj", "frameworks": ["$(SharedKernelTargetFramework)"], "rollForward": "LatestMajor"},
-      {"include": "tools/*.csproj", "frameworks": ["$(SharedKernelTargetFramework)"], "rollForward": "Major"},
-      {"include": "*.csproj", "frameworks": ["$(SharedKernelTargetFramework)"]}
+      {"include": "tools/SharedKernel.Testing.CodeFixRunner/*.csproj", "frameworks": ["$(RepositoryTargetFramework)"], "rollForward": "LatestMajor"},
+      {"include": "tools/*.csproj", "frameworks": ["$(RepositoryTargetFramework)"], "rollForward": "Major"},
+      {"include": "*.csproj", "frameworks": ["$(RepositoryTargetFramework)"]}
     ],
     "commandFiles": [".github/*", "*.sh", "*.ps1", "*.md"]
   }
