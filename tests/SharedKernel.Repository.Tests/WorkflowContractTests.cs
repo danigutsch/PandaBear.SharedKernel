@@ -365,7 +365,7 @@ public sealed class WorkflowContractTests
 
         // Assert
         files.ShouldNotBeEmpty();
-        violations.ShouldBeEmpty("The repository's framework comes from SharedKernelTargetFramework; workflows derive runtimes from it.");
+        violations.ShouldBeEmpty("The repository's framework comes from RepositoryTargetFramework; workflows derive runtimes from it.");
     }
 
     [Fact]
@@ -380,10 +380,10 @@ public sealed class WorkflowContractTests
 
         // Assert
         action.ShouldNotContain("dotnet-version: ${{ inputs.dotnet-version }}", StringComparison.Ordinal);
-        runtimeStep.ShouldContain("-getProperty:SharedKernelTargetFramework", StringComparison.Ordinal);
+        runtimeStep.ShouldContain("-getProperty:RepositoryTargetFramework", StringComparison.Ordinal);
         runtimeStep.ShouldContain("dotnet --version", StringComparison.Ordinal);
         runtimeStep.ShouldContain("-lt", StringComparison.Ordinal);
-        runtimeStep.ShouldContain("-getProperty:SharedKernelTargetFramework | tail -n 1", StringComparison.Ordinal, "Banner lines before the property value must not hide it.");
+        runtimeStep.ShouldContain("-getProperty:RepositoryTargetFramework | tail -n 1", StringComparison.Ordinal, "Banner lines before the property value must not hide it.");
         runtimeStep.ShouldContain("exit 1", StringComparison.Ordinal, "A value that is not a framework moniker fails the setup instead of installing no runtime.");
         runtimeStep.ShouldContain("steps.framework.outputs.runtime != ''", StringComparison.Ordinal);
         runtimeStep.ShouldContain("dotnet-version: ${{ steps.framework.outputs.runtime }}", StringComparison.Ordinal);
@@ -413,7 +413,7 @@ public sealed class WorkflowContractTests
         workflow.ShouldContain("::notice::", StringComparison.Ordinal);
         workflow.ShouldContain("-p:RestorePackagesWithLockFile=false", StringComparison.Ordinal);
         workflow.ShouldContain("-p:RestoreLockedMode=false", StringComparison.Ordinal);
-        workflow.ShouldContain("-p:SharedKernelTargetFramework=", StringComparison.Ordinal);
+        workflow.ShouldContain("-p:RepositoryTargetFramework=", StringComparison.Ordinal);
         workflow.ShouldContain("dotnet-quality: preview", StringComparison.Ordinal);
         workflow.ShouldNotContain("rm global.json", StringComparison.Ordinal, "global.json also pins the Aspire AppHost SDK and selects the Microsoft.Testing.Platform runner.");
         workflow.ShouldContain("\"allowPrerelease\": true", StringComparison.Ordinal);

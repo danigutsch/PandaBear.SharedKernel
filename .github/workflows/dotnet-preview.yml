@@ -50,7 +50,7 @@ jobs:
           jq '.sdk = {"rollForward": "latestMajor", "allowPrerelease": true}' global.json > global.json.preview
           mv global.json.preview global.json
           dotnet --version
-          properties=("-p:SharedKernelTargetFramework=net$NEXT_MAJOR.0" -p:RestorePackagesWithLockFile=false -p:RestoreLockedMode=false)
+          properties=("-p:RepositoryTargetFramework=net$NEXT_MAJOR.0" -p:RestorePackagesWithLockFile=false -p:RestoreLockedMode=false)
           dotnet restore SharedKernel.slnx "${properties[@]}"
           dotnet build SharedKernel.slnx -c Release --no-restore "${properties[@]}"
           dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore "${properties[@]}"

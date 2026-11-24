@@ -9,7 +9,7 @@
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and '$(IsRoslynComponent)' != 'true' and '$(EnableSharedKernelTestingAnalyzers)' != 'false'">
+	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and '$(IsRoslynComponent)' != 'true' and '$(EnableTestingAnalyzers)' != 'false'">
 		<ProjectReference Include="$(MSBuildThisFileDirectory)..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj"
 			OutputItemType="Analyzer"
 			ReferenceOutputAssembly="false"

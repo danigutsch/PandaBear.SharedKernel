@@ -14,7 +14,7 @@ approvals.
 
 ## Prerequisites
 
-The tool targets the repository's .NET version (`SharedKernelTargetFramework`) and rolls forward to a later major runtime when that one is not installed.
+The tool targets the repository's .NET version (`RepositoryTargetFramework`) and rolls forward to a later major runtime when that one is not installed.
 `verify-text-encoding`, `verify-line-endings`, `verify-json`, `verify-gherkin`, `verify-target-frameworks`,
 `dependency snapshot`, `dependency verify-license-exceptions`, and the `automation` steps also need Git on an absolute
 `PATH` entry.

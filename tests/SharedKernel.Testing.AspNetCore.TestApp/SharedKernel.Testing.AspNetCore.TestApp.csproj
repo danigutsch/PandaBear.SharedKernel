@@ -3,7 +3,7 @@
     <PropertyGroup>
         <RootNamespace>PandaBear.Testing.AspNetCore.TestApp</RootNamespace>
         <IsPackable>false</IsPackable>
-        <EnableSharedKernelTestingAnalyzers>false</EnableSharedKernelTestingAnalyzers>
+        <EnableTestingAnalyzers>false</EnableTestingAnalyzers>
     </PropertyGroup>
 
     <ItemGroup>

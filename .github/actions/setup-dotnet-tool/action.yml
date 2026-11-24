@@ -34,20 +34,20 @@ runs:
       env:
         GLOBAL_JSON_FILE: ${{ inputs.global-json-file }}
       run: |
-        # The framework is the SharedKernelTargetFramework property of the Directory.Build.props beside global.json.
+        # The framework is the RepositoryTargetFramework property of the Directory.Build.props beside global.json.
         # An empty property installs nothing; the SDK covers a framework of its own major.
         root="$(dirname "$GLOBAL_JSON_FILE")"
         runtime=''
         if [[ -f "$root/Directory.Build.props" ]]; then
           # The property is the last line: the dotnet CLI can print banner lines first.
-          framework="$(cd "$root" && dotnet msbuild Directory.Build.props -getProperty:SharedKernelTargetFramework | tail -n 1 | tr -d '[:space:]')"
+          framework="$(cd "$root" && dotnet msbuild Directory.Build.props -getProperty:RepositoryTargetFramework | tail -n 1 | tr -d '[:space:]')"
           sdk="$(cd "$root" && dotnet --version | tail -n 1)"
           if [[ "$framework" =~ ^net([0-9]+)\.[0-9]+$ ]]; then
             if [[ "${BASH_REMATCH[1]}" -lt "${sdk%%.*}" ]]; then
               runtime="${BASH_REMATCH[1]}.0.x"
             fi
           elif [[ -n "$framework" ]]; then
-            echo "::error file=$root/Directory.Build.props::SharedKernelTargetFramework is '$framework', not a framework such as net<major>.<minor>."
+            echo "::error file=$root/Directory.Build.props::RepositoryTargetFramework is '$framework', not a framework such as net<major>.<minor>."
             exit 1
           fi
         fi
