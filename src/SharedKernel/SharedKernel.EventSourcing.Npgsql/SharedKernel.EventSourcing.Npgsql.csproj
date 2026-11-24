@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\SharedKernel.Mediator\DurationBuckets.cs" Link="DurationBuckets.cs" />
+    <Compile Include="..\SharedKernel.Observability\DurationBuckets.cs" Link="DurationBuckets.cs" />
   </ItemGroup>
 
   <ItemGroup>

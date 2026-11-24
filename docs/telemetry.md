@@ -16,9 +16,9 @@ one in the Conventional Commit history.
 3. **Durations** are `Histogram<double>` instruments with unit `s` that record `elapsed.TotalSeconds`, never milliseconds. Every
    duration histogram passes `InstrumentAdvice<double>` with the shared bucket boundaries
    `[0.001, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]`. The boundaries are defined once, in the
-   internal `DurationBuckets` class in `src/SharedKernel/SharedKernel.Mediator/DurationBuckets.cs`, and every other package that
-   records a duration compiles the same file through a linked `<Compile Include="..." Link="..." />` item, as `TelemetryGuard`
-   is shared. No package takes a new dependency for it.
+   internal `DurationBuckets` class in `src/SharedKernel/SharedKernel.Observability/DurationBuckets.cs`, next to the rest of
+   the telemetry setup. Every package that records a duration compiles that file through a linked
+   `<Compile Include="..." Link="..." />` item, so no package takes a new dependency for it.
 4. **Attributes** use the OpenTelemetry semantic-convention name wherever one exists: `error.type`, `http.route`,
    `http.request.method`, `http.response.status_code`, `db.system.name` (and the resource attributes `service.name`,
    `service.version`, and `exception.type`). Any other attribute is `sharedkernel.<area>.<name>`. Outcome and other enum-like
