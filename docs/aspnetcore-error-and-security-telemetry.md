@@ -2,7 +2,7 @@
 
 Three opt-in registrations make unexpected errors and security events observable without exposing
 exception text, tokens or claims. Each lives in the package that owns its concern, and all of them share the
-meter `PandaBear.AspNetCore`. Packages remain preview (prerelease). Nothing here is on by default.
+meter `SharedKernel.AspNetCore`. Packages remain preview (prerelease). Nothing here is on by default.
 
 | Registration | Package | Namespace |
 | --- | --- | --- |
@@ -21,8 +21,9 @@ var app = builder.Build();
 app.UseExceptionHandler();                             // required so the framework calls the handler
 ```
 
-Export the meter with the host's OpenTelemetry (or other `System.Diagnostics.Metrics`) configuration by
-adding the meter name `PandaBear.AspNetCore` (`AspNetCoreTelemetry.MeterName`, in the core package).
+Export the meter with `metrics.AddInstrumentation()` from `SharedKernel.Observability`, whose `SharedKernel.*` pattern covers it, or
+by adding the meter name `SharedKernel.AspNetCore` (`AspNetCoreTelemetry.MeterName`, in the core package). The
+[telemetry standard](telemetry.md) lists every SharedKernel name.
 
 `AddAuthenticationEventTelemetry` wraps, after all other configuration, the `JwtBearerEvents` of every
 scheme, and `AddRateLimitEventTelemetry` wraps `RateLimiterOptions.OnRejected`. Existing handlers keep running
@@ -100,8 +101,8 @@ builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = 
 
 | Signal | Name | Values |
 | --- | --- | --- |
-| Log event | `EventId` 4001 `UnhandledException`, Error | `ErrorType`, `RouteTemplate`, `StatusCode`, `TraceId`; no exception object |
-| Counter | `unhandled_exceptions_total` | `error_type` (exception type `Name`, with `AggregateException` and `TargetInvocationException` unwrapped to their first inner exception), `route_template` (matched pattern or `unmatched`), `handled` (bool) |
+| Log event | `EventId` 4001 `UnhandledException`, Error | `ErrorType` (full exception type name), `RouteTemplate`, `StatusCode`, `TraceId`; no exception object |
+| Counter | `sharedkernel.aspnetcore.unhandled_exceptions` | `error.type` (full exception type name, with `AggregateException` and `TargetInvocationException` unwrapped to their first inner exception), `http.route` (matched pattern or `unmatched`), `sharedkernel.aspnetcore.handled` (bool) |
 
 Another component can report with the same series. Resolve `UnhandledExceptionReporter` and call
 `Report(exception, routeTemplate, statusCode, traceId, handled: true)`, for example from a Blazor circuit
@@ -113,16 +114,16 @@ characters is reported as `unmatched`, so a caller mistake cannot leak a path, t
 
 | Signal | Name | Values |
 | --- | --- | --- |
-| Log event | `EventId` 4101 `AuthenticationEvent`, Warning (Information for a `challenge` with `missing_token`, which is routine anonymous traffic) | `SecurityEvent`, `Reason`, `Scheme`, `RouteTemplate`, `TraceId` |
-| Counter | `authentication_events_total` | `event` = `authentication_failed`, `challenge`, `forbidden`; `reason`; `scheme` |
-| Log event | `EventId` 4102 `RateLimitRejection`, Warning | `Policy`, `StatusCode`, `RouteTemplate`, `TraceId` |
-| Counter | `rate_limit_rejections_total` | `policy` (the endpoint's `EnableRateLimiting` name, else `none`) |
+| Log event | `EventId` 4002 `AuthenticationEvent`, Warning (Information for a `challenge` with `missing_token`, which is routine anonymous traffic) | `SecurityEvent`, `Reason`, `Scheme`, `RouteTemplate`, `TraceId` |
+| Counter | `sharedkernel.aspnetcore.authentication.events` | `sharedkernel.aspnetcore.authentication.event` = `authentication_failed`, `challenge`, `forbidden`; `sharedkernel.aspnetcore.authentication.reason`; `sharedkernel.aspnetcore.authentication.scheme` |
+| Log event | `EventId` 4003 `RateLimitRejection`, Warning | `Policy`, `StatusCode`, `RouteTemplate`, `TraceId` |
+| Counter | `sharedkernel.aspnetcore.rate_limit.rejections` | `sharedkernel.aspnetcore.rate_limit.policy` (the endpoint's `EnableRateLimiting` name, else `none`) |
 
-The `policy` label comes from the matched endpoint's metadata. A rejection by a global limiter (`GlobalLimiter`) has no
+The `sharedkernel.aspnetcore.rate_limit.policy` label comes from the matched endpoint's metadata. A rejection by a global limiter (`GlobalLimiter`) has no
 policy of its own: it is labelled `none`, or with the endpoint's policy name when the endpoint also carries one, so the label
-cannot distinguish the two. `scheme` is the authentication scheme that raised the event.
+cannot distinguish the two. `sharedkernel.aspnetcore.authentication.scheme` is the authentication scheme that raised the event.
 
-`reason` is one of `missing_token`, `token_expired`, `token_not_yet_valid`, `invalid_signature`,
+`sharedkernel.aspnetcore.authentication.reason` is one of `missing_token`, `token_expired`, `token_not_yet_valid`, `invalid_signature`,
 `signing_key_not_found`, `invalid_audience`, `invalid_issuer`, `malformed_token`, `invalid_token`,
 `authentication_error` or, for `forbidden`, `insufficient_permission`. Tokens, claims, client addresses
 and exception messages are never logged or used as tags. A request with an invalid token raises both
@@ -133,12 +134,12 @@ and exception messages are never logged or used as tags. A request with an inval
 This repository ships no alert rules; the service owner chooses thresholds, routing and severity. Useful signals:
 
 - Error rate: the ratio of 5xx responses to all responses, from your HTTP server metrics.
-- New failure mode: an `error_type` series on `unhandled_exceptions_total` that was absent during the previous baseline
+- New failure mode: an `error.type` series on `sharedkernel.aspnetcore.unhandled_exceptions` that was absent during the previous baseline
   window. A counter series does not exist until its first increment, so a new series starts at 1 and `increase()` or
   `rate()` never sees it. Test for series presence (`max_over_time(...)` combined with `unless` and `offset`) instead.
-- Authentication failures: `authentication_events_total` with `event="authentication_failed"` against a historical
+- Authentication failures: `sharedkernel.aspnetcore.authentication.events` with the event `authentication_failed` against a historical
   baseline plus a floor, so a single failure on a quiet service does not alert.
-- Rate limiting: sustained `rate_limit_rejections_total` for one `policy`.
+- Rate limiting: sustained `sharedkernel.aspnetcore.rate_limit.rejections` for one policy.
 
 Metric names assume an OpenTelemetry-to-Prometheus export that keeps the instrument name and the tags. Exporters
 differ (suffixes, unit handling, rewritten dots), so query your backend for the stored names before writing a rule.

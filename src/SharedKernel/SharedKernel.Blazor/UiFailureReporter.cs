@@ -29,17 +29,17 @@ public sealed class UiFailureReporter : IUiFailureReporter
     /// <summary>The trace id logged when no <see cref="Activity" /> is current.</summary>
     public const string UnknownTraceId = "unknown";
 
-    /// <summary>The name of the meter; register it with your OpenTelemetry metrics pipeline.</summary>
-    public const string MeterName = "PandaBear.Blazor";
+    /// <summary>The name of the meter, exported by <c>AddInstrumentation</c> through its <c>SharedKernel.*</c> pattern.</summary>
+    public const string MeterName = "SharedKernel.Blazor";
 
     /// <summary>The name of the counter of handled UI failures.</summary>
-    public const string HandledFailuresCounterName = "handled_ui_failures_total";
+    public const string HandledFailuresCounterName = "sharedkernel.blazor.handled_failures";
 
-    /// <summary>The counter tag that carries the exception type name.</summary>
-    public const string ErrorTypeTag = "error_type";
+    /// <summary>The semantic-convention counter tag that carries the full type name of the exception.</summary>
+    public const string ErrorTypeTag = "error.type";
 
     /// <summary>The counter tag that carries the sanitized operation name.</summary>
-    public const string OperationTag = "operation";
+    public const string OperationTag = "sharedkernel.blazor.operation";
 
     private readonly ILogger<UiFailureReporter> _logger;
     private Counter<long>? _counter;
@@ -69,15 +69,19 @@ public sealed class UiFailureReporter : IUiFailureReporter
 
         var traceId = Activity.Current?.TraceId.ToString() ?? UnknownTraceId;
         var operationName = SafeOperation(operation);
-        UiFailureLog.HandledFailure(_logger, operationName, exception.GetType().FullName ?? exception.GetType().Name, traceId);
         var errorType = ErrorType(exception);
+        UiFailureLog.HandledFailure(_logger, operationName, errorType, traceId);
         TelemetryGuard.Run(() => _counter?.Add(
             1,
             new KeyValuePair<string, object?>(ErrorTypeTag, errorType),
             new KeyValuePair<string, object?>(OperationTag, operationName)));
     }
 
-    private static string ErrorType(Exception exception) => UnwrapWrapperExceptions(exception).GetType().Name;
+    private static string ErrorType(Exception exception)
+    {
+        var type = UnwrapWrapperExceptions(exception).GetType();
+        return type.FullName ?? type.Name;
+    }
 
     /// <summary>
     /// Returns the first inner exception of aggregate and reflection wrappers, which hide the real fault;

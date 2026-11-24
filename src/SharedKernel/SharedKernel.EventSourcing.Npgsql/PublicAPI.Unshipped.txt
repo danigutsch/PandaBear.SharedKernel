@@ -26,6 +26,8 @@ static PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.TagOperat
 static PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.TagOutcome.get -> string!
 static PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.TagProjectionName.get -> string!
 static PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.TagSchema.get -> string!
+static PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.TagDbSystemName.get -> string!
+static PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql.get -> string!
 PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingOptions
 PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingOptions.PostgreSqlEventSourcingOptions() -> void
 PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingOptions.Schema.get -> string!

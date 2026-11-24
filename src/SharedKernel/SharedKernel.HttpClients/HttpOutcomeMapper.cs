@@ -17,7 +17,7 @@ public static class HttpOutcomeMapper
     /// <summary>
     /// Identifies the stable activity source used for bounded HTTP outcome telemetry.
     /// </summary>
-    public const string ActivitySourceName = "SharedKernel.HttpClients.ContractOutcomes";
+    public const string ActivitySourceName = "SharedKernel.HttpClients";
 
     private const string EmptyBodyMessage = "HTTP response body was empty.";
     private const string MalformedBodyMessage = "HTTP response body was malformed.";
@@ -31,7 +31,7 @@ public static class HttpOutcomeMapper
     private const string ValidationMalformedBodyMessage = "Validation problem response body was malformed.";
     private const string ValidationMissingErrorsMessage = "Validation problem response body did not contain errors.";
     private const string MethodTag = "http.request.method";
-    private const string OutcomeKindTag = "http.outcome.kind";
+    private const string OutcomeKindTag = "sharedkernel.http_client.outcome";
     private const string StatusCodeTag = "http.response.status_code";
     /// <summary>Activity source for outcome mapping spans.</summary>
     internal static readonly ActivitySource OutcomeActivitySource = new(ActivitySourceName);
@@ -493,7 +493,7 @@ public static class HttpOutcomeMapper
 
     private static Activity? StartActivity(HttpMethod method)
     {
-        var activity = OutcomeActivitySource.StartActivity("http.client.outcome", ActivityKind.Internal);
+        var activity = OutcomeActivitySource.StartActivity("http_client.outcome", ActivityKind.Internal);
         activity?.SetTag(MethodTag, method.Method);
         return activity;
     }
@@ -505,7 +505,27 @@ public static class HttpOutcomeMapper
             activity?.SetTag(StatusCodeTag, (int)statusCode.Value);
         }
 
-        activity?.SetTag(OutcomeKindTag, kind.ToString());
+        activity?.SetTag(OutcomeKindTag, OutcomeTagValue(kind));
+    }
+
+    /// <summary>Returns the outcome kind as the lowercase snake_case value of the outcome attribute, such as <c>timed_out</c>.</summary>
+    /// <param name="kind">The outcome kind.</param>
+    /// <returns>The attribute value.</returns>
+    internal static string OutcomeTagValue(HttpOutcomeKind kind)
+    {
+        var name = kind.ToString();
+        var value = new StringBuilder(name.Length + 4);
+        foreach (var character in name)
+        {
+            if (char.IsUpper(character) && value.Length > 0)
+            {
+                value.Append('_');
+            }
+
+            value.Append(char.ToLowerInvariant(character));
+        }
+
+        return value.ToString();
     }
 
     /// <summary>Returns whether the content declares the application/json media type.</summary>

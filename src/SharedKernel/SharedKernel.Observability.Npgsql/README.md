@@ -14,9 +14,10 @@ Reusable, read-only PostgreSQL index-health collection for .NET services.
   changes, deletes, or maintains an index.
 - PostgreSQL object names are returned only as in-memory advisory evidence. They must never become
   metric tags or structured log fields.
-- The `SharedKernel.Observability.Npgsql` meter emits only finite `outcome`, `action`, and `reason`
-  dimensions. It emits no SQL, parameter, connection-string, role, tenant, schema, table, or index
-  values.
+- The `SharedKernel.Observability.Npgsql` meter emits `sharedkernel.index_health.collections` and
+  `sharedkernel.index_health.assessments` with only the finite `sharedkernel.index_health.outcome`,
+  `sharedkernel.index_health.action`, and `sharedkernel.index_health.reason` dimensions, plus `db.system.name` = `postgresql`. It emits no SQL, parameter, connection-string,
+  role, tenant, schema, table, or index values.
 - Permission, capability, connectivity, and timeout failures become bounded collection outcomes.
   Cooperative cancellation is rethrown.
 

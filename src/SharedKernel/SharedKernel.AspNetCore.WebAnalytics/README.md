@@ -40,7 +40,7 @@ package is trimming- and NativeAOT-safe.
 Page views are configured like telemetry in the service defaults, which add the OTLP exporter only when `OTEL_EXPORTER_OTLP_ENDPOINT`
 is set: each target adds itself only when its own setting is present (Umami: `ConnectionStrings:{name}`), and page views are captured
 only when at least one target exists. Without a target, `UsePageViews` adds nothing to the pipeline, no queue or background service
-exists, and the site logs once, at information level, that page views are off (event `4205`). A blank connection string counts as
+exists, and the site logs once, at information level, that page views are off (event `4205`, `PageViewsOff`). A blank connection string counts as
 absent. A connection string that is present but not of the form above stops the host at start with an `OptionsValidationException` that
 names the key and never repeats the value.
 
@@ -100,7 +100,7 @@ Umami receives `url`, `referrer`, `language`, `hostname` and the `website` id fr
 header, and the shortened address in `ClientIpHeader`. What is never sent or kept: the full address, other query values (search terms,
 e-mail addresses, tokens, click ids such as `gclid` or `fbclid`), the referrer's query and fragment, cookies, request bodies, the page
 title, the screen size, and any identifier of the visitor. Nothing is written to the browser. `PageView` has no `ToString` that prints
-the address or the `User-Agent`, and neither is ever logged: log entries carry a target name, a status code, an exception type name or
+the address or the `User-Agent`, and neither is ever logged: log entries carry a target name, a status code, a full exception type name or
 a count, and the Umami `HttpClient` redacts every logged header value. Its own request log entries name only the Umami address.
 
 Even shortened, the address together with the `User-Agent` is personal data in transit, so **the site's privacy notice must name the
@@ -127,16 +127,16 @@ headers (a batch shares one set of headers), through the named client `UmamiPage
 HTTP client defaults apply; with `PandaBear.SharedKernel.ServiceDefaults` that is the standard resilience handler, which never retries
 a `POST`, so a page view is not counted twice. Nothing a target does can fail or change a page.
 
-A page view is dropped for one target, counted on the counter `web_analytics_page_views_dropped_total` of the meter
-`PandaBear.AspNetCore.WebAnalytics` (registered by `AddInstrumentation`) with the tags `target` (the target's name) and
-`reason`, when:
+A page view is dropped for one target, counted on the counter `sharedkernel.web_analytics.page_views.dropped` of the meter
+`SharedKernel.AspNetCore.WebAnalytics` (registered by `AddInstrumentation`) with the tags `sharedkernel.web_analytics.target` (the
+target's name) and `sharedkernel.web_analytics.reason`, when:
 
-| `reason` | When | Logged |
+| Reason value | When | Logged |
 | --- | --- | --- |
 | `queue_full` | the target's queue is full | no, to keep a slow target from flooding the log |
-| `rejected` | the target answered other than 2xx | warning `4201` with the target and the status code |
-| `send_failed` | the send failed or timed out | warning `4202` with the target and the exception type name |
-| `shutdown` | it came after the host began stopping, or was still queued or in flight when `ShutdownTimeout` ended | warning `4204` with the count and the target |
+| `rejected` | the target answered other than 2xx | warning `4201` `PageViewSendRejected` with the target and the status code |
+| `send_failed` | the send failed or timed out | warning `4202` `PageViewSendFailed` with the target and the full exception type name (`ErrorType`) |
+| `shutdown` | it came after the host began stopping, or was still queued or in flight when `ShutdownTimeout` ended | warning `4204` `PageViewsUnsentAtShutdown` with the count and the target |
 
 `WebAnalyticsTelemetry` names the meter, counter, tags, reasons and event ids. A meter listener that throws never reaches the request.
 Two targets with the same name stop the host at start.

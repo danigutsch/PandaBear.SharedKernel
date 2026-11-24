@@ -1,7 +1,8 @@
 namespace PandaBear.Mediator;
 
 /// <summary>
-/// Adds optional activity-based observability around mediator request dispatch.
+/// Adds optional activity-based observability around mediator request dispatch: a <c>mediator.handle</c> span tagged with the
+/// request and response type names, the outcome and, on failure, the full exception type name.
 /// </summary>
 /// <typeparam name="TRequest">The mediator request type.</typeparam>
 /// <typeparam name="TResponse">The mediator response type.</typeparam>
@@ -14,30 +15,30 @@ public sealed class ActivityBehavior<TRequest, TResponse> : IPipelineBehavior<TR
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(next);
 
-        using var activity = MediatorActivitySource.StartRequestActivity<TRequest>();
+        using var activity = MediatorActivitySource.StartRequestActivity();
         if (activity is not null)
         {
-            activity.SetTag(MediatorTelemetry.TagRequestType, request.GetType().FullName ?? typeof(TRequest).FullName ?? typeof(TRequest).Name);
-            activity.SetTag(MediatorTelemetry.TagResponseType, typeof(TResponse).FullName ?? typeof(TResponse).Name);
+            activity.SetTag(MediatorTelemetry.TagRequestName, MediatorActivitySource.GetTypeName(typeof(TRequest)));
+            activity.SetTag(MediatorTelemetry.TagResponseName, MediatorActivitySource.GetTypeName(typeof(TResponse)));
         }
 
         try
         {
             var response = await next().ConfigureAwait(false);
-            activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeSuccess);
+            activity?.SetTag(MediatorTelemetry.TagOutcome, MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Ok);
             return response;
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
-            activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeCancelled);
+            activity?.SetTag(MediatorTelemetry.TagOutcome, MediatorTelemetry.OutcomeCancelled);
             throw;
         }
         catch (Exception ex)
         {
-            activity?.SetTag(MediatorTelemetry.TagErrorType, ex.GetType().Name);
+            activity?.SetTag(MediatorTelemetry.TagErrorType, ex.GetType().FullName);
             activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error);
-            activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeError);
+            activity?.SetTag(MediatorTelemetry.TagOutcome, MediatorTelemetry.OutcomeError);
             throw;
         }
     }

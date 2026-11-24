@@ -132,6 +132,11 @@ public sealed class GeneratorDispatchTests
         generatedSource.ShouldContain("global::PandaBear.Mediator.MediatorTelemetry.TagRequestName", StringComparison.Ordinal);
         generatedSource.ShouldContain("global::PandaBear.Mediator.MediatorTelemetry.TagOutcome", StringComparison.Ordinal);
         generatedSource.ShouldContain("global::PandaBear.Mediator.MediatorTelemetry.OutcomeSuccess", StringComparison.Ordinal);
+        generatedSource.ShouldContain("RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds,", StringComparison.Ordinal);
+        generatedSource.ShouldContain("TagErrorType, ex.GetType().FullName);", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("TotalMilliseconds", StringComparison.Ordinal);
+        generatedDispatchSource.ShouldContain("NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds,", StringComparison.Ordinal);
+        generatedDispatchSource.ShouldNotContain("TotalMilliseconds", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("internal static class GeneratedDispatch", StringComparison.Ordinal);
         generatedDispatchSource.ShouldContain("internal static class GeneratedDispatch", StringComparison.Ordinal);
         generatedPipelinesSource.ShouldContain("internal static class GeneratedPipelines", StringComparison.Ordinal);

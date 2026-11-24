@@ -86,7 +86,7 @@ internal sealed class UmamiWebsiteProvisioner(ResourceNotificationService notifi
         }
         catch (Exception exception) when (exception is not (OutOfMemoryException or AccessViolationException))
         {
-            UmamiWebsiteLog.Unexpected(logger, exception.GetType().Name);
+            UmamiWebsiteLog.Unexpected(logger, exception.GetType().FullName ?? exception.GetType().Name);
             await Publish(website, KnownResourceStates.FailedToStart).ConfigureAwait(false);
         }
     }

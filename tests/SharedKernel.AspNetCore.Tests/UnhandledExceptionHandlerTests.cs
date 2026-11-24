@@ -53,7 +53,7 @@ public sealed class UnhandledExceptionHandlerTests
         record.Message.ShouldNotContain("/orders/42", "the raw path must not reach the log");
         var keys = record.State.Select(static pair => pair.Key).Where(static key => key != "{OriginalFormat}");
         keys.ShouldBeEquivalentTo("ErrorType", "RouteTemplate", "StatusCode", "TraceId");
-        record.State.ShouldContain(new KeyValuePair<string, object?>("ErrorType", nameof(InvalidOperationException)));
+        record.State.ShouldContain(new KeyValuePair<string, object?>("ErrorType", typeof(InvalidOperationException).FullName));
         record.State.ShouldContain(new KeyValuePair<string, object?>("RouteTemplate", "/orders/{id}"));
         record.State.ShouldContain(new KeyValuePair<string, object?>("StatusCode", 500));
     }
@@ -78,7 +78,7 @@ public sealed class UnhandledExceptionHandlerTests
             AspNetCoreTelemetry.ErrorTypeTag,
             AspNetCoreTelemetry.RouteTemplateTag,
             AspNetCoreTelemetry.HandledTag);
-        measurement.Tags[AspNetCoreTelemetry.ErrorTypeTag].ShouldBe(nameof(InvalidOperationException));
+        measurement.Tags[AspNetCoreTelemetry.ErrorTypeTag].ShouldBe("System.InvalidOperationException");
         measurement.Tags[AspNetCoreTelemetry.RouteTemplateTag].ShouldBe("/orders/{id}");
         measurement.Tags[AspNetCoreTelemetry.HandledTag].ShouldBe(true);
     }
@@ -268,7 +268,7 @@ public sealed class UnhandledExceptionHandlerTests
 
         // Assert
         meters.Measurements.Select(static m => m.Tags[AspNetCoreTelemetry.ErrorTypeTag])
-            .ShouldBeEquivalentTo("InvalidOperationException", "ArgumentException", "TimeoutException");
+            .ShouldBeEquivalentTo("System.InvalidOperationException", "System.ArgumentException", "System.TimeoutException");
     }
 
     [Fact]

@@ -4,8 +4,8 @@ using OpenTelemetry.Trace;
 namespace PandaBear.Observability;
 
 /// <summary>
-/// Registers the meters and activity sources of every SharedKernel package by name prefix. Each package names its telemetry
-/// <c>PandaBear.*</c> or <c>SharedKernel.*</c> (a repository convention test enforces it), so one call covers the packages a host uses
+/// Registers the meters and activity sources of every SharedKernel package by name prefix. Each package names its meter and
+/// activity source after its assembly, <c>SharedKernel.&lt;Package&gt;</c> (a repository convention test enforces it), so one call covers the packages a host uses
 /// without naming them and without referencing the packages it does not use. A package that is not loaded creates no meter or source, so
 /// nothing extra is exported.
 /// </summary>
@@ -15,8 +15,8 @@ namespace PandaBear.Observability;
 /// </remarks>
 public static class InstrumentationExtensions
 {
-    /// <summary>Gets the name patterns of SharedKernel meters and activity sources: <c>PandaBear.*</c> and <c>SharedKernel.*</c>.</summary>
-    public static IReadOnlyList<string> NamePatterns { get; } = ["PandaBear.*", "SharedKernel.*"];
+    /// <summary>Gets the name pattern of SharedKernel meters and activity sources: <c>SharedKernel.*</c>.</summary>
+    public static IReadOnlyList<string> NamePatterns { get; } = ["SharedKernel.*"];
 
     /// <summary>Collects the metrics of every SharedKernel package.</summary>
     /// <param name="metrics">The meter provider builder.</param>

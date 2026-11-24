@@ -21,11 +21,15 @@ persistence, locking, idempotency, retries, and business-specific state.
 
 The polling loop emits:
 
-- Activity name: `poll`
-- Duration metric: `scheduling.polling.cycle.duration`, unit `s`
-- Batch counter: `scheduling.polling.batch`
-- Item counter: `scheduling.polling.item`
-- Failure counter: `scheduling.polling.failure`
+- Activity name: `scheduling.poll`
+- Duration metric: `sharedkernel.scheduling.polling.cycle.duration`, unit `s`, with the shared duration buckets
+- Batch counter: `sharedkernel.scheduling.polling.batches`
+- Item counter: `sharedkernel.scheduling.polling.items`
+- Failure counter: `sharedkernel.scheduling.polling.failures`
+
+Attributes: `sharedkernel.scheduling.service.name`, `sharedkernel.scheduling.outcome` (`success`, `cancelled`, `error`),
+`sharedkernel.scheduling.item_count` and `error.type` (the full exception type name). See the
+[telemetry standard](../../../docs/telemetry.md).
 
 ## Package identity and availability
 

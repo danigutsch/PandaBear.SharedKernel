@@ -90,7 +90,7 @@ internal sealed partial class AppMediator : IMediator
         catch (global::System.Exception ex)
         {
             outcome = global::PandaBear.Mediator.MediatorTelemetry.OutcomeError;
-            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
+            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().FullName);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
             activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, global::PandaBear.Mediator.MediatorTelemetry.OutcomeError);
             throw;
@@ -99,7 +99,7 @@ internal sealed partial class AppMediator : IMediator
         {
             activity?.Dispose();
             _instrumentation.RequestsTotal.Add(1, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "CreateTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
-            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "CreateTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
+            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "CreateTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 
@@ -137,7 +137,7 @@ internal sealed partial class AppMediator : IMediator
         catch (global::System.Exception ex)
         {
             outcome = global::PandaBear.Mediator.MediatorTelemetry.OutcomeError;
-            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
+            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().FullName);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
             activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, global::PandaBear.Mediator.MediatorTelemetry.OutcomeError);
             throw;
@@ -146,7 +146,7 @@ internal sealed partial class AppMediator : IMediator
         {
             activity?.Dispose();
             _instrumentation.RequestsTotal.Add(1, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "DeleteTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
-            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "DeleteTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
+            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "DeleteTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 
@@ -182,7 +182,7 @@ internal sealed partial class AppMediator : IMediator
         catch (global::System.Exception ex)
         {
             outcome = global::PandaBear.Mediator.MediatorTelemetry.OutcomeError;
-            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
+            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().FullName);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
             activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, global::PandaBear.Mediator.MediatorTelemetry.OutcomeError);
             throw;
@@ -191,7 +191,7 @@ internal sealed partial class AppMediator : IMediator
         {
             activity?.Dispose();
             _instrumentation.RequestsTotal.Add(1, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "GetTourById" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
-            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "GetTourById" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
+            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "GetTourById" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 
@@ -229,7 +229,7 @@ internal sealed partial class AppMediator : IMediator
         catch (global::System.Exception ex)
         {
             outcome = global::PandaBear.Mediator.MediatorTelemetry.OutcomeError;
-            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
+            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().FullName);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
             activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, global::PandaBear.Mediator.MediatorTelemetry.OutcomeError);
             throw;
@@ -238,7 +238,7 @@ internal sealed partial class AppMediator : IMediator
         {
             activity?.Dispose();
             _instrumentation.RequestsTotal.Add(1, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "LookupTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
-            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "LookupTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
+            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagRequestName, "LookupTour" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 
@@ -297,7 +297,7 @@ internal sealed partial class AppMediator : IMediator
                 catch (global::System.Exception ex)
                 {
                     outcome = global::PandaBear.Mediator.MediatorTelemetry.OutcomeError;
-                    activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
+                    activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().FullName);
                     activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
                     activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, global::PandaBear.Mediator.MediatorTelemetry.OutcomeError);
                     throw;

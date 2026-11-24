@@ -179,6 +179,7 @@ public sealed class PostgreSqlProjectionCheckpointStore : IProjectionCheckpointS
         }
 
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagSchema, schemaName);
+        activity.SetTag(PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagOperation, operation);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagProjectionName, projectionName);
         return activity;
@@ -196,10 +197,11 @@ public sealed class PostgreSqlProjectionCheckpointStore : IProjectionCheckpointS
     private static void RecordCheckpointDuration(string schemaName, string operation, string outcome, TimeSpan duration)
     {
         PostgreSqlEventSourcingTelemetry.CheckpointDuration.Record(
-            duration.TotalMilliseconds,
+            duration.TotalSeconds,
             new TagList
             {
                 { PostgreSqlEventSourcingTelemetry.TagSchema, schemaName },
+                { PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql },
                 { PostgreSqlEventSourcingTelemetry.TagOperation, operation },
                 { PostgreSqlEventSourcingTelemetry.TagOutcome, outcome },
             });

@@ -27,9 +27,10 @@ public sealed class S3ObjectStoreTelemetryTests
         // Assert
         listener.Dispose();
         // Other tests share the source, so assert over every activity seen.
-        activities.Any(static activity => activity.OperationName == "object_storage.exists").ShouldBe(true);
+        activities.Any(static activity => activity.OperationName == "object_storage.exists"
+            && Equals(activity.GetTagItem("sharedkernel.object_storage.operation"), "exists")).ShouldBe(true);
         activities.SelectMany(static activity => activity.TagObjects)
-            .Any(static tag => tag.Key != "object_storage.operation" || $"{tag.Value}".Contains("customer", StringComparison.Ordinal))
+            .Any(static tag => tag.Key != "sharedkernel.object_storage.operation" || $"{tag.Value}".Contains("customer", StringComparison.Ordinal))
             .ShouldBe(false);
     }
 

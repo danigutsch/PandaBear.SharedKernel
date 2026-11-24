@@ -6,17 +6,17 @@ namespace PandaBear.AspNetCore.WebAnalytics;
 /// </summary>
 public static class WebAnalyticsTelemetry
 {
-    /// <summary>The name of the meter, registered by <c>AddInstrumentation</c> through its <c>PandaBear.*</c> pattern.</summary>
-    public const string MeterName = "PandaBear.AspNetCore.WebAnalytics";
+    /// <summary>The name of the meter, registered by <c>AddInstrumentation</c> through its <c>SharedKernel.*</c> pattern.</summary>
+    public const string MeterName = "SharedKernel.AspNetCore.WebAnalytics";
 
     /// <summary>The counter of page views that were not delivered to a target, tagged with <see cref="TargetTag"/> and <see cref="ReasonTag"/>.</summary>
-    public const string DroppedPageViewsCounterName = "web_analytics_page_views_dropped_total";
+    public const string DroppedPageViewsCounterName = "sharedkernel.web_analytics.page_views.dropped";
 
     /// <summary>The tag that carries the <see cref="IPageViewTarget.Name"/> of the target that did not receive the page view.</summary>
-    public const string TargetTag = "target";
+    public const string TargetTag = "sharedkernel.web_analytics.target";
 
     /// <summary>The tag that carries why a page view was dropped.</summary>
-    public const string ReasonTag = "reason";
+    public const string ReasonTag = "sharedkernel.web_analytics.reason";
 
     /// <summary>The target's queue was full, because the target is slow or unreachable or the site is busier than the queue allows.</summary>
     public const string QueueFullReason = "queue_full";

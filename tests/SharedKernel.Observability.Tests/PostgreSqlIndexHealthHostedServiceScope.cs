@@ -65,7 +65,7 @@ internal sealed class PostgreSqlIndexHealthHostedServiceScope : IAsyncDisposable
     {
         measurements.Enqueue(measurement);
         if (measurement.InstrumentName == PostgreSqlIndexHealthTelemetry.CollectionMetricName
-            && measurement.Tags.TryGetValue("outcome", out var outcome)
+            && measurement.Tags.TryGetValue("sharedkernel.index_health.outcome", out var outcome)
             && outcome == "unavailable")
         {
             unavailableCollectionObserved.TrySetResult(true);

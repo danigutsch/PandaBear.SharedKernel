@@ -64,7 +64,10 @@ public sealed class PollingBackgroundServiceTests
         // Assert
         var failure = logger.Records.ShouldHaveSingleItem(entry => entry.Level == LogLevel.Error);
         failure.Message.ShouldContain("failing", StringComparison.Ordinal);
-        failure.Message.ShouldContain(nameof(InvalidOperationException), StringComparison.Ordinal);
+        failure.Message.ShouldContain(typeof(InvalidOperationException).FullName!, StringComparison.Ordinal);
+        failure.EventId.Id.ShouldBe(3001);
+        failure.EventId.Name.ShouldBe("PollingCycleFailed");
+        failure.State.ShouldContain(new KeyValuePair<string, object?>("ErrorType", typeof(InvalidOperationException).FullName));
         failure.Message.ShouldNotContain("secret detail", StringComparison.Ordinal);
     }
 

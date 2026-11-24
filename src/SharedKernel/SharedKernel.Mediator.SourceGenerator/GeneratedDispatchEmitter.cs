@@ -299,7 +299,7 @@ internal static class GeneratedDispatchEmitter
                 builder.AppendLine("        catch (global::System.Exception ex)");
                 builder.AppendLine("        {");
                 builder.AppendLine("            outcome = global::PandaBear.Mediator.MediatorTelemetry.OutcomeError;");
-                builder.AppendLine("            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
+                builder.AppendLine("            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().FullName);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);");
                 builder.AppendLine("            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, global::PandaBear.Mediator.MediatorTelemetry.OutcomeError);");
                 builder.AppendLine("            throw;");
@@ -310,7 +310,7 @@ internal static class GeneratedDispatchEmitter
                 builder.Append("            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
                     .AppendLine(" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
-                builder.Append("            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagNotificationName, ")
+                builder.Append("            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
                     .AppendLine(" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
                 builder.AppendLine("        }");
@@ -396,7 +396,7 @@ internal static class GeneratedDispatchEmitter
                         builder.AppendLine("                }");
                         builder.AppendLine("                catch (global::System.Exception ex)");
                         builder.AppendLine("                {");
-                        builder.AppendLine("                    handlerActivity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
+                        builder.AppendLine("                    handlerActivity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().FullName);");
                         builder.AppendLine("                    handlerActivity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);");
                         builder.AppendLine("                    handlerActivity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, global::PandaBear.Mediator.MediatorTelemetry.OutcomeError);");
                         builder.AppendLine("                    throw;");
@@ -421,7 +421,7 @@ internal static class GeneratedDispatchEmitter
                 builder.AppendLine("        catch (global::System.Exception ex)");
                 builder.AppendLine("        {");
                 builder.AppendLine("            outcome = global::PandaBear.Mediator.MediatorTelemetry.OutcomeError;");
-                builder.AppendLine("            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
+                builder.AppendLine("            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().FullName);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);");
                 builder.AppendLine("            activity?.SetTag(global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, global::PandaBear.Mediator.MediatorTelemetry.OutcomeError);");
                 builder.AppendLine("            throw;");
@@ -432,7 +432,7 @@ internal static class GeneratedDispatchEmitter
                 builder.Append("            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
                     .AppendLine(" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
-                builder.Append("            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagNotificationName, ")
+                builder.Append("            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds, new global::System.Diagnostics.TagList { { global::PandaBear.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
                     .AppendLine(" }, { global::PandaBear.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
                 builder.AppendLine("        }");

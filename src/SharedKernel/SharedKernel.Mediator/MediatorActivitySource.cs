@@ -18,22 +18,23 @@ public static class MediatorActivitySource
     public static ActivitySource Source { get; } = new(ActivitySourceName);
 
     /// <summary>
-    /// Starts an internal activity for the provided request type.
+    /// Starts the internal <see cref="MediatorTelemetry.ActivityHandle" /> activity around one request.
     /// </summary>
-    /// <typeparam name="TRequest">The mediator request type.</typeparam>
     /// <returns>The started activity when a listener is enabled; otherwise <see langword="null" />.</returns>
-    internal static Activity? StartRequestActivity<TRequest>()
+    internal static Activity? StartRequestActivity()
     {
-        return Source.StartActivity(GetActivityName<TRequest>(), ActivityKind.Internal);
+        return Source.StartActivity(MediatorTelemetry.ActivityHandle, ActivityKind.Internal);
     }
 
     /// <summary>
-    /// Gets the default activity name for the provided request type.
+    /// Gets the simple name of a type without its generic arity, the form the generated dispatch spans use.
     /// </summary>
-    /// <typeparam name="TRequest">The mediator request type.</typeparam>
-    /// <returns>The default activity name.</returns>
-    internal static string GetActivityName<TRequest>()
+    /// <param name="type">The request or response type.</param>
+    /// <returns>The type name, such as <c>List</c> for <c>List&lt;int&gt;</c>.</returns>
+    internal static string GetTypeName(Type type)
     {
-        return typeof(TRequest).Name;
+        var name = type.Name;
+        var arity = name.IndexOf('`', StringComparison.Ordinal);
+        return arity < 0 ? name : name[..arity];
     }
 }

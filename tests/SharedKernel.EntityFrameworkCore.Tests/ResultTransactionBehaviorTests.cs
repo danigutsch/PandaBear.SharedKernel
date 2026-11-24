@@ -361,6 +361,13 @@ public sealed class ResultTransactionBehaviorTests(PostgreSqlFixture fixture) : 
         var persisted = await H.CountNamed(DataSource, "hook-commit");
         persisted.ShouldBe(1);
         scenario.Logger.Records.Count(record => record.Level == LogLevel.Error).ShouldBe(1);
+        var failure = scenario.Logger.Records.ShouldHaveSingleItem(record => record.Level == LogLevel.Error);
+        failure.EventId.Id.ShouldBe(2001);
+        failure.EventId.Name.ShouldBe("OutcomeHookFailed");
+        failure.State.ShouldContain(new KeyValuePair<string, object?>("RequestName", nameof(ResultTransactionTestCommand)));
+        failure.State.ShouldContain(new KeyValuePair<string, object?>("HookKind", "IAfterCommit"));
+        failure.State.ShouldContain(new KeyValuePair<string, object?>("HookType", nameof(ResultTransactionTestHooks)));
+        failure.State.ShouldContain(new KeyValuePair<string, object?>("ErrorType", typeof(InvalidOperationException).FullName));
     }
 
     [Fact]
@@ -381,5 +388,7 @@ public sealed class ResultTransactionBehaviorTests(PostgreSqlFixture fixture) : 
         // Assert
         result.IsFailure.ShouldBeTrue();
         scenario.Logger.Records.Count(record => record.Level == LogLevel.Error).ShouldBe(1);
+        scenario.Logger.Records.ShouldHaveSingleItem(record => record.Level == LogLevel.Error)
+            .State.ShouldContain(new KeyValuePair<string, object?>("HookKind", "IAfterRollback"));
     }
 }

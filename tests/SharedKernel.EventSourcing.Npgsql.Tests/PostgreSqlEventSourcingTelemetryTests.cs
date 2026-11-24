@@ -62,9 +62,11 @@ public sealed class PostgreSqlEventSourcingTelemetryTests(PostgreSqlTestServerFi
         stoppedActivities.ShouldContain(activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityAppend, StringComparison.Ordinal)
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagOutcome, PostgreSqlEventSourcingTelemetry.OutcomeSuccess)
+            && PostgreSqlEventStoreTestsHelpers.HasTag(activity, "db.system.name", "postgresql")
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagExpectedRevisionMode, PostgreSqlEventSourcingTelemetry.ExpectedRevisionNoStream));
         stoppedActivities.ShouldContain(activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityLoad, StringComparison.Ordinal)
+            && PostgreSqlEventStoreTestsHelpers.HasTag(activity, "db.system.name", "postgresql")
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagEventCount, 1));
         measurements.ShouldContain(PostgreSqlEventSourcingTelemetry.MetricAppendDuration, StringComparer.Ordinal);
         measurements.ShouldContain(PostgreSqlEventSourcingTelemetry.MetricLoadDuration, StringComparer.Ordinal);
@@ -135,6 +137,7 @@ public sealed class PostgreSqlEventSourcingTelemetryTests(PostgreSqlTestServerFi
         stoppedActivities.ShouldContain(activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityCheckpoint, StringComparison.Ordinal)
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagOperation, "save_checkpoint")
+            && PostgreSqlEventStoreTestsHelpers.HasTag(activity, "db.system.name", "postgresql")
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagCheckpointPosition, 27L));
         stoppedActivities.ShouldContain(activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityCheckpoint, StringComparison.Ordinal)

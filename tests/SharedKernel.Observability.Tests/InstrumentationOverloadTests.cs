@@ -28,7 +28,7 @@ public sealed class InstrumentationOverloadTests
         ProbeInstrumentation[] probes = [registered, instance, fromFactory, fromServices, fromServicesAndProvider];
         using var exporter = new DiscardingMetricExporter();
         using var reader = new BaseExportingMetricReader(exporter);
-        using var meter = new Meter("PandaBear.Probe");
+        using var meter = new Meter("SharedKernel.Probe");
         var provider = Sdk.CreateMeterProviderBuilder()
             .ConfigureServices(services => services.AddSingleton(registered))
             .AddInstrumentation()
@@ -59,7 +59,7 @@ public sealed class InstrumentationOverloadTests
         using var fromServices = new ProbeInstrumentation();
         using var fromServicesAndProvider = new ProbeInstrumentation();
         ProbeInstrumentation[] probes = [registered, instance, fromFactory, fromServices, fromServicesAndProvider];
-        using var source = new ActivitySource("PandaBear.Probe");
+        using var source = new ActivitySource("SharedKernel.Probe");
         var provider = Sdk.CreateTracerProviderBuilder()
             .ConfigureServices(services => services.AddSingleton(registered))
             .AddInstrumentation()

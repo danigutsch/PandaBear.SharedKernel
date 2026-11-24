@@ -26,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\SharedKernel.Observability\DurationBuckets.cs" Link="DurationBuckets.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="SharedKernel.EventSourcing.Npgsql.Tests" />
   </ItemGroup>
 

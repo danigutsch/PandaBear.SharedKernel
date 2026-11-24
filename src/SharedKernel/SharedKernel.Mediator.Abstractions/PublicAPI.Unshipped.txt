@@ -70,9 +70,8 @@ static PandaBear.Mediator.MediatorTelemetry.TagOutcome.get -> string!
 static PandaBear.Mediator.MediatorTelemetry.TagPipelineDepth.get -> string!
 static PandaBear.Mediator.MediatorTelemetry.TagRequestAssembly.get -> string!
 static PandaBear.Mediator.MediatorTelemetry.TagRequestName.get -> string!
-static PandaBear.Mediator.MediatorTelemetry.TagRequestType.get -> string!
-static PandaBear.Mediator.MediatorTelemetry.TagResponseType.get -> string!
-static PandaBear.Mediator.MediatorTelemetry.TagRuntimeOutcome.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagResponseName.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.ActivityHandle.get -> string!
 PandaBear.Mediator.PipelineOrderAttribute
 PandaBear.Mediator.PipelineOrderAttribute.Order.get -> int
 PandaBear.Mediator.PipelineOrderAttribute.Order.init -> void

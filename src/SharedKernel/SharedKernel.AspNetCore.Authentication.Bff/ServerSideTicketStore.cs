@@ -172,7 +172,7 @@ public sealed partial class ServerSideTicketStore : ITicketStore
         catch (Exception exception) when (exception is CryptographicException or FormatException or InvalidDataException
             or EndOfStreamException or ArgumentException)
         {
-            LogUnreadableTicket(_logger, exception.GetType().Name);
+            LogUnreadableTicket(_logger, exception.GetType().FullName ?? exception.GetType().Name);
             ticket = null;
         }
 
@@ -218,6 +218,6 @@ public sealed partial class ServerSideTicketStore : ITicketStore
         return ticket.Properties.ExpiresUtc is { } expiresUtc && expiresUtc < absoluteEnd ? expiresUtc : absoluteEnd;
     }
 
-    [LoggerMessage(LogLevel.Warning, "A stored cookie ticket could not be read and was removed. Failure type: {FailureType}.")]
-    private static partial void LogUnreadableTicket(ILogger logger, string failureType);
+    [LoggerMessage(4307, LogLevel.Warning, "A stored cookie ticket could not be read and was removed. Error type: {ErrorType}.", EventName = "UnreadableTicketRemoved")]
+    private static partial void LogUnreadableTicket(ILogger logger, string errorType);
 }

@@ -78,6 +78,6 @@ public static partial class PermanentRedirectExtensions
         return true;
     }
 
-    [LoggerMessage(EventId = 1, Level = LogLevel.Warning, Message = "A permanent redirect target was ignored because it is not a plain local path.")]
+    [LoggerMessage(EventId = 4004, EventName = "UnsafeRedirectTargetIgnored", Level = LogLevel.Warning, Message = "A permanent redirect target was ignored because it is not a plain local path.")]
     private static partial void LogUnsafeTarget(ILogger logger);
 }

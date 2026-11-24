@@ -3,7 +3,8 @@ using Microsoft.Extensions.Logging;
 namespace PandaBear.Scheduling.Tests;
 
 /// <summary>
-/// A polling service whose batches follow a script: each entry is a processed count, or an exception to throw.
+/// A polling service whose batches follow a script: each entry is a processed count, an exception to throw, or a
+/// <see cref="TimeSpan" /> to wait before processing nothing, which gives a cycle a known minimum duration.
 /// </summary>
 internal sealed class ScriptedPollingService(
     ILogger logger,
@@ -20,13 +21,13 @@ internal sealed class ScriptedPollingService(
     /// <summary>Task that completes once the script has been fully consumed.</summary>
     public Task ScriptConsumed => scriptConsumed.Task;
 
-    protected override ValueTask<int> ExecuteBatch(CancellationToken stoppingToken)
+    protected override async ValueTask<int> ExecuteBatch(CancellationToken stoppingToken)
     {
         BatchCalls++;
         if (!pending.TryDequeue(out var step))
         {
             scriptConsumed.TrySetResult();
-            return ValueTask.FromResult(0);
+            return 0;
         }
 
         if (pending.Count == 0)
@@ -34,11 +35,17 @@ internal sealed class ScriptedPollingService(
             scriptConsumed.TrySetResult();
         }
 
-        return step switch
+        switch (step)
         {
-            Exception exception => throw exception,
-            int processed => ValueTask.FromResult(processed),
-            _ => throw new InvalidOperationException("Script entries are int or Exception."),
-        };
+            case TimeSpan delay:
+                await Task.Delay(delay, CancellationToken.None);
+                return 0;
+            case int processed:
+                return processed;
+            case Exception exception:
+                throw exception;
+            default:
+                throw new InvalidOperationException("Script entries are int, TimeSpan or Exception.");
+        }
     }
 }

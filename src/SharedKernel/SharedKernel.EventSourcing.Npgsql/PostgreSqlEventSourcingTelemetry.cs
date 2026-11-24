@@ -16,92 +16,102 @@ public static class PostgreSqlEventSourcingTelemetry
     /// <summary>
     /// Gets the activity name for stream append operations.
     /// </summary>
-    public static string ActivityAppend => "eventsourcing.postgresql.append";
+    public static string ActivityAppend => "event_sourcing.append";
 
     /// <summary>
     /// Gets the activity name for stream load operations.
     /// </summary>
-    public static string ActivityLoad => "eventsourcing.postgresql.load";
+    public static string ActivityLoad => "event_sourcing.load";
 
     /// <summary>
     /// Gets the activity name for projection checkpoint operations.
     /// </summary>
-    public static string ActivityCheckpoint => "eventsourcing.postgresql.checkpoint";
+    public static string ActivityCheckpoint => "event_sourcing.checkpoint";
 
     /// <summary>
     /// Gets the histogram name for append operation duration.
     /// </summary>
-    public static string MetricAppendDuration => "eventsourcing.postgresql.append.duration";
+    public static string MetricAppendDuration => "sharedkernel.event_sourcing.append.duration";
 
     /// <summary>
     /// Gets the histogram name for load operation duration.
     /// </summary>
-    public static string MetricLoadDuration => "eventsourcing.postgresql.load.duration";
+    public static string MetricLoadDuration => "sharedkernel.event_sourcing.load.duration";
 
     /// <summary>
     /// Gets the histogram name for projection checkpoint operation duration.
     /// </summary>
-    public static string MetricCheckpointDuration => "eventsourcing.postgresql.checkpoint.duration";
+    public static string MetricCheckpointDuration => "sharedkernel.event_sourcing.checkpoint.duration";
 
     /// <summary>
     /// Gets the counter name for appended events.
     /// </summary>
-    public static string MetricEventsAppended => "eventsourcing.postgresql.event.appended";
+    public static string MetricEventsAppended => "sharedkernel.event_sourcing.events.appended";
 
     /// <summary>
     /// Gets the counter name for loaded events.
     /// </summary>
-    public static string MetricEventsLoaded => "eventsourcing.postgresql.event.loaded";
+    public static string MetricEventsLoaded => "sharedkernel.event_sourcing.events.loaded";
 
     /// <summary>
     /// Gets the counter name for optimistic concurrency conflicts.
     /// </summary>
-    public static string MetricAppendConflicts => "eventsourcing.postgresql.append.conflict";
+    public static string MetricAppendConflicts => "sharedkernel.event_sourcing.append.conflicts";
 
     /// <summary>
     /// Gets the tag that captures the configured PostgreSQL schema name.
     /// </summary>
-    public static string TagSchema => "eventsourcing.postgresql.schema";
+    public static string TagSchema => "sharedkernel.event_sourcing.schema";
 
     /// <summary>
     /// Gets the tag that captures the logical operation name.
     /// </summary>
-    public static string TagOperation => "eventsourcing.operation";
+    public static string TagOperation => "sharedkernel.event_sourcing.operation";
 
     /// <summary>
     /// Gets the tag that captures operation outcome.
     /// </summary>
-    public static string TagOutcome => "eventsourcing.outcome";
+    public static string TagOutcome => "sharedkernel.event_sourcing.outcome";
 
     /// <summary>
     /// Gets the tag that captures the number of events handled by an operation.
     /// </summary>
-    public static string TagEventCount => "eventsourcing.event.count";
+    public static string TagEventCount => "sharedkernel.event_sourcing.event_count";
 
     /// <summary>
     /// Gets the tag that captures the expected stream revision mode.
     /// </summary>
-    public static string TagExpectedRevisionMode => "eventsourcing.expected_revision.mode";
+    public static string TagExpectedRevisionMode => "sharedkernel.event_sourcing.expected_revision.mode";
 
     /// <summary>
     /// Gets the tag that captures the expected stream revision value when one is required.
     /// </summary>
-    public static string TagExpectedRevisionValue => "eventsourcing.expected_revision.value";
+    public static string TagExpectedRevisionValue => "sharedkernel.event_sourcing.expected_revision.value";
 
     /// <summary>
     /// Gets the tag that captures the actual stream revision during conflicts.
     /// </summary>
-    public static string TagActualRevision => "eventsourcing.actual_revision";
+    public static string TagActualRevision => "sharedkernel.event_sourcing.actual_revision";
 
     /// <summary>
     /// Gets the tag that captures projection checkpoint names.
     /// </summary>
-    public static string TagProjectionName => "eventsourcing.projection.name";
+    public static string TagProjectionName => "sharedkernel.event_sourcing.projection.name";
 
     /// <summary>
     /// Gets the tag that captures projection checkpoint positions.
     /// </summary>
-    public static string TagCheckpointPosition => "eventsourcing.checkpoint.position";
+    public static string TagCheckpointPosition => "sharedkernel.event_sourcing.checkpoint.position";
+
+    /// <summary>
+    /// Gets the semantic-convention tag that names the database system on every span and measurement.
+    /// </summary>
+    public static string TagDbSystemName => "db.system.name";
+
+    /// <summary>
+    /// Gets the <see cref="TagDbSystemName" /> value of the PostgreSQL provider.
+    /// </summary>
+    public static string DbSystemNamePostgreSql => "postgresql";
 
     /// <summary>
     /// Gets the success outcome value.
@@ -139,23 +149,26 @@ public static class PostgreSqlEventSourcingTelemetry
     /// <summary>Meter that owns the event sourcing instruments.</summary>
     internal static Meter Meter { get; } = new(Name);
 
-    /// <summary>Records how long an event stream append took, in milliseconds.</summary>
-    internal static Histogram<double> AppendDuration { get; } = Meter.CreateHistogram<double>(
+    /// <summary>Records how long an event stream append took, in seconds.</summary>
+    internal static Histogram<double> AppendDuration { get; } = Meter.CreateHistogram(
         MetricAppendDuration,
-        unit: "ms",
-        description: "Duration of PostgreSQL event stream append operations.");
+        unit: "s",
+        description: "Duration of PostgreSQL event stream append operations.",
+        advice: DurationBuckets.Advice);
 
-    /// <summary>Records how long an event stream load took, in milliseconds.</summary>
-    internal static Histogram<double> LoadDuration { get; } = Meter.CreateHistogram<double>(
+    /// <summary>Records how long an event stream load took, in seconds.</summary>
+    internal static Histogram<double> LoadDuration { get; } = Meter.CreateHistogram(
         MetricLoadDuration,
-        unit: "ms",
-        description: "Duration of PostgreSQL event stream load operations.");
+        unit: "s",
+        description: "Duration of PostgreSQL event stream load operations.",
+        advice: DurationBuckets.Advice);
 
-    /// <summary>Records how long a projection checkpoint operation took, in milliseconds.</summary>
-    internal static Histogram<double> CheckpointDuration { get; } = Meter.CreateHistogram<double>(
+    /// <summary>Records how long a projection checkpoint operation took, in seconds.</summary>
+    internal static Histogram<double> CheckpointDuration { get; } = Meter.CreateHistogram(
         MetricCheckpointDuration,
-        unit: "ms",
-        description: "Duration of PostgreSQL projection checkpoint operations.");
+        unit: "s",
+        description: "Duration of PostgreSQL projection checkpoint operations.",
+        advice: DurationBuckets.Advice);
 
     /// <summary>Counts events written to event streams.</summary>
     internal static Counter<long> EventsAppended { get; } = Meter.CreateCounter<long>(

@@ -13,7 +13,8 @@ bucket in production; `AutoProvisionBucket` is for local development only. `Publ
 independent of the authenticated endpoint. Presigned PUT tickets sign `Content-Type` and the exact
 `Content-Length`, and last at most seven days.
 
-Traces come from the `SharedKernel.ObjectStorage.S3` activity source and carry only the operation name; bucket, object
+Traces come from the `SharedKernel.ObjectStorage.S3` activity source, which `tracing.AddInstrumentation()` from
+`SharedKernel.Observability` exports, and carry only the operation name, as `sharedkernel.object_storage.operation`; bucket, object
 key, URL and request identifiers are never tagged. AWS SDK tracing is not registered, and HttpClient instrumentation is
 suppressed while an operation runs, so path-style URLs cannot reach exporters.
 Hosting a local SeaweedFS container belongs to `SharedKernel.Aspire.Hosting.SeaweedFs`.
