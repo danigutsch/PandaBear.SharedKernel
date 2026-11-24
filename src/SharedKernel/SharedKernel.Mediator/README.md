@@ -23,8 +23,11 @@ The package now also exposes an optional activity-based observability behavior:
 
 - `MediatorActivitySource` defines the stable `ActivitySource` name
   `SharedKernel.Mediator`.
-- `ActivityBehavior<TRequest, TResponse>` adds an internal request activity around mediator pipeline
-  execution.
+- `ActivityBehavior<TRequest, TResponse>` adds an internal `mediator.handle` activity around mediator pipeline
+  execution, tagged `sharedkernel.mediator.request.name`, `sharedkernel.mediator.response.name`,
+  `sharedkernel.mediator.outcome` and, on failure, `error.type`. The generated dispatch emits the `mediator.send`,
+  `mediator.stream`, `mediator.publish` and `mediator.notification.handle` spans and the `sharedkernel.mediator.*` metrics,
+  with durations in seconds; the [telemetry standard](../../../docs/telemetry.md) lists them.
 
 ## Concurrency conflict handling
 

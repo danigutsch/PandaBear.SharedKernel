@@ -27,7 +27,7 @@ extension in your application startup and supply any required parameters for ser
 - `AddTelemetryPrivacy` — Log and trace privacy processors with formatted messages and scopes excluded
 - `PrivacyDataClassifications` — Technical personal, sensitive, credential, and financial classifications for source-generated logging parameters
 - `AddInstrumentation()` — On `MeterProviderBuilder` and `TracerProviderBuilder`: collects the meters and traces the
-  activity sources of every SharedKernel package by name prefix (`PandaBear.*` and `SharedKernel.*`, see `NamePatterns`)
+  activity sources of every SharedKernel package by name prefix (`SharedKernel.*`, see `NamePatterns`)
 
 ```csharp
 builder.AddObservability();
@@ -36,9 +36,10 @@ builder.Services.AddOpenTelemetry()
     .WithTracing(tracing => tracing.AddInstrumentation());
 ```
 
-The prefixes replace one hard-coded name per package (`PandaBear.AspNetCore`, `PandaBear.Blazor`, `SharedKernel.Mediator`,
-`SharedKernel.EventSourcing.Npgsql`, ...) and need no reference to those packages: a package that is not loaded creates no meter or
-source, so nothing extra is exported. A repository convention test keeps every declared telemetry name under the two prefixes. Each
+The prefix replaces one hard-coded name per package (`SharedKernel.AspNetCore`, `SharedKernel.Blazor`, `SharedKernel.Mediator`,
+`SharedKernel.EventSourcing.Npgsql`, ...) and needs no reference to those packages: a package that is not loaded creates no meter or
+source, so nothing extra is exported. Every meter and activity source is named after the assembly of the package that creates it, as
+the [telemetry standard](../../../docs/telemetry.md) requires and a repository convention test enforces. Each
 package still exposes its own name constant (for example `AspNetCoreTelemetry.MeterName`) for hosts that register names one by one.
 The call is opt-in rather than part of `AddObservability()`, so existing hosts export nothing new until they ask for it.
 

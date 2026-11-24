@@ -23,9 +23,9 @@ public sealed class AppMediatorInstrumentation : IDisposable
         _activitySource = MediatorActivitySource.Source;
         _meter = meterFactory.Create(MediatorTelemetry.Name);
         RequestsTotal = _meter.CreateCounter<long>(MediatorTelemetry.MetricRequests, "{request}", "Total mediator requests dispatched.");
-        RequestsDuration = _meter.CreateHistogram<double>(MediatorTelemetry.MetricRequestDuration, "ms", "Duration of mediator request dispatch.");
+        RequestsDuration = _meter.CreateHistogram(MediatorTelemetry.MetricRequestDuration, "s", "Duration of mediator request dispatch.", advice: DurationBuckets.Advice);
         NotificationsTotal = _meter.CreateCounter<long>(MediatorTelemetry.MetricNotifications, "{notification}", "Total mediator notifications dispatched.");
-        NotificationsDuration = _meter.CreateHistogram<double>(MediatorTelemetry.MetricNotificationDuration, "ms", "Duration of mediator notification fan-out.");
+        NotificationsDuration = _meter.CreateHistogram(MediatorTelemetry.MetricNotificationDuration, "s", "Duration of mediator notification fan-out.", advice: DurationBuckets.Advice);
         StreamsTotal = _meter.CreateCounter<long>(MediatorTelemetry.MetricStreams, "{request}", "Total mediator stream requests dispatched.");
     }
 
@@ -40,7 +40,7 @@ public sealed class AppMediatorInstrumentation : IDisposable
     public Counter<long> RequestsTotal { get; }
 
     /// <summary>
-    /// Gets the histogram for mediator request duration.
+    /// Gets the histogram for mediator request duration, in seconds.
     /// </summary>
     public Histogram<double> RequestsDuration { get; }
 
@@ -50,7 +50,7 @@ public sealed class AppMediatorInstrumentation : IDisposable
     public Counter<long> NotificationsTotal { get; }
 
     /// <summary>
-    /// Gets the histogram for mediator notification duration.
+    /// Gets the histogram for mediator notification duration, in seconds.
     /// </summary>
     public Histogram<double> NotificationsDuration { get; }
 

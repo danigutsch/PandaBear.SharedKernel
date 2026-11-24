@@ -87,7 +87,7 @@ internal static class PostgreSqlEventStoreTestsHelpers
         return listener;
     }
 
-    /// <summary>Creates and starts a listener that queues the instrument name of each double or long measurement from the event sourcing meter tagged with the given schema.</summary>
+    /// <summary>Creates and starts a listener that queues the instrument name of each double or long measurement from the event sourcing meter tagged with the given schema and the PostgreSQL database system.</summary>
     public static MeterListener CreateMeterListener(
         ConcurrentQueue<string> measurements,
         string schema)
@@ -105,14 +105,14 @@ internal static class PostgreSqlEventStoreTestsHelpers
 
         listener.SetMeasurementEventCallback<double>((instrument, _, tags, _) =>
         {
-            if (HasMeasurementTag(tags, PostgreSqlEventSourcingTelemetry.TagSchema, schema))
+            if (HasMeasurementTag(tags, PostgreSqlEventSourcingTelemetry.TagSchema, schema) && HasMeasurementTag(tags, "db.system.name", "postgresql"))
             {
                 measurements.Enqueue(instrument.Name);
             }
         });
         listener.SetMeasurementEventCallback<long>((instrument, _, tags, _) =>
         {
-            if (HasMeasurementTag(tags, PostgreSqlEventSourcingTelemetry.TagSchema, schema))
+            if (HasMeasurementTag(tags, PostgreSqlEventSourcingTelemetry.TagSchema, schema) && HasMeasurementTag(tags, "db.system.name", "postgresql"))
             {
                 measurements.Enqueue(instrument.Name);
             }

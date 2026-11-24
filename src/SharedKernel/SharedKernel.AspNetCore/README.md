@@ -107,7 +107,7 @@ and are unchanged. Security headers, forwarded headers, CORS, the unhandled-exce
 ## Error and security telemetry
 
 Opt in with `services.AddUnhandledExceptionHandler()` (and `app.UseExceptionHandler()`) for a
-`traceId`-only RFC 9457 error body plus one log event and the `unhandled_exceptions_total` counter. Bounded JWT bearer
+`traceId`-only RFC 9457 error body plus one log event and the `sharedkernel.aspnetcore.unhandled_exceptions` counter. Bounded JWT bearer
 failure, challenge and forbidden events come from `AddAuthenticationEventTelemetry()` in the Authentication package and
 rate-limit rejections from `AddRateLimitEventTelemetry()` in the RateLimiting package. Exception messages, tokens and
 claims never reach the response, log or metric tags. See

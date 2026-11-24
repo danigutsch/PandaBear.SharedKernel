@@ -78,7 +78,7 @@ public sealed class UnhandledExceptionHandlerTests
             AspNetCoreTelemetry.ErrorTypeTag,
             AspNetCoreTelemetry.RouteTemplateTag,
             AspNetCoreTelemetry.HandledTag);
-        measurement.Tags[AspNetCoreTelemetry.ErrorTypeTag].ShouldBe(nameof(InvalidOperationException));
+        measurement.Tags[AspNetCoreTelemetry.ErrorTypeTag].ShouldBe("System.InvalidOperationException");
         measurement.Tags[AspNetCoreTelemetry.RouteTemplateTag].ShouldBe("/orders/{id}");
         measurement.Tags[AspNetCoreTelemetry.HandledTag].ShouldBe(true);
     }
@@ -268,7 +268,7 @@ public sealed class UnhandledExceptionHandlerTests
 
         // Assert
         meters.Measurements.Select(static m => m.Tags[AspNetCoreTelemetry.ErrorTypeTag])
-            .ShouldBeEquivalentTo("InvalidOperationException", "ArgumentException", "TimeoutException");
+            .ShouldBeEquivalentTo("System.InvalidOperationException", "System.ArgumentException", "System.TimeoutException");
     }
 
     [Fact]

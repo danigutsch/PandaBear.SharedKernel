@@ -382,6 +382,8 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         }
 
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagSchema, schemaName);
+
+        activity.SetTag(PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagOperation, "append");
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagEventCount, eventCount);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagExpectedRevisionMode, GetExpectedRevisionMode(expectedRevision));
@@ -405,6 +407,8 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         }
 
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagSchema, schemaName);
+
+        activity.SetTag(PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagOperation, operation);
         return activity;
     }
@@ -450,10 +454,11 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
     private static void RecordAppendDuration(string schemaName, string outcome, TimeSpan duration)
     {
         PostgreSqlEventSourcingTelemetry.AppendDuration.Record(
-            duration.TotalMilliseconds,
+            duration.TotalSeconds,
             new TagList
             {
                 { PostgreSqlEventSourcingTelemetry.TagSchema, schemaName },
+                { PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql },
                 { PostgreSqlEventSourcingTelemetry.TagOutcome, outcome },
             });
     }
@@ -461,10 +466,11 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
     private static void RecordLoadDuration(string schemaName, string operation, string outcome, TimeSpan duration)
     {
         PostgreSqlEventSourcingTelemetry.LoadDuration.Record(
-            duration.TotalMilliseconds,
+            duration.TotalSeconds,
             new TagList
             {
                 { PostgreSqlEventSourcingTelemetry.TagSchema, schemaName },
+                { PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql },
                 { PostgreSqlEventSourcingTelemetry.TagOperation, operation },
                 { PostgreSqlEventSourcingTelemetry.TagOutcome, outcome },
             });
@@ -477,6 +483,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
             new TagList
             {
                 { PostgreSqlEventSourcingTelemetry.TagSchema, schemaName },
+                { PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql },
             });
     }
 
@@ -487,6 +494,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
             new TagList
             {
                 { PostgreSqlEventSourcingTelemetry.TagSchema, schemaName },
+                { PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql },
                 { PostgreSqlEventSourcingTelemetry.TagOperation, operation },
             });
     }
@@ -498,6 +506,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
             new TagList
             {
                 { PostgreSqlEventSourcingTelemetry.TagSchema, schemaName },
+                { PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql },
             });
     }
 

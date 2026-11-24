@@ -69,21 +69,21 @@ public sealed class PostgreSqlIndexHealthTelemetryTests
             .Where(measurement => measurement.InstrumentName == PostgreSqlIndexHealthTelemetry.AssessmentMetricName)
             .ToArray();
         var tableTooSmallMeasurements = assessmentMeasurements
-            .Where(measurement => measurement.Tags.TryGetValue("action", out var action)
+            .Where(measurement => measurement.Tags.TryGetValue("sharedkernel.index_health.action", out var action)
                 && action == "insufficient_evidence"
-                && measurement.Tags.TryGetValue("reason", out var reason)
+                && measurement.Tags.TryGetValue("sharedkernel.index_health.reason", out var reason)
                 && reason == "table_too_small")
             .ToArray();
         var statisticsUnavailableMeasurements = assessmentMeasurements
-            .Where(measurement => measurement.Tags.TryGetValue("action", out var action)
+            .Where(measurement => measurement.Tags.TryGetValue("sharedkernel.index_health.action", out var action)
                 && action == "insufficient_evidence"
-                && measurement.Tags.TryGetValue("reason", out var reason)
+                && measurement.Tags.TryGetValue("sharedkernel.index_health.reason", out var reason)
                 && reason == "statistics_unavailable")
             .ToArray();
         var reviewCreationTableTooSmallMeasurements = assessmentMeasurements
-            .Where(measurement => measurement.Tags.TryGetValue("action", out var action)
+            .Where(measurement => measurement.Tags.TryGetValue("sharedkernel.index_health.action", out var action)
                 && action == "review_creation"
-                && measurement.Tags.TryGetValue("reason", out var reason)
+                && measurement.Tags.TryGetValue("sharedkernel.index_health.reason", out var reason)
                 && reason == "table_too_small")
             .ToArray();
 
@@ -149,14 +149,17 @@ public sealed class PostgreSqlIndexHealthTelemetryTests
         var renderedTags = string.Join(
             ",",
             measurements.SelectMany(measurement => measurement.Tags.Select(tag => $"{tag.Key}={tag.Value}")));
-        var collectionOutcomes = collectionMeasurements.Select(measurement => measurement.Tags["outcome"]).Distinct().ToArray();
-        var assessmentActions = assessmentMeasurements.Select(measurement => measurement.Tags["action"]).Distinct().ToArray();
-        var assessmentReasons = assessmentMeasurements.Select(measurement => measurement.Tags["reason"]).Distinct().ToArray();
-        var collectionTagsAreBounded = collectionMeasurements.All(measurement => measurement.Tags.Count == 1 && measurement.Tags.ContainsKey("outcome"));
+        var collectionOutcomes = collectionMeasurements.Select(measurement => measurement.Tags["sharedkernel.index_health.outcome"]).Distinct().ToArray();
+        var assessmentActions = assessmentMeasurements.Select(measurement => measurement.Tags["sharedkernel.index_health.action"]).Distinct().ToArray();
+        var assessmentReasons = assessmentMeasurements.Select(measurement => measurement.Tags["sharedkernel.index_health.reason"]).Distinct().ToArray();
+        var collectionTagsAreBounded = collectionMeasurements.All(measurement => measurement.Tags.Count == 2
+            && measurement.Tags.ContainsKey("sharedkernel.index_health.outcome")
+            && measurement.Tags.GetValueOrDefault("db.system.name") == "postgresql");
         var assessmentTagsAreBounded = assessmentMeasurements.All(
-            measurement => measurement.Tags.Count == 2
-                && measurement.Tags.ContainsKey("action")
-                && measurement.Tags.ContainsKey("reason"));
+            measurement => measurement.Tags.Count == 3
+                && measurement.Tags.ContainsKey("sharedkernel.index_health.action")
+                && measurement.Tags.ContainsKey("sharedkernel.index_health.reason")
+                && measurement.Tags.GetValueOrDefault("db.system.name") == "postgresql");
 
         // Assert
         collectionOutcomes.ShouldHaveCount(4);

@@ -731,13 +731,15 @@ public sealed class HttpOutcomeMapperTests
                 && candidate.ParentSpanId == parent.SpanId)
             .ShouldHaveSingleItem();
         var tags = activity.TagObjects.OrderBy(tag => tag.Key, StringComparer.Ordinal).ToArray();
+        activity.Source.Name.ShouldBe("SharedKernel.HttpClients");
+        activity.OperationName.ShouldBe("http_client.outcome");
         tags.Select(tag => tag.Key).ShouldBeEquivalentTo(
-            "http.outcome.kind",
             "http.request.method",
-            "http.response.status_code");
+            "http.response.status_code",
+            "sharedkernel.http_client.outcome");
         tags.ShouldHaveSingleItem(tag => tag.Key == "http.request.method").Value.ShouldBe("GET");
         tags.ShouldHaveSingleItem(tag => tag.Key == "http.response.status_code").Value.ShouldBe(200);
-        tags.ShouldHaveSingleItem(tag => tag.Key == "http.outcome.kind").Value.ShouldBe(nameof(HttpOutcomeKind.Succeeded));
+        tags.ShouldHaveSingleItem(tag => tag.Key == "sharedkernel.http_client.outcome").Value.ShouldBe("succeeded");
         var telemetryText = string.Join('|', tags.Select(tag => $"{tag.Key}={tag.Value}"));
         telemetryText.ShouldNotContain("secret-token", StringComparison.Ordinal);
         telemetryText.ShouldNotContain("alice@example.test", StringComparison.Ordinal);

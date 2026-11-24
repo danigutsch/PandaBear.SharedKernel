@@ -7,37 +7,37 @@ namespace PandaBear.AspNetCore;
 public static class AspNetCoreTelemetry
 {
     /// <summary>The name of the meter that owns every instrument in this package.</summary>
-    public const string MeterName = "PandaBear.AspNetCore";
+    public const string MeterName = "SharedKernel.AspNetCore";
 
     /// <summary>The counter of unhandled exceptions, tagged with <see cref="ErrorTypeTag" />, <see cref="RouteTemplateTag" /> and <see cref="HandledTag" />.</summary>
-    public const string UnhandledExceptionsCounterName = "unhandled_exceptions_total";
+    public const string UnhandledExceptionsCounterName = "sharedkernel.aspnetcore.unhandled_exceptions";
 
     /// <summary>The counter of JWT bearer authentication failures, challenges and forbidden results, tagged with <see cref="EventTag" />, <see cref="ReasonTag" /> and <see cref="SchemeTag" />.</summary>
-    public const string AuthenticationEventsCounterName = "authentication_events_total";
+    public const string AuthenticationEventsCounterName = "sharedkernel.aspnetcore.authentication.events";
 
     /// <summary>The counter of rate-limit rejections, tagged with <see cref="PolicyTag" />.</summary>
-    public const string RateLimitRejectionsCounterName = "rate_limit_rejections_total";
+    public const string RateLimitRejectionsCounterName = "sharedkernel.aspnetcore.rate_limit.rejections";
 
-    /// <summary>The tag that carries the exception type name.</summary>
-    public const string ErrorTypeTag = "error_type";
+    /// <summary>The semantic-convention tag that carries the full type name of the exception.</summary>
+    public const string ErrorTypeTag = "error.type";
 
-    /// <summary>The tag that carries the matched route template, or <see cref="UnmatchedRoute" />.</summary>
-    public const string RouteTemplateTag = "route_template";
+    /// <summary>The semantic-convention tag <c>http.route</c> that carries the matched route template, or <see cref="UnmatchedRoute" />.</summary>
+    public const string RouteTemplateTag = "http.route";
 
     /// <summary>The boolean tag that states whether a handler produced a response for the exception.</summary>
-    public const string HandledTag = "handled";
+    public const string HandledTag = "sharedkernel.aspnetcore.handled";
 
     /// <summary>The tag that carries the authentication event: <c>authentication_failed</c>, <c>challenge</c> or <c>forbidden</c>.</summary>
-    public const string EventTag = "event";
+    public const string EventTag = "sharedkernel.aspnetcore.authentication.event";
 
     /// <summary>The tag that carries a bounded authentication reason such as <c>token_expired</c>; never token, claim or exception text.</summary>
-    public const string ReasonTag = "reason";
+    public const string ReasonTag = "sharedkernel.aspnetcore.authentication.reason";
 
     /// <summary>The tag that carries the authentication scheme name.</summary>
-    public const string SchemeTag = "scheme";
+    public const string SchemeTag = "sharedkernel.aspnetcore.authentication.scheme";
 
     /// <summary>The tag that carries the application-owned rate-limit policy name, or <see cref="NoPolicy" />.</summary>
-    public const string PolicyTag = "policy";
+    public const string PolicyTag = "sharedkernel.aspnetcore.rate_limit.policy";
 
     /// <summary>The route template reported when no endpoint matched the request.</summary>
     public const string UnmatchedRoute = "unmatched";

@@ -13,8 +13,11 @@ namespace PandaBear.Observability.Tests;
 public sealed class InstrumentationTests
 {
     [Theory]
-    [InlineData("PandaBear.AspNetCore")]
-    [InlineData("PandaBear.Blazor")]
+    [InlineData("SharedKernel.AspNetCore")]
+    [InlineData("SharedKernel.AspNetCore.WebAnalytics")]
+    [InlineData("SharedKernel.Blazor")]
+    [InlineData("SharedKernel.MalwareScanning.ClamAv")]
+    [InlineData("SharedKernel.Scheduling")]
     [InlineData("SharedKernel.EventSourcing.Npgsql")]
     [InlineData("SharedKernel.Mediator")]
     [InlineData("SharedKernel.Observability.Npgsql")]
@@ -39,7 +42,10 @@ public sealed class InstrumentationTests
     [Theory]
     [InlineData("SharedKernel.EventSourcing.Npgsql")]
     [InlineData("SharedKernel.Mediator")]
-    [InlineData("SharedKernel.HttpClients.ContractOutcomes")]
+    [InlineData("SharedKernel.HttpClients")]
+    [InlineData("SharedKernel.MalwareScanning.ClamAv")]
+    [InlineData("SharedKernel.ObjectStorage.S3")]
+    [InlineData("SharedKernel.Scheduling")]
     public void A_shared_kernel_activity_source_is_traced(string sourceName)
     {
         // Arrange
@@ -53,8 +59,10 @@ public sealed class InstrumentationTests
         listened.ShouldBeTrue(sourceName);
     }
 
-    [Fact]
-    public void Other_telemetry_is_left_alone()
+    [Theory]
+    [InlineData("Contoso.Orders")]
+    [InlineData("PandaBear.AspNetCore")]
+    public void Other_telemetry_is_left_alone(string name)
     {
         // Arrange
         using var exporter = new DiscardingMetricExporter();
@@ -64,8 +72,8 @@ public sealed class InstrumentationTests
             .AddReader(reader)
             .Build();
         using var tracerProvider = Sdk.CreateTracerProviderBuilder().AddInstrumentation().Build();
-        using var meter = new Meter("Contoso.Orders");
-        using var source = new ActivitySource("Contoso.Orders");
+        using var meter = new Meter(name);
+        using var source = new ActivitySource(name);
 
         // Act
         var counter = meter.CreateCounter<long>("probe");
@@ -76,12 +84,12 @@ public sealed class InstrumentationTests
     }
 
     [Fact]
-    public void The_name_patterns_cover_both_prefixes()
+    public void The_name_patterns_cover_only_the_shared_kernel_prefix()
     {
         // Act
         var patterns = InstrumentationExtensions.NamePatterns;
 
         // Assert
-        patterns.ShouldBe(["PandaBear.*", "SharedKernel.*"]);
+        patterns.ShouldBe(["SharedKernel.*"]);
     }
 }

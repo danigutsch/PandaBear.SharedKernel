@@ -43,7 +43,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         span.Status.ShouldBe(ActivityStatusCode.Error);
         span.StatusDescription.ShouldBeNull();
         outcome.ShouldBe(MediatorTelemetry.OutcomeError);
-        errorType.ShouldBe("InvalidOperationException");
+        errorType.ShouldBe("System.InvalidOperationException");
 
         span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
@@ -149,7 +149,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         span.Status.ShouldBe(ActivityStatusCode.Error);
         span.StatusDescription.ShouldBeNull();
         span.GetTagItem(MediatorTelemetry.TagOutcome).ShouldBe(MediatorTelemetry.OutcomeError);
-        span.GetTagItem(MediatorTelemetry.TagErrorType).ShouldBe(nameof(OperationCanceledException));
+        span.GetTagItem(MediatorTelemetry.TagErrorType).ShouldBe("System.OperationCanceledException");
         span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
@@ -202,7 +202,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         span.Status.ShouldBe(ActivityStatusCode.Error);
         span.StatusDescription.ShouldBeNull();
         span.GetTagItem(MediatorTelemetry.TagOutcome).ShouldBe(MediatorTelemetry.OutcomeError);
-        span.GetTagItem(MediatorTelemetry.TagErrorType).ShouldBe(nameof(OperationCanceledException));
+        span.GetTagItem(MediatorTelemetry.TagErrorType).ShouldBe("System.OperationCanceledException");
         span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
@@ -255,7 +255,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         span.Status.ShouldBe(ActivityStatusCode.Error);
         span.StatusDescription.ShouldBeNull();
         outcome.ShouldBe(MediatorTelemetry.OutcomeError);
-        errorType.ShouldBe("InvalidOperationException");
+        errorType.ShouldBe("System.InvalidOperationException");
 
         span.Events.ShouldNotContain(static evt => evt.Name == "exception");
 
@@ -352,7 +352,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         handlerSpan.Status.ShouldBe(ActivityStatusCode.Error);
         handlerSpan.StatusDescription.ShouldBeNull();
         handlerOutcome.ShouldBe(MediatorTelemetry.OutcomeError);
-        handlerErrorType.ShouldBe("InvalidOperationException");
+        handlerErrorType.ShouldBe("System.InvalidOperationException");
         handlerName.ShouldBe("TourCreatedHandlerOne");
 
         handlerSpan.Events.ShouldNotContain(static evt => evt.Name == "exception");
@@ -386,7 +386,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         span.Status.ShouldBe(ActivityStatusCode.Error);
         span.StatusDescription.ShouldBeNull();
         outcome.ShouldBe(MediatorTelemetry.OutcomeError);
-        errorType.ShouldBe("InvalidOperationException");
+        errorType.ShouldBe("System.InvalidOperationException");
 
         span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }

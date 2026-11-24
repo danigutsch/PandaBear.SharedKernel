@@ -16,45 +16,45 @@ public static class SchedulingTelemetry
     /// <summary>
     /// Gets the activity name for one polling drain cycle.
     /// </summary>
-    public static string ActivityPollingCycle => "poll";
+    public static string ActivityPollingCycle => "scheduling.poll";
 
     /// <summary>
     /// Gets the histogram name for polling cycle duration.
     /// </summary>
-    public static string MetricPollingCycleDuration => "scheduling.polling.cycle.duration";
+    public static string MetricPollingCycleDuration => "sharedkernel.scheduling.polling.cycle.duration";
 
     /// <summary>
     /// Gets the counter name for completed polling batches.
     /// </summary>
-    public static string MetricPollingBatches => "scheduling.polling.batch";
+    public static string MetricPollingBatches => "sharedkernel.scheduling.polling.batches";
 
     /// <summary>
     /// Gets the counter name for processed polling work items.
     /// </summary>
-    public static string MetricPollingItems => "scheduling.polling.item";
+    public static string MetricPollingItems => "sharedkernel.scheduling.polling.items";
 
     /// <summary>
     /// Gets the counter name for non-fatal polling failures.
     /// </summary>
-    public static string MetricPollingFailures => "scheduling.polling.failure";
+    public static string MetricPollingFailures => "sharedkernel.scheduling.polling.failures";
 
     /// <summary>
     /// Gets the tag that captures the polling service name.
     /// </summary>
-    public static string TagServiceName => "scheduling.service.name";
+    public static string TagServiceName => "sharedkernel.scheduling.service.name";
 
     /// <summary>
     /// Gets the tag that captures operation outcome.
     /// </summary>
-    public static string TagOutcome => "scheduling.outcome";
+    public static string TagOutcome => "sharedkernel.scheduling.outcome";
 
     /// <summary>
     /// Gets the tag that captures processed item count.
     /// </summary>
-    public static string TagItemCount => "scheduling.item.count";
+    public static string TagItemCount => "sharedkernel.scheduling.item_count";
 
     /// <summary>
-    /// Gets the tag that captures the exception type for failed polling work.
+    /// Gets the semantic-convention tag that captures the full exception type name of failed polling work.
     /// </summary>
     public static string TagErrorType => "error.type";
 
@@ -80,10 +80,11 @@ public static class SchedulingTelemetry
     internal static Meter Meter { get; } = new(Name);
 
     /// <summary>Records how long one polling drain cycle took, in seconds.</summary>
-    internal static Histogram<double> PollingCycleDuration { get; } = Meter.CreateHistogram<double>(
+    internal static Histogram<double> PollingCycleDuration { get; } = Meter.CreateHistogram(
         MetricPollingCycleDuration,
         "s",
-        "Duration of one polling drain cycle.");
+        "Duration of one polling drain cycle.",
+        advice: DurationBuckets.Advice);
 
     /// <summary>Counts polling batches that completed.</summary>
     internal static Counter<long> PollingBatches { get; } = Meter.CreateCounter<long>(

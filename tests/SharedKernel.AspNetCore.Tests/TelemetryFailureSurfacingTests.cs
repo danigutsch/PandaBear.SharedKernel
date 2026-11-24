@@ -16,7 +16,7 @@ public sealed class TelemetryFailureSurfacingTests
         reporter.Report(new InvalidOperationException(), "/orders/{id}", 500, "trace", handled: true);
 
         // Assert
-        captured.Text.ShouldContain("PandaBear.AspNetCore telemetry failure: InvalidOperationException", "the package and the failure type are surfaced");
+        captured.Text.ShouldContain("SharedKernel.AspNetCore telemetry failure: InvalidOperationException", "the package and the failure type are surfaced");
         captured.Text.ShouldNotContain(ThrowingLogger<UnhandledExceptionReporter>.Secret, "the failure message must not be surfaced");
     }
 }

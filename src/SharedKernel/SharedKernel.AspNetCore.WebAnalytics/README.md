@@ -127,11 +127,11 @@ headers (a batch shares one set of headers), through the named client `UmamiPage
 HTTP client defaults apply; with `PandaBear.SharedKernel.ServiceDefaults` that is the standard resilience handler, which never retries
 a `POST`, so a page view is not counted twice. Nothing a target does can fail or change a page.
 
-A page view is dropped for one target, counted on the counter `web_analytics_page_views_dropped_total` of the meter
-`PandaBear.AspNetCore.WebAnalytics` (registered by `AddInstrumentation`) with the tags `target` (the target's name) and
-`reason`, when:
+A page view is dropped for one target, counted on the counter `sharedkernel.web_analytics.page_views.dropped` of the meter
+`SharedKernel.AspNetCore.WebAnalytics` (registered by `AddInstrumentation`) with the tags `sharedkernel.web_analytics.target` (the
+target's name) and `sharedkernel.web_analytics.reason`, when:
 
-| `reason` | When | Logged |
+| Reason value | When | Logged |
 | --- | --- | --- |
 | `queue_full` | the target's queue is full | no, to keep a slow target from flooding the log |
 | `rejected` | the target answered other than 2xx | warning `4201` with the target and the status code |

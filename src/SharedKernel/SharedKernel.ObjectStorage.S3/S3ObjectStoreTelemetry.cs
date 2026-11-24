@@ -11,7 +11,7 @@ namespace PandaBear.ObjectStorage.S3;
 /// </remarks>
 public static class S3ObjectStoreTelemetry
 {
-    /// <summary>Name of the activity source to register with a tracer provider.</summary>
+    /// <summary>Name of the activity source; <c>AddInstrumentation</c> traces it through its <c>SharedKernel.*</c> pattern.</summary>
     public const string Name = "SharedKernel.ObjectStorage.S3";
 
     /// <summary>Source of the operation activities.</summary>
@@ -21,7 +21,7 @@ public static class S3ObjectStoreTelemetry
     internal static IDisposable Start(string operation)
     {
         var activity = ActivitySource.StartActivity($"object_storage.{operation}", ActivityKind.Client);
-        activity?.SetTag("object_storage.operation", operation);
+        activity?.SetTag("sharedkernel.object_storage.operation", operation);
         return new OperationScope(activity, SuppressInstrumentationScope.Begin());
     }
 

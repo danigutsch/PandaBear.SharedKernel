@@ -14,6 +14,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="..\SharedKernel.Mediator\DurationBuckets.cs" Link="DurationBuckets.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Scheduling.Tests" />
     </ItemGroup>
 
 </Project>

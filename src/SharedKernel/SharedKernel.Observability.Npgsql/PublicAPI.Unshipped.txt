@@ -1,5 +1,5 @@
 #nullable enable
-const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.CollectionMetricName = "postgresql.index_health.collections" -> string!
+const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.CollectionMetricName = "sharedkernel.index_health.collections" -> string!
 PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence
 PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.EstimatedRows.get -> long
 PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.EstimatedRows.init -> void
@@ -76,7 +76,7 @@ PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.HighInd
 PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.HighSequentialScanVolume = 7 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
 PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.InsufficientActivity = 8 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
 PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry
-const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.AssessmentMetricName = "postgresql.index_health.assessments" -> string!
+const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.AssessmentMetricName = "sharedkernel.index_health.assessments" -> string!
 const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.MeterName = "SharedKernel.Observability.Npgsql" -> string!
 static PandaBear.Observability.Npgsql.PostgreSqlIndexHealthServiceCollectionExtensions.AddPostgreSqlIndexHealthMonitoring(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IEnumerable<string!>! connectionStrings, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions! options) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.<Clone>$() -> PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence!

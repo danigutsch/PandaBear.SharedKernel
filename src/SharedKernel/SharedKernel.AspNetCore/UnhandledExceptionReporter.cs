@@ -70,19 +70,18 @@ public sealed partial class UnhandledExceptionReporter
     {
         ArgumentNullException.ThrowIfNull(exception);
 
-        var errorType = ErrorType(exception);
+        var exceptionType = UnwrapWrapperExceptions(exception).GetType();
+        var errorType = exceptionType.FullName ?? exceptionType.Name;
         var route = RouteTemplateNormalizer.Normalize(routeTemplate);
         var trace = traceId ?? string.Empty;
 
-        TelemetryGuard.Run(() => LogUnhandledException(_logger, errorType, route, statusCode, trace));
+        TelemetryGuard.Run(() => LogUnhandledException(_logger, exceptionType.Name, route, statusCode, trace));
         TelemetryGuard.Run(() => _counter?.Add(
             1,
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.ErrorTypeTag, errorType),
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.RouteTemplateTag, route),
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.HandledTag, handled)));
     }
-
-    private static string ErrorType(Exception exception) => UnwrapWrapperExceptions(exception).GetType().Name;
 
     /// <summary>
     /// Returns the first inner exception of aggregate and reflection wrappers, which hide the real fault;

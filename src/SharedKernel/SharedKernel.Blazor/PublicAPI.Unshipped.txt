@@ -2,12 +2,12 @@
 const PandaBear.Blazor.ErrorSummary.MaxMessageLength = 300 -> int
 const PandaBear.Blazor.InteractiveMarker.AttributeName = "data-interactive" -> string!
 const PandaBear.Blazor.InteractiveMarker.ReadySelector = "[data-interactive='true']" -> string!
-const PandaBear.Blazor.UiFailureReporter.ErrorTypeTag = "error_type" -> string!
+const PandaBear.Blazor.UiFailureReporter.ErrorTypeTag = "error.type" -> string!
 const PandaBear.Blazor.UiFailureReporter.HandledFailureEventId = 7001 -> int
-const PandaBear.Blazor.UiFailureReporter.HandledFailuresCounterName = "handled_ui_failures_total" -> string!
+const PandaBear.Blazor.UiFailureReporter.HandledFailuresCounterName = "sharedkernel.blazor.handled_failures" -> string!
 const PandaBear.Blazor.UiFailureReporter.MaxOperationLength = 100 -> int
-const PandaBear.Blazor.UiFailureReporter.MeterName = "PandaBear.Blazor" -> string!
-const PandaBear.Blazor.UiFailureReporter.OperationTag = "operation" -> string!
+const PandaBear.Blazor.UiFailureReporter.MeterName = "SharedKernel.Blazor" -> string!
+const PandaBear.Blazor.UiFailureReporter.OperationTag = "sharedkernel.blazor.operation" -> string!
 const PandaBear.Blazor.UiFailureReporter.UnknownOperation = "unknown" -> string!
 const PandaBear.Blazor.UiFailureReporter.UnknownTraceId = "unknown" -> string!
 const PandaBear.Blazor.UploadStatus.MaxDisplayTextLength = 200 -> int

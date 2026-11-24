@@ -10,10 +10,16 @@ public static class PostgreSqlIndexHealthTelemetry
     public const string MeterName = "SharedKernel.Observability.Npgsql";
 
     /// <summary>Gets the aggregate index-health assessment metric name.</summary>
-    public const string AssessmentMetricName = "postgresql.index_health.assessments";
+    public const string AssessmentMetricName = "sharedkernel.index_health.assessments";
 
     /// <summary>Gets the once-per-run index-health collection metric name.</summary>
-    public const string CollectionMetricName = "postgresql.index_health.collections";
+    public const string CollectionMetricName = "sharedkernel.index_health.collections";
+
+    private const string OutcomeTag = "sharedkernel.index_health.outcome";
+    private const string ActionTag = "sharedkernel.index_health.action";
+    private const string ReasonTag = "sharedkernel.index_health.reason";
+    private const string DbSystemNameTag = "db.system.name";
+    private const string DbSystemName = "postgresql";
 
     private static readonly Meter Meter = new(MeterName);
     private static readonly Counter<long> Assessments = Meter.CreateCounter<long>(
@@ -43,7 +49,8 @@ public static class PostgreSqlIndexHealthTelemetry
     {
         TagList tags =
         [
-            new KeyValuePair<string, object?>("outcome", GetOutcomeTag(outcome)),
+            new KeyValuePair<string, object?>(OutcomeTag, GetOutcomeTag(outcome)),
+            new KeyValuePair<string, object?>(DbSystemNameTag, DbSystemName),
         ];
 
         Collections.Add(1, tags);
@@ -56,8 +63,9 @@ public static class PostgreSqlIndexHealthTelemetry
     {
         TagList tags =
         [
-            new KeyValuePair<string, object?>("action", GetActionTag(action)),
-            new KeyValuePair<string, object?>("reason", GetReasonTag(reason)),
+            new KeyValuePair<string, object?>(ActionTag, GetActionTag(action)),
+            new KeyValuePair<string, object?>(ReasonTag, GetReasonTag(reason)),
+            new KeyValuePair<string, object?>(DbSystemNameTag, DbSystemName),
         ];
 
         Assessments.Add(count, tags);

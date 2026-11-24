@@ -37,7 +37,7 @@ public sealed class UiFailureReporterTests
         measurement.Instrument.ShouldBe(UiFailureReporter.HandledFailuresCounterName);
         measurement.Value.ShouldBe(1);
         measurement.Tags.Count.ShouldBe(2);
-        measurement.Tags[UiFailureReporter.ErrorTypeTag].ShouldBe(nameof(InvalidOperationException));
+        measurement.Tags[UiFailureReporter.ErrorTypeTag].ShouldBe("System.InvalidOperationException");
         measurement.Tags[UiFailureReporter.OperationTag].ShouldBe("customers.import");
     }
 
@@ -131,7 +131,7 @@ public sealed class UiFailureReporterTests
         reporter.Report(new AggregateException(new TimeoutException(HostileText.StackTrace)), "op");
 
         // Assert
-        meters.Measurements.ShouldHaveSingleItem().Tags[UiFailureReporter.ErrorTypeTag].ShouldBe(nameof(TimeoutException));
+        meters.Measurements.ShouldHaveSingleItem().Tags[UiFailureReporter.ErrorTypeTag].ShouldBe("System.TimeoutException");
     }
 
     [Fact]
@@ -145,7 +145,7 @@ public sealed class UiFailureReporterTests
         reporter.Report(new TargetInvocationException(new FormatException()), "op");
 
         // Assert
-        meters.Measurements.ShouldHaveSingleItem().Tags[UiFailureReporter.ErrorTypeTag].ShouldBe(nameof(FormatException));
+        meters.Measurements.ShouldHaveSingleItem().Tags[UiFailureReporter.ErrorTypeTag].ShouldBe("System.FormatException");
     }
 
     [Fact]

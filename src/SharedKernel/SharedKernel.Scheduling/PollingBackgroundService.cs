@@ -66,7 +66,7 @@ public abstract partial class PollingBackgroundService : BackgroundService
                 SchedulingTelemetry.PollingFailures.Add(
                     1,
                     new KeyValuePair<string, object?>(SchedulingTelemetry.TagServiceName, serviceName),
-                    new KeyValuePair<string, object?>(SchedulingTelemetry.TagErrorType, exception.GetType().Name));
+                    new KeyValuePair<string, object?>(SchedulingTelemetry.TagErrorType, exception.GetType().FullName));
                 LogPollingFailure(logger, serviceName, exception.GetType().Name);
             }
 
@@ -111,7 +111,7 @@ public abstract partial class PollingBackgroundService : BackgroundService
         {
             outcome = SchedulingTelemetry.OutcomeError;
             activity?.SetTag(SchedulingTelemetry.TagOutcome, outcome);
-            activity?.SetTag(SchedulingTelemetry.TagErrorType, exception.GetType().Name);
+            activity?.SetTag(SchedulingTelemetry.TagErrorType, exception.GetType().FullName);
             activity?.SetStatus(ActivityStatusCode.Error);
             throw;
         }
