@@ -1,0 +1,76 @@
+#nullable enable
+PandaBear.Review.ReviewDecision
+PandaBear.Review.ReviewDecision.Advisory = 3 -> PandaBear.Review.ReviewDecision
+PandaBear.Review.ReviewDecision.Approved = 1 -> PandaBear.Review.ReviewDecision
+PandaBear.Review.ReviewDecision.ChangesRequested = 2 -> PandaBear.Review.ReviewDecision
+PandaBear.Review.ReviewDecision.None = 0 -> PandaBear.Review.ReviewDecision
+PandaBear.Review.ReviewEvidence
+PandaBear.Review.ReviewEvidence.ActorPseudonym.get -> string!
+PandaBear.Review.ReviewEvidence.Decision.get -> PandaBear.Review.ReviewDecision
+PandaBear.Review.ReviewEvidence.Lane.get -> string!
+PandaBear.Review.ReviewEvidence.OccurredAt.get -> System.DateTimeOffset
+PandaBear.Review.ReviewEvidence.ReasonCode.get -> string!
+PandaBear.Review.ReviewEvidence.Revision.get -> PandaBear.Review.ReviewRevision!
+PandaBear.Review.ReviewEvidenceSnapshot
+PandaBear.Review.ReviewEvidenceSnapshot.<Clone>$() -> PandaBear.Review.ReviewEvidenceSnapshot!
+PandaBear.Review.ReviewEvidenceSnapshot.ActorPseudonym.get -> string!
+PandaBear.Review.ReviewEvidenceSnapshot.ActorPseudonym.init -> void
+PandaBear.Review.ReviewEvidenceSnapshot.Decision.get -> PandaBear.Review.ReviewDecision
+PandaBear.Review.ReviewEvidenceSnapshot.Decision.init -> void
+PandaBear.Review.ReviewEvidenceSnapshot.Deconstruct(out PandaBear.Review.ReviewRevision! Revision, out string! Lane, out PandaBear.Review.ReviewDecision Decision, out string! ActorPseudonym, out System.DateTimeOffset OccurredAt, out string! ReasonCode) -> void
+PandaBear.Review.ReviewEvidenceSnapshot.Equals(PandaBear.Review.ReviewEvidenceSnapshot? other) -> bool
+PandaBear.Review.ReviewEvidenceSnapshot.Lane.get -> string!
+PandaBear.Review.ReviewEvidenceSnapshot.Lane.init -> void
+PandaBear.Review.ReviewEvidenceSnapshot.OccurredAt.get -> System.DateTimeOffset
+PandaBear.Review.ReviewEvidenceSnapshot.OccurredAt.init -> void
+PandaBear.Review.ReviewEvidenceSnapshot.ReasonCode.get -> string!
+PandaBear.Review.ReviewEvidenceSnapshot.ReasonCode.init -> void
+PandaBear.Review.ReviewEvidenceSnapshot.ReviewEvidenceSnapshot(PandaBear.Review.ReviewRevision! Revision, string! Lane, PandaBear.Review.ReviewDecision Decision, string! ActorPseudonym, System.DateTimeOffset OccurredAt, string! ReasonCode) -> void
+PandaBear.Review.ReviewEvidenceSnapshot.Revision.get -> PandaBear.Review.ReviewRevision!
+PandaBear.Review.ReviewEvidenceSnapshot.Revision.init -> void
+PandaBear.Review.ReviewHistory
+PandaBear.Review.ReviewHistory.ChangesRequested.get -> bool
+PandaBear.Review.ReviewHistory.Entries.get -> System.Collections.Immutable.ImmutableList<PandaBear.Review.ReviewEvidence!>!
+PandaBear.Review.ReviewHistory.ExpectedHumanLane.get -> string?
+PandaBear.Review.ReviewHistory.IsApproved.get -> bool
+PandaBear.Review.ReviewHistory.Lanes.get -> System.Collections.Immutable.ImmutableArray<string!>
+PandaBear.Review.ReviewHistory.RecordAdvisory(PandaBear.Review.ReviewRevision! revision, string! lane, string! actorPseudonym, System.DateTimeOffset occurredAt, string! reasonCode) -> PandaBear.Results.Result<PandaBear.Review.ReviewHistory!>
+PandaBear.Review.ReviewHistory.RecordHumanDecision(PandaBear.Review.ReviewRevision! revision, string! lane, PandaBear.Review.ReviewDecision decision, string! actorPseudonym, System.DateTimeOffset occurredAt, string! reasonCode) -> PandaBear.Results.Result<PandaBear.Review.ReviewHistory!>
+PandaBear.Review.ReviewHistory.Revision.get -> PandaBear.Review.ReviewRevision!
+PandaBear.Review.ReviewHistory.Snapshot() -> PandaBear.Review.ReviewHistorySnapshot!
+PandaBear.Review.ReviewHistory.StartRevision(PandaBear.Review.ReviewRevision! revision) -> PandaBear.Results.Result<PandaBear.Review.ReviewHistory!>
+PandaBear.Review.ReviewHistorySnapshot
+PandaBear.Review.ReviewHistorySnapshot.<Clone>$() -> PandaBear.Review.ReviewHistorySnapshot!
+PandaBear.Review.ReviewHistorySnapshot.Deconstruct(out PandaBear.Review.ReviewRevision! Revision, out System.Collections.Immutable.ImmutableArray<string!> Lanes, out System.Collections.Immutable.ImmutableArray<PandaBear.Review.ReviewEvidenceSnapshot!> Evidence) -> void
+PandaBear.Review.ReviewHistorySnapshot.Equals(PandaBear.Review.ReviewHistorySnapshot? other) -> bool
+PandaBear.Review.ReviewHistorySnapshot.Evidence.get -> System.Collections.Immutable.ImmutableArray<PandaBear.Review.ReviewEvidenceSnapshot!>
+PandaBear.Review.ReviewHistorySnapshot.Evidence.init -> void
+PandaBear.Review.ReviewHistorySnapshot.Lanes.get -> System.Collections.Immutable.ImmutableArray<string!>
+PandaBear.Review.ReviewHistorySnapshot.Lanes.init -> void
+PandaBear.Review.ReviewHistorySnapshot.ReviewHistorySnapshot(PandaBear.Review.ReviewRevision! Revision, System.Collections.Immutable.ImmutableArray<string!> Lanes, System.Collections.Immutable.ImmutableArray<PandaBear.Review.ReviewEvidenceSnapshot!> Evidence) -> void
+PandaBear.Review.ReviewHistorySnapshot.Revision.get -> PandaBear.Review.ReviewRevision!
+PandaBear.Review.ReviewHistorySnapshot.Revision.init -> void
+PandaBear.Review.ReviewRevision
+PandaBear.Review.ReviewRevision.<Clone>$() -> PandaBear.Review.ReviewRevision!
+PandaBear.Review.ReviewRevision.ContentHash.get -> string!
+PandaBear.Review.ReviewRevision.Equals(PandaBear.Review.ReviewRevision? other) -> bool
+PandaBear.Review.ReviewRevision.Number.get -> long
+PandaBear.Review.ReviewRevision.ReviewRevision(long number, string! contentHash) -> void
+const PandaBear.Review.ReviewHistory.MaximumReasonLength = 128 -> int
+override PandaBear.Review.ReviewEvidenceSnapshot.Equals(object? obj) -> bool
+override PandaBear.Review.ReviewEvidenceSnapshot.GetHashCode() -> int
+override PandaBear.Review.ReviewEvidenceSnapshot.ToString() -> string!
+override PandaBear.Review.ReviewHistorySnapshot.Equals(object? obj) -> bool
+override PandaBear.Review.ReviewHistorySnapshot.GetHashCode() -> int
+override PandaBear.Review.ReviewHistorySnapshot.ToString() -> string!
+override PandaBear.Review.ReviewRevision.Equals(object? obj) -> bool
+override PandaBear.Review.ReviewRevision.GetHashCode() -> int
+override PandaBear.Review.ReviewRevision.ToString() -> string!
+static PandaBear.Review.ReviewEvidenceSnapshot.operator !=(PandaBear.Review.ReviewEvidenceSnapshot? left, PandaBear.Review.ReviewEvidenceSnapshot? right) -> bool
+static PandaBear.Review.ReviewEvidenceSnapshot.operator ==(PandaBear.Review.ReviewEvidenceSnapshot? left, PandaBear.Review.ReviewEvidenceSnapshot? right) -> bool
+static PandaBear.Review.ReviewHistory.Restore(PandaBear.Review.ReviewHistorySnapshot? snapshot) -> PandaBear.Results.Result<PandaBear.Review.ReviewHistory!>
+static PandaBear.Review.ReviewHistory.Start(PandaBear.Review.ReviewRevision! revision, System.Collections.Generic.IEnumerable<string!>! lanes) -> PandaBear.Review.ReviewHistory!
+static PandaBear.Review.ReviewHistorySnapshot.operator !=(PandaBear.Review.ReviewHistorySnapshot? left, PandaBear.Review.ReviewHistorySnapshot? right) -> bool
+static PandaBear.Review.ReviewHistorySnapshot.operator ==(PandaBear.Review.ReviewHistorySnapshot? left, PandaBear.Review.ReviewHistorySnapshot? right) -> bool
+static PandaBear.Review.ReviewRevision.operator !=(PandaBear.Review.ReviewRevision? left, PandaBear.Review.ReviewRevision? right) -> bool
+static PandaBear.Review.ReviewRevision.operator ==(PandaBear.Review.ReviewRevision? left, PandaBear.Review.ReviewRevision? right) -> bool

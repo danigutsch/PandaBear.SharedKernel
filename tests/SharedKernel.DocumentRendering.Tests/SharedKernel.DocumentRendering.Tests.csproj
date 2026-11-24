@@ -12,11 +12,15 @@
         <PackageReference Include="coverlet.MTP">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Playwright" />
         <PackageReference Include="xunit.v3.mtp-v2" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DocumentRendering\SharedKernel.DocumentRendering.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DocumentRendering.Pdf\SharedKernel.DocumentRendering.Pdf.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DocumentRendering.Pdf.Chromium\SharedKernel.DocumentRendering.Pdf.Chromium.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Playwright\SharedKernel.Testing.Playwright.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
     </ItemGroup>
 </Project>

@@ -159,6 +159,21 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
         return await retention.PurgeExpired(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, guard, ct, scopePrefix);
     }
 
+    /// <summary>Runs an inclusive retention purge through the registered retention store.</summary>
+    public async ValueTask<IdempotencyRetentionPurgeResult> PurgeThrough(
+        DateTimeOffset cutoff,
+        string? ownerTrackedScopePrefix,
+        string[] heldRetentionOwners,
+        int batchSize,
+        CancellationToken ct,
+        string? scopePrefix = null,
+        Func<IReadOnlyCollection<string>, CancellationToken, ValueTask<IReadOnlySet<string>>>? guard = null)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var retention = scope.ServiceProvider.GetRequiredService<IIdempotencyRetentionStore>();
+        return await retention.PurgeExpiredThrough(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, ct, scopePrefix, guard);
+    }
+
     /// <summary>
     /// Locks the stored row of the operation with SELECT ... FOR UPDATE on a separate connection until the returned handle is disposed.
     /// </summary>

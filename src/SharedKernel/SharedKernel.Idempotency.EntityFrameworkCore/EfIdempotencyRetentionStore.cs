@@ -28,7 +28,7 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
         int batchSize,
         CancellationToken ct,
         string? scopePrefix = null) =>
-        Purge(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, guard: null, scopePrefix, ct);
+        Purge(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, guard: null, scopePrefix, inclusiveCutoff: false, ct);
 
     /// <inheritdoc />
     public ValueTask<IdempotencyRetentionPurgeResult> PurgeExpired(
@@ -41,8 +41,19 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
         string? scopePrefix = null)
     {
         ArgumentNullException.ThrowIfNull(guard);
-        return Purge(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, guard, scopePrefix, ct);
+        return Purge(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, guard, scopePrefix, inclusiveCutoff: false, ct);
     }
+
+    /// <inheritdoc />
+    public ValueTask<IdempotencyRetentionPurgeResult> PurgeExpiredThrough(
+        DateTimeOffset cutoff,
+        string? ownerTrackedScopePrefix,
+        IReadOnlyCollection<string> heldRetentionOwners,
+        int batchSize,
+        CancellationToken ct,
+        string? scopePrefix = null,
+        Func<IReadOnlyCollection<string>, CancellationToken, ValueTask<IReadOnlySet<string>>>? guard = null) =>
+        Purge(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, guard, scopePrefix, inclusiveCutoff: true, ct);
 
     private async ValueTask<IdempotencyRetentionPurgeResult> Purge(
         DateTimeOffset cutoff,
@@ -51,6 +62,7 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
         int batchSize,
         Func<IReadOnlyCollection<string>, CancellationToken, ValueTask<IReadOnlySet<string>>>? guard,
         string? scopePrefix,
+        bool inclusiveCutoff,
         CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(heldRetentionOwners);
@@ -77,7 +89,7 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
 
         var entityType = dbContext.Model.FindEntityType(typeof(IdempotencyEntryEntity))
             ?? throw new InvalidOperationException("Idempotency entry entity is not configured.");
-        var sql = PurgeSql.For(entityType);
+        var sql = PurgeSql.For(entityType, inclusiveCutoff);
         var parameters = new PurgeParameters(cutoff.ToUniversalTime(), held, ownerTrackedScopePrefix, scopePrefix, batchSize);
         var connectionWasOpen = dbContext.Database.GetDbConnection().State is System.Data.ConnectionState.Open;
         await dbContext.Database.OpenConnectionAsync(ct).ConfigureAwait(false);
@@ -168,7 +180,7 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
     [SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",
-        Justification = "The statements are built only from quoted table and column names of the mapped model; every caller value travels as a parameter.")]
+        Justification = "The statements use quoted mapped identifiers and fixed comparison operators; every caller value travels as a parameter.")]
     private DbCommand CreateCommand(string commandText, DbTransaction transaction, PurgeParameters parameters)
     {
         var command = dbContext.Database.GetDbConnection().CreateCommand();
@@ -207,7 +219,7 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
     {
         /// <summary>Builds the statements using the column and table names of the mapped idempotency entity.</summary>
         /// <exception cref="InvalidOperationException">Thrown when <paramref name="entityType"/> is not mapped to a table.</exception>
-        public static PurgeSql For(IEntityType entityType)
+        public static PurgeSql For(IEntityType entityType, bool inclusiveCutoff)
         {
             var storeObject = StoreObjectIdentifier.Table(
                 entityType.GetTableName() ?? throw new InvalidOperationException("Idempotency table name is not configured."),
@@ -221,7 +233,8 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
 
             var touched = $"COALESCE(entry.{completedAt}, entry.{startedAt})";
             var inScope = $"(NOT @restricted OR starts_with(entry.{scope}, @scopePrefix))";
-            var candidate = $"{touched} < @cutoff AND {inScope}";
+            var comparison = inclusiveCutoff ? "<=" : "<";
+            var candidate = $"{touched} {comparison} @cutoff AND {inScope}";
             var isHeld = $"entry.{owner} = ANY(@held)";
             var isUnattributed = $"entry.{owner} IS NULL AND @tracked AND starts_with(entry.{scope}, @prefix)";
 

@@ -1,0 +1,4 @@
+#nullable enable
+PandaBear.DocumentRendering.Pdf.Chromium.ChromiumDocumentRenderer
+PandaBear.DocumentRendering.Pdf.Chromium.ChromiumDocumentRenderer.ChromiumDocumentRenderer(Microsoft.Playwright.IBrowser! browser, string! qpdfExecutablePath, int maxHtmlBytes, int maxPdfBytes, System.TimeSpan timeout) -> void
+PandaBear.DocumentRendering.Pdf.Chromium.ChromiumDocumentRenderer.Render(PandaBear.DocumentRendering.DocumentRenderRequest! request, System.DateTimeOffset documentDate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.ReadOnlyMemory<byte>>!

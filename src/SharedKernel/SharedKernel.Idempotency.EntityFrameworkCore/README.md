@@ -37,6 +37,10 @@ cancelled, nothing is deleted and the exception propagates. `Held` counts the ex
 in `heldRetentionOwners` plus the selected entries kept because the guard returned their owner. Unattributed entries are
 retained and counted as before and never reach the guard. The overload without a guard shares the same code path.
 
+Choose `PurgeExpiredThrough` when the host's retention policy includes an entry touched at the cutoff. The provider
+uses an inclusive database comparison for both batch selection and retained counts. The same scope restriction,
+locking, transaction and optional guard behavior applies.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.

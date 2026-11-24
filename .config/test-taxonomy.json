@@ -42,6 +42,10 @@
     {"path":"src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.DispositionHold.EntityFrameworkCore/SharedKernel.DispositionHold.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
     {"path":"src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.DocumentRendering.Pdf/SharedKernel.DocumentRendering.Pdf.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit","Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.DocumentRendering.Pdf.Chromium/SharedKernel.DocumentRendering.Pdf.Chromium.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit","System"]},
+    {"path":"src/SharedKernel/SharedKernel.DocumentWorkflow.EntityFrameworkCore/SharedKernel.DocumentWorkflow.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.DocumentWorkflow/SharedKernel.DocumentWorkflow.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Documentation/SharedKernel.Documentation.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Domain.Analyzers/SharedKernel.Domain.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Domain.CodeFixes/SharedKernel.Domain.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
@@ -104,6 +108,7 @@
     {"path":"src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
     {"path":"src/SharedKernel/SharedKernel.Results.SourceGenerator/SharedKernel.Results.SourceGenerator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
     {"path":"src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Review/SharedKernel.Review.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Sandbox.ClaudeCode/SharedKernel.Sandbox.ClaudeCode.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Sandbox/SharedKernel.Sandbox.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Scheduling/SharedKernel.Scheduling.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
@@ -381,8 +386,20 @@
     {
       "path": "tests/SharedKernel.DocumentRendering.Tests/SharedKernel.DocumentRendering.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The suite covers the HTML model, in-process PDF boundaries, browser failures, and explicit qualification of the qpdf and Chromium runtimes.",
       "seams": [
-        {"sut":"src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj","type":"Unit","dependency":"in-process","capabilities":["DocumentBlock","DocumentList"],"lane":"library"}
+        {"sut":"src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj","type":"Unit","dependency":"in-process","capabilities":["DocumentBlock","DocumentList","DocumentLink"],"lane":"browser"},
+        {"sut":"src/SharedKernel/SharedKernel.DocumentRendering.Pdf/SharedKernel.DocumentRendering.Pdf.csproj","type":"Unit","dependency":"in-process","capabilities":["QpdfDocumentNormalizer","QpdfDocumentMetadata"],"lane":"browser"},
+        {"sut":"src/SharedKernel/SharedKernel.DocumentRendering.Pdf/SharedKernel.DocumentRendering.Pdf.csproj","type":"Integration","dependency":"qpdf","capabilities":["QualifiedQpdfDateNormalization"],"lane":"browser"},
+        {"sut":"src/SharedKernel/SharedKernel.DocumentRendering.Pdf.Chromium/SharedKernel.DocumentRendering.Pdf.Chromium.csproj","type":"Unit","dependency":"in-process","capabilities":["ChromiumPdfTransfer","ChromiumContextCleanup"],"lane":"browser"},
+        {"sut":"src/SharedKernel/SharedKernel.DocumentRendering.Pdf.Chromium/SharedKernel.DocumentRendering.Pdf.Chromium.csproj","type":"System","dependency":"playwright-and-qpdf","capabilities":["ChromiumPdfBounds","ChromiumPdfNormalizerUnavailable","QualifiedChromiumTaggedPdf"],"lane":"browser"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.DocumentWorkflow.Tests.Unit/SharedKernel.DocumentWorkflow.Tests.Unit.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.DocumentWorkflow/SharedKernel.DocumentWorkflow.csproj","type":"Unit","dependency":"in-process","capabilities":["DocumentFinalizer","DocumentRevisionSnapshot","DocumentWorkflow"],"lane":"library"}
       ]
     },
     {
@@ -453,6 +470,7 @@
       "register": "tests/README.md",
       "migrationException": "The current executable has multiple explicit testing seams.",
       "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.DocumentWorkflow.EntityFrameworkCore/SharedKernel.DocumentWorkflow.EntityFrameworkCore.csproj","type":"Integration","dependency":"postgresql","capabilities":["DocumentWorkflowStore","FinalizeDocumentRevisionHandler"],"lane":"services"},
         {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj","type":"Unit","dependency":"in-process","capabilities":["CommandLogProjection","ContextKeyedDefaultRegistration"],"lane":"services"},
         {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj","type":"Integration","dependency":"postgresql","capabilities":["CommandLogProjection","ContextKeyedDefaultRegistration"],"lane":"services"},
         {"sut":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore/SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.csproj","type":"Integration","dependency":"postgresql","capabilities":["IntegrationEventInboxDuplicates"],"lane":"services"},
@@ -813,6 +831,13 @@
       "register": "tests/README.md",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj","type":"Unit","dependency":"in-process","capabilities":["OptionAsyncComposition","OptionComposition"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Review.Tests.Unit/SharedKernel.Review.Tests.Unit.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Review/SharedKernel.Review.csproj","type":"Unit","dependency":"in-process","capabilities":["ReviewHistory","ReviewHistorySnapshot"],"lane":"library"}
       ]
     },
     {

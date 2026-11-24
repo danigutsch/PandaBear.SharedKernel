@@ -29,10 +29,12 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
         DockerPath = Path.Combine(_tools.Path, "docker");
         CliCallsPath = Path.Combine(_tools.Path, "cli-calls.txt");
         DockerCallsPath = Path.Combine(_tools.Path, "docker-calls.txt");
-        WriteExecutable(DockerPath, "#!/bin/sh\n" + RecordCall(DockerCallsPath) + "\n");
-        // The launcher is written once and never rewritten; the per-test script is only read by the shell. Executing a file that was
-        // just rewritten can fail with ETXTBSY (text file busy) when a parallel test forks while the file is still open for writing.
-        WriteExecutable(CliPath, "#!/bin/sh\nexec /bin/sh \"$0.script\" \"$@\"\n");
+        // The build copies the launcher before tests start. Parallel child processes can inherit writable descriptors
+        // for the test scripts, which the shell reads as data.
+        var launcher = Path.Combine(AppContext.BaseDirectory, "Fixtures", "run-fixture-script.sh");
+        File.CreateSymbolicLink(DockerPath, launcher);
+        File.CreateSymbolicLink(CliPath, launcher);
+        File.WriteAllText(DockerPath + ".script", RecordCall(DockerCallsPath) + "\n");
         WriteCli(UpScript("{\"outcome\":\"success\",\"containerId\":\"abc123\"}"));
     }
 
@@ -100,13 +102,6 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
             new RepoConfigToolEnvironment(RootPath) { DevcontainerHost = host ?? Host() },
             cancellationToken ?? TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
-    }
-
-    /// <summary>Writes the content with LF line endings and marks the file executable for its owner.</summary>
-    public static void WriteExecutable(string path, string content)
-    {
-        File.WriteAllText(path, content.ReplaceLineEndings("\n"));
-        File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
     }
 
     /// <summary>Deletes the temporary tools directory and the root directory when the workspace created it.</summary>

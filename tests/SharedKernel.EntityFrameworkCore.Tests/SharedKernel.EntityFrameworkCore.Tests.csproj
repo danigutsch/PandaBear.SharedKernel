@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DocumentWorkflow.EntityFrameworkCore\SharedKernel.DocumentWorkflow.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.EntityFrameworkCore\SharedKernel.Testing.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IntegrationTesting\SharedKernel.IntegrationTesting.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" IsAspireProjectResource="false" />
@@ -38,7 +39,11 @@
         <ProjectReference Include="..\SharedKernel.Npgsql.Testing\SharedKernel.Npgsql.Testing.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.EntityFrameworkCore.Npgsql\SharedKernel.EntityFrameworkCore.Npgsql.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Idempotency.EntityFrameworkCore\SharedKernel.Idempotency.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator\SharedKernel.Mediator.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.EntityFrameworkCore\SharedKernel.Mediator.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj"
+                          OutputItemType="Analyzer" ReferenceOutputAssembly="false" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Domain.EntityFrameworkCore\SharedKernel.Domain.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DispositionHold.EntityFrameworkCore\SharedKernel.DispositionHold.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging\SharedKernel.Messaging.csproj" IsAspireProjectResource="false" />

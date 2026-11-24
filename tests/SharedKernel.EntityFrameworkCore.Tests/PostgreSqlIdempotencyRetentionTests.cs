@@ -80,6 +80,51 @@ public sealed class PostgreSqlIdempotencyRetentionTests(PostgreSqlFixture fixtur
     }
 
     [Fact]
+    public async Task Inclusive_purge_applies_the_cutoff_to_candidates_and_retained_counts()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var completed = await Scenario.Seed(TrackedScope, "document-completed", Old, ct);
+        await Scenario.Complete(completed, Cutoff, ct);
+        var started = await Scenario.Seed(TrackedScope, "document-started", Cutoff, ct);
+        var preHeld = await Scenario.Seed(TrackedScope, "document-preheld", Cutoff, ct);
+        var guardHeld = await Scenario.Seed(TrackedScope, "document-guardheld", Cutoff, ct);
+        var unattributed = await Scenario.Seed(TrackedScope, null, Cutoff, ct);
+        var outOfScope = await Scenario.Seed(UntrackedScope, "document-elsewhere", Cutoff, ct);
+        var recent = await Scenario.Seed(TrackedScope, "document-recent", Cutoff.AddMicroseconds(1), ct);
+        var guard = new RecordingPurgeGuard("document-guardheld");
+
+        // Act
+        var result = await Scenario.PurgeThrough(Cutoff, TrackedPrefix, ["document-preheld"], 100, ct, TrackedPrefix, guard.Check);
+
+        // Assert
+        result.ShouldBe(new IdempotencyRetentionPurgeResult(Purged: 2, Held: 2, Unattributed: 1));
+        await Scenario.ShouldHaveDeleted(completed, ct);
+        await Scenario.ShouldHaveDeleted(started, ct);
+        await Scenario.ShouldHaveRetained(preHeld, ct);
+        await Scenario.ShouldHaveRetained(guardHeld, ct);
+        await Scenario.ShouldHaveRetained(unattributed, ct);
+        await Scenario.ShouldHaveRetained(outOfScope, ct);
+        await Scenario.ShouldHaveRetained(recent, ct);
+    }
+
+    [Fact]
+    public async Task Inclusive_purge_handles_the_maximum_cutoff_without_adjusting_the_timestamp()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var operation = await Scenario.Seed(TrackedScope, "document-maximum", Old, ct);
+        await Scenario.Complete(operation, DateTimeOffset.MaxValue, ct);
+
+        // Act
+        var result = await Scenario.PurgeThrough(DateTimeOffset.MaxValue, TrackedPrefix, [], 100, ct);
+
+        // Assert
+        result.ShouldBe(new IdempotencyRetentionPurgeResult(Purged: 1, Held: 0, Unattributed: 0));
+        await Scenario.ShouldHaveDeleted(operation, ct);
+    }
+
+    [Fact]
     public async Task PurgeExpired_does_not_delete_a_held_entry_outside_the_owner_tracked_scopes()
     {
         // Arrange

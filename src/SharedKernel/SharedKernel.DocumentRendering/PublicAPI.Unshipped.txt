@@ -32,6 +32,14 @@ PandaBear.DocumentRendering.DocumentField.PrivacyClassification.get -> PandaBear
 PandaBear.DocumentRendering.DocumentField.PrivacyClassification.init -> void
 PandaBear.DocumentRendering.DocumentField.Value.get -> string!
 PandaBear.DocumentRendering.DocumentField.Value.init -> void
+PandaBear.DocumentRendering.DocumentLink
+PandaBear.DocumentRendering.DocumentLink.DocumentLink(string! Text, System.Uri! Target, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+PandaBear.DocumentRendering.DocumentLink.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
+PandaBear.DocumentRendering.DocumentLink.PrivacyClassification.init -> void
+PandaBear.DocumentRendering.DocumentLink.Target.get -> System.Uri!
+PandaBear.DocumentRendering.DocumentLink.Target.init -> void
+PandaBear.DocumentRendering.DocumentLink.Text.get -> string!
+PandaBear.DocumentRendering.DocumentLink.Text.init -> void
 PandaBear.DocumentRendering.DocumentList
 PandaBear.DocumentRendering.DocumentList.DocumentList(System.Collections.Generic.IReadOnlyList<string!>! Items, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
 PandaBear.DocumentRendering.DocumentList.IsOrdered.get -> bool
@@ -88,6 +96,8 @@ PandaBear.DocumentRendering.DocumentBrandingSnapshot.Equals(PandaBear.DocumentRe
 PandaBear.DocumentRendering.DocumentField.<Clone>$() -> PandaBear.DocumentRendering.DocumentField!
 PandaBear.DocumentRendering.DocumentField.Deconstruct(out string! Label, out string! Value, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
 PandaBear.DocumentRendering.DocumentField.Equals(PandaBear.DocumentRendering.DocumentField? other) -> bool
+PandaBear.DocumentRendering.DocumentLink.Deconstruct(out string! Text, out System.Uri! Target, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+PandaBear.DocumentRendering.DocumentLink.Equals(PandaBear.DocumentRendering.DocumentLink? other) -> bool
 PandaBear.DocumentRendering.DocumentList.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Items, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
 PandaBear.DocumentRendering.DocumentList.Equals(PandaBear.DocumentRendering.DocumentList? other) -> bool
 PandaBear.DocumentRendering.DocumentParagraph.Deconstruct(out string! Text, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
@@ -108,6 +118,10 @@ override PandaBear.DocumentRendering.DocumentBrandingSnapshot.ToString() -> stri
 override PandaBear.DocumentRendering.DocumentField.Equals(object? obj) -> bool
 override PandaBear.DocumentRendering.DocumentField.GetHashCode() -> int
 override PandaBear.DocumentRendering.DocumentField.ToString() -> string!
+override PandaBear.DocumentRendering.DocumentLink.<Clone>$() -> PandaBear.DocumentRendering.DocumentLink!
+override PandaBear.DocumentRendering.DocumentLink.Equals(object? obj) -> bool
+override PandaBear.DocumentRendering.DocumentLink.GetHashCode() -> int
+override PandaBear.DocumentRendering.DocumentLink.ToString() -> string!
 override PandaBear.DocumentRendering.DocumentList.<Clone>$() -> PandaBear.DocumentRendering.DocumentList!
 override PandaBear.DocumentRendering.DocumentList.Equals(object? obj) -> bool
 override PandaBear.DocumentRendering.DocumentList.GetHashCode() -> int
@@ -122,6 +136,7 @@ override PandaBear.DocumentRendering.DocumentRenderRequest.ToString() -> string!
 override PandaBear.DocumentRendering.DocumentSection.Equals(object? obj) -> bool
 override PandaBear.DocumentRendering.DocumentSection.GetHashCode() -> int
 override PandaBear.DocumentRendering.DocumentSection.ToString() -> string!
+override sealed PandaBear.DocumentRendering.DocumentLink.Equals(PandaBear.DocumentRendering.DocumentBlock? other) -> bool
 override sealed PandaBear.DocumentRendering.DocumentList.Equals(PandaBear.DocumentRendering.DocumentBlock? other) -> bool
 override sealed PandaBear.DocumentRendering.DocumentParagraph.Equals(PandaBear.DocumentRendering.DocumentBlock? other) -> bool
 static PandaBear.DocumentRendering.DocumentBlock.operator !=(PandaBear.DocumentRendering.DocumentBlock? left, PandaBear.DocumentRendering.DocumentBlock? right) -> bool
@@ -130,6 +145,8 @@ static PandaBear.DocumentRendering.DocumentBrandingSnapshot.operator !=(PandaBea
 static PandaBear.DocumentRendering.DocumentBrandingSnapshot.operator ==(PandaBear.DocumentRendering.DocumentBrandingSnapshot? left, PandaBear.DocumentRendering.DocumentBrandingSnapshot? right) -> bool
 static PandaBear.DocumentRendering.DocumentField.operator !=(PandaBear.DocumentRendering.DocumentField? left, PandaBear.DocumentRendering.DocumentField? right) -> bool
 static PandaBear.DocumentRendering.DocumentField.operator ==(PandaBear.DocumentRendering.DocumentField? left, PandaBear.DocumentRendering.DocumentField? right) -> bool
+static PandaBear.DocumentRendering.DocumentLink.operator !=(PandaBear.DocumentRendering.DocumentLink? left, PandaBear.DocumentRendering.DocumentLink? right) -> bool
+static PandaBear.DocumentRendering.DocumentLink.operator ==(PandaBear.DocumentRendering.DocumentLink? left, PandaBear.DocumentRendering.DocumentLink? right) -> bool
 static PandaBear.DocumentRendering.DocumentList.operator !=(PandaBear.DocumentRendering.DocumentList? left, PandaBear.DocumentRendering.DocumentList? right) -> bool
 static PandaBear.DocumentRendering.DocumentList.operator ==(PandaBear.DocumentRendering.DocumentList? left, PandaBear.DocumentRendering.DocumentList? right) -> bool
 static PandaBear.DocumentRendering.DocumentParagraph.operator !=(PandaBear.DocumentRendering.DocumentParagraph? left, PandaBear.DocumentRendering.DocumentParagraph? right) -> bool
@@ -138,6 +155,7 @@ static PandaBear.DocumentRendering.DocumentRenderRequest.operator !=(PandaBear.D
 static PandaBear.DocumentRendering.DocumentRenderRequest.operator ==(PandaBear.DocumentRendering.DocumentRenderRequest? left, PandaBear.DocumentRendering.DocumentRenderRequest? right) -> bool
 static PandaBear.DocumentRendering.DocumentSection.operator !=(PandaBear.DocumentRendering.DocumentSection? left, PandaBear.DocumentRendering.DocumentSection? right) -> bool
 static PandaBear.DocumentRendering.DocumentSection.operator ==(PandaBear.DocumentRendering.DocumentSection? left, PandaBear.DocumentRendering.DocumentSection? right) -> bool
+static PandaBear.DocumentRendering.HtmlDocumentRenderer.Render(PandaBear.DocumentRendering.DocumentRenderRequest! request, int maxOutputBytes, System.Threading.CancellationToken ct) -> byte[]!
 virtual PandaBear.DocumentRendering.DocumentBlock.EqualityContract.get -> System.Type!
 virtual PandaBear.DocumentRendering.DocumentBlock.Equals(PandaBear.DocumentRendering.DocumentBlock? other) -> bool
 virtual PandaBear.DocumentRendering.DocumentBlock.PrintMembers(System.Text.StringBuilder! builder) -> bool

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.DocumentWorkflow.EntityFrameworkCore</PackageId>
+        <Description>Versioned EF Core document workflow persistence with optimistic concurrency.</Description>
+        <RootNamespace>PandaBear.DocumentWorkflow.EntityFrameworkCore</RootNamespace>
+        <PackageTags>documents;workflow;shared-kernel;dotnet</PackageTags>
+        <!-- EF Core model discovery and query execution require runtime metadata and dynamic code. -->
+        <IsAotCompatible>false</IsAotCompatible>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.AuditTrail\SharedKernel.AuditTrail.csproj" />
+        <ProjectReference Include="..\SharedKernel.DocumentWorkflow\SharedKernel.DocumentWorkflow.csproj" />
+        <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\SharedKernel.Idempotency.Abstractions\SharedKernel.Idempotency.Abstractions.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>

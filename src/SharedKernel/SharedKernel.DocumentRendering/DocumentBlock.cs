@@ -1,8 +1,8 @@
 namespace PandaBear.DocumentRendering;
 
 /// <summary>
-/// Defines one block of a document section that keeps its position among the other blocks: a <see cref="DocumentParagraph"/> or a
-/// <see cref="DocumentList"/>. Use blocks, through <see cref="DocumentSection.Blocks"/>, when prose must follow a list.
+/// Defines a <see cref="DocumentParagraph"/>, <see cref="DocumentList"/>, or <see cref="DocumentLink"/> that keeps its
+/// position among the other elements of <see cref="DocumentSection.Blocks"/>.
 /// The set of blocks is closed: only this package defines them.
 /// </summary>
 public abstract record DocumentBlock

@@ -757,6 +757,9 @@
         "resolved": "18.1.0",
         "contentHash": "5K+9KFg2TdTl7VXv88Qzi/0lqK6JFoNP3lRuImPYGRV7K/QYklDyTrj4+A+KAki1JsQi6qKY+hDyY7d6WRqjrw=="
       },
+      "PandaBear.SharedKernel.AuditTrail": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.BuildingBlocks": {
         "type": "Project",
         "dependencies": {
@@ -775,6 +778,29 @@
           "PandaBear.SharedKernel.DispositionHold.Abstractions": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Npgsql": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.DocumentRendering": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.DocumentWorkflow": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.DocumentRendering": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Review": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.DocumentWorkflow.EntityFrameworkCore": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.AuditTrail": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.DocumentWorkflow": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Idempotency.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Domain": {
@@ -824,6 +850,15 @@
         "dependencies": {
           "Aspire.Hosting.Testing": "[13.6.5, )",
           "PandaBear.SharedKernel.Testing.Xunit": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Mediator": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Diagnostics": "[11.0.0, )",
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Mediator.Abstractions": {
@@ -885,6 +920,12 @@
       },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
+      },
+      "PandaBear.SharedKernel.Review": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+        }
       },
       "PandaBear.SharedKernel.Scheduling": {
         "type": "Project"

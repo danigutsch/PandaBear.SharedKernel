@@ -85,4 +85,33 @@ public interface IIdempotencyRetentionStore
         Func<IReadOnlyCollection<string>, CancellationToken, ValueTask<IReadOnlySet<string>>> guard,
         CancellationToken ct,
         string? scopePrefix = null);
+
+    /// <summary>Purges one bounded batch of entries last touched at or before the cutoff.</summary>
+    /// <remarks>
+    /// Selection, retention counts, scope restrictions, and the optional guard follow the same rules as
+    /// <see cref="PurgeExpired(DateTimeOffset, string, IReadOnlyCollection{string}, int, Func{IReadOnlyCollection{string}, CancellationToken, ValueTask{IReadOnlySet{string}}}, CancellationToken, string)" />,
+    /// with exact-cutoff entries included. The last touch is completion, or start when the entry never completed.
+    /// </remarks>
+    /// <param name="cutoff">The inclusive cutoff for selection and retention counts.</param>
+    /// <param name="ownerTrackedScopePrefix">The prefix requiring a retention owner, or <see langword="null" /> for none.</param>
+    /// <param name="heldRetentionOwners">The owner keys to retain before selecting the batch.</param>
+    /// <param name="batchSize">The maximum number of entries to select. It must be positive.</param>
+    /// <param name="ct">A token that can cancel the purge and the optional guard.</param>
+    /// <param name="scopePrefix">The prefix limiting the entire purge, or <see langword="null" /> for every scope.</param>
+    /// <param name="guard">An optional check that returns the owners to keep from the selected batch.</param>
+    /// <returns>The deleted, held, and unattributed entry counts.</returns>
+    /// <exception cref="NotSupportedException">The store has no inclusive retention implementation.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="heldRetentionOwners" /> is <see langword="null" />.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="batchSize" /> is not positive.</exception>
+    /// <exception cref="ArgumentException">A prefix is invalid or an owner key is not a valid identifier.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="ct" /> was cancelled.</exception>
+    ValueTask<IdempotencyRetentionPurgeResult> PurgeExpiredThrough(
+        DateTimeOffset cutoff,
+        string? ownerTrackedScopePrefix,
+        IReadOnlyCollection<string> heldRetentionOwners,
+        int batchSize,
+        CancellationToken ct,
+        string? scopePrefix = null,
+        Func<IReadOnlyCollection<string>, CancellationToken, ValueTask<IReadOnlySet<string>>>? guard = null) =>
+        throw new NotSupportedException($"{GetType().Name} does not support an inclusive retention cutoff.");
 }
