@@ -17,4 +17,8 @@ public sealed record CiConfiguration(
     string? DefaultSlice = null,
     IReadOnlyList<OpenApiTargetConfiguration>? OpenApi = null,
     CoverageConfiguration? Coverage = null,
-    MutationConfiguration? Mutation = null);
+    MutationConfiguration? Mutation = null)
+{
+    /// <summary>Gets the optional projects required in every partial quality build.</summary>
+    public QualityBuildConfiguration? QualityBuild { get; init; }
+}

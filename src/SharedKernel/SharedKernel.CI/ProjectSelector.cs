@@ -14,8 +14,8 @@ public static class ProjectSelector
 
     /// <summary>Checks the configured project lists against the solution.</summary>
     /// <exception cref="InvalidOperationException">
-    /// A slice or <c>alwaysSelected</c> entry is not a test project of the solution, a slice's service is not a project of the
-    /// solution or is a test project, or, without a default slice, a solution test project belongs to no slice.
+    /// A slice or <c>alwaysSelected</c> entry is not a test project of the solution, a quality build entry is not a solution
+    /// project, a slice's service is not a solution project or is a test project, or a test has no slice or default slice.
     /// </exception>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
     public static void Validate(CiConfiguration configuration, SolutionGraph graph)
@@ -23,6 +23,14 @@ public static class ProjectSelector
         ArgumentNullException.ThrowIfNull(configuration);
         ArgumentNullException.ThrowIfNull(graph);
         var known = graph.Projects.ToHashSet(StringComparer.Ordinal);
+        foreach (var project in configuration.QualityBuild?.Projects ?? [])
+        {
+            if (!known.Contains(project))
+            {
+                throw CiConfigurationFile.Invalid("$.qualityBuild.projects names " + project + ", which is not a project of " + graph.Solution + ".");
+            }
+        }
+
         for (var index = 0; index < configuration.Selection.AlwaysSelected.Count; index++)
         {
             ValidateTestProject(configuration.Selection.AlwaysSelected[index], "$.selection.alwaysSelected[" + Index(index) + "]", known, graph);

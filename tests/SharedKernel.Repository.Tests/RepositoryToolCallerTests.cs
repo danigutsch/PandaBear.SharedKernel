@@ -38,7 +38,9 @@ public sealed class RepositoryToolCallerTests
             .ToArray();
 
         // Assert
-        selections.ShouldBe(["select --base $BASE_SHA --github-output $GITHUB_OUTPUT"], "An empty base selects every test project with a reason.");
+        selections.ShouldBe(
+            ["select --base $BASE_SHA --candidate-excluded-source benchmarks/**/*.cs --github-output $GITHUB_OUTPUT"],
+            "An empty base selects every test project with a reason.");
     }
 
     [Fact]

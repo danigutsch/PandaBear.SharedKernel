@@ -20,6 +20,7 @@ public sealed class SolutionGraph
         string solution,
         string[] projects,
         HashSet<string> tests,
+        List<string> governedProjects,
         Dictionary<string, string[]> references,
         Dictionary<string, List<string>> compileInputs,
         HashSet<string> unread,
@@ -29,6 +30,7 @@ public sealed class SolutionGraph
         Solution = solution;
         Projects = projects;
         Tests = tests;
+        GovernedProjects = governedProjects;
         this.references = references;
         this.compileInputs = compileInputs;
         Uncertainty = uncertainty;
@@ -43,6 +45,9 @@ public sealed class SolutionGraph
     /// <summary>Gets the projects that reference <c>xunit.v3.mtp-v2</c> or set <c>IsTestProject</c> to <c>true</c>.</summary>
     public IReadOnlySet<string> Tests { get; }
 
+    /// <summary>Gets the solution projects whose compilations the configured governed literal check inspects.</summary>
+    internal IReadOnlyList<string> GovernedProjects { get; }
+
     /// <summary>Gets the solution projects whose project file cannot be read.</summary>
     internal HashSet<string> Unread { get; }
 
@@ -52,7 +57,12 @@ public sealed class SolutionGraph
     /// <summary>Loads the solution and its project files under <paramref name="root"/>.</summary>
     /// <exception cref="InvalidOperationException">The solution cannot be read, or names a project outside the root.</exception>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
-    public static SolutionGraph Load(string root, string solution)
+    public static SolutionGraph Load(string root, string solution) => Load(root, solution, null);
+
+    /// <summary>Loads the solution graph and, when configured, the governed literal project inventory.</summary>
+    /// <exception cref="InvalidOperationException">The solution cannot be read, or names a project outside the root.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="root"/> or <paramref name="solution"/> is <see langword="null"/>.</exception>
+    internal static SolutionGraph Load(string root, string solution, string? governedPackageIdPrefix)
     {
         ArgumentNullException.ThrowIfNull(root);
         ArgumentNullException.ThrowIfNull(solution);
@@ -75,6 +85,7 @@ public sealed class SolutionGraph
             .ToArray();
         var known = projects.ToHashSet(StringComparer.Ordinal);
         var tests = new HashSet<string>(StringComparer.Ordinal);
+        var governedProjects = new List<string>();
         var references = new Dictionary<string, string[]>(StringComparer.Ordinal);
         var compileInputs = new Dictionary<string, List<string>>(StringComparer.Ordinal);
         var unread = new HashSet<string>(StringComparer.Ordinal);
@@ -99,6 +110,14 @@ public sealed class SolutionGraph
                 || elements.Any(static element => element.Name.LocalName == "IsTestProject" && element.Value.Trim() == "true"))
             {
                 tests.Add(project);
+            }
+
+            if (governedPackageIdPrefix is not null
+                && (elements.Any(static element => element.Name.LocalName == "GovernedLiteralProject" && element.Value == "true")
+                    || (elements.Any(element => element.Name.LocalName == "PackageId" && element.Value.StartsWith(governedPackageIdPrefix, StringComparison.Ordinal))
+                        && !elements.Any(static element => element.Name.LocalName == "IsPackable" && element.Value == "false"))))
+            {
+                governedProjects.Add(project);
             }
 
             if (elements.FirstOrDefault(static element => element.Name.LocalName == "Import" && !IsSdkImport(element)) is not null)
@@ -158,7 +177,7 @@ public sealed class SolutionGraph
             }
         }
 
-        return new SolutionGraph(solution, projects, tests, references, compileInputs, unread, uncertainty);
+        return new SolutionGraph(solution, projects, tests, governedProjects, references, compileInputs, unread, uncertainty);
     }
 
     /// <summary>

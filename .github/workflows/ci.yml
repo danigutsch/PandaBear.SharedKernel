@@ -30,6 +30,7 @@ jobs:
       build_required: ${{ steps.selection.outputs.build_required }}
       full_validation: ${{ steps.selection.outputs.full_validation }}
       matrix: ${{ steps.selection.outputs.matrix }}
+      candidate_required: ${{ steps.selection.outputs.candidate_required }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -41,8 +42,8 @@ jobs:
       - name: Select affected test projects
         id: selection
         env:
-          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || '' }}
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- select --base "$BASE_SHA" --github-output "$GITHUB_OUTPUT"
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || '' }}
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- select --base "$BASE_SHA" --candidate-excluded-source "benchmarks/**/*.cs" --github-output "$GITHUB_OUTPUT"
       - name: Upload selection reasons
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -166,7 +167,10 @@ jobs:
 
   candidate:
     needs: selection
-    if: needs.selection.outputs.build_required == 'true'
+    if: >-
+      needs.selection.outputs.build_required == 'true' &&
+      (github.event_name != 'pull_request' || needs.selection.outputs.full_validation != 'false' ||
+      needs.selection.outputs.matrix != '[]' || needs.selection.outputs.candidate_required != 'false')
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -281,9 +285,20 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: ./.github/actions/setup-dotnet-tool
+      - name: Download pull request validation plan
+        if: needs.selection.outputs.build_required == 'true' && github.event_name == 'pull_request'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: selection-and-reasons
+          path: TestResults/selection
       - name: Bootstrap from clean checkout
-        if: needs.selection.outputs.build_required == 'true'
+        if: needs.selection.outputs.build_required == 'true' && (github.event_name != 'pull_request' || needs.selection.outputs.full_validation != 'false')
         run: bash setup-dev.sh
+      - name: Build required and affected projects for repository quality
+        if: needs.selection.outputs.build_required == 'true' && github.event_name == 'pull_request' && needs.selection.outputs.full_validation == 'false'
+        run: |
+          dotnet restore SharedKernel.slnx --locked-mode
+          dotnet build TestResults/selection/quality.build.slnf -c Release --no-restore
       - name: Validate setup and workflow contracts
         if: needs.selection.outputs.build_required == 'true'
         run: |
@@ -301,12 +316,6 @@ jobs:
       - name: Verify lock coverage of the lock-free libraries
         if: needs.selection.outputs.build_required == 'true'
         run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- verify-lock-coverage
-      - name: Download pull request formatting plan
-        if: needs.selection.outputs.build_required == 'true' && github.event_name == 'pull_request'
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: selection-and-reasons
-          path: TestResults/selection
       - name: Verify formatting of selected files
         if: needs.selection.outputs.build_required == 'true' && github.event_name == 'pull_request'
         run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- verify-format
@@ -483,11 +492,13 @@ jobs:
           SELECTION_RESULT: ${{ needs.selection.result }}
           QUALITY_RESULT: ${{ needs.repository-quality.result }}
           BUILD_REQUIRED: ${{ needs.selection.outputs.build_required }}
+          FULL_VALIDATION: ${{ needs.selection.outputs.full_validation }}
           MATRIX: ${{ needs.selection.outputs.matrix }}
           VALIDATE_RESULT: ${{ needs.validate.result }}
           COVERAGE_RESULT: ${{ needs.coverage-gate.result }}
           EVENT_NAME: ${{ github.event_name }}
           SOURCE_BUILD_RESULT: ${{ needs.source-build.result }}
+          CANDIDATE_REQUIRED: ${{ needs.selection.outputs.candidate_required }}
           CANDIDATE_RESULT: ${{ needs.candidate.result }}
           LINUX_RESULT: ${{ needs.linux-package-consumption.result }}
           WINDOWS_RESULT: ${{ needs.windows-package-consumption.result }}
@@ -515,8 +526,13 @@ jobs:
             else
               test "$VALIDATE_RESULT" = success || exit 1
             fi
-            for result in "$SOURCE_BUILD_RESULT" "$CANDIDATE_RESULT" "$LINUX_RESULT" "$WINDOWS_RESULT"; do
-              test "$result" = success || exit 1
+            test "$SOURCE_BUILD_RESULT" = success || exit 1
+            expected_package_result=success
+            if [[ "$EVENT_NAME" == pull_request && "$FULL_VALIDATION" == false && "$MATRIX" == '[]' && "$CANDIDATE_REQUIRED" == false ]]; then
+              expected_package_result=skipped
+            fi
+            for result in "$CANDIDATE_RESULT" "$LINUX_RESULT" "$WINDOWS_RESULT"; do
+              test "$result" = "$expected_package_result" || exit 1
             done
             if [[ "$EVENT_NAME" == pull_request && "$MATRIX" != '[]' ]]; then
               test "$COVERAGE_RESULT" = success || exit 1

@@ -34,19 +34,28 @@ public sealed class CiConfigurationConventionTests
         unbuilt.ShouldBeEmpty("build_required starts the candidate job, which packs and consumes every package whenever a packable project changes.");
     }
 
-    [Fact]
-    public async Task Full_validation_covers_the_style_analyzer_tests()
+    [Theory]
+    [InlineData(StyleAnalyzerTests, true)]
+    [InlineData("tests/SharedKernel.Style.Analyzers.Tests/GovernedLiteralRepositoryTests.cs", true)]
+    [InlineData("src/SharedKernel/SharedKernel.Style.Analyzers/StyleAnalyzer.cs", true)]
+    [InlineData("src/SharedKernel/SharedKernel.Style.Analyzers/GovernedLiterals.txt", true)]
+    [InlineData("src/SharedKernel/SharedKernel.Style.CodeFixes/StyleCodeFixProvider.cs", true)]
+    [InlineData("src/SharedKernel/SharedKernel.Testing.Analyzers/TestingAnalyzer.cs", true)]
+    [InlineData("src/SharedKernel/SharedKernel.Testing.CodeFixes/TestingCodeFixProvider.cs", true)]
+    [InlineData("src/SharedKernel/SharedKernel.PageSections/PageSection.cs", false)]
+    public async Task Global_compiler_inputs_select_full_validation_and_ordinary_sources_stay_selective(string path, bool fullValidation)
     {
         // Arrange
         var root = PackagingConventionTestFiles.GetRepositoryRoot();
+        var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
+        var graph = SolutionGraph.Load(root, configuration.Solution);
 
         // Act
-        var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
+        var plan = ProjectSelector.Select(configuration, graph, [path], null, null);
 
         // Assert
-        ProjectSelector.Match(configuration.Selection.FullValidation, StyleAnalyzerTests).ShouldNotBeNull();
-        ProjectSelector.Match(configuration.Selection.FullValidation, StyleAnalyzerTests[..(StyleAnalyzerTests.AsSpan().LastIndexOf('/') + 1)] + "Source.cs")
-            .ShouldNotBeNull("The style analyzer tests guard the governed literals of every library, so their change runs every test project.");
+        plan.FullValidation.ShouldBe(fullValidation, "Inherited build files apply the analyzers and literal catalog outside the explicit project graph.");
+        plan.BuildRequired.ShouldBeTrue();
     }
 
     [Fact]

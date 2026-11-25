@@ -35,12 +35,33 @@ public sealed class TestSelector
     /// <exception cref="InvalidOperationException">The configuration or the solution is not valid.</exception>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
     public Task<SelectionPlan> Select(
-        string root, string selectionDirectory, string? baseRevision, IRunOutputs? outputs, TextWriter output, TextWriter error, CancellationToken ct)
+        string root, string selectionDirectory, string? baseRevision, IRunOutputs? outputs, TextWriter output, TextWriter error, CancellationToken ct) =>
+        Select(root, selectionDirectory, baseRevision, candidateExcludedSource: null, outputs, output, error, ct);
+
+    /// <summary>Writes the normal validation plan and optionally reports package candidate applicability.</summary>
+    /// <param name="root">The repository root.</param>
+    /// <param name="selectionDirectory">The absolute directory that receives the plan.</param>
+    /// <param name="baseRevision">The full Git object ID of the base, or <see langword="null"/>.</param>
+    /// <param name="candidateExcludedSource">
+    /// A verified package source exclusion, or <see langword="null"/> to retain the existing forge outputs. The supported value is
+    /// <c>benchmarks/**/*.cs</c>. The additional <c>candidate_required</c> output is false only for verified existing benchmark source edits.
+    /// </param>
+    /// <param name="outputs">The run outputs of the forge, or <see langword="null"/>.</param>
+    /// <param name="output">Receives the selection reasons.</param>
+    /// <param name="error">Receives warnings.</param>
+    /// <param name="ct">Cancels Git.</param>
+    /// <returns>The plan that was written.</returns>
+    /// <exception cref="InvalidOperationException">The configuration or solution is invalid, or a slice already uses the requested candidate output.</exception>
+    /// <exception cref="ArgumentNullException">A required argument is <see langword="null"/>.</exception>
+    public Task<SelectionPlan> Select(
+        string root, string selectionDirectory, string? baseRevision, string? candidateExcludedSource,
+        IRunOutputs? outputs, TextWriter output, TextWriter error, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(root);
         ArgumentNullException.ThrowIfNull(selectionDirectory);
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(error);
-        return ProjectSelectionPlan.Write(root, selectionDirectory, baseRevision, outputs, _machine.Run, output, error, ct, _machine.TimeProvider);
+        return ProjectSelectionPlan.Write(root, selectionDirectory, baseRevision, outputs, _machine.Run, output, error, ct, _machine.TimeProvider,
+            candidateExcludedSource: candidateExcludedSource);
     }
 }

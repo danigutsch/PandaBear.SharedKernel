@@ -19,9 +19,11 @@ public sealed class WorkflowContractTests
             .Split("\n  validation-summary:", StringSplitOptions.None)[0];
 
         // Assert
-        workflow.ShouldContain("github.event_name == 'push' && github.event.before", StringComparison.Ordinal);
         quality.ShouldContain("needs: selection", StringComparison.Ordinal);
-        quality.ShouldContain("if: needs.selection.outputs.build_required == 'true'\n        run: bash setup-dev.sh", StringComparison.Ordinal);
+        quality.ShouldContain(
+            "if: needs.selection.outputs.build_required == 'true' && (github.event_name != 'pull_request' || needs.selection.outputs.full_validation != 'false')\n"
+                + "        run: bash setup-dev.sh",
+            StringComparison.Ordinal);
         quality.ShouldContain("if: needs.selection.outputs.build_required == 'true'\n        run: |\n          dotnet test", StringComparison.Ordinal);
         quality.ShouldContain(
             "if: needs.selection.outputs.build_required == 'true' && github.event_name != 'pull_request'\n        run: dotnet format",
@@ -146,7 +148,7 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
-    public void Every_build_checks_governed_literals_after_the_full_solution_build_of_repository_quality()
+    public void Every_build_checks_governed_literals_after_compiling_the_required_projects()
     {
         // Arrange
         var root = PackagingConventionTestFiles.GetRepositoryRoot();
@@ -160,13 +162,14 @@ public sealed class WorkflowContractTests
             "      - name: Check governed literals against every library of the solution build\n"
                 + "        if: needs.selection.outputs.build_required == 'true'\n"
                 + "        run: dotnet test --project tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj -c Release --no-build --no-restore --explicit only\n",
-            StringComparison.Ordinal,
-            "Selected test runs build only what they test, so the explicit governed literal check runs after setup-dev.sh builds the solution.");
-        quality.IndexOf("run: bash setup-dev.sh", StringComparison.Ordinal).ShouldBeLessThan(quality.IndexOf("--explicit only", StringComparison.Ordinal));
+            StringComparison.Ordinal);
+        var governedCheck = quality.IndexOf("--explicit only", StringComparison.Ordinal);
+        quality.IndexOf("run: bash setup-dev.sh", StringComparison.Ordinal).ShouldBeInRange(0, governedCheck - 1);
+        quality.IndexOf("dotnet build TestResults/selection/quality.build.slnf", StringComparison.Ordinal).ShouldBeInRange(0, governedCheck - 1);
     }
 
     [Fact]
-    public void Repository_quality_verifies_lock_coverage_after_restoring_and_building_the_whole_solution()
+    public void Repository_quality_restores_the_whole_solution_before_a_selective_build_and_lock_checks()
     {
         // Arrange
         var root = PackagingConventionTestFiles.GetRepositoryRoot();
@@ -181,12 +184,22 @@ public sealed class WorkflowContractTests
                 + "        if: needs.selection.outputs.build_required == 'true'\n"
                 + "        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- verify-lock-coverage\n",
             StringComparison.Ordinal,
-            "Only a restore of the whole solution creates obj/project.assets.json for every lock-free library, and setup-dev.sh restores and builds it, so the drift guard runs after it.");
-        quality.IndexOf("run: bash setup-dev.sh", StringComparison.Ordinal).ShouldBeLessThan(quality.IndexOf("-- verify-lock-coverage", StringComparison.Ordinal));
+            "A whole-solution restore creates obj/project.assets.json for every lock-free library.");
+        quality.ShouldContain(
+            "if: needs.selection.outputs.build_required == 'true' && github.event_name == 'pull_request' && needs.selection.outputs.full_validation == 'false'\n"
+                + "        run: |\n"
+                + "          dotnet restore SharedKernel.slnx --locked-mode\n"
+                + "          dotnet build TestResults/selection/quality.build.slnf -c Release --no-restore\n",
+            StringComparison.Ordinal);
+        var lockedRestore = quality.IndexOf("dotnet restore SharedKernel.slnx --locked-mode", StringComparison.Ordinal);
+        var verifyLocks = quality.IndexOf("-- verify-lock-coverage", StringComparison.Ordinal);
+        quality.IndexOf("path: TestResults/selection", StringComparison.Ordinal).ShouldBeInRange(0, lockedRestore - 1);
+        quality.IndexOf("run: bash setup-dev.sh", StringComparison.Ordinal).ShouldBeInRange(0, verifyLocks - 1);
+        lockedRestore.ShouldBeLessThan(verifyLocks);
     }
 
     [Fact]
-    public void Validation_summary_requires_the_source_build_whenever_a_candidate_is_required()
+    public void Validation_summary_requires_the_source_build_whenever_a_build_is_required()
     {
         // Arrange
         var root = PackagingConventionTestFiles.GetRepositoryRoot();
@@ -210,7 +223,7 @@ public sealed class WorkflowContractTests
                 + "            else\n"
                 + "              test \"$VALIDATE_RESULT\" = success || exit 1\n"
                 + "            fi\n"
-                + "            for result in \"$SOURCE_BUILD_RESULT\" \"$CANDIDATE_RESULT\" \"$LINUX_RESULT\" \"$WINDOWS_RESULT\"; do\n",
+                + "            test \"$SOURCE_BUILD_RESULT\" = success || exit 1\n",
             StringComparison.Ordinal);
     }
 

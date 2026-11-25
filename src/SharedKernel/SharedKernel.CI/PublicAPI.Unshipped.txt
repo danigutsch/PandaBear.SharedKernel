@@ -49,6 +49,8 @@ SharedKernel.CI.CiConfiguration.Mutation.get -> SharedKernel.CI.MutationConfigur
 SharedKernel.CI.CiConfiguration.Mutation.init -> void
 SharedKernel.CI.CiConfiguration.OpenApi.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.CI.OpenApiTargetConfiguration!>?
 SharedKernel.CI.CiConfiguration.OpenApi.init -> void
+SharedKernel.CI.CiConfiguration.QualityBuild.get -> SharedKernel.CI.QualityBuildConfiguration?
+SharedKernel.CI.CiConfiguration.QualityBuild.init -> void
 SharedKernel.CI.CiConfiguration.Selection.get -> SharedKernel.CI.SelectionConfiguration!
 SharedKernel.CI.CiConfiguration.Selection.init -> void
 SharedKernel.CI.CiConfiguration.Slices.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SliceConfiguration!>!
@@ -176,6 +178,15 @@ SharedKernel.CI.PrereleasePruningRequest.Protected.init -> void
 SharedKernel.CI.PrereleasePruningRequest.Repository.get -> string!
 SharedKernel.CI.PrereleasePruningRequest.Repository.init -> void
 SharedKernel.CI.ProjectSelector
+SharedKernel.CI.QualityBuildConfiguration
+SharedKernel.CI.QualityBuildConfiguration.<Clone>$() -> SharedKernel.CI.QualityBuildConfiguration!
+SharedKernel.CI.QualityBuildConfiguration.Deconstruct(out string! GovernedPackageIdPrefix, out System.Collections.Generic.IReadOnlyList<string!>! Projects) -> void
+SharedKernel.CI.QualityBuildConfiguration.Equals(SharedKernel.CI.QualityBuildConfiguration? other) -> bool
+SharedKernel.CI.QualityBuildConfiguration.GovernedPackageIdPrefix.get -> string!
+SharedKernel.CI.QualityBuildConfiguration.GovernedPackageIdPrefix.init -> void
+SharedKernel.CI.QualityBuildConfiguration.Projects.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.QualityBuildConfiguration.Projects.init -> void
+SharedKernel.CI.QualityBuildConfiguration.QualityBuildConfiguration(string! GovernedPackageIdPrefix, System.Collections.Generic.IReadOnlyList<string!>! Projects) -> void
 SharedKernel.CI.RepositoryRelease
 SharedKernel.CI.RepositoryRelease.<Clone>$() -> SharedKernel.CI.RepositoryRelease!
 SharedKernel.CI.RepositoryRelease.CreatedAt.get -> System.DateTimeOffset
@@ -316,6 +327,7 @@ SharedKernel.CI.TestPathRule.Tests.get -> System.Collections.Generic.IReadOnlyLi
 SharedKernel.CI.TestPathRule.Tests.init -> void
 SharedKernel.CI.TestSelector
 SharedKernel.CI.TestSelector.Select(string! root, string! selectionDirectory, string? baseRevision, SharedKernel.CI.IRunOutputs? outputs, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.CI.SelectionPlan!>!
+SharedKernel.CI.TestSelector.Select(string! root, string! selectionDirectory, string? baseRevision, string? candidateExcludedSource, SharedKernel.CI.IRunOutputs? outputs, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.CI.SelectionPlan!>!
 SharedKernel.CI.TestSelector.TestSelector(SharedKernel.CI.CiMachine! machine) -> void
 SharedKernel.CI.WarningReports
 const SharedKernel.CI.CiConfigurationFile.RelativePath = ".config/sharedkernel-ci.json" -> string!
@@ -354,6 +366,9 @@ override SharedKernel.CI.PlaywrightConfiguration.ToString() -> string!
 override SharedKernel.CI.PrereleasePruningRequest.Equals(object? obj) -> bool
 override SharedKernel.CI.PrereleasePruningRequest.GetHashCode() -> int
 override SharedKernel.CI.PrereleasePruningRequest.ToString() -> string!
+override SharedKernel.CI.QualityBuildConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.QualityBuildConfiguration.GetHashCode() -> int
+override SharedKernel.CI.QualityBuildConfiguration.ToString() -> string!
 override SharedKernel.CI.RepositoryRelease.Equals(object? obj) -> bool
 override SharedKernel.CI.RepositoryRelease.GetHashCode() -> int
 override SharedKernel.CI.RepositoryRelease.ToString() -> string!
@@ -410,6 +425,8 @@ static SharedKernel.CI.PrereleasePruningRequest.operator ==(SharedKernel.CI.Prer
 static SharedKernel.CI.ProjectSelector.Match(System.Collections.Generic.IEnumerable<string!>! patterns, string! path) -> string?
 static SharedKernel.CI.ProjectSelector.Select(SharedKernel.CI.CiConfiguration! configuration, SharedKernel.CI.SolutionGraph! graph, System.Collections.Generic.IReadOnlyList<string!>? changes, string? fullReason, string? nonInertBuildFile) -> SharedKernel.CI.SelectionPlan!
 static SharedKernel.CI.ProjectSelector.Validate(SharedKernel.CI.CiConfiguration! configuration, SharedKernel.CI.SolutionGraph! graph) -> void
+static SharedKernel.CI.QualityBuildConfiguration.operator !=(SharedKernel.CI.QualityBuildConfiguration? left, SharedKernel.CI.QualityBuildConfiguration? right) -> bool
+static SharedKernel.CI.QualityBuildConfiguration.operator ==(SharedKernel.CI.QualityBuildConfiguration? left, SharedKernel.CI.QualityBuildConfiguration? right) -> bool
 static SharedKernel.CI.RepositoryRelease.operator !=(SharedKernel.CI.RepositoryRelease? left, SharedKernel.CI.RepositoryRelease? right) -> bool
 static SharedKernel.CI.RepositoryRelease.operator ==(SharedKernel.CI.RepositoryRelease? left, SharedKernel.CI.RepositoryRelease? right) -> bool
 static SharedKernel.CI.SelectedTest.operator !=(SharedKernel.CI.SelectedTest? left, SharedKernel.CI.SelectedTest? right) -> bool

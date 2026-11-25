@@ -172,6 +172,16 @@ public static partial class CiConfigurationFile
         {
             ValidateMutation(mutation);
         }
+
+        if (configuration.QualityBuild is { } qualityBuild)
+        {
+            if (string.IsNullOrWhiteSpace(qualityBuild.GovernedPackageIdPrefix))
+            {
+                throw Invalid("$.qualityBuild.governedPackageIdPrefix must not be blank.");
+            }
+
+            ValidateProjects(qualityBuild.Projects, "$.qualityBuild.projects", new Dictionary<string, string>(StringComparer.Ordinal));
+        }
     }
 
     private static void ValidateService(
