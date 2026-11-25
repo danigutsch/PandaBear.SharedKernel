@@ -163,6 +163,7 @@
     {
       "path": "tests/SharedKernel.AI.Tests/SharedKernel.AI.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AI/SharedKernel.AI.csproj","type":"Unit","dependency":"in-process","capabilities":["ImageInputLimit","LiteLlmImageTextGenerator"],"lane":"library"}
       ]
@@ -170,6 +171,7 @@
     {
       "path": "tests/SharedKernel.ApiVersioning.AspNetCore.Tests/SharedKernel.ApiVersioning.AspNetCore.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ApiVersioning.AspNetCore/SharedKernel.ApiVersioning.AspNetCore.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["ApiVersionRouteGroupExtensions"],"lane":"library"}
       ]
@@ -177,6 +179,7 @@
     {
       "path": "tests/SharedKernel.ApiVersioning.Tests/SharedKernel.ApiVersioning.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ApiVersioning/SharedKernel.ApiVersioning.csproj","type":"Unit","dependency":"in-process","capabilities":["ApiDeprecationPolicyExtensions","ApiVersionCatalog"],"lane":"library"}
       ]
@@ -193,6 +196,7 @@
     {
       "path": "tests/SharedKernel.AspNetCore.Authentication.Bff.Tests/SharedKernel.AspNetCore.Authentication.Bff.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Authentication.Bff/SharedKernel.AspNetCore.Authentication.Bff.csproj","type":"Unit","dependency":"in-process","capabilities":["AuthenticationEvent","CurrentUserAccessor"],"lane":"library"}
       ]
@@ -200,6 +204,7 @@
     {
       "path": "tests/SharedKernel.AspNetCore.Authentication.Tests/SharedKernel.AspNetCore.Authentication.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Authentication/SharedKernel.AspNetCore.Authentication.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["AntiforgerySignOutEndpointRouteBuilderExtensions","ApiAuthenticationServiceCollectionExtensions"],"lane":"library"}
       ]
@@ -207,6 +212,7 @@
     {
       "path": "tests/SharedKernel.AspNetCore.Localization.Tests/SharedKernel.AspNetCore.Localization.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Localization/SharedKernel.AspNetCore.Localization.csproj","type":"Integration","dependency":"test-server","capabilities":["CulturePathRedirect","CulturePath"],"lane":"library"}
       ]
@@ -214,6 +220,7 @@
     {
       "path": "tests/SharedKernel.AspNetCore.RateLimiting.Tests/SharedKernel.AspNetCore.RateLimiting.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AspNetCore.RateLimiting/SharedKernel.AspNetCore.RateLimiting.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["RateLimitEventPipeline","RateLimitEventTelemetry"],"lane":"library"}
       ]
@@ -221,6 +228,7 @@
     {
       "path": "tests/SharedKernel.AspNetCore.Seo.Tests/SharedKernel.AspNetCore.Seo.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Seo/SharedKernel.AspNetCore.Seo.csproj","type":"Integration","dependency":"test-server","capabilities":["CanonicalOrigin","RobotsTxtEndpoint"],"lane":"library"}
       ]
@@ -228,6 +236,7 @@
     {
       "path": "tests/SharedKernel.AspNetCore.Tests/SharedKernel.AspNetCore.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AspNetCore/SharedKernel.AspNetCore.csproj","type":"Unit","dependency":"in-process","capabilities":["DefaultPublicCaching","ForwardedClientIp"],"lane":"library"}
       ]
@@ -235,6 +244,7 @@
     {
       "path": "tests/SharedKernel.AspNetCore.WebAnalytics.Tests/SharedKernel.AspNetCore.WebAnalytics.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AspNetCore.WebAnalytics/SharedKernel.AspNetCore.WebAnalytics.csproj","type":"Integration","dependency":"test-server","capabilities":["PageViewCapture","PageViewDispatcher"],"lane":"library"}
       ]
@@ -242,6 +252,7 @@
     {
       "path": "tests/SharedKernel.Aspire.Analyzers.Tests/SharedKernel.Aspire.Analyzers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Aspire.Analyzers/SharedKernel.Aspire.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["AspireAnalyzer"],"lane":"library"}
       ]
@@ -249,6 +260,7 @@
     {
       "path": "tests/SharedKernel.Aspire.CodeFixes.Tests/SharedKernel.Aspire.CodeFixes.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Aspire.CodeFixes/SharedKernel.Aspire.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["AspireCodeFixProvider"],"lane":"library"}
       ]
@@ -256,6 +268,7 @@
     {
       "path": "tests/SharedKernel.Aspire.Hosting.K6.Tests/SharedKernel.Aspire.Hosting.K6.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Aspire.Hosting.K6/SharedKernel.Aspire.Hosting.K6.csproj","type":"Component","dependency":"in-process-aspire-model","capabilities":["K6ScenarioResourceExtensions"],"lane":"library"}
       ]
@@ -263,6 +276,7 @@
     {
       "path": "tests/SharedKernel.Aspire.Hosting.Tests/SharedKernel.Aspire.Hosting.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Aspire.Hosting/SharedKernel.Aspire.Hosting.csproj","type":"Component","dependency":"in-process-aspire-model","capabilities":["AppHostEnvironmentHealthCheck","ClamAvResource"],"lane":"library"}
       ]
@@ -270,6 +284,7 @@
     {
       "path": "tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Aspire.Hosting.Umami/SharedKernel.Aspire.Hosting.Umami.csproj","type":"Integration","dependency":"umami-and-postgresql","capabilities":["UmamiPageViewEndToEnd","UmamiTestWebsiteBorrow"],"lane":"services"}
       ]
@@ -277,6 +292,7 @@
     {
       "path": "tests/SharedKernel.AuditTrail.GeneratorTests/SharedKernel.AuditTrail.GeneratorTests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.AuditTrail/SharedKernel.AuditTrail.csproj","type":"Unit","dependency":"in-process","capabilities":["AuditTrailMappingGenerator","AuditTrailPackageConsumption"],"lane":"library"}
       ]
@@ -284,6 +300,7 @@
     {
       "path": "tests/SharedKernel.Blazor.Analyzers.Tests/SharedKernel.Blazor.Analyzers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Blazor.Analyzers/SharedKernel.Blazor.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["BusyFlagAnalyzer","BusyFlagDetection"],"lane":"library"}
       ]
@@ -291,6 +308,7 @@
     {
       "path": "tests/SharedKernel.Blazor.CodeFixes.Tests/SharedKernel.Blazor.CodeFixes.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Blazor.CodeFixes/SharedKernel.Blazor.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["BlazorCodeFix"],"lane":"library"}
       ]
@@ -316,6 +334,7 @@
     {
       "path": "tests/SharedKernel.Branding.Tests/SharedKernel.Branding.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj","type":"Unit","dependency":"in-process","capabilities":["BrandingApiClient","BrandingSettings"],"lane":"library"}
       ]
@@ -323,6 +342,7 @@
     {
       "path": "tests/SharedKernel.BuildingBlocks.Tests/SharedKernel.BuildingBlocks.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj","type":"Unit","dependency":"in-process","capabilities":["Cnpj","Cpf"],"lane":"library"}
       ]
@@ -330,6 +350,7 @@
     {
       "path": "tests/SharedKernel.CI.Forgejo.Tests/SharedKernel.CI.Forgejo.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.CI.Forgejo/SharedKernel.CI.Forgejo.csproj","type":"Unit","dependency":"in-process","capabilities":["ForgejoActionsFiles","ForgejoReleaseAssets"],"lane":"library"}
       ]
@@ -337,6 +358,7 @@
     {
       "path": "tests/SharedKernel.CI.GitHub.Tests/SharedKernel.CI.GitHub.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.CI.GitHub/SharedKernel.CI.GitHub.csproj","type":"Unit","dependency":"in-process","capabilities":["GitHubActionsFiles","GitHubReleaseStore"],"lane":"library"}
       ]
@@ -344,6 +366,7 @@
     {
       "path": "tests/SharedKernel.CI.Tests/SharedKernel.CI.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj","type":"Component","dependency":"temporary-repositories","capabilities":["BuildFileInertness","CiConfigurationFile"],"lane":"library"}
       ]
@@ -351,6 +374,7 @@
     {
       "path": "tests/SharedKernel.Caching.Tests/SharedKernel.Caching.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj","type":"Unit","dependency":"in-process","capabilities":["RevisionCache"],"lane":"library"}
       ]
@@ -358,6 +382,7 @@
     {
       "path": "tests/SharedKernel.ConfigurationFiles.Tests/SharedKernel.ConfigurationFiles.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj","type":"Unit","dependency":"in-process","capabilities":["JsonConfigurationFile"],"lane":"library"}
       ]
@@ -372,6 +397,7 @@
     {
       "path": "tests/SharedKernel.DevContainers.Tests/SharedKernel.DevContainers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj","type":"Unit","dependency":"in-process","capabilities":["DevcontainerCliArchive","PodmanDnsPreflight"],"lane":"library"}
       ]
@@ -379,6 +405,7 @@
     {
       "path": "tests/SharedKernel.DispositionHold.Abstractions.Tests/SharedKernel.DispositionHold.Abstractions.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj","type":"Unit","dependency":"in-process","capabilities":["DispositionHoldDecision","DispositionScope"],"lane":"library"}
       ]
@@ -405,6 +432,7 @@
     {
       "path": "tests/SharedKernel.Documentation.Tests/SharedKernel.Documentation.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Documentation/SharedKernel.Documentation.csproj","type":"Unit","dependency":"in-process","capabilities":["DocumentationCommandLine","DocumentationConformanceChecker"],"lane":"library"}
       ]
@@ -412,6 +440,7 @@
     {
       "path": "tests/SharedKernel.Domain.Analyzers.Tests/SharedKernel.Domain.Analyzers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Domain.Analyzers/SharedKernel.Domain.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["AmbientClockAnalyzer","DomainAnalyzer"],"lane":"library"}
       ]
@@ -419,6 +448,7 @@
     {
       "path": "tests/SharedKernel.Domain.CodeFixes.Tests/SharedKernel.Domain.CodeFixes.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Domain.CodeFixes/SharedKernel.Domain.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["DomainCodeFixProvider"],"lane":"library"}
       ]
@@ -426,6 +456,7 @@
     {
       "path": "tests/SharedKernel.Domain.EntityFrameworkCore.Tests/SharedKernel.Domain.EntityFrameworkCore.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Domain.EntityFrameworkCore/SharedKernel.Domain.EntityFrameworkCore.csproj","type":"Component","dependency":"entity-framework-core","capabilities":["DomainEventDispatch"],"lane":"library"}
       ]
@@ -433,6 +464,7 @@
     {
       "path": "tests/SharedKernel.Domain.GeneratorTests/SharedKernel.Domain.GeneratorTests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj","type":"Unit","dependency":"in-process","capabilities":["ModelIdentityGenerator","ValueObjectGenerator"],"lane":"library"}
       ]
@@ -440,6 +472,7 @@
     {
       "path": "tests/SharedKernel.Domain.Tests/SharedKernel.Domain.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj","type":"Unit","dependency":"in-process","capabilities":["CompositeDomainEventDispatcher","DomainEventDispatch"],"lane":"library"}
       ]
@@ -447,6 +480,7 @@
     {
       "path": "tests/SharedKernel.Encodings.Tests/SharedKernel.Encodings.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Encodings/SharedKernel.Encodings.csproj","type":"Unit","dependency":"in-process","capabilities":["base32","bech32"],"lane":"library"}
       ]
@@ -454,6 +488,7 @@
     {
       "path": "tests/SharedKernel.EntityFrameworkCore.Analyzers.Tests/SharedKernel.EntityFrameworkCore.Analyzers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore.Analyzers/SharedKernel.EntityFrameworkCore.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["EntityFrameworkCoreAnalyzer"],"lane":"library"}
       ]
@@ -461,6 +496,7 @@
     {
       "path": "tests/SharedKernel.EntityFrameworkCore.Sqlite.Tests/SharedKernel.EntityFrameworkCore.Sqlite.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore.Sqlite/SharedKernel.EntityFrameworkCore.Sqlite.csproj","type":"Integration","dependency":"sqlite","capabilities":["ApplyMigrations","EnsureMigrationsApplied"],"lane":"library"}
       ]
@@ -480,6 +516,7 @@
     {
       "path": "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.EventSourcing.Npgsql/SharedKernel.EventSourcing.Npgsql.csproj","type":"Integration","dependency":"postgresql","capabilities":["PostgreSqlControlledTime","PostgreSqlEventSourcingTelemetry"],"lane":"services"}
       ]
@@ -487,6 +524,7 @@
     {
       "path": "tests/SharedKernel.EventSourcing.Tests/SharedKernel.EventSourcing.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.EventSourcing/SharedKernel.EventSourcing.csproj","type":"Unit","dependency":"in-process","capabilities":["EventSourcedAggregateRoot","EventSourcingValue"],"lane":"library"}
       ]
@@ -494,6 +532,7 @@
     {
       "path": "tests/SharedKernel.Forgejo.Tests/SharedKernel.Forgejo.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Forgejo/SharedKernel.Forgejo.csproj","type":"Unit","dependency":"in-process","capabilities":["ForgejoApiClient","ForgejoPager"],"lane":"library"}
       ]
@@ -509,6 +548,7 @@
     {
       "path": "tests/SharedKernel.GitHub.Tests/SharedKernel.GitHub.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.GitHub/SharedKernel.GitHub.csproj","type":"Unit","dependency":"in-process","capabilities":["GitHubApiClient","GitHubToken"],"lane":"library"}
       ]
@@ -516,6 +556,7 @@
     {
       "path": "tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.HttpClients/SharedKernel.HttpClients.csproj","type":"Unit","dependency":"in-process","capabilities":["ContractHttpValidation","HttpOutcomeMapper"],"lane":"library"}
       ]
@@ -523,6 +564,7 @@
     {
       "path": "tests/SharedKernel.IO.Analyzers.Tests/SharedKernel.IO.Analyzers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.IO.Analyzers/SharedKernel.IO.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["RequestSizeLimitAnalyzer","IOAnalyzer"],"lane":"library"}
       ]
@@ -530,6 +572,7 @@
     {
       "path": "tests/SharedKernel.IO.Tests/SharedKernel.IO.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj","type":"Unit","dependency":"temporary-files-and-in-process","capabilities":["BoundedReaderFile","BoundedReaderStream"],"lane":"library"}
       ]
@@ -537,6 +580,7 @@
     {
       "path": "tests/SharedKernel.Idempotency.Abstractions.Tests/SharedKernel.Idempotency.Abstractions.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Idempotency.Abstractions/SharedKernel.Idempotency.Abstractions.csproj","type":"Unit","dependency":"in-process","capabilities":["IIdempotencyStoreRetentionOwner","IIdempotencyStore"],"lane":"library"}
       ]
@@ -544,6 +588,7 @@
     {
       "path": "tests/SharedKernel.Idempotency.AspNetCore.Tests/SharedKernel.Idempotency.AspNetCore.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Idempotency.AspNetCore/SharedKernel.Idempotency.AspNetCore.csproj","type":"Unit","dependency":"in-process","capabilities":["IdempotencyKeyHeader","KeyBoundDataProtector"],"lane":"library"}
       ]
@@ -551,6 +596,7 @@
     {
       "path": "tests/SharedKernel.ImageProcessing.Tests/SharedKernel.ImageProcessing.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ImageProcessing/SharedKernel.ImageProcessing.csproj","type":"Component","dependency":"magick-image-processor","capabilities":["ImageAnimationDetector","MagickImageProcessorPngOutput"],"lane":"library"}
       ]
@@ -558,6 +604,7 @@
     {
       "path": "tests/SharedKernel.InputNormalization.Tests/SharedKernel.InputNormalization.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj","type":"Unit","dependency":"in-process","capabilities":["ControlCharacters","NumericSanitizer"],"lane":"library"}
       ]
@@ -574,6 +621,7 @@
     {
       "path": "tests/SharedKernel.LoadTesting.K6.Tests/SharedKernel.LoadTesting.K6.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.LoadTesting.K6/SharedKernel.LoadTesting.K6.csproj","type":"Unit","dependency":"in-process","capabilities":["K6ArgumentPolicy","K6LoadGenerator"],"lane":"library"}
       ]
@@ -581,6 +629,7 @@
     {
       "path": "tests/SharedKernel.LoadTesting.Tests/SharedKernel.LoadTesting.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.LoadTesting/SharedKernel.LoadTesting.csproj","type":"Unit","dependency":"in-process","capabilities":["LoadTestContainer","LoadTestRunner"],"lane":"library"}
       ]
@@ -588,6 +637,7 @@
     {
       "path": "tests/SharedKernel.MalwareScanning.ClamAv.Tests/SharedKernel.MalwareScanning.ClamAv.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.MalwareScanning.ClamAv/SharedKernel.MalwareScanning.ClamAv.csproj","type":"Integration","dependency":"clamav-and-loopback","capabilities":["ClamAvHealthCheck","ClamAvMalwareScanner"],"lane":"library"}
       ]
@@ -595,6 +645,7 @@
     {
       "path": "tests/SharedKernel.Mediator.Analyzers.Tests/SharedKernel.Mediator.Analyzers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Mediator.Analyzers/SharedKernel.Mediator.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["MediatorAnalyzer"],"lane":"library"}
       ]
@@ -602,6 +653,7 @@
     {
       "path": "tests/SharedKernel.Mediator.CodeFixes.Tests/SharedKernel.Mediator.CodeFixes.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Mediator.CodeFixes/SharedKernel.Mediator.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["MediatorCodeFixProvider"],"lane":"library"}
       ]
@@ -609,6 +661,7 @@
     {
       "path": "tests/SharedKernel.Mediator.EntityFrameworkCore.Tests/SharedKernel.Mediator.EntityFrameworkCore.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Mediator.EntityFrameworkCore/SharedKernel.Mediator.EntityFrameworkCore.csproj","type":"Component","dependency":"entity-framework-core","capabilities":["EfCoreCommandTransactionBehavior","ResultTransactionBehavior"],"lane":"library"}
       ]
@@ -616,6 +669,7 @@
     {
       "path": "tests/SharedKernel.Mediator.GeneratorTests/SharedKernel.Mediator.GeneratorTests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Mediator/SharedKernel.Mediator.csproj","type":"Unit","dependency":"in-process","capabilities":["GeneratorDependencyInjection","GeneratorDeterminism"],"lane":"library"}
       ]
@@ -623,6 +677,7 @@
     {
       "path": "tests/SharedKernel.Mediator.PackageConsumptionTests/SharedKernel.Mediator.PackageConsumptionTests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Mediator/SharedKernel.Mediator.csproj","type":"Contract","dependency":"packed-immutable-artifacts","capabilities":["SharedKernelGeneratorPackageConsumption","SharedKernelMediatorPackageConsumption"],"lane":"library"}
       ]
@@ -630,6 +685,7 @@
     {
       "path": "tests/SharedKernel.Mediator.Tests/SharedKernel.Mediator.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Mediator/SharedKernel.Mediator.csproj","type":"Unit","dependency":"in-process","capabilities":["ActivityBehavior","ConcurrencyConflictBehavior"],"lane":"library"}
       ]
@@ -637,6 +693,7 @@
     {
       "path": "tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.CloudEvents/SharedKernel.Messaging.IntegrationEvents.CloudEvents.csproj","type":"Unit","dependency":"in-process","capabilities":["CloudEventMapper"],"lane":"library"}
       ]
@@ -644,6 +701,7 @@
     {
       "path": "tests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/SharedKernel.Messaging.IntegrationEvents.csproj","type":"Unit","dependency":"in-process","capabilities":["IntegrationEventMappingGeneratorProtobufConsumer","IntegrationEventMappingGeneratorProtobuf"],"lane":"library"}
       ]
@@ -651,6 +709,7 @@
     {
       "path": "tests/SharedKernel.Messaging.IntegrationEvents.Tests/SharedKernel.Messaging.IntegrationEvents.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/SharedKernel.Messaging.IntegrationEvents.csproj","type":"Unit","dependency":"in-process","capabilities":["GeneratedIntegrationEventDispatch","GeneratedIntegrationEventProtobufDelivery"],"lane":"library"}
       ]
@@ -658,6 +717,7 @@
     {
       "path": "tests/SharedKernel.Messaging.Protobuf.Tests/SharedKernel.Messaging.Protobuf.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Messaging.Protobuf/SharedKernel.Messaging.Protobuf.csproj","type":"Unit","dependency":"in-process","capabilities":["ProtobufEventEnvelopeFormat","ProtobufIntegrationEventConsumer"],"lane":"library"}
       ]
@@ -665,6 +725,7 @@
     {
       "path": "tests/SharedKernel.Messaging.Tests/SharedKernel.Messaging.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Messaging/SharedKernel.Messaging.csproj","type":"Unit","dependency":"in-process","capabilities":["EventEnvelope"],"lane":"library"}
       ]
@@ -681,6 +742,7 @@
     {
       "path": "tests/SharedKernel.ObjectStorage.FileSystem.Tests/SharedKernel.ObjectStorage.FileSystem.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ObjectStorage.FileSystem/SharedKernel.ObjectStorage.FileSystem.csproj","type":"Integration","dependency":"temporary-filesystem","capabilities":["object-store","atomic-publication"],"lane":"library"}
       ]
@@ -688,6 +750,7 @@
     {
       "path": "tests/SharedKernel.ObjectStorage.S3.Tests/SharedKernel.ObjectStorage.S3.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ObjectStorage.S3/SharedKernel.ObjectStorage.S3.csproj","type":"Unit","dependency":"in-process","capabilities":["ObjectStorageKey","S3ObjectStoreHealthCheck"],"lane":"library"}
       ]
@@ -712,6 +775,7 @@
     {
       "path": "tests/SharedKernel.OpenApi.Tests/SharedKernel.OpenApi.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["ConditionalRequestEndpointExtensions","MultipartFormRequestBodyDocumentTransformer"],"lane":"library"}
       ]
@@ -719,6 +783,7 @@
     {
       "path": "tests/SharedKernel.Packages.Tests/SharedKernel.Packages.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj","type":"Unit","dependency":"in-process","capabilities":["AptPackageReader","BrewPackageReader"],"lane":"library"}
       ]
@@ -726,6 +791,7 @@
     {
       "path": "tests/SharedKernel.Packages.Tool.Tests/SharedKernel.Packages.Tool.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"tools/SharedKernel.Packages.Tool/SharedKernel.Packages.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["DocumentedCommandLines","PlanCommand"],"lane":"library"}
       ]
@@ -750,6 +816,7 @@
     {
       "path": "tests/SharedKernel.PlaywrightMcp.Tests/SharedKernel.PlaywrightMcp.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj","type":"Unit","dependency":"in-process","capabilities":["PlaywrightMcpContainerArguments","PlaywrightMcpRuntime"],"lane":"library"}
       ]
@@ -757,6 +824,7 @@
     {
       "path": "tests/SharedKernel.PlaywrightMcp.Tool.Tests/SharedKernel.PlaywrightMcp.Tool.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["PlaywrightMcpCommandLine","PlaywrightMcpTermination"],"lane":"library"}
       ]
@@ -764,6 +832,7 @@
     {
       "path": "tests/SharedKernel.Processes.Tests/SharedKernel.Processes.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj","type":"Unit","dependency":"in-process","capabilities":["BoundedProcessRunner","CancellableChildProcess"],"lane":"library"}
       ]
@@ -771,6 +840,7 @@
     {
       "path": "tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"tools/SharedKernel.RepoConfig.Tool/SharedKernel.RepoConfig.Tool.csproj","type":"Component","dependency":"temporary-git-repositories-and-fake-http","capabilities":["BaselineCommand","BaselineGit"],"lane":"library"}
       ]
@@ -778,6 +848,7 @@
     {
       "path": "tests/SharedKernel.Repositories.Forgejo.Tests/SharedKernel.Repositories.Forgejo.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Repositories.Forgejo/SharedKernel.Repositories.Forgejo.csproj","type":"Unit","dependency":"in-process","capabilities":["ForgejoIssueReader","ForgejoLabelStore"],"lane":"library"}
       ]
@@ -785,6 +856,7 @@
     {
       "path": "tests/SharedKernel.Repositories.GitHub.Tests/SharedKernel.Repositories.GitHub.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Repositories.GitHub/SharedKernel.Repositories.GitHub.csproj","type":"Unit","dependency":"in-process","capabilities":["GitHubDependencySubmission","GitHubForgeIssueReader"],"lane":"library"}
       ]
@@ -792,6 +864,7 @@
     {
       "path": "tests/SharedKernel.Repositories.Tests/SharedKernel.Repositories.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Repositories/SharedKernel.Repositories.csproj","type":"Unit","dependency":"in-process","capabilities":["JsonVerifierInvalidUtf8","MarkdownLinkRulesAnchor"],"lane":"library"}
       ]
@@ -808,6 +881,7 @@
     {
       "path": "tests/SharedKernel.Results.Analyzers.Tests/SharedKernel.Results.Analyzers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["DiscardedResult","RawResultEndpoint"],"lane":"library"}
       ]
@@ -815,6 +889,7 @@
     {
       "path": "tests/SharedKernel.Results.AspNet.Tests/SharedKernel.Results.AspNet.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["ConcurrencyHeaders","ResultHttpExtensions"],"lane":"library"}
       ]
@@ -822,6 +897,7 @@
     {
       "path": "tests/SharedKernel.Results.GeneratorTests/SharedKernel.Results.GeneratorTests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj","type":"Unit","dependency":"in-process","capabilities":["GeneratorImplementation","ResultErrorCatalogGenerator"],"lane":"library"}
       ]
@@ -829,6 +905,7 @@
     {
       "path": "tests/SharedKernel.Results.Tests/SharedKernel.Results.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj","type":"Unit","dependency":"in-process","capabilities":["OptionAsyncComposition","OptionComposition"],"lane":"library"}
       ]
@@ -843,6 +920,7 @@
     {
       "path": "tests/SharedKernel.Sandbox.ClaudeCode.Tests/SharedKernel.Sandbox.ClaudeCode.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Sandbox.ClaudeCode/SharedKernel.Sandbox.ClaudeCode.csproj","type":"Unit","dependency":"in-process","capabilities":["ClaudeCodeSettingsDocument","ClaudeCodeSettingsFile"],"lane":"library"}
       ]
@@ -850,6 +928,7 @@
     {
       "path": "tests/SharedKernel.Sandbox.Tests/SharedKernel.Sandbox.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Sandbox/SharedKernel.Sandbox.csproj","type":"Unit","dependency":"in-process","capabilities":["DesiredSettings","SandboxConfigurationFile"],"lane":"library"}
       ]
@@ -857,6 +936,7 @@
     {
       "path": "tests/SharedKernel.Sandbox.Tool.Tests/SharedKernel.Sandbox.Tool.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"tools/SharedKernel.Sandbox.Tool/SharedKernel.Sandbox.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["DoctorCommand","DoctorProcess"],"lane":"library"}
       ]
@@ -864,6 +944,7 @@
     {
       "path": "tests/SharedKernel.Scheduling.Tests/SharedKernel.Scheduling.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Scheduling/SharedKernel.Scheduling.csproj","type":"Unit","dependency":"in-process","capabilities":["PollingBackgroundService"],"lane":"library"}
       ]
@@ -871,6 +952,7 @@
     {
       "path": "tests/SharedKernel.SecretScanning.Tests/SharedKernel.SecretScanning.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.SecretScanning/SharedKernel.SecretScanning.csproj","type":"Unit","dependency":"in-process","capabilities":["secret-detection","rule-validation"],"lane":"library"}
       ]
@@ -878,6 +960,7 @@
     {
       "path": "tests/SharedKernel.Secrets.Age.Tests/SharedKernel.Secrets.Age.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Secrets.Age/SharedKernel.Secrets.Age.csproj","type":"Unit","dependency":"in-process","capabilities":["ProcessAgeTool","RealAge"],"lane":"library"}
       ]
@@ -885,6 +968,7 @@
     {
       "path": "tests/SharedKernel.Secrets.Sops.Tests/SharedKernel.Secrets.Sops.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Secrets.Sops/SharedKernel.Secrets.Sops.csproj","type":"Unit","dependency":"in-process","capabilities":["ProcessSopsToolEdit","ProcessSopsToolRewrite"],"lane":"library"}
       ]
@@ -892,6 +976,7 @@
     {
       "path": "tests/SharedKernel.Secrets.Tests/SharedKernel.Secrets.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Secrets/SharedKernel.Secrets.csproj","type":"Unit","dependency":"in-process","capabilities":["AgeIdentityRef","AgeRecipientSet"],"lane":"library"}
       ]
@@ -899,6 +984,7 @@
     {
       "path": "tests/SharedKernel.Secrets.Tool.Tests/SharedKernel.Secrets.Tool.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"tools/SharedKernel.Secrets.Tool/SharedKernel.Secrets.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["BaseRevision","Configuration"],"lane":"library"}
       ]
@@ -906,6 +992,7 @@
     {
       "path": "tests/SharedKernel.ServiceDefaults.Tests/SharedKernel.ServiceDefaults.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ServiceDefaults/SharedKernel.ServiceDefaults.csproj","type":"Integration","dependency":"test-server","capabilities":["HealthEndpoint","HttpClientDefaults"],"lane":"library"}
       ]
@@ -922,6 +1009,7 @@
     {
       "path": "tests/SharedKernel.Style.CodeFixes.Tests/SharedKernel.Style.CodeFixes.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["CaseInsensitiveJsonContextCodeFix","CurrentTimeCodeFix"],"lane":"library"}
       ]
@@ -929,6 +1017,7 @@
     {
       "path": "tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj","type":"Unit","dependency":"in-process","capabilities":["CsvDocument","CsvDocumentUtf8Parsing"],"lane":"library"}
       ]
@@ -936,6 +1025,7 @@
     {
       "path": "tests/SharedKernel.Testing.Analyzers.Tests/SharedKernel.Testing.Analyzers.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj","type":"Unit","dependency":"roslyn-in-process","capabilities":["AssertionDelegateInlining","AssertionDiagnostics"],"lane":"library"}
       ]
@@ -943,6 +1033,7 @@
     {
       "path": "tests/SharedKernel.Testing.AspNetCore.Tests/SharedKernel.Testing.AspNetCore.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Testing.AspNetCore/SharedKernel.Testing.AspNetCore.csproj","type":"Integration","dependency":"test-server-and-loopback-kestrel","capabilities":["ConfigurationReload","KestrelTestHost"],"lane":"library"}
       ]
@@ -950,6 +1041,7 @@
     {
       "path": "tests/SharedKernel.Testing.CodeFixRunner.Tests/SharedKernel.Testing.CodeFixRunner.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj","type":"Unit","dependency":"in-process","capabilities":["CodeFixRunEngine","CodeFixRunnerCaller"],"lane":"library"}
       ]
@@ -957,6 +1049,7 @@
     {
       "path": "tests/SharedKernel.Testing.GeneratorTests/SharedKernel.Testing.GeneratorTests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj","type":"Unit","dependency":"in-process","capabilities":["CallProxyGeneratorDiagnostic","CallProxyGeneratorOutput"],"lane":"library"}
       ]
@@ -964,6 +1057,7 @@
     {
       "path": "tests/SharedKernel.Testing.ObjectStorage.Tests/SharedKernel.Testing.ObjectStorage.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Testing.ObjectStorage/SharedKernel.Testing.ObjectStorage.csproj","type":"Unit","dependency":"in-process","capabilities":["InMemoryObjectStoreDiscard","InMemoryObjectStoreFailure"],"lane":"library"}
       ]
@@ -982,6 +1076,7 @@
     {
       "path": "tests/SharedKernel.UploadSanitizing.Tests/SharedKernel.UploadSanitizing.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.UploadSanitizing/SharedKernel.UploadSanitizing.csproj","type":"Unit","dependency":"in-process","capabilities":["FontSanitizerOptions","FontSanitizerRobustness"],"lane":"library"}
       ]
@@ -989,6 +1084,7 @@
     {
       "path": "tests/SharedKernel.Vault.Bitwarden.Tests/SharedKernel.Vault.Bitwarden.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Vault.Bitwarden/SharedKernel.Vault.Bitwarden.csproj","type":"Unit","dependency":"in-process","capabilities":["BitwardenCsvReader","BitwardenJsonReader"],"lane":"library"}
       ]
@@ -996,6 +1092,7 @@
     {
       "path": "tests/SharedKernel.Vault.Keeper.Tests/SharedKernel.Vault.Keeper.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj","type":"Unit","dependency":"in-process","capabilities":["KeeperCsvReader","KeeperJsonReader"],"lane":"library"}
       ]
@@ -1003,6 +1100,7 @@
     {
       "path": "tests/SharedKernel.Vault.Tests/SharedKernel.Vault.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj","type":"Unit","dependency":"in-process","capabilities":["PasswordHealthReport","AttachmentClassifier"],"lane":"library"}
       ]
@@ -1010,6 +1108,7 @@
     {
       "path": "tests/SharedKernel.VaultManager.Tool.Tests/SharedKernel.VaultManager.Tool.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["BriefBuilder","ApplyPreviewCommand"],"lane":"library"}
       ]
@@ -1017,6 +1116,7 @@
     {
       "path": "tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj",
       "register": "tests/README.md",
+      "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj","type":"Component","dependency":"temporary-git-repositories","capabilities":["CandidateDefaultVersion","CandidateEvidenceMerge"],"lane":"library"}
       ]
