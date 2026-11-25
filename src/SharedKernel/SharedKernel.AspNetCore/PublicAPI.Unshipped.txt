@@ -62,3 +62,11 @@ static SharedKernel.AspNetCore.PermanentRedirect.operator !=(SharedKernel.AspNet
 static SharedKernel.AspNetCore.PermanentRedirect.operator ==(SharedKernel.AspNetCore.PermanentRedirect? left, SharedKernel.AspNetCore.PermanentRedirect? right) -> bool
 SharedKernel.AspNetCore.FormBindingDeadlineExtensions
 static SharedKernel.AspNetCore.FormBindingDeadlineExtensions.UseFormBindingDeadline(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+SharedKernel.AspNetCore.ErrorPageExtensions
+static SharedKernel.AspNetCore.ErrorPageExtensions.UseErrorPages(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, Microsoft.AspNetCore.Http.PathString prefix, params Microsoft.AspNetCore.Http.PathString[]! hiddenPaths) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+SharedKernel.AspNetCore.ErrorPageKind
+SharedKernel.AspNetCore.ErrorPageKind.Failure = 2 -> SharedKernel.AspNetCore.ErrorPageKind
+SharedKernel.AspNetCore.ErrorPageKind.NotFound = 0 -> SharedKernel.AspNetCore.ErrorPageKind
+SharedKernel.AspNetCore.ErrorPageKind.RequestError = 1 -> SharedKernel.AspNetCore.ErrorPageKind
+SharedKernel.AspNetCore.ErrorPageKinds
+static SharedKernel.AspNetCore.ErrorPageKinds.Of(int statusCode) -> SharedKernel.AspNetCore.ErrorPageKind

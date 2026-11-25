@@ -585,6 +585,13 @@ var cover = ResponsiveImage.Create(
   it takes the `Brand` typography role, with the h1 face, bold, without the underline. A theme that wants another look sets
   `typography.brand`; a logo link is not affected.
 
+## Page methods
+
+A site without forms answers GET and HEAD only. `MapRazorComponents<App>().AllowOnlyGetAndHead(typeof(Error))` lets every routed
+component answer those two methods, so any other method gets 405 with `Allow: GET, HEAD`, and the error page every method: the error
+handlers (`UseErrorPages` in `PandaBear.SharedKernel.AspNetCore`) re-execute a failed request with its own method, and routing matches
+it before the page renders it as a GET.
+
 ## Parameter guards
 
 The components check their parameters with three public guards, which a component of an application or another package can use for

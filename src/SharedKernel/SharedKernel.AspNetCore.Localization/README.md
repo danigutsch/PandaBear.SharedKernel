@@ -16,6 +16,11 @@ mechanics. It builds on the `SupportedCultures` and `ContentCulture` value objec
   segment (`/en/tours`, not `/EN/tours`). The request culture is the segment, or, when the provider is created with
   `CultureLanguageTags`, the language tag the segment's culture declares (`/pt/tours` gives `pt-BR`). See
   [Language tags other than the segment](#language-tags-other-than-the-segment).
+- `UsePathRequestLocalization`: request localization whose only source is the culture segment of the path, with
+  `PathCultureRequestCultureProvider`. It takes `CultureLanguageTags` (the request runs as the tag the segment's culture declares) or
+  `SupportedCultures` (it runs as the segment). Any other path runs as the default, the response names the language in
+  `Content-Language`, and neither `Accept-Language`, a query string nor a cookie changes it, so a page's address alone decides its
+  language.
 - `UseCulturePathRedirect`: redirects GET and HEAD requests without a supported prefix (`/`, `/tours`, `/fr/tours`) to the
   same local path under the best culture, with a 302. The culture is the remembered-choice cookie, then the Accept-Language
   header by quality, then the default culture. The response carries `Vary: Accept-Language, Cookie`. A first segment that
@@ -78,7 +83,8 @@ cultures that declare another tag are listed; the others declare themselves, so 
 the `SupportedCultures` constructor. `CultureLanguageTags.Create` rejects a culture that is not supported, a culture with two
 tags, and a tag that two cultures would declare, so `.Value` stops the application at start-up with that message.
 
-Register the tags, not the segments, as the supported cultures and UI cultures: the middleware accepts only a provider result it
+`UsePathRequestLocalization(languageTags)` sets this up. To register the provider by hand, register the tags, not the segments,
+as the supported cultures and UI cultures: the middleware accepts only a provider result it
 supports, and would otherwise fall back to a parent (`pt`) or the default. The address segment stays the culture:
 `/pt-BR/tours` is not a localized address, and `CulturePath`, `UseCulturePathRedirect`, and `RememberCulture` keep working with
 the `SupportedCultures` set. The redirect matches `Accept-Language` against the segments with `SupportedCultures.Resolve`, so a
@@ -89,16 +95,7 @@ var pt = ContentCulture.Restore("pt");
 var en = ContentCulture.Restore("en");
 var supported = SupportedCultures.Create(pt, [pt, en]).Value;
 var languageTags = CultureLanguageTags.Create(supported, [new CultureLanguageTag(pt, ContentCulture.Restore("pt-BR"))]).Value;
-string[] requestCultures = [.. languageTags.LanguageTags.Select(static tag => tag.Value)]; // pt-BR, en
-
-app.UseRequestLocalization(options =>
-{
-    options.SetDefaultCulture(languageTags.DefaultLanguageTag.Value)
-        .AddSupportedCultures(requestCultures)
-        .AddSupportedUICultures(requestCultures);
-    options.ApplyCurrentCultureToResponseHeaders = true;
-    options.RequestCultureProviders = [new PathCultureRequestCultureProvider(languageTags)];
-});
+app.UsePathRequestLocalization(languageTags); // pt-BR for /pt/..., en for /en/...
 
 // A page under /pt/ runs as pt-BR. Build its links from the culture, and declare the tag:
 var page = languageTags.TryGetCulture(CultureInfo.CurrentUICulture.Name, out var culture) ? culture : supported.Default; // pt

@@ -49,6 +49,19 @@ policy. Each consuming application owns those decisions.
   ```csharp
   app.UseStatusCodePagesWithReExecuteExcept("/not-found", createScopeForStatusCodePages: true, "/api");
   ```
+- `UseErrorPages`: the error handling of a site with one page per status code. An unhandled exception is re-executed as
+  `{prefix}/500` and an empty error response as `{prefix}/{status}`, each in a new service scope and with the original status code.
+  The page runs as a GET, so a re-executed POST is not read as a form submission, and a HEAD stays a HEAD. After request
+  localization, the page names the request's language in `Content-Language` again, which the exception handler had cleared. A
+  direct request under the prefix or one of the hidden paths, such as the `/not-found` page a Blazor router needs, is not found.
+  Routing matches a re-executed request with its original method, so the page's endpoint must accept every method (see
+  `AllowOnlyGetAndHead` in `PandaBear.SharedKernel.Blazor.Site`). `ErrorPageKinds.Of(status)` names what the page tells the visitor:
+  `NotFound` for 404, `Failure` for 408, 429 and every server error, and `RequestError` for any other client error.
+
+  ```csharp
+  app.UsePathRequestLocalization(languageTags);
+  app.UseErrorPages("/error", "/not-found");
+  ```
 - `AddUnhandledExceptionHandler` and `AspNetCoreTelemetry`: an opt-in unhandled-exception handler and the names of the
   meter, instruments, tags and log event identifiers of the ASP.NET Core telemetry family.
 - `HostEnvironmentVariableNames.AspNetCoreEnvironment` and `HostEnvironmentVariableNames.DotNetEnvironment` for C#
