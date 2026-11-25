@@ -112,6 +112,22 @@ public Task<Result> Save(CancellationToken ct) => db.SaveChangesAsResult(parser,
 }, ct);
 ```
 
+## JSON list columns
+
+`property.HasJsonConversion()` maps an `IReadOnlyList<T>` of plain values (strings, numbers, ids, small records) to one required JSON
+text column, written with `JsonSerializerOptions.Web` (camel case). Lists are compared by their JSON, so assigning an equal list writes
+nothing and a change made in place is detected. Use it for lists that are read and written with their owner and never queried.
+
+```csharp
+builder.Property(tour => tour.Cities).HasJsonConversion();
+```
+
+Entity Framework Core 10's own JSON mapping is the first choice for a new model: primitive collections for lists of plain values, and
+`ComplexCollection(...).ToJson()` for lists of reference-type records. Those keep a different stored shape (the CLR property names unless
+renamed with `HasJsonPropertyName`, no value-type records) and a different model, so moving an existing value-converted column to them
+needs a migration and a data rewrite; `HasJsonConversion` keeps such columns as they are. It uses reflection-based `System.Text.Json`,
+so it is marked as not trimming- or Native-AOT-compatible.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.EntityFrameworkCore`. C# namespace: `SharedKernel.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.EntityFrameworkCore`.

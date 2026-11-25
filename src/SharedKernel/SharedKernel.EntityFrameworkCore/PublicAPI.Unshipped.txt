@@ -50,3 +50,5 @@ static SharedKernel.EntityFrameworkCore.UniqueViolation.operator ==(SharedKernel
 const SharedKernel.EntityFrameworkCore.DbContextResultExtensions.ConcurrencyConflictMessage = "The data was changed or removed by someone else. Reload it and try again." -> string!
 SharedKernel.EntityFrameworkCore.DbContextResultExtensions
 static SharedKernel.EntityFrameworkCore.DbContextResultExtensions.SaveChangesAsResult(this Microsoft.EntityFrameworkCore.DbContext! dbContext, SharedKernel.EntityFrameworkCore.IUniqueViolationParser! parser, System.Func<string!, SharedKernel.Results.Result>! uniqueRuleResult, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Results.Result>!
+SharedKernel.EntityFrameworkCore.JsonColumnPropertyBuilderExtensions
+static SharedKernel.EntityFrameworkCore.JsonColumnPropertyBuilderExtensions.HasJsonConversion<T>(this Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder<System.Collections.Generic.IReadOnlyList<T>!>! property) -> Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder<System.Collections.Generic.IReadOnlyList<T>!>!
