@@ -121,7 +121,16 @@ For a form that edits one kind of record, `ServerFormSubmission.ForRecord(contex
 same submission with control ids `customer-{field}` and default messages built from the noun ("This value is not valid.", "We could
 not save the customer. Try again later.", "The customer was changed or removed by someone else. Reload the page and try again.",
 "That customer no longer exists."). Each message can be replaced through the optional `invalidMessage`, `failureMessage`,
-`conflictMessage` and `notFoundMessage` parameters.
+`conflictMessage` and `notFoundMessage` parameters. A nested field path keeps a plain id: `FieldIds.For(prefix, field)` turns its dots and
+list indexes into hyphens (`pt.itinerary[0].title` → `site-tour-pt-itinerary-0-title`); use it for the control ids of such fields.
+
+`FormActions` ends the form: the submission's `Error` as an alert, the submit button (disabled while `IsSaving`), any extra buttons
+(`ChildContent`) and an optional cancel link.
+
+```razor
+<FormActions Submission="_session.Submission" CancelHref="customers" />
+<FormActions Submission="_upload" SubmitText="Upload" CancelHref="site/images" CancelText="Back" />
+```
 
 ### Form fields
 
