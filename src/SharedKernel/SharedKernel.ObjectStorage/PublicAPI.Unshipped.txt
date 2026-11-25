@@ -159,3 +159,5 @@ SharedKernel.ObjectStorage.ObjectInventoryReport
 SharedKernel.ObjectStorage.ObjectInventoryReport.MissingObjectKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
 SharedKernel.ObjectStorage.ObjectInventoryReport.OrphanObjects.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ObjectStorage.ObjectInventoryItem!>!
 static SharedKernel.ObjectStorage.ObjectInventoryReport.Compare(System.Collections.Generic.IEnumerable<SharedKernel.ObjectStorage.ObjectInventoryItem!>! inventory, System.Collections.Generic.IEnumerable<string!>! referencedKeys) -> SharedKernel.ObjectStorage.ObjectInventoryReport!
+SharedKernel.ObjectStorage.ObjectStorageKeyValidator
+static SharedKernel.ObjectStorage.ObjectStorageKeyValidator.IsValidRelativeKey(string? value, int maxLength) -> bool

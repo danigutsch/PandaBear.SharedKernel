@@ -1,9 +1,7 @@
-using SharedKernel.Testing;
-
-namespace SharedKernel.InputNormalization.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>Unit tests for ObjectStorageKeyValidator.IsValidRelativeKey.</summary>
-[Trait(TestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
 public sealed class ObjectStorageKeyValidatorTests
 {
     [Theory]

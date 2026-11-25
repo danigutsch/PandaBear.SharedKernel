@@ -9,8 +9,6 @@ static SharedKernel.InputNormalization.DisplayText.OneLine(string? text) -> stri
 static SharedKernel.InputNormalization.DisplayText.Value(string? value, bool masked) -> string!
 SharedKernel.InputNormalization.NumericSanitizer
 static SharedKernel.InputNormalization.NumericSanitizer.SanitizePrice(decimal value) -> decimal
-SharedKernel.InputNormalization.ObjectStorageKeyValidator
-static SharedKernel.InputNormalization.ObjectStorageKeyValidator.IsValidRelativeKey(string? value, int maxLength) -> bool
 SharedKernel.InputNormalization.PrintableText
 static SharedKernel.InputNormalization.PrintableText.OneLine(string! text) -> string!
 const SharedKernel.InputNormalization.PrintableText.Replacement = '�' -> char

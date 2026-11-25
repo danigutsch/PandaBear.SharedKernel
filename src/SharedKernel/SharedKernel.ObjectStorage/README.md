@@ -33,9 +33,8 @@ await store.ListKeys(ObjectStoragePrefix.From("media/"), ct);
 ```
 
 Typed overloads adapt to existing `IObjectStore` string contracts, so existing provider implementations
-remain compatible. Write and upload request `Create` factories also accept typed keys. This package reuses
-the existing `PandaBear.SharedKernel.InputNormalization` package for validation; no additional
-third-party dependency is introduced.
+remain compatible. Write and upload request `Create` factories also accept typed keys. The keys are checked by
+`ObjectStorageKeyValidator.IsValidRelativeKey`, which this package owns; it has no package dependency.
 
 ## Package identity and availability
 

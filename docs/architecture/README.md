@@ -111,7 +111,6 @@ flowchart TB
     SharedKernel_Messaging_IntegrationEvents_EntityFrameworkCore[SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
     SharedKernel_Messaging_IntegrationEvents_EntityFrameworkCore[SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore] --> SharedKernel_Scheduling[SharedKernel.Scheduling]
     SharedKernel_Messaging_Protobuf[SharedKernel.Messaging.Protobuf] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
-    SharedKernel_ObjectStorage[SharedKernel.ObjectStorage] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_ObjectStorage_FileSystem[SharedKernel.ObjectStorage.FileSystem] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_ObjectStorage_FileSystem[SharedKernel.ObjectStorage.FileSystem] --> SharedKernel_ObjectStorage[SharedKernel.ObjectStorage]
     SharedKernel_ObjectStorage_S3[SharedKernel.ObjectStorage.S3] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
