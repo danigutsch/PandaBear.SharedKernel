@@ -13,7 +13,7 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 | Folder | Contents |
 | --- | --- |
-| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `SearchKey`, `SqlLikePattern`, `PublicationStatus`, `WebUrl`, `SanitizedText`, option-to-result helpers |
+| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `PublicationStatus`, `WebUrl`, `SanitizedText`, option-to-result helpers |
 | `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet`, `TranslationListRules` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
@@ -134,20 +134,6 @@ var page = await photos.OrderBy(photo => photo.SortOrder).ThenBy(photo => photo.
 ```
 
 `Pager` in `PandaBear.SharedKernel.Blazor.Site` renders the links for a window.
-
-## Search keys
-
-`SearchKey.Of(text)` is the accent- and case-insensitive key of a text for comparing search input with stored text: `ESLOVÊNIA`
-and `Eslovênia` both give `eslovenia`. Lone surrogates become U+FFFD, the text is decomposed (NFD), nonspacing, spacing combining and
-enclosing marks are dropped, the rest is lowercased with the invariant culture, every white-space run becomes one space with none at
-either end, and the result is composed again (NFC). Unlike a slug it keeps every letter and digit of every script (`Москва` →
-`москва`, `東京` and `ß` unchanged) and keeps punctuation, so it is a comparison key, not an identifier. .NET has no full Unicode case
-folding, so `ß` does not match `ss`; the key follows the Unicode data of the running .NET, so rebuild stored keys when it changes.
-`PandaBear.SharedKernel.EntityFrameworkCore.Sqlite` maps it into SQLite queries (`SearchFold`).
-
-`SqlLikePattern.ContainsLiteral(text)` builds a parameter value for a literal SQL LIKE or ILIKE contains search.
-Pass the pattern and `SqlLikePattern.EscapeCharacter` to the provider. Apply `SearchKey.Of` first when your query uses search keys.
-The pattern preserves the supplied text and returns `%%` for an empty string. The caller decides how to handle blank input.
 
 ## Web addresses
 

@@ -1,4 +1,4 @@
-using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
 
 namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 

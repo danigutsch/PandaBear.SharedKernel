@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Tests literal SQL LIKE patterns before they are passed to a provider.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

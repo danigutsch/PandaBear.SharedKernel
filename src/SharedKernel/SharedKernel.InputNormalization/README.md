@@ -31,6 +31,17 @@ an ASCII letter or `_`, then ASCII letters, digits, or `_`, at most 63 bytes. Po
 NAMEDATALEN-1 (63) bytes, so two long names could select the same object. Only ASCII is accepted, so the character count is the
 byte count. The idempotency, integration event, and disposition hold storage options and the event-sourcing schema use it.
 
+## Search keys
+
+`SearchKey.Of(text)` is the accent- and case-insensitive key of a text for comparing search input with stored text: `ESLOVÊNIA`
+and `Eslovênia` both give `eslovenia`. Lone surrogates become U+FFFD, the text is decomposed (NFD), nonspacing, spacing combining and
+enclosing marks are dropped, the rest is lowercased with the invariant culture, every white-space run becomes one space with none at
+either end, and the result is composed again (NFC). Unlike a slug it keeps every letter and digit of every script (`Москва` →
+`москва`, `東京` and `ß` unchanged) and keeps punctuation, so it is a comparison key, not an identifier. .NET has no full Unicode case
+folding, so `ß` does not match `ss`; the key follows the Unicode data of the running .NET, so rebuild stored keys when it changes.
+`PandaBear.SharedKernel.EntityFrameworkCore.Sqlite` maps it into SQLite queries (`SearchFold`), and
+`SqlLikePattern.ContainsLiteral` of `PandaBear.SharedKernel.EntityFrameworkCore` turns a key into a literal `LIKE` pattern.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.

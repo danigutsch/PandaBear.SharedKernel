@@ -33,3 +33,5 @@ static SharedKernel.InputNormalization.RasterImageMediaType.Find(string? mediaTy
 static SharedKernel.InputNormalization.StringSanitizer.TrySanitizeParagraphs(string? value, out System.Collections.Generic.IReadOnlyList<string!>! paragraphs) -> bool
 SharedKernel.InputNormalization.PostgreSqlIdentifier
 static SharedKernel.InputNormalization.PostgreSqlIdentifier.IsUnquoted(string? value) -> bool
+SharedKernel.InputNormalization.SearchKey
+static SharedKernel.InputNormalization.SearchKey.Of(string? text) -> string!

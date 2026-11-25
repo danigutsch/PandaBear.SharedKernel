@@ -55,3 +55,6 @@ static SharedKernel.EntityFrameworkCore.JsonColumnPropertyBuilderExtensions.HasJ
 SharedKernel.EntityFrameworkCore.RevisionDbContextExtensions
 static SharedKernel.EntityFrameworkCore.RevisionDbContextExtensions.IncrementRevision<TRevision>(this Microsoft.EntityFrameworkCore.DbContext! dbContext, System.Linq.Expressions.Expression<System.Func<TRevision!, long>!>! revision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
 static SharedKernel.EntityFrameworkCore.RevisionDbContextExtensions.SaveChangesIncrementingRevision<TRevision>(this Microsoft.EntityFrameworkCore.DbContext! dbContext, System.Linq.Expressions.Expression<System.Func<TRevision!, long>!>! revision, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<int>!>! saveChanges, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+SharedKernel.EntityFrameworkCore.SqlLikePattern
+const SharedKernel.EntityFrameworkCore.SqlLikePattern.EscapeCharacter = "\\" -> string!
+static SharedKernel.EntityFrameworkCore.SqlLikePattern.ContainsLiteral(string! text) -> string!
