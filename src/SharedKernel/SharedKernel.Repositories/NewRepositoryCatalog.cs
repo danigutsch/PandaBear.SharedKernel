@@ -17,11 +17,18 @@ internal static class NewRepositoryCatalog
             }
             else if (feature == RepositoryFeature.Gitignore)
             {
-                files.Add(new BaselineFileConfiguration(".gitignore", Profile: language == RepositoryLanguage.Dotnet ? "gitignore-dotnet" : "gitignore"));
+                var profile = language switch
+                {
+                    _ when language == RepositoryLanguage.Dotnet => "gitignore-dotnet",
+                    _ when language == RepositoryLanguage.Nix => "gitignore-nix",
+                    _ => "gitignore"
+                };
+                files.Add(new BaselineFileConfiguration(".gitignore", Profile: profile));
             }
             else if (feature == RepositoryFeature.Gitattributes)
             {
-                files.Add(new BaselineFileConfiguration(".gitattributes", Profile: "gitattributes"));
+                files.Add(new BaselineFileConfiguration(".gitattributes",
+                    Profile: language == RepositoryLanguage.Shell ? "gitattributes-shell" : "gitattributes"));
             }
             else if (feature == RepositoryFeature.Editorconfig)
             {
@@ -56,6 +63,10 @@ internal static class NewRepositoryCatalog
                     new BaselineGitConfigurationEntry("tag.gpgsign", "true"),
                     new BaselineGitConfigurationEntry("gpg.format", "ssh"),
                 ]);
+            }
+            else if (feature == RepositoryFeature.SdkBootstrap)
+            {
+                files.Add(new BaselineFileConfiguration("scripts/bootstrap-dotnet.sh", Profile: "sdk-bootstrap"));
             }
         }
 

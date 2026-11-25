@@ -53,6 +53,7 @@ internal static class RepoConfigCommandLine
         {
             CreateInitCommand(environment, root),
             CreateVerifyCommand(environment, root),
+            CreateTrackedCheckCommand(root),
             CreateDiffCommand(environment, root),
             CreateSetCommand(environment, root),
             CreateGetCommand(environment, root),
@@ -95,6 +96,21 @@ internal static class RepoConfigCommandLine
         Command command = new("verify", "Verify the roadmap structure, configuration, and items.") { root };
         SetGuardedAction(command, (parseResult, output, error, _) =>
             Task.FromResult(RepoConfigToolApplication.Verify(root.GetExistingDirectory(parseResult), output, error)));
+        return command;
+    }
+
+    private static Command CreateTrackedCheckCommand(RootOption root)
+    {
+        Option<string> configuration = new("--config")
+        {
+            Description = "Path to the check configuration relative to the Git work tree root.",
+            HelpName = "path",
+            DefaultValueFactory = static _ => TrackedCheckRunner.ConfigurationPath,
+        };
+        Option<bool> strict = new("--strict") { Description = "Fail when a lane's tooling is unavailable." };
+        Command command = new("check-tracked", "Run configured check lanes on nonempty tracked file selections.") { configuration, strict, root };
+        SetGuardedAction(command, (parseResult, output, error, ct) => TrackedCheckRunner.Run(root.GetExistingDirectory(parseResult),
+            parseResult.GetRequiredValue(configuration), parseResult.GetValue(strict), output, error, ct));
         return command;
     }
 
@@ -267,6 +283,10 @@ internal static class RepoConfigCommandLine
         {
             Description = "Value for @@copyrightHolder@@ in a supplied policy template."
         };
+        Option<string?> devcontainerImage = new("--devcontainer-image")
+        {
+            Description = "SHA-256 digest-pinned image for the opt-in devcontainer feature.",
+        };
         Option<bool> force = new("--force")
         {
             Description = "Write the repository instead of previewing it. Never replaces an existing file or Git setting."
@@ -274,7 +294,7 @@ internal static class RepoConfigCommandLine
         Command command = new("new", "Start a repository: write the chosen baseline files and their consumer configuration, and initialize Git. Previews unless --force is given.")
         {
             name, branch, language, sdkVersion, feature, with, force, root,
-            licenseSource, securitySource, codeOwnersSource, owner, copyrightHolder
+            licenseSource, securitySource, codeOwnersSource, owner, copyrightHolder, devcontainerImage
         };
         command.Validators.Add(result =>
         {
@@ -306,6 +326,7 @@ internal static class RepoConfigCommandLine
                     ResolvePolicySource(parseResult.GetValue(codeOwnersSource), environment.WorkingDirectory),
                     parseResult.GetValue(owner),
                     parseResult.GetValue(copyrightHolder)),
+                parseResult.GetValue(devcontainerImage),
                 parseResult.GetValue(force),
                 output,
                 error,

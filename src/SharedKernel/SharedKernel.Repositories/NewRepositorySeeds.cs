@@ -86,9 +86,15 @@ internal static class NewRepositorySeeds
         </Project>
         """;
 
+    private const string Checks = """
+        {
+          "lanes": []
+        }
+        """;
+
     /// <summary>Gets the write-once features in catalog order.</summary>
     internal static IReadOnlyList<RepositoryFeature> Features { get; } =
-        [RepositoryFeature.Agents, RepositoryFeature.GlobalJson, RepositoryFeature.NugetConfig, RepositoryFeature.BuildProps];
+        [RepositoryFeature.Agents, RepositoryFeature.GlobalJson, RepositoryFeature.NugetConfig, RepositoryFeature.BuildProps, RepositoryFeature.CheckRunner];
 
     /// <summary>Renders the files of the selected seed features in catalog order, each with LF line endings and a final newline.</summary>
     /// <param name="repositoryName">The validated repository name.</param>
@@ -117,6 +123,10 @@ internal static class NewRepositorySeeds
             else if (feature == RepositoryFeature.BuildProps)
             {
                 files.Add(("Directory.Build.props", BuildProps.Replace("@@major@@", Required(sdk).Major.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal)));
+            }
+            else if (feature == RepositoryFeature.CheckRunner)
+            {
+                files.Add((TrackedCheckRunner.ConfigurationPath, Checks));
             }
         }
 

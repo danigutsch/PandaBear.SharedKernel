@@ -95,6 +95,7 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `baseline apply` | Creates and updates the managed baseline files; previews unless `--force` is given. |
 | `new` | Starts a repository from a language and features: writes the baseline files and their configuration and initializes Git; previews unless `--force` is given. See [Starting a repository](#starting-a-repository). |
 | `seed-drift` | Compares selected write-once files with the current catalog. See [Comparing write-once files](#comparing-write-once-files). |
+| `check-tracked` | Runs configured check lanes against nonempty Git-index selections. See [Repository checks](#repository-checks). |
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request; see [Roadmap publication](#roadmap-publication). |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
@@ -478,7 +479,7 @@ chosen language and features, writes the files and the configuration in one roll
 | `--root <path>` | The directory to create or fill. Defaults to the current directory. |
 | `--name <name>` | Repository name for the README. Defaults to the last segment of `--root`. |
 | `--branch <name>` | Default branch. Defaults to `main`. |
-| `--language <id>` | `none` (default) or `dotnet`. A language selects the content of a feature, such as the .NET ignore rules; it adds no file itself. |
+| `--language <id>` | `none` (default), `dotnet`, `shell`, or `nix`. A language selects content for the features you request. |
 | `--sdk-version <v>` | The .NET SDK version, such as `10.0.100`, that `global.json` pins and `Directory.Build.props` targets. Needed by the `global-json` and `build-props` features. |
 | `--feature <id>` | A feature in the exact selection. Repeat to select several. |
 | `--with <id>` | A feature to add to the language defaults. Repeat to add several. Use without `--feature`. |
@@ -487,6 +488,7 @@ chosen language and features, writes the files and the configuration in one roll
 | `--codeowners-source <path>` | Caller-owned template for `CODEOWNERS`. |
 | `--owner <text>` | Value of `@@owner@@` in a policy source. |
 | `--copyright-holder <text>` | Value of `@@copyrightHolder@@` in a policy source. |
+| `--devcontainer-image <image>` | Caller-selected SHA-256 pinned image for the `devcontainer` feature. |
 | `--force` | Writes instead of previewing. |
 
 The features are `readme`, `gitignore`, `gitattributes`, `editorconfig`, `hooks` (a tracked `pre-commit` hook and
@@ -526,6 +528,63 @@ Repeat `--feature` to choose from `agents`, `global-json`, `nuget-config`, and `
 directory name. The check compares UTF-8 files up to 1 MiB, ignoring CRLF versus LF and a leading UTF-8 byte order mark.
 It reports `current`, `different`, or `missing` with each selected path and returns 1 for differences, missing files,
 or input errors. It reads the files without changing them.
+
+### Repository checks
+
+Select `--with check-runner` to create the write-once `.config/sharedkernel-checks.json` file.
+When selecting an exact feature list with `--feature`, include a managed baseline feature such as `readme`.
+Add the checks the repository needs. Each `pathspec` uses Git's index pathspec rules, and each
+`command` array names an executable followed by literal arguments. A lane reads the selected
+tracked regular-file paths present in the checkout on standard input as NUL-delimited UTF-8. Lanes run in the Git work
+tree root. An empty selection fails before the corresponding executable runs.
+
+```json
+{
+  "lanes": [
+    { "pathspec": "docs/*.md", "command": ["./checks/verify-docs"] }
+  ]
+}
+```
+
+```sh
+dotnet repo check-tracked --strict
+```
+
+A lane returns zero on success, 77 for tooling unavailable, or another code for a failed check.
+Tool absence is a skip by default and a failure with `--strict`. The runner reports every lane
+and prints the executed and skipped counts. No executed lane is a failure. Use `--config` to
+select another repository-relative configuration. Run these commands only with check files and
+executables you trust.
+
+### Verifying the pinned .NET SDK
+
+With `--language dotnet`, select `--with sdk-bootstrap` to write `scripts/bootstrap-dotnet.sh`.
+It reads the SDK version from `global.json` and checks for the exact installed SDK by default.
+An exact feature selection needs an existing `global.json` or the `global-json` feature.
+The launcher's prerequisites are a POSIX shell and `jq`.
+
+```sh
+sh scripts/bootstrap-dotnet.sh
+sh scripts/bootstrap-dotnet.sh --install
+```
+
+Explicit installation uses Microsoft's release metadata to select the SDK and platform, checks
+the exact HTTPS URL and verifies the published SHA-512 before extraction. It uses `curl`,
+`sha512sum` or `shasum`, and `tar` or `unzip`. The verified host is installed side by side
+under `bin/sharedkernel-dotnet/<version>/<rid>`. Use the printed host path to select that SDK.
+[Microsoft .NET release metadata](https://github.com/dotnet/core/blob/main/release-notes/releases-index.json)
+
+### Shell, Nix and Dev Containers
+
+`--language shell` sets LF attributes for shell source and Bats files. `--language nix` ignores
+Nix build-result links while keeping source and lock files trackable. The .NET-only features
+require `--language dotnet`.
+
+Add `--with devcontainer` and pass a caller-selected image reference via `--devcontainer-image`.
+The image must use an `@sha256:` digest with 64 lowercase hexadecimal digits. Creation validates
+the feature and image together before writing files. The repository owns subsequent changes to
+the seeded `.devcontainer/devcontainer.json`. With an exact feature list, select a managed baseline
+feature as well.
 
 ## Roadmap publication
 

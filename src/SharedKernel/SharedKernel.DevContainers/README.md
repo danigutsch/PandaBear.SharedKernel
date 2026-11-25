@@ -31,3 +31,7 @@ var exitCode = await PodmanDnsPreflight.Run(PodmanDnsHost.Current(), quiet: fals
 Package ID: `PandaBear.SharedKernel.DevContainers`. C# namespace: `SharedKernel.DevContainers`. Assembly/project identity: `SharedKernel.DevContainers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+## Scaffold images
+
+`DevcontainerImageConfiguration.TryCreate` validates a caller-selected SHA-256 pinned image
+and creates a minimal image-based Dev Container JSON configuration.

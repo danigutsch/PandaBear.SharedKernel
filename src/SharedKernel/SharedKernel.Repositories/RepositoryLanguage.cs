@@ -14,10 +14,16 @@ public sealed record RepositoryLanguage
     /// <summary>.NET: selects the .NET ignore rules.</summary>
     public static readonly RepositoryLanguage Dotnet = new("dotnet");
 
+    /// <summary>Shell: explicitly normalizes shell script and test files to LF.</summary>
+    public static readonly RepositoryLanguage Shell = new("shell");
+
+    /// <summary>Nix: ignores the default local build output links.</summary>
+    public static readonly RepositoryLanguage Nix = new("nix");
+
     private RepositoryLanguage(string id) => Id = id;
 
     /// <summary>Gets every language, in the order that messages list them.</summary>
-    public static IReadOnlyList<RepositoryLanguage> All { get; } = [None, Dotnet];
+    public static IReadOnlyList<RepositoryLanguage> All { get; } = [None, Dotnet, Shell, Nix];
 
     /// <summary>Gets the ID that the <c>--language</c> option takes.</summary>
     public string Id { get; }

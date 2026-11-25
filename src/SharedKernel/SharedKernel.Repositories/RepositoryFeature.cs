@@ -50,6 +50,15 @@ public sealed record RepositoryFeature
     /// <summary>A <c>Directory.Build.props</c> with strict compiler and analysis settings, written once. Needs <c>--sdk-version</c>.</summary>
     public static readonly RepositoryFeature BuildProps = new("build-props", selectedByDefault: true, RepositoryLanguage.Dotnet);
 
+    /// <summary>An owner-editable configuration for tracked-file validation lanes.</summary>
+    public static readonly RepositoryFeature CheckRunner = new("check-runner", selectedByDefault: false);
+
+    /// <summary>A pre-SDK launcher that verifies or explicitly installs the pinned .NET SDK.</summary>
+    public static readonly RepositoryFeature SdkBootstrap = new("sdk-bootstrap", selectedByDefault: false, RepositoryLanguage.Dotnet);
+
+    /// <summary>A write-once Dev Container configuration for a caller-selected digest-pinned image.</summary>
+    public static readonly RepositoryFeature Devcontainer = new("devcontainer", selectedByDefault: false);
+
     private RepositoryFeature(string id, bool selectedByDefault, RepositoryLanguage? requiredLanguage = null)
     {
         Id = id;
@@ -59,7 +68,8 @@ public sealed record RepositoryFeature
 
     /// <summary>Gets every feature, in the order that files and settings are written and messages list them.</summary>
     public static IReadOnlyList<RepositoryFeature> All { get; } =
-        [Readme, Gitignore, Gitattributes, Editorconfig, Hooks, GitConfig, SignedCommits, Agents, GlobalJson, NugetConfig, BuildProps, PrePushHook, CommitMessageHook];
+        [Readme, Gitignore, Gitattributes, Editorconfig, Hooks, GitConfig, SignedCommits, Agents, GlobalJson, NugetConfig, BuildProps,
+            PrePushHook, CommitMessageHook, CheckRunner, SdkBootstrap, Devcontainer];
 
     /// <summary>Gets the ID that the <c>--feature</c> option takes.</summary>
     public string Id { get; }
