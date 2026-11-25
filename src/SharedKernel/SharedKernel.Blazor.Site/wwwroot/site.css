@@ -309,13 +309,21 @@ a {
     object-fit: contain;
 }
 
+/*
+ * Plain lists: the lists of the components that show no markers, without the list's margin and indent. A list that must stay a list in
+ * Safari, which drops the semantics of a list without markers, has role="list".
+ */
 .site-nav__list,
 .site-nav__sublist,
 .site-language-switcher ul,
-.site-contact-card__channels {
-    list-style: none;
+.site-contact-card__channels,
+.site-separated-list,
+.site-step-list,
+.site-credits-list,
+.site-pager__list {
     margin: 0;
     padding: 0;
+    list-style: none;
 }
 
 .site-nav__list {
@@ -539,12 +547,6 @@ a {
  * Separated list: items on one line, each kept together, joined by a bar with empty alternative text, so assistive technology never
  * reads it. An item wider than the whole line breaks inside.
  */
-.site-separated-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
 .site-separated-list__item {
     display: inline-block;
     max-width: 100%;
@@ -557,6 +559,28 @@ a {
     margin-inline: 0.5em;
 }
 
+/*
+ * Heading group: the hgroup of a card, a hero or a section keeps no margin of its own, and every eyebrow, a step's number included, is
+ * small, bold, letter-spaced text in the primary colour above its heading. A hero's eyebrow, a tagline, is muted and further from its
+ * title.
+ */
+.site-card__heading,
+.site-hero__heading,
+.site-section__heading {
+    margin: 0;
+}
+
+.site-card__eyebrow,
+.site-hero__eyebrow,
+.site-section__eyebrow,
+.site-step-list__number {
+    margin: 0 0 var(--site-space-1);
+    color: var(--site-color-primary);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
 /* Hero. */
 .site-hero {
     display: grid;
@@ -565,16 +589,9 @@ a {
     padding-block: var(--site-space-5);
 }
 
-.site-hero__heading {
-    margin: 0;
-}
-
 .site-hero__eyebrow {
-    margin: 0 0 var(--site-space-2);
+    margin-bottom: var(--site-space-2);
     color: var(--site-color-muted);
-    font-size: var(--site-font-size-sm);
-    font-weight: 700;
-    letter-spacing: 0.05em;
 }
 
 .site-hero__subtitle {
@@ -878,19 +895,6 @@ a {
     margin-bottom: var(--site-space-4);
 }
 
-/* The eyebrow: a short label above the heading, small and spaced like the hero's, in the primary colour. */
-.site-section__heading {
-    margin: 0;
-}
-
-.site-section__eyebrow {
-    margin: 0 0 var(--site-space-1);
-    color: var(--site-color-primary);
-    font-size: var(--site-font-size-sm);
-    font-weight: 700;
-    letter-spacing: 0.05em;
-}
-
 .site-divider {
     width: var(--site-divider-width);
     height: var(--site-divider-thickness);
@@ -908,16 +912,9 @@ a {
  * Text alignment of a section or band. The alignment classes set private custom properties, which inherit, so the nearest section or
  * band that sets an alignment wins: a start section inside a centred band is at the start again. Centred, the divider, the intro,
  * paragraphs and lists, a video link, a byline, a default action row and an image narrower than its column are centred, a list's items
- * stay at the start, and the quote drops its start rule.
+ * stay at the start, and the quote drops its start rule. The start set is the one a card resets to; the centred set, which a centred
+ * card shares, follows the card rule (see Cards).
  */
-:is(.site-section--text-center, .site-band--text-center) {
-    --_site-centre-margin: auto;
-    --_site-centre-justify: center;
-    --_site-image-position: 50% 50%;
-    --_site-quote-rule: 0;
-    text-align: center;
-}
-
 :is(.site-section--text-start, .site-band--text-start) {
     --_site-centre-margin: initial;
     --_site-centre-justify: initial;
@@ -1154,18 +1151,6 @@ a {
     overflow-wrap: break-word;
 }
 
-.site-card__heading {
-    margin: 0;
-}
-
-.site-card__eyebrow {
-    margin: 0 0 var(--site-space-1);
-    color: var(--site-color-primary);
-    font-size: var(--site-font-size-sm);
-    font-weight: 700;
-    letter-spacing: 0.05em;
-}
-
 .site-card__title a {
     color: inherit;
     text-decoration: none;
@@ -1253,10 +1238,13 @@ a {
 }
 
 /*
- * A card does not inherit the alignment of a section or band around it: it resets the private alignment properties and starts its text,
- * and only its own centred alignment sets them, as a centred section does.
+ * The centred alignment of a section, band or card, defined once. A card does not inherit the alignment of a section or band around it:
+ * its own rule resets the private alignment properties and starts its text, and only its own centred alignment sets them, so this rule
+ * follows the card rule.
  */
-.site-card--text-center {
+.site-card--text-center,
+.site-section--text-center,
+.site-band--text-center {
     --_site-centre-margin: auto;
     --_site-centre-justify: center;
     --_site-image-position: 50% 50%;
@@ -1421,12 +1409,6 @@ a {
  * Step list: the steps of an itinerary without list markers (the role="list" keeps the list in Safari), each spaced from the one before,
  * its number a small bold letter-spaced eyebrow in the primary colour above its title, then its facts in one row and its note.
  */
-.site-step-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
 .site-step-list__item + .site-step-list__item {
     margin-top: var(--site-space-5);
 }
@@ -1437,14 +1419,6 @@ a {
 
 .site-step-list__heading > .site-step-list__title {
     margin: 0;
-}
-
-.site-step-list__number {
-    margin: 0 0 var(--site-space-1);
-    color: var(--site-color-primary);
-    font-size: var(--site-font-size-sm);
-    font-weight: 700;
-    letter-spacing: 0.05em;
 }
 
 .site-step-list__facts {
@@ -1571,12 +1545,6 @@ a {
 /*
  * Credits list: one credit to a row, without markers (the role="list" keeps the list in Safari), a square thumbnail beside its lines.
  */
-.site-credits-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
 .site-credits-list__item {
     display: flex;
     align-items: flex-start;
@@ -1899,9 +1867,6 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
     flex-wrap: wrap;
     align-items: center;
     gap: var(--site-space-1);
-    list-style: none;
-    margin: 0;
-    padding: 0;
 }
 
 .site-pager a {

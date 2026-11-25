@@ -75,10 +75,6 @@ public sealed partial class Hero
 
     private string TitleScaleClass => TitleScale == HeroTitleScale.Large ? " site-hero--title-large" : string.Empty;
 
-    private bool HasEyebrow => !string.IsNullOrWhiteSpace(Eyebrow);
-
-    private bool HasSubtitle => !string.IsNullOrWhiteSpace(Subtitle);
-
     /// <inheritdoc />
     protected override void OnParametersSet()
     {

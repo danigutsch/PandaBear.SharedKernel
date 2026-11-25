@@ -188,6 +188,46 @@ public sealed class PermanentRedirectTests
         response.Headers.Location.ShouldBeNull();
     }
 
+    [Theory]
+    [InlineData("/quem-somos/hist%C3%B3ria")]
+    [InlineData("/Quem-Somos/HIST%C3%93RIA/")]
+    [InlineData("/quem-somos/histo%CC%81ria")]
+    public async Task A_request_path_in_any_spelling_of_a_stored_path_is_redirected_to_the_encoded_target(string path)
+    {
+        // Arrange
+        await using var host = await RedirectTestHost.StartStored(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["/quem-somos/história"] = "/pt/páginas/história",
+        });
+
+        // Act
+        using var response = await host.Send(HttpMethod.Get, path);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.MovedPermanently);
+        response.Headers.Location.ShouldBe(new Uri("/pt/p%C3%A1ginas/hist%C3%B3ria", UriKind.Relative));
+    }
+
+    [Theory]
+    [InlineData("/a%2Fb")]
+    [InlineData("/a%2fb")]
+    [InlineData("/a%252Fb")]
+    public async Task A_request_path_that_only_decodes_to_a_stored_path_is_not_redirected(string path)
+    {
+        // Arrange
+        await using var host = await RedirectTestHost.StartStored(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["/a/b"] = "/new",
+        });
+
+        // Act
+        using var response = await host.Send(HttpMethod.Get, path);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Headers.Location.ShouldBeNull();
+    }
+
     [Fact]
     public async Task Null_arguments_are_rejected()
     {

@@ -1197,3 +1197,22 @@ static SharedKernel.Blazor.Site.RazorComponentMethodExtensions.AllowOnlyGetAndHe
 const SharedKernel.Blazor.Site.Theming.ThemeFont.FamilyKeyMessage = "The family name must start with a letter a to z and use only letters a to z, digits, spaces, hyphens and underscores, at most 32 characters." -> string!
 static SharedKernel.Blazor.Site.Theming.ThemeFont.ForFamily(string? family, System.Collections.Generic.IEnumerable<SharedKernel.Blazor.Site.Theming.ThemeFontFace!>! faces) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.ThemeFont!>
 static SharedKernel.Blazor.Site.Theming.ThemeFont.KeyOf(string? family) -> string!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Content.get -> TContent?
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Culture.get -> string!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Culture.set -> void
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.CulturePageBase() -> void
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.CurrentPath.get -> string!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Found.get -> bool
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.InSection(System.Func<SharedKernel.BuildingBlocks.ContentCulture!, string!>! section) -> bool
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Language.get -> SharedKernel.BuildingBlocks.ContentCulture!
+abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.Cultures.get -> SharedKernel.BuildingBlocks.SupportedCultures!
+abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.Load(TContent! content) -> bool
+abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.ReadContent(SharedKernel.BuildingBlocks.ContentCulture! culture, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TContent!>!
+override SharedKernel.Blazor.Site.CulturePageBase<TContent>.OnParametersSetAsync() -> System.Threading.Tasks.Task!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.HttpContext.get -> Microsoft.AspNetCore.Http.HttpContext?
+static SharedKernel.Blazor.Site.ImageAlternative.From(SharedKernel.BuildingBlocks.ImageAltText! alt) -> SharedKernel.Blazor.Site.ImageAlternative!
+SharedKernel.Blazor.Site.ContactLinks
+static SharedKernel.Blazor.Site.ContactLinks.Email(SharedKernel.BuildingBlocks.EmailAddress! address) -> SharedKernel.Blazor.Site.LinkTarget?
+static SharedKernel.Blazor.Site.ContactLinks.Phone(SharedKernel.BuildingBlocks.PhoneNumber! number) -> SharedKernel.Blazor.Site.LinkTarget?
+static SharedKernel.Blazor.Site.ContactLinks.WhatsApp(SharedKernel.BuildingBlocks.PhoneNumber! number) -> SharedKernel.Blazor.Site.LinkTarget?
