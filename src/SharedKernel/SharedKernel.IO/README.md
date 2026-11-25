@@ -39,6 +39,30 @@ and `.tmp`. `AtomicFile.Replace(path, bytes)` publishes content already in memor
 cannot await, such as a synchronous save.
 For text files containing secrets, use `SecureFile.WriteAllText` for owner-only Unix permissions.
 
+## Content-addressed files
+
+`ContentAddressedFileStore` keeps files in one directory under the lowercase hexadecimal SHA-256 of their bytes plus an
+extension, such as uploaded images and fonts that are served with immutable caching: a name always holds the same bytes.
+`Store(content, extension, ct)` creates the directory, writes through `AtomicFile.CreateIfAbsent` and returns a
+`StoredFile` with the name and whether this call created the file; a file already present under the name is kept, so
+concurrent stores of the same content write it once. `ContentAddressedFileStore.NameOf(content, extension)` gives the name
+without writing, to check a record before storing. The extension is empty or a dot and ASCII letters or digits.
+`PathOf(name)` and `Delete(name)` take a plain file name of ASCII letters, digits, `.`, `-` and `_` that does not start
+with a dot, and refuse anything else, so a stored name can never reach outside the directory. The caller records the
+names and deletes a file that no record uses; when its record cannot be saved, delete the file only if `Created` is true.
+
+```csharp
+using SharedKernel.IO;
+
+var store = new ContentAddressedFileStore(mediaFolder);
+var stored = await store.Store(image.Bytes, image.FileExtension, ct);
+var saved = await SaveRecord(stored.Name, ct);
+if (!saved && stored.Created)
+{
+    store.Delete(stored.Name);
+}
+```
+
 ## Secret files and path identity
 
 `SecureFile.WriteAllText` writes text that should stay private, such as a decrypted export: on Unix the file is readable and

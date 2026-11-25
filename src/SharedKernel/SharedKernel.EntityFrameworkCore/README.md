@@ -91,6 +91,72 @@ concurrency token no longer matches) into `SharedKernel.BuildingBlocks.Concurren
 the inner exception and the message never contains data values. Catch it in the application handler and report a conflict instead of
 an unexpected failure. `SaveChangesTranslatingUniqueViolations` is unchanged and does not translate conflicts.
 
+### Results instead of exceptions
+
+Code that returns a `SharedKernel.Results.Result` and does not run through the mediator's `UniqueViolationBehavior` and
+`ConcurrencyConflictBehavior` can save with `dbContext.SaveChangesAsResult(parser, uniqueRuleResult, ct)` and need no try/catch:
+
+- success is `Result.Ok()`;
+- a violated tagged index returns `uniqueRuleResult(rule)`, typically the same field error as the pre-check;
+- a stale row returns a `Conflict` result with the code `ResultErrorCodes.ConcurrencyConflict` and
+  `DbContextResultExtensions.ConcurrencyConflictMessage`, the same result as the mediator's `ConcurrencyConflictResults.Stale()`.
+
+After a reported violation or conflict the change tracker is cleared, so the context can be used again; every other failure propagates
+unchanged.
+
+```csharp
+public Task<Result> Save(CancellationToken ct) => db.SaveChangesAsResult(parser, rule => rule switch
+{
+    "catalog.slug" => Result.Invalid("This slug is already used.", "slug", "This slug is already used."),
+    _ => Result.Conflict("A value that must be unique is already in use."),
+}, ct);
+```
+
+## JSON list columns
+
+`property.HasJsonConversion()` maps an `IReadOnlyList<T>` of plain values (strings, numbers, ids, small records) to one required JSON
+text column, written with `JsonSerializerOptions.Web` (camel case). Lists are compared by their JSON, so assigning an equal list writes
+nothing and a change made in place is detected. Use it for lists that are read and written with their owner and never queried.
+
+```csharp
+builder.Property(tour => tour.Cities).HasJsonConversion();
+```
+
+Entity Framework Core 10's own JSON mapping is the first choice for a new model: primitive collections for lists of plain values, and
+`ComplexCollection(...).ToJson()` for lists of reference-type records. Those keep a different stored shape (the CLR property names unless
+renamed with `HasJsonPropertyName`, no value-type records) and a different model, so moving an existing value-converted column to them
+needs a migration and a data rewrite; `HasJsonConversion` keeps such columns as they are. It uses reflection-based `System.Text.Json`,
+so it is marked as not trimming- or Native-AOT-compatible.
+
+## Content revision
+
+`RevisionCache` (`SharedKernel.Caching`) reads a revision number that grows with every content change. This package keeps it on the
+writing side. The application owns the row: an entity with a `long` value, in a table that holds exactly one row (seed it with `HasData`
+at 0).
+
+```csharp
+public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default) =>
+    this.SaveChangesIncrementingRevision<ContentRevision>(
+        row => row.Value,
+        ct => base.SaveChangesAsync(acceptAllChangesOnSuccess, ct),
+        cancellationToken);
+
+public override int SaveChanges(bool acceptAllChangesOnSuccess) =>
+    throw new NotSupportedException("Use SaveChangesAsync so the content revision grows with the change.");
+```
+
+- When any entity other than the revision row was added, modified or deleted (changes are detected first), the save and a single
+  `UPDATE ... SET Value = Value + 1` run in one transaction: concurrent writers never lose a bump, and a failed save leaves the revision
+  alone. Inside the caller's transaction both commit or roll back with it; otherwise the helper opens and commits its own.
+- A save without content changes, or one that only changes the revision row, does not increment it.
+- `dbContext.IncrementRevision<TRevision>(row => row.Value, ct)` increments it alone, for a change made without tracked entities (for
+  example `ExecuteDelete` in the caller's transaction).
+- A change made with SQL outside the context does not increment the revision.
+
+It is a save helper called from the override rather than a `SaveChangesInterceptor`, because an interceptor that opens the transaction
+in `SavingChanges` cannot guarantee to close it: a failure after `SavingChanges` but before the save starts (for example in another
+interceptor) reaches no `SaveChangesFailed`, and the context would keep the transaction open.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.EntityFrameworkCore`. C# namespace: `SharedKernel.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.EntityFrameworkCore`.

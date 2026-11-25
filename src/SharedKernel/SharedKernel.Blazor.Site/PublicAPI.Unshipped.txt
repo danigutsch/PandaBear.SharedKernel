@@ -1208,3 +1208,8 @@ abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.Load(TContent! conte
 abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.ReadContent(SharedKernel.BuildingBlocks.ContentCulture! culture, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TContent!>!
 override SharedKernel.Blazor.Site.CulturePageBase<TContent>.OnParametersSetAsync() -> System.Threading.Tasks.Task!
 SharedKernel.Blazor.Site.CulturePageBase<TContent>.HttpContext.get -> Microsoft.AspNetCore.Http.HttpContext?
+static SharedKernel.Blazor.Site.ImageAlternative.From(SharedKernel.BuildingBlocks.ImageAltText! alt) -> SharedKernel.Blazor.Site.ImageAlternative!
+SharedKernel.Blazor.Site.ContactLinks
+static SharedKernel.Blazor.Site.ContactLinks.Email(SharedKernel.BuildingBlocks.EmailAddress! address) -> SharedKernel.Blazor.Site.LinkTarget?
+static SharedKernel.Blazor.Site.ContactLinks.Phone(SharedKernel.BuildingBlocks.PhoneNumber! number) -> SharedKernel.Blazor.Site.LinkTarget?
+static SharedKernel.Blazor.Site.ContactLinks.WhatsApp(SharedKernel.BuildingBlocks.PhoneNumber! number) -> SharedKernel.Blazor.Site.LinkTarget?

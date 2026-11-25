@@ -546,6 +546,7 @@ text is on the primary colour.
   (`ArgumentOutOfRangeException`), so the browser reserves the space and the layout does not shift.
 - `ImageAlternative` is the accessibility decision for an image: `ImageAlternative.Describe("what it shows")` or
   `ImageAlternative.Decorative()` (rendered as `alt=""`). `ResponsiveImage.Create` requires one (`ArgumentNullException`).
+  `ImageAlternative.From(alt)` renders a stored, validated `SharedKernel.BuildingBlocks.ImageAltText` (decorative stays decorative).
 - `ContactCard` takes `SharedKernel.BuildingBlocks.EmailAddress` and `PhoneNumber`. It checks restored values again, so only digits reach a
   `tel:` or WhatsApp link and no query reaches a `mailto:` link.
 - `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`.
@@ -900,3 +901,28 @@ route names the culture segment `{Culture}`. The page supplies the site's `Suppo
 ```
 
 `SitePage` is the application's own base: `CulturePageBase<SiteContent>` with `Cultures` and `ReadContent` filled in once.
+
+## Contact links
+
+`ContactLinks` builds the links of contact values, so a header, footer, `FactGrid` card and `ContactCard` link a contact the same way.
+Each returns a `LinkTarget` with a fixed scheme, or `null` when the value cannot be written into that scheme safely (for example a
+value restored without validation): the caller then shows the text without a link. User data never chooses the scheme.
+
+- `ContactLinks.Phone(phone)`: `tel:` and the canonical digits with the optional leading `+` (`tel:+5511999990000`); a number that is
+  not 7 to 15 digits gets no link.
+- `ContactLinks.WhatsApp(phone)`: `https://wa.me/` and the digits without the `+` (`https://wa.me/5511999990000`), as WhatsApp asks.
+- `ContactLinks.Email(email)`: `mailto:` and the address. The local part is linked only when it holds ASCII letters, digits, `.`, `_`,
+  `+` and `-`, which need no escaping; `?`, `&`, `%`, `,`, `;`, `/`, `#`, quotes and non-ASCII letters could start a header or a second
+  recipient in a mail program that decodes before it splits, so such an address gets no link rather than a percent-encoded one (which
+  `LinkTarget` refuses for the same reason). An international domain is written in its ASCII (Punycode) form
+  (`contato@viajantés.com.br` links to `mailto:contato@xn--viajants-h1a.com.br`); a domain IDNA refuses gets no link.
+
+```razor
+<FactGrid Cards="@([new FactCard("E-mail", [new FactValue(_email.Value, ContactLinks.Email(_email))])])" />
+@if (ContactLinks.WhatsApp(_whatsApp) is { } chat)
+{
+    <a href="@chat">@_whatsApp.Value</a>
+}
+```
+
+`ContactCard` uses the same links; a value they refuse throws `ArgumentException` naming the parameter (`Phone`, `WhatsApp` or `Email`).
