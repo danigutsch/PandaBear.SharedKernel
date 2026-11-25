@@ -114,8 +114,8 @@ All of these take `runner` (default `ubuntu-latest`), declare `permissions` per 
 
 ### `actionlint-reusable.yml`
 
-Job `actionlint` (`contents: read`) checks out, optionally installs shellcheck, installs actionlint from its release,
-and runs `actionlint -color`.
+Job `actionlint` (`contents: read`) checks out, optionally installs shellcheck, and installs actionlint from its release.
+By default it runs `actionlint -color` across the repository.
 
 | Input | Default | Meaning |
 | --- | --- | --- |
@@ -123,8 +123,13 @@ and runs `actionlint -color`.
 | `actionlint-version` | `1.7.9` | Release without the leading `v`. |
 | `actionlint-sha256` | empty | SHA-256 of the linux_amd64 archive. Empty verifies against the release checksum file. |
 | `install-shellcheck` | `true` | Install shellcheck with apt. |
+| `changed-workflows-on-pull-request` | `false` | Build the CI tool from the checked-out SharedKernel source and lint changed workflows on pull requests. |
 
-The caller keeps the triggers and path filters. SharedKernel's `actionlint.yml` passes the archive SHA-256.
+The caller owns its triggers and path filters. SharedKernel's `actionlint.yml` passes the archive SHA-256 and opts in to
+[`ci verify-workflows`](../../tools/SharedKernel.CI.Tool/README.md#lint-workflow-changes) on pull requests.
+It lints the checked-out copies of changed workflows and skips deleted workflows. An unavailable Git comparison
+or changes to a shared action or Actionlint configuration trigger full lint. Main pushes, the nightly schedule,
+and manual runs also use full lint. Consumers can run the same lint command using the pinned CI tool.
 
 ### `dependency-snapshot-reusable.yml`
 

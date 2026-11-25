@@ -20,6 +20,10 @@ on:
         description: Install shellcheck with apt so actionlint checks run steps. Set false when the runner provides it.
         type: boolean
         default: true
+      changed-workflows-on-pull-request:
+        description: Use the checked-out SharedKernel CI tool for affected-workflow lint on pull requests.
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -34,6 +38,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+          fetch-depth: ${{ inputs.changed-workflows-on-pull-request && github.event_name == 'pull_request' && '0' || '1' }}
 
       - name: Install shellcheck
         if: ${{ inputs.install-shellcheck }}
@@ -80,5 +85,20 @@ jobs:
           tar -xzf "$archive" actionlint
           sudo install actionlint /usr/local/bin/actionlint
 
-      - name: Lint GitHub Actions workflows
+      - name: Build the portable lint tool
+        if: inputs.changed-workflows-on-pull-request && github.event_name == 'pull_request'
+        uses: ./.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.CI.Tool
+
+      - name: Lint affected GitHub Actions workflows
+        if: inputs.changed-workflows-on-pull-request && github.event_name == 'pull_request'
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- verify-workflows --base "$BASE_SHA" --head "$HEAD_SHA"
+
+      - name: Lint all GitHub Actions workflows
+        if: ${{ !inputs.changed-workflows-on-pull-request || github.event_name != 'pull_request' }}
         run: actionlint -color

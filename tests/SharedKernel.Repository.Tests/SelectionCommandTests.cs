@@ -26,7 +26,7 @@ public static class SelectionCommandTests
         result.ExitCode.ShouldBe(0);
         result.Output.ShouldBe("No path changed between the base and HEAD.\n");
         var outputs = await File.ReadAllTextAsync(githubOutput, ct);
-        outputs.ShouldBe("existing=value\nbuild_required=false\ndocumentation_only=true\nmatrix=[]\nlibrary_required=false\n");
+        outputs.ShouldBe("existing=value\nbuild_required=false\ndocumentation_only=true\nfull_validation=false\nmatrix=[]\nlibrary_required=false\n");
         var selection = Path.Combine(repository.Root, "TestResults", "selection");
         string?[] files = [.. Directory.EnumerateFiles(selection).Select(Path.GetFileName)];
         files.ShouldBe(["selection.json"]);
@@ -93,9 +93,13 @@ public static class SelectionCommandTests
             }
 
             """.ReplaceLineEndings("\n"));
+        var affected = await SelectionTestFiles.Projects(selection, "affected.build", ct);
+        affected.ShouldBe(["src/Core/Core.csproj", "src/Dependent/Dependent.csproj", "tests/Core.Tests/Core.Tests.csproj"]);
+        var changedPaths = await File.ReadAllTextAsync(Path.Combine(selection, "changed-paths.nul"), ct);
+        changedPaths.ShouldBe("src/Core/Changed.cs\0");
         File.Exists(Path.Combine(selection, "hosted.slnf")).ShouldBeFalse();
         outputs.ShouldBe(
-            "build_required=true\ndocumentation_only=false\nmatrix=[\"library\"]\nlibrary_required=true\nhosted_required=false\n");
+            "build_required=true\ndocumentation_only=false\nfull_validation=false\nmatrix=[\"library\"]\nlibrary_required=true\nhosted_required=false\n");
         var plan = await SelectionTestFiles.ReadPlan(selection, ct);
         plan.Slices[0].Tests.ShouldHaveSingleItem().SelectedBy.ShouldBe(["src/Core/Changed.cs"]);
         result.Output.ShouldContain("src/Core/Changed.cs: owned by src/Core/Core.csproj.", StringComparison.Ordinal);
@@ -151,7 +155,7 @@ public static class SelectionCommandTests
         library.ShouldBe(["tests/Core.Tests/Core.Tests.csproj"]);
         hosted.ShouldBe(["tests/Hosted.Tests/Hosted.Tests.csproj"]);
         build.ShouldBe(["src/Core/Core.csproj", "src/Dependent/Dependent.csproj", "tests/Core.Tests/Core.Tests.csproj", "tests/Hosted.Tests/Hosted.Tests.csproj"]);
-        outputs.ShouldBe("build_required=true\ndocumentation_only=false\nmatrix=[\"library\",\"hosted\"]\nlibrary_required=true\nhosted_required=true\n");
+        outputs.ShouldBe("build_required=true\ndocumentation_only=false\nfull_validation=true\nmatrix=[\"library\",\"hosted\"]\nlibrary_required=true\nhosted_required=true\n");
         plan.FullValidation.ShouldBeTrue();
     }
 
@@ -321,12 +325,13 @@ public static class SelectionCommandTests
     }
 
     [Fact]
-    public static async Task Selection_writes_the_plan_to_the_selection_directory_under_the_root_and_removes_stale_filters()
+    public static async Task Selection_writes_the_plan_under_the_root_and_removes_stale_selective_outputs()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         using var repository = new RepositoryTestScope();
         repository.WriteFile("plans/current/removed.slnf", "{}");
+        repository.WriteFile("plans/current/changed-paths.nul", "src/Old.cs\0");
 
         // Act
         var result = await RepositoryToolInvocation.Run(
@@ -403,7 +408,7 @@ public static class SelectionCommandTests
         // Assert
         var outputs = await File.ReadAllTextAsync(githubOutput, ct);
         result.ExitCode.ShouldBe(0, result.Error);
-        outputs.ShouldStartWith("build_required=false\ndocumentation_only=true\nmatrix=[]\n", StringComparison.Ordinal);
+        outputs.ShouldStartWith("build_required=false\ndocumentation_only=true\nfull_validation=false\nmatrix=[]\n", StringComparison.Ordinal);
     }
 
     [Theory]

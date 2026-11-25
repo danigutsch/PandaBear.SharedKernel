@@ -88,6 +88,7 @@ public static class ProjectSelector
         var reasons = new List<string>();
         var owners = new Dictionary<string, string[]>(StringComparer.Ordinal);
         var mapped = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
+        var mappedBuildOwners = new HashSet<string>(StringComparer.Ordinal);
         foreach (var path in changes.Distinct(StringComparer.Ordinal))
         {
             if (Match(configuration.Selection.FullValidation, path) is { } pattern)
@@ -102,19 +103,20 @@ public static class ProjectSelector
                 continue;
             }
 
-            if ((configuration.Selection.TestPaths ?? []).FirstOrDefault(rule => Match(rule.Paths, path) is not null) is { } testPath)
-            {
-                mapped[path] = testPath.Tests;
-                reasons.Add(path + ": selects " + string.Join(", ", testPath.Tests) + " through $.selection.testPaths.");
-                continue;
-            }
-
             if (graph.Uncertainty is { } uncertainty)
             {
                 return Full(configuration, graph, path + ": changed, and " + uncertainty);
             }
 
             var owning = graph.Owners(path);
+            if ((configuration.Selection.TestPaths ?? []).FirstOrDefault(rule => Match(rule.Paths, path) is not null) is { } testPath)
+            {
+                mapped[path] = testPath.Tests;
+                mappedBuildOwners.UnionWith(owning);
+                reasons.Add(path + ": selects " + string.Join(", ", testPath.Tests) + " through $.selection.testPaths.");
+                continue;
+            }
+
             if (owning.Length == 0)
             {
                 return Full(configuration, graph, documentation is null
@@ -161,7 +163,8 @@ public static class ProjectSelector
             reasons.Add(project + ": depends on a changed project.");
         }
 
-        string[] build = [.. affected.Where(project => !graph.Tests.Contains(project)).Order(StringComparer.Ordinal)];
+        var affectedBuild = mappedBuildOwners.Count == 0 ? affected : graph.WithDependents(changed.Concat(mappedBuildOwners));
+        string[] build = [.. affectedBuild.Where(project => !graph.Tests.Contains(project)).Order(StringComparer.Ordinal)];
         return Plan(configuration, false, false, [.. reasons], build, tests);
     }
 

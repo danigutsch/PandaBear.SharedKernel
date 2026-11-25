@@ -58,6 +58,7 @@ public sealed class RepositoryToolCallerTests
             [
                 "verify-commit-message --file <commit-message-file>",
                 "select --base <object-id>",
+                "verify-format",
                 "run --slice library",
                 "openapi refresh --target library",
                 "install-playwright --project <test-project> --browser chromium --with-dependencies",

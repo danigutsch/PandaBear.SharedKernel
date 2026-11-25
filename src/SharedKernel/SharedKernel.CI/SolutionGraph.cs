@@ -163,18 +163,18 @@ public sealed class SolutionGraph
 
     /// <summary>
     /// Returns the projects that own <paramref name="path"/>: the projects that compile or include it as a data item by an
-    /// explicit path and the project whose directory most closely contains it.
+    /// explicit path and every project whose directory contains it. SDK default item globs can reach nested paths.
     /// </summary>
     internal string[] Owners(string path)
     {
         var owners = compileInputs.TryGetValue(path, out var inputs) ? new HashSet<string>(inputs, StringComparer.Ordinal) : new HashSet<string>(StringComparer.Ordinal);
-        var directoryOwner = Projects
-            .Where(project => path == project || (project.Contains('/', StringComparison.Ordinal)
-                && path.StartsWith(project[..(project.LastIndexOf('/', StringComparison.Ordinal) + 1)], StringComparison.Ordinal)))
-            .MaxBy(static project => project.LastIndexOf('/', StringComparison.Ordinal));
-        if (directoryOwner is not null)
+        foreach (var project in Projects)
         {
-            owners.Add(directoryOwner);
+            var directoryLength = project.LastIndexOf('/', StringComparison.Ordinal) + 1;
+            if (path.AsSpan().StartsWith(project.AsSpan(0, directoryLength), StringComparison.Ordinal))
+            {
+                owners.Add(project);
+            }
         }
 
         return [.. owners.Order(StringComparer.Ordinal)];
