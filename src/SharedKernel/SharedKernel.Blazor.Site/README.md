@@ -871,3 +871,28 @@ fallback, and `Inter` maps to an uploaded `ThemeFont`. `BrandName` and `LogoUri`
 Package ID: `PandaBear.SharedKernel.Blazor.Site`. C# namespace: `SharedKernel.Blazor.Site`. Assembly/project identity: `SharedKernel.Blazor.Site`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Contact links
+
+`ContactLinks` builds the links of contact values, so a header, footer, `FactGrid` card and `ContactCard` link a contact the same way.
+Each returns a `LinkTarget` with a fixed scheme, or `null` when the value cannot be written into that scheme safely (for example a
+value restored without validation): the caller then shows the text without a link. User data never chooses the scheme.
+
+- `ContactLinks.Phone(phone)`: `tel:` and the canonical digits with the optional leading `+` (`tel:+5511999990000`); a number that is
+  not 7 to 15 digits gets no link.
+- `ContactLinks.WhatsApp(phone)`: `https://wa.me/` and the digits without the `+` (`https://wa.me/5511999990000`), as WhatsApp asks.
+- `ContactLinks.Email(email)`: `mailto:` and the address. The local part is linked only when it holds ASCII letters, digits, `.`, `_`,
+  `+` and `-`, which need no escaping; `?`, `&`, `%`, `,`, `;`, `/`, `#`, quotes and non-ASCII letters could start a header or a second
+  recipient in a mail program that decodes before it splits, so such an address gets no link rather than a percent-encoded one (which
+  `LinkTarget` refuses for the same reason). An international domain is written in its ASCII (Punycode) form
+  (`contato@viajantés.com.br` links to `mailto:contato@xn--viajants-h1a.com.br`); a domain IDNA refuses gets no link.
+
+```razor
+<FactGrid Cards="@([new FactCard("E-mail", [new FactValue(_email.Value, ContactLinks.Email(_email))])])" />
+@if (ContactLinks.WhatsApp(_whatsApp) is { } chat)
+{
+    <a href="@chat">@_whatsApp.Value</a>
+}
+```
+
+`ContactCard` uses the same links; a value they refuse throws `ArgumentException` naming the parameter (`Phone`, `WhatsApp` or `Email`).
