@@ -54,7 +54,7 @@ public static class RevisionDbContextExtensions
     /// public override Task&lt;int&gt; SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default) =&gt;
     ///     this.SaveChangesIncrementingRevision&lt;ContentRevision&gt;(
     ///         row =&gt; row.Value,
-    ///         token =&gt; base.SaveChangesAsync(acceptAllChangesOnSuccess, token),
+    ///         ct =&gt; base.SaveChangesAsync(acceptAllChangesOnSuccess, ct),
     ///         cancellationToken);
     /// </code>
     /// A change made with SQL outside the context does not increment the revision.

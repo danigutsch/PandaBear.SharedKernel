@@ -138,7 +138,7 @@ at 0).
 public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default) =>
     this.SaveChangesIncrementingRevision<ContentRevision>(
         row => row.Value,
-        token => base.SaveChangesAsync(acceptAllChangesOnSuccess, token),
+        ct => base.SaveChangesAsync(acceptAllChangesOnSuccess, ct),
         cancellationToken);
 
 public override int SaveChanges(bool acceptAllChangesOnSuccess) =>

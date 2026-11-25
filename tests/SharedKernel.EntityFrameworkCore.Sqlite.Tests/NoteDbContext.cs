@@ -16,7 +16,7 @@ public sealed class NoteDbContext(DbContextOptions<NoteDbContext> options) : DbC
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default) =>
         this.SaveChangesIncrementingRevision<NoteRevision>(
             revision => revision.Value,
-            token => base.SaveChangesAsync(acceptAllChangesOnSuccess, token),
+            ct => base.SaveChangesAsync(acceptAllChangesOnSuccess, ct),
             cancellationToken);
 
     /// <inheritdoc />
