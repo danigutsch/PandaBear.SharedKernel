@@ -1194,6 +1194,20 @@ static SharedKernel.Blazor.Site.PhotoCreditLabels.operator !=(SharedKernel.Blazo
 static SharedKernel.Blazor.Site.PhotoCreditLabels.operator ==(SharedKernel.Blazor.Site.PhotoCreditLabels? left, SharedKernel.Blazor.Site.PhotoCreditLabels? right) -> bool
 SharedKernel.Blazor.Site.RazorComponentMethodExtensions
 static SharedKernel.Blazor.Site.RazorComponentMethodExtensions.AllowOnlyGetAndHead(this Microsoft.AspNetCore.Builder.RazorComponentsEndpointConventionBuilder! builder, params System.Type![]! anyMethodComponents) -> Microsoft.AspNetCore.Builder.RazorComponentsEndpointConventionBuilder!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Content.get -> TContent?
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Culture.get -> string!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Culture.set -> void
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.CulturePageBase() -> void
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.CurrentPath.get -> string!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Found.get -> bool
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.InSection(System.Func<SharedKernel.BuildingBlocks.ContentCulture!, string!>! section) -> bool
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.Language.get -> SharedKernel.BuildingBlocks.ContentCulture!
+abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.Cultures.get -> SharedKernel.BuildingBlocks.SupportedCultures!
+abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.Load(TContent! content) -> bool
+abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.ReadContent(SharedKernel.BuildingBlocks.ContentCulture! culture, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TContent!>!
+override SharedKernel.Blazor.Site.CulturePageBase<TContent>.OnParametersSetAsync() -> System.Threading.Tasks.Task!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.HttpContext.get -> Microsoft.AspNetCore.Http.HttpContext?
 static SharedKernel.Blazor.Site.ImageAlternative.From(SharedKernel.BuildingBlocks.ImageAltText! alt) -> SharedKernel.Blazor.Site.ImageAlternative!
 SharedKernel.Blazor.Site.ContactLinks
 static SharedKernel.Blazor.Site.ContactLinks.Email(SharedKernel.BuildingBlocks.EmailAddress! address) -> SharedKernel.Blazor.Site.LinkTarget?

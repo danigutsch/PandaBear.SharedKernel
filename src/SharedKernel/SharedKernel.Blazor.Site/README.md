@@ -873,6 +873,35 @@ Package ID: `PandaBear.SharedKernel.Blazor.Site`. C# namespace: `SharedKernel.Bl
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 
+## Culture pages
+
+A static site with one address prefix per language (`/pt/...`, `/en/...`) derives its pages from `CulturePageBase<TContent>`. The
+route names the culture segment `{Culture}`. The page supplies the site's `SupportedCultures`, reads the content of one language in
+`ReadContent(culture, cancellationToken)`, and picks what it shows in `Load(content)`. The base then:
+
+- matches the segment against `Cultures` ignoring case, sets `Language` and reads `Content` with the request's aborted token;
+- calls `NavigationManager.NotFound()` when the culture is not supported (nothing is read) or `Load` returns `false`, so the response
+  is 404 and the router's not-found page renders; the page renders its own markup only when `Found` is `true`;
+- offers `CurrentPath` (root-relative, without query, fragment or trailing slash) and `InSection(section)`. A fixed section with a
+  translated segment routes every spelling (`@page "/{Culture}/viagens"` and `@page "/{Culture}/tours"`) and returns
+  `InSection(culture => ...)` from `Load`, so `/pt/tours` and `/en/viagens` answer 404.
+
+```razor
+@page "/{Culture}/contact"
+@inherits SitePage
+
+@if (Found)
+{
+    <h1>@Content!.ContactTitle</h1>
+}
+
+@code {
+    protected override bool Load(SiteContent content) => content.HasContactPage;
+}
+```
+
+`SitePage` is the application's own base: `CulturePageBase<SiteContent>` with `Cultures` and `ReadContent` filled in once.
+
 ## Contact links
 
 `ContactLinks` builds the links of contact values, so a header, footer, `FactGrid` card and `ContactCard` link a contact the same way.
