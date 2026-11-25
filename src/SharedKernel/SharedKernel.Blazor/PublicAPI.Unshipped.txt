@@ -385,3 +385,17 @@ override SharedKernel.Blazor.ImagePickerTexts.ToString() -> string!
 static SharedKernel.Blazor.ImagePicker.FirstChosenPage<TKey>(System.Collections.Generic.IEnumerable<TKey>! chosen, int pageSize = 24) -> System.Collections.Generic.IReadOnlyList<TKey>!
 static SharedKernel.Blazor.ImagePickerTexts.operator !=(SharedKernel.Blazor.ImagePickerTexts? left, SharedKernel.Blazor.ImagePickerTexts? right) -> bool
 static SharedKernel.Blazor.ImagePickerTexts.operator ==(SharedKernel.Blazor.ImagePickerTexts? left, SharedKernel.Blazor.ImagePickerTexts? right) -> bool
+SharedKernel.Blazor.FieldIds
+static SharedKernel.Blazor.FieldIds.For(string! idPrefix, string! field) -> string!
+SharedKernel.Blazor.FormActions
+SharedKernel.Blazor.FormActions.CancelHref.get -> string?
+SharedKernel.Blazor.FormActions.CancelHref.set -> void
+SharedKernel.Blazor.FormActions.CancelText.get -> string!
+SharedKernel.Blazor.FormActions.CancelText.set -> void
+SharedKernel.Blazor.FormActions.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.FormActions.ChildContent.set -> void
+SharedKernel.Blazor.FormActions.FormActions() -> void
+SharedKernel.Blazor.FormActions.SubmitText.get -> string!
+SharedKernel.Blazor.FormActions.SubmitText.set -> void
+SharedKernel.Blazor.FormActions.Submission.get -> SharedKernel.Blazor.ServerFormSubmission?
+SharedKernel.Blazor.FormActions.Submission.set -> void

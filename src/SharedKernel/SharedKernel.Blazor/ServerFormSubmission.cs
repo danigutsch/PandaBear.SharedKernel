@@ -40,11 +40,11 @@ public sealed class ServerFormSubmission : IDisposable
 
     /// <summary>
     /// Creates the submission of a form that edits one kind of record, with the repeated default messages and the control ids
-    /// <c>{idPrefix}-{field}</c>.
+    /// <c>{idPrefix}-{field}</c>, where a nested field path has its dots and list indexes as hyphens (<see cref="FieldIds.For" />).
     /// </summary>
     /// <param name="editContext">The edit context that shows the field messages.</param>
     /// <param name="knownFields">The model field names the form can display.</param>
-    /// <param name="idPrefix">The prefix of the control ids; the id of a field is the prefix, a hyphen and the field name.</param>
+    /// <param name="idPrefix">The prefix of the control ids; the id of a field is <see cref="FieldIds.For" />.</param>
     /// <param name="noun">The lowercase name of the record, for example <c>customer</c>, used in the default messages.</param>
     /// <param name="invalidMessage">The field message for unusable server messages; defaults to "This value is not valid."</param>
     /// <param name="failureMessage">The general failure message; defaults to "We could not save the {noun}. Try again later."</param>
@@ -69,7 +69,7 @@ public sealed class ServerFormSubmission : IDisposable
         return new ServerFormSubmission(
             editContext,
             new ServerValidationOptions(knownFields, invalidMessage ?? "This value is not valid."),
-            field => idPrefix + "-" + field,
+            field => FieldIds.For(idPrefix, field),
             failureMessage ?? $"We could not save the {noun}. Try again later.")
         {
             ConflictMessage = conflictMessage ?? $"The {noun} was changed or removed by someone else. Reload the page and try again.",
