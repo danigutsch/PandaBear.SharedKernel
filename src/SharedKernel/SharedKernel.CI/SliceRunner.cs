@@ -28,6 +28,7 @@ public sealed class SliceRunner
     /// <param name="ct">Cancels the run; the services are stopped and the evidence is written first.</param>
     /// <exception cref="InvalidOperationException">A phase failed, no Cobertura report exists for a selected test project, or a service failed to stop.</exception>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="options"/> requests coverage evidence without collecting coverage.</exception>
     public Task Run(string root, string selectionDirectory, SliceRunOptions options, IStepSummary? summary, TextWriter output, TextWriter error, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(root);
@@ -35,11 +36,17 @@ public sealed class SliceRunner
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(error);
+        if (options.CoverageEvidence && !options.Coverage)
+        {
+            throw new ArgumentException("Coverage evidence requires collecting coverage.", nameof(options));
+        }
+
         return SliceRun.Run(
             root,
             selectionDirectory,
             options,
             summary,
+            _machine.RunGit,
             _machine.Run,
             _machine.RunConfigured,
             output,

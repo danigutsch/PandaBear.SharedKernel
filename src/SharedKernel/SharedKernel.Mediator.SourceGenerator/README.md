@@ -26,8 +26,29 @@ project and emits generated source for the mediator toolchain.
   compilation, including per-notification sequential or
   parallel fan-out
 - Can optionally emit a generated call-graph JSON artifact wrapper
-  when `sharedkernel_mediator_emit_call_graph_json = true`
+  when explicitly enabled for the build
 - Packs as an analyzer-style assembly under `analyzers/dotnet/cs`
+
+## Call graph schema
+
+Build with `-p:SharedKernelMediatorEmitCallGraphJson=true -p:EmitCompilerGeneratedFiles=true` to inspect
+`SharedKernel.Mediator.Generated.CallGraph.g.cs`. A valid build property overrides the global analyzer
+option `sharedkernel_mediator_emit_call_graph_json`. The generated source wraps the JSON in the raw
+string literal of `PandaBear.Mediator.Generated.MediatorCallGraph.Json`. Documentation tools can
+read that literal from the generated source without loading the application assembly.
+
+The top-level `schemaVersion` is an integer. Version 1 contains three arrays.
+
+| Array | Content |
+| --- | --- |
+| `requests` | Request and response names, request kind, handler, ordered pipelines, and generator AOT classification. Request kinds are `request`, `command`, `command-with-response`, and `query`. |
+| `notifications` | Notification name, handlers in generated dispatch order, and `sequential` or `parallel` dispatch. |
+| `streamRequests` | Stream request and item response names, stream handler, ordered stream pipelines, and generator AOT classification. |
+
+Entries are ordered by the discovery model. Equivalent declaration order changes preserve the
+generated document. A `handler` value of `<none>` indicates that discovery found no unique handler.
+Consumers should check the schema version before rendering and accept additive fields in that
+version. Earlier unversioned output omits `schemaVersion` and `kind`.
 
 ## AOT and Trimming
 

@@ -22,6 +22,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Forgejo\SharedKernel.Forgejo.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Processes\SharedKernel.Processes.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Repositories.Forgejo\SharedKernel.Repositories.Forgejo.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Repositories.GitHub\SharedKernel.Repositories.GitHub.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Repositories\SharedKernel.Repositories.csproj" />

@@ -36,11 +36,20 @@ internal sealed class DocumentationGeneratorBlock
     /// <summary>Audience to assign to endpoints per source file path.</summary>
     public Dictionary<string, string> SourceAudiences { get; set; } = new(StringComparer.Ordinal);
 
+    /// <summary>Generated OpenAPI document paths keyed by source directory prefixes relative to the inventory source.</summary>
+    public Dictionary<string, string> OpenApiAuthorizationDocuments { get; set; } = new(StringComparer.Ordinal);
+
     /// <summary>Audience to assign to endpoints per route path.</summary>
     public Dictionary<string, string> RouteAudiences { get; set; } = new(StringComparer.Ordinal);
 
     /// <summary>Audience for endpoints that match neither a source nor a route audience.</summary>
     public string DefaultAudience { get; set; } = "unspecified";
+
+    /// <summary>Least heading level included in a Markdown table of contents.</summary>
+    public int MinHeadingLevel { get; set; } = 2;
+
+    /// <summary>Greatest heading level included in a Markdown table of contents.</summary>
+    public int MaxHeadingLevel { get; set; } = 3;
 
     /// <summary>Label of the trigger node in github-actions-jobs blocks.</summary>
     public string TriggerLabel { get; set; } = string.Empty;

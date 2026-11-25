@@ -66,7 +66,9 @@ public sealed class BaselineCommandTests
             + "Created docs/README.md.\n"
             + "Created CODEOWNERS.\n"
             + "example-repo: 3 created, 0 updated, 0 overwritten, and 0 unchanged files.\n");
-        workspace.ReadFile(".gitattributes").ShouldStartWith("# Managed by sharedkernel-repo baseline (sha256 ", StringComparison.Ordinal, "Hash-comment marker on a non-Markdown file.");
+        var attributes = workspace.ReadFile(".gitattributes");
+        attributes.ShouldStartWith("# Managed by sharedkernel-repo baseline (sha256 ", StringComparison.Ordinal, "Hash-comment marker on a non-Markdown file.");
+        attributes.ShouldContain("*.webp binary\n", StringComparison.Ordinal, "WebP assets keep their original bytes.");
         var readme = workspace.ReadFile("docs/README.md");
         readme.ShouldStartWith("<!-- Managed by sharedkernel-repo baseline (sha256 ", StringComparison.Ordinal, "HTML-comment marker on a Markdown file.");
         readme.ShouldContain("# example-repo", StringComparison.Ordinal, "The repository name variable is substituted.");

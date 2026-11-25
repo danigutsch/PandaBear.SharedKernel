@@ -122,6 +122,10 @@ internal static partial class RepositoryCommandLine
         {
             Description = "Collect Cobertura coverage per test project and fail when a selected test project produced no report.",
         };
+        var coverageEvidenceOption = new Option<bool>("--coverage-evidence")
+        {
+            Description = "Bind fresh Cobertura reports to the current Git index tree. Requires --coverage.",
+        };
         var playwrightOption = new Option<bool>("--install-playwright")
         {
             Description = "Install the Playwright browsers that the selected slices configure before the tests run.",
@@ -153,6 +157,7 @@ internal static partial class RepositoryCommandLine
             sliceOption,
             configurationOption,
             coverageOption,
+            coverageEvidenceOption,
             playwrightOption,
             dependenciesOption,
             excludeTraitOption,
@@ -162,6 +167,11 @@ internal static partial class RepositoryCommandLine
         };
         command.Validators.Add(result =>
         {
+            if (result.GetValue(coverageEvidenceOption) && !result.GetValue(coverageOption))
+            {
+                result.AddError("--coverage-evidence requires --coverage.");
+            }
+
             if (result.GetValue(dependenciesOption) && !result.GetValue(playwrightOption))
             {
                 result.AddError("--playwright-dependencies requires --install-playwright.");
@@ -186,7 +196,10 @@ internal static partial class RepositoryCommandLine
                         parseResult.GetValue(coverageOption),
                         parseResult.GetValue(playwrightOption),
                         parseResult.GetValue(dependenciesOption),
-                        parseResult.GetValue(excludeTraitOption) ?? []),
+                        parseResult.GetValue(excludeTraitOption) ?? [])
+                    {
+                        CoverageEvidence = parseResult.GetValue(coverageEvidenceOption),
+                    },
                     parseResult.GetValue(summaryOption) is { } summary ? new GitHubActionsStepSummary(Path.GetFullPath(summary, root)) : null,
                     output,
                     error,
@@ -356,7 +369,7 @@ internal static partial class RepositoryCommandLine
     private static Command CreateCoverage(string workingDirectory, CiMachine machine)
     {
         var command = new Command(
-            "coverage", "Record the Release symbols of a build, and verify the changed-code coverage of Cobertura reports with the coverage policy of .config/sharedkernel-ci.json.");
+            "coverage", "Measure staged coverage, record Release symbols, and verify committed coverage using .config/sharedkernel-ci.json.");
 
         var recordOutput = PathOption("--output", "Symbol evidence file to write. Relative to the root.", "file");
         recordOutput.DefaultValueFactory = static _ => CoverageVerifier.DefaultSymbolEvidencePath;
@@ -373,19 +386,7 @@ internal static partial class RepositoryCommandLine
                 Path.GetFullPath(parseResult.GetValue(recordRoot) ?? ".", workingDirectory), parseResult.GetRequiredValue(recordOutput), output, ct),
             ct));
 
-        var reportOption = new Option<string[]>("--report")
-        {
-            Description = "Cobertura report, or a directory searched recursively for " + CoverageVerifier.ReportFilePattern + " reports; repeat it for several. Relative to the root.",
-            HelpName = "path",
-            Required = true,
-        };
-        reportOption.Validators.Add(static result =>
-        {
-            if (result.GetValueOrDefault<string[]>() is { } reports && reports.Any(string.IsNullOrWhiteSpace))
-            {
-                result.AddError("--report requires a path.");
-            }
-        });
+        var reportOption = CreateCoverageReportOption();
         var baseOption = new Option<string>("--base")
         {
             Description = "Git object ID of the revision to compare with HEAD; the lines added in <base>...HEAD count.",
@@ -426,7 +427,76 @@ internal static partial class RepositoryCommandLine
 
         command.Subcommands.Add(record);
         command.Subcommands.Add(verify);
+        command.Subcommands.Add(CreateMeasureStagedCoverage(workingDirectory, machine));
         return command;
+    }
+
+    private static Command CreateMeasureStagedCoverage(string workingDirectory, CiMachine machine)
+    {
+        var reportOption = CreateCoverageReportOption(required: false);
+        var evidenceOption = new Option<string[]>("--evidence")
+        {
+            Description = "Report evidence written by run --coverage --coverage-evidence. Relative to the root. Repeat for several runs of the same tree.",
+            HelpName = "file",
+        };
+        evidenceOption.Validators.Add(static result =>
+        {
+            if (result.GetValueOrDefault<string[]>() is { } evidence && evidence.Any(string.IsNullOrWhiteSpace))
+            {
+                result.AddError("--evidence requires a file.");
+            }
+        });
+        var baseOption = new Option<string?>("--base")
+        {
+            Description = "Full Git commit or tree object ID used as the comparison base. Defaults to HEAD.",
+            HelpName = "object-id",
+        };
+        var rootOption = CreateRootOption();
+        var command = new Command("measure-staged", "Report the changed executable lines and conditions staged in the Git index.")
+        {
+            reportOption,
+            evidenceOption,
+            baseOption,
+            rootOption,
+        };
+        command.Validators.Add(result =>
+        {
+            if ((result.GetValue(reportOption) is { Length: > 0 }) == (result.GetValue(evidenceOption) is { Length: > 0 }))
+            {
+                result.AddError("Specify either --report or --evidence.");
+            }
+        });
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, _) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var verifier = new CoverageVerifier(machine);
+                var baseRevision = parseResult.GetValue(baseOption);
+                return parseResult.GetValue(evidenceOption) is { Length: > 0 } evidence
+                    ? verifier.MeasureStagedWithEvidence(root, evidence, baseRevision, output, ct)
+                    : verifier.MeasureStaged(root, parseResult.GetRequiredValue(reportOption), baseRevision, output, ct);
+            },
+            ct));
+        return command;
+    }
+
+    private static Option<string[]> CreateCoverageReportOption(bool required = true)
+    {
+        var option = new Option<string[]>("--report")
+        {
+            Description = "Cobertura report, or a directory searched recursively for " + CoverageVerifier.ReportFilePattern + " reports; repeat it for several. Relative to the root.",
+            HelpName = "path",
+            Required = required,
+        };
+        option.Validators.Add(static result =>
+        {
+            if (result.GetValueOrDefault<string[]>() is { } reports && reports.Any(string.IsNullOrWhiteSpace))
+            {
+                result.AddError("--report requires a path.");
+            }
+        });
+        return option;
     }
 
     private static Command CreateStageCandidate(string workingDirectory, CiToolServices services)

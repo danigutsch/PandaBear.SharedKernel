@@ -101,13 +101,23 @@ internal sealed class CoverageTestScope : IDisposable
             processes.Run,
             TestContext.Current.CancellationToken);
 
+    /// <summary>Runs local staged measurement with the given reports, or <c>coverage.xml</c> when none is given.</summary>
+    public Task<RepositoryToolResult> MeasureStaged(ProcessLog processes, params string[] reports) =>
+        RepositoryToolInvocation.Run(
+            Root,
+            ["coverage", "measure-staged", .. (reports.Length == 0 ? ["coverage.xml"] : reports).SelectMany(static report => new[] { "--report", report })],
+            processes.Run,
+            TestContext.Current.CancellationToken);
+
     /// <summary>
-    /// Writes <c>src/Core.cs</c> as one interface, its change, an empty report, and a portable PDB at
+    /// Writes <c>src/Core.cs</c>, its change, an empty report, and a portable PDB at
     /// <c>src/bin/Release/net10.0/Core.pdb</c> that names the file as the scenario requires.
     /// </summary>
     public void WriteSymbols(string scenario)
     {
-        const string source = "public interface IValue { int Value { get; } }\n";
+        var source = scenario == "constant-symbols"
+            ? "public static class Values { public const int Value = 1; }\n"
+            : "public interface IValue { int Value { get; } }\n";
         WriteFile("src/Core.cs", source);
         WriteFile("coverage.xml", "<coverage><packages /></coverage>");
         Patch = "--- /dev/null\n+++ b/src/Core.cs\n@@ -0,0 +1 @@\n+" + source;

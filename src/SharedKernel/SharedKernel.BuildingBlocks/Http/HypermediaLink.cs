@@ -47,6 +47,14 @@ public sealed record HypermediaLink
     [JsonPropertyName("method")]
     public string Method { get; }
 
+    /// <summary>Creates a link whose target is retrieved with HTTP GET.</summary>
+    /// <param name="rel">The link relation.</param>
+    /// <param name="href">The link target.</param>
+    /// <returns>The GET link.</returns>
+    /// <exception cref="ArgumentNullException">The relation or target is null.</exception>
+    /// <exception cref="ArgumentException">The relation or target is empty or whitespace.</exception>
+    public static HypermediaLink CreateGet(string rel, string href) => new(rel, href, HttpMethod.Get.Method);
+
     /// <summary>
     /// Creates a link, rejecting blank values.
     /// </summary>

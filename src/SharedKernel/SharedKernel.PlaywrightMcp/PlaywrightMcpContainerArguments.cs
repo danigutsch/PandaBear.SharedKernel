@@ -64,6 +64,7 @@ internal static class PlaywrightMcpContainerArguments
 
         var startInfo = CreateBaseStartInfo(options);
         AddLocalEnginePrefix(startInfo, options);
+        var homeOwnership = options.Engine == ContainerEngine.Podman ? "U" : "uid=1000,gid=1000";
 
         AddArguments(
             startInfo,
@@ -78,7 +79,7 @@ internal static class PlaywrightMcpContainerArguments
             "--tmpfs",
             "/tmp:rw,nosuid,nodev,noexec,size=512m",
             "--tmpfs",
-            "/home/node:rw,nosuid,nodev,size=128m,uid=1000,gid=1000,mode=0700",
+            $"/home/node:rw,nosuid,nodev,size=128m,{homeOwnership},mode=0700",
             "--security-opt=no-new-privileges",
             "--pids-limit=256",
             "--memory=2g",

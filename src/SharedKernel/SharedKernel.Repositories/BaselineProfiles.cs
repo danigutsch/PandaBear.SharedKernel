@@ -14,6 +14,7 @@ internal static class BaselineProfiles
         *.jpg binary
         *.jpeg binary
         *.gif binary
+        *.webp binary
         *.ico binary
         *.pdf binary
         *.zip binary

@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace PandaBear.CI;
 
 /// <summary>
@@ -66,6 +68,128 @@ public sealed class CoverageVerifier
         ArgumentNullException.ThrowIfNull(gateEvidencePath);
         ArgumentNullException.ThrowIfNull(output);
         return CoverageGate.Verify(root, [.. reports], baseRevision, symbolEvidencePath, gateEvidencePath, _machine.Run, output, ct);
+    }
+
+    /// <summary>Reports the changed executable lines and conditions in the Git index, using local Cobertura reports and Release symbols.</summary>
+    /// <param name="root">The repository root.</param>
+    /// <param name="reports">Cobertura files or directories searched for <see cref="ReportFilePattern"/>, relative to the root.</param>
+    /// <param name="output">Receives the measured counts.</param>
+    /// <param name="ct">Cancels Git and output.</param>
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Tracked files differ from the index, the policy is absent, or Git failed.</exception>
+    /// <exception cref="InvalidDataException">An unreported included source file lacks matching symbols that show it has no executable code, or the diff, report, or symbols are invalid.</exception>
+    /// <exception cref="TimeoutException">Git did not finish in time.</exception>
+    public Task MeasureStaged(string root, IReadOnlyList<string> reports, TextWriter output, CancellationToken ct) =>
+        MeasureStaged(root, reports, baseRevision: null, output, ct);
+
+    /// <summary>Measures the changed lines and conditions in the index relative to a Git base.</summary>
+    /// <param name="root">The repository root.</param>
+    /// <param name="reports">Cobertura files or directories containing reports, relative to the root.</param>
+    /// <param name="baseRevision">A full Git commit or tree object ID, or <see langword="null" /> to compare against <c>HEAD</c>.</param>
+    /// <param name="output">Receives the measured counts.</param>
+    /// <param name="ct">Cancels Git and output.</param>
+    /// <exception cref="ArgumentNullException">A required argument is <see langword="null" />.</exception>
+    /// <exception cref="InvalidOperationException">The base is invalid, tracked files differ from the index, the policy is absent, or Git failed.</exception>
+    public async Task MeasureStaged(string root, IReadOnlyList<string> reports, string? baseRevision, TextWriter output, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(root);
+        ArgumentNullException.ThrowIfNull(reports);
+        ArgumentNullException.ThrowIfNull(output);
+        await MeasureStagedCore(root, reports, baseRevision, withEvidence: false, output, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>Measures staged coverage from reports captured and hashed by a run of the current staged tree.</summary>
+    /// <param name="root">The repository root.</param>
+    /// <param name="evidence">Evidence files written by a coverage run, relative to the root.</param>
+    /// <param name="output">Receives the measured counts.</param>
+    /// <param name="ct">Cancels Git, evidence loading, and output.</param>
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">No evidence file was supplied.</exception>
+    /// <exception cref="InvalidOperationException">Tracked files differ from the index, evidence records another tree, the policy is absent, or Git failed.</exception>
+    /// <exception cref="InvalidDataException">Evidence or a report is invalid, its recorded hash differs, or included staged code has no coverage or matching symbols.</exception>
+    /// <exception cref="TimeoutException">Git did not finish in time.</exception>
+    public Task MeasureStagedWithEvidence(string root, IReadOnlyList<string> evidence, TextWriter output, CancellationToken ct) =>
+        MeasureStagedWithEvidence(root, evidence, baseRevision: null, output, ct);
+
+    /// <summary>Measures the verified staged tree relative to a Git base using the captured coverage evidence.</summary>
+    /// <param name="root">The repository root.</param>
+    /// <param name="evidence">Evidence files written by a coverage run, relative to the root.</param>
+    /// <param name="baseRevision">A full Git commit or tree object ID, or <see langword="null" /> to compare against <c>HEAD</c>.</param>
+    /// <param name="output">Receives the measured counts.</param>
+    /// <param name="ct">Cancels Git, evidence loading, and output.</param>
+    /// <exception cref="ArgumentNullException">A required argument is <see langword="null" />.</exception>
+    /// <exception cref="ArgumentException">No evidence file was supplied.</exception>
+    /// <exception cref="InvalidOperationException">The base is invalid, the evidence names another tree, the policy is absent, or Git failed.</exception>
+    public async Task MeasureStagedWithEvidence(
+        string root, IReadOnlyList<string> evidence, string? baseRevision, TextWriter output, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(root);
+        ArgumentNullException.ThrowIfNull(evidence);
+        ArgumentNullException.ThrowIfNull(output);
+        if (evidence.Count == 0)
+        {
+            throw new ArgumentException("At least one coverage evidence file is required.", nameof(evidence));
+        }
+
+        await MeasureStagedCore(root, evidence, baseRevision, withEvidence: true, output, ct).ConfigureAwait(false);
+    }
+
+    private async Task MeasureStagedCore(
+        string root, IReadOnlyList<string> inputs, string? baseRevision, bool withEvidence, TextWriter output, CancellationToken ct)
+    {
+        if (baseRevision is not null && !ProjectSelectionPlan.IsObjectId(baseRevision))
+        {
+            throw new InvalidOperationException("--base requires a full hexadecimal Git object ID.");
+        }
+
+        var coverage = await ReadCoverage(root, ct).ConfigureAwait(false);
+        Dictionary<string, string>? hashes = null;
+        string? tree = null;
+        if (withEvidence)
+        {
+            tree = await CoverageReportEvidence.ReadTree(root, _machine.RunGit, ct).ConfigureAwait(false);
+            hashes = await CoverageReportEvidence.Read(root, inputs, tree, ct).ConfigureAwait(false);
+        }
+        else
+        {
+            await CoverageReportEvidence.RequireTrackedMatch(root, _machine.RunGit, ct).ConfigureAwait(false);
+        }
+
+        var comparisonBase = baseRevision ?? "HEAD";
+        string[] revisions = tree is null ? ["--cached", comparisonBase] : [comparisonBase, tree];
+        var patch = await _machine.RunGit([.. CoverageGate.DiffArguments, .. revisions, "--"], root, ct).ConfigureAwait(false);
+        var changes = ChangedLines.Parse(patch, coverage.Includes);
+        IEnumerable<string> files = hashes is null ? CoberturaReport.Find(root, inputs) : hashes.Keys;
+        var report = CoberturaReport.Read(root, files, coverage.Includes, hashes);
+        var missing = changes.Keys.Where(path => !report.ContainsKey(path)).Order(StringComparer.Ordinal).ToArray();
+        if (missing.Length > 0)
+        {
+            var symbols = SymbolEvidence.FindReleaseFiles(root, coverage);
+            var unreported = missing.Where(path => !PortableSymbols.HasOnlyNonExecutableCode(root, path, symbols)).ToArray();
+            if (unreported.Length > 0)
+            {
+                throw new InvalidDataException("Included staged source files in no coverage report: " + string.Join(", ", unreported) + ".");
+            }
+        }
+
+        long covered = 0;
+        long total = 0;
+        foreach (var (path, changedLines) in changes.OrderBy(static change => change.Key, StringComparer.Ordinal))
+        {
+            var counts = report.TryGetValue(path, out var fileCoverage)
+                ? LineCoverage.CountChanged(changedLines, fileCoverage)
+                : default;
+            covered += counts.HitLines + counts.HitConditions;
+            total += counts.Lines + counts.Conditions;
+            var summary = string.Create(
+                CultureInfo.InvariantCulture,
+                $"{path} {counts.HitLines}/{counts.Lines} executable lines, {counts.HitConditions}/{counts.Conditions} conditions.");
+            await output.WriteLineAsync(summary.AsMemory(), ct).ConfigureAwait(false);
+        }
+
+        await output.WriteLineAsync(
+            string.Create(CultureInfo.InvariantCulture, $"Staged coverage measured {covered}/{total} changed executable lines and conditions.").AsMemory(),
+            ct).ConfigureAwait(false);
     }
 
     private static async Task<CoverageConfiguration> ReadCoverage(string root, CancellationToken ct)

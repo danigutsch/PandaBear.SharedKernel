@@ -66,7 +66,7 @@ A package keeps an older major version when that version works on the repository
 newer one:
 
 - ASP.NET Core, `Microsoft.Extensions.*`, and `System.Security.*` use 11.0.0, and
-  `Microsoft.OpenApi` 3.11.0, which `Microsoft.AspNetCore.OpenApi` 11 requires.
+  `Microsoft.OpenApi` 3.11.1 satisfies the `Microsoft.AspNetCore.OpenApi` 11 dependency range.
 - The EF family stays on 10.x until `Npgsql.EntityFrameworkCore.PostgreSQL` 11.0.0 is stable: every package whose 11.x
   requires EF Core 11, and `Microsoft.Data.Sqlite.Core`, which the EF Core Sqlite provider is built against.
   - Npgsql's 10.0.3 provider requires EF Core `[10.0.4, 11.0.0)`, and `11.0.0-rc.3` requires exactly EF Core

@@ -142,18 +142,18 @@ public static class DocumentationConformanceChecker
         foreach (var requirement in check.InvocationRequirements)
         {
             var fullSourcePath = ResolveRepositoryPath(rootPath, requirement.SourcePath, "C# invocation source");
-            var identifiers = string.IsNullOrWhiteSpace(requirement.MethodName)
-                ? DocumentationSourceFacts.ReadTopLevelInvocationIdentifiers(fullSourcePath)
-                : DocumentationSourceFacts.ReadMethodInvocationIdentifiers(
-                    fullSourcePath,
-                    requirement.MethodName,
-                    requirement.ParameterCount);
-            var actualCount = identifiers.Count(identifier => identifier == requirement.InvokedMethodName);
+            var receiver = requirement.Receiver;
+            var qualifiedInvocations = receiver is null
+                ? null
+                : DocumentationSourceFacts.ReadQualifiedInvocationArguments(
+                    fullSourcePath, requirement.MethodName, requirement.ParameterCount, requirement.InvokedMethodName, receiver);
+            var invokedName = receiver is null ? requirement.InvokedMethodName : $"{receiver}.{requirement.InvokedMethodName}";
+            var actualCount = qualifiedInvocations?.Length ?? CountUnqualifiedInvocations(fullSourcePath, requirement);
             if (actualCount != requirement.ExpectedCount)
             {
                 throw new InvalidOperationException(
                     $"Documentation fact check '{check.Name}' expected {requirement.ExpectedCount} invocation(s) of "
-                    + $"'{requirement.InvokedMethodName}' in '{requirement.SourcePath}', found {actualCount}.");
+                    + $"'{invokedName}' in '{requirement.SourcePath}', found {actualCount}.");
             }
 
             if (requirement.ExpectedArguments.Count == 0)
@@ -167,18 +167,24 @@ public static class DocumentationConformanceChecker
                     $"Documentation fact check '{check.Name}' cannot validate top-level invocation arguments in '{requirement.SourcePath}'.");
             }
 
-            var arguments = DocumentationSourceFacts.ReadMethodInvocationArguments(
-                fullSourcePath,
-                requirement.MethodName,
-                requirement.ParameterCount,
-                requirement.InvokedMethodName);
+            var arguments = qualifiedInvocations?.SelectMany(static arguments => arguments).ToArray()
+                ?? DocumentationSourceFacts.ReadMethodInvocationArguments(
+                    fullSourcePath, requirement.MethodName, requirement.ParameterCount, requirement.InvokedMethodName);
             if (!arguments.SequenceEqual(requirement.ExpectedArguments, StringComparer.Ordinal))
             {
                 throw new InvalidOperationException(
                     $"Documentation fact check '{check.Name}' found unexpected arguments for "
-                    + $"'{requirement.InvokedMethodName}' in '{requirement.SourcePath}'.");
+                    + $"'{invokedName}' in '{requirement.SourcePath}'.");
             }
         }
+    }
+
+    private static int CountUnqualifiedInvocations(string sourcePath, DocumentationInvocationRequirement requirement)
+    {
+        var identifiers = string.IsNullOrWhiteSpace(requirement.MethodName)
+            ? DocumentationSourceFacts.ReadTopLevelInvocationIdentifiers(sourcePath)
+            : DocumentationSourceFacts.ReadMethodInvocationIdentifiers(sourcePath, requirement.MethodName, requirement.ParameterCount);
+        return identifiers.Count(identifier => identifier == requirement.InvokedMethodName);
     }
 
     private static void ValidateConfig(DocumentationConformanceConfig config, string configPath)

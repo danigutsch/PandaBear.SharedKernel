@@ -26,6 +26,7 @@ internal static class SliceRun
         string selection,
         SliceRunOptions options,
         IStepSummary? summary,
+        Func<string[], string, CancellationToken, Task<string>> runGit,
         Func<string, string[], string, CancellationToken, Task<string>> run,
         Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured,
         TextWriter output,
@@ -38,6 +39,7 @@ internal static class SliceRun
         var time = timeProvider ?? TimeProvider.System;
         var start = startService ?? ProcessTree.Start;
         var execution = Path.Combine(selection, options.Slices.Count == 0 ? "execution" : "execution-" + string.Join('+', options.Slices));
+        var results = Path.Combine(execution, "results");
         Directory.CreateDirectory(execution);
         var phases = new List<RunPhase>();
         var hosts = new List<ServiceHost>();
@@ -92,6 +94,16 @@ internal static class SliceRun
                 return;
             }
 
+            string? sourceTree = null;
+            if (options.CoverageEvidence)
+            {
+                await Phase("coverage-source", async () =>
+                {
+                    sourceTree = await CoverageReportEvidence.ReadTree(root, runGit, ct).ConfigureAwait(false);
+                    return sourceTree;
+                }).ConfigureAwait(false);
+            }
+
             var targets = configuration.OpenApi ?? [];
             var openApi = configured.SelectMany(static slice => slice.OpenApi ?? []).Distinct(StringComparer.Ordinal)
                 .Select(name => targets.First(candidate => candidate.Name == name))
@@ -127,7 +139,13 @@ internal static class SliceRun
             }
 
             await Phase("restore", () => run("dotnet", ["restore", buildFilter, "--locked-mode"], root, ct)).ConfigureAwait(false);
-            await Phase("build", () => run("dotnet", ["build", buildFilter, "-c", options.Configuration, "--no-restore"], root, ct)).ConfigureAwait(false);
+            string[] build = ["build", buildFilter, "-c", options.Configuration, "--no-restore"];
+            if (sourceTree is not null)
+            {
+                build = [.. build, "--no-incremental"];
+            }
+
+            await Phase("build", () => run("dotnet", build, root, ct)).ConfigureAwait(false);
             foreach (var target in openApi)
             {
                 var name = target.Name;
@@ -162,7 +180,6 @@ internal static class SliceRun
                 }).ConfigureAwait(false);
             }
 
-            var results = Path.Combine(execution, "results");
             if (Directory.Exists(results))
             {
                 // A report left by an earlier run must not satisfy the coverage check.
@@ -185,7 +202,7 @@ internal static class SliceRun
             await Phase("test", () => handed.Count == 0 ? run("dotnet", test, root, ct) : RunTests(test)).ConfigureAwait(false);
             if (options.Coverage)
             {
-                await Phase("coverage", () =>
+                await Phase("coverage", async () =>
                 {
                     // The per-module layout gives every test project a <project>/<target-framework>_<runtime> directory.
                     var missing = projects.Where(project =>
@@ -193,9 +210,23 @@ internal static class SliceRun
                         var directory = Path.Combine(results, Path.GetFileNameWithoutExtension(project));
                         return !Directory.Exists(directory) || !Directory.EnumerateFiles(directory, CoberturaReport.FilePattern, SearchOption.AllDirectories).Any();
                     }).ToArray();
-                    return missing.Length == 0
-                        ? Task.FromResult(string.Empty)
-                        : throw new InvalidOperationException("No Cobertura report for " + string.Join(", ", missing) + " under " + results + ".");
+                    if (missing.Length != 0)
+                    {
+                        throw new InvalidOperationException("No Cobertura report for " + string.Join(", ", missing) + " under " + results + ".");
+                    }
+
+                    if (sourceTree is not null)
+                    {
+                        var currentTree = await CoverageReportEvidence.ReadTree(root, runGit, ct).ConfigureAwait(false);
+                        if (currentTree != sourceTree)
+                        {
+                            throw new InvalidOperationException("The staged tree changed during the coverage run. Rebuild and collect fresh coverage reports.");
+                        }
+
+                        await CoverageReportEvidence.Record(results, sourceTree, ct).ConfigureAwait(false);
+                    }
+
+                    return string.Empty;
                 }).ConfigureAwait(false);
             }
 

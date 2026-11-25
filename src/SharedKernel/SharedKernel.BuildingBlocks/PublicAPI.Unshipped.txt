@@ -113,6 +113,7 @@ PandaBear.BuildingBlocks.HypermediaLink.Href.get -> string!
 PandaBear.BuildingBlocks.HypermediaLink.Method.get -> string!
 PandaBear.BuildingBlocks.HypermediaLink.Rel.get -> string!
 static PandaBear.BuildingBlocks.HypermediaLink.Create(string? rel, string? href, string? method) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.HypermediaLink!>
+static PandaBear.BuildingBlocks.HypermediaLink.CreateGet(string! rel, string! href) -> PandaBear.BuildingBlocks.HypermediaLink!
 PandaBear.BuildingBlocks.CountryCode.EnglishName.get -> string!
 PandaBear.BuildingBlocks.BirthDate
 PandaBear.BuildingBlocks.BirthDate.AgeOn(System.DateOnly day) -> int

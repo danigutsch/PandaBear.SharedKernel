@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -42,19 +43,32 @@ internal static partial class CoberturaReport
     /// <summary>Reads the line coverage of each source file that <paramref name="isIncluded"/> accepts, by repository-relative path.</summary>
     /// <remarks>
     /// A document type declaration is refused, so a report cannot expand entities or reach another file. A line is hit
-    /// when any report hits it, and its conditions are those of the report that covers the most.
+    /// when any report hits it, and its conditions are those of the report that covers the most. When hashes are supplied,
+    /// each report must match its recorded bytes before parsing.
     /// </remarks>
     /// <exception cref="InvalidDataException">A report is not Cobertura or has an invalid line.</exception>
     /// <exception cref="XmlException">A report is not well-formed XML or declares a document type.</exception>
-    public static Dictionary<string, Dictionary<int, LineCoverage>> Read(string root, IEnumerable<string> files, Func<string, bool> isIncluded)
+    public static Dictionary<string, Dictionary<int, LineCoverage>> Read(
+        string root, IEnumerable<string> files, Func<string, bool> isIncluded, IReadOnlyDictionary<string, string>? hashes = null)
     {
         var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null };
         var result = new Dictionary<string, Dictionary<int, LineCoverage>>(StringComparer.Ordinal);
         foreach (var file in files)
         {
             XDocument document;
-            using (var reader = XmlReader.Create(file, settings))
+            using (var stream = File.OpenRead(file))
             {
+                if (hashes is not null)
+                {
+                    if (Convert.ToHexStringLower(SHA256.HashData(stream)) != hashes[file])
+                    {
+                        throw new InvalidDataException("The coverage report " + file + " does not match its evidence. Collect fresh coverage reports.");
+                    }
+
+                    stream.Position = 0;
+                }
+
+                using var reader = XmlReader.Create(stream, settings);
                 document = XDocument.Load(reader);
             }
 

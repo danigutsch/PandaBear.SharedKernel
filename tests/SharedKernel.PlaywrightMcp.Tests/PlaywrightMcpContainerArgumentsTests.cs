@@ -145,6 +145,7 @@ public sealed class PlaywrightMcpContainerArgumentsTests
         startInfo.ArgumentList.ShouldContain("--http-proxy=false");
         startInfo.ArgumentList.ShouldContain("--cap-drop=all");
         startInfo.ArgumentList.ShouldContain("--network=none");
+        startInfo.ArgumentList.ShouldContain("/home/node:rw,nosuid,nodev,size=128m,U,mode=0700");
         startInfo.ArgumentList.ShouldNotContain("--context");
         PlaywrightMcpContainerArguments.CreateContainerCleanupStartInfo(options, "test-container")
             .ArgumentList.ShouldContain("--ignore");

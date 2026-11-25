@@ -1,1 +1,5 @@
-<Project />
+<Project>
+    <ItemGroup>
+        <CompilerVisibleProperty Include="SharedKernelMediatorEmitCallGraphJson" />
+    </ItemGroup>
+</Project>

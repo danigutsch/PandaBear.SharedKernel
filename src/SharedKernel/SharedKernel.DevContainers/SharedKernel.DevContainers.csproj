@@ -3,7 +3,7 @@
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.DevContainers</PackageId>
-        <Description>Development container host checks: starts a repository dev container with a pinned, integrity-checked Dev Container CLI, runs commands in it, and inspects rootless Podman aardvark-dns state without changing it.</Description>
+        <Description>Development container host checks, rootless Podman DNS inspection, and opt-in isolated rootless Podman test execution.</Description>
         <PackageTags>devcontainers;podman;containers;diagnostics;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

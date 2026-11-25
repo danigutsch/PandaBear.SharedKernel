@@ -62,6 +62,7 @@ PandaBear.DevContainers.DevcontainerVerificationOptions.LogDirectory.get -> stri
 PandaBear.DevContainers.DevcontainerVerificationOptions.LogDirectory.init -> void
 PandaBear.DevContainers.DevcontainerVerificationOptions.Root.get -> string!
 PandaBear.DevContainers.DevcontainerVerificationOptions.Root.init -> void
+PandaBear.DevContainers.IsolatedPodman
 PandaBear.DevContainers.PodmanCommandResult
 PandaBear.DevContainers.PodmanCommandResult.<Clone>$() -> PandaBear.DevContainers.PodmanCommandResult!
 PandaBear.DevContainers.PodmanCommandResult.Deconstruct(out int ExitCode, out string! StandardOutput, out string! StandardError) -> void
@@ -98,6 +99,8 @@ static PandaBear.DevContainers.DevcontainerHost.operator ==(PandaBear.DevContain
 static PandaBear.DevContainers.DevcontainerVerification.Run(PandaBear.DevContainers.DevcontainerVerificationOptions! options, PandaBear.DevContainers.DevcontainerHost! host, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
 static PandaBear.DevContainers.DevcontainerVerificationOptions.operator !=(PandaBear.DevContainers.DevcontainerVerificationOptions? left, PandaBear.DevContainers.DevcontainerVerificationOptions? right) -> bool
 static PandaBear.DevContainers.DevcontainerVerificationOptions.operator ==(PandaBear.DevContainers.DevcontainerVerificationOptions? left, PandaBear.DevContainers.DevcontainerVerificationOptions? right) -> bool
+static PandaBear.DevContainers.IsolatedPodman.Run(PandaBear.DevContainers.PodmanDnsHost! host, string! imageStore, string! networkHelper, System.Diagnostics.ProcessStartInfo! command, PandaBear.Processes.IProcessRunner! runner, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static PandaBear.DevContainers.IsolatedPodman.Run(PandaBear.DevContainers.PodmanDnsHost! host, string! imageStore, string! networkHelper, string? runtimeParent, System.Diagnostics.ProcessStartInfo! command, PandaBear.Processes.IProcessRunner! runner, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 static PandaBear.DevContainers.PodmanCommandResult.operator !=(PandaBear.DevContainers.PodmanCommandResult? left, PandaBear.DevContainers.PodmanCommandResult? right) -> bool
 static PandaBear.DevContainers.PodmanCommandResult.operator ==(PandaBear.DevContainers.PodmanCommandResult? left, PandaBear.DevContainers.PodmanCommandResult? right) -> bool
 static PandaBear.DevContainers.PodmanDnsHost.Current() -> PandaBear.DevContainers.PodmanDnsHost!

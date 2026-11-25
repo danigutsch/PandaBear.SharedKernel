@@ -6,8 +6,10 @@
     {"path":"src/SharedKernel/SharedKernel.AI/SharedKernel.AI.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.ApiVersioning.AspNetCore/SharedKernel.ApiVersioning.AspNetCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
     {"path":"src/SharedKernel/SharedKernel.ApiVersioning/SharedKernel.ApiVersioning.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore.Analyzers/SharedKernel.AspNetCore.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.AspNetCore.Authentication.Bff/SharedKernel.AspNetCore.Authentication.Bff.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.AspNetCore.Authentication/SharedKernel.AspNetCore.Authentication.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore.CodeFixes/SharedKernel.AspNetCore.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.AspNetCore.Localization/SharedKernel.AspNetCore.Localization.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
     {"path":"src/SharedKernel/SharedKernel.AspNetCore.RateLimiting/SharedKernel.AspNetCore.RateLimiting.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
     {"path":"src/SharedKernel/SharedKernel.AspNetCore.Seo/SharedKernel.AspNetCore.Seo.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
@@ -172,6 +174,15 @@
       "register": "tests/README.md",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ApiVersioning/SharedKernel.ApiVersioning.csproj","type":"Unit","dependency":"in-process","capabilities":["ApiDeprecationPolicyExtensions","ApiVersionCatalog"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AspNetCore.Analyzers.Tests/SharedKernel.AspNetCore.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The Roslyn executable checks both analyzer diagnostics and their code fixes.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Analyzers/SharedKernel.AspNetCore.Analyzers.csproj","type":"Unit","dependency":"in-process-roslyn","capabilities":["RuntimeEndpointBindingAnalyzer"],"lane":"library"},
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore.CodeFixes/SharedKernel.AspNetCore.CodeFixes.csproj","type":"Unit","dependency":"in-process-roslyn","capabilities":["RuntimeEndpointBindingCodeFixProvider"],"lane":"library"}
       ]
     },
     {

@@ -6,8 +6,9 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Development container host checks. `DevcontainerVerification` starts a repository's dev container with a pinned,
 integrity-checked [Dev Container CLI](https://github.com/devcontainers/cli), runs commands inside it, and removes it.
-`PodmanDnsPreflight` inspects rootless Podman aardvark-dns state without changing it. The `dotnet repo` tool
-exposes them as `verify-devcontainer` and `verify-podman-dns`; its
+`PodmanDnsPreflight` inspects rootless Podman aardvark-dns state without changing it. `IsolatedPodman` runs an
+opt-in test command in a private local rootless Podman engine. The `dotnet repo` tool
+exposes these operations as `verify-devcontainer`, `verify-podman-dns`, and `run-isolated-podman`. Its
 [README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.RepoConfig.Tool/README.md)
 describes the checks and their output.
 
@@ -22,7 +23,7 @@ var exitCode = await PodmanDnsPreflight.Run(PodmanDnsHost.Current(), quiet: fals
 - `DevcontainerHost` and `PodmanDnsHost` describe the machine: the executables, the platform, the process runner, and
   the HTTP client that downloads the pinned CLI. `Current()` describes this machine; tests pass fakes.
 - `DevcontainerCliPins` pins the Node.js runtime by SHA-256 and the `@devcontainers/cli` package by its npm integrity.
-- Both checks write their report to the writers they are given and return the exit code that the README of the tool
+- The operations write to the writers they are given and return the exit code that the README of the tool
   documents.
 
 ## Package identity and availability
