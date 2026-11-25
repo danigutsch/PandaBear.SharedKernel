@@ -23,5 +23,5 @@ This is a source-breaking change. Consumers adopt it in one step: replace `using
 compatibility and breaking-change gates stay enabled, and the Conventional Commit history marks it as breaking. A repository convention
 test rejects a `PandaBear` namespace in `src/`.
 
-Data-protection purposes in `SharedKernel.AspNetCore.Authentication.Bff` were derived from the namespace and change with it, so payloads
-protected under the old purposes, such as cached user tokens and server-side tickets, no longer unprotect; affected users sign in again.
+The three persisted Data Protection purposes in `SharedKernel.AspNetCore.Authentication.Bff` retain their established values.
+Replicas can share tickets and tokens across the namespace change when they use the same key ring, application name and cache keys.

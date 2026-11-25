@@ -28,7 +28,8 @@ namespace SharedKernel.AspNetCore.Authentication.Bff;
 /// </remarks>
 public sealed partial class ServerSideTicketStore : ITicketStore
 {
-    private const string ProtectorPurpose = "SharedKernel.AspNetCore.Authentication.Bff.ServerSideTicketStore.v1";
+    // This persisted purpose is shared by running versions and survives namespace changes.
+    private const string ProtectorPurpose = "PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.v1";
     private const string SessionStartedItem = ".sharedkernel.bff.session-started";
 
     private readonly IDistributedCache _cache;

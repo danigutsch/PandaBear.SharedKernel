@@ -12,8 +12,9 @@ namespace SharedKernel.AspNetCore.Authentication.Bff;
 /// </summary>
 internal sealed class ProtectedTokenCache
 {
-    private const string UserTokensPurpose = "SharedKernel.AspNetCore.Authentication.Bff.UserTokens.v1";
-    private const string ExchangedTokenPurpose = "SharedKernel.AspNetCore.Authentication.Bff.ExchangedToken.v1";
+    // These persisted purposes are shared by running versions and survive namespace changes.
+    private const string UserTokensPurpose = "PandaBear.AspNetCore.Authentication.Bff.UserTokens.v1";
+    private const string ExchangedTokenPurpose = "PandaBear.AspNetCore.Authentication.Bff.ExchangedToken.v1";
     private const byte FormatVersion = 1;
     private const int FingerprintLength = 32;
 
