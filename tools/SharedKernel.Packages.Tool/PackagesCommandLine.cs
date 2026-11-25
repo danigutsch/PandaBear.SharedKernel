@@ -1,4 +1,5 @@
 using System.CommandLine;
+using SharedKernel.CommandLine;
 using SharedKernel.InputNormalization;
 using SharedKernel.Processes;
 
@@ -20,11 +21,7 @@ internal static class PackagesCommandLine
         ArgumentNullException.ThrowIfNull(runner);
 
         var inventory = new PackageInventory(runner, executables);
-        var rootOption = new Option<string>("--root")
-        {
-            Description = "Repository root directory. Defaults to the current directory.",
-            HelpName = "path",
-        };
+        var rootOption = new RootOption(workingDirectory);
         var plan = new Command("plan", "Report the declared packages that are not installed or are installed at another version. Changes nothing.")
         {
             rootOption,
@@ -32,7 +29,7 @@ internal static class PackagesCommandLine
         plan.SetAction((parseResult, cancellationToken) => Execute(
             parseResult,
             (output, error) => PlanCommand.Run(
-                Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory),
+                rootOption.GetExistingDirectory(parseResult),
                 inventory,
                 output,
                 error,

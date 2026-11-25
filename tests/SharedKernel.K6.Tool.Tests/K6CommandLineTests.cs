@@ -28,6 +28,38 @@ public sealed class K6CommandLineTests
     }
 
     [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task An_empty_root_is_a_parse_error_instead_of_the_current_directory(string root)
+    {
+        // Arrange
+        using var repository = new K6TestRepository();
+
+        // Act
+        var exitCode = await repository.Invoke(["run", "--scenario", "smoke", "--root", root], TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        repository.Error.ToString().ShouldContain("--root requires a directory path.", StringComparison.Ordinal);
+        repository.RunDirectories().ShouldBe([]);
+    }
+
+    [Fact]
+    public async Task A_root_that_is_not_a_directory_fails_without_running()
+    {
+        // Arrange
+        using var repository = new K6TestRepository();
+
+        // Act
+        var exitCode = await repository.Invoke(["run", "--scenario", "smoke", "--root", "missing"], TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        repository.Error.ToString().ShouldBe("--root is not an existing directory: " + Path.Combine(repository.Root, "missing") + "\n");
+        repository.RunDirectories().ShouldBe([]);
+    }
+
+    [Theory]
     [InlineData("--image requires --container.", "run --scenario smoke --image " + K6TestRepository.Image)]
     [InlineData("--image requires an image reference pinned by digest, such as grafana/k6:<tag>@sha256:<digest>.", "run --scenario smoke --container --image registry.example/k6:1.0")]
     public async Task Image_errors_name_the_rule(string message, string commandLine)

@@ -6,6 +6,12 @@ namespace SharedKernel.RepoConfig.Tests;
 /// <summary>Finds <c>repo</c> command lines in the repository workflows.</summary>
 internal static partial class RepoConfigToolCallers
 {
+    // Sample values for shell variables that options validate.
+    private static readonly Dictionary<string, string> Samples = new(StringComparer.Ordinal)
+    {
+        ["$GITHUB_REPOSITORY"] = "danigutsch/PandaBear.SharedKernel",
+    };
+
     /// <summary>Returns every tool invocation found in the <c>.github/workflows</c> YAML files under <paramref name="root"/>, with its arguments split into tokens.</summary>
     /// <param name="root">The repository root that contains <c>.github/workflows</c>.</param>
     public static IEnumerable<RepoConfigToolCaller> Find(string root)
@@ -20,7 +26,9 @@ internal static partial class RepoConfigToolCallers
             var text = File.ReadAllText(file).Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\\\n", " ", StringComparison.Ordinal);
             foreach (Match match in Invocation().Matches(text))
             {
-                yield return new RepoConfigToolCaller(relativePath, [.. CommandLineParser.SplitCommandLine(match.Groups["arguments"].Value)]);
+                yield return new RepoConfigToolCaller(
+                    relativePath,
+                    [.. CommandLineParser.SplitCommandLine(match.Groups["arguments"].Value).Select(static argument => Samples.GetValueOrDefault(argument, argument))]);
             }
         }
     }

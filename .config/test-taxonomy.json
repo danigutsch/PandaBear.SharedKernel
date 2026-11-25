@@ -37,6 +37,7 @@
     {"path":"src/SharedKernel/SharedKernel.CI.GitHub/SharedKernel.CI.GitHub.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
     {"path":"src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.CommandLine/SharedKernel.CommandLine.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.ContentRights/SharedKernel.ContentRights.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
@@ -385,6 +386,13 @@
       "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj","type":"Unit","dependency":"in-process","capabilities":["RevisionCache"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.CommandLine.Tests.Unit/SharedKernel.CommandLine.Tests.Unit.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.CommandLine/SharedKernel.CommandLine.csproj","type":"Unit","dependency":"in-process","capabilities":["RootOption","RepositoryOption","ForgejoOption"],"lane":"library"}
       ]
     },
     {

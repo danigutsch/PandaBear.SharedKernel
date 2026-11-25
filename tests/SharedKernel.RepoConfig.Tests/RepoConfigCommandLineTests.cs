@@ -254,6 +254,42 @@ public sealed class RepoConfigCommandLineTests
     }
 
     [Theory]
+    [InlineData("verify")]
+    [InlineData("verify-json")]
+    [InlineData("baseline", "verify")]
+    public async Task A_root_that_is_not_a_directory_is_an_error(params string[] command)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run([.. command, "--root", "missing"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ToString().ShouldBe("repo: --root is not an existing directory: " + Path.Combine(workspace.RootPath, "missing") + "\n");
+    }
+
+    [Fact]
+    public async Task Init_creates_a_root_that_does_not_exist_yet()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["init", "--root", "new"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        error.ToString().ShouldBe(string.Empty);
+        workspace.FileExists("new/roadmap/config.json").ShouldBeTrue();
+    }
+
+    [Theory]
     [InlineData("sync")]
     [InlineData("reconcile")]
     [InlineData("import")]

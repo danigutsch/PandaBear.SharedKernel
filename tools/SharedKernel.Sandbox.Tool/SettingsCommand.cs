@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.Globalization;
+using SharedKernel.CommandLine;
 using SharedKernel.InputNormalization;
 using SharedKernel.Sandbox.ClaudeCode;
 
@@ -31,11 +32,7 @@ internal static class SettingsCommand
 
     private static Command Build(string name, string description, SettingsMode mode, string workingDirectory, ISandboxEnvironment environment, Action? beforeCommit)
     {
-        var rootOption = new Option<string>("--root")
-        {
-            Description = "Repository root directory that holds .config/sharedkernel-sandbox.json. Defaults to the current directory.",
-            HelpName = "path",
-        };
+        var rootOption = new RootOption(workingDirectory, "Repository root directory that holds .config/sharedkernel-sandbox.json. Defaults to the current directory.");
         var sockets = new Option<bool>("--accept-risk-allow-all-unix-sockets")
         {
             Description = "Accept allowAllUnixSockets: true, which opens the container engine, the ssh and gpg agents, and the user bus to every sandboxed command.",
@@ -71,11 +68,7 @@ internal static class SettingsCommand
             var error = parseResult.InvocationConfiguration.Error;
             try
             {
-                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
-                if (!Directory.Exists(root))
-                {
-                    throw new InvalidOperationException("The root directory does not exist.");
-                }
+                var root = rootOption.GetExistingDirectory(parseResult);
 
                 var flags = new SettingsRiskFlags(parseResult.GetValue(sockets), parseResult.GetValue(excluded), parseResult.GetValue(denyRead), parseResult.GetValue(broadWrite), parseResult.GetValue(sensitiveWrite));
                 return await Run(root, mode, parseResult.GetValue(force), flags, environment, parseResult.InvocationConfiguration.Output, beforeCommit, cancellationToken).ConfigureAwait(false);

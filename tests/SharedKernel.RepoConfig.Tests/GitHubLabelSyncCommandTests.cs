@@ -131,7 +131,7 @@ public sealed class GitHubLabelSyncCommandTests
         using var handler = new TestHttpMessageHandler();
 
         // Act
-        var (exitCode, output, error) = await Run(workspace, handler, force: true, repository: "owner/repository/extra");
+        var (exitCode, output, error) = await Run(workspace, handler, force: true, repository: "-owner/repository");
 
         // Assert
         exitCode.ShouldBe(1);

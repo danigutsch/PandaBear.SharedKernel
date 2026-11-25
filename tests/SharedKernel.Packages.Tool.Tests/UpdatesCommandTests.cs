@@ -50,6 +50,23 @@ public sealed class UpdatesCommandTests
     }
 
     [Fact]
+    public async Task An_empty_root_is_a_parse_error_before_anything_is_read_or_contacted()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        var runner = Runner();
+
+        // Act
+        var (exitCode, output, error) = await RunWithArguments(repository.Path, runner, ResolveAll, "updates", "--allow-network", "--root", "");
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ShouldNotContain("bat", StringComparison.Ordinal);
+        error.ShouldContain("--root requires a directory path.", StringComparison.Ordinal);
+        runner.Runs.ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task Each_updatable_declared_package_gets_a_line_with_the_decision_and_the_reason()
     {
         // Arrange

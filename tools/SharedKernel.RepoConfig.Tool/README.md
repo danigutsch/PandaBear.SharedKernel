@@ -119,9 +119,11 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
 the snapshot, its size, and the endpoint. Every command except `verify-podman-dns`, `run-isolated-podman`, and
 `github link-subissue` takes `--root <path>`,
-which defaults to the current directory; relative `--snapshot`, `--github-output`, `--log-directory`,
+which defaults to the current directory. A relative root resolves from the current directory, an empty value is a command-line error, and a root that is not an existing directory fails with `--root is not an existing directory: <path>`;
+only `init` and `new` accept a root that does not exist yet, which they create. Relative `--snapshot`, `--github-output`, `--log-directory`,
 `--devcontainer-cli`, and `verify-links` paths resolve against it. Run `dotnet repo <command> --help` for the
-options of each command.
+options of each command. `--repository` takes two parts of ASCII letters, digits, `-`, `.`, and `_`, neither of which is `.` or `..`; anything else is a
+command-line error. The GitHub commands then also apply GitHub's narrower owner and name rules.
 
 `[diagram]` before a command line prints how the tool parses it without running it, and exits 1 when the
 command line does not parse, as in `dotnet repo [diagram] verify-json --root .`.

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using SharedKernel.CI.Forgejo;
 using SharedKernel.CI.GitHub;
+using SharedKernel.CommandLine;
 using SharedKernel.Forgejo;
 using SharedKernel.GitHub;
 using SharedKernel.InputNormalization;
@@ -50,7 +51,7 @@ internal static partial class RepositoryCommandLine
 
     private static Command CreateRunMutationTests(string workingDirectory, CiMachine machine)
     {
-        var rootOption = CreateRootOption();
+        var rootOption = CreateRootOption(workingDirectory);
         var command = new Command(
             "run-mutation-tests",
             "Run each Stryker.NET config of .config/sharedkernel-ci.json in order, with the configured dotnet-stryker installed on demand, and stop at the first failure.")
@@ -59,7 +60,7 @@ internal static partial class RepositoryCommandLine
         };
         command.SetAction((parseResult, ct) => Execute(
             parseResult,
-            (output, _) => new MutationTestRunner(machine).Run(Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory), output, ct),
+            (output, _) => new MutationTestRunner(machine).Run(rootOption.GetExistingDirectory(parseResult), output, ct),
             ct));
         return command;
     }
@@ -75,7 +76,7 @@ internal static partial class RepositoryCommandLine
             "--github-output",
             "GitHub Actions output file that receives build_required, documentation_only, matrix, and <slice>_required. Relative to the root.",
             "path");
-        var rootOption = CreateRootOption();
+        var rootOption = CreateRootOption(workingDirectory);
         var selectionOption = CreateSelectionOption();
         var command = new Command(
             "select", "Select the test projects affected since a base revision, as .config/sharedkernel-ci.json configures, and write the validation plan.")
@@ -89,7 +90,7 @@ internal static partial class RepositoryCommandLine
             parseResult,
             (output, error) =>
             {
-                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var root = rootOption.GetExistingDirectory(parseResult);
                 return new TestSelector(machine).Select(
                     root,
                     Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
@@ -148,7 +149,7 @@ internal static partial class RepositoryCommandLine
             }
         });
         var summaryOption = PathOption("--github-summary", "GitHub Actions step summary file that receives the phases. Relative to the root.", "path");
-        var rootOption = CreateRootOption();
+        var rootOption = CreateRootOption(workingDirectory);
         var selectionOption = CreateSelectionOption();
         var command = new Command(
             "run",
@@ -186,7 +187,7 @@ internal static partial class RepositoryCommandLine
             parseResult,
             (output, error) =>
             {
-                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var root = rootOption.GetExistingDirectory(parseResult);
                 return new SliceRunner(machine).Run(
                     root,
                     Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
@@ -228,7 +229,7 @@ internal static partial class RepositoryCommandLine
             DefaultValueFactory = static _ => 30,
             CustomParser = static result => ParseWholeNumber(result, 1, 1440, "--timeout-minutes requires 1 to 1440.", 30),
         };
-        var rootOption = CreateRootOption();
+        var rootOption = CreateRootOption(workingDirectory);
         var selectionOption = PathOption("--selection", "Directory for the plan, the solution filter, and the lane logs, relative to the root.", "directory");
         selectionOption.DefaultValueFactory = static _ => "TestResults/local-check";
         var testArguments = new Argument<string[]>("test-arguments")
@@ -252,7 +253,7 @@ internal static partial class RepositoryCommandLine
             parseResult,
             (output, error) =>
             {
-                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var root = rootOption.GetExistingDirectory(parseResult);
                 return new LocalCheckRunner(machine).Run(
                     root,
                     Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
@@ -300,12 +301,12 @@ internal static partial class RepositoryCommandLine
                     result.AddError("--target requires a target name: lowercase letters and digits in words separated by '-'.");
                 }
             });
-            var rootOption = CreateRootOption();
+            var rootOption = CreateRootOption(workingDirectory);
             var action = new Command(name, description) { targetOption, rootOption };
             action.SetAction((parseResult, ct) => Execute(
                 parseResult,
                 (_, error) => new OpenApiGenerator(machine).Generate(
-                    Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory), parseResult.GetValue(targetOption) ?? [], refresh, error, ct),
+                    rootOption.GetExistingDirectory(parseResult), parseResult.GetValue(targetOption) ?? [], refresh, error, ct),
                 ct));
             return action;
         }
@@ -336,7 +337,7 @@ internal static partial class RepositoryCommandLine
             Description = "Install only the headless shell of Chromium, not the full browser. For tests that never run headed.",
         };
         var configurationOption = CreateConfigurationOption(null);
-        var rootOption = CreateRootOption();
+        var rootOption = CreateRootOption(workingDirectory);
         var command = new Command(
             "install-playwright", "Install Playwright browsers with the playwright.ps1 in the build output of a project, found through its evaluated OutputPath.")
         {
@@ -351,7 +352,7 @@ internal static partial class RepositoryCommandLine
             parseResult,
             async (_, error) =>
             {
-                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var root = rootOption.GetExistingDirectory(parseResult);
                 await error.WriteAsync(await new PlaywrightInstaller(machine).Install(
                     root,
                     parseResult.GetRequiredValue(projectOption),
@@ -373,7 +374,7 @@ internal static partial class RepositoryCommandLine
 
         var recordOutput = PathOption("--output", "Symbol evidence file to write. Relative to the root.", "file");
         recordOutput.DefaultValueFactory = static _ => CoverageVerifier.DefaultSymbolEvidencePath;
-        var recordRoot = CreateRootOption();
+        var recordRoot = CreateRootOption(workingDirectory);
         var record = new Command(
             "record-symbols", "Record HEAD and the SHA-256 hash of every Release portable PDB under the configured symbol directories.")
         {
@@ -383,7 +384,7 @@ internal static partial class RepositoryCommandLine
         record.SetAction((parseResult, ct) => Execute(
             parseResult,
             (output, _) => new CoverageVerifier(machine).RecordSymbols(
-                Path.GetFullPath(parseResult.GetValue(recordRoot) ?? ".", workingDirectory), parseResult.GetRequiredValue(recordOutput), output, ct),
+                recordRoot.GetExistingDirectory(parseResult), parseResult.GetRequiredValue(recordOutput), output, ct),
             ct));
 
         var reportOption = CreateCoverageReportOption();
@@ -398,7 +399,7 @@ internal static partial class RepositoryCommandLine
         symbolsOption.Required = true;
         var verifyOutput = PathOption("--output", "Gate evidence file to write. Relative to the root.", "file");
         verifyOutput.DefaultValueFactory = static _ => CoverageVerifier.DefaultGateEvidencePath;
-        var verifyRoot = CreateRootOption();
+        var verifyRoot = CreateRootOption(workingDirectory);
         var verify = new Command(
             "verify",
             "Verify the symbol evidence, then require the configured share of the executable lines and conditions added since --base to be covered.")
@@ -413,7 +414,7 @@ internal static partial class RepositoryCommandLine
             parseResult,
             (output, _) =>
             {
-                var root = Path.GetFullPath(parseResult.GetValue(verifyRoot) ?? ".", workingDirectory);
+                var root = verifyRoot.GetExistingDirectory(parseResult);
                 return new CoverageVerifier(machine).Verify(
                     root,
                     parseResult.GetRequiredValue(reportOption),
@@ -451,7 +452,7 @@ internal static partial class RepositoryCommandLine
             Description = "Full Git commit or tree object ID used as the comparison base. Defaults to HEAD.",
             HelpName = "object-id",
         };
-        var rootOption = CreateRootOption();
+        var rootOption = CreateRootOption(workingDirectory);
         var command = new Command("measure-staged", "Report the changed executable lines and conditions staged in the Git index.")
         {
             reportOption,
@@ -470,7 +471,7 @@ internal static partial class RepositoryCommandLine
             parseResult,
             (output, _) =>
             {
-                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var root = rootOption.GetExistingDirectory(parseResult);
                 var verifier = new CoverageVerifier(machine);
                 var baseRevision = parseResult.GetValue(baseOption);
                 return parseResult.GetValue(evidenceOption) is { Length: > 0 } evidence
@@ -509,10 +510,10 @@ internal static partial class RepositoryCommandLine
         libraryRootOption.Required = true;
         var outputOption = PathOption("--output", "Local feed that receives the packages and candidate.json. Relative to the root.", "directory");
         outputOption.Required = true;
-        var repositoryOption = RepositoryOption("GitHub repository whose v<version> release supplies the packages.");
+        var repositoryOption = new RepositoryOption("GitHub repository whose v<version> release supplies the packages.");
         var feedOption = PathOption("--feed", "Directory that holds the packages. Relative to the root.", "directory");
-        var forgejoOption = ForgejoOption("Forgejo instance, such as https://codeberg.org, whose --repository release supplies the packages instead of GitHub's.");
-        var rootOption = CreateRootOption();
+        var forgejoOption = new ForgejoOption("Forgejo instance, such as https://codeberg.org, whose --repository release supplies the packages instead of GitHub's.");
+        var rootOption = CreateRootOption(workingDirectory);
         var command = new Command(
             "stage-candidate",
             "Verify a pinned candidate against a clean library checkout, then stage its packages from a release or a directory in a local feed.")
@@ -544,7 +545,7 @@ internal static partial class RepositoryCommandLine
             parseResult,
             async (output, _) =>
             {
-                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var root = rootOption.GetExistingDirectory(parseResult);
                 var feed = parseResult.GetValue(feedOption);
                 var stager = new CandidateStager(services.Machine, services.CreateDownloadHandler, CiToolServices.UserAgent)
                 {
@@ -570,8 +571,7 @@ internal static partial class RepositoryCommandLine
 
     private static Command CreatePrunePrereleases(CiToolServices services)
     {
-        var repositoryOption = RepositoryOption("GitHub repository whose prereleases are pruned.");
-        repositoryOption.Required = true;
+        var repositoryOption = new RepositoryOption("GitHub repository whose prereleases are pruned.") { Required = true };
         var keepOption = new Option<int>("--keep")
         {
             Description = "How many of the newest prereleases stay, by creation date. Protected versions do not count toward it.",
@@ -608,7 +608,7 @@ internal static partial class RepositoryCommandLine
         {
             Description = "Delete the releases that the preview lists. Their tags stay. Without it the command only previews.",
         };
-        var forgejoOption = ForgejoOption("Forgejo instance, such as https://codeberg.org, that hosts --repository instead of GitHub. Its token comes from FORGEJO_TOKEN.");
+        var forgejoOption = new ForgejoOption("Forgejo instance, such as https://codeberg.org, that hosts --repository instead of GitHub. Its token comes from FORGEJO_TOKEN.");
         var command = new Command(
             "prune-prereleases",
             "Keep the newest prereleases of a GitHub repository and the protected versions, and delete the other prereleases but not their tags. Previews unless --force.")
@@ -667,51 +667,6 @@ internal static partial class RepositoryCommandLine
         repository is null ? null
         : forgejo is null ? new GitHubReleaseAssets(repository)
         : new ForgejoReleaseAssets(services.CreateApiHandler(), forgejo, repository, CiToolServices.UserAgent);
-
-    private static Option<Uri> ForgejoOption(string description)
-    {
-        var option = new Option<Uri>("--forgejo")
-        {
-            Description = description,
-            HelpName = "url",
-            CustomParser = static result =>
-            {
-                var value = result.Tokens is [.., var token] ? token.Value : string.Empty;
-                if (Uri.TryCreate(value, UriKind.Absolute, out var server))
-                {
-                    try
-                    {
-                        ForgejoApiClient.ApiBase(server);
-                        return server;
-                    }
-                    catch (ArgumentException)
-                    {
-                    }
-                }
-
-                result.AddError("--forgejo requires an absolute HTTPS address without user information, a query, or a fragment, such as https://codeberg.org.");
-                return null;
-            },
-        };
-        return option;
-    }
-
-    private static Option<string> RepositoryOption(string description)
-    {
-        var option = new Option<string>("--repository") { Description = description, HelpName = "owner/name" };
-
-        // The value becomes part of a GitHub address, so it may not add path segments or a host.
-        option.Validators.Add(static result =>
-        {
-            var repository = result.GetValueOrDefault<string>() ?? string.Empty;
-            if (!Repository().IsMatch(repository) || repository.Split('/')[1] is "." or "..")
-            {
-                result.AddError(
-                    "--repository requires owner/name: letters, digits, and '-' in the owner, also '.' and '_' in the name, which cannot be '.' or '..'.");
-            }
-        });
-        return option;
-    }
 
     private static Command CreateVerifyCommitMessage(string workingDirectory)
     {
@@ -867,7 +822,7 @@ internal static partial class RepositoryCommandLine
         return option;
     }
 
-    private static Option<string> CreateRootOption() => PathOption("--root", "Repository root. Defaults to the current directory.", "path");
+    private static RootOption CreateRootOption(string workingDirectory) => new(workingDirectory, "Repository root. Defaults to the current directory.");
 
     private static Option<string> CreateSelectionOption()
     {
@@ -927,9 +882,6 @@ internal static partial class RepositoryCommandLine
             return FailureExitCode;
         }
     }
-
-    [GeneratedRegex(@"\A[A-Za-z0-9-]+/[A-Za-z0-9._-]+\z", RegexOptions.CultureInvariant)]
-    private static partial Regex Repository();
 
     [GeneratedRegex(@"\A[A-Za-z][A-Za-z0-9_.-]*\z", RegexOptions.CultureInvariant)]
     private static partial Regex ConfigurationName();

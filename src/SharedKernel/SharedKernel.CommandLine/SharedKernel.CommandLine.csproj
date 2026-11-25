@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.CommandLine</PackageId>
+        <Description>The System.CommandLine options that the SharedKernel command-line tools share: --root, --repository, and --forgejo, each with one validation and one set of messages.</Description>
+        <PackageTags>command-line;system-commandline;tools;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.CommandLine.Tests.Unit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Forgejo\SharedKernel.Forgejo.csproj" />
+        <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

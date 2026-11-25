@@ -1,0 +1,15 @@
+#nullable enable
+SharedKernel.CommandLine.ForgejoOption
+SharedKernel.CommandLine.ForgejoOption.ForgejoOption(string! description) -> void
+SharedKernel.CommandLine.RepositoryOption
+SharedKernel.CommandLine.RepositoryOption.RepositoryOption(string! description) -> void
+SharedKernel.CommandLine.RootOption
+SharedKernel.CommandLine.RootOption.GetDirectory(System.CommandLine.ParseResult! parseResult) -> string!
+SharedKernel.CommandLine.RootOption.GetExistingDirectory(System.CommandLine.ParseResult! parseResult) -> string!
+SharedKernel.CommandLine.RootOption.RootOption(string! workingDirectory) -> void
+SharedKernel.CommandLine.RootOption.RootOption(string! workingDirectory, string! description) -> void
+const SharedKernel.CommandLine.ForgejoOption.InvalidMessage = "--forgejo requires an absolute HTTPS address without user information, a query, or a fragment, such as https://codeberg.org." -> string!
+const SharedKernel.CommandLine.RepositoryOption.InvalidMessage = "--repository requires owner/name: ASCII letters, digits, '-', '.', and '_' in each part, and neither part '.' nor '..'." -> string!
+const SharedKernel.CommandLine.RootOption.DefaultDescription = "Repository root directory. Defaults to the current directory." -> string!
+const SharedKernel.CommandLine.RootOption.EmptyMessage = "--root requires a directory path." -> string!
+const SharedKernel.CommandLine.RootOption.NullCharacterMessage = "--root path contains a null character." -> string!

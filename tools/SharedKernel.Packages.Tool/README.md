@@ -55,7 +55,8 @@ cargo: Allow bat 0.24.0 -> 0.26.1: The candidate has been public for 30 days; th
 cargo: Hold fd-find 9.0.0 -> 10.0.0: The candidate is too new; it can be installed in 5 days.
 ```
 
-`plan` takes `--root <path>`, the repository root, which defaults to the current directory. It prints one line for each
+`plan` takes `--root <path>`, the repository root, which defaults to the current directory. A relative root resolves from
+the current directory, an empty value is a command-line error, and a root that is not an existing directory fails with `--root is not an existing directory: <path>`. It prints one line for each
 declared package that is not met, then a summary. When a manager cannot be read, the other managers are still reported, the
 error is printed, and there is no summary:
 
@@ -99,7 +100,7 @@ cargo: change ripgrep from 13.0.0 to 14.1.0
 | --- | --- |
 | 0 | Every declared package is installed. |
 | 1 | A declared package is missing or at another version. Nothing else is wrong. |
-| 2 | The result cannot be known: a package has more than one owner, the configuration is invalid or missing, a tool is not on `PATH`, or a tool failed, ran too long, wrote too much, or printed something unreadable. |
+| 2 | The result cannot be known: a package has more than one owner, the configuration is invalid or missing, a tool is not on `PATH`, `--root` is not an existing directory, or a tool failed, ran too long, wrote too much, or printed something unreadable. |
 
 For `updates`, 0 means every declared, installed, unpinned package was checked and the decisions were printed, and 2 means the result
 is unknown or incomplete: the network was not allowed, the age is missing or invalid, a tool is missing or unreadable, any

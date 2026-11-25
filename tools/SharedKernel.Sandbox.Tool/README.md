@@ -169,7 +169,9 @@ path prefixes follow the Claude Code settings reference, and keys it does not kn
   (about 100 bytes) makes the probes report a failure. A different `TMPDIR` only helps when binding is refused by path; it
   does not help against a filter on socket creation.
 - .NET cannot use Linux abstract-namespace sockets for named pipes, so they are not probed.
-- `--root` must be an existing directory, so that a misspelled root cannot silently skip the denied-read check.
+- `--root` must be an existing directory, so that a misspelled root cannot silently skip the denied-read check; otherwise the
+  command fails with `--root is not an existing directory: <path>`. An empty `--root` is a command-line error, not the
+  current directory, and a relative root resolves from the current directory.
 
 ## Exit codes
 

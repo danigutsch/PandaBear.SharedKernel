@@ -229,8 +229,41 @@ public sealed class DoctorCommandTests
         // Assert
         exitCode.ShouldBe(2);
         output.ShouldBe(string.Empty);
-        error.ShouldContain("The root directory does not exist.", StringComparison.Ordinal);
+        error.ShouldBe("--root is not an existing directory: " + missing + "\n");
         environment.Calls.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task An_empty_root_is_a_parse_error_instead_of_the_current_directory(string root)
+    {
+        // Arrange
+        using var repository = CreateRepository(null);
+        var environment = new FakeSandboxEnvironment();
+
+        // Act
+        var (exitCode, _, error) = await RunWithArguments(repository.Path, environment, "doctor", "--root", root);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain("--root requires a directory path.", StringComparison.Ordinal);
+        environment.Calls.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task A_relative_root_is_resolved_from_the_working_directory()
+    {
+        // Arrange
+        using var repository = CreateRepository(null);
+        Directory.CreateDirectory(Path.Combine(repository.Path, "app"));
+
+        // Act
+        var (exitCode, _, error) = await RunWithArguments(repository.Path, new FakeSandboxEnvironment(), "doctor", "--root", "app");
+
+        // Assert
+        exitCode.ShouldBe(0);
+        error.ShouldBe(string.Empty);
     }
 
     [Fact]

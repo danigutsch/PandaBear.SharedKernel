@@ -219,6 +219,38 @@ public sealed class PlanCommandTests
     }
 
     [Fact]
+    public async Task An_empty_root_is_a_parse_error_instead_of_the_current_directory()
+    {
+        // Arrange
+        using var repository = CreateRepository("""{"version":1,"packages":{"apt":["git"]}}""");
+        var runner = ScriptedProcessRunner.ByFileName([]);
+
+        // Act
+        var (exitCode, _, error) = await RunWithArguments(repository.Path, runner, ResolveAll, "plan", "--root", "");
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain("--root requires a directory path.", StringComparison.Ordinal);
+        runner.Runs.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task A_root_that_is_not_a_directory_fails_without_running_a_tool()
+    {
+        // Arrange
+        using var repository = CreateRepository(null);
+        var runner = ScriptedProcessRunner.ByFileName([]);
+
+        // Act
+        var (exitCode, _, error) = await RunWithArguments(repository.Path, runner, ResolveAll, "plan", "--root", "missing");
+
+        // Assert
+        exitCode.ShouldBe(PlanCommand.FailureExitCode);
+        error.ShouldBe("--root is not an existing directory: " + Path.Combine(repository.Path, "missing") + "\n");
+        runner.Runs.ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task A_control_character_in_a_manager_name_never_reaches_the_terminal()
     {
         // Arrange

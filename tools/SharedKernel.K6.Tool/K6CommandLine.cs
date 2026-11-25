@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.ComponentModel;
+using SharedKernel.CommandLine;
 using SharedKernel.InputNormalization;
 using SharedKernel.LoadTesting;
 
@@ -61,20 +62,7 @@ internal static class K6CommandLine
         {
             Description = "Allow k6 --out, --log-output, --console-output, and --traces-output.",
         };
-        var rootOption = new Option<string>("--root")
-        {
-            Description = "Repository root. Defaults to the current directory.",
-            HelpName = "path",
-        };
-
-        // An empty path resolves to the current directory, which a missing shell variable should not select.
-        rootOption.Validators.Add(static result =>
-        {
-            if (string.IsNullOrWhiteSpace(result.GetValueOrDefault<string>()))
-            {
-                result.AddError("--root requires a path.");
-            }
-        });
+        var rootOption = new RootOption(workingDirectory, "Repository root. Defaults to the current directory.");
         var k6ArgumentsArgument = new Argument<string[]>("k6-arguments")
         {
             Description = "Arguments for k6 run, after --. The tool sets the summary export, the target, and the scenario environment.",
@@ -104,7 +92,7 @@ internal static class K6CommandLine
             error => runner.Run(
                 new LoadTestSettings
                 {
-                    Root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory),
+                    Root = rootOption.GetExistingDirectory(parseResult),
                     ConfigurationPath = ConfigurationPath,
                     Scenario = parseResult.GetRequiredValue(scenarioOption),
                     Container = parseResult.GetValue(containerOption),

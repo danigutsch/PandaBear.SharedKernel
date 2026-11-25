@@ -45,6 +45,8 @@ flowchart TB
     SharedKernel_CI_Forgejo[SharedKernel.CI.Forgejo] --> SharedKernel_Forgejo[SharedKernel.Forgejo]
     SharedKernel_CI_GitHub[SharedKernel.CI.GitHub] --> SharedKernel_CI[SharedKernel.CI]
     SharedKernel_CI_GitHub[SharedKernel.CI.GitHub] --> SharedKernel_GitHub[SharedKernel.GitHub]
+    SharedKernel_CommandLine[SharedKernel.CommandLine] --> SharedKernel_Forgejo[SharedKernel.Forgejo]
+    SharedKernel_CommandLine[SharedKernel.CommandLine] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_ConfigurationFiles[SharedKernel.ConfigurationFiles] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_ContentRights[SharedKernel.ContentRights] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_DevContainers[SharedKernel.DevContainers] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]

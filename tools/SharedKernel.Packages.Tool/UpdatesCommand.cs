@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.Globalization;
+using SharedKernel.CommandLine;
 using SharedKernel.InputNormalization;
 
 namespace SharedKernel.Packages.Tool;
@@ -20,11 +21,7 @@ internal static class UpdatesCommand
     /// <summary>Builds the <c>updates</c> command.</summary>
     public static Command Create(string workingDirectory, PackageInventory inventory, Func<UpdateSources> createSources)
     {
-        var rootOption = new Option<string>("--root")
-        {
-            Description = "Repository root directory. Defaults to the current directory.",
-            HelpName = "path",
-        };
+        var rootOption = new RootOption(workingDirectory);
         var ageOption = new Option<int?>(AgeOptionName)
         {
             Description = "Days a release must have been public before it is allowed, 0 to 3650. Defaults to minimumReleaseAgeDays in the configuration; one of the two is required.",
@@ -43,7 +40,7 @@ internal static class UpdatesCommand
         command.SetAction((parseResult, cancellationToken) => PackagesCommandLine.Execute(
             parseResult,
             (output, error) => Run(
-                Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory),
+                rootOption.GetExistingDirectory(parseResult),
                 parseResult.GetValue(ageOption),
                 parseResult.GetValue(networkOption) ? NetworkAccess.Allowed : NetworkAccess.Denied,
                 inventory,
