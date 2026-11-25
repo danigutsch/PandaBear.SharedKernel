@@ -92,9 +92,24 @@ internal static class NewRepositorySeeds
         }
         """;
 
+    private const string AllowedSigners = """
+        # Add the SSH public keys allowed to sign commits in this repository.
+        # Each entry has a principal, optional OpenSSH key constraints, and the public key.
+        """;
+
+    private const string PublicationGuardSeed = """
+        {
+          "version": 1,
+          "neverTrack": [".config/publication-guard.local.patterns"],
+          "patterns": [],
+          "allowlist": []
+        }
+        """;
+
     /// <summary>Gets the write-once features in catalog order.</summary>
     internal static IReadOnlyList<RepositoryFeature> Features { get; } =
-        [RepositoryFeature.Agents, RepositoryFeature.GlobalJson, RepositoryFeature.NugetConfig, RepositoryFeature.BuildProps, RepositoryFeature.CheckRunner];
+        [RepositoryFeature.Agents, RepositoryFeature.GlobalJson, RepositoryFeature.NugetConfig, RepositoryFeature.BuildProps,
+            RepositoryFeature.CheckRunner, RepositoryFeature.PublicationGuard, RepositoryFeature.SignatureVerifier];
 
     /// <summary>Renders the files of the selected seed features in catalog order, each with LF line endings and a final newline.</summary>
     /// <param name="repositoryName">The validated repository name.</param>
@@ -127,6 +142,15 @@ internal static class NewRepositorySeeds
             else if (feature == RepositoryFeature.CheckRunner)
             {
                 files.Add((TrackedCheckRunner.ConfigurationPath, Checks));
+            }
+            else if (feature == RepositoryFeature.PublicationGuard)
+            {
+                files.Add((PublicationGuard.PolicyPath, PublicationGuardSeed));
+                files.Add((".config/.gitignore", "/publication-guard.local.patterns"));
+            }
+            else if (feature == RepositoryFeature.SignatureVerifier)
+            {
+                files.Add((CommitSignatureVerifier.SignerPath, AllowedSigners));
             }
         }
 

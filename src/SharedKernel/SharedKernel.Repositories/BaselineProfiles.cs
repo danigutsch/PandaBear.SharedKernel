@@ -305,6 +305,8 @@ internal static class BaselineProfiles
         ["pull-request-template"] = PullRequestTemplate,
         ["issue-form-bug"] = IssueFormBug,
         ["issue-form-feature"] = IssueFormFeature,
+        ["issue-form-bug-forgejo"] = IssueFormBug.Replace("\ndescription:", "\nabout:", StringComparison.Ordinal),
+        ["issue-form-feature-forgejo"] = IssueFormFeature.Replace("\ndescription:", "\nabout:", StringComparison.Ordinal),
         ["pre-commit-diff-check"] = HookPreCommitDiffCheck,
         ["pre-push-diff-check"] = HookPrePushDiffCheck,
         ["commit-msg-conventional"] = HookCommitMessage,

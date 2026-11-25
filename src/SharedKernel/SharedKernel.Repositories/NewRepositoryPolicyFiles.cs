@@ -39,6 +39,19 @@ internal static class NewRepositoryPolicyFiles
             files.Add((path, BaselinePlanner.Substitute(path, template, baseline, sources)));
         }
 
+        if (sources.CiPolicySource is { } ciSource && sources.Forge is { } forge)
+        {
+            var path = $"{ForgeCiProfile.GetDirectory(forge)}/workflows/ci.yml";
+            if (string.IsNullOrWhiteSpace(ciSource))
+            {
+                throw new InvalidOperationException("CI policy requires a source file path.");
+            }
+
+            var policy = await BaselinePlanner.ReadSourceText(Path.GetFullPath(ciSource), path, ciSource, cancellationToken)
+                .ConfigureAwait(false);
+            files.Add((path, ForgeCiProfile.Render(forge, policy)));
+        }
+
         return files;
     }
 }

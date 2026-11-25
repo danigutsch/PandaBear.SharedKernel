@@ -53,6 +53,12 @@ public sealed record RepositoryFeature
     /// <summary>An owner-editable configuration for tracked-file validation lanes.</summary>
     public static readonly RepositoryFeature CheckRunner = new("check-runner", selectedByDefault: false);
 
+    /// <summary>An owner-editable seed for SSH signers authorized to verify commits.</summary>
+    public static readonly RepositoryFeature SignatureVerifier = new("signature-verifier", selectedByDefault: false);
+
+    /// <summary>An owner-editable staged publication policy and ignore entry for private patterns.</summary>
+    public static readonly RepositoryFeature PublicationGuard = new("publication-guard", selectedByDefault: false);
+
     /// <summary>A pre-SDK launcher that verifies or explicitly installs the pinned .NET SDK.</summary>
     public static readonly RepositoryFeature SdkBootstrap = new("sdk-bootstrap", selectedByDefault: false, RepositoryLanguage.Dotnet);
 
@@ -69,7 +75,7 @@ public sealed record RepositoryFeature
     /// <summary>Gets every feature, in the order that files and settings are written and messages list them.</summary>
     public static IReadOnlyList<RepositoryFeature> All { get; } =
         [Readme, Gitignore, Gitattributes, Editorconfig, Hooks, GitConfig, SignedCommits, Agents, GlobalJson, NugetConfig, BuildProps,
-            PrePushHook, CommitMessageHook, CheckRunner, SdkBootstrap, Devcontainer];
+            PrePushHook, CommitMessageHook, CheckRunner, PublicationGuard, SdkBootstrap, Devcontainer, SignatureVerifier];
 
     /// <summary>Gets the ID that the <c>--feature</c> option takes.</summary>
     public string Id { get; }

@@ -11,4 +11,11 @@ public sealed record RepositoryPolicySources(
     string? SecuritySource = null,
     string? CodeOwnersSource = null,
     string? Owner = null,
-    string? CopyrightHolder = null);
+    string? CopyrightHolder = null)
+{
+    /// <summary>Gets the optional forge for pull request and issue templates.</summary>
+    public ForgeKind? Forge { get; init; }
+
+    /// <summary>Gets the path to the optional caller-owned JSON policy for the selected forge's CI workflow.</summary>
+    public string? CiPolicySource { get; init; }
+}

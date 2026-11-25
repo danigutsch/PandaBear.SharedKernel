@@ -4,7 +4,12 @@ namespace SharedKernel.Repositories;
 internal static class NewRepositoryCatalog
 {
     /// <summary>Builds the baseline for the selected <paramref name="features"/>, in catalog order whatever order they were chosen in.</summary>
-    public static BaselineConfiguration Build(string repositoryName, string defaultBranch, RepositoryLanguage language, IReadOnlyCollection<RepositoryFeature> features)
+    public static BaselineConfiguration Build(
+        string repositoryName,
+        string defaultBranch,
+        RepositoryLanguage language,
+        IReadOnlyCollection<RepositoryFeature> features,
+        ForgeKind? forge)
     {
         List<BaselineFileConfiguration> files = [];
         List<BaselineGitConfigurationEntry> settings = [];
@@ -68,6 +73,15 @@ internal static class NewRepositoryCatalog
             {
                 files.Add(new BaselineFileConfiguration("scripts/bootstrap-dotnet.sh", Profile: "sdk-bootstrap"));
             }
+        }
+
+        if (forge is { } selectedForge)
+        {
+            var directory = ForgeCiProfile.GetDirectory(selectedForge);
+            var suffix = selectedForge == ForgeKind.Forgejo ? "-forgejo" : string.Empty;
+            files.Add(new BaselineFileConfiguration($"{directory}/pull_request_template.md", Profile: "pull-request-template"));
+            files.Add(new BaselineFileConfiguration($"{directory}/ISSUE_TEMPLATE/bug.yml", Profile: "issue-form-bug" + suffix));
+            files.Add(new BaselineFileConfiguration($"{directory}/ISSUE_TEMPLATE/feature.yml", Profile: "issue-form-feature" + suffix));
         }
 
         return new BaselineConfiguration(

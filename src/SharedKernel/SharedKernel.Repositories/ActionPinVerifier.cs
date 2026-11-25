@@ -69,7 +69,7 @@ public static partial class ActionPinVerifier
         var at = reference.LastIndexOf('@', StringComparison.Ordinal);
         var name = at < 0 ? reference : reference[..at];
         var pinned = at < 0 ? string.Empty : reference[(at + 1)..];
-        if (!FullSha().IsMatch(pinned))
+        if (!IsFullCommitSha(pinned))
         {
             return $"'{name}' must pin a full 40-character lowercase commit SHA, not '{pinned}'.";
         }
@@ -162,7 +162,7 @@ public static partial class ActionPinVerifier
         HashSet<string> repositories = new(StringComparer.OrdinalIgnoreCase);
         foreach (var pin in manifest.Actions)
         {
-            if (!RepositoryName().IsMatch(pin.Repository) || !FullSha().IsMatch(pin.Sha) || string.IsNullOrWhiteSpace(pin.Version) || pin.Version.Trim() != pin.Version)
+            if (!RepositoryName().IsMatch(pin.Repository) || !IsFullCommitSha(pin.Sha) || string.IsNullOrWhiteSpace(pin.Version) || pin.Version.Trim() != pin.Version)
             {
                 throw new InvalidOperationException($"The action pin manifest entry '{pin.Repository}' needs an owner/repository name, a full lowercase commit SHA, and a version.");
             }
@@ -184,7 +184,10 @@ public static partial class ActionPinVerifier
     [GeneratedRegex(@"\buses[""']?\s*:", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex UsesKeyword();
 
-    [GeneratedRegex("^[0-9a-f]{40}$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
+    /// <summary>Checks whether an action reference uses a full lowercase commit SHA.</summary>
+    internal static bool IsFullCommitSha(ReadOnlySpan<char> value) => FullSha().IsMatch(value);
+
+    [GeneratedRegex(@"\A[0-9a-f]{40}\z", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex FullSha();
 
     [GeneratedRegex(@"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]

@@ -26,8 +26,7 @@ public static partial class DevcontainerImageConfiguration
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        if (string.IsNullOrEmpty(image) || image.Length > MaxImageReferenceLength ||
-            PinnedImage().Match(image) is not { Success: true } match || match.Groups["name"].Length > MaxImageNameLength)
+        if (!IsDigestPinned(image))
         {
             configuration = null;
             return false;
@@ -41,6 +40,11 @@ public static partial class DevcontainerImageConfiguration
             """ + "\n";
         return true;
     }
+
+    /// <summary>Checks whether <paramref name="image"/> is a valid image reference pinned by a SHA-256 digest.</summary>
+    public static bool IsDigestPinned([NotNullWhen(true)] string? image) =>
+        !string.IsNullOrEmpty(image) && image.Length <= MaxImageReferenceLength &&
+        PinnedImage().Match(image) is { Success: true } match && match.Groups["name"].Length <= MaxImageNameLength;
 
     [GeneratedRegex(@"\A(?<name>" + ImageName + ")" + Tag + @"@sha256:[a-f0-9]{64}\z", RegexOptions.CultureInvariant)]
     private static partial Regex PinnedImage();

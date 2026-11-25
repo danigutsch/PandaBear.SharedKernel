@@ -141,7 +141,13 @@ public static class RepositoryScaffold
             return 1;
         }
 
-        var baseline = NewRepositoryCatalog.Build(repositoryName, defaultBranch, repoLanguage, features);
+        var forge = policySources?.Forge;
+        if (forge is null && policySources?.CiPolicySource is not null)
+        {
+            throw new InvalidOperationException("--ci-policy requires --forge.");
+        }
+
+        var baseline = NewRepositoryCatalog.Build(repositoryName, defaultBranch, repoLanguage, features, forge);
         if (baseline.FindError() is { } problem)
         {
             // The shared validation names JSON paths; this command takes options.
