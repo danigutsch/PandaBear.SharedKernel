@@ -161,3 +161,36 @@ static SharedKernel.Npgsql.PostgreSqlScheduleRunPage.operator ==(SharedKernel.Np
 ~override SharedKernel.Npgsql.PostgreSqlScheduleRun.ToString() -> string
 ~override SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.Equals(object obj) -> bool
 ~override SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.ToString() -> string
+SharedKernel.Npgsql.PostgreSqlJobLease
+SharedKernel.Npgsql.PostgreSqlJobLease.ExpiresAt.get -> System.DateTimeOffset
+SharedKernel.Npgsql.PostgreSqlJobLease.Fence.get -> System.Guid
+SharedKernel.Npgsql.PostgreSqlJobLease.JobName.get -> string!
+SharedKernel.Npgsql.PostgreSqlJobLease.Kind.get -> SharedKernel.Npgsql.PostgreSqlJobRunKind
+SharedKernel.Npgsql.PostgreSqlJobLease.RunId.get -> System.Guid
+SharedKernel.Npgsql.PostgreSqlJobLease.ScheduledFor.get -> System.DateTimeOffset?
+SharedKernel.Npgsql.PostgreSqlJobRunKind
+SharedKernel.Npgsql.PostgreSqlJobRunKind.Manual = 1 -> SharedKernel.Npgsql.PostgreSqlJobRunKind
+SharedKernel.Npgsql.PostgreSqlJobRunKind.Retry = 2 -> SharedKernel.Npgsql.PostgreSqlJobRunKind
+SharedKernel.Npgsql.PostgreSqlJobRunKind.Scheduled = 0 -> SharedKernel.Npgsql.PostgreSqlJobRunKind
+SharedKernel.Npgsql.PostgreSqlJobScheduler
+SharedKernel.Npgsql.PostgreSqlJobScheduler.Acquire(System.TimeSpan leaseDuration, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Npgsql.PostgreSqlJobLease?>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.Complete(SharedKernel.Npgsql.PostgreSqlJobLease! lease, SharedKernel.Npgsql.PostgreSqlScheduleRunStatus outcome, System.DateTimeOffset? nextDueAt, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.InitializeSchema(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.PostgreSqlJobScheduler(Npgsql.NpgsqlDataSource! dataSource, string! schema) -> void
+SharedKernel.Npgsql.PostgreSqlJobScheduler.Register(string! jobName, System.DateTimeOffset? firstDueAt, System.TimeSpan? fixedDelay, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.Renew(SharedKernel.Npgsql.PostgreSqlJobLease! lease, System.TimeSpan leaseDuration, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlJobSchedule
+SharedKernel.Npgsql.PostgreSqlJobSchedule.FixedDelay.get -> System.TimeSpan?
+SharedKernel.Npgsql.PostgreSqlJobSchedule.IsPaused.get -> bool
+SharedKernel.Npgsql.PostgreSqlJobSchedule.JobName.get -> string!
+SharedKernel.Npgsql.PostgreSqlJobSchedule.NextDueAt.get -> System.DateTimeOffset?
+SharedKernel.Npgsql.PostgreSqlJobScheduler.ReadActive(string! jobName, SharedKernel.Npgsql.PostgreSqlScheduleRunCursor? after, int pageSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Npgsql.PostgreSqlScheduleRunPage!>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.ReadHistory(string! jobName, SharedKernel.Npgsql.PostgreSqlScheduleRunCursor? after, int pageSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Npgsql.PostgreSqlScheduleRunPage!>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.ReadJob(string! jobName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Npgsql.PostgreSqlJobSchedule?>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.Retry(string! jobName, System.Guid failedRunId, System.Guid requestId, Npgsql.NpgsqlTransaction! transaction, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.Retry(string! jobName, System.Guid failedRunId, System.Guid requestId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.SetPaused(string! jobName, bool paused, Npgsql.NpgsqlTransaction! transaction, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.SetPaused(string! jobName, bool paused, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.Trigger(string! jobName, System.Guid requestId, Npgsql.NpgsqlTransaction! transaction, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlJobScheduler.Trigger(string! jobName, System.Guid requestId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+static SharedKernel.Npgsql.PostgreSqlJobScheduler.CreateSchemaSql(string! schema) -> string!

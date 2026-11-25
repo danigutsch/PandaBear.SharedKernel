@@ -9,7 +9,7 @@ namespace SharedKernel.Scheduling;
 /// </summary>
 public static class SchedulingTelemetry
 {
-    private static readonly ConcurrentDictionary<PollingBackgroundService, (string ServiceName, CancellationToken StoppingToken)> PollingServices =
+    private static readonly ConcurrentDictionary<BatchDrainExecution, (string ServiceName, CancellationToken StoppingToken)> BatchDrains =
         new(ReferenceEqualityComparer.Instance);
 
     static SchedulingTelemetry()
@@ -122,16 +122,16 @@ public static class SchedulingTelemetry
         "{failure}",
         "Non-fatal polling failures.");
 
-    /// <summary>Begins observing a worker whose background loop has started.</summary>
-    internal static void RegisterPollingService(PollingBackgroundService service, string serviceName, CancellationToken stoppingToken) =>
-        PollingServices.TryAdd(service, (serviceName, stoppingToken));
+    /// <summary>Begins observing a drain for the duration of its owner's lifetime.</summary>
+    internal static void RegisterBatchDrain(BatchDrainExecution drain, string serviceName, CancellationToken stoppingToken) =>
+        BatchDrains.TryAdd(drain, (serviceName, stoppingToken));
 
-    /// <summary>Stops observing a worker whose background loop has exited.</summary>
-    internal static void UnregisterPollingService(PollingBackgroundService service) =>
-        PollingServices.TryRemove(service, out _);
+    /// <summary>Stops observing a drain whose owner has stopped.</summary>
+    internal static void UnregisterBatchDrain(BatchDrainExecution drain) =>
+        BatchDrains.TryRemove(drain, out _);
 
     private static IEnumerable<Measurement<double>> ObservePollingBatchActiveDurations() =>
-        PollingServices
+        BatchDrains
             .Where(entry => !entry.Value.StoppingToken.IsCancellationRequested)
             .GroupBy(entry => entry.Value.ServiceName, StringComparer.Ordinal)
             .Select(group => new Measurement<double>(

@@ -9,6 +9,7 @@ Lightweight scheduling primitives for hosted .NET services.
 ## What it provides
 
 - `PollingBackgroundService`: drains available work in batches, then waits for the next poll.
+- `BatchDrain`: drains available work once under a caller-owned schedule and observation lifetime.
 - OpenTelemetry source and meter named `SharedKernel.Scheduling`.
 - Stable low-cardinality telemetry tags for service name, outcome, item count, and error type.
 
@@ -17,6 +18,16 @@ Lightweight scheduling primitives for hosted .NET services.
 This package is not a durable scheduler, queue, or job store. Callers remain responsible for
 persistence, locking, idempotency, retries, and business-specific state.
 
+## Caller-owned scheduling
+
+Create a `BatchDrain` with a stable service name and keep it for the lifetime of the worker. Call `Run` when
+the caller schedules a cycle and pass a delegate that processes one batch and returns its item count. `Run`
+invokes batches through the first empty result, forwards the cancellation token, and propagates batch failures.
+
+Use a separate drain for each concurrently active cycle. Multiple instances with the same service name share
+one gauge series. Its value is zero while all registered instances are idle. Disposing an instance removes
+its observation immediately. The caller still owns any active batch and can complete or cancel it independently.
+
 ## Telemetry
 
 An override of `ExecuteDrainCycle` can wrap the entire cycle with a caller-owned observation.
@@ -24,14 +35,15 @@ Await the base implementation once to preserve batch draining and its telemetry.
 ends with an empty batch. A thrown exception or host cancellation remains visible to the wrapper.
 The polling delay starts after the wrapper returns or the polling loop handles its failure.
 
-The polling loop emits:
+Both drain entry points emit the same batch, item, active age, and cycle instrumentation:
 
 - Activity name: `scheduling.poll`
 - Duration metric: `sharedkernel.scheduling.polling.cycle.duration`, unit `s`, with the shared duration buckets
 - Active batch duration gauge: `sharedkernel.scheduling.polling.batch.active.duration`, unit `s`
 - Batch counter: `sharedkernel.scheduling.polling.batches`
 - Item counter: `sharedkernel.scheduling.polling.items`
-- Failure counter: `sharedkernel.scheduling.polling.failures`
+
+The polling host also emits `sharedkernel.scheduling.polling.failures` when it handles a failure and continues polling.
 
 Attributes: `sharedkernel.scheduling.service.name`, `sharedkernel.scheduling.outcome` (`success`, `cancelled`, `error`),
 `sharedkernel.scheduling.item_count` and `error.type` (the full exception type name). See the

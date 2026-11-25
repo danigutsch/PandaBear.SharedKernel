@@ -1,4 +1,8 @@
 #nullable enable
+SharedKernel.Scheduling.BatchDrain
+SharedKernel.Scheduling.BatchDrain.BatchDrain(string! serviceName) -> void
+SharedKernel.Scheduling.BatchDrain.Dispose() -> void
+SharedKernel.Scheduling.BatchDrain.Run(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<int>>! executeBatch, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
 SharedKernel.Scheduling.PollingBackgroundService
 SharedKernel.Scheduling.PollingBackgroundService.PollingBackgroundService(Microsoft.Extensions.Logging.ILogger! logger, string! serviceName, System.TimeSpan pollInterval) -> void
 SharedKernel.Scheduling.SchedulingTelemetry
