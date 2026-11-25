@@ -23,6 +23,12 @@ public sealed record RepositoryFeature
     /// <summary>A tracked <c>pre-commit</c> hook, activated through <c>core.hooksPath</c>.</summary>
     public static readonly RepositoryFeature Hooks = new("hooks", selectedByDefault: true);
 
+    /// <summary>A tracked <c>pre-push</c> hook that checks the tip of each updated ref.</summary>
+    public static readonly RepositoryFeature PrePushHook = new("pre-push-hook", selectedByDefault: false);
+
+    /// <summary>A tracked <c>commit-msg</c> hook that invokes the Conventional Commit verifier.</summary>
+    public static readonly RepositoryFeature CommitMessageHook = new("commit-msg-hook", selectedByDefault: false);
+
     /// <summary>Neutral Git settings: default branch, fast-forward-only pulls, and pruning fetches.</summary>
     public static readonly RepositoryFeature GitConfig = new("git-config", selectedByDefault: true);
 
@@ -44,6 +50,21 @@ public sealed record RepositoryFeature
     /// <summary>A <c>Directory.Build.props</c> with strict compiler and analysis settings, written once. Needs <c>--sdk-version</c>.</summary>
     public static readonly RepositoryFeature BuildProps = new("build-props", selectedByDefault: true, RepositoryLanguage.Dotnet);
 
+    /// <summary>An owner-editable configuration for tracked-file validation lanes.</summary>
+    public static readonly RepositoryFeature CheckRunner = new("check-runner", selectedByDefault: false);
+
+    /// <summary>An owner-editable seed for SSH signers authorized to verify commits.</summary>
+    public static readonly RepositoryFeature SignatureVerifier = new("signature-verifier", selectedByDefault: false);
+
+    /// <summary>An owner-editable staged publication policy and ignore entry for private patterns.</summary>
+    public static readonly RepositoryFeature PublicationGuard = new("publication-guard", selectedByDefault: false);
+
+    /// <summary>A pre-SDK launcher that verifies or explicitly installs the pinned .NET SDK.</summary>
+    public static readonly RepositoryFeature SdkBootstrap = new("sdk-bootstrap", selectedByDefault: false, RepositoryLanguage.Dotnet);
+
+    /// <summary>A write-once Dev Container configuration for a caller-selected digest-pinned image.</summary>
+    public static readonly RepositoryFeature Devcontainer = new("devcontainer", selectedByDefault: false);
+
     private RepositoryFeature(string id, bool selectedByDefault, RepositoryLanguage? requiredLanguage = null)
     {
         Id = id;
@@ -52,7 +73,9 @@ public sealed record RepositoryFeature
     }
 
     /// <summary>Gets every feature, in the order that files and settings are written and messages list them.</summary>
-    public static IReadOnlyList<RepositoryFeature> All { get; } = [Readme, Gitignore, Gitattributes, Editorconfig, Hooks, GitConfig, SignedCommits, Agents, GlobalJson, NugetConfig, BuildProps];
+    public static IReadOnlyList<RepositoryFeature> All { get; } =
+        [Readme, Gitignore, Gitattributes, Editorconfig, Hooks, GitConfig, SignedCommits, Agents, GlobalJson, NugetConfig, BuildProps,
+            PrePushHook, CommitMessageHook, CheckRunner, PublicationGuard, SdkBootstrap, Devcontainer, SignatureVerifier];
 
     /// <summary>Gets the ID that the <c>--feature</c> option takes.</summary>
     public string Id { get; }

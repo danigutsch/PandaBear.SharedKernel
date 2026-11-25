@@ -14,6 +14,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.ConfigurationFiles\SharedKernel.ConfigurationFiles.csproj" />
+        <ProjectReference Include="..\SharedKernel.DevContainers\SharedKernel.DevContainers.csproj" />
         <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
         <ProjectReference Include="..\SharedKernel.IO\SharedKernel.IO.csproj" />
         <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />

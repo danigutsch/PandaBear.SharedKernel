@@ -53,6 +53,9 @@ internal static class RepoConfigCommandLine
         {
             CreateInitCommand(environment, root),
             CreateVerifyCommand(environment, root),
+            CreateTrackedCheckCommand(root),
+            CreateCommitSignatureCommand(root),
+            CreatePublicationGuardCommand(root),
             CreateDiffCommand(environment, root),
             CreateSetCommand(environment, root),
             CreateGetCommand(environment, root),
@@ -74,6 +77,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyDevcontainerCommand(environment, root),
             CreateBaselineCommand(environment, root),
             CreateNewCommand(environment, root),
+            CreateSeedDriftCommand(root),
         };
 
         // Consumer caller tests run "[diagram] <command line>" to parse a command line without running it.
@@ -97,11 +101,54 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
+    private static Command CreateTrackedCheckCommand(RootOption root)
+    {
+        Option<string> configuration = new("--config")
+        {
+            Description = "Path to the check configuration relative to the Git work tree root.",
+            HelpName = "path",
+            DefaultValueFactory = static _ => TrackedCheckRunner.ConfigurationPath,
+        };
+        Option<bool> strict = new("--strict") { Description = "Fail when a lane's tooling is unavailable." };
+        Command command = new("check-tracked", "Run configured check lanes on nonempty tracked file selections.") { configuration, strict, root };
+        SetGuardedAction(command, (parseResult, output, error, ct) => TrackedCheckRunner.Run(root.GetExistingDirectory(parseResult),
+            parseResult.GetRequiredValue(configuration), parseResult.GetValue(strict), output, error, ct));
+        return command;
+    }
+
+    private static Command CreateCommitSignatureCommand(RootOption root)
+    {
+        Option<string> baseRef = new("--base")
+        {
+            Required = true,
+            Description = "Protected base commit ID or ref containing the authorized SSH signers.",
+            HelpName = "ref",
+        };
+        Option<string> headRef = new("--head")
+        {
+            Required = true,
+            Description = "Actual submitted head commit ID or ref from the forge event.",
+            HelpName = "ref",
+        };
+        Command command = new("verify-commit-signatures", "Verify the SSH signatures of a change against the protected base.") { baseRef, headRef, root };
+        SetGuardedAction(command, (parseResult, output, _, ct) => CommitSignatureVerifier.Run(
+            root.GetExistingDirectory(parseResult), parseResult.GetRequiredValue(baseRef), parseResult.GetRequiredValue(headRef), output, ct));
+        return command;
+    }
+
     private static Command CreateDiffCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("diff", "Report drift between the roadmap files and the expected structure.") { root };
         SetGuardedAction(command, (parseResult, output, error, _) =>
             Task.FromResult(RepoConfigToolApplication.Diff(root.GetExistingDirectory(parseResult), output, error)));
+        return command;
+    }
+
+    private static Command CreatePublicationGuardCommand(RootOption root)
+    {
+        Command command = new("verify-publication", "Check a staged publication policy, paths and content.") { root };
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+            PublicationGuard.Run(root.GetExistingDirectory(parseResult), output, error, ct));
         return command;
     }
 
@@ -239,7 +286,45 @@ internal static class RepoConfigCommandLine
         };
         Option<string[]> feature = new("--feature")
         {
-            Description = "Feature to write; repeat the option to select several: " + string.Join(", ", RepositoryFeature.All.Select(static f => f.Id)) + ". Defaults to every feature except signed-commits; the dotnet features need --language dotnet."
+            Description = "Exact feature list; repeat for each feature: " + string.Join(", ", RepositoryFeature.All.Select(static f => f.Id)) + ". The defaults select standard language features. Signing and additional hooks are optional."
+        };
+        Option<string[]> with = new("--with")
+        {
+            Description = "Add a feature to the language defaults; repeat to add several. Cannot be combined with --feature.",
+            HelpName = "feature"
+        };
+        Option<string?> licenseSource = new("--license-source")
+        {
+            Description = "Path to the caller's LICENSE template."
+        };
+        Option<string?> securitySource = new("--security-source")
+        {
+            Description = "Path to the caller's SECURITY.md template."
+        };
+        Option<string?> codeOwnersSource = new("--codeowners-source")
+        {
+            Description = "Path to the caller's CODEOWNERS template."
+        };
+        Option<string?> owner = new("--owner")
+        {
+            Description = "Value for @@owner@@ in a supplied policy template."
+        };
+        Option<string?> copyrightHolder = new("--copyright-holder")
+        {
+            Description = "Value for @@copyrightHolder@@ in a supplied policy template."
+        };
+        Option<string?> devcontainerImage = new("--devcontainer-image")
+        {
+            Description = "SHA-256 digest-pinned image for the opt-in devcontainer feature.",
+        };
+        Option<string?> forge = new("--forge")
+        {
+            Description = "Place pull request and issue forms under github or forgejo paths."
+        };
+        forge.AcceptOnlyFromAmong("github", "forgejo");
+        Option<string?> ciPolicy = new("--ci-policy")
+        {
+            Description = "Path to the caller's JSON policy for the selected forge's CI workflow."
         };
         Option<bool> force = new("--force")
         {
@@ -247,18 +332,84 @@ internal static class RepoConfigCommandLine
         };
         Command command = new("new", "Start a repository: write the chosen baseline files and their consumer configuration, and initialize Git. Previews unless --force is given.")
         {
-            name, branch, language, sdkVersion, feature, force, root
+            name, branch, language, sdkVersion, feature, with, force, root,
+            licenseSource, securitySource, codeOwnersSource, owner, copyrightHolder, devcontainerImage, forge, ciPolicy
         };
-        SetGuardedAction(command, (parseResult, output, error, ct) => RepositoryScaffold.Run(
+        command.Validators.Add(result =>
+        {
+            if (result.GetResult(feature) is not null && result.GetResult(with) is not null)
+            {
+                result.AddError("--feature and --with cannot be combined.");
+            }
+        });
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+        {
+            var languageId = parseResult.GetRequiredValue(language);
+            var featureIds = parseResult.GetValue(feature) ?? [];
+            if (parseResult.GetValue(with) is { Length: > 0 } additions &&
+                RepositoryLanguage.TryParse(languageId, out var repositoryLanguage))
+            {
+                featureIds = [.. RepositoryFeature.DefaultsFor(repositoryLanguage).Select(static item => item.Id), .. additions];
+            }
+
+            return RepositoryScaffold.Run(
+                root.GetDirectory(parseResult),
+                parseResult.GetValue(name),
+                parseResult.GetRequiredValue(branch),
+                languageId,
+                parseResult.GetValue(sdkVersion),
+                featureIds,
+                new RepositoryPolicySources(
+                    ResolvePolicySource(parseResult.GetValue(licenseSource), environment.WorkingDirectory),
+                    ResolvePolicySource(parseResult.GetValue(securitySource), environment.WorkingDirectory),
+                    ResolvePolicySource(parseResult.GetValue(codeOwnersSource), environment.WorkingDirectory),
+                    parseResult.GetValue(owner),
+                    parseResult.GetValue(copyrightHolder))
+                {
+                    Forge = parseResult.GetValue(forge) switch
+                    {
+                        "github" => ForgeKind.GitHub,
+                        "forgejo" => ForgeKind.Forgejo,
+                        _ => null
+                    },
+                    CiPolicySource = ResolvePolicySource(parseResult.GetValue(ciPolicy), environment.WorkingDirectory)
+                },
+                parseResult.GetValue(devcontainerImage),
+                parseResult.GetValue(force),
+                output,
+                error,
+                ct);
+        });
+        return command;
+    }
+
+    private static string? ResolvePolicySource(string? path, string workingDirectory) =>
+        string.IsNullOrWhiteSpace(path) ? path : Path.GetFullPath(path, Path.GetFullPath(workingDirectory));
+
+    private static Command CreateSeedDriftCommand(RootOption root)
+    {
+        Option<string?> name = new("--name")
+        {
+            Description = "Repository name for AGENTS.md. Defaults to the last segment of the repository path."
+        };
+        Option<string?> sdkVersion = new("--sdk-version")
+        {
+            Description = "Expected .NET SDK version for the global-json and build-props features."
+        };
+        Option<string[]> feature = new("--feature")
+        {
+            Description = "Write-once scaffold feature to compare. Repeat to compare several."
+        };
+        Command command = new("seed-drift", "Compare selected write-once files to the current catalog without changing them.")
+        {
+            name, sdkVersion, feature, root
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) => RepositorySeedDrift.Run(
             root.GetDirectory(parseResult),
             parseResult.GetValue(name),
-            parseResult.GetRequiredValue(branch),
-            parseResult.GetRequiredValue(language),
             parseResult.GetValue(sdkVersion),
             parseResult.GetValue(feature) ?? [],
-            parseResult.GetValue(force),
             output,
-            error,
             ct));
         return command;
     }
@@ -531,6 +682,22 @@ internal static class RepoConfigCommandLine
             Description = "Existing absolute directory for private transient engine state. The graph and volumes stay under TMPDIR.",
             HelpName = "directory",
         };
+        Option<string?> logDirectory = new("--log-directory")
+        {
+            Description = "Existing absolute directory for new stdout.log and stderr.log files.",
+            HelpName = "directory",
+        };
+        Option<long> maxLogBytes = new("--max-log-bytes")
+        {
+            Description = "Maximum bytes written to each child log. Required with --log-directory.",
+        };
+        maxLogBytes.Validators.Add(result =>
+        {
+            if (result.GetValueOrDefault<long>() <= 0)
+            {
+                result.AddError("--max-log-bytes must be a positive whole number.");
+            }
+        });
         Argument<string[]> child = new("command")
         {
             Arity = ArgumentArity.OneOrMore,
@@ -538,9 +705,16 @@ internal static class RepoConfigCommandLine
         };
         Command command = new(IsolatedPodmanCommandName, "Run a test command with its own local rootless Podman engine.")
         {
-            imageStore, timeout, networkHelper, runtimeParent, child
+            imageStore, timeout, networkHelper, runtimeParent, logDirectory, maxLogBytes, child
         };
-        SetGuardedAction(command, (parseResult, output, error, ct) =>
+        command.Validators.Add(result =>
+        {
+            if ((result.GetResult(logDirectory) is null) != (result.GetResult(maxLogBytes) is null))
+            {
+                result.AddError("--log-directory and --max-log-bytes must be supplied together.");
+            }
+        });
+        SetGuardedAction(command, async (parseResult, output, error, ct) =>
         {
             var arguments = parseResult.GetRequiredValue(child);
             var executable = PathExecutableResolver.Default.Resolve(arguments[0]);
@@ -549,9 +723,19 @@ internal static class RepoConfigCommandLine
             {
                 startInfo.ArgumentList.Add(argument);
             }
-            var runner = environment.IsolatedPodmanCommandRunner
-                ?? new BoundedProcessRunner(TimeSpan.FromSeconds(parseResult.GetRequiredValue(timeout)));
-            return IsolatedPodman.Run(
+            var duration = TimeSpan.FromSeconds(parseResult.GetRequiredValue(timeout));
+            if (parseResult.GetValue(logDirectory) is not { } directory)
+            {
+                return await Run(environment.IsolatedPodmanCommandRunner ?? new BoundedProcessRunner(duration)).ConfigureAwait(false);
+            }
+
+            ct.ThrowIfCancellationRequested();
+            var logPath = PodmanFileLogRunner.ResolveDirectory(directory);
+            using var stdout = PodmanFileLogRunner.OpenLog(Path.Combine(logPath, "stdout.log"));
+            using var stderr = PodmanFileLogRunner.OpenLog(Path.Combine(logPath, "stderr.log"));
+            return await Run(new PodmanFileLogRunner(duration, stdout, stderr, parseResult.GetRequiredValue(maxLogBytes))).ConfigureAwait(false);
+
+            Task<int> Run(IProcessRunner runner) => IsolatedPodman.Run(
                 environment.PodmanHost ?? PodmanDnsHost.Current(),
                 parseResult.GetRequiredValue(imageStore),
                 parseResult.GetRequiredValue(networkHelper),

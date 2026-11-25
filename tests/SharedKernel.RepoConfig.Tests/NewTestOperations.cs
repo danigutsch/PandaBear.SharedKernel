@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace SharedKernel.RepoConfig.Tests;
 
-/// <summary>Test helpers for the <c>new</c> command.</summary>
+/// <summary>Test helpers for scaffolding files and checking the resulting repository.</summary>
 internal static class NewTestOperations
 {
     /// <summary>Runs <c>new --root &lt;workspace&gt;</c> with <paramref name="options"/>.</summary>
@@ -10,11 +10,22 @@ internal static class NewTestOperations
         RunAt(workspace.RootPath, options);
 
     /// <summary>Runs <c>new --root &lt;root&gt;</c> with <paramref name="options"/>.</summary>
-    public static async Task<(int ExitCode, string Output, string Error)> RunAt(string root, params string[] options)
+    public static Task<(int ExitCode, string Output, string Error)> RunAt(string root, params string[] options) =>
+        RunCommand("new", root, options);
+
+    /// <summary>Runs <c>seed-drift</c> against the workspace.</summary>
+    public static Task<(int ExitCode, string Output, string Error)> SeedDrift(TemporaryRepoConfigWorkspace workspace, params string[] options) =>
+        RunCommand("seed-drift", workspace.RootPath, options);
+
+    /// <summary>Runs the tracked-check lanes against the workspace.</summary>
+    public static Task<(int ExitCode, string Output, string Error)> CheckTracked(TemporaryRepoConfigWorkspace workspace, params string[] options) =>
+        RunCommand("check-tracked", workspace.RootPath, options);
+
+    private static async Task<(int ExitCode, string Output, string Error)> RunCommand(string command, string root, string[] options)
     {
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
-        List<string> arguments = ["new", "--root", root, .. options];
+        List<string> arguments = [command, "--root", root, .. options];
         var exitCode = await RepoConfigToolRunner.Run(arguments, output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
     }

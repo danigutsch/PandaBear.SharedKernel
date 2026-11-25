@@ -39,16 +39,27 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
     /// <param name="ct">Cancels the run and ends the running process tree.</param>
     /// <returns>A task that completes when the evidence is <c>passed</c>.</returns>
     /// <exception cref="ArgumentNullException">Thrown when an argument is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">The evidence file would replace the candidate manifest, or no command is given.</exception>
+    /// <exception cref="ArgumentException">The evidence file would replace the candidate manifest or the execution choices are missing or conflicting.</exception>
     /// <exception cref="InvalidOperationException">The evidence is not <c>passed</c>; the message gives the reason.</exception>
     public async Task Verify(ConsumerVerificationOptions options, TextWriter output, TextWriter error, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(error);
-        if (options.Command.Count == 0)
+        ArgumentNullException.ThrowIfNull(options.RecipeInputs);
+        if (options.Command.Count == 0 && options.Recipe is null)
         {
             throw new ArgumentException("The consumer verification needs a command to run.", nameof(options));
+        }
+
+        if (options.Command.Count != 0 && options.Recipe is not null)
+        {
+            throw new ArgumentException("The consumer verification accepts a command or a recipe.", nameof(options));
+        }
+
+        if (options.Recipe is null && options.RecipeInputs.Count != 0)
+        {
+            throw new ArgumentException("Consumer verification inputs require a recipe.", nameof(options));
         }
 
         if (string.Equals(options.Output, options.Candidate, StringComparison.OrdinalIgnoreCase))
@@ -91,7 +102,16 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
                     ["NUGET_HTTP_CACHE_PATH"] = Path.Combine(scratch, "http-cache"),
                     ["NUGET_FALLBACK_PACKAGES"] = null,
                 };
-                await _commands.RunStreaming(options.Command[0], [.. options.Command.Skip(1)], clone, environment, error, ct).ConfigureAwait(false);
+                if (options.Recipe is { } recipe)
+                {
+                    var steps = await ConsumerVerificationRecipe.Read(options.RepoRoot, clone, recipe, options.RecipeInputs, ct).ConfigureAwait(false);
+                    await RunRecipe(steps, clone, environment, error, ct).ConfigureAwait(false);
+                }
+                else
+                {
+                    await _commands.RunStreaming(options.Command[0], [.. options.Command.Skip(1)], clone, environment, error, ct).ConfigureAwait(false);
+                }
+
                 status = "passed";
             }
             catch (Exception exception) when (!ct.IsCancellationRequested && exception is ArgumentException
@@ -132,6 +152,27 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
         {
             DeleteScratch(scratch, error);
         }
+    }
+
+    private async Task RunRecipe(
+        IReadOnlyList<(string[] Arguments, bool HasInputs)> steps, string clone,
+        IReadOnlyDictionary<string, string?> environment, TextWriter error, CancellationToken ct)
+    {
+        for (var index = 0; index < steps.Count; index++)
+        {
+            var (arguments, hasInputs) = steps[index];
+            try
+            {
+                await _commands.RunStreaming(arguments[0], arguments[1..], clone, environment, error, ct, includeArgumentsInFailure: !hasInputs)
+                    .ConfigureAwait(false);
+            }
+            catch (InvalidOperationException exception) when (!ct.IsCancellationRequested)
+            {
+                throw new InvalidOperationException($"Recipe step {index + 1} failed: {exception.Message}", exception);
+            }
+        }
+
+        ct.ThrowIfCancellationRequested();
     }
 
     private static string Solution(string clone, ConsumerVerificationOptions options)

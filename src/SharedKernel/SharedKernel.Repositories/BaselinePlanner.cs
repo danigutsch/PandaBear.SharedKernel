@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using SharedKernel.InputNormalization;
 using SharedKernel.IO;
 
 namespace SharedKernel.Repositories;
@@ -71,24 +72,31 @@ internal static partial class BaselinePlanner
         }
     }
 
-    private static async Task<string> ReadSource(string root, BaselineFileConfiguration file, CancellationToken cancellationToken)
+    private static Task<string> ReadSource(string root, BaselineFileConfiguration file, CancellationToken cancellationToken)
     {
         var source = file.Source!;
-        var path = Resolve(root, source, file.Path);
+        return ReadSourceText(Resolve(root, source, file.Path), file.Path, source, cancellationToken);
+    }
+
+    /// <summary>Reads a bounded UTF-8 source and identifies its destination in validation errors.</summary>
+    /// <exception cref="InvalidOperationException">The named source is missing, too large, or invalid UTF-8.</exception>
+    internal static async Task<string> ReadSourceText(string path, string destination, string source, CancellationToken cancellationToken)
+    {
+        var displaySource = ControlCharacters.Escape(source);
         try
         {
             var bytes = await BoundedReader.ReadFile(path, MaxBytes, cancellationToken).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"{file.Path}: source {source} exceeds the 1 MiB limit.");
+                ?? throw new InvalidOperationException($"{destination}: source {displaySource} exceeds the 1 MiB limit.");
             return new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true)
                 .GetString(RepositoryFile.WithoutUtf8ByteOrderMark(bytes).Span);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {
-            throw new InvalidOperationException($"{file.Path}: source {source} does not exist.", exception);
+            throw new InvalidOperationException($"{destination}: source {displaySource} does not exist.", exception);
         }
         catch (DecoderFallbackException exception)
         {
-            throw new InvalidOperationException($"{file.Path}: source {source} is not valid UTF-8.", exception);
+            throw new InvalidOperationException($"{destination}: source {displaySource} is not valid UTF-8.", exception);
         }
     }
 
@@ -114,13 +122,28 @@ internal static partial class BaselinePlanner
         return File.ReadAllText(fullPath);
     }
 
-    private static string Substitute(string path, string template, BaselineConfiguration baseline) =>
+    /// <summary>Renders baseline variables and, for caller-supplied policy files, caller-provided values.</summary>
+    /// <exception cref="InvalidOperationException">The template names an unknown or missing variable.</exception>
+    internal static string Substitute(
+        string path,
+        string template,
+        BaselineConfiguration baseline,
+        RepositoryPolicySources? policySources = null) =>
         VariablePattern().Replace(template, match => match.Groups[1].Value switch
         {
             "repositoryName" => baseline.RepositoryName,
             "defaultBranch" => baseline.DefaultBranch,
+            "owner" when policySources is not null => RequirePolicyVariable(path, match.Value, policySources.Owner, "--owner"),
+            "copyrightHolder" when policySources is not null => RequirePolicyVariable(path, match.Value, policySources.CopyrightHolder, "--copyright-holder"),
+            _ when policySources is not null => throw new InvalidOperationException(
+                $"{path}: unknown variable {match.Value}; the variables are @@repositoryName@@, @@defaultBranch@@, @@owner@@, and @@copyrightHolder@@."),
             _ => throw new InvalidOperationException($"{path}: unknown variable {match.Value}; the variables are @@repositoryName@@ and @@defaultBranch@@."),
         });
+
+    private static string RequirePolicyVariable(string path, string placeholder, string? value, string option) =>
+        string.IsNullOrWhiteSpace(value)
+            ? throw new InvalidOperationException($"{path}: {placeholder} requires {option}.")
+            : value;
 
     [GeneratedRegex("@@([A-Za-z]+)@@", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex VariablePattern();

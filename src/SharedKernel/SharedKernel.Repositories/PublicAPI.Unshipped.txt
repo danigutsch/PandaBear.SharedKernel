@@ -1,4 +1,7 @@
 #nullable enable
+SharedKernel.Repositories.PublicationGuard
+static SharedKernel.Repositories.PublicationGuard.Run(string! rootPath, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static readonly SharedKernel.Repositories.RepositoryFeature.PublicationGuard -> SharedKernel.Repositories.RepositoryFeature!
 SharedKernel.Repositories.NuGetPinInspection
 SharedKernel.Repositories.NuGetUpgradeTrial
 SharedKernel.Repositories.NuGetUpgradeTrialOptions
@@ -442,3 +445,47 @@ static SharedKernel.Repositories.TargetFrameworkRule.operator !=(SharedKernel.Re
 static SharedKernel.Repositories.TargetFrameworkRule.operator ==(SharedKernel.Repositories.TargetFrameworkRule? left, SharedKernel.Repositories.TargetFrameworkRule? right) -> bool
 static SharedKernel.Repositories.TargetFrameworkVerifier.Verify(string! rootPath, SharedKernel.Repositories.TargetFrameworkConfiguration! configuration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
 static SharedKernel.Repositories.TargetFrameworkVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+override SharedKernel.Repositories.RepositoryPolicySources.Equals(object? obj) -> bool
+override SharedKernel.Repositories.RepositoryPolicySources.GetHashCode() -> int
+override SharedKernel.Repositories.RepositoryPolicySources.ToString() -> string!
+SharedKernel.Repositories.RepositoryPolicySources
+SharedKernel.Repositories.RepositoryPolicySources.<Clone>$() -> SharedKernel.Repositories.RepositoryPolicySources!
+SharedKernel.Repositories.RepositoryPolicySources.CodeOwnersSource.get -> string?
+SharedKernel.Repositories.RepositoryPolicySources.CodeOwnersSource.init -> void
+SharedKernel.Repositories.RepositoryPolicySources.CopyrightHolder.get -> string?
+SharedKernel.Repositories.RepositoryPolicySources.CopyrightHolder.init -> void
+SharedKernel.Repositories.RepositoryPolicySources.Deconstruct(out string? LicenseSource, out string? SecuritySource, out string? CodeOwnersSource, out string? Owner, out string? CopyrightHolder) -> void
+SharedKernel.Repositories.RepositoryPolicySources.Equals(SharedKernel.Repositories.RepositoryPolicySources? other) -> bool
+SharedKernel.Repositories.RepositoryPolicySources.LicenseSource.get -> string?
+SharedKernel.Repositories.RepositoryPolicySources.LicenseSource.init -> void
+SharedKernel.Repositories.RepositoryPolicySources.Owner.get -> string?
+SharedKernel.Repositories.RepositoryPolicySources.Owner.init -> void
+SharedKernel.Repositories.RepositoryPolicySources.RepositoryPolicySources(string? LicenseSource = null, string? SecuritySource = null, string? CodeOwnersSource = null, string? Owner = null, string? CopyrightHolder = null) -> void
+SharedKernel.Repositories.RepositoryPolicySources.SecuritySource.get -> string?
+SharedKernel.Repositories.RepositoryPolicySources.SecuritySource.init -> void
+SharedKernel.Repositories.RepositorySeedDrift
+static SharedKernel.Repositories.RepositoryPolicySources.operator !=(SharedKernel.Repositories.RepositoryPolicySources? left, SharedKernel.Repositories.RepositoryPolicySources? right) -> bool
+static SharedKernel.Repositories.RepositoryPolicySources.operator ==(SharedKernel.Repositories.RepositoryPolicySources? left, SharedKernel.Repositories.RepositoryPolicySources? right) -> bool
+static SharedKernel.Repositories.RepositoryScaffold.Run(string! rootPath, string? name, string! defaultBranch, string! language, string? sdkVersion, System.Collections.Generic.IReadOnlyList<string!>! featureIds, SharedKernel.Repositories.RepositoryPolicySources? policySources, bool force, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.RepositorySeedDrift.Run(string! rootPath, string? name, string? sdkVersion, System.Collections.Generic.IReadOnlyList<string!>! featureIds, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static readonly SharedKernel.Repositories.RepositoryFeature.CommitMessageHook -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.PrePushHook -> SharedKernel.Repositories.RepositoryFeature!
+static SharedKernel.Repositories.RepositoryScaffold.Run(string! rootPath, string? name, string! defaultBranch, string! language, string? sdkVersion, System.Collections.Generic.IReadOnlyList<string!>! featureIds, SharedKernel.Repositories.RepositoryPolicySources? policySources, string? devcontainerImage, bool force, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static readonly SharedKernel.Repositories.RepositoryFeature.Devcontainer -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryLanguage.Nix -> SharedKernel.Repositories.RepositoryLanguage!
+static readonly SharedKernel.Repositories.RepositoryLanguage.Shell -> SharedKernel.Repositories.RepositoryLanguage!
+SharedKernel.Repositories.TrackedCheckRunner
+const SharedKernel.Repositories.TrackedCheckRunner.ConfigurationPath = ".config/sharedkernel-checks.json" -> string!
+static SharedKernel.Repositories.TrackedCheckRunner.Run(string! directory, string! configuration, bool strict, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+static readonly SharedKernel.Repositories.RepositoryFeature.CheckRunner -> SharedKernel.Repositories.RepositoryFeature!
+SharedKernel.Repositories.CommitSignatureVerifier
+static SharedKernel.Repositories.CommitSignatureVerifier.Run(string! directory, string! baseRef, string! headRef, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static readonly SharedKernel.Repositories.RepositoryFeature.SignatureVerifier -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.SdkBootstrap -> SharedKernel.Repositories.RepositoryFeature!
+SharedKernel.Repositories.ForgeKind
+SharedKernel.Repositories.ForgeKind.Forgejo = 1 -> SharedKernel.Repositories.ForgeKind
+SharedKernel.Repositories.ForgeKind.GitHub = 0 -> SharedKernel.Repositories.ForgeKind
+SharedKernel.Repositories.RepositoryPolicySources.CiPolicySource.get -> string?
+SharedKernel.Repositories.RepositoryPolicySources.CiPolicySource.init -> void
+SharedKernel.Repositories.RepositoryPolicySources.Forge.get -> SharedKernel.Repositories.ForgeKind?
+SharedKernel.Repositories.RepositoryPolicySources.Forge.init -> void

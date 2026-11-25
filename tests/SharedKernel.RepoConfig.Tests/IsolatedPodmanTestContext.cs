@@ -50,18 +50,34 @@ internal sealed class IsolatedPodmanTestContext : IDisposable
     /// <param name="arguments">Arguments for the child executable.</param>
     /// <param name="runtimeParent">Optional existing parent of the private runtime root.</param>
     /// <returns>The exit code and captured output.</returns>
-    public async Task<(int ExitCode, string Output, string Error)> RunCommand(
+    public Task<(int ExitCode, string Output, string Error)> RunCommand(
         IProcessRunner runner,
         string[]? arguments = null,
-        string? runtimeParent = null)
+        string? runtimeParent = null) =>
+        RunCommand(
+            runtimeParent is null ? [] : ["--runtime-parent", runtimeParent],
+            [Executable, .. arguments ?? []],
+            TestContext.Current.CancellationToken,
+            runner);
+
+    /// <summary>Runs the CLI with explicit wrapper options and a direct child executable.</summary>
+    /// <param name="options">Options for the wrapper.</param>
+    /// <param name="child">The executable and its argument values.</param>
+    /// <param name="cancellationToken">Cancels the CLI operation.</param>
+    /// <param name="runner">Optional replacement runner for the console mode.</param>
+    /// <returns>The exit code and captured CLI output.</returns>
+    public async Task<(int ExitCode, string Output, string Error)> RunCommand(
+        string[] options,
+        string[] child,
+        CancellationToken cancellationToken,
+        IProcessRunner? runner = null)
     {
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
         var environment = new RepoConfigToolEnvironment(_directory.Path) { PodmanHost = Host, IsolatedPodmanCommandRunner = runner };
-        string[] runtimeArguments = runtimeParent is null ? [] : ["--runtime-parent", runtimeParent];
         var exitCode = await RepoConfigToolRunner.Run(
-            ["run-isolated-podman", "--image-store", ImageStore, .. runtimeArguments, "--", Executable, .. arguments ?? []],
-            output, error, environment, TestContext.Current.CancellationToken).ConfigureAwait(false);
+            ["run-isolated-podman", "--image-store", ImageStore, .. options, "--", .. child],
+            output, error, environment, cancellationToken).ConfigureAwait(false);
         return (exitCode, output.ToString(), error.ToString());
     }
 

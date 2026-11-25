@@ -94,6 +94,10 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `baseline verify` | Fails when a managed baseline file is missing, outdated, edited by hand, or unmanaged; see [Repository baseline](#repository-baseline). |
 | `baseline apply` | Creates and updates the managed baseline files; previews unless `--force` is given. |
 | `new` | Starts a repository from a language and features: writes the baseline files and their configuration and initializes Git; previews unless `--force` is given. See [Starting a repository](#starting-a-repository). |
+| `seed-drift` | Compares selected write-once files with the current catalog. See [Comparing write-once files](#comparing-write-once-files). |
+| `check-tracked` | Runs configured check lanes against nonempty Git-index selections. See [Repository checks](#repository-checks). |
+| `verify-commit-signatures --base <ref> --head <ref>` | Verifies the submitted commits with the protected base's SSH signers. See [Verifying signed commits](#verifying-signed-commits). |
+| `verify-publication` | Checks a staged policy, Git paths, and index blobs before publication. See [Publication guard](#publication-guard). |
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request; see [Roadmap publication](#roadmap-publication). |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
@@ -440,8 +444,8 @@ content the configuration produces. The tool names no forge, owner, or host; the
 Embedded profiles, all generic: `gitattributes` (LF policy, CRLF for `.cmd` and `.bat`, binary extensions),
 `editorconfig` (UTF-8, LF, final newline, indentation), `gitignore` (environment files, logs, temporary files, OS
 and IDE folders), `readme` (skeleton using the two variables), `pull-request-template`, `issue-form-bug`,
-`issue-form-feature` (YAML issue forms that GitHub and Forgejo read), and `pre-commit-diff-check` (a hook that runs
-`git diff --cached --check`).
+`issue-form-feature` (YAML issue forms that GitHub and Forgejo read), `pre-commit-diff-check` (staged whitespace),
+`pre-push-diff-check` (pushed tip whitespace), and `commit-msg-conventional` (Conventional Commits).
 
 `gitConfig` is an array of `{key, value, overwriteExisting}` repository-local Git settings, set with
 `git config --local` and never by editing `.git/config`. Only these keys are accepted: `init.defaultBranch`,
@@ -477,9 +481,18 @@ chosen language and features, writes the files and the configuration in one roll
 | `--root <path>` | The directory to create or fill. Defaults to the current directory. |
 | `--name <name>` | Repository name for the README. Defaults to the last segment of `--root`. |
 | `--branch <name>` | Default branch. Defaults to `main`. |
-| `--language <id>` | `none` (default) or `dotnet`. A language selects the content of a feature, such as the .NET ignore rules; it adds no file itself. |
+| `--language <id>` | `none` (default), `dotnet`, `shell`, or `nix`. A language selects content for the features you request. |
 | `--sdk-version <v>` | The .NET SDK version, such as `10.0.100`, that `global.json` pins and `Directory.Build.props` targets. Needed by the `global-json` and `build-props` features. |
-| `--feature <id>` | A feature to write; repeat the option to select several. Without it every feature except `signed-commits` is written, and the .NET features only with `--language dotnet`. |
+| `--feature <id>` | A feature in the exact selection. Repeat to select several. |
+| `--with <id>` | A feature to add to the language defaults. Repeat to add several. Use without `--feature`. |
+| `--license-source <path>` | Caller-owned template for `LICENSE`. |
+| `--security-source <path>` | Caller-owned template for `SECURITY.md`. |
+| `--codeowners-source <path>` | Caller-owned template for `CODEOWNERS`. |
+| `--owner <text>` | Value of `@@owner@@` in a policy source. |
+| `--copyright-holder <text>` | Value of `@@copyrightHolder@@` in a policy source. |
+| `--devcontainer-image <image>` | Caller-selected SHA-256 pinned image for the `devcontainer` feature. |
+| `--forge <kind>` | Selects `github` or `forgejo` pull request templates and issue forms. |
+| `--ci-policy <path>` | Caller-owned JSON policy for the selected forge's pull request workflow. Requires `--forge`. |
 | `--force` | Writes instead of previewing. |
 
 The features are `readme`, `gitignore`, `gitattributes`, `editorconfig`, `hooks` (a tracked `pre-commit` hook and
@@ -490,11 +503,176 @@ have no comment for the marker or are meant to be edited: `agents` (`AGENTS.md`)
 `nuget-config` makes nuget.org the only package source, with source mapping, and the only
 [audit source](https://learn.microsoft.com/nuget/concepts/auditing-packages#audit-sources), so the audit stays on
 nuget.org when a feed is added and NuGet reports `NU1905` when the source provides no vulnerability data.
-`signed-commits` is opt-in because signing needs a key that you
-provide, and commits fail without one. An unknown language or feature, an invalid name, an existing configuration
+The standard features for the language and `pre-commit` are selected by default. Use
+`--with signed-commits` to keep the defaults and enable signing. Supply a signing key before committing.
+Add `--with pre-push-hook` for a local whitespace check at each updated ref tip. It clears inherited Git environment
+variables and skips ref deletions. Hosted CI still performs the full verification. Add `--with commit-msg-hook` to run
+the Conventional Commit check using the repository's restored `ci` .NET tool. The scaffold installs
+selected hooks under the tracked `.githooks` directory and sets `core.hooksPath`.
+An unknown language or feature, an invalid name, an existing configuration
 file, or a conflict with an existing unmanaged file or different Git setting is reported on standard error and the
 command exits 1, in a preview too, with nothing written. The content is neutral: no owner, copyright holder, forge, or
 host is embedded.
+
+Each supplied policy source must be a UTF-8 file of at most 1 MiB. Relative source paths are resolved from the
+invocation directory. Alongside `@@repositoryName@@` and `@@defaultBranch@@`, sources can use `@@owner@@` and
+`@@copyrightHolder@@` with their corresponding options. Use `--owner=@your-team` for a handle with a leading `@`.
+A missing source or placeholder value aborts a preview or
+write before Git initialization. License, security, and code owner files are written once at the repository root. Source paths and
+rendering values are used for the scaffold operation and remain outside the generated baseline configuration.
+
+### Forge templates and CI
+
+Use `--forge github` or `--forge forgejo` to add the managed pull request template and bug and feature forms.
+They use the selected forge's directory and form syntax. Use `--ci-policy` to also generate its `workflows/ci.yml`.
+The workflow is written once and can be edited by the repository owner. `baseline apply` updates managed files.
+
+```sh
+dotnet repo new --root ./example --forge github --ci-policy ./ci-policy.json --force
+```
+
+Supply the runner label, a container image with a SHA-256 digest, the checkout and check action URLs, and a timeout
+from 1 to 360 minutes. The following uses example pins. Fill in the image and actions approved for your repository.
+The checkout action must support `persist-credentials: false`. The check action owns the repository's validation steps.
+
+```json
+{
+  "runner": "ubuntu-latest",
+  "image": "registry.example.test/ci/dotnet@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "githubActionOrigin": "https://github.com",
+  "checkoutAction": "https://github.com/example/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+  "checkAction": "https://github.com/example/ci/check@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+  "timeoutMinutes": 20
+}
+```
+
+Each action URL must end with a full lowercase commit SHA. For GitHub, set `githubActionOrigin` to the HTTPS
+authority used by your GitHub installation's native action resolver. Both URLs must match it. The generated workflow
+uses native `owner/repository[/path]@SHA` references and requests read-only contents.
+For Forgejo, omit `githubActionOrigin` and supply absolute HTTPS action URLs reachable from the runner.
+The generated check job runs on fork
+pull requests, which receive a read-only token and no secrets. Repository owners can add a separate workflow
+under their own permissions policy. [GitHub workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) ·
+[Forgejo workflow security](https://forgejo.org/docs/latest/user/actions/reference/)
+
+### Comparing write-once files
+
+```bash
+dotnet repo seed-drift --root ./example --feature agents --feature global-json --sdk-version 10.0.100
+```
+
+Repeat `--feature` to choose from `agents`, `global-json`, `nuget-config`, `build-props`, `check-runner`,
+`publication-guard`, and `signature-verifier`. Pass the expected `--sdk-version` for `global-json` and
+`build-props`. Use `--name` when the name for `AGENTS.md` differs from the
+directory name. The check compares UTF-8 files up to 1 MiB, ignoring CRLF versus LF and a leading UTF-8 byte order mark.
+It reports `current`, `different`, or `missing` with each selected path and returns 1 for differences, missing files,
+or input errors. It reads the files without changing them.
+
+### Repository checks
+
+Select `--with check-runner` to create the write-once `.config/sharedkernel-checks.json` file.
+When selecting an exact feature list with `--feature`, include a managed baseline feature such as `readme`.
+Add the checks the repository needs. Each `pathspec` uses Git's index pathspec rules, and each
+`command` array names an executable followed by literal arguments. A lane reads the selected
+tracked regular-file paths present in the checkout on standard input as NUL-delimited UTF-8. Lanes run in the Git work
+tree root. An empty selection fails before the corresponding executable runs.
+
+```json
+{
+  "lanes": [
+    { "pathspec": "docs/*.md", "command": ["./checks/verify-docs"] }
+  ]
+}
+```
+
+```sh
+dotnet repo check-tracked --strict
+```
+
+A lane returns zero on success, 77 for tooling unavailable, or another code for a failed check.
+Tool absence is a skip by default and a failure with `--strict`. The runner reports every lane
+and prints the executed and skipped counts. No executed lane is a failure. Use `--config` to
+select another repository-relative configuration. Run these commands only with check files and
+executables you trust.
+
+### Verifying signed commits
+
+Select `--with signature-verifier` to create a write-once `.config/allowed_signers` template.
+Add the repository's authorized SSH public keys using the
+[OpenSSH allowed signers format](https://man.openbsd.org/ssh-keygen#ALLOWED_SIGNERS), then commit the file
+to the protected branch before requiring the check.
+
+Run a trusted, pinned installation of the tool from a checkout with complete history. Give it the protected
+base and actual change head from the forge event. The event's head identifies the submitted commits and excludes the forge's synthetic
+test merge from the range.
+
+```sh
+dotnet repo verify-commit-signatures --base "$BASE_COMMIT" --head "$CHANGE_HEAD"
+```
+
+The tool reads the protected base's signer file directly from Git and verifies every commit in
+`base..head`. An empty range, an unavailable ref or signer file, or an unverified commit fails the check.
+Key lifetime options such as `valid-before` apply at the recorded commit time. The check requires
+Git with SSH signature support and OpenSSH 8.8 or newer for key lifetime options.
+
+### Publication guard
+
+Select `dotnet repo new --with publication-guard --force` to seed an owner-editable
+`.config/publication-guard.json` policy and an ignore entry for
+`.config/publication-guard.local.patterns`. Supply the repository's rules, then stage the
+policy and the files to check. Run `dotnet repo verify-publication` from the repository.
+Use `--root <directory>` to select a working tree.
+
+```json
+{
+  "version": 1,
+  "neverTrack": [":(top,glob)private/**"],
+  "patterns": [{"id": "example-mailbox", "regex": "@example[.]invalid"}],
+  "allowlist": [{"rule": "example-mailbox", "path": "docs/example.md", "reason": "Synthetic example"}]
+}
+```
+
+`neverTrack` uses Git pathspecs. Pattern rules use Git extended regular expressions and
+check staged bytes, paths, and symlink targets. The staged policy is excluded from its
+configured patterns so it can declare those patterns. A reasoned allowlist entry exempts
+one exact path from one named pattern. It has no effect on a forbidden path.
+
+Put additional private patterns in the ignored local file, one expression per line.
+Blank lines and lines starting with `#` after optional whitespace are ignored. The local
+file remains untracked. Its absence or an empty pattern set is reported as a skip.
+Diagnostics report the failing check without revealing pattern values, paths or matched
+content. The check covers the staged index. Publication reviews that include existing
+history need a separate history inspection.
+
+### Verifying the pinned .NET SDK
+
+With `--language dotnet`, select `--with sdk-bootstrap` to write `scripts/bootstrap-dotnet.sh`.
+It reads the SDK version from `global.json` and checks for the exact installed SDK by default.
+An exact feature selection needs an existing `global.json` or the `global-json` feature.
+The launcher's prerequisites are a POSIX shell and `jq`.
+
+```sh
+sh scripts/bootstrap-dotnet.sh
+sh scripts/bootstrap-dotnet.sh --install
+```
+
+Explicit installation uses Microsoft's release metadata to select the SDK and platform, checks
+the exact HTTPS URL and verifies the published SHA-512 before extraction. It uses `curl`,
+`sha512sum` or `shasum`, and `tar` or `unzip`. The verified host is installed side by side
+under `bin/sharedkernel-dotnet/<version>/<rid>`. Use the printed host path to select that SDK.
+[Microsoft .NET release metadata](https://github.com/dotnet/core/blob/main/release-notes/releases-index.json)
+
+### Shell, Nix and Dev Containers
+
+`--language shell` sets LF attributes for shell source and Bats files. `--language nix` ignores
+Nix build-result links while keeping source and lock files trackable. The .NET-only features
+require `--language dotnet`.
+
+Add `--with devcontainer` and pass a caller-selected image reference via `--devcontainer-image`.
+The image must use an `@sha256:` digest with 64 lowercase hexadecimal digits. Creation validates
+the feature and image together before writing files. The repository owns subsequent changes to
+the seeded `.devcontainer/devcontainer.json`. With an exact feature list, select a managed baseline
+feature as well.
 
 ## Roadmap publication
 
@@ -601,20 +779,22 @@ Pass `--` before the child executable so the wrapper forwards the remaining argu
 The child runs in the current directory and has a default timeout of 1,800 seconds. Use
 `--timeout-seconds` to change the timeout. The wrapper captures bounded output and returns the child's exit code.
 
-For a verbose test run, redirect both streams inside the trusted child to a file in an existing ext4 directory
-outside the private Podman directories. The wrapper limits each captured stream to 8,388,608 characters and stops
-the child when it exceeds that limit. Redirecting the wrapper's own output still applies the capture limit.
+The default console mode captures up to 8,388,608 characters from each child stream. It stops the
+child if either stream exceeds the limit. Redirecting the wrapper's own output keeps this console limit.
+For verbose runs, supply an existing caller-owned absolute directory outside the private engine
+paths and choose a positive byte limit for each file.
 
-```bash
-test_log=$(mktemp /absolute/path/on/ext4/example-tests.log.XXXXXXXX)
-printf 'Test log: %s\n' "$test_log"
+```sh
 dotnet repo run-isolated-podman --image-store /absolute/path/to/overlay/store \
-    -- bash -c 'log=$1; shift; exec "$@" >"$log" 2>&1' bash "$test_log" \
-    dotnet test --project tests/Example.Tests
+    --log-directory /absolute/path/to/test-logs --max-log-bytes 67108864 \
+    -- dotnet test --project tests/Example.Tests
 ```
 
-The `exec` in this example keeps the test process under the wrapper's timeout and preserves its exit status.
-The log remains available after the wrapper cleans up its private Podman directories.
+The wrapper creates new `stdout.log` and `stderr.log` files and copies the child streams as bytes.
+Existing files are preserved and a collision fails before the engine starts. Engine diagnostics still
+go to the wrapper's standard error. Partial logs survive child failure, timeout, cancellation, or
+output overflow. A write failure or a stream that exceeds its byte limit stops the child and cleans
+up the verified engine. Reserve space for two files at the chosen limit.
 
 The wrapper verifies engine ownership and DNS before the child starts. After the child exits or is
 canceled, it verifies ownership again, removes resources in the private engine, and checks empty

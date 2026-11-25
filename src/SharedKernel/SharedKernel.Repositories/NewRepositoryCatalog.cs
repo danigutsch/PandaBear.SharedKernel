@@ -4,11 +4,16 @@ namespace SharedKernel.Repositories;
 internal static class NewRepositoryCatalog
 {
     /// <summary>Builds the baseline for the selected <paramref name="features"/>, in catalog order whatever order they were chosen in.</summary>
-    public static BaselineConfiguration Build(string repositoryName, string defaultBranch, RepositoryLanguage language, IReadOnlyCollection<RepositoryFeature> features)
+    public static BaselineConfiguration Build(
+        string repositoryName,
+        string defaultBranch,
+        RepositoryLanguage language,
+        IReadOnlyCollection<RepositoryFeature> features,
+        ForgeKind? forge)
     {
         List<BaselineFileConfiguration> files = [];
         List<BaselineGitConfigurationEntry> settings = [];
-        BaselineHooksConfiguration? hooks = null;
+        List<BaselineHookConfiguration> hooks = [];
         foreach (var feature in RepositoryFeature.All.Where(features.Contains))
         {
             if (feature == RepositoryFeature.Readme)
@@ -17,11 +22,18 @@ internal static class NewRepositoryCatalog
             }
             else if (feature == RepositoryFeature.Gitignore)
             {
-                files.Add(new BaselineFileConfiguration(".gitignore", Profile: language == RepositoryLanguage.Dotnet ? "gitignore-dotnet" : "gitignore"));
+                var profile = language switch
+                {
+                    _ when language == RepositoryLanguage.Dotnet => "gitignore-dotnet",
+                    _ when language == RepositoryLanguage.Nix => "gitignore-nix",
+                    _ => "gitignore"
+                };
+                files.Add(new BaselineFileConfiguration(".gitignore", Profile: profile));
             }
             else if (feature == RepositoryFeature.Gitattributes)
             {
-                files.Add(new BaselineFileConfiguration(".gitattributes", Profile: "gitattributes"));
+                files.Add(new BaselineFileConfiguration(".gitattributes",
+                    Profile: language == RepositoryLanguage.Shell ? "gitattributes-shell" : "gitattributes"));
             }
             else if (feature == RepositoryFeature.Editorconfig)
             {
@@ -29,7 +41,15 @@ internal static class NewRepositoryCatalog
             }
             else if (feature == RepositoryFeature.Hooks)
             {
-                hooks = new BaselineHooksConfiguration([new BaselineHookConfiguration("pre-commit", Profile: "pre-commit-diff-check")]);
+                hooks.Add(new BaselineHookConfiguration("pre-commit", Profile: "pre-commit-diff-check"));
+            }
+            else if (feature == RepositoryFeature.PrePushHook)
+            {
+                hooks.Add(new BaselineHookConfiguration("pre-push", Profile: "pre-push-diff-check"));
+            }
+            else if (feature == RepositoryFeature.CommitMessageHook)
+            {
+                hooks.Add(new BaselineHookConfiguration("commit-msg", Profile: "commit-msg-conventional"));
             }
             else if (feature == RepositoryFeature.GitConfig)
             {
@@ -49,6 +69,19 @@ internal static class NewRepositoryCatalog
                     new BaselineGitConfigurationEntry("gpg.format", "ssh"),
                 ]);
             }
+            else if (feature == RepositoryFeature.SdkBootstrap)
+            {
+                files.Add(new BaselineFileConfiguration("scripts/bootstrap-dotnet.sh", Profile: "sdk-bootstrap"));
+            }
+        }
+
+        if (forge is { } selectedForge)
+        {
+            var directory = ForgeCiProfile.GetDirectory(selectedForge);
+            var suffix = selectedForge == ForgeKind.Forgejo ? "-forgejo" : string.Empty;
+            files.Add(new BaselineFileConfiguration($"{directory}/pull_request_template.md", Profile: "pull-request-template"));
+            files.Add(new BaselineFileConfiguration($"{directory}/ISSUE_TEMPLATE/bug.yml", Profile: "issue-form-bug" + suffix));
+            files.Add(new BaselineFileConfiguration($"{directory}/ISSUE_TEMPLATE/feature.yml", Profile: "issue-form-feature" + suffix));
         }
 
         return new BaselineConfiguration(
@@ -56,6 +89,6 @@ internal static class NewRepositoryCatalog
             files.Count == 0 ? null : files,
             defaultBranch,
             settings.Count == 0 ? null : settings,
-            hooks);
+            hooks.Count == 0 ? null : new BaselineHooksConfiguration(hooks));
     }
 }

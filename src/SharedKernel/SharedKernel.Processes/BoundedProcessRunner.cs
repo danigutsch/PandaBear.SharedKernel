@@ -147,51 +147,106 @@ public sealed class BoundedProcessRunner : IProcessRunner
         int maxErrorBytes,
         CancellationToken cancellationToken)
     {
+        using MemoryStream output = new();
+        using MemoryStream error = new();
+        var exitCode = await RunBytes(startInfo, standardInput, output, maxOutputBytes, error, maxErrorBytes, cancellationToken).ConfigureAwait(false);
+        return new CapturedProcessOutput(exitCode, output.ToArray(), Encoding.UTF8.GetString(error.GetBuffer(), 0, (int)error.Length));
+    }
+
+    /// <summary>
+    /// Runs a direct child process and copies its output to two caller-owned streams. Both streams are drained
+    /// concurrently. A transfer failure, output above a limit, a timeout, or cancellation ends the process tree.
+    /// </summary>
+    /// <remarks>
+    /// The destinations must honor cancellation during asynchronous writes. The runner waits for any in-flight
+    /// writes before it returns so that the caller can safely reuse or dispose each destination.
+    /// </remarks>
+    /// <param name="startInfo">The process to run. Its <see cref="ProcessStartInfo.FileName"/> is a fully qualified path.</param>
+    /// <param name="output">A writable stream for standard output that remains open after the run.</param>
+    /// <param name="maxOutputBytes">The most standard output bytes to write, including on failure.</param>
+    /// <param name="error">A separate writable stream for standard error that remains open after the run.</param>
+    /// <param name="maxErrorBytes">The most standard error bytes to write, including on failure.</param>
+    /// <param name="cancellationToken">Cancels the run and ends the process tree.</param>
+    /// <returns>The child process exit code.</returns>
+    /// <exception cref="ArgumentNullException">A required argument is null.</exception>
+    /// <exception cref="ArgumentException">The executable is relative or the output streams are not separate and writable.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">A limit is not positive.</exception>
+    /// <exception cref="InvalidOperationException">The process could not start, exceeded a limit, or left a pipe open.</exception>
+    /// <exception cref="IOException">A stream transfer failed.</exception>
+    /// <exception cref="TimeoutException">The process runs longer than the time limit.</exception>
+    /// <exception cref="OperationCanceledException">The caller canceled the run.</exception>
+    public Task<int> RunToStreams(
+        ProcessStartInfo startInfo,
+        Stream output,
+        long maxOutputBytes,
+        Stream error,
+        long maxErrorBytes,
+        CancellationToken cancellationToken) =>
+        RunBytes(startInfo, null, output, maxOutputBytes, error, maxErrorBytes, cancellationToken);
+
+    private async Task<int> RunBytes(
+        ProcessStartInfo startInfo,
+        ReadOnlyMemory<byte>? standardInput,
+        Stream output,
+        long maxOutputBytes,
+        Stream error,
+        long maxErrorBytes,
+        CancellationToken cancellationToken)
+    {
         ArgumentNullException.ThrowIfNull(startInfo);
+        ArgumentNullException.ThrowIfNull(output);
+        ArgumentNullException.ThrowIfNull(error);
         if (!Path.IsPathFullyQualified(startInfo.FileName))
         {
             throw new ArgumentException("The executable must be an absolute path.", nameof(startInfo));
+        }
+
+        if (!output.CanWrite || !error.CanWrite || ReferenceEquals(output, error))
+        {
+            throw new ArgumentException("Standard output and standard error require separate writable streams.");
         }
 
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxOutputBytes);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxErrorBytes);
         cancellationToken.ThrowIfCancellationRequested();
 
-        startInfo.RedirectStandardInput = true;
+        startInfo.RedirectStandardInput |= standardInput.HasValue;
         startInfo.RedirectStandardOutput = true;
         startInfo.RedirectStandardError = true;
         startInfo.UseShellExecute = false;
 
         using var timeout = new CancellationTokenSource(_timeout);
-        using var overflow = new CancellationTokenSource();
-        using var execution = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token, overflow.Token);
+        using var failureSignal = new CancellationTokenSource();
+        using var execution = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token, failureSignal.Token);
         using var process = Start(startInfo);
-        var streams = ProcessByteStreams.Start(
-            process.StandardInput.BaseStream,
-            standardInput,
+        var streams = new ProcessByteStreams(
+            startInfo.RedirectStandardInput ? process.StandardInput.BaseStream : null,
+            standardInput.GetValueOrDefault(),
             process.StandardOutput.BaseStream,
+            output,
             maxOutputBytes,
             process.StandardError.BaseStream,
+            error,
             maxErrorBytes,
-            overflow,
+            failureSignal.CancelAsync,
             execution.Token);
         await using var streamsScope = streams.ConfigureAwait(false);
         var finished = false;
         try
         {
             await process.WaitForExitAsync(execution.Token).ConfigureAwait(false);
-            (byte[] Output, byte[] Error) bytes;
             try
             {
-                bytes = await streams.Completed(DrainTimeout, execution.Token).ConfigureAwait(false);
+                await streams.Completed(DrainTimeout, execution.Token).ConfigureAwait(false);
             }
             catch (TimeoutException)
             {
                 throw new InvalidOperationException("The process left its output open after it exited.");
             }
 
+            streams.ThrowIfFailed();
             finished = true;
-            return new CapturedProcessOutput(process.ExitCode, bytes.Output, Encoding.UTF8.GetString(bytes.Error));
+            return process.ExitCode;
         }
         catch (OperationCanceledException exception)
         {
@@ -200,11 +255,7 @@ public sealed class BoundedProcessRunner : IProcessRunner
                 throw new OperationCanceledException(exception.Message, exception, cancellationToken);
             }
 
-            if (overflow.IsCancellationRequested)
-            {
-                throw new InvalidOperationException("The process wrote more output than the limit allows.");
-            }
-
+            streams.ThrowIfFailed();
             throw new TimeoutException(_timeoutMessage);
         }
         finally

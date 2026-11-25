@@ -108,3 +108,6 @@ static SharedKernel.DevContainers.PodmanDnsHost.operator !=(SharedKernel.DevCont
 static SharedKernel.DevContainers.PodmanDnsHost.operator ==(SharedKernel.DevContainers.PodmanDnsHost? left, SharedKernel.DevContainers.PodmanDnsHost? right) -> bool
 static SharedKernel.DevContainers.PodmanDnsPreflight.Run(SharedKernel.DevContainers.PodmanDnsHost! host, bool quiet, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 static SharedKernel.DevContainers.PodmanDnsPreflight.RunProcess(System.Diagnostics.ProcessStartInfo! startInfo, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.DevContainers.PodmanCommandResult!>!
+SharedKernel.DevContainers.DevcontainerImageConfiguration
+static SharedKernel.DevContainers.DevcontainerImageConfiguration.IsDigestPinned(string? image) -> bool
+static SharedKernel.DevContainers.DevcontainerImageConfiguration.TryCreate(string! name, string? image, out string? configuration) -> bool
