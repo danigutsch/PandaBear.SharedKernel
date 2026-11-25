@@ -61,7 +61,7 @@ public static class VersioningCommandLineTests
     [InlineData("validate-candidate", "--version <version>", "--baseline-version <version>", "--aot", "--repo-root <path>")]
     [InlineData("consume-candidate", "--candidate <path>", "--candidate-directory <path>", "--output <path>", "--aot", "--repo-root <path>")]
     [InlineData("consume-packages", "--feed <path> (REQUIRED)", "--version <version> (REQUIRED)", "--aot", "--repo-root <path>")]
-    [InlineData("verify-consumer", "<command>...", "--candidate <file> (REQUIRED)", "--solution <file>", "--output <file>", "--repo-root <path>")]
+    [InlineData("verify-consumer", "<command>...", "--candidate <file> (REQUIRED)", "--solution <file>", "--output <file>", "--recipe <file>", "--recipe-input <name=value>", "--repo-root <path>")]
     public static async Task Command_help_lists_arguments_and_options_on_standard_output(string command, params string[] expected)
     {
         // Act
@@ -120,6 +120,8 @@ public static class VersioningCommandLineTests
     [InlineData("Options '--candidate' and '--candidate-directory' cannot be combined.", "consume-candidate", "--candidate", "candidate.json", "--candidate-directory", "candidates")]
     [InlineData("Option '--candidate' is required.", "verify-consumer", "--", "dotnet", "test")]
     [InlineData("Required argument 'command' missing for command: 'verify-consumer'.", "verify-consumer", "--candidate", "candidate.json")]
+    [InlineData("Option '--recipe' cannot be combined with a command.", "verify-consumer", "--candidate", "candidate.json", "--recipe", "steps.json", "--", "dotnet", "test")]
+    [InlineData("Option '--recipe-input' requires '--recipe'.", "verify-consumer", "--candidate", "candidate.json", "--recipe-input", "input=value", "--", "dotnet", "test")]
     public static async Task Invalid_command_lines_are_parse_errors_on_standard_error(string expectedError, params string[] args)
     {
         // Act
@@ -148,6 +150,7 @@ public static class VersioningCommandLineTests
     [InlineData("consume-candidate", "consume-candidate", "--candidate-directory", "artifacts/candidate", "--aot")]
     [InlineData("consume-packages", "consume-packages", "--feed", "packages", "--version", "1.2.3", "--aot", "--repo-root", "/repo")]
     [InlineData("verify-consumer", "verify-consumer", "--candidate", "candidate.json", "--solution", "App.slnx", "--output", "evidence.json", "--repo-root", "/repo", "--", "dotnet", "test", "--solution", "App.slnx")]
+    [InlineData("verify-consumer", "verify-consumer", "--candidate", "candidate.json", "--recipe", "steps.json")]
     public static void Command_lines_dispatch_to_their_command(string command, params string[] args)
     {
         // Act

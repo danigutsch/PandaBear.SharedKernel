@@ -36,6 +36,10 @@ var output = await runner.Run(startInfo, forward: null, cancellationToken);
   standard error text. It writes the given bytes to standard input and closes it, takes a byte limit for each output
   stream, and ends the process tree above a limit, after the time limit, or on cancellation, which it rethrows with the
   caller's token.
+  `RunToStreams` copies stdout and stderr concurrently to separate caller-owned streams using a byte
+  limit for each, without collecting the output in memory. Transfer errors end the process tree.
+  Partial output remains in the destination streams, which stay open for the caller. Each stream must
+  honor asynchronous cancellation because the runner waits for writes to finish before returning.
 - `GitStartInfo.Create(workingDirectory, arguments)` describes a `git` run: `git` from an absolute `PATH` directory (or
   the `IExecutableResolver` given), the arguments one by one without a shell, both output streams redirected,
   `GIT_TERMINAL_PROMPT=0`, and none of the host's forge tokens, `SSH_ASKPASS`, `SSH_ASKPASS_REQUIRE`, or `GIT_*` variables,

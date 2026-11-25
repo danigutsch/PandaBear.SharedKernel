@@ -168,6 +168,10 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
     public Task<CommandLineInvocation> Verify(string[] command, CancellationToken ct, params string[] options) =>
         VersioningCommandLineRunner.Invoke(["verify-consumer", "--candidate", Manifest, "--repo-root", Root, .. options, "--", .. command], ct);
 
+    /// <summary>Runs the verifier with an explicitly named consumer recipe.</summary>
+    public Task<CommandLineInvocation> VerifyRecipe(string recipe, CancellationToken ct, params string[] options) =>
+        VersioningCommandLineRunner.Invoke(["verify-consumer", "--candidate", Manifest, "--repo-root", Root, "--recipe", recipe, .. options], ct);
+
     /// <summary>
     /// Deletes the consumer repository and the candidate directory.
     /// </summary>

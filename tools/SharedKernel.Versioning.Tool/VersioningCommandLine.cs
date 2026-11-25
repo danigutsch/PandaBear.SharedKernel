@@ -613,11 +613,21 @@ internal static class VersioningCommandLine
             Description = "Evidence file to write, never the candidate manifest. Default: " + ConsumerVerifier.DefaultOutput + " in the repository root.",
             HelpName = "file",
         };
+        var recipe = new Option<string>("--recipe")
+        {
+            Description = "Committed JSON command recipe inside the consumer repository.",
+            HelpName = "file",
+        };
+        var recipeInput = new Option<string[]>("--recipe-input")
+        {
+            Description = "String value for a named recipe input. Repeat the option for each input.",
+            HelpName = "name=value",
+        };
         var repoRoot = RepoRootOption();
         var childCommand = new Argument<string[]>("command")
         {
             Description = "Command, after --, that restores, builds, and tests the consumer in the clone, such as dotnet test.",
-            Arity = ArgumentArity.OneOrMore,
+            Arity = ArgumentArity.ZeroOrMore,
         };
         var command = new Command(
             "verify-consumer",
@@ -626,9 +636,27 @@ internal static class VersioningCommandLine
             candidate,
             solution,
             evidence,
+            recipe,
+            recipeInput,
             repoRoot,
             childCommand,
         };
+        command.Validators.Add(result =>
+        {
+            var hasRecipe = result.GetResult(recipe) is not null;
+            var hasCommand = result.GetValue(childCommand) is { Length: > 0 };
+            if (!hasRecipe && result.GetResult(recipeInput) is not null)
+            {
+                result.AddError("Option '--recipe-input' requires '--recipe'.");
+            }
+
+            if (hasRecipe == hasCommand)
+            {
+                result.AddError(hasRecipe
+                    ? "Option '--recipe' cannot be combined with a command."
+                    : "Required argument 'command' missing for command: 'verify-consumer'. Specify a command or --recipe.");
+            }
+        });
         SetAction(command, (parseResult, output, ct) =>
         {
             var root = Path.GetFullPath(parseResult.GetRequiredValue(repoRoot));
@@ -638,7 +666,11 @@ internal static class VersioningCommandLine
                     Path.GetFullPath(parseResult.GetRequiredValue(candidate)),
                     parseResult.GetValue(solution) is { } path ? Path.GetFullPath(path) : null,
                     Path.GetFullPath(parseResult.GetValue(evidence) ?? Path.Combine(root, ConsumerVerifier.DefaultOutput)),
-                    parseResult.GetRequiredValue(childCommand)),
+                    parseResult.GetValue(childCommand) ?? [])
+                {
+                    Recipe = parseResult.GetValue(recipe),
+                    RecipeInputs = parseResult.GetValue(recipeInput) ?? [],
+                },
                 output,
                 parseResult.InvocationConfiguration.Error,
                 ct);

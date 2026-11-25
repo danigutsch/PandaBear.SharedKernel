@@ -319,6 +319,10 @@ SharedKernel.Versioning.ConsumerVerificationOptions.Deconstruct(out string! Repo
 SharedKernel.Versioning.ConsumerVerificationOptions.Equals(SharedKernel.Versioning.ConsumerVerificationOptions? other) -> bool
 SharedKernel.Versioning.ConsumerVerificationOptions.Output.get -> string!
 SharedKernel.Versioning.ConsumerVerificationOptions.Output.init -> void
+SharedKernel.Versioning.ConsumerVerificationOptions.Recipe.get -> string?
+SharedKernel.Versioning.ConsumerVerificationOptions.Recipe.init -> void
+SharedKernel.Versioning.ConsumerVerificationOptions.RecipeInputs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Versioning.ConsumerVerificationOptions.RecipeInputs.init -> void
 SharedKernel.Versioning.ConsumerVerificationOptions.RepoRoot.get -> string!
 SharedKernel.Versioning.ConsumerVerificationOptions.RepoRoot.init -> void
 SharedKernel.Versioning.ConsumerVerificationOptions.Solution.get -> string?

@@ -1,72 +1,51 @@
+using System.Runtime.ExceptionServices;
+
 namespace SharedKernel.Processes;
 
 /// <summary>
-/// Writes the standard input of a started process and reads its standard output and standard error as bytes, each up to
-/// a limit. Disposing waits for all three, so a scope that owns this object cannot end while a stream still uses the
-/// process or its token.
+/// Transfers the byte streams of a running process. An output overrun or transfer failure signals cancellation
+/// immediately, including while the child waits with a full pipe. Disposing waits for all transfers to end.
 /// </summary>
 internal sealed class ProcessByteStreams : IAsyncDisposable
 {
-    private readonly Task _input;
-    private readonly Task<byte[]> _output;
-    private readonly Task<byte[]> _error;
-    private readonly CancellationTokenSource _overflow;
+    private readonly Func<Task> _cancelExecution;
+    private readonly Task _transfers;
+    private ExceptionDispatchInfo? _failure;
 
-    private ProcessByteStreams(Task input, Task<byte[]> output, Task<byte[]> error, CancellationTokenSource overflow)
-    {
-        _input = input;
-        _output = output;
-        _error = error;
-        _overflow = overflow;
-    }
-
-    /// <summary>
-    /// Starts the three transfers. Writing <paramref name="bytes"/> closes standard input; output over its limit cancels
-    /// <paramref name="overflow"/>, which ends the run.
-    /// </summary>
-    public static ProcessByteStreams Start(
-        Stream input,
+    /// <summary>Starts transferring both output pipes and optionally writing and closing standard input.</summary>
+    public ProcessByteStreams(
+        Stream? input,
         ReadOnlyMemory<byte> bytes,
+        Stream standardOutput,
         Stream output,
-        int maxOutputBytes,
+        long maxOutputBytes,
+        Stream standardError,
         Stream error,
-        int maxErrorBytes,
-        CancellationTokenSource overflow,
-        CancellationToken cancellationToken) =>
-        new(
-            Write(input, bytes, cancellationToken),
-            Read(output, maxOutputBytes, overflow, cancellationToken),
-            Read(error, maxErrorBytes, overflow, cancellationToken),
-            overflow);
-
-    /// <summary>Waits until all three transfers have ended, or until <paramref name="drainTimeout"/> after the call.</summary>
-    /// <exception cref="TimeoutException">A stream stayed open longer than <paramref name="drainTimeout"/>.</exception>
-    /// <exception cref="InvalidOperationException">A stream went over its limit, however late: its bytes are then incomplete.</exception>
-    public async Task<(byte[] Output, byte[] Error)> Completed(TimeSpan drainTimeout, CancellationToken cancellationToken)
+        long maxErrorBytes,
+        Func<Task> cancelExecution,
+        CancellationToken cancellationToken)
     {
-        await Task.WhenAll(_input, _output, _error).WaitAsync(drainTimeout, cancellationToken).ConfigureAwait(false);
-        return _overflow.IsCancellationRequested
-            ? throw new InvalidOperationException("The process wrote more output than the limit allows.")
-            : (await _output.ConfigureAwait(false), await _error.ConfigureAwait(false));
+        _cancelExecution = cancelExecution;
+        _transfers = Task.WhenAll(
+            input is null ? Task.CompletedTask : WriteInput(input, bytes, cancellationToken),
+            Copy(standardOutput, output, maxOutputBytes, cancellationToken),
+            Copy(standardError, error, maxErrorBytes, cancellationToken));
     }
+
+    /// <summary>Waits until the transfers have ended, up to the drain timeout.</summary>
+    public Task Completed(TimeSpan drainTimeout, CancellationToken cancellationToken) =>
+        _transfers.WaitAsync(drainTimeout, cancellationToken);
+
+    /// <summary>Throws the first truncation or transfer failure with its original stack.</summary>
+    public void ThrowIfFailed() => Volatile.Read(ref _failure)?.Throw();
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        foreach (var transfer in new Task[] { _input, _output, _error })
-        {
-            try
-            {
-                await transfer.ConfigureAwait(false);
-            }
-            catch (Exception exception) when (exception is OperationCanceledException or IOException or ObjectDisposedException)
-            {
-                // Cancelled with the run, or the pipe closed.
-            }
-        }
+        await _transfers.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
     }
 
-    private static async Task Write(Stream stream, ReadOnlyMemory<byte> bytes, CancellationToken cancellationToken)
+    private async Task WriteInput(Stream stream, ReadOnlyMemory<byte> bytes, CancellationToken cancellationToken)
     {
         try
         {
@@ -82,24 +61,43 @@ internal sealed class ProcessByteStreams : IAsyncDisposable
         {
             // The child exited without reading all its input; its exit code reports what happened.
         }
+        catch (Exception exception) when (!cancellationToken.IsCancellationRequested)
+        {
+            await Fail(exception).ConfigureAwait(false);
+        }
     }
 
-    private static async Task<byte[]> Read(Stream stream, int limit, CancellationTokenSource overflow, CancellationToken cancellationToken)
+    private async Task Copy(Stream source, Stream destination, long remaining, CancellationToken cancellationToken)
     {
-        using MemoryStream content = new();
-        var buffer = new byte[8192];
-        int read;
-        while ((read = await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) > 0)
+        try
         {
-            if (read > limit - content.Length)
+            var buffer = new byte[8192];
+            int read;
+            while ((read = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) > 0)
             {
-                await overflow.CancelAsync().ConfigureAwait(false);
-                return [];
+                var count = (int)Math.Min(read, remaining);
+                if (count > 0)
+                {
+                    await destination.WriteAsync(buffer.AsMemory(0, count), cancellationToken).ConfigureAwait(false);
+                    remaining -= count;
+                }
+                if (read > count)
+                {
+                    throw new InvalidOperationException("The process wrote more output than the limit allows.");
+                }
             }
-
-            await content.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
         }
+        catch (Exception exception) when (!cancellationToken.IsCancellationRequested)
+        {
+            await Fail(exception).ConfigureAwait(false);
+        }
+    }
 
-        return content.ToArray();
+    private async Task Fail(Exception exception)
+    {
+        if (Interlocked.CompareExchange(ref _failure, ExceptionDispatchInfo.Capture(exception), null) is null)
+        {
+            await _cancelExecution().ConfigureAwait(false);
+        }
     }
 }

@@ -634,6 +634,22 @@ internal static class RepoConfigCommandLine
             Description = "Existing absolute directory for private transient engine state. The graph and volumes stay under TMPDIR.",
             HelpName = "directory",
         };
+        Option<string?> logDirectory = new("--log-directory")
+        {
+            Description = "Existing absolute directory for new stdout.log and stderr.log files.",
+            HelpName = "directory",
+        };
+        Option<long> maxLogBytes = new("--max-log-bytes")
+        {
+            Description = "Maximum bytes written to each child log. Required with --log-directory.",
+        };
+        maxLogBytes.Validators.Add(result =>
+        {
+            if (result.GetValueOrDefault<long>() <= 0)
+            {
+                result.AddError("--max-log-bytes must be a positive whole number.");
+            }
+        });
         Argument<string[]> child = new("command")
         {
             Arity = ArgumentArity.OneOrMore,
@@ -641,9 +657,16 @@ internal static class RepoConfigCommandLine
         };
         Command command = new(IsolatedPodmanCommandName, "Run a test command with its own local rootless Podman engine.")
         {
-            imageStore, timeout, networkHelper, runtimeParent, child
+            imageStore, timeout, networkHelper, runtimeParent, logDirectory, maxLogBytes, child
         };
-        SetGuardedAction(command, (parseResult, output, error, ct) =>
+        command.Validators.Add(result =>
+        {
+            if ((result.GetResult(logDirectory) is null) != (result.GetResult(maxLogBytes) is null))
+            {
+                result.AddError("--log-directory and --max-log-bytes must be supplied together.");
+            }
+        });
+        SetGuardedAction(command, async (parseResult, output, error, ct) =>
         {
             var arguments = parseResult.GetRequiredValue(child);
             var executable = PathExecutableResolver.Default.Resolve(arguments[0]);
@@ -652,9 +675,19 @@ internal static class RepoConfigCommandLine
             {
                 startInfo.ArgumentList.Add(argument);
             }
-            var runner = environment.IsolatedPodmanCommandRunner
-                ?? new BoundedProcessRunner(TimeSpan.FromSeconds(parseResult.GetRequiredValue(timeout)));
-            return IsolatedPodman.Run(
+            var duration = TimeSpan.FromSeconds(parseResult.GetRequiredValue(timeout));
+            if (parseResult.GetValue(logDirectory) is not { } directory)
+            {
+                return await Run(environment.IsolatedPodmanCommandRunner ?? new BoundedProcessRunner(duration)).ConfigureAwait(false);
+            }
+
+            ct.ThrowIfCancellationRequested();
+            var logPath = PodmanFileLogRunner.ResolveDirectory(directory);
+            using var stdout = PodmanFileLogRunner.OpenLog(Path.Combine(logPath, "stdout.log"));
+            using var stderr = PodmanFileLogRunner.OpenLog(Path.Combine(logPath, "stderr.log"));
+            return await Run(new PodmanFileLogRunner(duration, stdout, stderr, parseResult.GetRequiredValue(maxLogBytes))).ConfigureAwait(false);
+
+            Task<int> Run(IProcessRunner runner) => IsolatedPodman.Run(
                 environment.PodmanHost ?? PodmanDnsHost.Current(),
                 parseResult.GetRequiredValue(imageStore),
                 parseResult.GetRequiredValue(networkHelper),
