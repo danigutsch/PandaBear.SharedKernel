@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Lists the files that the Git index of a repository tracks, through <see cref="GitProcess"/>.

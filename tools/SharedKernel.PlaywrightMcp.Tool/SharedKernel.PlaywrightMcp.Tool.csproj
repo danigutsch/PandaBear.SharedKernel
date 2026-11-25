@@ -6,7 +6,7 @@
         <PackageId>PandaBear.SharedKernel.PlaywrightMcp.Tool</PackageId>
         <ToolCommandName>browsermcp</ToolCommandName>
         <Description>Reusable Playwright MCP browser automation tool.</Description>
-        <RootNamespace>PandaBear.PlaywrightMcp.Tool</RootNamespace>
+        <RootNamespace>SharedKernel.PlaywrightMcp.Tool</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>

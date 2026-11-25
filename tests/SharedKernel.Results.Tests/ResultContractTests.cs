@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Tests that Result and Result&lt;T&gt; satisfy the shared <see cref="IResultLike{TSelf}"/> contract generically.

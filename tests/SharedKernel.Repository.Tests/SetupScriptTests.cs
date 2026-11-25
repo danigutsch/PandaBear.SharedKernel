@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the setup script that restores and builds the solution.</summary>
 public sealed class SetupScriptTests

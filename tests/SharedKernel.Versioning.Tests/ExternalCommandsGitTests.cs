@@ -1,6 +1,6 @@
-using PandaBear.Processes.Tests;
+using SharedKernel.Processes.Tests;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Tests that every <c>git</c> run of the versioning engine (release history, candidate validation, and consumer

@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Renders the pager for tests.</summary>
 internal static class PagerRendering

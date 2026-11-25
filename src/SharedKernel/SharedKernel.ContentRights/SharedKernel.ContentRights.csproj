@@ -4,7 +4,6 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.ContentRights</PackageId>
         <Description>Content license declarations, original sources and reusable public attribution.</Description>
-        <RootNamespace>PandaBear.ContentRights</RootNamespace>
         <PackageTags>content;license;attribution;photos;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

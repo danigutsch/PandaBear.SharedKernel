@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Sops.Tests;
+namespace SharedKernel.Secrets.Sops.Tests;
 
 /// <summary>Tests <c>sops edit</c> through the adapter with a fake process runner.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

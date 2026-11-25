@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// In-memory test context that maps FirstMessagingBusinessRecord to first_messaging.first_records and applies every supplied model configuration.

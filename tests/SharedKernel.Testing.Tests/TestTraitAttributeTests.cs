@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the typed trait attributes other than <see cref="TestScopeAttribute" />.</summary>
 [TestScope(TestScope.Unit)]

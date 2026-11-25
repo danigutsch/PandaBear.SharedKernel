@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Provides serialization metadata for document workflow storage.</summary>
 [JsonSerializable(typeof(DocumentRevisionPayload))]

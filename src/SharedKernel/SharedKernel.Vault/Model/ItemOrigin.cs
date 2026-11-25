@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Where a vault item was read from.</summary>
 /// <param name="Provider">Source vault provider, for example <c>keeper</c> or <c>bitwarden</c>.</param>

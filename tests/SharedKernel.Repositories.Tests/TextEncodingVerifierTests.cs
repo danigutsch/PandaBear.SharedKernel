@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Engine tests split from the command-line tests in TextEncodingProcessTests.</summary>
 public sealed class TextEncodingVerifierTests

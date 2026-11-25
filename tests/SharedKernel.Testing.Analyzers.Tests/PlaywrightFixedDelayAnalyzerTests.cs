@@ -1,9 +1,9 @@
 using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using static PandaBear.Testing.Analyzers.Tests.PlaywrightFixedDelayTestSource;
+using static SharedKernel.Testing.Analyzers.Tests.PlaywrightFixedDelayTestSource;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the opt-in diagnostic for fixed Playwright page and frame delays.</summary>
 public sealed class PlaywrightFixedDelayAnalyzerTests

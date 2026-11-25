@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>
 /// Tests the RFC 4180 writer: CRLF records, quoting only where reading needs it, doubled quotes, and the formula-injection guard that

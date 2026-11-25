@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Caller-localized labels for rendering photo credits.</summary>
 /// <param name="Creator">The label for identified creators.</param>

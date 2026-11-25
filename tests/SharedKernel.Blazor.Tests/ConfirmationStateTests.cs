@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the "are you sure" state of a list where at most one row waits for confirmation.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

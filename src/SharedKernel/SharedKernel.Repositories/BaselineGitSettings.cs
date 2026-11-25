@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The Git settings and hook names that the baseline may manage. Anything that can run code or redirect

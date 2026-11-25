@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>An unvalidated button of a section.</summary>
 /// <typeparam name="TLinkInput">The application's raw link target, as an editor enters it; its context turns it into a validated target.</typeparam>

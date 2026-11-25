@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Tests how the resolver follows GitHub issue references across transfers and migrations.</summary>
 public sealed class GitHubIssueReferenceResolverTests

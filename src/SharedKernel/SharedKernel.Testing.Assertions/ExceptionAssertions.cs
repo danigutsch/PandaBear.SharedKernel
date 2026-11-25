@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PandaBear.Testing.Assertions;
+namespace SharedKernel.Testing.Assertions;
 
 /// <summary>
 /// Shared assertions for exception patterns used by reflection-heavy tests.

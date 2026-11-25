@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures notification publish generation overhead for explicitly ordered versus unordered handlers.
@@ -29,12 +29,12 @@ public class NotificationPublishGenerationBenchmarks
             NotificationPublishBenchmarkSourceFactory.CreateGenerationSource(
                 HandlerCount,
                 NotificationPublishBenchmarkSourceFactory.OrderedHandlers),
-            $"PandaBear.Mediator.Benchmarks.NotificationPublish.Generation.Ordered.{HandlerCount}");
+            $"SharedKernel.Mediator.Benchmarks.NotificationPublish.Generation.Ordered.{HandlerCount}");
         unorderedCompilation = BenchmarkCompilationFactory.CreateCompilation(
             NotificationPublishBenchmarkSourceFactory.CreateGenerationSource(
                 HandlerCount,
                 NotificationPublishBenchmarkSourceFactory.UnorderedHandlers),
-            $"PandaBear.Mediator.Benchmarks.NotificationPublish.Generation.Unordered.{HandlerCount}");
+            $"SharedKernel.Mediator.Benchmarks.NotificationPublish.Generation.Unordered.{HandlerCount}");
     }
 
     /// <summary>

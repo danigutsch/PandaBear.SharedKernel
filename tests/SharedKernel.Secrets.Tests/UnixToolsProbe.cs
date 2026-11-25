@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tells tests whether the small Unix tools they run as real processes exist.</summary>
 internal static class UnixToolsProbe

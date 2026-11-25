@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Tests escaping of control characters for terminal output.</summary>
 public sealed class ControlCharactersTests

@@ -19,7 +19,7 @@ dotnet add package PandaBear.SharedKernel.Testing.Contracts --version <validated
 ```
 
 ```csharp
-using PandaBear.Testing.Contracts;
+using SharedKernel.Testing.Contracts;
 
 public static class Example
 {
@@ -35,6 +35,6 @@ public static class Example
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Contracts`. C# namespace: `PandaBear.Testing.Contracts`. Assembly/project identity: `SharedKernel.Testing.Contracts`.
+Package ID: `PandaBear.SharedKernel.Testing.Contracts`. C# namespace: `SharedKernel.Testing.Contracts`. Assembly/project identity: `SharedKernel.Testing.Contracts`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

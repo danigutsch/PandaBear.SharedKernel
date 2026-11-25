@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.Results.AspNet;
+namespace SharedKernel.Results.AspNet;
 
 /// <summary>
 /// Provides ASP.NET Core HTTP mappings for result statuses.

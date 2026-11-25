@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.ConfigurationFiles;
+namespace SharedKernel.ConfigurationFiles;
 
 /// <summary>
 /// Reads a strict JSON configuration file, such as <c>.config/sharedkernel-ci.json</c>, from under a repository root.

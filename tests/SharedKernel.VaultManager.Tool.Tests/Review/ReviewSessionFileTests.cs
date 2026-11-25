@@ -1,16 +1,16 @@
-using PandaBear.SecretScanning;
-using PandaBear.Testing;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.Review;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
+using SharedKernel.SecretScanning;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Review.ReviewVaults;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Tests that a review session saves decisions and writes the merged export to its files.</summary>
 public sealed class ReviewSessionFileTests : IDisposable

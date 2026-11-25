@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.ObjectStorage.Tests;
+namespace SharedKernel.Testing.ObjectStorage.Tests;
 
 /// <summary>A read-only stream that cannot seek, wrapping another stream.</summary>
 /// <param name="inner">The stream that supplies the bytes; disposed with this stream.</param>

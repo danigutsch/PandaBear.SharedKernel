@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Builds source files for the user-message overload code fix tests, together with the WithUserMessage helper they forward to.</summary>
 internal static class AssertionUserMessageOverloadCodeFixTestSource

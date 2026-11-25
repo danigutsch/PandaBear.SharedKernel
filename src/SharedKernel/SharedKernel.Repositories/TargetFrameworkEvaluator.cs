@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Statically evaluates the <c>TargetFramework</c>, <c>TargetFrameworks</c>, and <c>RollForward</c> properties of a

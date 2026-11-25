@@ -1,7 +1,7 @@
 using System.Runtime.Versioning;
-using static PandaBear.RepoConfig.Tests.BaselineTestOperations;
+using static SharedKernel.RepoConfig.Tests.BaselineTestOperations;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>baseline verify</c> and <c>baseline apply</c> commands.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

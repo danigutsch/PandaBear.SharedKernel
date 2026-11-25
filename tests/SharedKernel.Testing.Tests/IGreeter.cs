@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>A service the registration tests wrap in a <see cref="CallProxy"/>.</summary>
 public interface IGreeter

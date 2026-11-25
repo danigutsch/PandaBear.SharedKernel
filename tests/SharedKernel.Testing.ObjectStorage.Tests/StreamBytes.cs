@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.ObjectStorage.Tests;
+namespace SharedKernel.Testing.ObjectStorage.Tests;
 
 /// <summary>Reads streams handed out by the store under test.</summary>
 internal static class StreamBytes

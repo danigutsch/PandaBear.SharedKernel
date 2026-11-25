@@ -7,7 +7,7 @@ using System.Text.Json.Serialization.Metadata;
 using Polly.CircuitBreaker;
 using Polly.Timeout;
 
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>
 /// Sends HTTP requests and maps response status, bounded JSON bodies, and transport failures to HTTP outcomes.

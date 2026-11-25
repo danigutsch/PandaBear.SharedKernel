@@ -1,9 +1,9 @@
 using System.Globalization;
-using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>Validates the ordered sections of one translation of a page, and reads the images they show.</summary>
 public static class PageSectionList

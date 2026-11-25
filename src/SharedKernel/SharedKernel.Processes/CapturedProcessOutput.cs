@@ -1,4 +1,4 @@
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>The exit code, the exact standard output bytes, and the standard error text of a finished child process.</summary>
 public sealed class CapturedProcessOutput

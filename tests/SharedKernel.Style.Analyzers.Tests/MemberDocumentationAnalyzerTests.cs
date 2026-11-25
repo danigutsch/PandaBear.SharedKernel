@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Globalization;
 
-namespace PandaBear.Style.Analyzers.Tests;
+namespace SharedKernel.Style.Analyzers.Tests;
 
 /// <summary>Tests for the SKSTYLE017 rule that requires XML documentation on internal types and members.</summary>
 public sealed class MemberDocumentationAnalyzerTests

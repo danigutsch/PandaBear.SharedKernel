@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore;
+namespace SharedKernel.EntityFrameworkCore;
 
 /// <summary>What a database provider reported about a unique-index violation: a constraint name, a table with columns, or both.</summary>
 /// <param name="ConstraintName">The index or constraint name when the provider reports one; otherwise <see langword="null"/>.</param>

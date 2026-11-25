@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests how roadmap reconciliation handles blockers that live in another repository.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

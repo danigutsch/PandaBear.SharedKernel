@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>The limits of page sections. The defaults are ViajantesTurismo V2's.</summary>
 public sealed class PageSectionRules

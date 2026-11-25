@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The files, Git settings, hooks, and variables of <c>baseline verify</c> and <c>baseline apply</c>.

@@ -1,7 +1,7 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>A match group as the review lists it. Holds names, keys, field paths, and counts, never values.</summary>
 /// <param name="Key">Group key.</param>

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The values of a repository JSON file that a license review approved.

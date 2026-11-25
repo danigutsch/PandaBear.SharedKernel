@@ -1,8 +1,8 @@
 using System.Text;
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// A reference to one value inside an encrypted file: <c>&lt;file&gt;#&lt;key path&gt;</c>, for example

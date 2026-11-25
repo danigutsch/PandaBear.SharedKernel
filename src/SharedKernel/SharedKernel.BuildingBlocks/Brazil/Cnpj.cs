@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A canonical numeric or alphanumeric Brazilian CNPJ; not proof of registration or identity.</summary>
 public sealed class Cnpj : ValueObject

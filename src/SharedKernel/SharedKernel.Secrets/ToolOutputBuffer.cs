@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>A growing byte buffer with a size limit (over it: overflow) that overwrites every array it stops using.</summary>
 internal sealed class ToolOutputBuffer

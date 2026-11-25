@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Declares what the test verifies. Emits the <c>Focus</c> trait, like <c>[Trait("Focus", ...)]</c>.

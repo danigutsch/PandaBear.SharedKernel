@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Builder;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>
 /// Tests the permanent redirect middleware: GET and HEAD requests whose path the application moved get a 301 to a local path, and a target

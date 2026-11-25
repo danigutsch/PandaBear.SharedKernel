@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting.Tests;
+namespace SharedKernel.LoadTesting.Tests;
 
 /// <summary>A load generator that records the run it receives and returns a fixed exit code.</summary>
 /// <param name="exitCode">The exit code that <see cref="Run"/> returns.</param>

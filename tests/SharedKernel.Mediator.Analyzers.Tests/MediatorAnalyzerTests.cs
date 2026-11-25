@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Mediator.Analyzers.Tests;
+namespace SharedKernel.Mediator.Analyzers.Tests;
 
 /// <summary>Tests the mediator analyzer rules for handler signatures, cancellation handling, pipeline arity, stream handlers and editorconfig options.</summary>
 public sealed class MediatorAnalyzerTests
@@ -25,7 +25,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -52,7 +52,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -84,7 +84,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -116,7 +116,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -146,7 +146,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -174,7 +174,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -202,7 +202,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -233,7 +233,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -263,7 +263,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -294,7 +294,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -322,7 +322,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -352,7 +352,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -380,7 +380,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -425,7 +425,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -457,7 +457,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -495,7 +495,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -532,7 +532,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -565,7 +565,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Threading;
 
@@ -598,7 +598,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Threading;
 
@@ -629,7 +629,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Threading;
 
@@ -659,7 +659,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange — [EnumeratorCancellation] present suppresses both SKMED007 and SKMED008
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
             using System.Threading;
@@ -696,7 +696,7 @@ public sealed class MediatorAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
             using System.Threading;

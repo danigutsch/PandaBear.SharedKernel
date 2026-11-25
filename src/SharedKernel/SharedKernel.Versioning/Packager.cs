@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Packs the SharedKernel repository's projects with <c>dotnet</c>, checks their API compatibility, and proves that the

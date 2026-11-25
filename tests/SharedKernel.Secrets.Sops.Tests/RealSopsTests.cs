@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Sops.Tests;
+namespace SharedKernel.Secrets.Sops.Tests;
 
 /// <summary>
 /// Runs the adapter against the real sops program with throwaway keys from the real age-keygen, in temporary directories.

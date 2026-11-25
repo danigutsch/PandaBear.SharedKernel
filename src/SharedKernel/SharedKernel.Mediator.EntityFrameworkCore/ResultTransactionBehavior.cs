@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using PandaBear.Npgsql;
-using PandaBear.Results;
-using PortableLockDeclaration = PandaBear.Mediator.Transactions.ITransactionLockDeclaration;
+using SharedKernel.Npgsql;
+using SharedKernel.Results;
+using PortableLockDeclaration = SharedKernel.Mediator.Transactions.ITransactionLockDeclaration;
 
-namespace PandaBear.Mediator.EntityFrameworkCore;
+namespace SharedKernel.Mediator.EntityFrameworkCore;
 
 /// <summary>
 /// Runs a command that returns a <see cref="Result"/> or <see cref="Result{T}"/> in one retry-compatible EF Core transaction and commits

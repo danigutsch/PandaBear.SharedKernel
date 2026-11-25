@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Creates the configured repository labels that are missing and updates those that differ. Labels that are not

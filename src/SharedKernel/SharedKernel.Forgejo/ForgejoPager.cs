@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Net.Http.Headers;
 
-namespace PandaBear.Forgejo;
+namespace SharedKernel.Forgejo;
 
 /// <summary>
 /// Reads every page of a Forgejo list. <see href="https://forgejo.org/docs/latest/user/api-usage/">API usage</see>

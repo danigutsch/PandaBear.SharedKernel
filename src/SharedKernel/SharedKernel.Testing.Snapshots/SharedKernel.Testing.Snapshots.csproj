@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Snapshots</PackageId>
         <Description>Reusable snapshot text helpers for SharedKernel test suites.</Description>
-        <RootNamespace>PandaBear.Testing.Snapshots</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.Snapshots</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;snapshots;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

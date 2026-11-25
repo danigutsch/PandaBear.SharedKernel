@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>
 /// Describes a time-limited direct upload ticket.

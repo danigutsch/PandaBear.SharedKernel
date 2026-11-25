@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 
-namespace PandaBear.LoadTesting.Tests;
+namespace SharedKernel.LoadTesting.Tests;
 
 /// <summary>An HTTP handler that answers each request with the next status of a script, repeating the last one.</summary>
 /// <param name="statuses">The status of each answer, in order.</param>

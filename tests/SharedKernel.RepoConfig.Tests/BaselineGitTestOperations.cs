@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers for the Git settings and hooks of the <c>baseline</c> commands.</summary>
 internal static class BaselineGitTestOperations

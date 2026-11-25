@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>Tests that the outcome span reports each <see cref="HttpOutcomeKind"/> as a lowercase snake_case attribute value.</summary>
 [Trait(TestTraitNames.ScopeName, "unit")]

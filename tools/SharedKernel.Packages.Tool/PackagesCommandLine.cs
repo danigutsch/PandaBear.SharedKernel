@@ -1,8 +1,8 @@
 using System.CommandLine;
-using PandaBear.InputNormalization;
-using PandaBear.Processes;
+using SharedKernel.InputNormalization;
+using SharedKernel.Processes;
 
-namespace PandaBear.Packages.Tool;
+namespace SharedKernel.Packages.Tool;
 
 /// <summary>Builds the <c>syspackages</c> command tree.</summary>
 internal static class PackagesCommandLine

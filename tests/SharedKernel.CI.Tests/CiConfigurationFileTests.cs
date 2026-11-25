@@ -1,5 +1,5 @@
 
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards the strict format of <c>.config/sharedkernel-ci.json</c>.</summary>
 public sealed class CiConfigurationFileTests : IDisposable

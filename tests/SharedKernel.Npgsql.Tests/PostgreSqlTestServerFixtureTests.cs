@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests the database leases handed out by the shared PostgreSQL test server fixture.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture whose server the borrowing fixtures connect to.</param>

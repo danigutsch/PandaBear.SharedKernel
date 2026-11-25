@@ -1,11 +1,11 @@
 using System.CommandLine;
-using PandaBear.InputNormalization;
-using PandaBear.IO;
-using PandaBear.Vault.Analysis;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Formats;
+using SharedKernel.InputNormalization;
+using SharedKernel.IO;
+using SharedKernel.Vault.Analysis;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Formats;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// <c>scan</c>: finds secrets stored outside their fields and weak or reused passwords. It writes a value-free summary to

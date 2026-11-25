@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Trait names and values used to categorize the PostgreSQL event sourcing tests.</summary>
 internal static class TestTraits

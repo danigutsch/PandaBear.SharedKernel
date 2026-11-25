@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.IntegrationTesting</PackageId>
         <Description>Reusable Aspire and PostgreSQL integration-test helpers for SharedKernel test suites.</Description>
-        <RootNamespace>PandaBear.IntegrationTesting</RootNamespace>
+        <RootNamespace>SharedKernel.IntegrationTesting</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;integration-testing;aspire;postgresql;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

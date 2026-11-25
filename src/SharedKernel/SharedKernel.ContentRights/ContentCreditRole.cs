@@ -1,4 +1,4 @@
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>Why a person or organization is named in the public credit.</summary>
 public enum ContentCreditRole

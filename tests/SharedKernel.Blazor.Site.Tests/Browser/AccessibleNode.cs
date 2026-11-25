@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>A node that Chromium exposes to assistive technology.</summary>
 /// <param name="Role">The Chromium role, such as <c>navigation</c> or <c>DisclosureTriangle</c>.</param>

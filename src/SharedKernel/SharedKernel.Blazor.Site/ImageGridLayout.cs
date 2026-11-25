@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>How an <see cref="ImageGrid" /> arranges its images.</summary>
 public enum ImageGridLayout

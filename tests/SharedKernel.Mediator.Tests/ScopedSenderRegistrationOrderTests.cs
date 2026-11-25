@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Tests the order semantics of the <see cref="ScopedSender"/> registration helpers.</summary>
 public sealed class ScopedSenderRegistrationOrderTests

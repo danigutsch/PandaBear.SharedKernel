@@ -1,4 +1,4 @@
-namespace PandaBear.Style.Analyzers.Tests;
+namespace SharedKernel.Style.Analyzers.Tests;
 
 /// <summary>Tests for the SKSTYLE014 rule that flags direct reads of the system clock.</summary>
 public sealed class CurrentTimeAnalyzerTests

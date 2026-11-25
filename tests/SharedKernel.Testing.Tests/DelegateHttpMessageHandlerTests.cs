@@ -1,7 +1,7 @@
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using System.Net;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the delegate-backed HTTP message handler and the tracking stream content.</summary>
 public sealed class DelegateHttpMessageHandlerTests

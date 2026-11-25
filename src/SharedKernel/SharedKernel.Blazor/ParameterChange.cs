@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>How a parameter value compares with the one a <see cref="ParameterTracker{T}"/> saw before.</summary>
 public enum ParameterChange

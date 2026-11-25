@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.EntityFrameworkCore.Tests;
+namespace SharedKernel.Mediator.EntityFrameworkCore.Tests;
 
 /// <summary>A pipeline behavior that delegates to EfCoreCommandTransactionBehavior over a supplied context, so tests can construct it directly.</summary>
 /// <typeparam name="TRequest">The request type, which must produce TResponse.</typeparam>

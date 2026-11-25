@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace PandaBear.Testing.Packaging;
+namespace SharedKernel.Testing.Packaging;
 
 /// <summary>
 /// Runs focused dotnet CLI commands for package-consumption tests.

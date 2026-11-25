@@ -1,163 +1,163 @@
 #nullable enable
-PandaBear.Npgsql.NpgsqlDataSourceBuilderExtensions
-PandaBear.Npgsql.PostgreSqlAdvisoryLockKey
-PandaBear.Npgsql.PostgreSqlLockKey
-PandaBear.Npgsql.PostgreSqlLockKey.CompareTo(PandaBear.Npgsql.PostgreSqlLockKey other) -> int
-PandaBear.Npgsql.PostgreSqlLockKey.PostgreSqlLockKey() -> void
-PandaBear.Npgsql.PostgreSqlLockKey.PostgreSqlLockKey(long Value) -> void
-PandaBear.Npgsql.PostgreSqlLockKey.Value.get -> long
-PandaBear.Npgsql.PostgreSqlLockKey.Value.init -> void
-PandaBear.Npgsql.PostgreSqlOrderedTransactionLocks
-PandaBear.Npgsql.PostgreSqlOrderedTransactionLocks.Acquire(System.Collections.Generic.IEnumerable<PandaBear.Npgsql.PostgreSqlTransactionLockRequest>! locks, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.Npgsql.PostgreSqlOrderedTransactionLocks.PostgreSqlOrderedTransactionLocks(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction) -> void
-PandaBear.Npgsql.PostgreSqlSessionAdvisoryLock
-PandaBear.Npgsql.PostgreSqlTransactionAdvisoryLock
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Name.get -> string!
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Name.init -> void
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest.PostgreSqlTransactionLockRequest() -> void
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest.PostgreSqlTransactionLockRequest(int Tier, string! Name) -> void
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Tier.get -> int
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Tier.init -> void
-static PandaBear.Npgsql.NpgsqlDataSourceBuilderExtensions.ConfigureTracingWithoutFirstResponseEvent(this Npgsql.NpgsqlDataSourceBuilder! builder) -> Npgsql.NpgsqlDataSourceBuilder!
-static PandaBear.Npgsql.PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(string! identity) -> long
-static PandaBear.Npgsql.PostgreSqlLockKey.FromIdentity(string! identity) -> PandaBear.Npgsql.PostgreSqlLockKey
-static PandaBear.Npgsql.PostgreSqlLockKey.operator <(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
-static PandaBear.Npgsql.PostgreSqlLockKey.operator <=(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
-static PandaBear.Npgsql.PostgreSqlLockKey.operator >(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
-static PandaBear.Npgsql.PostgreSqlLockKey.operator >=(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
-static PandaBear.Npgsql.PostgreSqlSessionAdvisoryLock.Acquire(Npgsql.NpgsqlDataSource! dataSource, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
-static PandaBear.Npgsql.PostgreSqlTransactionAdvisoryLock.Acquire(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-static PandaBear.Npgsql.PostgreSqlSessionAdvisoryLock.AcquireKey(Npgsql.NpgsqlDataSource! dataSource, PandaBear.Npgsql.PostgreSqlLockKey lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
-static PandaBear.Npgsql.PostgreSqlTransactionAdvisoryLock.AcquireKey(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, PandaBear.Npgsql.PostgreSqlLockKey lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.Npgsql.PostgreSqlLockKey.Deconstruct(out long Value) -> void
-PandaBear.Npgsql.PostgreSqlLockKey.Equals(PandaBear.Npgsql.PostgreSqlLockKey other) -> bool
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Deconstruct(out int Tier, out string! Name) -> void
-PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Equals(PandaBear.Npgsql.PostgreSqlTransactionLockRequest other) -> bool
-override PandaBear.Npgsql.PostgreSqlLockKey.GetHashCode() -> int
-override PandaBear.Npgsql.PostgreSqlTransactionLockRequest.GetHashCode() -> int
-static PandaBear.Npgsql.PostgreSqlLockKey.operator !=(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
-static PandaBear.Npgsql.PostgreSqlLockKey.operator ==(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
-static PandaBear.Npgsql.PostgreSqlTransactionLockRequest.operator !=(PandaBear.Npgsql.PostgreSqlTransactionLockRequest left, PandaBear.Npgsql.PostgreSqlTransactionLockRequest right) -> bool
-static PandaBear.Npgsql.PostgreSqlTransactionLockRequest.operator ==(PandaBear.Npgsql.PostgreSqlTransactionLockRequest left, PandaBear.Npgsql.PostgreSqlTransactionLockRequest right) -> bool
-~override PandaBear.Npgsql.PostgreSqlLockKey.Equals(object obj) -> bool
-~override PandaBear.Npgsql.PostgreSqlLockKey.ToString() -> string
-~override PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Equals(object obj) -> bool
-~override PandaBear.Npgsql.PostgreSqlTransactionLockRequest.ToString() -> string
-PandaBear.Npgsql.PostgreSqlArtifactIntegrity
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.<Clone>$() -> PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyContentColumn.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyContentColumn.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyIdColumn.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyIdColumn.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.BodySchema.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.BodySchema.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyTable.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyTable.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.Deconstruct(out string! MetadataSchema, out string! MetadataTable, out string! IdColumn, out string! EligibilityColumn, out string! LengthColumn, out string! Sha256Column, out string! BodySchema, out string! BodyTable, out string! BodyIdColumn, out string! BodyContentColumn) -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.EligibilityColumn.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.EligibilityColumn.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.Equals(PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping? other) -> bool
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.IdColumn.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.IdColumn.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.LengthColumn.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.LengthColumn.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.MetadataSchema.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.MetadataSchema.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.MetadataTable.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.MetadataTable.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.PostgreSqlArtifactIntegrityMapping(string! MetadataSchema, string! MetadataTable, string! IdColumn, string! EligibilityColumn, string! LengthColumn, string! Sha256Column, string! BodySchema, string! BodyTable, string! BodyIdColumn, string! BodyContentColumn) -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.Sha256Column.get -> string!
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.Sha256Column.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.Deconstruct(out System.Guid Id, out PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus Status) -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.Equals(PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult other) -> bool
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.Id.get -> System.Guid
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.Id.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.PostgreSqlArtifactIntegrityResult() -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.PostgreSqlArtifactIntegrityResult(System.Guid Id, PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus Status) -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.Status.get -> PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.Status.init -> void
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus.DigestMismatch = 3 -> PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus.Intact = 4 -> PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus.LengthMismatch = 2 -> PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus.MissingBody = 0 -> PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus
-PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus.MissingIntegrityMetadata = 1 -> PandaBear.Npgsql.PostgreSqlArtifactIntegrityStatus
-override PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.Equals(object? obj) -> bool
-override PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.GetHashCode() -> int
-override PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.ToString() -> string!
-override PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.GetHashCode() -> int
-static PandaBear.Npgsql.PostgreSqlArtifactIntegrity.ReadPage(Npgsql.NpgsqlDataSource! dataSource, PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping! mapping, System.Guid? afterId, int pageSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult>!>!
-static PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.operator !=(PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping? left, PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping? right) -> bool
-static PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping.operator ==(PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping? left, PandaBear.Npgsql.PostgreSqlArtifactIntegrityMapping? right) -> bool
-static PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.operator !=(PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult left, PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult right) -> bool
-static PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.operator ==(PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult left, PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult right) -> bool
-~override PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.Equals(object obj) -> bool
-~override PandaBear.Npgsql.PostgreSqlArtifactIntegrityResult.ToString() -> string
-PandaBear.Npgsql.PostgreSqlScheduleRun
-PandaBear.Npgsql.PostgreSqlScheduleRun.Deconstruct(out System.Guid RunId, out System.DateTimeOffset StartedAt, out System.DateTimeOffset? ScheduledFor, out System.DateTimeOffset? FinishedAt, out System.DateTimeOffset? RetryAt, out PandaBear.Npgsql.PostgreSqlScheduleRunStatus Status) -> void
-PandaBear.Npgsql.PostgreSqlScheduleRun.Equals(PandaBear.Npgsql.PostgreSqlScheduleRun other) -> bool
-PandaBear.Npgsql.PostgreSqlScheduleRun.FinishedAt.get -> System.DateTimeOffset?
-PandaBear.Npgsql.PostgreSqlScheduleRun.FinishedAt.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRun.PostgreSqlScheduleRun() -> void
-PandaBear.Npgsql.PostgreSqlScheduleRun.PostgreSqlScheduleRun(System.Guid RunId, System.DateTimeOffset StartedAt, System.DateTimeOffset? ScheduledFor, System.DateTimeOffset? FinishedAt, System.DateTimeOffset? RetryAt, PandaBear.Npgsql.PostgreSqlScheduleRunStatus Status) -> void
-PandaBear.Npgsql.PostgreSqlScheduleRun.RetryAt.get -> System.DateTimeOffset?
-PandaBear.Npgsql.PostgreSqlScheduleRun.RetryAt.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRun.RunId.get -> System.Guid
-PandaBear.Npgsql.PostgreSqlScheduleRun.RunId.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRun.ScheduledFor.get -> System.DateTimeOffset?
-PandaBear.Npgsql.PostgreSqlScheduleRun.ScheduledFor.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRun.StartedAt.get -> System.DateTimeOffset
-PandaBear.Npgsql.PostgreSqlScheduleRun.StartedAt.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRun.Status.get -> PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRun.Status.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor.Deconstruct(out System.DateTimeOffset StartedAt, out System.Guid RunId) -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor.Equals(PandaBear.Npgsql.PostgreSqlScheduleRunCursor other) -> bool
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor.PostgreSqlScheduleRunCursor() -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor.PostgreSqlScheduleRunCursor(System.DateTimeOffset StartedAt, System.Guid RunId) -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor.RunId.get -> System.Guid
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor.RunId.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor.StartedAt.get -> System.DateTimeOffset
-PandaBear.Npgsql.PostgreSqlScheduleRunCursor.StartedAt.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunPage
-PandaBear.Npgsql.PostgreSqlScheduleRunPage.<Clone>$() -> PandaBear.Npgsql.PostgreSqlScheduleRunPage!
-PandaBear.Npgsql.PostgreSqlScheduleRunPage.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Npgsql.PostgreSqlScheduleRun>! Runs, out PandaBear.Npgsql.PostgreSqlScheduleRunCursor? Next) -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunPage.Equals(PandaBear.Npgsql.PostgreSqlScheduleRunPage? other) -> bool
-PandaBear.Npgsql.PostgreSqlScheduleRunPage.Next.get -> PandaBear.Npgsql.PostgreSqlScheduleRunCursor?
-PandaBear.Npgsql.PostgreSqlScheduleRunPage.Next.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunPage.PostgreSqlScheduleRunPage(System.Collections.Generic.IReadOnlyList<PandaBear.Npgsql.PostgreSqlScheduleRun>! Runs, PandaBear.Npgsql.PostgreSqlScheduleRunCursor? Next) -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunPage.Runs.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Npgsql.PostgreSqlScheduleRun>!
-PandaBear.Npgsql.PostgreSqlScheduleRunPage.Runs.init -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRunStatus.Cancelled = 3 -> PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRunStatus.Failed = 4 -> PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRunStatus.RetryScheduled = 5 -> PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRunStatus.Running = 1 -> PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRunStatus.Succeeded = 2 -> PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRunStatus.TerminalFailure = 6 -> PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRunStatus.Unknown = 0 -> PandaBear.Npgsql.PostgreSqlScheduleRunStatus
-PandaBear.Npgsql.PostgreSqlScheduleRunStore
-PandaBear.Npgsql.PostgreSqlScheduleRunStore.Complete(string! jobName, System.Guid runId, PandaBear.Npgsql.PostgreSqlScheduleRunStatus outcome, System.DateTimeOffset? retryAt, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
-PandaBear.Npgsql.PostgreSqlScheduleRunStore.PostgreSqlScheduleRunStore(Npgsql.NpgsqlDataSource! dataSource, string! schema, string! relationName) -> void
-PandaBear.Npgsql.PostgreSqlScheduleRunStore.ReadActivePage(string! jobName, PandaBear.Npgsql.PostgreSqlScheduleRunCursor? after, int pageSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Npgsql.PostgreSqlScheduleRunPage!>!
-PandaBear.Npgsql.PostgreSqlScheduleRunStore.ReadPage(string! jobName, PandaBear.Npgsql.PostgreSqlScheduleRunCursor? after, int pageSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Npgsql.PostgreSqlScheduleRunPage!>!
-PandaBear.Npgsql.PostgreSqlScheduleRunStore.Refresh(string! jobName, System.Guid runId, System.TimeSpan observationWindow, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
-PandaBear.Npgsql.PostgreSqlScheduleRunStore.Start(string! jobName, System.Guid runId, System.DateTimeOffset? scheduledFor, System.TimeSpan observationWindow, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
-override PandaBear.Npgsql.PostgreSqlScheduleRun.GetHashCode() -> int
-override PandaBear.Npgsql.PostgreSqlScheduleRunCursor.GetHashCode() -> int
-override PandaBear.Npgsql.PostgreSqlScheduleRunPage.Equals(object? obj) -> bool
-override PandaBear.Npgsql.PostgreSqlScheduleRunPage.GetHashCode() -> int
-override PandaBear.Npgsql.PostgreSqlScheduleRunPage.ToString() -> string!
-static PandaBear.Npgsql.PostgreSqlScheduleRun.operator !=(PandaBear.Npgsql.PostgreSqlScheduleRun left, PandaBear.Npgsql.PostgreSqlScheduleRun right) -> bool
-static PandaBear.Npgsql.PostgreSqlScheduleRun.operator ==(PandaBear.Npgsql.PostgreSqlScheduleRun left, PandaBear.Npgsql.PostgreSqlScheduleRun right) -> bool
-static PandaBear.Npgsql.PostgreSqlScheduleRunCursor.operator !=(PandaBear.Npgsql.PostgreSqlScheduleRunCursor left, PandaBear.Npgsql.PostgreSqlScheduleRunCursor right) -> bool
-static PandaBear.Npgsql.PostgreSqlScheduleRunCursor.operator ==(PandaBear.Npgsql.PostgreSqlScheduleRunCursor left, PandaBear.Npgsql.PostgreSqlScheduleRunCursor right) -> bool
-static PandaBear.Npgsql.PostgreSqlScheduleRunPage.operator !=(PandaBear.Npgsql.PostgreSqlScheduleRunPage? left, PandaBear.Npgsql.PostgreSqlScheduleRunPage? right) -> bool
-static PandaBear.Npgsql.PostgreSqlScheduleRunPage.operator ==(PandaBear.Npgsql.PostgreSqlScheduleRunPage? left, PandaBear.Npgsql.PostgreSqlScheduleRunPage? right) -> bool
-~override PandaBear.Npgsql.PostgreSqlScheduleRun.Equals(object obj) -> bool
-~override PandaBear.Npgsql.PostgreSqlScheduleRun.ToString() -> string
-~override PandaBear.Npgsql.PostgreSqlScheduleRunCursor.Equals(object obj) -> bool
-~override PandaBear.Npgsql.PostgreSqlScheduleRunCursor.ToString() -> string
+SharedKernel.Npgsql.NpgsqlDataSourceBuilderExtensions
+SharedKernel.Npgsql.PostgreSqlAdvisoryLockKey
+SharedKernel.Npgsql.PostgreSqlLockKey
+SharedKernel.Npgsql.PostgreSqlLockKey.CompareTo(SharedKernel.Npgsql.PostgreSqlLockKey other) -> int
+SharedKernel.Npgsql.PostgreSqlLockKey.PostgreSqlLockKey() -> void
+SharedKernel.Npgsql.PostgreSqlLockKey.PostgreSqlLockKey(long Value) -> void
+SharedKernel.Npgsql.PostgreSqlLockKey.Value.get -> long
+SharedKernel.Npgsql.PostgreSqlLockKey.Value.init -> void
+SharedKernel.Npgsql.PostgreSqlOrderedTransactionLocks
+SharedKernel.Npgsql.PostgreSqlOrderedTransactionLocks.Acquire(System.Collections.Generic.IEnumerable<SharedKernel.Npgsql.PostgreSqlTransactionLockRequest>! locks, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Npgsql.PostgreSqlOrderedTransactionLocks.PostgreSqlOrderedTransactionLocks(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction) -> void
+SharedKernel.Npgsql.PostgreSqlSessionAdvisoryLock
+SharedKernel.Npgsql.PostgreSqlTransactionAdvisoryLock
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.Name.get -> string!
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.Name.init -> void
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.PostgreSqlTransactionLockRequest() -> void
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.PostgreSqlTransactionLockRequest(int Tier, string! Name) -> void
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.Tier.get -> int
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.Tier.init -> void
+static SharedKernel.Npgsql.NpgsqlDataSourceBuilderExtensions.ConfigureTracingWithoutFirstResponseEvent(this Npgsql.NpgsqlDataSourceBuilder! builder) -> Npgsql.NpgsqlDataSourceBuilder!
+static SharedKernel.Npgsql.PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(string! identity) -> long
+static SharedKernel.Npgsql.PostgreSqlLockKey.FromIdentity(string! identity) -> SharedKernel.Npgsql.PostgreSqlLockKey
+static SharedKernel.Npgsql.PostgreSqlLockKey.operator <(SharedKernel.Npgsql.PostgreSqlLockKey left, SharedKernel.Npgsql.PostgreSqlLockKey right) -> bool
+static SharedKernel.Npgsql.PostgreSqlLockKey.operator <=(SharedKernel.Npgsql.PostgreSqlLockKey left, SharedKernel.Npgsql.PostgreSqlLockKey right) -> bool
+static SharedKernel.Npgsql.PostgreSqlLockKey.operator >(SharedKernel.Npgsql.PostgreSqlLockKey left, SharedKernel.Npgsql.PostgreSqlLockKey right) -> bool
+static SharedKernel.Npgsql.PostgreSqlLockKey.operator >=(SharedKernel.Npgsql.PostgreSqlLockKey left, SharedKernel.Npgsql.PostgreSqlLockKey right) -> bool
+static SharedKernel.Npgsql.PostgreSqlSessionAdvisoryLock.Acquire(Npgsql.NpgsqlDataSource! dataSource, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
+static SharedKernel.Npgsql.PostgreSqlTransactionAdvisoryLock.Acquire(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+static SharedKernel.Npgsql.PostgreSqlSessionAdvisoryLock.AcquireKey(Npgsql.NpgsqlDataSource! dataSource, SharedKernel.Npgsql.PostgreSqlLockKey lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
+static SharedKernel.Npgsql.PostgreSqlTransactionAdvisoryLock.AcquireKey(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, SharedKernel.Npgsql.PostgreSqlLockKey lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Npgsql.PostgreSqlLockKey.Deconstruct(out long Value) -> void
+SharedKernel.Npgsql.PostgreSqlLockKey.Equals(SharedKernel.Npgsql.PostgreSqlLockKey other) -> bool
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.Deconstruct(out int Tier, out string! Name) -> void
+SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.Equals(SharedKernel.Npgsql.PostgreSqlTransactionLockRequest other) -> bool
+override SharedKernel.Npgsql.PostgreSqlLockKey.GetHashCode() -> int
+override SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.GetHashCode() -> int
+static SharedKernel.Npgsql.PostgreSqlLockKey.operator !=(SharedKernel.Npgsql.PostgreSqlLockKey left, SharedKernel.Npgsql.PostgreSqlLockKey right) -> bool
+static SharedKernel.Npgsql.PostgreSqlLockKey.operator ==(SharedKernel.Npgsql.PostgreSqlLockKey left, SharedKernel.Npgsql.PostgreSqlLockKey right) -> bool
+static SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.operator !=(SharedKernel.Npgsql.PostgreSqlTransactionLockRequest left, SharedKernel.Npgsql.PostgreSqlTransactionLockRequest right) -> bool
+static SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.operator ==(SharedKernel.Npgsql.PostgreSqlTransactionLockRequest left, SharedKernel.Npgsql.PostgreSqlTransactionLockRequest right) -> bool
+~override SharedKernel.Npgsql.PostgreSqlLockKey.Equals(object obj) -> bool
+~override SharedKernel.Npgsql.PostgreSqlLockKey.ToString() -> string
+~override SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.Equals(object obj) -> bool
+~override SharedKernel.Npgsql.PostgreSqlTransactionLockRequest.ToString() -> string
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrity
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.<Clone>$() -> SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyContentColumn.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyContentColumn.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyIdColumn.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyIdColumn.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.BodySchema.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.BodySchema.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyTable.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.BodyTable.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.Deconstruct(out string! MetadataSchema, out string! MetadataTable, out string! IdColumn, out string! EligibilityColumn, out string! LengthColumn, out string! Sha256Column, out string! BodySchema, out string! BodyTable, out string! BodyIdColumn, out string! BodyContentColumn) -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.EligibilityColumn.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.EligibilityColumn.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.Equals(SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping? other) -> bool
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.IdColumn.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.IdColumn.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.LengthColumn.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.LengthColumn.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.MetadataSchema.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.MetadataSchema.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.MetadataTable.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.MetadataTable.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.PostgreSqlArtifactIntegrityMapping(string! MetadataSchema, string! MetadataTable, string! IdColumn, string! EligibilityColumn, string! LengthColumn, string! Sha256Column, string! BodySchema, string! BodyTable, string! BodyIdColumn, string! BodyContentColumn) -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.Sha256Column.get -> string!
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.Sha256Column.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.Deconstruct(out System.Guid Id, out SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus Status) -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.Equals(SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult other) -> bool
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.Id.get -> System.Guid
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.Id.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.PostgreSqlArtifactIntegrityResult() -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.PostgreSqlArtifactIntegrityResult(System.Guid Id, SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus Status) -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.Status.get -> SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.Status.init -> void
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus.DigestMismatch = 3 -> SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus.Intact = 4 -> SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus.LengthMismatch = 2 -> SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus.MissingBody = 0 -> SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus
+SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus.MissingIntegrityMetadata = 1 -> SharedKernel.Npgsql.PostgreSqlArtifactIntegrityStatus
+override SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.Equals(object? obj) -> bool
+override SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.GetHashCode() -> int
+override SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.ToString() -> string!
+override SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.GetHashCode() -> int
+static SharedKernel.Npgsql.PostgreSqlArtifactIntegrity.ReadPage(Npgsql.NpgsqlDataSource! dataSource, SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping! mapping, System.Guid? afterId, int pageSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult>!>!
+static SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.operator !=(SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping? left, SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping? right) -> bool
+static SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping.operator ==(SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping? left, SharedKernel.Npgsql.PostgreSqlArtifactIntegrityMapping? right) -> bool
+static SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.operator !=(SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult left, SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult right) -> bool
+static SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.operator ==(SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult left, SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult right) -> bool
+~override SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.Equals(object obj) -> bool
+~override SharedKernel.Npgsql.PostgreSqlArtifactIntegrityResult.ToString() -> string
+SharedKernel.Npgsql.PostgreSqlScheduleRun
+SharedKernel.Npgsql.PostgreSqlScheduleRun.Deconstruct(out System.Guid RunId, out System.DateTimeOffset StartedAt, out System.DateTimeOffset? ScheduledFor, out System.DateTimeOffset? FinishedAt, out System.DateTimeOffset? RetryAt, out SharedKernel.Npgsql.PostgreSqlScheduleRunStatus Status) -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRun.Equals(SharedKernel.Npgsql.PostgreSqlScheduleRun other) -> bool
+SharedKernel.Npgsql.PostgreSqlScheduleRun.FinishedAt.get -> System.DateTimeOffset?
+SharedKernel.Npgsql.PostgreSqlScheduleRun.FinishedAt.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRun.PostgreSqlScheduleRun() -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRun.PostgreSqlScheduleRun(System.Guid RunId, System.DateTimeOffset StartedAt, System.DateTimeOffset? ScheduledFor, System.DateTimeOffset? FinishedAt, System.DateTimeOffset? RetryAt, SharedKernel.Npgsql.PostgreSqlScheduleRunStatus Status) -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRun.RetryAt.get -> System.DateTimeOffset?
+SharedKernel.Npgsql.PostgreSqlScheduleRun.RetryAt.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRun.RunId.get -> System.Guid
+SharedKernel.Npgsql.PostgreSqlScheduleRun.RunId.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRun.ScheduledFor.get -> System.DateTimeOffset?
+SharedKernel.Npgsql.PostgreSqlScheduleRun.ScheduledFor.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRun.StartedAt.get -> System.DateTimeOffset
+SharedKernel.Npgsql.PostgreSqlScheduleRun.StartedAt.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRun.Status.get -> SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRun.Status.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.Deconstruct(out System.DateTimeOffset StartedAt, out System.Guid RunId) -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.Equals(SharedKernel.Npgsql.PostgreSqlScheduleRunCursor other) -> bool
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.PostgreSqlScheduleRunCursor() -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.PostgreSqlScheduleRunCursor(System.DateTimeOffset StartedAt, System.Guid RunId) -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.RunId.get -> System.Guid
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.RunId.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.StartedAt.get -> System.DateTimeOffset
+SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.StartedAt.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage.<Clone>$() -> SharedKernel.Npgsql.PostgreSqlScheduleRunPage!
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage.Deconstruct(out System.Collections.Generic.IReadOnlyList<SharedKernel.Npgsql.PostgreSqlScheduleRun>! Runs, out SharedKernel.Npgsql.PostgreSqlScheduleRunCursor? Next) -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage.Equals(SharedKernel.Npgsql.PostgreSqlScheduleRunPage? other) -> bool
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage.Next.get -> SharedKernel.Npgsql.PostgreSqlScheduleRunCursor?
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage.Next.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage.PostgreSqlScheduleRunPage(System.Collections.Generic.IReadOnlyList<SharedKernel.Npgsql.PostgreSqlScheduleRun>! Runs, SharedKernel.Npgsql.PostgreSqlScheduleRunCursor? Next) -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage.Runs.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Npgsql.PostgreSqlScheduleRun>!
+SharedKernel.Npgsql.PostgreSqlScheduleRunPage.Runs.init -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRunStatus.Cancelled = 3 -> SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRunStatus.Failed = 4 -> SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRunStatus.RetryScheduled = 5 -> SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRunStatus.Running = 1 -> SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRunStatus.Succeeded = 2 -> SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRunStatus.TerminalFailure = 6 -> SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRunStatus.Unknown = 0 -> SharedKernel.Npgsql.PostgreSqlScheduleRunStatus
+SharedKernel.Npgsql.PostgreSqlScheduleRunStore
+SharedKernel.Npgsql.PostgreSqlScheduleRunStore.Complete(string! jobName, System.Guid runId, SharedKernel.Npgsql.PostgreSqlScheduleRunStatus outcome, System.DateTimeOffset? retryAt, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlScheduleRunStore.PostgreSqlScheduleRunStore(Npgsql.NpgsqlDataSource! dataSource, string! schema, string! relationName) -> void
+SharedKernel.Npgsql.PostgreSqlScheduleRunStore.ReadActivePage(string! jobName, SharedKernel.Npgsql.PostgreSqlScheduleRunCursor? after, int pageSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Npgsql.PostgreSqlScheduleRunPage!>!
+SharedKernel.Npgsql.PostgreSqlScheduleRunStore.ReadPage(string! jobName, SharedKernel.Npgsql.PostgreSqlScheduleRunCursor? after, int pageSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Npgsql.PostgreSqlScheduleRunPage!>!
+SharedKernel.Npgsql.PostgreSqlScheduleRunStore.Refresh(string! jobName, System.Guid runId, System.TimeSpan observationWindow, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Npgsql.PostgreSqlScheduleRunStore.Start(string! jobName, System.Guid runId, System.DateTimeOffset? scheduledFor, System.TimeSpan observationWindow, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+override SharedKernel.Npgsql.PostgreSqlScheduleRun.GetHashCode() -> int
+override SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.GetHashCode() -> int
+override SharedKernel.Npgsql.PostgreSqlScheduleRunPage.Equals(object? obj) -> bool
+override SharedKernel.Npgsql.PostgreSqlScheduleRunPage.GetHashCode() -> int
+override SharedKernel.Npgsql.PostgreSqlScheduleRunPage.ToString() -> string!
+static SharedKernel.Npgsql.PostgreSqlScheduleRun.operator !=(SharedKernel.Npgsql.PostgreSqlScheduleRun left, SharedKernel.Npgsql.PostgreSqlScheduleRun right) -> bool
+static SharedKernel.Npgsql.PostgreSqlScheduleRun.operator ==(SharedKernel.Npgsql.PostgreSqlScheduleRun left, SharedKernel.Npgsql.PostgreSqlScheduleRun right) -> bool
+static SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.operator !=(SharedKernel.Npgsql.PostgreSqlScheduleRunCursor left, SharedKernel.Npgsql.PostgreSqlScheduleRunCursor right) -> bool
+static SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.operator ==(SharedKernel.Npgsql.PostgreSqlScheduleRunCursor left, SharedKernel.Npgsql.PostgreSqlScheduleRunCursor right) -> bool
+static SharedKernel.Npgsql.PostgreSqlScheduleRunPage.operator !=(SharedKernel.Npgsql.PostgreSqlScheduleRunPage? left, SharedKernel.Npgsql.PostgreSqlScheduleRunPage? right) -> bool
+static SharedKernel.Npgsql.PostgreSqlScheduleRunPage.operator ==(SharedKernel.Npgsql.PostgreSqlScheduleRunPage? left, SharedKernel.Npgsql.PostgreSqlScheduleRunPage? right) -> bool
+~override SharedKernel.Npgsql.PostgreSqlScheduleRun.Equals(object obj) -> bool
+~override SharedKernel.Npgsql.PostgreSqlScheduleRun.ToString() -> string
+~override SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.Equals(object obj) -> bool
+~override SharedKernel.Npgsql.PostgreSqlScheduleRunCursor.ToString() -> string

@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Deliberately catastrophic pattern with a 1 ms timeout, used to prove timeouts become findings.</summary>
 internal static partial class SlowPatterns

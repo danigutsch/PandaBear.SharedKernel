@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Optional exact matches and a lower time bound for pending delivery rows.</summary>
 /// <param name="EventId">A stored event identifier, or <see langword="null"/> to include all identifiers.</param>

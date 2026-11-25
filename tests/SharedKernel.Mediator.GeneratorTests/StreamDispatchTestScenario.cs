@@ -1,6 +1,6 @@
-using PandaBear.Testing.Mediator;
+using SharedKernel.Testing.Mediator;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Holds a compiled stream request scenario with its generated mediator and a reference dispatcher so tests can compare both dispatch paths.</summary>
 internal sealed class StreamDispatchTestScenario : IDisposable

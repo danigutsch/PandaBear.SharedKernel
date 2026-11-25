@@ -1,435 +1,435 @@
 #nullable enable
-PandaBear.Testing.ReadObservingStream
-PandaBear.Testing.ReadObservingStream.ReadObservingStream(System.Func<System.Memory<byte>, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<int>>! read, System.Action<int, int>! observeRead) -> void
-override PandaBear.Testing.ReadObservingStream.CanRead.get -> bool
-override PandaBear.Testing.ReadObservingStream.CanSeek.get -> bool
-override PandaBear.Testing.ReadObservingStream.CanWrite.get -> bool
-override PandaBear.Testing.ReadObservingStream.Flush() -> void
-override PandaBear.Testing.ReadObservingStream.Length.get -> long
-override PandaBear.Testing.ReadObservingStream.Position.get -> long
-override PandaBear.Testing.ReadObservingStream.Position.set -> void
-override PandaBear.Testing.ReadObservingStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.ReadObservingStream.Read(System.Span<byte> buffer) -> int
-override PandaBear.Testing.ReadObservingStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override PandaBear.Testing.ReadObservingStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
-override PandaBear.Testing.ReadObservingStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.ReadObservingStream.SetLength(long value) -> void
-override PandaBear.Testing.ReadObservingStream.Write(byte[]! buffer, int offset, int count) -> void
-const PandaBear.Domain.Tests.TestTraits.AggregateRootCapability = "AggregateRoot" -> string!
-const PandaBear.Domain.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
-const PandaBear.Domain.Tests.TestTraits.DomainComponent = "SharedKernel.Domain" -> string!
-const PandaBear.Domain.Tests.TestTraits.EntityCapability = "Entity" -> string!
-const PandaBear.EventSourcing.Tests.TestTraits.EventSourcingComponent = "SharedKernel.EventSourcing" -> string!
-const PandaBear.Results.Tests.TestTraits.CompositionCategory = "Composition" -> string!
-const PandaBear.Results.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
-const PandaBear.Results.Tests.TestTraits.EdgeCaseCategory = "EdgeCase" -> string!
-const PandaBear.Results.Tests.TestTraits.FunctorLawsTheory = "FunctorLaws" -> string!
-const PandaBear.Results.Tests.TestTraits.MatchSemanticsTheory = "MatchSemantics" -> string!
-const PandaBear.Results.Tests.TestTraits.MonadLawsTheory = "MonadLaws" -> string!
-const PandaBear.Results.Tests.TestTraits.OptionCapability = "Option" -> string!
-const PandaBear.Results.Tests.TestTraits.ResultCapability = "Result" -> string!
-const PandaBear.Results.Tests.TestTraits.ResultsComponent = "SharedKernel.Results" -> string!
-const PandaBear.Idempotency.Tests.TestTraits.IdempotencyComponent = "SharedKernel.Idempotency.Abstractions" -> string!
-const PandaBear.Mediator.GeneratorTests.TestTraits.DependencyInjectionCapability = "DependencyInjection" -> string!
-const PandaBear.Mediator.GeneratorTests.TestTraits.DiscoveryCapability = "Discovery" -> string!
-const PandaBear.Mediator.GeneratorTests.TestTraits.DispatchCapability = "Dispatch" -> string!
-const PandaBear.Mediator.GeneratorTests.TestTraits.SourceGeneratorComponent = "SharedKernel.Mediator.SourceGenerator" -> string!
-const PandaBear.Mediator.Tests.TestTraits.AbstractionsComponent = "SharedKernel.Mediator.Abstractions" -> string!
-const PandaBear.Mediator.Tests.TestTraits.ContractsCapability = "Contracts" -> string!
-const PandaBear.Mediator.Tests.TestTraits.ReferenceDispatcherCapability = "ReferenceDispatcher" -> string!
-const PandaBear.Testing.Metrics.MeterCollector.ListenerFailureMessage = "listener-secret" -> string!
-const PandaBear.Testing.Metrics.ThrowingMeterFactory.FailureMessage = "factory-secret" -> string!
-const PandaBear.Testing.TestTraitNames.AreaName = "Area" -> string!
-const PandaBear.Testing.TestTraitNames.CapabilityName = "Capability" -> string!
-const PandaBear.Testing.TestTraitNames.CategoryName = "Category" -> string!
-const PandaBear.Testing.TestTraitNames.HostName = "Host" -> string!
-const PandaBear.Testing.TestTraitNames.ScopeName = "Scope" -> string!
-const PandaBear.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
-const PandaBear.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
-const PandaBear.Testing.TestTraitValues.ContractCategory = "contract" -> string!
-const PandaBear.Testing.TestTraitValues.DependencyInjectionCategory = "dependency-injection" -> string!
-const PandaBear.Testing.TestTraitValues.DriftGuardCategory = "drift-guard" -> string!
-const PandaBear.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
-const PandaBear.Testing.TestTraitValues.IntegrationEventTransport = "integration-event-transport" -> string!
-const PandaBear.Testing.TestTraitValues.OpenApiSurface = "openapi" -> string!
-const PandaBear.Testing.TestTraitValues.SecurityCategory = "security" -> string!
-const PandaBear.Testing.TestTraitValues.SnapshotCategory = "snapshot" -> string!
-const PandaBear.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
-override PandaBear.Testing.BlockingReadStream.CanRead.get -> bool
-override PandaBear.Testing.BlockingReadStream.CanSeek.get -> bool
-override PandaBear.Testing.BlockingReadStream.CanWrite.get -> bool
-override PandaBear.Testing.BlockingReadStream.Flush() -> void
-override PandaBear.Testing.BlockingReadStream.Length.get -> long
-override PandaBear.Testing.BlockingReadStream.Position.get -> long
-override PandaBear.Testing.BlockingReadStream.Position.set -> void
-override PandaBear.Testing.BlockingReadStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.BlockingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override PandaBear.Testing.BlockingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
-override PandaBear.Testing.BlockingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.BlockingReadStream.SetLength(long value) -> void
-override PandaBear.Testing.BlockingReadStream.Write(byte[]! buffer, int offset, int count) -> void
-override PandaBear.Testing.GatedCountingReadStream.CanRead.get -> bool
-override PandaBear.Testing.GatedCountingReadStream.CanSeek.get -> bool
-override PandaBear.Testing.GatedCountingReadStream.CanWrite.get -> bool
-override PandaBear.Testing.GatedCountingReadStream.Flush() -> void
-override PandaBear.Testing.GatedCountingReadStream.Length.get -> long
-override PandaBear.Testing.GatedCountingReadStream.Position.get -> long
-override PandaBear.Testing.GatedCountingReadStream.Position.set -> void
-override PandaBear.Testing.GatedCountingReadStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.GatedCountingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override PandaBear.Testing.GatedCountingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<int>
-override PandaBear.Testing.GatedCountingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.GatedCountingReadStream.SetLength(long value) -> void
-override PandaBear.Testing.GatedCountingReadStream.Write(byte[]! buffer, int offset, int count) -> void
-override PandaBear.Testing.RecordingWriteStream.CanRead.get -> bool
-override PandaBear.Testing.RecordingWriteStream.CanSeek.get -> bool
-override PandaBear.Testing.RecordingWriteStream.CanWrite.get -> bool
-override PandaBear.Testing.RecordingWriteStream.Flush() -> void
-override PandaBear.Testing.RecordingWriteStream.Length.get -> long
-override PandaBear.Testing.RecordingWriteStream.Position.get -> long
-override PandaBear.Testing.RecordingWriteStream.Position.set -> void
-override PandaBear.Testing.RecordingWriteStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.RecordingWriteStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.RecordingWriteStream.SetLength(long value) -> void
-override PandaBear.Testing.RecordingWriteStream.Write(byte[]! buffer, int offset, int count) -> void
-override PandaBear.Testing.RecordingWriteStream.Write(System.ReadOnlySpan<byte> buffer) -> void
-override PandaBear.Testing.TrackingReadStream.CanRead.get -> bool
-override PandaBear.Testing.TrackingReadStream.CanSeek.get -> bool
-override PandaBear.Testing.TrackingReadStream.CanWrite.get -> bool
-override PandaBear.Testing.TrackingReadStream.Flush() -> void
-override PandaBear.Testing.TrackingReadStream.Length.get -> long
-override PandaBear.Testing.TrackingReadStream.Position.get -> long
-override PandaBear.Testing.TrackingReadStream.Position.set -> void
-override PandaBear.Testing.TrackingReadStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.TrackingReadStream.Read(System.Span<byte> buffer) -> int
-override PandaBear.Testing.TrackingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override PandaBear.Testing.TrackingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
-override PandaBear.Testing.TrackingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.TrackingReadStream.SetLength(long value) -> void
-override PandaBear.Testing.TrackingReadStream.Write(byte[]! buffer, int offset, int count) -> void
-override PandaBear.Testing.UnsizedStream.CanRead.get -> bool
-override PandaBear.Testing.UnsizedStream.CanSeek.get -> bool
-override PandaBear.Testing.UnsizedStream.CanWrite.get -> bool
-override PandaBear.Testing.UnsizedStream.Flush() -> void
-override PandaBear.Testing.UnsizedStream.Length.get -> long
-override PandaBear.Testing.UnsizedStream.Position.get -> long
-override PandaBear.Testing.UnsizedStream.Position.set -> void
-override PandaBear.Testing.UnsizedStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.UnsizedStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.UnsizedStream.SetLength(long value) -> void
-override PandaBear.Testing.UnsizedStream.Write(byte[]! buffer, int offset, int count) -> void
-PandaBear.Domain.Tests.TestTraits
-PandaBear.EventSourcing.Tests.TestTraits
-PandaBear.Results.Tests.TestTraits
-PandaBear.Idempotency.Tests.TestTraits
-PandaBear.Mediator.GeneratorTests.TestTraits
-PandaBear.Mediator.Tests.TestTraits
-PandaBear.Testing.BlockingReadStream
-PandaBear.Testing.BlockingReadStream.BlockingReadStream(System.Action? onReadStarted = null) -> void
-PandaBear.Testing.BlockingReadStream.IsDisposed.get -> bool
-PandaBear.Testing.BlockingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
-PandaBear.Testing.FakeExecutable
-PandaBear.Testing.FileSystemProbes
-PandaBear.Testing.GatedCountingReadStream
-PandaBear.Testing.GatedCountingReadStream.BytesRead.get -> long
-PandaBear.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
-PandaBear.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
-PandaBear.Testing.GatedCountingReadStream.Release() -> void
-PandaBear.Testing.InvariantStringWriter
-PandaBear.Testing.InvariantStringWriter.InvariantStringWriter() -> void
-PandaBear.Testing.LoopbackPort
-PandaBear.Testing.Metrics.MeterCollector
-PandaBear.Testing.Metrics.MeterCollector.Create(System.Diagnostics.Metrics.MeterOptions! options) -> System.Diagnostics.Metrics.Meter!
-PandaBear.Testing.Metrics.MeterCollector.Dispose() -> void
-PandaBear.Testing.Metrics.MeterCollector.Measurements.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Metrics.RecordedMeasurement!>!
-PandaBear.Testing.Metrics.MeterCollector.MeterCollector(string? meterName = null) -> void
-PandaBear.Testing.Metrics.MeterCollector.ThrowOnMeasurement.get -> bool
-PandaBear.Testing.Metrics.MeterCollector.ThrowOnMeasurement.set -> void
-PandaBear.Testing.Metrics.RecordedMeasurement
-PandaBear.Testing.Metrics.RecordedMeasurement.Instrument.get -> string!
-PandaBear.Testing.Metrics.RecordedMeasurement.Instrument.init -> void
-PandaBear.Testing.Metrics.RecordedMeasurement.RecordedMeasurement(string! Instrument, long Value, System.Collections.Generic.IReadOnlyDictionary<string!, object?>! Tags) -> void
-PandaBear.Testing.Metrics.RecordedMeasurement.Tags.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object?>!
-PandaBear.Testing.Metrics.RecordedMeasurement.Tags.init -> void
-PandaBear.Testing.Metrics.RecordedMeasurement.Value.get -> long
-PandaBear.Testing.Metrics.RecordedMeasurement.Value.init -> void
-PandaBear.Testing.Metrics.ThrowingMeterFactory
-PandaBear.Testing.Metrics.ThrowingMeterFactory.Create(System.Diagnostics.Metrics.MeterOptions! options) -> System.Diagnostics.Metrics.Meter!
-PandaBear.Testing.Metrics.ThrowingMeterFactory.Dispose() -> void
-PandaBear.Testing.Metrics.ThrowingMeterFactory.ThrowingMeterFactory() -> void
-PandaBear.Testing.RecordingFakeExecutable
-PandaBear.Testing.RecordingFakeExecutable.Arguments() -> string![]!
-PandaBear.Testing.RecordingFakeExecutable.ArgumentsPath.get -> string!
-PandaBear.Testing.RecordingFakeExecutable.Environment() -> string![]!
-PandaBear.Testing.RecordingFakeExecutable.EnvironmentPath.get -> string!
-PandaBear.Testing.RecordingFakeExecutable.Path.get -> string!
-PandaBear.Testing.RecordingFakeExecutable.ProcessId() -> int
-PandaBear.Testing.RecordingFakeExecutable.ProcessIdPath.get -> string!
-PandaBear.Testing.RecordingFakeExecutable.RecordingFakeExecutable(string! directory, string! name, int exitCode, string! body) -> void
-PandaBear.Testing.RecordingFakeExecutable.Started.get -> bool
-PandaBear.Testing.RecordingWriteStream
-PandaBear.Testing.RecordingWriteStream.RecordingWriteStream() -> void
-PandaBear.Testing.RecordingWriteStream.WriteSizes.get -> System.Collections.Generic.IReadOnlyList<int>!
-PandaBear.Testing.SerialTestJustificationAttribute
-PandaBear.Testing.SerialTestJustificationAttribute.Reason.get -> string!
-PandaBear.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
-PandaBear.Testing.TemporaryGitRepository
-PandaBear.Testing.TemporaryGitRepository.Commit(string! fileName, string! content, string! message, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.Testing.TemporaryGitRepository.Dispose() -> void
-PandaBear.Testing.TemporaryGitRepository.GitEnvironment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
-PandaBear.Testing.TemporaryGitRepository.Initialize(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.Testing.TemporaryGitRepository.RootPath.get -> string!
-PandaBear.Testing.TemporaryGitRepository.RunGit(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-PandaBear.Testing.TemporaryGitRepository.Tag(string! tag, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.Testing.TemporaryGitRepository.TemporaryGitRepository() -> void
-PandaBear.Testing.TemporaryGitRepository.TryRunGit(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Testing.TestProcessResult>!
-PandaBear.Testing.TemporaryGitRepository.WriteText(string! relativePath, string! content) -> void
-PandaBear.Testing.TestGit
-PandaBear.Testing.TestProcess
-PandaBear.Testing.TestProcessResult
-PandaBear.Testing.TestProcessResult.ExitCode.get -> int
-PandaBear.Testing.TestProcessResult.ExitCode.init -> void
-PandaBear.Testing.TestProcessResult.StandardError.get -> string!
-PandaBear.Testing.TestProcessResult.StandardError.init -> void
-PandaBear.Testing.TestProcessResult.StandardOutput.get -> string!
-PandaBear.Testing.TestProcessResult.StandardOutput.init -> void
-PandaBear.Testing.TestProcessResult.TestProcessResult() -> void
-PandaBear.Testing.TestProcessResult.TestProcessResult(int ExitCode, string! StandardOutput, string! StandardError) -> void
-PandaBear.Testing.TestTraitNames
-PandaBear.Testing.TestTraitValues
-PandaBear.Testing.EnvironmentVariableScope
-PandaBear.Testing.EnvironmentVariableScope.EnvironmentVariableScope(string! name, string? value) -> void
-PandaBear.Testing.EnvironmentVariableScope.Dispose() -> void
-PandaBear.Testing.TemporaryDirectory
-PandaBear.Testing.TemporaryDirectory.TemporaryDirectory() -> void
-PandaBear.Testing.TemporaryDirectory.Path.get -> string!
-PandaBear.Testing.TemporaryDirectory.Dispose() -> void
-PandaBear.Testing.TestScope
-PandaBear.Testing.TestScope.Architecture = 7 -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScope.Behavior = 1 -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScope.Component = 2 -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScope.Contract = 3 -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScope.Integration = 5 -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScope.System = 6 -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScope.UiIntegration = 4 -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScope.Unit = 0 -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScopeExtensions
-PandaBear.Testing.TrackingAsyncDisposable
-PandaBear.Testing.TrackingAsyncDisposable.DisposeAsync() -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.TrackingAsyncDisposable.DisposeCalled.get -> bool
-PandaBear.Testing.TrackingAsyncDisposable.TrackingAsyncDisposable(string! name, System.Collections.Generic.ICollection<string!>! disposalOrder, System.Exception? failure = null) -> void
-PandaBear.Testing.TrackingCleanupAction
-PandaBear.Testing.TrackingCleanupAction.Invoke() -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.TrackingCleanupAction.TrackingCleanupAction(string! name, System.Collections.Generic.ICollection<string!>! cleanupOrder, System.Exception? failure = null) -> void
-PandaBear.Testing.TrackingReadStream
-PandaBear.Testing.TrackingReadStream.BytesRead.get -> long
-PandaBear.Testing.TrackingReadStream.IsDisposed.get -> bool
-PandaBear.Testing.TrackingReadStream.ReadCount.get -> int
-PandaBear.Testing.TrackingReadStream.TrackingReadStream(byte[]! content, bool seekable = false) -> void
-PandaBear.Testing.UnsizedStream
-PandaBear.Testing.UnsizedStream.UnsizedStream(byte[]! content) -> void
-static PandaBear.Testing.FakeExecutable.Quote(string! value) -> string!
-static PandaBear.Testing.FakeExecutable.WriteMarker(string! path, string! marker) -> void
-static PandaBear.Testing.FakeExecutable.WriteScript(string! path, string! body) -> void
-static PandaBear.Testing.FileSystemProbes.CanCreateSymbolicLinks.get -> bool
-static PandaBear.Testing.FileSystemProbes.CanDenyAccess.get -> bool
-static PandaBear.Testing.FileSystemProbes.IsCaseSensitive.get -> bool
-static PandaBear.Testing.LoopbackPort.GetFree() -> int
-static PandaBear.Testing.TestGit.Commit(string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-static PandaBear.Testing.TestGit.CommitAll(string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-static PandaBear.Testing.TestGit.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
-static PandaBear.Testing.TestGit.Run(string! directory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-static PandaBear.Testing.TestGit.TryRun(string! directory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? environment = null) -> System.Threading.Tasks.Task<PandaBear.Testing.TestProcessResult>!
-static PandaBear.Testing.TestProcess.Run(string! fileName, string! workingDirectory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken cancellationToken, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? environment = null) -> System.Threading.Tasks.Task<PandaBear.Testing.TestProcessResult>!
-static PandaBear.Testing.TestScopeExtensions.ToTraitValue(this PandaBear.Testing.TestScope scope) -> string!
-PandaBear.Testing.TestHost
-PandaBear.Testing.TestHost.InProcess = 0 -> PandaBear.Testing.TestHost
-PandaBear.Testing.TestHost.TestServer = 1 -> PandaBear.Testing.TestHost
-PandaBear.Testing.TestHost.Aspire = 2 -> PandaBear.Testing.TestHost
-PandaBear.Testing.TestHost.Browser = 3 -> PandaBear.Testing.TestHost
-PandaBear.Testing.TestHostExtensions
-static PandaBear.Testing.TestHostExtensions.ToTraitValue(this PandaBear.Testing.TestHost host) -> string!
-PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocus.CoreBehavior = 0 -> PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocus.DomainRule = 1 -> PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocus.EdgeCase = 2 -> PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocus.Regression = 3 -> PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocus.Security = 4 -> PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocus.DriftGuard = 5 -> PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocus.Migration = 6 -> PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocusExtensions
-static PandaBear.Testing.TestFocusExtensions.ToTraitValue(this PandaBear.Testing.TestFocus focus) -> string!
-PandaBear.Testing.TestPriority
-PandaBear.Testing.TestPriority.Smoke = 0 -> PandaBear.Testing.TestPriority
-PandaBear.Testing.TestPriority.Critical = 1 -> PandaBear.Testing.TestPriority
-PandaBear.Testing.TestPriorityExtensions
-static PandaBear.Testing.TestPriorityExtensions.ToTraitValue(this PandaBear.Testing.TestPriority priority) -> string!
-const PandaBear.Testing.TestTraitNames.FocusName = "Focus" -> string!
-const PandaBear.Testing.TestTraitNames.PriorityName = "Priority" -> string!
-PandaBear.Testing.CountingTimeProvider
-PandaBear.Testing.CountingTimeProvider.CountingTimeProvider() -> void
-PandaBear.Testing.CountingTimeProvider.CountingTimeProvider(System.TimeProvider! inner) -> void
-PandaBear.Testing.CountingTimeProvider.Reads.get -> int
-PandaBear.Testing.CountingTimeProvider.Reset() -> void
-override PandaBear.Testing.CountingTimeProvider.CreateTimer(System.Threading.TimerCallback! callback, object? state, System.TimeSpan dueTime, System.TimeSpan period) -> System.Threading.ITimer!
-override PandaBear.Testing.CountingTimeProvider.GetTimestamp() -> long
-override PandaBear.Testing.CountingTimeProvider.GetUtcNow() -> System.DateTimeOffset
-override PandaBear.Testing.CountingTimeProvider.LocalTimeZone.get -> System.TimeZoneInfo!
-override PandaBear.Testing.CountingTimeProvider.TimestampFrequency.get -> long
-PandaBear.Testing.TestCleanup
-static PandaBear.Testing.TestCleanup.DisposeAll(System.Exception? operationFailure, params System.IAsyncDisposable?[]! resources) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.TestCleanup.Run(System.Exception? operationFailure, params System.Func<System.Threading.Tasks.ValueTask>![]! cleanupActions) -> System.Threading.Tasks.Task!
-override PandaBear.Testing.BlockingReadStream.Read(System.Span<byte> buffer) -> int
-PandaBear.Testing.BlockingReadStream.BlockingReadStream(byte[]! prefix, byte[]! remainder) -> void
-PandaBear.Testing.BlockingReadStream.Blocked.get -> System.Threading.Tasks.Task!
-PandaBear.Testing.BlockingReadStream.BlockedReadCancelled.get -> bool
-PandaBear.Testing.BlockingReadStream.BytesRead.get -> long
-PandaBear.Testing.BlockingReadStream.Disposed.get -> System.Threading.Tasks.Task!
-PandaBear.Testing.BlockingReadStream.Release() -> void
-PandaBear.Testing.DisposalTrackingStream
-PandaBear.Testing.DisposalTrackingStream.AsyncDisposeCount.get -> int
-PandaBear.Testing.DisposalTrackingStream.DisposalTrackingStream(System.IO.Stream! inner) -> void
-PandaBear.Testing.DisposalTrackingStream.DisposeCount.get -> int
-PandaBear.Testing.DisposalTrackingStream.Disposed.get -> System.Threading.Tasks.Task!
-PandaBear.Testing.DisposalTrackingStream.InnerStream.get -> System.IO.Stream!
-PandaBear.Testing.DisposalTrackingStream.IsDisposed.get -> bool
-override PandaBear.Testing.DisposalTrackingStream.CanRead.get -> bool
-override PandaBear.Testing.DisposalTrackingStream.CanSeek.get -> bool
-override PandaBear.Testing.DisposalTrackingStream.CanWrite.get -> bool
-override PandaBear.Testing.DisposalTrackingStream.DisposeAsync() -> System.Threading.Tasks.ValueTask
-override PandaBear.Testing.DisposalTrackingStream.Flush() -> void
-override PandaBear.Testing.DisposalTrackingStream.FlushAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-override PandaBear.Testing.DisposalTrackingStream.Length.get -> long
-override PandaBear.Testing.DisposalTrackingStream.Position.get -> long
-override PandaBear.Testing.DisposalTrackingStream.Position.set -> void
-override PandaBear.Testing.DisposalTrackingStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.DisposalTrackingStream.Read(System.Span<byte> buffer) -> int
-override PandaBear.Testing.DisposalTrackingStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override PandaBear.Testing.DisposalTrackingStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
-override PandaBear.Testing.DisposalTrackingStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.DisposalTrackingStream.SetLength(long value) -> void
-override PandaBear.Testing.DisposalTrackingStream.Write(byte[]! buffer, int offset, int count) -> void
-override PandaBear.Testing.DisposalTrackingStream.Write(System.ReadOnlySpan<byte> buffer) -> void
-override PandaBear.Testing.DisposalTrackingStream.WriteAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-override PandaBear.Testing.DisposalTrackingStream.WriteAsync(System.ReadOnlyMemory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.GatedChunkReadStream
-PandaBear.Testing.GatedChunkReadStream.BytesRead.get -> long
-PandaBear.Testing.GatedChunkReadStream.GatedChunkReadStream(byte[]! content, int chunkSize) -> void
-PandaBear.Testing.GatedChunkReadStream.IsDisposed.get -> bool
-PandaBear.Testing.GatedChunkReadStream.LargestRequestedRead.get -> int
-PandaBear.Testing.GatedChunkReadStream.ReadCount.get -> int
-PandaBear.Testing.GatedChunkReadStream.ReleaseAll() -> void
-PandaBear.Testing.GatedChunkReadStream.ReleaseRead() -> void
-PandaBear.Testing.GatedChunkReadStream.WaitForPendingRead(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-override PandaBear.Testing.GatedChunkReadStream.CanRead.get -> bool
-override PandaBear.Testing.GatedChunkReadStream.CanSeek.get -> bool
-override PandaBear.Testing.GatedChunkReadStream.CanWrite.get -> bool
-override PandaBear.Testing.GatedChunkReadStream.Flush() -> void
-override PandaBear.Testing.GatedChunkReadStream.Length.get -> long
-override PandaBear.Testing.GatedChunkReadStream.Position.get -> long
-override PandaBear.Testing.GatedChunkReadStream.Position.set -> void
-override PandaBear.Testing.GatedChunkReadStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.GatedChunkReadStream.Read(System.Span<byte> buffer) -> int
-override PandaBear.Testing.GatedChunkReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override PandaBear.Testing.GatedChunkReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
-override PandaBear.Testing.GatedChunkReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.GatedChunkReadStream.SetLength(long value) -> void
-override PandaBear.Testing.GatedChunkReadStream.Write(byte[]! buffer, int offset, int count) -> void
-PandaBear.Testing.ThrowingReadStream
-PandaBear.Testing.ThrowingReadStream.BytesRead.get -> long
-PandaBear.Testing.ThrowingReadStream.IsDisposed.get -> bool
-PandaBear.Testing.ThrowingReadStream.ReadCount.get -> int
-PandaBear.Testing.ThrowingReadStream.ThrowingReadStream(byte[]! prefix, System.Exception! exception) -> void
-PandaBear.Testing.ThrowingReadStream.ThrowingReadStream(System.Exception! exception) -> void
-override PandaBear.Testing.ThrowingReadStream.CanRead.get -> bool
-override PandaBear.Testing.ThrowingReadStream.CanSeek.get -> bool
-override PandaBear.Testing.ThrowingReadStream.CanWrite.get -> bool
-override PandaBear.Testing.ThrowingReadStream.Flush() -> void
-override PandaBear.Testing.ThrowingReadStream.Length.get -> long
-override PandaBear.Testing.ThrowingReadStream.Position.get -> long
-override PandaBear.Testing.ThrowingReadStream.Position.set -> void
-override PandaBear.Testing.ThrowingReadStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.ThrowingReadStream.Read(System.Span<byte> buffer) -> int
-override PandaBear.Testing.ThrowingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override PandaBear.Testing.ThrowingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
-override PandaBear.Testing.ThrowingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.ThrowingReadStream.SetLength(long value) -> void
-override PandaBear.Testing.ThrowingReadStream.Write(byte[]! buffer, int offset, int count) -> void
-PandaBear.Testing.TrackingReadStream.MaxBytesPerRead.get -> int
-PandaBear.Testing.TrackingReadStream.MaxBytesPerRead.init -> void
-PandaBear.Testing.CallProxyServiceCollectionExtensions
-PandaBear.Testing.CallHooks<TService>
-PandaBear.Testing.CallHooks<TService>.Generated<THooks>() -> THooks!
-PandaBear.Testing.CallProxy
-PandaBear.Testing.GeneratedCallHooks<TService>
-PandaBear.Testing.GeneratedCallHooks<TService>.GeneratedCallHooks() -> void
-PandaBear.Testing.MethodHooks<TCall, TResult>
-PandaBear.Testing.MethodHooks<TCall, TResult>.After(System.Action<TCall>! hook) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
-PandaBear.Testing.MethodHooks<TCall, TResult>.After(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
-PandaBear.Testing.MethodHooks<TCall, TResult>.Before(System.Action<TCall>! hook) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
-PandaBear.Testing.MethodHooks<TCall, TResult>.Before(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
-PandaBear.Testing.MethodHooks<TCall, TResult>.MethodHooks() -> void
-PandaBear.Testing.MethodHooks<TCall, TResult>.Returns(TResult value) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
-PandaBear.Testing.MethodHooks<TCall, TResult>.RunAfter(TCall call) -> System.Threading.Tasks.Task!
-PandaBear.Testing.MethodHooks<TCall, TResult>.RunBefore(TCall call) -> System.Threading.Tasks.Task!
-PandaBear.Testing.MethodHooks<TCall, TResult>.TryGetReplacement(out TResult value) -> bool
-PandaBear.Testing.MethodHooks<TCall>
-PandaBear.Testing.MethodHooks<TCall>.After(System.Action<TCall>! hook) -> PandaBear.Testing.MethodHooks<TCall>!
-PandaBear.Testing.MethodHooks<TCall>.After(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.MethodHooks<TCall>!
-PandaBear.Testing.MethodHooks<TCall>.Before(System.Action<TCall>! hook) -> PandaBear.Testing.MethodHooks<TCall>!
-PandaBear.Testing.MethodHooks<TCall>.Before(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.MethodHooks<TCall>!
-PandaBear.Testing.MethodHooks<TCall>.MethodHooks() -> void
-PandaBear.Testing.MethodHooks<TCall>.RunAfter(TCall call) -> System.Threading.Tasks.Task!
-PandaBear.Testing.MethodHooks<TCall>.RunBefore(TCall call) -> System.Threading.Tasks.Task!
-abstract PandaBear.Testing.GeneratedCallHooks<TService>.Wrap(TService! inner) -> TService!
-static PandaBear.Testing.CallProxy.Create<TService>(TService! inner, System.Action<PandaBear.Testing.CallHooks<TService!>!>? configure = null) -> TService!
-static PandaBear.Testing.CallProxy.Register<TService>(System.Func<PandaBear.Testing.GeneratedCallHooks<TService!>!>! create) -> void
-static PandaBear.Testing.CallProxyServiceCollectionExtensions.WrapWithCallProxy<TService>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.Testing.CallHooks<TService!>!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-PandaBear.Testing.Metrics.RecordedMeasurement.<Clone>$() -> PandaBear.Testing.Metrics.RecordedMeasurement!
-PandaBear.Testing.Metrics.RecordedMeasurement.Deconstruct(out string! Instrument, out long Value, out System.Collections.Generic.IReadOnlyDictionary<string!, object?>! Tags) -> void
-PandaBear.Testing.Metrics.RecordedMeasurement.Equals(PandaBear.Testing.Metrics.RecordedMeasurement? other) -> bool
-PandaBear.Testing.TestProcessResult.Deconstruct(out int ExitCode, out string! StandardOutput, out string! StandardError) -> void
-PandaBear.Testing.TestProcessResult.Equals(PandaBear.Testing.TestProcessResult other) -> bool
-override PandaBear.Testing.Metrics.RecordedMeasurement.Equals(object? obj) -> bool
-override PandaBear.Testing.Metrics.RecordedMeasurement.GetHashCode() -> int
-override PandaBear.Testing.Metrics.RecordedMeasurement.ToString() -> string!
-override PandaBear.Testing.TestProcessResult.GetHashCode() -> int
-static PandaBear.Testing.Metrics.RecordedMeasurement.operator !=(PandaBear.Testing.Metrics.RecordedMeasurement? left, PandaBear.Testing.Metrics.RecordedMeasurement? right) -> bool
-static PandaBear.Testing.Metrics.RecordedMeasurement.operator ==(PandaBear.Testing.Metrics.RecordedMeasurement? left, PandaBear.Testing.Metrics.RecordedMeasurement? right) -> bool
-static PandaBear.Testing.TestProcessResult.operator !=(PandaBear.Testing.TestProcessResult left, PandaBear.Testing.TestProcessResult right) -> bool
-static PandaBear.Testing.TestProcessResult.operator ==(PandaBear.Testing.TestProcessResult left, PandaBear.Testing.TestProcessResult right) -> bool
-~override PandaBear.Testing.TestProcessResult.Equals(object obj) -> bool
-~override PandaBear.Testing.TestProcessResult.ToString() -> string
-PandaBear.Testing.RepositoryRoot
-static PandaBear.Testing.RepositoryRoot.Locate(string! marker) -> string!
-static PandaBear.Testing.RepositoryRoot.Locate(string! marker, string! startDirectory) -> string!
-static PandaBear.Testing.RepositoryRoot.TryLocate(string! marker) -> string?
-static PandaBear.Testing.RepositoryRoot.TryLocate(string! marker, string! startDirectory) -> string?
-PandaBear.Testing.ReadmeCommandLines
-static PandaBear.Testing.ReadmeCommandLines.Find(string! markdown, string! invocation) -> string![]!
-PandaBear.Testing.ExecutableMap
-PandaBear.Testing.ExecutableMap.ExecutableMap() -> void
-PandaBear.Testing.ExecutableMap.ExecutableMap(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>! executables) -> void
-PandaBear.Testing.ExecutableMap.ExecutableMap(System.Func<string!, string?>! fallback) -> void
-PandaBear.Testing.ExecutableMap.Find(string! command) -> string?
-PandaBear.Testing.ExecutableMap.Set(string! command, string? path) -> void
-PandaBear.Testing.RecordedProcessRun
-PandaBear.Testing.RecordedProcessRun.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Testing.RecordedProcessRun.FileName.get -> string!
-PandaBear.Testing.RecordedProcessRun.Forward.get -> System.IO.TextWriter?
-PandaBear.Testing.RecordedProcessRun.StartInfo.get -> System.Diagnostics.ProcessStartInfo!
-PandaBear.Testing.ScriptedProcessRunner
-PandaBear.Testing.ScriptedProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!
-PandaBear.Testing.ScriptedProcessRunner.Runs.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.RecordedProcessRun!>!
-PandaBear.Testing.ScriptedProcessRunner.ScriptedProcessRunner(System.Func<System.Diagnostics.ProcessStartInfo!, System.IO.TextWriter?, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!>! respond) -> void
-static PandaBear.Testing.ScriptedProcessRunner.Answering(System.Func<PandaBear.Testing.RecordedProcessRun!, PandaBear.Processes.ProcessOutput!>! answer) -> PandaBear.Testing.ScriptedProcessRunner!
-static PandaBear.Testing.ScriptedProcessRunner.AnswersInOrder(params System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, PandaBear.Processes.ProcessOutput!>![]! answers) -> PandaBear.Testing.ScriptedProcessRunner!
-static PandaBear.Testing.ScriptedProcessRunner.ByFileName(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, PandaBear.Processes.ProcessOutput!>>! outputs) -> PandaBear.Testing.ScriptedProcessRunner!
-static PandaBear.Testing.ScriptedProcessRunner.InOrder(params PandaBear.Processes.ProcessOutput![]! outputs) -> PandaBear.Testing.ScriptedProcessRunner!
-static PandaBear.Testing.ScriptedProcessRunner.Returning(PandaBear.Processes.ProcessOutput! output) -> PandaBear.Testing.ScriptedProcessRunner!
-static PandaBear.Testing.ScriptedProcessRunner.Throwing(System.Exception! exception) -> PandaBear.Testing.ScriptedProcessRunner!
-PandaBear.Testing.CultureScope
-PandaBear.Testing.CultureScope.CultureScope(System.Globalization.CultureInfo! culture) -> void
-PandaBear.Testing.CultureScope.CultureScope(System.Globalization.CultureInfo! culture, System.Globalization.CultureInfo! uiCulture) -> void
-PandaBear.Testing.CultureScope.Dispose() -> void
-static PandaBear.Testing.CultureScope.Run<T>(System.Globalization.CultureInfo! culture, System.Func<T>! action) -> T
+SharedKernel.Testing.ReadObservingStream
+SharedKernel.Testing.ReadObservingStream.ReadObservingStream(System.Func<System.Memory<byte>, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<int>>! read, System.Action<int, int>! observeRead) -> void
+override SharedKernel.Testing.ReadObservingStream.CanRead.get -> bool
+override SharedKernel.Testing.ReadObservingStream.CanSeek.get -> bool
+override SharedKernel.Testing.ReadObservingStream.CanWrite.get -> bool
+override SharedKernel.Testing.ReadObservingStream.Flush() -> void
+override SharedKernel.Testing.ReadObservingStream.Length.get -> long
+override SharedKernel.Testing.ReadObservingStream.Position.get -> long
+override SharedKernel.Testing.ReadObservingStream.Position.set -> void
+override SharedKernel.Testing.ReadObservingStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.ReadObservingStream.Read(System.Span<byte> buffer) -> int
+override SharedKernel.Testing.ReadObservingStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override SharedKernel.Testing.ReadObservingStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Testing.ReadObservingStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.ReadObservingStream.SetLength(long value) -> void
+override SharedKernel.Testing.ReadObservingStream.Write(byte[]! buffer, int offset, int count) -> void
+const SharedKernel.Domain.Tests.TestTraits.AggregateRootCapability = "AggregateRoot" -> string!
+const SharedKernel.Domain.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
+const SharedKernel.Domain.Tests.TestTraits.DomainComponent = "SharedKernel.Domain" -> string!
+const SharedKernel.Domain.Tests.TestTraits.EntityCapability = "Entity" -> string!
+const SharedKernel.EventSourcing.Tests.TestTraits.EventSourcingComponent = "SharedKernel.EventSourcing" -> string!
+const SharedKernel.Results.Tests.TestTraits.CompositionCategory = "Composition" -> string!
+const SharedKernel.Results.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
+const SharedKernel.Results.Tests.TestTraits.EdgeCaseCategory = "EdgeCase" -> string!
+const SharedKernel.Results.Tests.TestTraits.FunctorLawsTheory = "FunctorLaws" -> string!
+const SharedKernel.Results.Tests.TestTraits.MatchSemanticsTheory = "MatchSemantics" -> string!
+const SharedKernel.Results.Tests.TestTraits.MonadLawsTheory = "MonadLaws" -> string!
+const SharedKernel.Results.Tests.TestTraits.OptionCapability = "Option" -> string!
+const SharedKernel.Results.Tests.TestTraits.ResultCapability = "Result" -> string!
+const SharedKernel.Results.Tests.TestTraits.ResultsComponent = "SharedKernel.Results" -> string!
+const SharedKernel.Idempotency.Tests.TestTraits.IdempotencyComponent = "SharedKernel.Idempotency.Abstractions" -> string!
+const SharedKernel.Mediator.GeneratorTests.TestTraits.DependencyInjectionCapability = "DependencyInjection" -> string!
+const SharedKernel.Mediator.GeneratorTests.TestTraits.DiscoveryCapability = "Discovery" -> string!
+const SharedKernel.Mediator.GeneratorTests.TestTraits.DispatchCapability = "Dispatch" -> string!
+const SharedKernel.Mediator.GeneratorTests.TestTraits.SourceGeneratorComponent = "SharedKernel.Mediator.SourceGenerator" -> string!
+const SharedKernel.Mediator.Tests.TestTraits.AbstractionsComponent = "SharedKernel.Mediator.Abstractions" -> string!
+const SharedKernel.Mediator.Tests.TestTraits.ContractsCapability = "Contracts" -> string!
+const SharedKernel.Mediator.Tests.TestTraits.ReferenceDispatcherCapability = "ReferenceDispatcher" -> string!
+const SharedKernel.Testing.Metrics.MeterCollector.ListenerFailureMessage = "listener-secret" -> string!
+const SharedKernel.Testing.Metrics.ThrowingMeterFactory.FailureMessage = "factory-secret" -> string!
+const SharedKernel.Testing.TestTraitNames.AreaName = "Area" -> string!
+const SharedKernel.Testing.TestTraitNames.CapabilityName = "Capability" -> string!
+const SharedKernel.Testing.TestTraitNames.CategoryName = "Category" -> string!
+const SharedKernel.Testing.TestTraitNames.HostName = "Host" -> string!
+const SharedKernel.Testing.TestTraitNames.ScopeName = "Scope" -> string!
+const SharedKernel.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
+const SharedKernel.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
+const SharedKernel.Testing.TestTraitValues.ContractCategory = "contract" -> string!
+const SharedKernel.Testing.TestTraitValues.DependencyInjectionCategory = "dependency-injection" -> string!
+const SharedKernel.Testing.TestTraitValues.DriftGuardCategory = "drift-guard" -> string!
+const SharedKernel.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
+const SharedKernel.Testing.TestTraitValues.IntegrationEventTransport = "integration-event-transport" -> string!
+const SharedKernel.Testing.TestTraitValues.OpenApiSurface = "openapi" -> string!
+const SharedKernel.Testing.TestTraitValues.SecurityCategory = "security" -> string!
+const SharedKernel.Testing.TestTraitValues.SnapshotCategory = "snapshot" -> string!
+const SharedKernel.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
+override SharedKernel.Testing.BlockingReadStream.CanRead.get -> bool
+override SharedKernel.Testing.BlockingReadStream.CanSeek.get -> bool
+override SharedKernel.Testing.BlockingReadStream.CanWrite.get -> bool
+override SharedKernel.Testing.BlockingReadStream.Flush() -> void
+override SharedKernel.Testing.BlockingReadStream.Length.get -> long
+override SharedKernel.Testing.BlockingReadStream.Position.get -> long
+override SharedKernel.Testing.BlockingReadStream.Position.set -> void
+override SharedKernel.Testing.BlockingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.BlockingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override SharedKernel.Testing.BlockingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Testing.BlockingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.BlockingReadStream.SetLength(long value) -> void
+override SharedKernel.Testing.BlockingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+override SharedKernel.Testing.GatedCountingReadStream.CanRead.get -> bool
+override SharedKernel.Testing.GatedCountingReadStream.CanSeek.get -> bool
+override SharedKernel.Testing.GatedCountingReadStream.CanWrite.get -> bool
+override SharedKernel.Testing.GatedCountingReadStream.Flush() -> void
+override SharedKernel.Testing.GatedCountingReadStream.Length.get -> long
+override SharedKernel.Testing.GatedCountingReadStream.Position.get -> long
+override SharedKernel.Testing.GatedCountingReadStream.Position.set -> void
+override SharedKernel.Testing.GatedCountingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.GatedCountingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override SharedKernel.Testing.GatedCountingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Testing.GatedCountingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.GatedCountingReadStream.SetLength(long value) -> void
+override SharedKernel.Testing.GatedCountingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+override SharedKernel.Testing.RecordingWriteStream.CanRead.get -> bool
+override SharedKernel.Testing.RecordingWriteStream.CanSeek.get -> bool
+override SharedKernel.Testing.RecordingWriteStream.CanWrite.get -> bool
+override SharedKernel.Testing.RecordingWriteStream.Flush() -> void
+override SharedKernel.Testing.RecordingWriteStream.Length.get -> long
+override SharedKernel.Testing.RecordingWriteStream.Position.get -> long
+override SharedKernel.Testing.RecordingWriteStream.Position.set -> void
+override SharedKernel.Testing.RecordingWriteStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.RecordingWriteStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.RecordingWriteStream.SetLength(long value) -> void
+override SharedKernel.Testing.RecordingWriteStream.Write(byte[]! buffer, int offset, int count) -> void
+override SharedKernel.Testing.RecordingWriteStream.Write(System.ReadOnlySpan<byte> buffer) -> void
+override SharedKernel.Testing.TrackingReadStream.CanRead.get -> bool
+override SharedKernel.Testing.TrackingReadStream.CanSeek.get -> bool
+override SharedKernel.Testing.TrackingReadStream.CanWrite.get -> bool
+override SharedKernel.Testing.TrackingReadStream.Flush() -> void
+override SharedKernel.Testing.TrackingReadStream.Length.get -> long
+override SharedKernel.Testing.TrackingReadStream.Position.get -> long
+override SharedKernel.Testing.TrackingReadStream.Position.set -> void
+override SharedKernel.Testing.TrackingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.TrackingReadStream.Read(System.Span<byte> buffer) -> int
+override SharedKernel.Testing.TrackingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override SharedKernel.Testing.TrackingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Testing.TrackingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.TrackingReadStream.SetLength(long value) -> void
+override SharedKernel.Testing.TrackingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+override SharedKernel.Testing.UnsizedStream.CanRead.get -> bool
+override SharedKernel.Testing.UnsizedStream.CanSeek.get -> bool
+override SharedKernel.Testing.UnsizedStream.CanWrite.get -> bool
+override SharedKernel.Testing.UnsizedStream.Flush() -> void
+override SharedKernel.Testing.UnsizedStream.Length.get -> long
+override SharedKernel.Testing.UnsizedStream.Position.get -> long
+override SharedKernel.Testing.UnsizedStream.Position.set -> void
+override SharedKernel.Testing.UnsizedStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.UnsizedStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.UnsizedStream.SetLength(long value) -> void
+override SharedKernel.Testing.UnsizedStream.Write(byte[]! buffer, int offset, int count) -> void
+SharedKernel.Domain.Tests.TestTraits
+SharedKernel.EventSourcing.Tests.TestTraits
+SharedKernel.Results.Tests.TestTraits
+SharedKernel.Idempotency.Tests.TestTraits
+SharedKernel.Mediator.GeneratorTests.TestTraits
+SharedKernel.Mediator.Tests.TestTraits
+SharedKernel.Testing.BlockingReadStream
+SharedKernel.Testing.BlockingReadStream.BlockingReadStream(System.Action? onReadStarted = null) -> void
+SharedKernel.Testing.BlockingReadStream.IsDisposed.get -> bool
+SharedKernel.Testing.BlockingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
+SharedKernel.Testing.FakeExecutable
+SharedKernel.Testing.FileSystemProbes
+SharedKernel.Testing.GatedCountingReadStream
+SharedKernel.Testing.GatedCountingReadStream.BytesRead.get -> long
+SharedKernel.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
+SharedKernel.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
+SharedKernel.Testing.GatedCountingReadStream.Release() -> void
+SharedKernel.Testing.InvariantStringWriter
+SharedKernel.Testing.InvariantStringWriter.InvariantStringWriter() -> void
+SharedKernel.Testing.LoopbackPort
+SharedKernel.Testing.Metrics.MeterCollector
+SharedKernel.Testing.Metrics.MeterCollector.Create(System.Diagnostics.Metrics.MeterOptions! options) -> System.Diagnostics.Metrics.Meter!
+SharedKernel.Testing.Metrics.MeterCollector.Dispose() -> void
+SharedKernel.Testing.Metrics.MeterCollector.Measurements.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Metrics.RecordedMeasurement!>!
+SharedKernel.Testing.Metrics.MeterCollector.MeterCollector(string? meterName = null) -> void
+SharedKernel.Testing.Metrics.MeterCollector.ThrowOnMeasurement.get -> bool
+SharedKernel.Testing.Metrics.MeterCollector.ThrowOnMeasurement.set -> void
+SharedKernel.Testing.Metrics.RecordedMeasurement
+SharedKernel.Testing.Metrics.RecordedMeasurement.Instrument.get -> string!
+SharedKernel.Testing.Metrics.RecordedMeasurement.Instrument.init -> void
+SharedKernel.Testing.Metrics.RecordedMeasurement.RecordedMeasurement(string! Instrument, long Value, System.Collections.Generic.IReadOnlyDictionary<string!, object?>! Tags) -> void
+SharedKernel.Testing.Metrics.RecordedMeasurement.Tags.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object?>!
+SharedKernel.Testing.Metrics.RecordedMeasurement.Tags.init -> void
+SharedKernel.Testing.Metrics.RecordedMeasurement.Value.get -> long
+SharedKernel.Testing.Metrics.RecordedMeasurement.Value.init -> void
+SharedKernel.Testing.Metrics.ThrowingMeterFactory
+SharedKernel.Testing.Metrics.ThrowingMeterFactory.Create(System.Diagnostics.Metrics.MeterOptions! options) -> System.Diagnostics.Metrics.Meter!
+SharedKernel.Testing.Metrics.ThrowingMeterFactory.Dispose() -> void
+SharedKernel.Testing.Metrics.ThrowingMeterFactory.ThrowingMeterFactory() -> void
+SharedKernel.Testing.RecordingFakeExecutable
+SharedKernel.Testing.RecordingFakeExecutable.Arguments() -> string![]!
+SharedKernel.Testing.RecordingFakeExecutable.ArgumentsPath.get -> string!
+SharedKernel.Testing.RecordingFakeExecutable.Environment() -> string![]!
+SharedKernel.Testing.RecordingFakeExecutable.EnvironmentPath.get -> string!
+SharedKernel.Testing.RecordingFakeExecutable.Path.get -> string!
+SharedKernel.Testing.RecordingFakeExecutable.ProcessId() -> int
+SharedKernel.Testing.RecordingFakeExecutable.ProcessIdPath.get -> string!
+SharedKernel.Testing.RecordingFakeExecutable.RecordingFakeExecutable(string! directory, string! name, int exitCode, string! body) -> void
+SharedKernel.Testing.RecordingFakeExecutable.Started.get -> bool
+SharedKernel.Testing.RecordingWriteStream
+SharedKernel.Testing.RecordingWriteStream.RecordingWriteStream() -> void
+SharedKernel.Testing.RecordingWriteStream.WriteSizes.get -> System.Collections.Generic.IReadOnlyList<int>!
+SharedKernel.Testing.SerialTestJustificationAttribute
+SharedKernel.Testing.SerialTestJustificationAttribute.Reason.get -> string!
+SharedKernel.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
+SharedKernel.Testing.TemporaryGitRepository
+SharedKernel.Testing.TemporaryGitRepository.Commit(string! fileName, string! content, string! message, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.TemporaryGitRepository.Dispose() -> void
+SharedKernel.Testing.TemporaryGitRepository.GitEnvironment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
+SharedKernel.Testing.TemporaryGitRepository.Initialize(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.TemporaryGitRepository.RootPath.get -> string!
+SharedKernel.Testing.TemporaryGitRepository.RunGit(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+SharedKernel.Testing.TemporaryGitRepository.Tag(string! tag, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.TemporaryGitRepository.TemporaryGitRepository() -> void
+SharedKernel.Testing.TemporaryGitRepository.TryRunGit(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Testing.TestProcessResult>!
+SharedKernel.Testing.TemporaryGitRepository.WriteText(string! relativePath, string! content) -> void
+SharedKernel.Testing.TestGit
+SharedKernel.Testing.TestProcess
+SharedKernel.Testing.TestProcessResult
+SharedKernel.Testing.TestProcessResult.ExitCode.get -> int
+SharedKernel.Testing.TestProcessResult.ExitCode.init -> void
+SharedKernel.Testing.TestProcessResult.StandardError.get -> string!
+SharedKernel.Testing.TestProcessResult.StandardError.init -> void
+SharedKernel.Testing.TestProcessResult.StandardOutput.get -> string!
+SharedKernel.Testing.TestProcessResult.StandardOutput.init -> void
+SharedKernel.Testing.TestProcessResult.TestProcessResult() -> void
+SharedKernel.Testing.TestProcessResult.TestProcessResult(int ExitCode, string! StandardOutput, string! StandardError) -> void
+SharedKernel.Testing.TestTraitNames
+SharedKernel.Testing.TestTraitValues
+SharedKernel.Testing.EnvironmentVariableScope
+SharedKernel.Testing.EnvironmentVariableScope.EnvironmentVariableScope(string! name, string? value) -> void
+SharedKernel.Testing.EnvironmentVariableScope.Dispose() -> void
+SharedKernel.Testing.TemporaryDirectory
+SharedKernel.Testing.TemporaryDirectory.TemporaryDirectory() -> void
+SharedKernel.Testing.TemporaryDirectory.Path.get -> string!
+SharedKernel.Testing.TemporaryDirectory.Dispose() -> void
+SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScope.Architecture = 7 -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScope.Behavior = 1 -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScope.Component = 2 -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScope.Contract = 3 -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScope.Integration = 5 -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScope.System = 6 -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScope.UiIntegration = 4 -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScope.Unit = 0 -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScopeExtensions
+SharedKernel.Testing.TrackingAsyncDisposable
+SharedKernel.Testing.TrackingAsyncDisposable.DisposeAsync() -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.TrackingAsyncDisposable.DisposeCalled.get -> bool
+SharedKernel.Testing.TrackingAsyncDisposable.TrackingAsyncDisposable(string! name, System.Collections.Generic.ICollection<string!>! disposalOrder, System.Exception? failure = null) -> void
+SharedKernel.Testing.TrackingCleanupAction
+SharedKernel.Testing.TrackingCleanupAction.Invoke() -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.TrackingCleanupAction.TrackingCleanupAction(string! name, System.Collections.Generic.ICollection<string!>! cleanupOrder, System.Exception? failure = null) -> void
+SharedKernel.Testing.TrackingReadStream
+SharedKernel.Testing.TrackingReadStream.BytesRead.get -> long
+SharedKernel.Testing.TrackingReadStream.IsDisposed.get -> bool
+SharedKernel.Testing.TrackingReadStream.ReadCount.get -> int
+SharedKernel.Testing.TrackingReadStream.TrackingReadStream(byte[]! content, bool seekable = false) -> void
+SharedKernel.Testing.UnsizedStream
+SharedKernel.Testing.UnsizedStream.UnsizedStream(byte[]! content) -> void
+static SharedKernel.Testing.FakeExecutable.Quote(string! value) -> string!
+static SharedKernel.Testing.FakeExecutable.WriteMarker(string! path, string! marker) -> void
+static SharedKernel.Testing.FakeExecutable.WriteScript(string! path, string! body) -> void
+static SharedKernel.Testing.FileSystemProbes.CanCreateSymbolicLinks.get -> bool
+static SharedKernel.Testing.FileSystemProbes.CanDenyAccess.get -> bool
+static SharedKernel.Testing.FileSystemProbes.IsCaseSensitive.get -> bool
+static SharedKernel.Testing.LoopbackPort.GetFree() -> int
+static SharedKernel.Testing.TestGit.Commit(string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static SharedKernel.Testing.TestGit.CommitAll(string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static SharedKernel.Testing.TestGit.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
+static SharedKernel.Testing.TestGit.Run(string! directory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static SharedKernel.Testing.TestGit.TryRun(string! directory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? environment = null) -> System.Threading.Tasks.Task<SharedKernel.Testing.TestProcessResult>!
+static SharedKernel.Testing.TestProcess.Run(string! fileName, string! workingDirectory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken cancellationToken, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? environment = null) -> System.Threading.Tasks.Task<SharedKernel.Testing.TestProcessResult>!
+static SharedKernel.Testing.TestScopeExtensions.ToTraitValue(this SharedKernel.Testing.TestScope scope) -> string!
+SharedKernel.Testing.TestHost
+SharedKernel.Testing.TestHost.InProcess = 0 -> SharedKernel.Testing.TestHost
+SharedKernel.Testing.TestHost.TestServer = 1 -> SharedKernel.Testing.TestHost
+SharedKernel.Testing.TestHost.Aspire = 2 -> SharedKernel.Testing.TestHost
+SharedKernel.Testing.TestHost.Browser = 3 -> SharedKernel.Testing.TestHost
+SharedKernel.Testing.TestHostExtensions
+static SharedKernel.Testing.TestHostExtensions.ToTraitValue(this SharedKernel.Testing.TestHost host) -> string!
+SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocus.CoreBehavior = 0 -> SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocus.DomainRule = 1 -> SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocus.EdgeCase = 2 -> SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocus.Regression = 3 -> SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocus.Security = 4 -> SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocus.DriftGuard = 5 -> SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocus.Migration = 6 -> SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocusExtensions
+static SharedKernel.Testing.TestFocusExtensions.ToTraitValue(this SharedKernel.Testing.TestFocus focus) -> string!
+SharedKernel.Testing.TestPriority
+SharedKernel.Testing.TestPriority.Smoke = 0 -> SharedKernel.Testing.TestPriority
+SharedKernel.Testing.TestPriority.Critical = 1 -> SharedKernel.Testing.TestPriority
+SharedKernel.Testing.TestPriorityExtensions
+static SharedKernel.Testing.TestPriorityExtensions.ToTraitValue(this SharedKernel.Testing.TestPriority priority) -> string!
+const SharedKernel.Testing.TestTraitNames.FocusName = "Focus" -> string!
+const SharedKernel.Testing.TestTraitNames.PriorityName = "Priority" -> string!
+SharedKernel.Testing.CountingTimeProvider
+SharedKernel.Testing.CountingTimeProvider.CountingTimeProvider() -> void
+SharedKernel.Testing.CountingTimeProvider.CountingTimeProvider(System.TimeProvider! inner) -> void
+SharedKernel.Testing.CountingTimeProvider.Reads.get -> int
+SharedKernel.Testing.CountingTimeProvider.Reset() -> void
+override SharedKernel.Testing.CountingTimeProvider.CreateTimer(System.Threading.TimerCallback! callback, object? state, System.TimeSpan dueTime, System.TimeSpan period) -> System.Threading.ITimer!
+override SharedKernel.Testing.CountingTimeProvider.GetTimestamp() -> long
+override SharedKernel.Testing.CountingTimeProvider.GetUtcNow() -> System.DateTimeOffset
+override SharedKernel.Testing.CountingTimeProvider.LocalTimeZone.get -> System.TimeZoneInfo!
+override SharedKernel.Testing.CountingTimeProvider.TimestampFrequency.get -> long
+SharedKernel.Testing.TestCleanup
+static SharedKernel.Testing.TestCleanup.DisposeAll(System.Exception? operationFailure, params System.IAsyncDisposable?[]! resources) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.TestCleanup.Run(System.Exception? operationFailure, params System.Func<System.Threading.Tasks.ValueTask>![]! cleanupActions) -> System.Threading.Tasks.Task!
+override SharedKernel.Testing.BlockingReadStream.Read(System.Span<byte> buffer) -> int
+SharedKernel.Testing.BlockingReadStream.BlockingReadStream(byte[]! prefix, byte[]! remainder) -> void
+SharedKernel.Testing.BlockingReadStream.Blocked.get -> System.Threading.Tasks.Task!
+SharedKernel.Testing.BlockingReadStream.BlockedReadCancelled.get -> bool
+SharedKernel.Testing.BlockingReadStream.BytesRead.get -> long
+SharedKernel.Testing.BlockingReadStream.Disposed.get -> System.Threading.Tasks.Task!
+SharedKernel.Testing.BlockingReadStream.Release() -> void
+SharedKernel.Testing.DisposalTrackingStream
+SharedKernel.Testing.DisposalTrackingStream.AsyncDisposeCount.get -> int
+SharedKernel.Testing.DisposalTrackingStream.DisposalTrackingStream(System.IO.Stream! inner) -> void
+SharedKernel.Testing.DisposalTrackingStream.DisposeCount.get -> int
+SharedKernel.Testing.DisposalTrackingStream.Disposed.get -> System.Threading.Tasks.Task!
+SharedKernel.Testing.DisposalTrackingStream.InnerStream.get -> System.IO.Stream!
+SharedKernel.Testing.DisposalTrackingStream.IsDisposed.get -> bool
+override SharedKernel.Testing.DisposalTrackingStream.CanRead.get -> bool
+override SharedKernel.Testing.DisposalTrackingStream.CanSeek.get -> bool
+override SharedKernel.Testing.DisposalTrackingStream.CanWrite.get -> bool
+override SharedKernel.Testing.DisposalTrackingStream.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override SharedKernel.Testing.DisposalTrackingStream.Flush() -> void
+override SharedKernel.Testing.DisposalTrackingStream.FlushAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+override SharedKernel.Testing.DisposalTrackingStream.Length.get -> long
+override SharedKernel.Testing.DisposalTrackingStream.Position.get -> long
+override SharedKernel.Testing.DisposalTrackingStream.Position.set -> void
+override SharedKernel.Testing.DisposalTrackingStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.DisposalTrackingStream.Read(System.Span<byte> buffer) -> int
+override SharedKernel.Testing.DisposalTrackingStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override SharedKernel.Testing.DisposalTrackingStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Testing.DisposalTrackingStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.DisposalTrackingStream.SetLength(long value) -> void
+override SharedKernel.Testing.DisposalTrackingStream.Write(byte[]! buffer, int offset, int count) -> void
+override SharedKernel.Testing.DisposalTrackingStream.Write(System.ReadOnlySpan<byte> buffer) -> void
+override SharedKernel.Testing.DisposalTrackingStream.WriteAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+override SharedKernel.Testing.DisposalTrackingStream.WriteAsync(System.ReadOnlyMemory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.GatedChunkReadStream
+SharedKernel.Testing.GatedChunkReadStream.BytesRead.get -> long
+SharedKernel.Testing.GatedChunkReadStream.GatedChunkReadStream(byte[]! content, int chunkSize) -> void
+SharedKernel.Testing.GatedChunkReadStream.IsDisposed.get -> bool
+SharedKernel.Testing.GatedChunkReadStream.LargestRequestedRead.get -> int
+SharedKernel.Testing.GatedChunkReadStream.ReadCount.get -> int
+SharedKernel.Testing.GatedChunkReadStream.ReleaseAll() -> void
+SharedKernel.Testing.GatedChunkReadStream.ReleaseRead() -> void
+SharedKernel.Testing.GatedChunkReadStream.WaitForPendingRead(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+override SharedKernel.Testing.GatedChunkReadStream.CanRead.get -> bool
+override SharedKernel.Testing.GatedChunkReadStream.CanSeek.get -> bool
+override SharedKernel.Testing.GatedChunkReadStream.CanWrite.get -> bool
+override SharedKernel.Testing.GatedChunkReadStream.Flush() -> void
+override SharedKernel.Testing.GatedChunkReadStream.Length.get -> long
+override SharedKernel.Testing.GatedChunkReadStream.Position.get -> long
+override SharedKernel.Testing.GatedChunkReadStream.Position.set -> void
+override SharedKernel.Testing.GatedChunkReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.GatedChunkReadStream.Read(System.Span<byte> buffer) -> int
+override SharedKernel.Testing.GatedChunkReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override SharedKernel.Testing.GatedChunkReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Testing.GatedChunkReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.GatedChunkReadStream.SetLength(long value) -> void
+override SharedKernel.Testing.GatedChunkReadStream.Write(byte[]! buffer, int offset, int count) -> void
+SharedKernel.Testing.ThrowingReadStream
+SharedKernel.Testing.ThrowingReadStream.BytesRead.get -> long
+SharedKernel.Testing.ThrowingReadStream.IsDisposed.get -> bool
+SharedKernel.Testing.ThrowingReadStream.ReadCount.get -> int
+SharedKernel.Testing.ThrowingReadStream.ThrowingReadStream(byte[]! prefix, System.Exception! exception) -> void
+SharedKernel.Testing.ThrowingReadStream.ThrowingReadStream(System.Exception! exception) -> void
+override SharedKernel.Testing.ThrowingReadStream.CanRead.get -> bool
+override SharedKernel.Testing.ThrowingReadStream.CanSeek.get -> bool
+override SharedKernel.Testing.ThrowingReadStream.CanWrite.get -> bool
+override SharedKernel.Testing.ThrowingReadStream.Flush() -> void
+override SharedKernel.Testing.ThrowingReadStream.Length.get -> long
+override SharedKernel.Testing.ThrowingReadStream.Position.get -> long
+override SharedKernel.Testing.ThrowingReadStream.Position.set -> void
+override SharedKernel.Testing.ThrowingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.ThrowingReadStream.Read(System.Span<byte> buffer) -> int
+override SharedKernel.Testing.ThrowingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override SharedKernel.Testing.ThrowingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Testing.ThrowingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.ThrowingReadStream.SetLength(long value) -> void
+override SharedKernel.Testing.ThrowingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+SharedKernel.Testing.TrackingReadStream.MaxBytesPerRead.get -> int
+SharedKernel.Testing.TrackingReadStream.MaxBytesPerRead.init -> void
+SharedKernel.Testing.CallProxyServiceCollectionExtensions
+SharedKernel.Testing.CallHooks<TService>
+SharedKernel.Testing.CallHooks<TService>.Generated<THooks>() -> THooks!
+SharedKernel.Testing.CallProxy
+SharedKernel.Testing.GeneratedCallHooks<TService>
+SharedKernel.Testing.GeneratedCallHooks<TService>.GeneratedCallHooks() -> void
+SharedKernel.Testing.MethodHooks<TCall, TResult>
+SharedKernel.Testing.MethodHooks<TCall, TResult>.After(System.Action<TCall>! hook) -> SharedKernel.Testing.MethodHooks<TCall, TResult>!
+SharedKernel.Testing.MethodHooks<TCall, TResult>.After(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> SharedKernel.Testing.MethodHooks<TCall, TResult>!
+SharedKernel.Testing.MethodHooks<TCall, TResult>.Before(System.Action<TCall>! hook) -> SharedKernel.Testing.MethodHooks<TCall, TResult>!
+SharedKernel.Testing.MethodHooks<TCall, TResult>.Before(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> SharedKernel.Testing.MethodHooks<TCall, TResult>!
+SharedKernel.Testing.MethodHooks<TCall, TResult>.MethodHooks() -> void
+SharedKernel.Testing.MethodHooks<TCall, TResult>.Returns(TResult value) -> SharedKernel.Testing.MethodHooks<TCall, TResult>!
+SharedKernel.Testing.MethodHooks<TCall, TResult>.RunAfter(TCall call) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.MethodHooks<TCall, TResult>.RunBefore(TCall call) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.MethodHooks<TCall, TResult>.TryGetReplacement(out TResult value) -> bool
+SharedKernel.Testing.MethodHooks<TCall>
+SharedKernel.Testing.MethodHooks<TCall>.After(System.Action<TCall>! hook) -> SharedKernel.Testing.MethodHooks<TCall>!
+SharedKernel.Testing.MethodHooks<TCall>.After(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> SharedKernel.Testing.MethodHooks<TCall>!
+SharedKernel.Testing.MethodHooks<TCall>.Before(System.Action<TCall>! hook) -> SharedKernel.Testing.MethodHooks<TCall>!
+SharedKernel.Testing.MethodHooks<TCall>.Before(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> SharedKernel.Testing.MethodHooks<TCall>!
+SharedKernel.Testing.MethodHooks<TCall>.MethodHooks() -> void
+SharedKernel.Testing.MethodHooks<TCall>.RunAfter(TCall call) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.MethodHooks<TCall>.RunBefore(TCall call) -> System.Threading.Tasks.Task!
+abstract SharedKernel.Testing.GeneratedCallHooks<TService>.Wrap(TService! inner) -> TService!
+static SharedKernel.Testing.CallProxy.Create<TService>(TService! inner, System.Action<SharedKernel.Testing.CallHooks<TService!>!>? configure = null) -> TService!
+static SharedKernel.Testing.CallProxy.Register<TService>(System.Func<SharedKernel.Testing.GeneratedCallHooks<TService!>!>! create) -> void
+static SharedKernel.Testing.CallProxyServiceCollectionExtensions.WrapWithCallProxy<TService>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<SharedKernel.Testing.CallHooks<TService!>!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+SharedKernel.Testing.Metrics.RecordedMeasurement.<Clone>$() -> SharedKernel.Testing.Metrics.RecordedMeasurement!
+SharedKernel.Testing.Metrics.RecordedMeasurement.Deconstruct(out string! Instrument, out long Value, out System.Collections.Generic.IReadOnlyDictionary<string!, object?>! Tags) -> void
+SharedKernel.Testing.Metrics.RecordedMeasurement.Equals(SharedKernel.Testing.Metrics.RecordedMeasurement? other) -> bool
+SharedKernel.Testing.TestProcessResult.Deconstruct(out int ExitCode, out string! StandardOutput, out string! StandardError) -> void
+SharedKernel.Testing.TestProcessResult.Equals(SharedKernel.Testing.TestProcessResult other) -> bool
+override SharedKernel.Testing.Metrics.RecordedMeasurement.Equals(object? obj) -> bool
+override SharedKernel.Testing.Metrics.RecordedMeasurement.GetHashCode() -> int
+override SharedKernel.Testing.Metrics.RecordedMeasurement.ToString() -> string!
+override SharedKernel.Testing.TestProcessResult.GetHashCode() -> int
+static SharedKernel.Testing.Metrics.RecordedMeasurement.operator !=(SharedKernel.Testing.Metrics.RecordedMeasurement? left, SharedKernel.Testing.Metrics.RecordedMeasurement? right) -> bool
+static SharedKernel.Testing.Metrics.RecordedMeasurement.operator ==(SharedKernel.Testing.Metrics.RecordedMeasurement? left, SharedKernel.Testing.Metrics.RecordedMeasurement? right) -> bool
+static SharedKernel.Testing.TestProcessResult.operator !=(SharedKernel.Testing.TestProcessResult left, SharedKernel.Testing.TestProcessResult right) -> bool
+static SharedKernel.Testing.TestProcessResult.operator ==(SharedKernel.Testing.TestProcessResult left, SharedKernel.Testing.TestProcessResult right) -> bool
+~override SharedKernel.Testing.TestProcessResult.Equals(object obj) -> bool
+~override SharedKernel.Testing.TestProcessResult.ToString() -> string
+SharedKernel.Testing.RepositoryRoot
+static SharedKernel.Testing.RepositoryRoot.Locate(string! marker) -> string!
+static SharedKernel.Testing.RepositoryRoot.Locate(string! marker, string! startDirectory) -> string!
+static SharedKernel.Testing.RepositoryRoot.TryLocate(string! marker) -> string?
+static SharedKernel.Testing.RepositoryRoot.TryLocate(string! marker, string! startDirectory) -> string?
+SharedKernel.Testing.ReadmeCommandLines
+static SharedKernel.Testing.ReadmeCommandLines.Find(string! markdown, string! invocation) -> string![]!
+SharedKernel.Testing.ExecutableMap
+SharedKernel.Testing.ExecutableMap.ExecutableMap() -> void
+SharedKernel.Testing.ExecutableMap.ExecutableMap(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>! executables) -> void
+SharedKernel.Testing.ExecutableMap.ExecutableMap(System.Func<string!, string?>! fallback) -> void
+SharedKernel.Testing.ExecutableMap.Find(string! command) -> string?
+SharedKernel.Testing.ExecutableMap.Set(string! command, string? path) -> void
+SharedKernel.Testing.RecordedProcessRun
+SharedKernel.Testing.RecordedProcessRun.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Testing.RecordedProcessRun.FileName.get -> string!
+SharedKernel.Testing.RecordedProcessRun.Forward.get -> System.IO.TextWriter?
+SharedKernel.Testing.RecordedProcessRun.StartInfo.get -> System.Diagnostics.ProcessStartInfo!
+SharedKernel.Testing.ScriptedProcessRunner
+SharedKernel.Testing.ScriptedProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Processes.ProcessOutput!>!
+SharedKernel.Testing.ScriptedProcessRunner.Runs.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.RecordedProcessRun!>!
+SharedKernel.Testing.ScriptedProcessRunner.ScriptedProcessRunner(System.Func<System.Diagnostics.ProcessStartInfo!, System.IO.TextWriter?, System.Threading.CancellationToken, System.Threading.Tasks.Task<SharedKernel.Processes.ProcessOutput!>!>! respond) -> void
+static SharedKernel.Testing.ScriptedProcessRunner.Answering(System.Func<SharedKernel.Testing.RecordedProcessRun!, SharedKernel.Processes.ProcessOutput!>! answer) -> SharedKernel.Testing.ScriptedProcessRunner!
+static SharedKernel.Testing.ScriptedProcessRunner.AnswersInOrder(params System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, SharedKernel.Processes.ProcessOutput!>![]! answers) -> SharedKernel.Testing.ScriptedProcessRunner!
+static SharedKernel.Testing.ScriptedProcessRunner.ByFileName(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, SharedKernel.Processes.ProcessOutput!>>! outputs) -> SharedKernel.Testing.ScriptedProcessRunner!
+static SharedKernel.Testing.ScriptedProcessRunner.InOrder(params SharedKernel.Processes.ProcessOutput![]! outputs) -> SharedKernel.Testing.ScriptedProcessRunner!
+static SharedKernel.Testing.ScriptedProcessRunner.Returning(SharedKernel.Processes.ProcessOutput! output) -> SharedKernel.Testing.ScriptedProcessRunner!
+static SharedKernel.Testing.ScriptedProcessRunner.Throwing(System.Exception! exception) -> SharedKernel.Testing.ScriptedProcessRunner!
+SharedKernel.Testing.CultureScope
+SharedKernel.Testing.CultureScope.CultureScope(System.Globalization.CultureInfo! culture) -> void
+SharedKernel.Testing.CultureScope.CultureScope(System.Globalization.CultureInfo! culture, System.Globalization.CultureInfo! uiCulture) -> void
+SharedKernel.Testing.CultureScope.Dispose() -> void
+static SharedKernel.Testing.CultureScope.Run<T>(System.Globalization.CultureInfo! culture, System.Func<T>! action) -> T

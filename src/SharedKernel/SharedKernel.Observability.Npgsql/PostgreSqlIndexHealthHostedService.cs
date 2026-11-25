@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 
-namespace PandaBear.Observability.Npgsql;
+namespace SharedKernel.Observability.Npgsql;
 
 /// <summary>
 /// Background service that periodically collects index health from every registered database.

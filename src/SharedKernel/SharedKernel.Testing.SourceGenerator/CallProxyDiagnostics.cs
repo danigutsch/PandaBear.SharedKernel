@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>The descriptors of the diagnostics the CallProxy generator reports.</summary>
 internal static class CallProxyDiagnostics

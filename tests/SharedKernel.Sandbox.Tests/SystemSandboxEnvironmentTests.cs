@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Tests the real environment's probes against temporary folders whose permissions force each outcome.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

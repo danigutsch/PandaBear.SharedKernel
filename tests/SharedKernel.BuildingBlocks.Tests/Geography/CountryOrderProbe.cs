@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Looks up positions in the ordered country list.</summary>
 internal static class CountryOrderProbe

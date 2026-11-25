@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.UploadSanitizing.Fonts;
+namespace SharedKernel.UploadSanitizing.Fonts;
 
 /// <summary>
 /// Reads the structure of a WOFF2 file (W3C WOFF File Format 2.0) without decoding its compressed data. Every offset and length is compared

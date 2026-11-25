@@ -1,6 +1,6 @@
 using ImageMagick;
 
-namespace PandaBear.ImageProcessing.Tests;
+namespace SharedKernel.ImageProcessing.Tests;
 
 /// <summary>
 /// Tests ImageAnimationDetector.Detect, which classifies PNG and WebP containers as static, animated, malformed or

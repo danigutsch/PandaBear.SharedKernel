@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests that the SKTEST002 rename fix writes built-in and configured segments in their listed spelling.</summary>
 public sealed class TestMethodNameCodeFixTests

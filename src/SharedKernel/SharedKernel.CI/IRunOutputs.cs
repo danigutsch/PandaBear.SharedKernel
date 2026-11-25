@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Hands named values of the current step to later steps and jobs of a forge's workflow run, such as the

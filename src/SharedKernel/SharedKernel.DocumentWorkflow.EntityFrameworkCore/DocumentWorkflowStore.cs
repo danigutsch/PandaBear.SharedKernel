@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using PandaBear.BuildingBlocks;
-using PandaBear.EntityFrameworkCore;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.EntityFrameworkCore;
+using SharedKernel.Results;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Persists workflow revisions with an optimistic storage version.</summary>
 /// <typeparam name="TContext">The context whose migrations own the document workflow table.</typeparam>

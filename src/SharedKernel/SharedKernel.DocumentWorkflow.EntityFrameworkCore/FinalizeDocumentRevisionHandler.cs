@@ -1,11 +1,11 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using PandaBear.AuditTrail;
-using PandaBear.Idempotency;
-using PandaBear.Results;
+using SharedKernel.AuditTrail;
+using SharedKernel.Idempotency;
+using SharedKernel.Results;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Finalizes a revision and commits its audit and idempotency state in the owning EF transaction.</summary>
 /// <typeparam name="TContext">The context that owns the document and idempotency state.</typeparam>

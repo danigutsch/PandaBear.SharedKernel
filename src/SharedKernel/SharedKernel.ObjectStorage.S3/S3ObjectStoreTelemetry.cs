@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using OpenTelemetry;
 
-namespace PandaBear.ObjectStorage.S3;
+namespace SharedKernel.ObjectStorage.S3;
 
 /// <summary>Activity source for object-store operations.</summary>
 /// <remarks>

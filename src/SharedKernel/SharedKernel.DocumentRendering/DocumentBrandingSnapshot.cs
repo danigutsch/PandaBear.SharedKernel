@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentRendering;
+namespace SharedKernel.DocumentRendering;
 
 /// <summary>
 /// Captures branding values used to decorate one document revision.

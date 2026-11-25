@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>The rules for a TOTP shared secret in Base32.</summary>
 internal static class TotpSecret

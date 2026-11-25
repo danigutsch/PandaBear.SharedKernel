@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Generates Pix email key candidates and holds the DICT email pattern as the reference.</summary>
 internal static partial class PixKeyEmailCandidates

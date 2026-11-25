@@ -17,8 +17,8 @@ dotnet add package PandaBear.SharedKernel.Results.AspNet --version <validated-ca
 ## Example
 
 ```csharp
-using PandaBear.Results;
-using PandaBear.Results.AspNet;
+using SharedKernel.Results;
+using SharedKernel.Results.AspNet;
 
 public static class Example
 {
@@ -30,7 +30,7 @@ public static class Example
 
 Check success/failure before accessing payloads; propagate cancellation in asynchronous flows. Keep business validation in its owning domain. Registry publication remains deferred.
 
-Package ID: `PandaBear.SharedKernel.Results.AspNet`. C# namespace: `PandaBear.Results.AspNet`. Assembly/project identity: `SharedKernel.Results.AspNet`.
+Package ID: `PandaBear.SharedKernel.Results.AspNet`. C# namespace: `SharedKernel.Results.AspNet`. Assembly/project identity: `SharedKernel.Results.AspNet`.
 
 ## Minimal API responses
 

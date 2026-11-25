@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Messaging</PackageId>
         <Description>Reusable event envelope publisher and integration event handler fakes for SharedKernel test suites.</Description>
-        <RootNamespace>PandaBear.Testing.Messaging</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.Messaging</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;messaging;integration-events;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The decoration behind the image of a <see cref="CardStyle.Plain" /> card.</summary>
 public enum CardImageShadow

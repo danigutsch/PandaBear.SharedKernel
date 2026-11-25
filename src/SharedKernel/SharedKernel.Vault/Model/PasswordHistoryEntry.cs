@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Previously used password.</summary>
 /// <param name="Password">Former password.</param>

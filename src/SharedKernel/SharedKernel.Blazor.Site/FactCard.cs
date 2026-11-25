@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One card of a <see cref="FactGrid" />: a label with one or more values and an optional icon.</summary>
 /// <param name="Label">The label, the card's term, for example "Duration". It must not be blank.</param>

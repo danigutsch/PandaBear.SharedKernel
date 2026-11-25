@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Temporary text file that is deleted on disposal, ignoring cleanup failures.</summary>
 internal sealed class TemporaryTextDocument : IDisposable

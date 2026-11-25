@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Public recipients of throwaway keys, for tests. No private key is kept anywhere.</summary>
 internal static class TestRecipients

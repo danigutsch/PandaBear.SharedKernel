@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The scope and outcome of a CI execution manifest for the compared revision.</summary>
 /// <param name="Status">The overall result of the verification run.</param>

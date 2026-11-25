@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>The validated text of an album in one culture: its title, slug and publication status.</summary>
 public sealed class AlbumTranslation

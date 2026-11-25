@@ -1,7 +1,7 @@
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A person's first and last name, sanitized; not a legal-identity check.</summary>
 public sealed class PersonName : ValueObject

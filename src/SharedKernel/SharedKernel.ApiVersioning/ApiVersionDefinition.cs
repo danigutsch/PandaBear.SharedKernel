@@ -1,4 +1,4 @@
-namespace PandaBear.ApiVersioning;
+namespace SharedKernel.ApiVersioning;
 
 /// <summary>
 /// Describes one public API contract version.

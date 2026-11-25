@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Helpers that enumerate a stream and capture the handler trace for dispatch behavior tests.</summary>
 internal static class GeneratorDispatchBehaviorTestsHelpers

@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.ConfigurationFiles;
-using PandaBear.IO;
+using SharedKernel.ConfigurationFiles;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Reads and validates the consumer policy in <c>.config/sharedkernel-repo.json</c>. Errors name the file and the JSON

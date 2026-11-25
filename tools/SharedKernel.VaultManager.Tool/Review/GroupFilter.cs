@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>Which match groups the review lists.</summary>
 internal enum GroupFilter

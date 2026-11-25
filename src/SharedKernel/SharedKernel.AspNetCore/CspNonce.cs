@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>Creates the nonce of one scope from <see cref="RandomNumberGenerator" /> on first read.</summary>
 internal sealed class CspNonce : ICspNonce

@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Results.Benchmarks</RootNamespace>
+        <RootNamespace>SharedKernel.Results.Benchmarks</RootNamespace>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Results" />
+        <Using Include="SharedKernel.Results" />
         <PackageReference Include="BenchmarkDotNet" />
     </ItemGroup>
 

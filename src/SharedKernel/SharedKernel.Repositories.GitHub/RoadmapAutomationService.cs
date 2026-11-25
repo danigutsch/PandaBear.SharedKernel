@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Runs the roadmap maintenance workflow steps: plan, validate, apply, seal, verify, and publish.</summary>
 public sealed class RoadmapAutomationService

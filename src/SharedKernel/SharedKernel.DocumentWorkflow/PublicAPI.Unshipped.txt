@@ -1,125 +1,125 @@
 #nullable enable
-PandaBear.DocumentWorkflow.DocumentArtifactWrite
-PandaBear.DocumentWorkflow.DocumentArtifactWrite.Content.get -> System.ReadOnlyMemory<byte>
-PandaBear.DocumentWorkflow.DocumentArtifactWrite.ContentHash.get -> string!
-PandaBear.DocumentWorkflow.DocumentArtifactWrite.ContentType.get -> string!
-PandaBear.DocumentWorkflow.DocumentArtifactWrite.LineageId.get -> System.Guid
-PandaBear.DocumentWorkflow.DocumentArtifactWrite.Reviewed.get -> PandaBear.Review.ReviewRevision!
-PandaBear.DocumentWorkflow.DocumentArtifactWrite.RevisionNumber.get -> int
-PandaBear.DocumentWorkflow.DocumentContent
-PandaBear.DocumentWorkflow.DocumentContent.Branding.get -> PandaBear.DocumentRendering.DocumentBrandingSnapshot?
-PandaBear.DocumentWorkflow.DocumentContent.DocumentContent(string! language, string! title, string! sectionHeading, System.Collections.Generic.IEnumerable<PandaBear.DocumentWorkflow.DocumentContentField!>! fields, PandaBear.DocumentRendering.DocumentBrandingSnapshot? branding) -> void
-PandaBear.DocumentWorkflow.DocumentContent.Fields.get -> System.Collections.Immutable.ImmutableArray<PandaBear.DocumentWorkflow.DocumentContentField!>
-PandaBear.DocumentWorkflow.DocumentContent.Language.get -> string!
-PandaBear.DocumentWorkflow.DocumentContent.SectionHeading.get -> string!
-PandaBear.DocumentWorkflow.DocumentContent.Title.get -> string!
-PandaBear.DocumentWorkflow.DocumentContent.ToRenderRequest() -> PandaBear.DocumentRendering.DocumentRenderRequest!
-PandaBear.DocumentWorkflow.DocumentContentField
-PandaBear.DocumentWorkflow.DocumentContentField.<Clone>$() -> PandaBear.DocumentWorkflow.DocumentContentField!
-PandaBear.DocumentWorkflow.DocumentContentField.Deconstruct(out string! Id, out string! Label, out string! Value, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification, out bool IsEditable) -> void
-PandaBear.DocumentWorkflow.DocumentContentField.DocumentContentField(string! Id, string! Label, string! Value, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification, bool IsEditable) -> void
-PandaBear.DocumentWorkflow.DocumentContentField.Equals(PandaBear.DocumentWorkflow.DocumentContentField? other) -> bool
-PandaBear.DocumentWorkflow.DocumentContentField.Id.get -> string!
-PandaBear.DocumentWorkflow.DocumentContentField.Id.init -> void
-PandaBear.DocumentWorkflow.DocumentContentField.IsEditable.get -> bool
-PandaBear.DocumentWorkflow.DocumentContentField.IsEditable.init -> void
-PandaBear.DocumentWorkflow.DocumentContentField.Label.get -> string!
-PandaBear.DocumentWorkflow.DocumentContentField.Label.init -> void
-PandaBear.DocumentWorkflow.DocumentContentField.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentWorkflow.DocumentContentField.PrivacyClassification.init -> void
-PandaBear.DocumentWorkflow.DocumentContentField.Value.get -> string!
-PandaBear.DocumentWorkflow.DocumentContentField.Value.init -> void
-PandaBear.DocumentWorkflow.DocumentFinalizer<TSource>
-PandaBear.DocumentWorkflow.DocumentFinalizer<TSource>.DocumentFinalizer(PandaBear.DocumentWorkflow.DocumentGenerator<TSource>! generator, PandaBear.DocumentRendering.IDocumentRenderer! renderer, PandaBear.DocumentWorkflow.IDocumentArtifactStore! store, string! contentType, int maximumArtifactBytes) -> void
-PandaBear.DocumentWorkflow.DocumentFinalizer<TSource>.FinalizeRevision(PandaBear.DocumentWorkflow.DocumentRevision! revision, PandaBear.Review.ReviewRevision! reviewed, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentRevision!>>
-PandaBear.DocumentWorkflow.DocumentGenerator<TSource>
-PandaBear.DocumentWorkflow.DocumentGenerator<TSource>.DocumentGenerator(PandaBear.DocumentWorkflow.IDocumentSource<TSource>! source, PandaBear.DocumentWorkflow.IDocumentTemplate<TSource>! template) -> void
-PandaBear.DocumentWorkflow.DocumentGenerator<TSource>.Generate(System.Guid lineageId, System.Guid sourceId, System.Collections.Generic.IEnumerable<string!>! lanes, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentRevision!>>
-PandaBear.DocumentWorkflow.DocumentGenerator<TSource>.ReadCurrentOrigin(System.Guid sourceId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentOrigin!>>
-PandaBear.DocumentWorkflow.DocumentGenerator<TSource>.Regenerate(PandaBear.DocumentWorkflow.DocumentRevision! previous, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<(PandaBear.DocumentWorkflow.DocumentRevision! Previous, PandaBear.DocumentWorkflow.DocumentRevision! Current)>>
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus.Approved = 4 -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus.ChangesRequested = 3 -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus.DraftGenerated = 1 -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus.Finalized = 5 -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus.InReview = 2 -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus.None = 0 -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus.Superseded = 6 -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentLifecycleStatus.Voided = 7 -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentOrigin
-PandaBear.DocumentWorkflow.DocumentOrigin.<Clone>$() -> PandaBear.DocumentWorkflow.DocumentOrigin!
-PandaBear.DocumentWorkflow.DocumentOrigin.Deconstruct(out System.Guid SourceId, out string! SourceVersion, out string! TemplateId, out string! TemplateVersion) -> void
-PandaBear.DocumentWorkflow.DocumentOrigin.DocumentOrigin(System.Guid SourceId, string! SourceVersion, string! TemplateId, string! TemplateVersion) -> void
-PandaBear.DocumentWorkflow.DocumentOrigin.Equals(PandaBear.DocumentWorkflow.DocumentOrigin? other) -> bool
-PandaBear.DocumentWorkflow.DocumentOrigin.SourceId.get -> System.Guid
-PandaBear.DocumentWorkflow.DocumentOrigin.SourceId.init -> void
-PandaBear.DocumentWorkflow.DocumentOrigin.SourceVersion.get -> string!
-PandaBear.DocumentWorkflow.DocumentOrigin.SourceVersion.init -> void
-PandaBear.DocumentWorkflow.DocumentOrigin.TemplateId.get -> string!
-PandaBear.DocumentWorkflow.DocumentOrigin.TemplateId.init -> void
-PandaBear.DocumentWorkflow.DocumentOrigin.TemplateVersion.get -> string!
-PandaBear.DocumentWorkflow.DocumentOrigin.TemplateVersion.init -> void
-PandaBear.DocumentWorkflow.DocumentRevision
-PandaBear.DocumentWorkflow.DocumentRevision.<Clone>$() -> PandaBear.DocumentWorkflow.DocumentRevision!
-PandaBear.DocumentWorkflow.DocumentRevision.ArtifactReference.get -> string?
-PandaBear.DocumentWorkflow.DocumentRevision.BeginReview() -> PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentRevision!>
-PandaBear.DocumentWorkflow.DocumentRevision.Content.get -> PandaBear.DocumentWorkflow.DocumentContent!
-PandaBear.DocumentWorkflow.DocumentRevision.Decide(PandaBear.Review.ReviewRevision! reviewed, string! lane, PandaBear.Review.ReviewDecision decision, string! actorPseudonym, System.DateTimeOffset occurredAt, string! reasonCode, PandaBear.DocumentWorkflow.DocumentOrigin! currentOrigin) -> PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentRevision!>
-PandaBear.DocumentWorkflow.DocumentRevision.Edit(string! fieldId, string! value) -> PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentRevision!>
-PandaBear.DocumentWorkflow.DocumentRevision.Equals(PandaBear.DocumentWorkflow.DocumentRevision? other) -> bool
-PandaBear.DocumentWorkflow.DocumentRevision.LineageId.get -> System.Guid
-PandaBear.DocumentWorkflow.DocumentRevision.Number.get -> int
-PandaBear.DocumentWorkflow.DocumentRevision.Origin.get -> PandaBear.DocumentWorkflow.DocumentOrigin!
-PandaBear.DocumentWorkflow.DocumentRevision.Review.get -> PandaBear.Review.ReviewHistory!
-PandaBear.DocumentWorkflow.DocumentRevision.Seal(string! artifactReference, PandaBear.Review.ReviewRevision! rendered, PandaBear.DocumentWorkflow.DocumentOrigin! currentOrigin) -> PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentRevision!>
-PandaBear.DocumentWorkflow.DocumentRevision.Snapshot() -> PandaBear.DocumentWorkflow.DocumentRevisionSnapshot!
-PandaBear.DocumentWorkflow.DocumentRevision.Status.get -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentRevision.Void() -> PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentRevision!>
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.<Clone>$() -> PandaBear.DocumentWorkflow.DocumentRevisionSnapshot!
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.ArtifactReference.get -> string?
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.ArtifactReference.init -> void
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Content.get -> PandaBear.DocumentWorkflow.DocumentContent!
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Content.init -> void
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Deconstruct(out System.Guid LineageId, out int Number, out PandaBear.DocumentWorkflow.DocumentOrigin! Origin, out PandaBear.DocumentWorkflow.DocumentContent! Content, out PandaBear.Review.ReviewHistorySnapshot! Review, out PandaBear.DocumentWorkflow.DocumentLifecycleStatus Status, out string? ArtifactReference) -> void
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.DocumentRevisionSnapshot(System.Guid LineageId, int Number, PandaBear.DocumentWorkflow.DocumentOrigin! Origin, PandaBear.DocumentWorkflow.DocumentContent! Content, PandaBear.Review.ReviewHistorySnapshot! Review, PandaBear.DocumentWorkflow.DocumentLifecycleStatus Status, string? ArtifactReference) -> void
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Equals(PandaBear.DocumentWorkflow.DocumentRevisionSnapshot? other) -> bool
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.LineageId.get -> System.Guid
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.LineageId.init -> void
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Number.get -> int
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Number.init -> void
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Origin.get -> PandaBear.DocumentWorkflow.DocumentOrigin!
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Origin.init -> void
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Review.get -> PandaBear.Review.ReviewHistorySnapshot!
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Review.init -> void
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Status.get -> PandaBear.DocumentWorkflow.DocumentLifecycleStatus
-PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Status.init -> void
-PandaBear.DocumentWorkflow.IDocumentArtifactStore
-PandaBear.DocumentWorkflow.IDocumentArtifactStore.Write(PandaBear.DocumentWorkflow.DocumentArtifactWrite! artifact, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<string!>>
-PandaBear.DocumentWorkflow.IDocumentSource<TSource>
-PandaBear.DocumentWorkflow.IDocumentSource<TSource>.Read(System.Guid sourceId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<(string! Version, TSource Data)>>
-PandaBear.DocumentWorkflow.IDocumentTemplate<TSource>
-PandaBear.DocumentWorkflow.IDocumentTemplate<TSource>.Create(TSource source) -> PandaBear.DocumentWorkflow.DocumentContent!
-PandaBear.DocumentWorkflow.IDocumentTemplate<TSource>.TemplateId.get -> string!
-PandaBear.DocumentWorkflow.IDocumentTemplate<TSource>.TemplateVersion.get -> string!
-override PandaBear.DocumentWorkflow.DocumentContentField.Equals(object? obj) -> bool
-override PandaBear.DocumentWorkflow.DocumentContentField.GetHashCode() -> int
-override PandaBear.DocumentWorkflow.DocumentContentField.ToString() -> string!
-override PandaBear.DocumentWorkflow.DocumentOrigin.Equals(object? obj) -> bool
-override PandaBear.DocumentWorkflow.DocumentOrigin.GetHashCode() -> int
-override PandaBear.DocumentWorkflow.DocumentOrigin.ToString() -> string!
-override PandaBear.DocumentWorkflow.DocumentRevision.Equals(object? obj) -> bool
-override PandaBear.DocumentWorkflow.DocumentRevision.GetHashCode() -> int
-override PandaBear.DocumentWorkflow.DocumentRevision.ToString() -> string!
-override PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.Equals(object? obj) -> bool
-override PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.GetHashCode() -> int
-override PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.ToString() -> string!
-static PandaBear.DocumentWorkflow.DocumentContentField.operator !=(PandaBear.DocumentWorkflow.DocumentContentField? left, PandaBear.DocumentWorkflow.DocumentContentField? right) -> bool
-static PandaBear.DocumentWorkflow.DocumentContentField.operator ==(PandaBear.DocumentWorkflow.DocumentContentField? left, PandaBear.DocumentWorkflow.DocumentContentField? right) -> bool
-static PandaBear.DocumentWorkflow.DocumentOrigin.operator !=(PandaBear.DocumentWorkflow.DocumentOrigin? left, PandaBear.DocumentWorkflow.DocumentOrigin? right) -> bool
-static PandaBear.DocumentWorkflow.DocumentOrigin.operator ==(PandaBear.DocumentWorkflow.DocumentOrigin? left, PandaBear.DocumentWorkflow.DocumentOrigin? right) -> bool
-static PandaBear.DocumentWorkflow.DocumentRevision.Restore(PandaBear.DocumentWorkflow.DocumentRevisionSnapshot? snapshot) -> PandaBear.Results.Result<PandaBear.DocumentWorkflow.DocumentRevision!>
-static PandaBear.DocumentWorkflow.DocumentRevision.operator !=(PandaBear.DocumentWorkflow.DocumentRevision? left, PandaBear.DocumentWorkflow.DocumentRevision? right) -> bool
-static PandaBear.DocumentWorkflow.DocumentRevision.operator ==(PandaBear.DocumentWorkflow.DocumentRevision? left, PandaBear.DocumentWorkflow.DocumentRevision? right) -> bool
-static PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.operator !=(PandaBear.DocumentWorkflow.DocumentRevisionSnapshot? left, PandaBear.DocumentWorkflow.DocumentRevisionSnapshot? right) -> bool
-static PandaBear.DocumentWorkflow.DocumentRevisionSnapshot.operator ==(PandaBear.DocumentWorkflow.DocumentRevisionSnapshot? left, PandaBear.DocumentWorkflow.DocumentRevisionSnapshot? right) -> bool
+SharedKernel.DocumentWorkflow.DocumentArtifactWrite
+SharedKernel.DocumentWorkflow.DocumentArtifactWrite.Content.get -> System.ReadOnlyMemory<byte>
+SharedKernel.DocumentWorkflow.DocumentArtifactWrite.ContentHash.get -> string!
+SharedKernel.DocumentWorkflow.DocumentArtifactWrite.ContentType.get -> string!
+SharedKernel.DocumentWorkflow.DocumentArtifactWrite.LineageId.get -> System.Guid
+SharedKernel.DocumentWorkflow.DocumentArtifactWrite.Reviewed.get -> SharedKernel.Review.ReviewRevision!
+SharedKernel.DocumentWorkflow.DocumentArtifactWrite.RevisionNumber.get -> int
+SharedKernel.DocumentWorkflow.DocumentContent
+SharedKernel.DocumentWorkflow.DocumentContent.Branding.get -> SharedKernel.DocumentRendering.DocumentBrandingSnapshot?
+SharedKernel.DocumentWorkflow.DocumentContent.DocumentContent(string! language, string! title, string! sectionHeading, System.Collections.Generic.IEnumerable<SharedKernel.DocumentWorkflow.DocumentContentField!>! fields, SharedKernel.DocumentRendering.DocumentBrandingSnapshot? branding) -> void
+SharedKernel.DocumentWorkflow.DocumentContent.Fields.get -> System.Collections.Immutable.ImmutableArray<SharedKernel.DocumentWorkflow.DocumentContentField!>
+SharedKernel.DocumentWorkflow.DocumentContent.Language.get -> string!
+SharedKernel.DocumentWorkflow.DocumentContent.SectionHeading.get -> string!
+SharedKernel.DocumentWorkflow.DocumentContent.Title.get -> string!
+SharedKernel.DocumentWorkflow.DocumentContent.ToRenderRequest() -> SharedKernel.DocumentRendering.DocumentRenderRequest!
+SharedKernel.DocumentWorkflow.DocumentContentField
+SharedKernel.DocumentWorkflow.DocumentContentField.<Clone>$() -> SharedKernel.DocumentWorkflow.DocumentContentField!
+SharedKernel.DocumentWorkflow.DocumentContentField.Deconstruct(out string! Id, out string! Label, out string! Value, out SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification, out bool IsEditable) -> void
+SharedKernel.DocumentWorkflow.DocumentContentField.DocumentContentField(string! Id, string! Label, string! Value, SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification, bool IsEditable) -> void
+SharedKernel.DocumentWorkflow.DocumentContentField.Equals(SharedKernel.DocumentWorkflow.DocumentContentField? other) -> bool
+SharedKernel.DocumentWorkflow.DocumentContentField.Id.get -> string!
+SharedKernel.DocumentWorkflow.DocumentContentField.Id.init -> void
+SharedKernel.DocumentWorkflow.DocumentContentField.IsEditable.get -> bool
+SharedKernel.DocumentWorkflow.DocumentContentField.IsEditable.init -> void
+SharedKernel.DocumentWorkflow.DocumentContentField.Label.get -> string!
+SharedKernel.DocumentWorkflow.DocumentContentField.Label.init -> void
+SharedKernel.DocumentWorkflow.DocumentContentField.PrivacyClassification.get -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentWorkflow.DocumentContentField.PrivacyClassification.init -> void
+SharedKernel.DocumentWorkflow.DocumentContentField.Value.get -> string!
+SharedKernel.DocumentWorkflow.DocumentContentField.Value.init -> void
+SharedKernel.DocumentWorkflow.DocumentFinalizer<TSource>
+SharedKernel.DocumentWorkflow.DocumentFinalizer<TSource>.DocumentFinalizer(SharedKernel.DocumentWorkflow.DocumentGenerator<TSource>! generator, SharedKernel.DocumentRendering.IDocumentRenderer! renderer, SharedKernel.DocumentWorkflow.IDocumentArtifactStore! store, string! contentType, int maximumArtifactBytes) -> void
+SharedKernel.DocumentWorkflow.DocumentFinalizer<TSource>.FinalizeRevision(SharedKernel.DocumentWorkflow.DocumentRevision! revision, SharedKernel.Review.ReviewRevision! reviewed, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentRevision!>>
+SharedKernel.DocumentWorkflow.DocumentGenerator<TSource>
+SharedKernel.DocumentWorkflow.DocumentGenerator<TSource>.DocumentGenerator(SharedKernel.DocumentWorkflow.IDocumentSource<TSource>! source, SharedKernel.DocumentWorkflow.IDocumentTemplate<TSource>! template) -> void
+SharedKernel.DocumentWorkflow.DocumentGenerator<TSource>.Generate(System.Guid lineageId, System.Guid sourceId, System.Collections.Generic.IEnumerable<string!>! lanes, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentRevision!>>
+SharedKernel.DocumentWorkflow.DocumentGenerator<TSource>.ReadCurrentOrigin(System.Guid sourceId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentOrigin!>>
+SharedKernel.DocumentWorkflow.DocumentGenerator<TSource>.Regenerate(SharedKernel.DocumentWorkflow.DocumentRevision! previous, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<(SharedKernel.DocumentWorkflow.DocumentRevision! Previous, SharedKernel.DocumentWorkflow.DocumentRevision! Current)>>
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus.Approved = 4 -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus.ChangesRequested = 3 -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus.DraftGenerated = 1 -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus.Finalized = 5 -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus.InReview = 2 -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus.None = 0 -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus.Superseded = 6 -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentLifecycleStatus.Voided = 7 -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentOrigin
+SharedKernel.DocumentWorkflow.DocumentOrigin.<Clone>$() -> SharedKernel.DocumentWorkflow.DocumentOrigin!
+SharedKernel.DocumentWorkflow.DocumentOrigin.Deconstruct(out System.Guid SourceId, out string! SourceVersion, out string! TemplateId, out string! TemplateVersion) -> void
+SharedKernel.DocumentWorkflow.DocumentOrigin.DocumentOrigin(System.Guid SourceId, string! SourceVersion, string! TemplateId, string! TemplateVersion) -> void
+SharedKernel.DocumentWorkflow.DocumentOrigin.Equals(SharedKernel.DocumentWorkflow.DocumentOrigin? other) -> bool
+SharedKernel.DocumentWorkflow.DocumentOrigin.SourceId.get -> System.Guid
+SharedKernel.DocumentWorkflow.DocumentOrigin.SourceId.init -> void
+SharedKernel.DocumentWorkflow.DocumentOrigin.SourceVersion.get -> string!
+SharedKernel.DocumentWorkflow.DocumentOrigin.SourceVersion.init -> void
+SharedKernel.DocumentWorkflow.DocumentOrigin.TemplateId.get -> string!
+SharedKernel.DocumentWorkflow.DocumentOrigin.TemplateId.init -> void
+SharedKernel.DocumentWorkflow.DocumentOrigin.TemplateVersion.get -> string!
+SharedKernel.DocumentWorkflow.DocumentOrigin.TemplateVersion.init -> void
+SharedKernel.DocumentWorkflow.DocumentRevision
+SharedKernel.DocumentWorkflow.DocumentRevision.<Clone>$() -> SharedKernel.DocumentWorkflow.DocumentRevision!
+SharedKernel.DocumentWorkflow.DocumentRevision.ArtifactReference.get -> string?
+SharedKernel.DocumentWorkflow.DocumentRevision.BeginReview() -> SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentRevision!>
+SharedKernel.DocumentWorkflow.DocumentRevision.Content.get -> SharedKernel.DocumentWorkflow.DocumentContent!
+SharedKernel.DocumentWorkflow.DocumentRevision.Decide(SharedKernel.Review.ReviewRevision! reviewed, string! lane, SharedKernel.Review.ReviewDecision decision, string! actorPseudonym, System.DateTimeOffset occurredAt, string! reasonCode, SharedKernel.DocumentWorkflow.DocumentOrigin! currentOrigin) -> SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentRevision!>
+SharedKernel.DocumentWorkflow.DocumentRevision.Edit(string! fieldId, string! value) -> SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentRevision!>
+SharedKernel.DocumentWorkflow.DocumentRevision.Equals(SharedKernel.DocumentWorkflow.DocumentRevision? other) -> bool
+SharedKernel.DocumentWorkflow.DocumentRevision.LineageId.get -> System.Guid
+SharedKernel.DocumentWorkflow.DocumentRevision.Number.get -> int
+SharedKernel.DocumentWorkflow.DocumentRevision.Origin.get -> SharedKernel.DocumentWorkflow.DocumentOrigin!
+SharedKernel.DocumentWorkflow.DocumentRevision.Review.get -> SharedKernel.Review.ReviewHistory!
+SharedKernel.DocumentWorkflow.DocumentRevision.Seal(string! artifactReference, SharedKernel.Review.ReviewRevision! rendered, SharedKernel.DocumentWorkflow.DocumentOrigin! currentOrigin) -> SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentRevision!>
+SharedKernel.DocumentWorkflow.DocumentRevision.Snapshot() -> SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot!
+SharedKernel.DocumentWorkflow.DocumentRevision.Status.get -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentRevision.Void() -> SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentRevision!>
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.<Clone>$() -> SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot!
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.ArtifactReference.get -> string?
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.ArtifactReference.init -> void
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Content.get -> SharedKernel.DocumentWorkflow.DocumentContent!
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Content.init -> void
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Deconstruct(out System.Guid LineageId, out int Number, out SharedKernel.DocumentWorkflow.DocumentOrigin! Origin, out SharedKernel.DocumentWorkflow.DocumentContent! Content, out SharedKernel.Review.ReviewHistorySnapshot! Review, out SharedKernel.DocumentWorkflow.DocumentLifecycleStatus Status, out string? ArtifactReference) -> void
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.DocumentRevisionSnapshot(System.Guid LineageId, int Number, SharedKernel.DocumentWorkflow.DocumentOrigin! Origin, SharedKernel.DocumentWorkflow.DocumentContent! Content, SharedKernel.Review.ReviewHistorySnapshot! Review, SharedKernel.DocumentWorkflow.DocumentLifecycleStatus Status, string? ArtifactReference) -> void
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Equals(SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot? other) -> bool
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.LineageId.get -> System.Guid
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.LineageId.init -> void
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Number.get -> int
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Number.init -> void
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Origin.get -> SharedKernel.DocumentWorkflow.DocumentOrigin!
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Origin.init -> void
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Review.get -> SharedKernel.Review.ReviewHistorySnapshot!
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Review.init -> void
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Status.get -> SharedKernel.DocumentWorkflow.DocumentLifecycleStatus
+SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Status.init -> void
+SharedKernel.DocumentWorkflow.IDocumentArtifactStore
+SharedKernel.DocumentWorkflow.IDocumentArtifactStore.Write(SharedKernel.DocumentWorkflow.DocumentArtifactWrite! artifact, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<string!>>
+SharedKernel.DocumentWorkflow.IDocumentSource<TSource>
+SharedKernel.DocumentWorkflow.IDocumentSource<TSource>.Read(System.Guid sourceId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<(string! Version, TSource Data)>>
+SharedKernel.DocumentWorkflow.IDocumentTemplate<TSource>
+SharedKernel.DocumentWorkflow.IDocumentTemplate<TSource>.Create(TSource source) -> SharedKernel.DocumentWorkflow.DocumentContent!
+SharedKernel.DocumentWorkflow.IDocumentTemplate<TSource>.TemplateId.get -> string!
+SharedKernel.DocumentWorkflow.IDocumentTemplate<TSource>.TemplateVersion.get -> string!
+override SharedKernel.DocumentWorkflow.DocumentContentField.Equals(object? obj) -> bool
+override SharedKernel.DocumentWorkflow.DocumentContentField.GetHashCode() -> int
+override SharedKernel.DocumentWorkflow.DocumentContentField.ToString() -> string!
+override SharedKernel.DocumentWorkflow.DocumentOrigin.Equals(object? obj) -> bool
+override SharedKernel.DocumentWorkflow.DocumentOrigin.GetHashCode() -> int
+override SharedKernel.DocumentWorkflow.DocumentOrigin.ToString() -> string!
+override SharedKernel.DocumentWorkflow.DocumentRevision.Equals(object? obj) -> bool
+override SharedKernel.DocumentWorkflow.DocumentRevision.GetHashCode() -> int
+override SharedKernel.DocumentWorkflow.DocumentRevision.ToString() -> string!
+override SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.Equals(object? obj) -> bool
+override SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.GetHashCode() -> int
+override SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.ToString() -> string!
+static SharedKernel.DocumentWorkflow.DocumentContentField.operator !=(SharedKernel.DocumentWorkflow.DocumentContentField? left, SharedKernel.DocumentWorkflow.DocumentContentField? right) -> bool
+static SharedKernel.DocumentWorkflow.DocumentContentField.operator ==(SharedKernel.DocumentWorkflow.DocumentContentField? left, SharedKernel.DocumentWorkflow.DocumentContentField? right) -> bool
+static SharedKernel.DocumentWorkflow.DocumentOrigin.operator !=(SharedKernel.DocumentWorkflow.DocumentOrigin? left, SharedKernel.DocumentWorkflow.DocumentOrigin? right) -> bool
+static SharedKernel.DocumentWorkflow.DocumentOrigin.operator ==(SharedKernel.DocumentWorkflow.DocumentOrigin? left, SharedKernel.DocumentWorkflow.DocumentOrigin? right) -> bool
+static SharedKernel.DocumentWorkflow.DocumentRevision.Restore(SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot? snapshot) -> SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.DocumentRevision!>
+static SharedKernel.DocumentWorkflow.DocumentRevision.operator !=(SharedKernel.DocumentWorkflow.DocumentRevision? left, SharedKernel.DocumentWorkflow.DocumentRevision? right) -> bool
+static SharedKernel.DocumentWorkflow.DocumentRevision.operator ==(SharedKernel.DocumentWorkflow.DocumentRevision? left, SharedKernel.DocumentWorkflow.DocumentRevision? right) -> bool
+static SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.operator !=(SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot? left, SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot? right) -> bool
+static SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot.operator ==(SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot? left, SharedKernel.DocumentWorkflow.DocumentRevisionSnapshot? right) -> bool

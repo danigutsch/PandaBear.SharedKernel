@@ -1,4 +1,4 @@
-namespace PandaBear.Encodings;
+namespace SharedKernel.Encodings;
 
 /// <summary>
 /// Bech32 as BIP-173 specifies it (not Bech32m), which is what age uses for recipients and identities. age lifts the

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Testing.Snapshots;
+namespace SharedKernel.Testing.Snapshots;
 
 /// <summary>Defines the fixed manifest wire format.</summary>
 [JsonSourceGenerationOptions(

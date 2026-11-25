@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>
 /// Serves files whose content never changes under their name, such as uploads stored as <c>&lt;content hash&gt;.&lt;extension&gt;</c>, from one

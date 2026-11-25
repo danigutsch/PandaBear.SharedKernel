@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>An immutable array compared by its items, so incremental generator models that hold it cache correctly.</summary>
 /// <typeparam name="T">The item type.</typeparam>

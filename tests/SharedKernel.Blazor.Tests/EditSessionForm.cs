@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>The form model of the edit session tests.</summary>
 internal sealed class EditSessionForm

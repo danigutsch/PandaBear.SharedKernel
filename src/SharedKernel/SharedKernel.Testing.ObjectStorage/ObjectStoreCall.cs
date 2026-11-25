@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.ObjectStorage;
+namespace SharedKernel.Testing.ObjectStorage;
 
 /// <summary>One call that <see cref="InMemoryObjectStore" /> received with valid arguments, whether or not it succeeded.</summary>
 /// <param name="Operation">The store member that was called.</param>

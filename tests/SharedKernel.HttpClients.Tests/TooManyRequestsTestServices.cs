@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Http.Resilience;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>Sends requests that a server answers with 429 through the standard resilience handler, with a customization.</summary>
 internal static class TooManyRequestsTestServices

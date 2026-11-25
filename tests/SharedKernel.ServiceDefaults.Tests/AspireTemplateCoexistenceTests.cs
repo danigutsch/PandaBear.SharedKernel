@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PandaBear.Observability;
-using PandaBear.ServiceDefaults;
+using SharedKernel.Observability;
+using SharedKernel.ServiceDefaults;
 
 namespace ServiceDefaultsConsumer;
 
 /// <summary>
 /// Tests that a host which keeps the official Aspire service-defaults template can call the SharedKernel registration methods too. The
-/// namespace lies outside <c>PandaBear</c>, as a consuming host's does, so the template's methods and the SharedKernel ones come from using
+/// namespace lies outside <c>SharedKernel</c>, as a consuming host's does, so the template's methods and the SharedKernel ones come from using
 /// directives in the same scope and a name they shared would make the calls ambiguous or bind them to the template.
 /// </summary>
 public sealed class AspireTemplateCoexistenceTests

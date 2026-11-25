@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// File operations that only Linux offers through glibc: an atomic exchange of two names and a durable directory. Where

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Testing.Snapshots;
+namespace SharedKernel.Testing.Snapshots;
 
 /// <summary>Describes one fixture attempt using only the manifest's approved values.</summary>
 /// <param name="Revision">The source revision used for the attempt.</param>

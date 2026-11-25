@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>What <see cref="SecretsRepository.CheckRecipients"/> checks.</summary>
 public sealed record CheckRecipientsSettings

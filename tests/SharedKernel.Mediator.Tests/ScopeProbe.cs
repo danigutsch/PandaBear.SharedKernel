@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Records which scopes were disposed.</summary>
 internal sealed class ScopeProbe

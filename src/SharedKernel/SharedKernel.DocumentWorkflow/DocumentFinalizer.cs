@@ -1,8 +1,8 @@
-using PandaBear.DocumentRendering;
-using PandaBear.Results;
-using PandaBear.Review;
+using SharedKernel.DocumentRendering;
+using SharedKernel.Results;
+using SharedKernel.Review;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Renders and stores an artifact for an approved revision through host-supplied ports.</summary>
 /// <typeparam name="TSource">The application's source model.</typeparam>

@@ -1,7 +1,7 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Tests how a finding of the text scanner becomes a vault finding with a proposed target.</summary>
 public sealed class ItemScannerProjectionTests

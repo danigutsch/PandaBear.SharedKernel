@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using PandaBear.Repository.Tests.Conventions;
+using SharedKernel.Repository.Tests.Conventions;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the text of the GitHub workflow files against changes that would break the CI contract.</summary>
 public sealed class WorkflowContractTests

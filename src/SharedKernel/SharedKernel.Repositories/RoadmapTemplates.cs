@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Starter file contents written when a repository roadmap structure is initialized.</summary>
 public static class RoadmapTemplates

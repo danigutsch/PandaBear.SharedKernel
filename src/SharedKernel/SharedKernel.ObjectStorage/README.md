@@ -25,7 +25,7 @@ slashes. Its empty/default value lists every object. A prefix is not interchange
 key. Provider length limits and filesystem containment checks still apply at the storage boundary.
 
 ```csharp
-using PandaBear.ObjectStorage;
+using SharedKernel.ObjectStorage;
 
 var key = ObjectStorageKey.From("media/original.jpg", maxLength: 1024);
 await store.Exists(key, ct);
@@ -39,7 +39,7 @@ third-party dependency is introduced.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.ObjectStorage`. C# namespace: `PandaBear.ObjectStorage`. Assembly/project identity: `SharedKernel.ObjectStorage`.
+Package ID: `PandaBear.SharedKernel.ObjectStorage`. C# namespace: `SharedKernel.ObjectStorage`. Assembly/project identity: `SharedKernel.ObjectStorage`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Whether one call may contact the network. Every network source takes it per call and refuses when it is <see cref="Denied"/>.</summary>
 public enum NetworkAccess

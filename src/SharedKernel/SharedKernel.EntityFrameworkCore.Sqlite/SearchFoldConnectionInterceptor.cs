@@ -2,7 +2,7 @@ using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite;
+namespace SharedKernel.EntityFrameworkCore.Sqlite;
 
 /// <summary>Registers <see cref="SearchFold.FunctionName"/> on every SQLite connection a context opens.</summary>
 internal sealed class SearchFoldConnectionInterceptor : DbConnectionInterceptor

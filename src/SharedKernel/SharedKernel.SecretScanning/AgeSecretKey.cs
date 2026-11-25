@@ -1,6 +1,6 @@
-using PandaBear.Encodings;
+using SharedKernel.Encodings;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Recognises an age identity, <c>AGE-SECRET-KEY-1...</c>, by its Bech32 checksum and its 32-byte key.</summary>
 internal static class AgeSecretKey

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 
-namespace PandaBear.Testing.AspNetCore.Tests;
+namespace SharedKernel.Testing.AspNetCore.Tests;
 
 /// <summary>Tests reading and bounding the component state of a prerendered Blazor page.</summary>
 [TestScope(TestScope.Unit)]

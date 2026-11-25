@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Helpers for probing PostgreSQL advisory locks from a separate connection.</summary>
 internal static class PostgreSqlTransactionAdvisoryLockTestsHelpers

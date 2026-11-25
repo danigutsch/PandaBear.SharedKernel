@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Finds and reads Cobertura coverage reports, merging the lines of every report that names a source file.</summary>
 internal static partial class CoberturaReport

@@ -1,6 +1,6 @@
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.ObjectStorage;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>A validated relative slash-delimited object identity, compared by its exact text.</summary>
 public readonly record struct ObjectStorageKey

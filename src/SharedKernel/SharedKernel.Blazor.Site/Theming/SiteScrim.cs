@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// The darkening of a photo behind on-primary text: the least opacity, in whole percent, at which the theme's text colour laid over

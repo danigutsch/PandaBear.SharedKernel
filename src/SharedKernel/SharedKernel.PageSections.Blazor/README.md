@@ -24,7 +24,7 @@ Reference the site stylesheet as `PandaBear.SharedKernel.Blazor.Site` describes;
 optional ones for the captions and credits of the sections' images:
 
 ```razor
-@using PandaBear.PageSections.Blazor
+@using SharedKernel.PageSections.Blazor
 
 <PageSectionsView Sections="_page.Sections" Image="Images.Responsive" Link="@(target => Routes.Of(target, Language))"
                   ImageCaption="@(id => _page.ImageOf(id)?.Caption)" ImageCredit="Images.CreditLine"
@@ -78,9 +78,9 @@ A section with nothing left to show (every part empty or left out) renders nothi
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.PageSections.Blazor`. C# namespace: `PandaBear.PageSections.Blazor`. Assembly/project identity:
+Package ID: `PandaBear.SharedKernel.PageSections.Blazor`. C# namespace: `SharedKernel.PageSections.Blazor`. Assembly/project identity:
 `SharedKernel.PageSections.Blazor`. It references `PandaBear.SharedKernel.PageSections` and `PandaBear.SharedKernel.Blazor.Site`, and
 the ASP.NET Core shared framework, as the site package does. The component is named `PageSectionsView` because a type named
-`PageSections` would clash with the `PandaBear.PageSections` namespace (CA1724).
+`PageSections` would clash with the `SharedKernel.PageSections` namespace (CA1724).
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

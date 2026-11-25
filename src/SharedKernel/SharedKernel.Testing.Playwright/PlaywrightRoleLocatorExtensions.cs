@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>
 /// Locates headings, links and buttons by their exact accessible name, the way a user and a screen reader find them. Playwright's

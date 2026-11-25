@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>GitHub close outcomes a roadmap item can carry when its issue closes.</summary>
 public static class RoadmapCloseReason

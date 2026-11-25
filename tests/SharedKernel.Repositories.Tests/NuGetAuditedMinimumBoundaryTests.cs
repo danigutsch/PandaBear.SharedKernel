@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Verifies when source and declaration evidence is insufficient for the automatic minimum.</summary>
 public sealed class NuGetAuditedMinimumBoundaryTests

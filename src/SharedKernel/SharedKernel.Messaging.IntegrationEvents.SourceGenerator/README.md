@@ -23,8 +23,8 @@ dotnet add package PandaBear.SharedKernel.Messaging.IntegrationEvents.SourceGene
 Compiler assets are delivered as analyzers. Add the matching runtime contracts explicitly; the runtime package does not bundle this generator. Keep the generator as a development-only reference (`PrivateAssets="all"`) and use a compiler compatible with the documented Roslyn 5.9 baseline.
 
 ```csharp
-using PandaBear.Domain;
-using PandaBear.Messaging.IntegrationEvents;
+using SharedKernel.Domain;
+using SharedKernel.Messaging.IntegrationEvents;
 
 public sealed record ItemCreated(Guid Id, DateTimeOffset Time) : IDomainEvent;
 public sealed record ItemPublished(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
@@ -43,6 +43,6 @@ public static class ItemMappings
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Messaging.IntegrationEvents.SourceGenerator`. C# namespace: `PandaBear.Messaging.IntegrationEvents.SourceGenerator`. Assembly/project identity: `SharedKernel.Messaging.IntegrationEvents.SourceGenerator`.
+Package ID: `PandaBear.SharedKernel.Messaging.IntegrationEvents.SourceGenerator`. C# namespace: `SharedKernel.Messaging.IntegrationEvents.SourceGenerator`. Assembly/project identity: `SharedKernel.Messaging.IntegrationEvents.SourceGenerator`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

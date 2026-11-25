@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>A .NET SDK version such as <c>10.0.100</c> or <c>10.0.100-rc.1.25451.107</c>. Only well-formed versions exist.</summary>
 internal sealed partial record SdkVersion

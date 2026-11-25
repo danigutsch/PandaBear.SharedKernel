@@ -1,6 +1,6 @@
 using System.CommandLine.Parsing;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Finds the tool command lines that the tool README documents.</summary>
 internal static class DocumentedCommandLines

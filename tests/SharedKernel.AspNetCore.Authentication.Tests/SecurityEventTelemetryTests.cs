@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace PandaBear.AspNetCore.Authentication.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Tests;
 
 /// <summary>Tests the opt-in authentication events.</summary>
 public sealed class SecurityEventTelemetryTests

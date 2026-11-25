@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Finds the command lines that a Markdown document, such as a tool README, documents for one invocation.</summary>
 public static partial class ReadmeCommandLines

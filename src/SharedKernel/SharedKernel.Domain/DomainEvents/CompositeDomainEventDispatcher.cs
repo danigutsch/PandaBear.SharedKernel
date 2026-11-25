@@ -1,4 +1,4 @@
-namespace PandaBear.Domain;
+namespace SharedKernel.Domain;
 
 /// <summary>Dispatches each domain event through registered handlers in registration order.</summary>
 public sealed class CompositeDomainEventDispatcher : IDomainEventDispatcher

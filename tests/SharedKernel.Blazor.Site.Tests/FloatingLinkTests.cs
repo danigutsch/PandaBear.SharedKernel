@@ -1,6 +1,6 @@
-using static PandaBear.Blazor.Site.Tests.SiteFixtures;
+using static SharedKernel.Blazor.Site.Tests.SiteFixtures;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the floating corner link.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

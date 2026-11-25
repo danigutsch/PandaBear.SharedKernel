@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>Single-valued text field of an item, with how to read, write, and compare it.</summary>
 /// <param name="Path">Field path.</param>

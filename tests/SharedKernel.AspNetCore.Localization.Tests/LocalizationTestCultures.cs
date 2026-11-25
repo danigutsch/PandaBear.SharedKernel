@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.AspNetCore.Localization.Tests;
+namespace SharedKernel.AspNetCore.Localization.Tests;
 
 /// <summary>Shared test cultures: Portuguese (default) and English.</summary>
 internal static class LocalizationTestCultures

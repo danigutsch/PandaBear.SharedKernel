@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>Subtype of <see cref="TestIntegrationEvent"/> that adds details but is not itself registered, inheriting the base event type.</summary>
 /// <param name="EventId">Unique identifier of the event instance.</param>

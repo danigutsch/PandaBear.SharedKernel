@@ -1,6 +1,6 @@
-using PandaBear.Testing.Snapshots;
+using SharedKernel.Testing.Snapshots;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Supplies approved metadata for reproduction manifest tests.</summary>
 internal static class ReproductionManifestTestData

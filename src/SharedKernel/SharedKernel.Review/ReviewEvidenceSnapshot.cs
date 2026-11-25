@@ -1,4 +1,4 @@
-namespace PandaBear.Review;
+namespace SharedKernel.Review;
 
 /// <summary>Represents one stored evidence entry awaiting validation on restore.</summary>
 /// <param name="Revision">The content revision that was reviewed.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The size of a <see cref="Hero" />'s title relative to the theme's level 1 heading.</summary>
 public enum HeroTitleScale

@@ -1,7 +1,7 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.Vault.Tests.Pipeline;
+namespace SharedKernel.Vault.Tests.Pipeline;
 
 /// <summary>Builds decisions on the findings of one item.</summary>
 internal static class PipelineDecisions

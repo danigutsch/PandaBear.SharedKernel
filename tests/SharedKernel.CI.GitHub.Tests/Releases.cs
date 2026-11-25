@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.CI.GitHub.Tests;
+namespace SharedKernel.CI.GitHub.Tests;
 
 /// <summary>Writes release lists as the GitHub releases API returns them.</summary>
 internal static class Releases

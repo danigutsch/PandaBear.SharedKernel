@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>Tests for <see cref="CsvDocument"/> creation, parsing, header validation and row lookup by header.</summary>
 public class CsvDocumentTests

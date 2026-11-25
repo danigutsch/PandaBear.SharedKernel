@@ -2,7 +2,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <IsPackable>true</IsPackable>
-        <RootNamespace>PandaBear.RepoConfig.Tool</RootNamespace>
+        <RootNamespace>SharedKernel.RepoConfig.Tool</RootNamespace>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>repo</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.RepoConfig.Tool</PackageId>

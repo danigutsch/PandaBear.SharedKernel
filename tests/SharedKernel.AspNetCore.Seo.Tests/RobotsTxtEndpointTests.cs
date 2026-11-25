@@ -2,7 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 
-namespace PandaBear.AspNetCore.Seo.Tests;
+namespace SharedKernel.AspNetCore.Seo.Tests;
 
 /// <summary>Characterizes the robots.txt endpoint that moved into the Seo package.</summary>
 public sealed class RobotsTxtEndpointTests

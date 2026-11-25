@@ -1,6 +1,6 @@
 using System.Data.Common;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// Umami's address and the website id, parsed from a connection string <c>Endpoint=&lt;address&gt;;WebsiteId=&lt;id&gt;</c>, the form the

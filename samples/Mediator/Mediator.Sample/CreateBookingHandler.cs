@@ -1,4 +1,4 @@
-using PandaBear.Mediator;
+using SharedKernel.Mediator;
 
 namespace Mediator.Sample;
 

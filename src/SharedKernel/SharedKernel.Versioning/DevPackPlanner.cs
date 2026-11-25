@@ -1,7 +1,7 @@
 using System.IO.Enumeration;
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Plans a fast, incremental local pack of SharedKernel for a consumer that develops against uncommitted library changes:

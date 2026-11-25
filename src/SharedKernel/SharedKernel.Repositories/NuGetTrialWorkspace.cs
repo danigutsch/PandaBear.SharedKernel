@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Copies the reviewed Git state and opted-in package inputs to a disposable checkout.</summary>
 internal sealed class NuGetTrialWorkspace : IDisposable

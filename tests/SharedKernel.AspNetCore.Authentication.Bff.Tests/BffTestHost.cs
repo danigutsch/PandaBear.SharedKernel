@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>A service provider wired with BFF token management, a fake identity provider, a fake clock and a recording cache.</summary>
 internal sealed class BffTestHost : IDisposable

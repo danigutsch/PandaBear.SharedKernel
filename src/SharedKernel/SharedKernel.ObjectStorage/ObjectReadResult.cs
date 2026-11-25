@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>
 /// Represents stored object content opened for reading.

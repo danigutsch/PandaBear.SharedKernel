@@ -83,7 +83,7 @@ dotnet add package PandaBear.SharedKernel.AspNetCore.Seo
 ```
 
 ```csharp
-using PandaBear.AspNetCore.Seo;
+using SharedKernel.AspNetCore.Seo;
 
 app.MapRobotsTxt("User-agent: *\nDisallow: /admin\n");
 app.MapGet("/sitemap.xml", async (CancellationToken cancellationToken) =>
@@ -97,13 +97,13 @@ app.MapGet("/sitemap.xml", async (CancellationToken cancellationToken) =>
 ## Migrating from SharedKernel.AspNetCore
 
 `AspNetCoreRobotsTxtExtensions`, `SitemapCanonicalOrigin`, `SitemapEntry` and `SitemapXmlSerializer` moved from
-`PandaBear.SharedKernel.AspNetCore` (namespace `PandaBear.AspNetCore`) into this package and namespace
-`PandaBear.AspNetCore.Seo`. Add the package reference and replace `using PandaBear.AspNetCore;` with
-`using PandaBear.AspNetCore.Seo;` where they are used.
+`PandaBear.SharedKernel.AspNetCore` (namespace `SharedKernel.AspNetCore`) into this package and namespace
+`SharedKernel.AspNetCore.Seo`. Add the package reference and replace `using SharedKernel.AspNetCore;` with
+`using SharedKernel.AspNetCore.Seo;` where they are used.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AspNetCore.Seo`. C# namespace: `PandaBear.AspNetCore.Seo`. Assembly/project
+Package ID: `PandaBear.SharedKernel.AspNetCore.Seo`. C# namespace: `SharedKernel.AspNetCore.Seo`. Assembly/project
 identity: `SharedKernel.AspNetCore.Seo`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured

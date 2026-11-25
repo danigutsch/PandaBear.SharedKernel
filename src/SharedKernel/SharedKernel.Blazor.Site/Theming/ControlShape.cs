@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// The corner shape of a theme. It sets <c>--site-control-radius</c>, the radius of buttons, pager links and language links, and

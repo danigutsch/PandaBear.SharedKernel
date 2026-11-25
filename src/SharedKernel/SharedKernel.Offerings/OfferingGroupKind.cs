@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The kind of a group of the offering listing (see <see cref="OfferingListing"/>).</summary>
 public enum OfferingGroupKind

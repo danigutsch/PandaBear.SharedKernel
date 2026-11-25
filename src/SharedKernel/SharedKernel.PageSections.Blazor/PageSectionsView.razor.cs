@@ -1,9 +1,9 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using PandaBear.Blazor.Site;
-using PandaBear.BuildingBlocks;
+using SharedKernel.Blazor.Site;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.PageSections.Blazor;
+namespace SharedKernel.PageSections.Blazor;
 
 /// <summary>
 /// Renders the sections of a page with the site components, each on the <see cref="Band" /> of its tone and its parts in the model's

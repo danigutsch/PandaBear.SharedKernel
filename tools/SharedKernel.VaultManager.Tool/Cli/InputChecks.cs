@@ -1,8 +1,8 @@
-using PandaBear.InputNormalization;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.VaultManager.Tool.Formats;
+using SharedKernel.InputNormalization;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.VaultManager.Tool.Formats;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>Checks the input files before a command asks for a password or reads any vault.</summary>
 internal static class InputChecks

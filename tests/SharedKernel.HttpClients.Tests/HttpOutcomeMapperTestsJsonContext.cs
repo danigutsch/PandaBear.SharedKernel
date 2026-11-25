@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>
 /// Source-generated System.Text.Json context for the payload and validation problem types used by the HttpOutcomeMapper tests.

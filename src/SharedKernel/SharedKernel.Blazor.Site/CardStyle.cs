@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The look of a <see cref="Card" />.</summary>
 public enum CardStyle

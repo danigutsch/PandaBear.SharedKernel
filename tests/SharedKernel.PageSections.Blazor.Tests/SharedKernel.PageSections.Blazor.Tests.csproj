@@ -2,15 +2,15 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.PageSections.Blazor.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.PageSections.Blazor.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <Using Include="Bunit" />
-        <Using Include="PandaBear.Blazor.Site" />
-        <Using Include="PandaBear.PageSections" />
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing.Playwright" />
+        <Using Include="SharedKernel.Blazor.Site" />
+        <Using Include="SharedKernel.PageSections" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Playwright" />
         <Using Include="Xunit" />
     </ItemGroup>
 

@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Serves two routed pages, <c>a</c> and <c>b</c>, under an origin that no server answers, for the address-wait tests.</summary>
 internal static class ExpectPathPages

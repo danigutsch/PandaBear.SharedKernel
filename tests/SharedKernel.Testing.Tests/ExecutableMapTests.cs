@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the executable resolver that a test maps by command name.</summary>
 public sealed class ExecutableMapTests

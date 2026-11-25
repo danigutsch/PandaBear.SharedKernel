@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Writes the report classes and applies the diff, report, and symbol scenarios of the coverage gate tests.</summary>
 internal static class CoverageScenarios

@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>A finished phase of <c>run</c>.</summary>
 /// <param name="Name">The phase, such as <c>build</c>, <c>openapi-admin</c>, or <c>service-services</c>.</param>

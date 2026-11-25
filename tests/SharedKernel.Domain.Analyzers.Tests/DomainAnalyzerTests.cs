@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Domain.Analyzers.Tests;
+namespace SharedKernel.Domain.Analyzers.Tests;
 
 /// <summary>Tests that the domain analyzer reports non-private setters (SKDOM001) and exposed mutable collections (SKDOM002) only where intended.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DomainEncapsulationCapability)]

@@ -1,10 +1,10 @@
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Tests that outbound HTTP clients registered with <c>AddForwardedClientIp</c> send the caller's resolved remote address as the only <c>X-Forwarded-For</c> value.</summary>
 [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]

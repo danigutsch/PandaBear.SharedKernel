@@ -12,6 +12,6 @@ Call `TestUniqueId.Create(prefix)` when a test needs an isolated identifier. Cho
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Data`. C# namespace: `PandaBear.Testing.Data`. Assembly/project identity: `SharedKernel.Testing.Data`.
+Package ID: `PandaBear.SharedKernel.Testing.Data`. C# namespace: `SharedKernel.Testing.Data`. Assembly/project identity: `SharedKernel.Testing.Data`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

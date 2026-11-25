@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace PandaBear.LoadTesting.K6.Tests;
+namespace SharedKernel.LoadTesting.K6.Tests;
 
 /// <summary>Tests how the k6 generator starts k6 and the container engine, through a scripted process runner.</summary>
 public sealed class K6LoadGeneratorTests

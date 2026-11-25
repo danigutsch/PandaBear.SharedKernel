@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace PandaBear.Mediator.CodeFixes;
+namespace SharedKernel.Mediator.CodeFixes;
 
 /// <summary>
 /// Adds the missing <c>CancellationToken ct</c> parameter to a public handler method.

@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>The caller's observation of executing a datasource query.</summary>
 /// <param name="Succeeded">Whether the datasource accepted and executed the query.</param>

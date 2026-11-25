@@ -23,6 +23,6 @@ Hosting a local SeaweedFS container belongs to `SharedKernel.Aspire.Hosting.Seaw
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.ObjectStorage.S3`. C# namespace: `PandaBear.ObjectStorage.S3`. Assembly/project identity: `SharedKernel.ObjectStorage.S3`.
+Package ID: `PandaBear.SharedKernel.ObjectStorage.S3`. C# namespace: `SharedKernel.ObjectStorage.S3`. Assembly/project identity: `SharedKernel.ObjectStorage.S3`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

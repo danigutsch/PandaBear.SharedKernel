@@ -1,7 +1,7 @@
 using System.Xml.Linq;
-using static PandaBear.RepoConfig.Tests.NewTestOperations;
+using static SharedKernel.RepoConfig.Tests.NewTestOperations;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>new</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>Keeper record as read from a JSON or CSV export, before mapping.</summary>
 internal sealed record KeeperRecord

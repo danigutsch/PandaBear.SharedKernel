@@ -1,4 +1,4 @@
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Tests how the resolver finds executables in the absolute directories of a search path.</summary>
 public sealed class PathExecutableResolverTests

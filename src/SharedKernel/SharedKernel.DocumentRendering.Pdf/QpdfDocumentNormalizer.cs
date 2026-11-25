@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.DocumentRendering.Pdf;
+namespace SharedKernel.DocumentRendering.Pdf;
 
 /// <summary>Normalizes the volatile Info dates of a renderer-owned tagged Chromium PDF with a caller-provisioned qpdf.</summary>
 /// <remarks>Use only with fresh output from a qualified renderer. This API does not accept an uploaded PDF.</remarks>

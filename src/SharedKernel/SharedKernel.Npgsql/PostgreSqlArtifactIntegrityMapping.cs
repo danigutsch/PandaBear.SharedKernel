@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>Identifies the PostgreSQL relations and columns used for binary artifact reconciliation.</summary>
 /// <param name="MetadataSchema">The schema containing the metadata relation.</param>

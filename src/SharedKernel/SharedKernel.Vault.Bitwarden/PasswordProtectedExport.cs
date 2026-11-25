@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using PandaBear.Vault.Bitwarden.Crypto;
+using SharedKernel.Vault.Bitwarden.Crypto;
 
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Reads and writes Bitwarden password-protected JSON exports.</summary>
 public static class PasswordProtectedExport

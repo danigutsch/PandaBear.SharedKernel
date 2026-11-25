@@ -3,7 +3,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Reads the roadmap-relevant state of GitHub issues for reconciliation.</summary>
 internal sealed class GitHubRoadmapReconcileClient

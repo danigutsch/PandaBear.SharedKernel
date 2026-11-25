@@ -1,6 +1,6 @@
-using static PandaBear.Npgsql.Tests.PostgreSqlArtifactIntegrityTestData;
+using static SharedKernel.Npgsql.Tests.PostgreSqlArtifactIntegrityTestData;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Exercises bounded integrity reports against a real PostgreSQL database.</summary>
 /// <param name="fixture">The fixture that supplies each test's isolated database.</param>

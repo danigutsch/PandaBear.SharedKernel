@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The tone of a <see cref="StatusBadge" />: a background and text colour pair from the stylesheet's status tokens. The tone only

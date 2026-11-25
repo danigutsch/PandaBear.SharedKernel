@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>Proposed destination of a finding.</summary>
 /// <param name="Kind">Destination kind.</param>

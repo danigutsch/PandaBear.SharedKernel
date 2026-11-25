@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Declares the test seam a test exercises. Emits the same <c>Scope</c> trait as <c>[Trait("Scope", ...)]</c>,

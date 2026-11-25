@@ -1,6 +1,6 @@
-using PandaBear.Testing.Metrics;
+using SharedKernel.Testing.Metrics;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>
 /// Tests that the instruments generated mediator dispatch records into carry the standard names, units, descriptions and, for

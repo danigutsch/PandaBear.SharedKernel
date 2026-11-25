@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests in Chromium, at 1280px where the content is 72rem (1152px) wide, that the smallest column width sets the number of columns

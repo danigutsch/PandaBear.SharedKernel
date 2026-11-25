@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// The readability rules of a theme. Contrast follows WCAG 2.2: 4.5:1 for text (SC 1.4.3 Contrast (Minimum)) and 3:1 for the focus

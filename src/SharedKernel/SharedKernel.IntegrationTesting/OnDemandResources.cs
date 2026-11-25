@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// A set of <see cref="OnDemandResource{T}"/> keyed by name: each key starts once, on its first demand, and every caller of that key shares

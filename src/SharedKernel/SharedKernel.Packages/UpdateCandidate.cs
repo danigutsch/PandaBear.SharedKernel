@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>A newer release of an installed package, with the time it was released.</summary>
 public sealed class UpdateCandidate : ValueObject

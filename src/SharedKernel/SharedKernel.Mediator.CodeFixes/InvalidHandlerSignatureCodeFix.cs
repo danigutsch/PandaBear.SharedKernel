@@ -2,9 +2,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using PandaBear.Mediator.SourceGenerator;
+using SharedKernel.Mediator.SourceGenerator;
 
-namespace PandaBear.Mediator.CodeFixes;
+namespace SharedKernel.Mediator.CodeFixes;
 
 /// <summary>
 /// Repairs the explicit-interface-only handler shape by adding a public forwarding method.

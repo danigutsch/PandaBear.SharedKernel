@@ -43,7 +43,7 @@ The repository owner owns support for every released version. [Security support]
 
 ## API and source compatibility
 
-C# namespaces use `PandaBear.*`; projects, assemblies, command names, and `PandaBear.SharedKernel.*` package IDs retain their documented identities. The [namespace decision](adr/20261020-pandabear-namespaces.md) records the breaking source change. Preserve API compatibility and breaking-change gates and mark deliberate breaks in Conventional Commit history. Keep previous candidates and evidence for rollback, as the [prerelease retention](#prerelease-retention) allows.
+C# namespaces follow their project and assembly names, `SharedKernel.*`; command names and `PandaBear.SharedKernel.*` package IDs retain their documented identities. The [namespace decision](adr/20261124-sharedkernel-namespaces.md) records the breaking source change back from `PandaBear.*`. Preserve API compatibility and breaking-change gates and mark deliberate breaks in Conventional Commit history. Keep previous candidates and evidence for rollback, as the [prerelease retention](#prerelease-retention) allows.
 
 Release tooling is documented in the root README and [versioning tool guide](../tools/SharedKernel.Versioning.Tool/README.md). Release preparation itself does not authorize registry publication.
 
@@ -52,7 +52,7 @@ References: [library versioning](https://learn.microsoft.com/en-us/dotnet/standa
 ## Idempotency contracts package migration
 
 The contracts package is now `PandaBear.SharedKernel.Idempotency.Abstractions`; the existing
-`PandaBear.Idempotency` namespace remains unchanged; the project and assembly become
+`SharedKernel.Idempotency` namespace remains unchanged; the project and assembly become
 `SharedKernel.Idempotency.Abstractions`.
 This is a breaking preview package-identity change. Consumers must replace direct references
 and refresh their candidate pins and lock files together; do not install both identities.

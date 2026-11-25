@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// The payload of a page view in Umami's documented send body. It has no <c>name</c>, so Umami records a page view, and no <c>title</c>,

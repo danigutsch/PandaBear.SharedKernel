@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Describes an operation associated with an AsyncAPI message.</summary>
 /// <param name="id">The operation key in the document.</param>

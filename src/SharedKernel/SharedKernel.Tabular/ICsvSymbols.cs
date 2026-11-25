@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>The structural characters of CSV in one text encoding, and how a field's code units become a string.</summary>
 /// <typeparam name="T">The code unit: <see cref="char"/> for UTF-16 or <see cref="byte"/> for UTF-8.</typeparam>

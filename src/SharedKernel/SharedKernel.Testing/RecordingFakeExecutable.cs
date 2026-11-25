@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>A POSIX shell script that records each argument on a line, its environment, and its process ID.</summary>
 public sealed class RecordingFakeExecutable

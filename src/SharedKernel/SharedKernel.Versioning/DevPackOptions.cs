@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>What <see cref="Packager.PackDev"/> packs, where, and which NuGet cache it evicts the packages from.</summary>
 /// <param name="Feed">The feed directory that receives the packages; created when missing.</param>

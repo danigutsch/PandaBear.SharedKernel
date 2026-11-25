@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>Tests that parsing UTF-8 bytes yields the same document or error as parsing the decoded text.</summary>
 public sealed class CsvDocumentUtf8ParsingTests

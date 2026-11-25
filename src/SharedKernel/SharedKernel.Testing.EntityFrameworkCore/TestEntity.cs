@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.EntityFrameworkCore;
+namespace SharedKernel.Testing.EntityFrameworkCore;
 
 /// <summary>A simple entity with an id and a name, stored by <see cref="TestDbContext" />.</summary>
 public sealed class TestEntity

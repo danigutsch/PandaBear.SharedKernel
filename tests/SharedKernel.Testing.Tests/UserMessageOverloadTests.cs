@@ -2,11 +2,11 @@ using System.Net;
 using System.Text;
 using System.Xml;
 using Microsoft.Playwright;
-using PandaBear.Results;
-using PandaBear.Testing.Http;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Results;
+using SharedKernel.Testing.Http;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the assertion overloads that accept a user message, which is prepended to the underlying failure.</summary>
 public sealed class UserMessageOverloadTests

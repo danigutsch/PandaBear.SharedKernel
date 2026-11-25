@@ -1,5 +1,5 @@
 using System.CommandLine;
-using PandaBear.CI.Tool;
+using SharedKernel.CI.Tool;
 
 // A cancelled run stops its services before it exits, and the real one needs about ten seconds to remove its container, but
 // System.CommandLine ends the process two seconds after a signal unless it is told otherwise. Ninety seconds cover the default

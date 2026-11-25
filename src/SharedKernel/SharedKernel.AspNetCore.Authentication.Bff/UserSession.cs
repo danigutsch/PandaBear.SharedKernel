@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Security.Claims;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// The token session of a principal: its opaque identifier and absolute end.

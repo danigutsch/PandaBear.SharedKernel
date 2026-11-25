@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the non-seekable stream that serves one chunk per released read.</summary>
 public sealed class GatedChunkReadStreamTests

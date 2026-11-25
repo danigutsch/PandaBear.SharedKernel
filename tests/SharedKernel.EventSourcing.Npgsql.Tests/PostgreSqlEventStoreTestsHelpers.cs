@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Shared helpers for the PostgreSQL event store tests: option creation, append capture and telemetry listeners.</summary>
 internal static class PostgreSqlEventStoreTestsHelpers

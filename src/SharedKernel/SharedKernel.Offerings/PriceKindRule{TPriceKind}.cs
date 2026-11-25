@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The application's rule for one price kind. The order of the rules is the display order of the prices.</summary>
 /// <typeparam name="TPriceKind">The application's price kind enum.</typeparam>

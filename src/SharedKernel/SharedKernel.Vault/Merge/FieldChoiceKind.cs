@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>What a field decision selects. The zero value is <see cref="Pending"/>, which selects nothing.</summary>
 public enum FieldChoiceKind

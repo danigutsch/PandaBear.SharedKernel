@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>A record of a CSV document: its field values and, for a parsed record, the line it starts on.</summary>
 public sealed class CsvRow : IReadOnlyList<string>

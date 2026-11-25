@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>Tests header matching and remapping without losing CSV source information.</summary>
 public sealed class CsvHeaderMappingTests

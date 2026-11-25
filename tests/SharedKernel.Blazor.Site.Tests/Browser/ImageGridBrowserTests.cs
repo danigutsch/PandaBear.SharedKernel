@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests in Chromium that an image grid or mosaic with a few photos fills its container, in a section's body, in a section's media

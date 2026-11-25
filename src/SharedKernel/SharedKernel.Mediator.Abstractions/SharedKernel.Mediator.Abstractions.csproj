@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Mediator.Abstractions</PackageId>
         <Description>Core abstractions for SharedKernel.Mediator.</Description>
-        <RootNamespace>PandaBear.Mediator</RootNamespace>
+        <RootNamespace>SharedKernel.Mediator</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>mediator;abstractions;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

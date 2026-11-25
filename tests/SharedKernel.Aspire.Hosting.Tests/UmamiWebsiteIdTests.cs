@@ -1,6 +1,6 @@
 using Aspire.Hosting;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the name-based (RFC 9562 version 5) website id: the published test vector, the version and variant bits, and its stability.</summary>
 public sealed class UmamiWebsiteIdTests

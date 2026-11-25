@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Runs each Stryker.NET config of <c>.config/sharedkernel-ci.json</c> in order, with the configured <c>dotnet-stryker</c>

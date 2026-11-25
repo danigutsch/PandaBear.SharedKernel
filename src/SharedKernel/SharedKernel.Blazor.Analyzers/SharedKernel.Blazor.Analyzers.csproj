@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Blazor.Analyzers</PackageId>
         <Description>Analyzers for Blazor component state and service-scope conventions.</Description>
-        <RootNamespace>PandaBear.Blazor.Analyzers</RootNamespace>
+        <RootNamespace>SharedKernel.Blazor.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>blazor;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

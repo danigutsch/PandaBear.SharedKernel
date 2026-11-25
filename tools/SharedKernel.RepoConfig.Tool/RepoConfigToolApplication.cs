@@ -3,14 +3,14 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using PandaBear.CI;
-using PandaBear.Forgejo;
-using PandaBear.InputNormalization;
-using PandaBear.Repositories;
-using PandaBear.Repositories.Forgejo;
-using PandaBear.Repositories.GitHub;
+using SharedKernel.CI;
+using SharedKernel.Forgejo;
+using SharedKernel.InputNormalization;
+using SharedKernel.Repositories;
+using SharedKernel.Repositories.Forgejo;
+using SharedKernel.Repositories.GitHub;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace SharedKernel.RepoConfig.Tool;
 
 /// <summary>
 /// Implements the <c>repo</c> commands and maps their failures to exit codes.

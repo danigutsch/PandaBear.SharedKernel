@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
-namespace PandaBear.Observability.Npgsql;
+namespace SharedKernel.Observability.Npgsql;
 
 /// <summary>Registers reusable, read-only PostgreSQL index-health monitoring.</summary>
 public static class PostgreSqlIndexHealthServiceCollectionExtensions

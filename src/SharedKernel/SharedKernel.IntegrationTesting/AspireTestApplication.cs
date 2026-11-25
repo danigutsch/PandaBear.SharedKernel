@@ -5,13 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using Xunit;
 
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// Owns an Aspire distributed application lifetime for integration tests. It follows the log lines of every resource from the start, so a

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components.Web;
-using PandaBear.Blazor.Site.Theming;
-using PandaBear.BuildingBlocks;
+using SharedKernel.Blazor.Site.Theming;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Builds the inputs and renders the hosts that several site component tests share.</summary>
 internal static class SiteFixtures

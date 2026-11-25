@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>A bounded page of pending delivery metadata.</summary>
 /// <param name="Entries">The rows, in descending timestamp and identifier order.</param>

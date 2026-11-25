@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace PandaBear.Results.AspNet.Tests;
+namespace SharedKernel.Results.AspNet.Tests;
 
 /// <summary>Builds failures that carry internal text and asserts that the text never reaches the client.</summary>
 internal static class HttpResultTestSupport

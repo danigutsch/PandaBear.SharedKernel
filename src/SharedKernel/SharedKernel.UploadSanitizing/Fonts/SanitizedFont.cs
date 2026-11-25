@@ -1,4 +1,4 @@
-namespace PandaBear.UploadSanitizing.Fonts;
+namespace SharedKernel.UploadSanitizing.Fonts;
 
 /// <summary>
 /// A font whose structure <see cref="FontSanitizer"/> checked. Only the sanitizer creates instances, so holding one means the bytes passed

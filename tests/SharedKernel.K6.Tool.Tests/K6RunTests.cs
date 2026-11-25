@@ -1,4 +1,4 @@
-namespace PandaBear.K6.Tool.Tests;
+namespace SharedKernel.K6.Tool.Tests;
 
 /// <summary>Tests running k6 locally and in a container.</summary>
 [Trait(TestTraitNames.ScopeName, "unit")]

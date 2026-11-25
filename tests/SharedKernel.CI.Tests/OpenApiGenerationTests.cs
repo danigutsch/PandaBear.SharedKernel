@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards the sanitized environment that OpenAPI generation builds run in, and the dotnet host they run through.</summary>
 public sealed class OpenApiGenerationTests : IDisposable
@@ -14,14 +14,14 @@ public sealed class OpenApiGenerationTests : IDisposable
         var root = RepositoryRoot.Locate("SharedKernel.slnx");
         var publicApi = Directory.EnumerateFiles(Path.Combine(root, "src", "SharedKernel", "SharedKernel.OpenApi"), "PublicAPI.*.txt")
             .SelectMany(File.ReadLines)
-            .ShouldHaveSingleItem(static line => line.StartsWith("const PandaBear.OpenApi.OpenApiGenerationMode.HostEnvironmentName = ", StringComparison.Ordinal));
+            .ShouldHaveSingleItem(static line => line.StartsWith("const SharedKernel.OpenApi.OpenApiGenerationMode.HostEnvironmentName = ", StringComparison.Ordinal));
         var startInfo = new ProcessStartInfo(Path.Combine(Path.GetTempPath(), "dotnet")) { WorkingDirectory = scope.Root };
 
         // Act
         OpenApiGeneration.ApplyEnvironment(startInfo);
 
         // Assert
-        publicApi.ShouldBe("const PandaBear.OpenApi.OpenApiGenerationMode.HostEnvironmentName = \"" + startInfo.Environment["ASPNETCORE_ENVIRONMENT"] + "\" -> string!");
+        publicApi.ShouldBe("const SharedKernel.OpenApi.OpenApiGenerationMode.HostEnvironmentName = \"" + startInfo.Environment["ASPNETCORE_ENVIRONMENT"] + "\" -> string!");
         startInfo.Environment["DOTNET_ENVIRONMENT"].ShouldBe(startInfo.Environment["ASPNETCORE_ENVIRONMENT"]);
     }
 

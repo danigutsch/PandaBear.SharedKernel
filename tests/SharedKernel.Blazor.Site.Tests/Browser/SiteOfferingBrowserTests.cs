@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>Tests the offering display atoms in Chromium at 1280px; they skip when the browser is not installed.</summary>
 [Testing.TestScope(Testing.TestScope.System)]

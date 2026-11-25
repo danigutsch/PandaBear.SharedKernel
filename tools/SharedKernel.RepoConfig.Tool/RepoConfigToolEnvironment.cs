@@ -1,8 +1,8 @@
-using PandaBear.DevContainers;
-using PandaBear.Processes;
-using PandaBear.Repositories;
+using SharedKernel.DevContainers;
+using SharedKernel.Processes;
+using SharedKernel.Repositories;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace SharedKernel.RepoConfig.Tool;
 
 /// <summary>
 /// Supplies the working directory and the external services that the command tree uses.

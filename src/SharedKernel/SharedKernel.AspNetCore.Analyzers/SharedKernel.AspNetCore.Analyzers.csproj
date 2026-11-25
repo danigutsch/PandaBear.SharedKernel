@@ -6,7 +6,6 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.AspNetCore.Analyzers</PackageId>
         <Description>Analyzers for ASP.NET Core Minimal API runtime binding fallbacks.</Description>
-        <RootNamespace>PandaBear.AspNetCore.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;analyzers;aot;shared-kernel</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

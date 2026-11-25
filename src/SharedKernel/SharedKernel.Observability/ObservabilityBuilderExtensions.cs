@@ -5,7 +5,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>
 /// Provides extension methods for configuring reusable OpenTelemetry observability for any host builder.

@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Builds the sources and options the SKTEST002 segment tests analyze.</summary>
 internal static class TestMethodNameTestSource

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using PandaBear.HttpCaching.AspNetCore;
+using SharedKernel.HttpCaching.AspNetCore;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Starts hosts with both the security headers and the default public caching, registered in either order.</summary>
 internal static class NonceCachingTestHost

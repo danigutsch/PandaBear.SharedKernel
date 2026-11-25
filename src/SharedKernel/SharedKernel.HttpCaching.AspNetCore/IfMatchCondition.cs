@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.HttpCaching.AspNetCore;
+namespace SharedKernel.HttpCaching.AspNetCore;
 
 /// <summary>
 /// An RFC 9110 <c>If-Match</c> condition: <c>*</c> or a list of entity tags, evaluated with strong comparison, so a weak tag never matches.

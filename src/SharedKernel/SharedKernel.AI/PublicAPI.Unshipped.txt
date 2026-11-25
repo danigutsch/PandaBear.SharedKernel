@@ -1,83 +1,83 @@
 #nullable enable
-PandaBear.AI.IImageTextGenerator
-PandaBear.AI.IImageTextGenerator.GenerateImageText(PandaBear.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.AI.ImageTextGenerationResult!>
-PandaBear.AI.ImageTextGenerationException
-PandaBear.AI.ImageTextGenerationException.ImageTextGenerationException() -> void
-PandaBear.AI.ImageTextGenerationException.ImageTextGenerationException(string! message) -> void
-PandaBear.AI.ImageTextGenerationException.ImageTextGenerationException(string! message, System.Exception! innerException) -> void
-PandaBear.AI.ImageTextGenerationRequest
-PandaBear.AI.ImageTextGenerationRequest.ContentType.get -> string!
-PandaBear.AI.ImageTextGenerationRequest.ContentType.init -> void
-PandaBear.AI.ImageTextGenerationRequest.Context.get -> string?
-PandaBear.AI.ImageTextGenerationRequest.Context.init -> void
-PandaBear.AI.ImageTextGenerationRequest.Image.get -> System.IO.Stream!
-PandaBear.AI.ImageTextGenerationRequest.Image.init -> void
-PandaBear.AI.ImageTextGenerationRequest.Language.get -> string!
-PandaBear.AI.ImageTextGenerationRequest.Language.init -> void
-PandaBear.AI.ImageTextGenerationRequest.Latitude.get -> decimal?
-PandaBear.AI.ImageTextGenerationRequest.Latitude.init -> void
-PandaBear.AI.ImageTextGenerationRequest.Longitude.get -> decimal?
-PandaBear.AI.ImageTextGenerationRequest.Longitude.init -> void
-PandaBear.AI.ImageTextGenerationResult
-PandaBear.AI.ImageTextGenerationResult.AltText.get -> string!
-PandaBear.AI.ImageTextGenerationResult.AltText.init -> void
-PandaBear.AI.ImageTextGenerationResult.Caption.get -> string?
-PandaBear.AI.ImageTextGenerationResult.Caption.init -> void
-PandaBear.AI.ImageTextGenerationResult.ImageTextGenerationResult(string! AltText, string? Caption) -> void
-PandaBear.AI.ImageTextGenerationResult.Usage.get -> PandaBear.AI.ImageTextGenerationUsage?
-PandaBear.AI.ImageTextGenerationResult.Usage.init -> void
-PandaBear.AI.ImageTextGenerationUsage
-PandaBear.AI.ImageTextGenerationUsage.<Clone>$() -> PandaBear.AI.ImageTextGenerationUsage!
-PandaBear.AI.ImageTextGenerationUsage.CostUsd.get -> decimal?
-PandaBear.AI.ImageTextGenerationUsage.CostUsd.init -> void
-PandaBear.AI.ImageTextGenerationUsage.Deconstruct(out long? InputTokens, out long? OutputTokens, out decimal? CostUsd) -> void
-PandaBear.AI.ImageTextGenerationUsage.Equals(PandaBear.AI.ImageTextGenerationUsage? other) -> bool
-PandaBear.AI.ImageTextGenerationUsage.ImageTextGenerationUsage(long? InputTokens, long? OutputTokens, decimal? CostUsd) -> void
-PandaBear.AI.ImageTextGenerationUsage.InputTokens.get -> long?
-PandaBear.AI.ImageTextGenerationUsage.InputTokens.init -> void
-PandaBear.AI.ImageTextGenerationUsage.OutputTokens.get -> long?
-PandaBear.AI.ImageTextGenerationUsage.OutputTokens.init -> void
-override PandaBear.AI.ImageTextGenerationUsage.Equals(object? obj) -> bool
-override PandaBear.AI.ImageTextGenerationUsage.GetHashCode() -> int
-override PandaBear.AI.ImageTextGenerationUsage.ToString() -> string!
-static PandaBear.AI.ImageTextGenerationUsage.operator !=(PandaBear.AI.ImageTextGenerationUsage? left, PandaBear.AI.ImageTextGenerationUsage? right) -> bool
-static PandaBear.AI.ImageTextGenerationUsage.operator ==(PandaBear.AI.ImageTextGenerationUsage? left, PandaBear.AI.ImageTextGenerationUsage? right) -> bool
-PandaBear.AI.LiteLlmImageTextGenerator
-PandaBear.AI.LiteLlmImageTextGenerator.GenerateImageText(PandaBear.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.AI.ImageTextGenerationResult!>
-PandaBear.AI.LiteLlmImageTextGenerator.LiteLlmImageTextGenerator(System.Net.Http.HttpClient! httpClient, PandaBear.AI.LiteLlmImageTextGeneratorOptions! options) -> void
-PandaBear.AI.LiteLlmImageTextGeneratorOptions
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.ApiKey.get -> string?
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.ApiKey.init -> void
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.get -> string!
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.init -> void
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.Endpoint.get -> System.Uri?
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.Endpoint.init -> void
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.Model.get -> string?
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.Model.init -> void
-const PandaBear.AI.LiteLlmImageTextGeneratorOptions.SectionName = "AI:ImageText:LiteLlm" -> string!
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.MaxImageBytes.get -> int
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.MaxImageBytes.init -> void
-PandaBear.AI.ImageTextGenerationRequest.<Clone>$() -> PandaBear.AI.ImageTextGenerationRequest!
-PandaBear.AI.ImageTextGenerationRequest.Equals(PandaBear.AI.ImageTextGenerationRequest? other) -> bool
-PandaBear.AI.ImageTextGenerationRequest.ImageTextGenerationRequest() -> void
-PandaBear.AI.ImageTextGenerationResult.<Clone>$() -> PandaBear.AI.ImageTextGenerationResult!
-PandaBear.AI.ImageTextGenerationResult.Deconstruct(out string! AltText, out string? Caption) -> void
-PandaBear.AI.ImageTextGenerationResult.Equals(PandaBear.AI.ImageTextGenerationResult? other) -> bool
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.<Clone>$() -> PandaBear.AI.LiteLlmImageTextGeneratorOptions!
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.Equals(PandaBear.AI.LiteLlmImageTextGeneratorOptions? other) -> bool
-PandaBear.AI.LiteLlmImageTextGeneratorOptions.LiteLlmImageTextGeneratorOptions() -> void
-override PandaBear.AI.ImageTextGenerationRequest.Equals(object? obj) -> bool
-override PandaBear.AI.ImageTextGenerationRequest.GetHashCode() -> int
-override PandaBear.AI.ImageTextGenerationRequest.ToString() -> string!
-override PandaBear.AI.ImageTextGenerationResult.Equals(object? obj) -> bool
-override PandaBear.AI.ImageTextGenerationResult.GetHashCode() -> int
-override PandaBear.AI.ImageTextGenerationResult.ToString() -> string!
-override PandaBear.AI.LiteLlmImageTextGeneratorOptions.Equals(object? obj) -> bool
-override PandaBear.AI.LiteLlmImageTextGeneratorOptions.GetHashCode() -> int
-override PandaBear.AI.LiteLlmImageTextGeneratorOptions.ToString() -> string!
-static PandaBear.AI.ImageTextGenerationRequest.operator !=(PandaBear.AI.ImageTextGenerationRequest? left, PandaBear.AI.ImageTextGenerationRequest? right) -> bool
-static PandaBear.AI.ImageTextGenerationRequest.operator ==(PandaBear.AI.ImageTextGenerationRequest? left, PandaBear.AI.ImageTextGenerationRequest? right) -> bool
-static PandaBear.AI.ImageTextGenerationResult.operator !=(PandaBear.AI.ImageTextGenerationResult? left, PandaBear.AI.ImageTextGenerationResult? right) -> bool
-static PandaBear.AI.ImageTextGenerationResult.operator ==(PandaBear.AI.ImageTextGenerationResult? left, PandaBear.AI.ImageTextGenerationResult? right) -> bool
-static PandaBear.AI.LiteLlmImageTextGeneratorOptions.operator !=(PandaBear.AI.LiteLlmImageTextGeneratorOptions? left, PandaBear.AI.LiteLlmImageTextGeneratorOptions? right) -> bool
-static PandaBear.AI.LiteLlmImageTextGeneratorOptions.operator ==(PandaBear.AI.LiteLlmImageTextGeneratorOptions? left, PandaBear.AI.LiteLlmImageTextGeneratorOptions? right) -> bool
+SharedKernel.AI.IImageTextGenerator
+SharedKernel.AI.IImageTextGenerator.GenerateImageText(SharedKernel.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.AI.ImageTextGenerationResult!>
+SharedKernel.AI.ImageTextGenerationException
+SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException() -> void
+SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException(string! message) -> void
+SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException(string! message, System.Exception! innerException) -> void
+SharedKernel.AI.ImageTextGenerationRequest
+SharedKernel.AI.ImageTextGenerationRequest.ContentType.get -> string!
+SharedKernel.AI.ImageTextGenerationRequest.ContentType.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Context.get -> string?
+SharedKernel.AI.ImageTextGenerationRequest.Context.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Image.get -> System.IO.Stream!
+SharedKernel.AI.ImageTextGenerationRequest.Image.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Language.get -> string!
+SharedKernel.AI.ImageTextGenerationRequest.Language.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Latitude.get -> decimal?
+SharedKernel.AI.ImageTextGenerationRequest.Latitude.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Longitude.get -> decimal?
+SharedKernel.AI.ImageTextGenerationRequest.Longitude.init -> void
+SharedKernel.AI.ImageTextGenerationResult
+SharedKernel.AI.ImageTextGenerationResult.AltText.get -> string!
+SharedKernel.AI.ImageTextGenerationResult.AltText.init -> void
+SharedKernel.AI.ImageTextGenerationResult.Caption.get -> string?
+SharedKernel.AI.ImageTextGenerationResult.Caption.init -> void
+SharedKernel.AI.ImageTextGenerationResult.ImageTextGenerationResult(string! AltText, string? Caption) -> void
+SharedKernel.AI.ImageTextGenerationResult.Usage.get -> SharedKernel.AI.ImageTextGenerationUsage?
+SharedKernel.AI.ImageTextGenerationResult.Usage.init -> void
+SharedKernel.AI.ImageTextGenerationUsage
+SharedKernel.AI.ImageTextGenerationUsage.<Clone>$() -> SharedKernel.AI.ImageTextGenerationUsage!
+SharedKernel.AI.ImageTextGenerationUsage.CostUsd.get -> decimal?
+SharedKernel.AI.ImageTextGenerationUsage.CostUsd.init -> void
+SharedKernel.AI.ImageTextGenerationUsage.Deconstruct(out long? InputTokens, out long? OutputTokens, out decimal? CostUsd) -> void
+SharedKernel.AI.ImageTextGenerationUsage.Equals(SharedKernel.AI.ImageTextGenerationUsage? other) -> bool
+SharedKernel.AI.ImageTextGenerationUsage.ImageTextGenerationUsage(long? InputTokens, long? OutputTokens, decimal? CostUsd) -> void
+SharedKernel.AI.ImageTextGenerationUsage.InputTokens.get -> long?
+SharedKernel.AI.ImageTextGenerationUsage.InputTokens.init -> void
+SharedKernel.AI.ImageTextGenerationUsage.OutputTokens.get -> long?
+SharedKernel.AI.ImageTextGenerationUsage.OutputTokens.init -> void
+override SharedKernel.AI.ImageTextGenerationUsage.Equals(object? obj) -> bool
+override SharedKernel.AI.ImageTextGenerationUsage.GetHashCode() -> int
+override SharedKernel.AI.ImageTextGenerationUsage.ToString() -> string!
+static SharedKernel.AI.ImageTextGenerationUsage.operator !=(SharedKernel.AI.ImageTextGenerationUsage? left, SharedKernel.AI.ImageTextGenerationUsage? right) -> bool
+static SharedKernel.AI.ImageTextGenerationUsage.operator ==(SharedKernel.AI.ImageTextGenerationUsage? left, SharedKernel.AI.ImageTextGenerationUsage? right) -> bool
+SharedKernel.AI.LiteLlmImageTextGenerator
+SharedKernel.AI.LiteLlmImageTextGenerator.GenerateImageText(SharedKernel.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.AI.ImageTextGenerationResult!>
+SharedKernel.AI.LiteLlmImageTextGenerator.LiteLlmImageTextGenerator(System.Net.Http.HttpClient! httpClient, SharedKernel.AI.LiteLlmImageTextGeneratorOptions! options) -> void
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ApiKey.get -> string?
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ApiKey.init -> void
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.get -> string!
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.init -> void
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Endpoint.get -> System.Uri?
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Endpoint.init -> void
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Model.get -> string?
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Model.init -> void
+const SharedKernel.AI.LiteLlmImageTextGeneratorOptions.SectionName = "AI:ImageText:LiteLlm" -> string!
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.MaxImageBytes.get -> int
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.MaxImageBytes.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.<Clone>$() -> SharedKernel.AI.ImageTextGenerationRequest!
+SharedKernel.AI.ImageTextGenerationRequest.Equals(SharedKernel.AI.ImageTextGenerationRequest? other) -> bool
+SharedKernel.AI.ImageTextGenerationRequest.ImageTextGenerationRequest() -> void
+SharedKernel.AI.ImageTextGenerationResult.<Clone>$() -> SharedKernel.AI.ImageTextGenerationResult!
+SharedKernel.AI.ImageTextGenerationResult.Deconstruct(out string! AltText, out string? Caption) -> void
+SharedKernel.AI.ImageTextGenerationResult.Equals(SharedKernel.AI.ImageTextGenerationResult? other) -> bool
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.<Clone>$() -> SharedKernel.AI.LiteLlmImageTextGeneratorOptions!
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Equals(SharedKernel.AI.LiteLlmImageTextGeneratorOptions? other) -> bool
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.LiteLlmImageTextGeneratorOptions() -> void
+override SharedKernel.AI.ImageTextGenerationRequest.Equals(object? obj) -> bool
+override SharedKernel.AI.ImageTextGenerationRequest.GetHashCode() -> int
+override SharedKernel.AI.ImageTextGenerationRequest.ToString() -> string!
+override SharedKernel.AI.ImageTextGenerationResult.Equals(object? obj) -> bool
+override SharedKernel.AI.ImageTextGenerationResult.GetHashCode() -> int
+override SharedKernel.AI.ImageTextGenerationResult.ToString() -> string!
+override SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Equals(object? obj) -> bool
+override SharedKernel.AI.LiteLlmImageTextGeneratorOptions.GetHashCode() -> int
+override SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ToString() -> string!
+static SharedKernel.AI.ImageTextGenerationRequest.operator !=(SharedKernel.AI.ImageTextGenerationRequest? left, SharedKernel.AI.ImageTextGenerationRequest? right) -> bool
+static SharedKernel.AI.ImageTextGenerationRequest.operator ==(SharedKernel.AI.ImageTextGenerationRequest? left, SharedKernel.AI.ImageTextGenerationRequest? right) -> bool
+static SharedKernel.AI.ImageTextGenerationResult.operator !=(SharedKernel.AI.ImageTextGenerationResult? left, SharedKernel.AI.ImageTextGenerationResult? right) -> bool
+static SharedKernel.AI.ImageTextGenerationResult.operator ==(SharedKernel.AI.ImageTextGenerationResult? left, SharedKernel.AI.ImageTextGenerationResult? right) -> bool
+static SharedKernel.AI.LiteLlmImageTextGeneratorOptions.operator !=(SharedKernel.AI.LiteLlmImageTextGeneratorOptions? left, SharedKernel.AI.LiteLlmImageTextGeneratorOptions? right) -> bool
+static SharedKernel.AI.LiteLlmImageTextGeneratorOptions.operator ==(SharedKernel.AI.LiteLlmImageTextGeneratorOptions? left, SharedKernel.AI.LiteLlmImageTextGeneratorOptions? right) -> bool

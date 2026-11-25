@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Contracts;
+namespace SharedKernel.Testing.Contracts;
 
 /// <summary>
 /// Shared assertions for published contract artifacts.

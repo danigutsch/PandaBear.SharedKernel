@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Tests the structure of the AppMediator, dispatch and pipeline sources the generator emits.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
@@ -13,7 +13,7 @@ public sealed class GeneratorDispatchTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             [assembly: MediatorModule]
 
@@ -119,7 +119,7 @@ public sealed class GeneratorDispatchTests
         generatedSource.ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
         generatedSource.ShouldContain("public async global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.LookupTour request,", StringComparison.Ordinal);
         generatedSource.ShouldContain("public async global::System.Threading.Tasks.ValueTask<int> Send(global::Demo.CreateTour request,", StringComparison.Ordinal);
-        generatedSource.ShouldContain("public async global::System.Threading.Tasks.ValueTask<global::PandaBear.Mediator.Unit> Send(global::Demo.DeleteTour request,", StringComparison.Ordinal);
+        generatedSource.ShouldContain("public async global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Send(global::Demo.DeleteTour request,", StringComparison.Ordinal);
         generatedSource.ShouldContain("public async global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.GetTourById request,", StringComparison.Ordinal);
         generatedSource.ShouldContain("public global::System.Collections.Generic.IAsyncEnumerable<string> Send(global::Demo.StreamTours request,", StringComparison.Ordinal);
         generatedSource.ShouldContain("public global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(", StringComparison.Ordinal);
@@ -128,10 +128,10 @@ public sealed class GeneratorDispatchTests
         generatedSource.ShouldContain("return GeneratedDispatch.Publish(this, notification, ct);", StringComparison.Ordinal);
         generatedSource.ShouldContain("public global::System.Threading.Tasks.ValueTask<object?> SendObject(", StringComparison.Ordinal);
         generatedSource.ShouldContain("throw new global::System.NotSupportedException($\"Generated request dispatch is not available for request type '{request.GetType().FullName}'.\");", StringComparison.Ordinal);
-        generatedSource.ShouldContain("global::PandaBear.Mediator.MediatorTelemetry.ActivitySend", StringComparison.Ordinal);
-        generatedSource.ShouldContain("global::PandaBear.Mediator.MediatorTelemetry.TagRequestName", StringComparison.Ordinal);
-        generatedSource.ShouldContain("global::PandaBear.Mediator.MediatorTelemetry.TagOutcome", StringComparison.Ordinal);
-        generatedSource.ShouldContain("global::PandaBear.Mediator.MediatorTelemetry.OutcomeSuccess", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess", StringComparison.Ordinal);
         generatedSource.ShouldContain("RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalSeconds,", StringComparison.Ordinal);
         generatedSource.ShouldContain("TagErrorType, ex.GetType().FullName);", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("TotalMilliseconds", StringComparison.Ordinal);
@@ -142,7 +142,7 @@ public sealed class GeneratorDispatchTests
         generatedPipelinesSource.ShouldContain("internal static class GeneratedPipelines", StringComparison.Ordinal);
         generatedDispatchSource.ShouldContain("global::Demo.LookupTour typed when request.GetType() == typeof(global::Demo.LookupTour) => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
         generatedDispatchSource.ShouldContain("global::Demo.CreateTour typed when request.GetType() == typeof(global::Demo.CreateTour) => Cast<int, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        generatedDispatchSource.ShouldContain("global::Demo.DeleteTour typed when request.GetType() == typeof(global::Demo.DeleteTour) => Cast<global::PandaBear.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        generatedDispatchSource.ShouldContain("global::Demo.DeleteTour typed when request.GetType() == typeof(global::Demo.DeleteTour) => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
         generatedDispatchSource.ShouldContain("global::Demo.GetTourById typed when request.GetType() == typeof(global::Demo.GetTourById) => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
         generatedDispatchSource.ShouldContain("global::Demo.LookupTour typed when request.GetType() == typeof(global::Demo.LookupTour) => Box<string>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
         generatedDispatchSource.ShouldContain("public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(", StringComparison.Ordinal);

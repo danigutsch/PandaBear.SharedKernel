@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// The reviewed exceptions of a repository, read from a JSON file that lives with the configuration it excuses. It turns the

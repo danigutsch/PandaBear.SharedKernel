@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The version-enumeration request passed to the repository SDK process.</summary>
 /// <param name="SchemaVersion">The version of the request format.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.CI.GitHub;
+namespace SharedKernel.CI.GitHub;
 
 /// <summary>Checks the <c>owner/name</c> form of a GitHub repository, which becomes part of request addresses.</summary>
 internal static class GitHubRepositoryName

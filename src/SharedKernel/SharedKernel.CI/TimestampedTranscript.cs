@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Receives the forwarded output lines of a child process, writes each to the echo writer with its UTC time as it

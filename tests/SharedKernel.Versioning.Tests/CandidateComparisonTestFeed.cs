@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Creates manifest-verified NuGet archives for comparison orchestration tests.</summary>
 internal sealed class CandidateComparisonTestFeed : IDisposable

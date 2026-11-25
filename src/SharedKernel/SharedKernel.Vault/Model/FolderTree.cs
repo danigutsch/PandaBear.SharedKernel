@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Folder paths of a Bitwarden individual vault, where <c>/</c> separates folder levels.</summary>
 public static class FolderTree

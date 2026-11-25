@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <PackageId>PandaBear.SharedKernel.ImageProcessing</PackageId>
         <Description>Image decoding and responsive variant generation for shared-kernel workflows.</Description>
-        <RootNamespace>PandaBear.ImageProcessing</RootNamespace>
+        <RootNamespace>SharedKernel.ImageProcessing</RootNamespace>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>image-processing;shared-kernel;imagemagick;dotnet</PackageTags>

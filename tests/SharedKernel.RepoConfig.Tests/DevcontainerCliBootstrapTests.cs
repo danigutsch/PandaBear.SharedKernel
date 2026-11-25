@@ -1,7 +1,7 @@
 using System.Net;
 using System.Security.Cryptography;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the download, verification, and extraction of the pinned Node.js and Dev Container CLI archives.</summary>
 public sealed class DevcontainerCliBootstrapTests

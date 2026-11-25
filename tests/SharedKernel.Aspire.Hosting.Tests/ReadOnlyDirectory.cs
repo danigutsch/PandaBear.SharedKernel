@@ -1,6 +1,6 @@
 using System.Runtime.Versioning;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Makes a directory read-only for its lifetime and restores its permissions when disposed.</summary>
 [UnsupportedOSPlatform("windows")]

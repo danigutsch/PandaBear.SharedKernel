@@ -2,7 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>
 /// Tests the status-code pages that re-execute every empty error response as a page, except under the excluded path prefixes, whose

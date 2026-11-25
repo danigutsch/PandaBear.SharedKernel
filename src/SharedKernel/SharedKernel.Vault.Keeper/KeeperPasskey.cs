@@ -2,9 +2,9 @@ using System.Buffers.Text;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>Converts Keeper passkey fields to Bitwarden passkeys.</summary>
 internal static class KeeperPasskey

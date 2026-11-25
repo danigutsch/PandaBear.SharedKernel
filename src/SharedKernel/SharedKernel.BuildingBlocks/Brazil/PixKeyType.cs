@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>The explicitly selected BCB DICT addressing-key format.</summary>
 public enum PixKeyType

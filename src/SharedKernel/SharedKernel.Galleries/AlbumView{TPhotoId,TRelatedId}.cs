@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>The public view of a published album in one culture, built by <see cref="Album{TPhotoId, TRelatedId}.PublishedIn"/>.</summary>
 /// <typeparam name="TPhotoId">The photo id type.</typeparam>

@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>The button of a section: its text, where it links, and its look.</summary>
 /// <typeparam name="TLink">The application's link target.</typeparam>

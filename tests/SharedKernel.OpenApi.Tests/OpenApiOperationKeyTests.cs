@@ -1,4 +1,4 @@
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>Protects operation matching across API descriptions and generated document routes.</summary>
 [Xunit.Trait(Testing.TestTraitNames.ScopeName, "unit")]

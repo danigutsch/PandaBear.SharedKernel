@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Domain.Analyzers.Tests;
+namespace SharedKernel.Domain.Analyzers.Tests;
 
 /// <summary>Compiles test source against the default usings and runs the domain analyzer over it.</summary>
 internal static class AnalyzerTestHarness

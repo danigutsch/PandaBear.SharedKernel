@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>File attached to a vault item in the source vault.</summary>
 /// <param name="FileName">Attachment file name.</param>

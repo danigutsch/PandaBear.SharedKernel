@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>What a test gives <c>stage-candidate</c> to reach Git, the network, and the clock.</summary>
 /// <param name="Git">Answers each Git command of the run.</param>

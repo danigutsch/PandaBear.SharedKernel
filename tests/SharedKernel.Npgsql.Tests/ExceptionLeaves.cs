@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Flattens exceptions into the individual failures a test wants to assert on.</summary>
 internal static class ExceptionLeaves

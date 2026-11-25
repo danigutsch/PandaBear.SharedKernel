@@ -4,7 +4,7 @@ using BenchmarkDotNet.Running;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Globalization;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Reports the generated source size for each notification-publish generation benchmark case.

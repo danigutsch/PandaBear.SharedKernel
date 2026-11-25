@@ -1,6 +1,6 @@
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>edit</c> with a fake sops: a terminal, an editor, and a memory-backed private directory that is removed afterwards.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

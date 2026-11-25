@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Sops.Tests;
+namespace SharedKernel.Secrets.Sops.Tests;
 
 /// <summary>Picks lines out of an encrypted SOPS document.</summary>
 internal static class SopsDocumentLines

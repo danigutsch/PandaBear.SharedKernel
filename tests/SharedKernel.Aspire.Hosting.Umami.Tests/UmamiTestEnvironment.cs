@@ -1,6 +1,6 @@
-using PandaBear.Aspire.Hosting.Umami.Testing;
+using SharedKernel.Aspire.Hosting.Umami.Testing;
 
-namespace PandaBear.Aspire.Hosting.Umami.Tests;
+namespace SharedKernel.Aspire.Hosting.Umami.Tests;
 
 /// <summary>Stands in for the process environment, so a test never changes a process-wide variable.</summary>
 internal static class UmamiTestEnvironment

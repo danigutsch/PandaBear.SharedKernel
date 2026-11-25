@@ -1,4 +1,4 @@
-namespace PandaBear.Style.Analyzers;
+namespace SharedKernel.Style.Analyzers;
 
 /// <summary>
 /// Exposes the public diagnostic identifiers for repository style analyzers.
@@ -49,7 +49,7 @@ public static class StyleDiagnosticIds
     public const string DomainEventSuffix = "SKSTYLE008";
 
     /// <summary>
-    /// Diagnostic emitted when a method returns only successful <c>PandaBear.Results.Result</c> values.
+    /// Diagnostic emitted when a method returns only successful <c>SharedKernel.Results.Result</c> values.
     /// </summary>
     public const string SuccessOnlyResultMethod = "SKSTYLE009";
 

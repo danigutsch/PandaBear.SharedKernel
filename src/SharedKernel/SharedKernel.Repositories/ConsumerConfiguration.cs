@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The consumer policy in <c>.config/sharedkernel-repo.json</c>.

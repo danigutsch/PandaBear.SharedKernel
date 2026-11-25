@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>A repo-config tool command line found in a workflow file.</summary>
 /// <param name="File">The workflow file path, relative to the repository root, that contains the command line.</param>

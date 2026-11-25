@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace PandaBear.DevContainers.Tests;
+namespace SharedKernel.DevContainers.Tests;
 
 /// <summary>Engine tests split from the command-line tests in PodmanDnsPreflightCommandTests.</summary>
 public sealed class PodmanDnsPreflightTests

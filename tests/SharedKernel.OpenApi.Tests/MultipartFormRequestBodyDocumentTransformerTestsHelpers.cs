@@ -2,7 +2,7 @@ using Microsoft.OpenApi;
 using System.Reflection;
 using MediaTypeMap = System.Collections.Generic.Dictionary<string, Microsoft.OpenApi.IOpenApiMediaType>;
 
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>Reflection and document-building helpers for the multipart request body transformer tests.</summary>
 internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers

@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Describes the characters the country-name sort key supports.</summary>
 internal static class CountryNameAlphabet

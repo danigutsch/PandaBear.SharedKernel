@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the proxy that tests use to hold, fail, replace or follow up calls to a service, through its typed hooks.</summary>
 public sealed class CallProxyTests

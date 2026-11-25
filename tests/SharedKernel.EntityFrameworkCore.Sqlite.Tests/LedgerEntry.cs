@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>A row of the migration test context.</summary>
 public sealed class LedgerEntry

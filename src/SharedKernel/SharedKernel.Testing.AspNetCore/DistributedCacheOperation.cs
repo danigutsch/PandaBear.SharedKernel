@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>The kind of <see cref="Microsoft.Extensions.Caching.Distributed.IDistributedCache" /> operation, regardless of sync or async form.</summary>
 public enum DistributedCacheOperation

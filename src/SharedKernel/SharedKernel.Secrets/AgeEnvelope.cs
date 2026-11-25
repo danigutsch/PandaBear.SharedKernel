@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Reads the header of the armored age file that SOPS stores for each recipient (<c>enc</c>) and checks its structure against the recipient label.

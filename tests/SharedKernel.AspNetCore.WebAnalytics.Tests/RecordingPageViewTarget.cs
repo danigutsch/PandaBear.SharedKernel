@@ -1,6 +1,6 @@
 using System.Threading.Channels;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>A page-view target that keeps every page view it receives, so a test can wait for them.</summary>
 /// <param name="name">The name of the target.</param>

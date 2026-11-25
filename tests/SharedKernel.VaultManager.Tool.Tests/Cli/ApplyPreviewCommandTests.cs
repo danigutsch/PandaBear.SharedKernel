@@ -1,10 +1,10 @@
 using System.Text.Json.Nodes;
-using PandaBear.Testing;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Cli.PreviewInputs;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Cli.PreviewInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests the dry run and the removal guard of the apply command.</summary>
 public sealed class ApplyPreviewCommandTests : IDisposable

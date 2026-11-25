@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Domain.Analyzers.Tests;
+namespace SharedKernel.Domain.Analyzers.Tests;
 
 /// <summary>Tests that the domain analyzer reports reads of the ambient clock (SKDOM003) only where intended.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DomainEncapsulationCapability)]

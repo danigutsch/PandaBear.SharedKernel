@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.AI.Tests;
+namespace SharedKernel.AI.Tests;
 
 /// <summary>Tests the request shape and error handling of the LiteLLM image text generator against a stubbed HTTP handler.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]

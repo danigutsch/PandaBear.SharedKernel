@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>
 /// Runs the built code-fix runner with <c>dotnet exec</c> in its own process, which has its own working directory and

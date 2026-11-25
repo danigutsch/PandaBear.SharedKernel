@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>A memory owner whose memory is not array-backed.</summary>
 /// <param name="content">The bytes to expose.</param>

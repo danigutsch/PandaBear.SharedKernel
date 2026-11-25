@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>
 /// Creates event envelopes for integration event tests.

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// Settings of the Umami target that <see cref="UmamiPageViewBuilderExtensions.AddUmami"/> adds, named after its connection name and

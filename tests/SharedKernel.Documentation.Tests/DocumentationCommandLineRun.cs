@@ -1,7 +1,7 @@
 using System.CommandLine;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Captured result of running the documentation command line: exit code, standard output and standard error.</summary>
 internal sealed class DocumentationCommandLineRun

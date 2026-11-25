@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using HeaderNames = Microsoft.Net.Http.Headers.HeaderNames;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// Sends page views to Umami through its documented <c>POST /api/send</c>, through the named <c>HttpClient</c> of

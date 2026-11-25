@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Analyzers.Tests;
+namespace SharedKernel.Results.Analyzers.Tests;
 
 /// <summary>Trait names and values shared by the Results analyzer tests.</summary>
 internal static class TestTraits

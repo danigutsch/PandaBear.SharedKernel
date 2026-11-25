@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>Protects exact object identity and safe relative storage syntax.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

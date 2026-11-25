@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Maps <see cref="TestPriority" /> to its <c>Priority</c> trait value.

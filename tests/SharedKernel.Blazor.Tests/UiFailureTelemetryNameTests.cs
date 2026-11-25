@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests that handled UI failures are counted under the names of the SharedKernel telemetry standard.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

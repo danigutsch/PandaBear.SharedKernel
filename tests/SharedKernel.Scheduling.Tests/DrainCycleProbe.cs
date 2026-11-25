@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Scheduling.Tests;
+namespace SharedKernel.Scheduling.Tests;
 
 /// <summary>Records the scope and outcome of the first drain cycle.</summary>
 /// <param name="logger">Records the polling loop's failure event.</param>

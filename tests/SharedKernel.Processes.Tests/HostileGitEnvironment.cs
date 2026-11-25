@@ -1,4 +1,4 @@
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>
 /// Sets, for the length of a scope, the process variables that must never reach git: forge tokens, askpass programs, a

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>
 /// Bounds what a test waits for, so a regression that never completes the awaited work fails the test instead of hanging the run. The

@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Verifies package inspection rejects option-like input before invoking the SDK.</summary>
 public sealed class NuGetPinInspectionTests

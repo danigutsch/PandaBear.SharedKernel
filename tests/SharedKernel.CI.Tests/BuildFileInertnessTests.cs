@@ -1,5 +1,5 @@
 
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards which tracked build files let documentation changes skip validation.</summary>
 public sealed class BuildFileInertnessTests : IDisposable

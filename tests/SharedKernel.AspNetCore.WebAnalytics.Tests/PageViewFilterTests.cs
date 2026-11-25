@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>Tests which answered requests count as page views: only a GET answered 200 with HTML, never a prefetch, and not when the visitor asks not to be tracked.</summary>
 public sealed class PageViewFilterTests

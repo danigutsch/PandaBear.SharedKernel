@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Creates repositories and configurations for the Gherkin verification tests.</summary>
 internal static class GherkinTestRepository

@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
-using PandaBear.GitHub;
-using PandaBear.Repositories.GitHub;
+using SharedKernel.GitHub;
+using SharedKernel.Repositories.GitHub;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace SharedKernel.RepoConfig.Tool;
 
 /// <summary>Creates the GitHub connections that the commands use, reading the token from the process environment.</summary>
 internal static class GitHubConnections

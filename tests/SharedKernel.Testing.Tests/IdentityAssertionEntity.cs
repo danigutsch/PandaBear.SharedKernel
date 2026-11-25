@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Record entity with value equality whose only member is a <see cref="Guid" /> identity, used to exercise identity assertions.</summary>
 internal sealed record IdentityAssertionEntity

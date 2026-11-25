@@ -11,7 +11,7 @@ The methods are named `AddApplicationDefaults` and `MapHealthEndpoints`, not the
 or bind to the template's method.
 
 ```csharp
-using PandaBear.ServiceDefaults;
+using SharedKernel.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddApplicationDefaults(options => options.SensitiveTelemetryAttributes.Add("customer.document"));
@@ -64,6 +64,6 @@ start with `/`, or the same path for both endpoints, throw `ArgumentException`.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.ServiceDefaults`. C# namespace: `PandaBear.ServiceDefaults`. Assembly/project identity: `SharedKernel.ServiceDefaults`.
+Package ID: `PandaBear.SharedKernel.ServiceDefaults`. C# namespace: `SharedKernel.ServiceDefaults`. Assembly/project identity: `SharedKernel.ServiceDefaults`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

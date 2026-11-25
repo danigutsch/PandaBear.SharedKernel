@@ -3,7 +3,7 @@
     <PropertyGroup>
         <IsPackable>true</IsPackable>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Documentation.Tool</RootNamespace>
+        <RootNamespace>SharedKernel.Documentation.Tool</RootNamespace>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>docs</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.Documentation.Tool</PackageId>

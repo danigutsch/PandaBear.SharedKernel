@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Requires the consumer and the library to pin the same .NET SDK, because the consumer builds the library's tools with

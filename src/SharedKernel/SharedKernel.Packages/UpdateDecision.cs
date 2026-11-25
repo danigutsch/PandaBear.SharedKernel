@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>The policy's answer for one candidate, with the reason in words.</summary>
 public sealed class UpdateDecision : ValueObject

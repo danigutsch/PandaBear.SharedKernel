@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Helpers for the ordered transaction lock tests.</summary>
 internal static class PostgreSqlOrderedTransactionLocksTestsHelpers

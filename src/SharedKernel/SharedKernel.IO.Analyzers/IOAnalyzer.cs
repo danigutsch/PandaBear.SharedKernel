@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace PandaBear.IO.Analyzers;
+namespace SharedKernel.IO.Analyzers;
 
 /// <summary>
 /// Reports unbounded stream buffering and hand-rolled copy loops.
@@ -24,7 +24,7 @@ public sealed partial class IOAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor UnboundedBufferingRule = new(
         IODiagnosticIds.UnboundedBuffering,
         title: "Request and upload streams should not be buffered without a length bound",
-        messageFormat: "'{0}' buffers received content in memory without an explicit length bound; use PandaBear.IO.SeekableContent.Create with a maximum length, or enforce a limit while reading",
+        messageFormat: "'{0}' buffers received content in memory without an explicit length bound; use SharedKernel.IO.SeekableContent.Create with a maximum length, or enforce a limit while reading",
         category: "IO",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
@@ -33,7 +33,7 @@ public sealed partial class IOAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor HandRolledCopyLoopRule = new(
         IODiagnosticIds.HandRolledCopyLoop,
         title: "Hand-rolled copy loops into a MemoryStream should use SeekableContent",
-        messageFormat: "This loop copies a stream into a MemoryStream without a length bound; use PandaBear.IO.SeekableContent.Create or enforce a maximum on the received bytes",
+        messageFormat: "This loop copies a stream into a MemoryStream without a length bound; use SharedKernel.IO.SeekableContent.Create or enforce a maximum on the received bytes",
         category: "IO",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,

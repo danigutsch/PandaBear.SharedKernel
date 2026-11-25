@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Vault.Csv;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Csv;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>
 /// Reads Keeper CSV exports. Columns are <c>Folder,Title,Login,Password,Website Address,Notes,Shared Folder</c>, then

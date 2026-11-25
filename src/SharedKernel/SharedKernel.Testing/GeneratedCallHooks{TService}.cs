@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// The base of the hooks that the CallProxy source generator emits for one service interface: it holds the typed hooks of every

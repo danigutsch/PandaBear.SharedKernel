@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.EntityFrameworkCore.Analyzers;
+namespace SharedKernel.EntityFrameworkCore.Analyzers;
 
 /// <summary>Syntax and symbol helpers that decide whether a unique index declaration lacks a <c>HasUniqueRule</c> call.</summary>
 internal static class UniqueIndexChain

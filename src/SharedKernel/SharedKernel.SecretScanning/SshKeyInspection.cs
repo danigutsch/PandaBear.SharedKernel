@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>What <see cref="SshKeyConverter.Inspect"/> learned about a private key without converting it.</summary>
 /// <param name="Format">Container format, for example <c>OpenSSH</c>, <c>PKCS#1</c>, or <c>PKCS#8</c>.</param>

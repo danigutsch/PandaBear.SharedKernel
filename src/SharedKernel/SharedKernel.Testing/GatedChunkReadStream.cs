@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Non-seekable, read-only stream that serves its content in chunks of at most a fixed size and holds every read until the test releases

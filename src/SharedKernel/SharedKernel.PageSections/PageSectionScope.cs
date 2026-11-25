@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>Where one translation's sections are validated: its culture, whether it is published, and the paths of its errors.</summary>
 /// <param name="Culture">The culture of the translation.</param>

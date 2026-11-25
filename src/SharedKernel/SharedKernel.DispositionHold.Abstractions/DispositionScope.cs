@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>
 /// Identifies what a hold restrains: an opaque kind (for example a record class) and an opaque key within it.

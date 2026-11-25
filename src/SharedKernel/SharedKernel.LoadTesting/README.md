@@ -15,9 +15,9 @@ describes the configuration format, the run layout, and the security checks, whi
 ## Usage
 
 ```csharp
-using PandaBear.LoadTesting;
-using PandaBear.LoadTesting.K6;
-using PandaBear.Processes;
+using SharedKernel.LoadTesting;
+using SharedKernel.LoadTesting.K6;
+using SharedKernel.Processes;
 
 using var healthCheckHandler = new SocketsHttpHandler { UseProxy = false, AllowAutoRedirect = false };
 var runner = new LoadTestRunner(new K6LoadGenerator(new SystemProcessRunner()), PathExecutableResolver.Default, healthCheckHandler);
@@ -49,6 +49,6 @@ var exitCode = await runner.Run(
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.LoadTesting`. C# namespace: `PandaBear.LoadTesting`. Assembly/project identity: `SharedKernel.LoadTesting`.
+Package ID: `PandaBear.SharedKernel.LoadTesting`. C# namespace: `SharedKernel.LoadTesting`. Assembly/project identity: `SharedKernel.LoadTesting`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

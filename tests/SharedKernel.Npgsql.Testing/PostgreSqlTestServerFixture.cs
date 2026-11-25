@@ -3,7 +3,7 @@ using Aspire.Hosting.Testing;
 using Npgsql;
 using Xunit;
 
-namespace PandaBear.Npgsql.Testing;
+namespace SharedKernel.Npgsql.Testing;
 
 /// <summary>Leases isolated per-test databases on a PostgreSQL server that an assembly-scoped fixture resolves on demand.</summary>
 /// <remarks>

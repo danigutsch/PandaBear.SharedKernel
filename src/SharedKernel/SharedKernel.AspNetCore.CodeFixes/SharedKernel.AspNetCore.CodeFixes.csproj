@@ -6,7 +6,6 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.AspNetCore.CodeFixes</PackageId>
         <Description>Code fixes for reviewed ASP.NET Core Minimal API runtime binding fallbacks.</Description>
-        <RootNamespace>PandaBear.AspNetCore.CodeFixes</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;code-fixes;aot;shared-kernel</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

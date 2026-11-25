@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests how AspireTestApplication configures container endpoints and application teardown.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture whose server the tests connect to.</param>

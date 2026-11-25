@@ -1,8 +1,8 @@
 using System.Text;
 using Microsoft.Playwright;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.DocumentRendering.Pdf.Chromium;
+namespace SharedKernel.DocumentRendering.Pdf.Chromium;
 
 /// <summary>Renders structured documents as bounded, deterministic tagged PDFs in a borrowed Chromium browser.</summary>
 public sealed class ChromiumDocumentRenderer

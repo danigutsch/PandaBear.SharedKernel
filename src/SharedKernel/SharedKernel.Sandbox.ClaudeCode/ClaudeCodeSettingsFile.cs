@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.ClaudeCode;
+namespace SharedKernel.Sandbox.ClaudeCode;
 
 /// <summary>
 /// A Claude Code settings file under a repository root, such as <c>.claude/settings.json</c>: plans the sandbox entries it

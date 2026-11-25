@@ -1,6 +1,6 @@
-using PandaBear.TestServices.Host;
+using SharedKernel.TestServices.Host;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Guards what the test-services host composes: one instance of every shared service, and Umami on the one PostgreSQL server.</summary>
 public sealed class SharedTestServicesTests

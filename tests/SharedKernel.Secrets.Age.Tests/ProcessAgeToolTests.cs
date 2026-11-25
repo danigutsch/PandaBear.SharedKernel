@@ -1,7 +1,7 @@
 using System.Runtime.Versioning;
 using System.Text;
 
-namespace PandaBear.Secrets.Age.Tests;
+namespace SharedKernel.Secrets.Age.Tests;
 
 /// <summary>Tests the age adapter with a fake process runner.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

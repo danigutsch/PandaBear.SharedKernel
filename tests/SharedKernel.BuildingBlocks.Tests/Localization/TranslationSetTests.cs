@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests culture fallback over the translations of one entity.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

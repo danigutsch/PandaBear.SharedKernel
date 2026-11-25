@@ -3,7 +3,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// Serves the GitHub releases API of one repository from memory: release list pages of 100 and release deletion. Every

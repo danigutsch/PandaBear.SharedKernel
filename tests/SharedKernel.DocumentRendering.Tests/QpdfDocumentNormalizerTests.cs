@@ -1,11 +1,11 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using PandaBear.DocumentRendering.Pdf;
-using PandaBear.Processes;
-using PandaBear.Testing;
+using SharedKernel.DocumentRendering.Pdf;
+using SharedKernel.Processes;
+using SharedKernel.Testing;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Verifies the bounded metadata rewrite for renderer-owned tagged documents.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]

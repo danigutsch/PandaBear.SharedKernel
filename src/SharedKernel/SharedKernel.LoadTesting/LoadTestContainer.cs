@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>The container engine and digest-pinned image that a container run starts the load generator in.</summary>
 public sealed partial class LoadTestContainer

@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Idempotency;
+namespace SharedKernel.Idempotency;
 
 /// <summary>
 /// Represents a stable idempotency key within a scope.

@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace PandaBear.IO;
+namespace SharedKernel.IO;
 
 /// <summary>Leases bounded seekable content: a private copy, or a caller-owned seekable source passed through uncopied.</summary>
 public sealed class SeekableContent : IDisposable, IAsyncDisposable

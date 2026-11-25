@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One step of a <see cref="StepList" />, such as a day of an itinerary. Its number comes from its position in the list.</summary>
 /// <param name="Title">The heading, such as "Valley of the Moon". It must not be blank.</param>

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the time provider that reports a business time zone as local time.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

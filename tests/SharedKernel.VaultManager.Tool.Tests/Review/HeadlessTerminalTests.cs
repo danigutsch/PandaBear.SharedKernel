@@ -1,7 +1,7 @@
 using Terminal.Gui.App;
 using Terminal.Gui.Drivers;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Checks that headless view tests stay away from the developer's terminal and clipboard.</summary>
 [Collection(HeadlessTerminal.Collection)]

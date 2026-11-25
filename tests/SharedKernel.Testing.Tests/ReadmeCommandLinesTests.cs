@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests finding the documented command lines of one invocation in Markdown.</summary>
 public sealed class ReadmeCommandLinesTests

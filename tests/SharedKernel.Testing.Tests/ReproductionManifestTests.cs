@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text.Json.Nodes;
-using PandaBear.Testing.Snapshots;
+using SharedKernel.Testing.Snapshots;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Verifies the versioned test-attempt format and the fixture allowlist.</summary>
 public sealed class ReproductionManifestTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Result of resolving the current repository location and node ID of a referenced GitHub issue.</summary>
 /// <param name="Repository">Current repository in <c>owner/name</c> form.</param>

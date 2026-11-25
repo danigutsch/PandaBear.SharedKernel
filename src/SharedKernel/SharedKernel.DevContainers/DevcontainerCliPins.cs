@@ -1,4 +1,4 @@
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>
 /// Pins the Node.js runtime and the Dev Container CLI package that <c>verify-devcontainer</c> downloads.

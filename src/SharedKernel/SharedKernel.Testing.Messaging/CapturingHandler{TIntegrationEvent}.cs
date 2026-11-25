@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using PandaBear.Messaging.IntegrationEvents;
+using SharedKernel.Messaging.IntegrationEvents;
 
-namespace PandaBear.Testing.Messaging;
+namespace SharedKernel.Testing.Messaging;
 
 /// <summary>
 /// Integration event handler that records the events it handles in a static list per event type.

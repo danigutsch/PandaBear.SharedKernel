@@ -1,7 +1,7 @@
 using System.CommandLine.Help;
 using System.CommandLine.Parsing;
 
-namespace PandaBear.K6.Tool.Tests;
+namespace SharedKernel.K6.Tool.Tests;
 
 /// <summary>Tests parsing and help of the k6 command line.</summary>
 [Trait(TestTraitNames.ScopeName, "unit")]

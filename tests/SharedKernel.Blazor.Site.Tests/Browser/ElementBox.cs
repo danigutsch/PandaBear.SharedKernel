@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>The rendered box of an element in CSS pixels, rounded to a tenth of a pixel so sub-pixel layout noise compares equal.</summary>
 /// <param name="X">The left edge.</param>

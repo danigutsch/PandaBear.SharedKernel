@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.Vault.Csv;
+namespace SharedKernel.Vault.Csv;
 
 /// <summary>
 /// Reads RFC 4180 CSV text. <c>SharedKernel.Tabular</c> deliberately does not support quoted fields, but vault exports

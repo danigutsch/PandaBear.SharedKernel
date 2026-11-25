@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Formats;
+namespace SharedKernel.Vault.Formats;
 
 /// <summary>Reads vault export files into provider-neutral items for <see cref="Pipeline.VaultPipeline"/>.</summary>
 public interface IVaultExportReader

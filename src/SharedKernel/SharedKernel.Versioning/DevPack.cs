@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Packs SharedKernel projects from the working tree into a feed for a consumer that develops against uncommitted changes.</summary>
 internal static class DevPack

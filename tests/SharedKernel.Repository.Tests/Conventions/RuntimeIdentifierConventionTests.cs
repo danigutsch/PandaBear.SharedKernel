@@ -1,14 +1,14 @@
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>
 /// Guards the prefix of the identifiers that SharedKernel writes at run time or into a consumer's model, such as claim types,
-/// database function names, model annotations and named HTTP clients: they use <c>SharedKernel</c>, as telemetry names do, never
-/// <c>PandaBear</c>, which names only namespaces and package IDs.
+/// database function names, model annotations and named HTTP clients: they use <c>SharedKernel</c>, as telemetry names and namespaces
+/// do, never <c>PandaBear</c>, which names only package IDs.
 /// </summary>
 public sealed class RuntimeIdentifierConventionTests
 {
     [Fact]
-    public void No_string_literal_uses_the_lower_case_or_annotation_form_of_the_namespace_prefix()
+    public void No_string_literal_uses_the_lower_case_or_annotation_form_of_the_package_prefix()
     {
         // Act
         var violations = RuntimeIdentifierSourceFiles.Literals()

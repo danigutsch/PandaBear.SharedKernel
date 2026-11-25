@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// How important a test is for fast feedback. The value of the <c>Priority</c> trait.

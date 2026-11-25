@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Tests the index that finds kept secret locations overlapping a new one.</summary>
 public sealed class OverlapIndexTests

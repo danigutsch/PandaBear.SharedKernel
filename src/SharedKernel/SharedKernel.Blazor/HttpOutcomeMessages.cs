@@ -1,6 +1,6 @@
-using PandaBear.HttpClients;
+using SharedKernel.HttpClients;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// Maps <see cref="HttpOutcomeKind" /> values to fixed, caller-supplied user copy.

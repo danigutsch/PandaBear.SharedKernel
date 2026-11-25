@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 /// <summary>
 /// Represents trait metadata required for xUnit test methods by analyzer configuration.

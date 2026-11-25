@@ -2,7 +2,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.Results.AspNet;
+namespace SharedKernel.Results.AspNet;
 
 /// <summary>
 /// Carries a record's numeric concurrency version over HTTP: <c>ETag</c> on reads, <c>If-Match</c> on updates.

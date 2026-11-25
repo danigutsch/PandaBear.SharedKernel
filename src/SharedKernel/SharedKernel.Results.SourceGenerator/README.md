@@ -1,6 +1,6 @@
 # SharedKernel.Results.SourceGenerator
 
-Incremental source generator for centralized `PandaBear.Results` error catalogs. It has no standalone package: it ships inside `PandaBear.SharedKernel.Results` as `analyzers/dotnet/cs/SharedKernel.Results.SourceGenerator.dll`, so a consumer references that package alone and receives the generator automatically.
+Incremental source generator for centralized `SharedKernel.Results` error catalogs. It has no standalone package: it ships inside `PandaBear.SharedKernel.Results` as `analyzers/dotnet/cs/SharedKernel.Results.SourceGenerator.dll`, so a consumer references that package alone and receives the generator automatically.
 
 ## Behavior
 
@@ -9,7 +9,7 @@ The generator discovers static result-returning error factories and properties a
 ## Example
 
 ```csharp
-using PandaBear.Results;
+using SharedKernel.Results;
 
 public static class ItemErrors
 {
@@ -17,4 +17,4 @@ public static class ItemErrors
 }
 ```
 
-C# namespace: `PandaBear.Results.SourceGenerator`. Assembly and project identity: `SharedKernel.Results.SourceGenerator`.
+C# namespace: `SharedKernel.Results.SourceGenerator`. Assembly and project identity: `SharedKernel.Results.SourceGenerator`.

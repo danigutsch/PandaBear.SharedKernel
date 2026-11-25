@@ -1,13 +1,13 @@
 using System.Text.Json.Nodes;
-using PandaBear.SecretScanning;
-using PandaBear.Testing;
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.SecretScanning;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Brief;
+namespace SharedKernel.VaultManager.Tool.Tests.Brief;
 
 /// <summary>Tests which groups, members, and findings a brief lists and what it withholds.</summary>
 public sealed class BriefBuilderTests : IDisposable

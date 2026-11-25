@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>A quote of a section and, optionally, who said it.</summary>
 public sealed record PageQuote

@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>
 /// A seekable in-memory stream whose Length reports more bytes than reads return, used to test length verification.

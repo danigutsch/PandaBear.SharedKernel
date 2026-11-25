@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>The stable text IDs of the package managers, as they appear in configuration and messages.</summary>
 public static class PackageManagers

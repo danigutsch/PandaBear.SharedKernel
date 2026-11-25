@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Reconciliation manifest that declares expected roadmap state and priority rules.</summary>
 internal sealed class GitHubRoadmapReconciliation

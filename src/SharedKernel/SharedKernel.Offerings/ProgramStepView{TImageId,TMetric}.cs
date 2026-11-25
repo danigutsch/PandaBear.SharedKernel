@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>One step of a public view: its number from its position, its text in the view's culture, and its image and metrics.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

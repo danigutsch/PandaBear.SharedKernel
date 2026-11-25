@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>Calendar helpers for <see cref="TimeProvider"/>.</summary>
 public static class TimeProviderExtensions

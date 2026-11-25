@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Non-seekable, read-only stream that serves a prefix and then throws a chosen exception from every later read, used to test how a

@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>Collects validation messages by field path, in the order they are found, and merges nested results under a prefix.</summary>
 internal sealed class ThemeErrors

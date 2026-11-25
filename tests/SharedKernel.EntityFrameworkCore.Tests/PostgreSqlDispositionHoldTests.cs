@@ -1,9 +1,9 @@
 using System.Data;
-using PandaBear.Npgsql;
-using PandaBear.DispositionHold;
-using PandaBear.DispositionHold.EntityFrameworkCore;
+using SharedKernel.Npgsql;
+using SharedKernel.DispositionHold;
+using SharedKernel.DispositionHold.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// PostgreSQL tests of the disposition hold store and guard: fail-closed behavior, decisions and lock ordering.

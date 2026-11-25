@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Playwright;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Returns fixed synthetic JSON replies to the PDF pipe reader.</summary>
 internal sealed class ChromiumProtocolReplyStub(params string[] replies) : ICDPSession

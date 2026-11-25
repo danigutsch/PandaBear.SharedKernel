@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Builds armored age files with chosen header stanzas, so tests can feed the metadata reader realistic enc values.</summary>
 internal static class AgeEnvelopes

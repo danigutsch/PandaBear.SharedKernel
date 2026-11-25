@@ -1,7 +1,7 @@
 using Google.Protobuf;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Messaging.Protobuf.Tests;
+namespace SharedKernel.Messaging.Protobuf.Tests;
 
 /// <summary>Tests delivery of Protobuf envelopes to handlers and the hand-off of other envelopes to the publisher registered before.</summary>
 public sealed class ProtobufIntegrationEventConsumerTests

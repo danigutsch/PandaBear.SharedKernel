@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>An empty image library.</summary>
 internal sealed class NoImages : IImageEligibility<Guid>

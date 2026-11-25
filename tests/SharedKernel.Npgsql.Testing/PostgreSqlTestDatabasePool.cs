@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Npgsql;
 
-namespace PandaBear.Npgsql.Testing;
+namespace SharedKernel.Npgsql.Testing;
 
 /// <summary>Issues isolated test databases on a caller-owned PostgreSQL server.</summary>
 [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The semaphore never allocates a wait handle and must remain available for concurrent or retrying disposal calls.")]

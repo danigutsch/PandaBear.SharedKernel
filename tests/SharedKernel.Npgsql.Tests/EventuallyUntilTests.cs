@@ -1,6 +1,6 @@
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests Eventually.Until, which polls a probe until it returns a value (a row another process writes, a message that arrives).</summary>
 public sealed class EventuallyUntilTests

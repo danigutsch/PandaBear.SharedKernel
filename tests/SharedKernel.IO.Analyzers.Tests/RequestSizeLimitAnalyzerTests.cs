@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Analyzers.Tests;
+namespace SharedKernel.IO.Analyzers.Tests;
 
 /// <summary>
 /// Tests that SKIO003 reports upload and raw-body endpoints without an endpoint-level request size limit.

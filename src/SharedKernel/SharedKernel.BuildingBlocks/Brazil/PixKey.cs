@@ -1,7 +1,7 @@
 using System.Buffers;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A typed canonical Pix key with validated format; not proof of DICT registration or recipient ownership.</summary>
 public sealed class PixKey : ValueObject

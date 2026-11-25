@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Idempotency.EntityFrameworkCore;
+using SharedKernel.Idempotency.EntityFrameworkCore;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Composes integration-event persistence and delivery for one context using the existing registrations.

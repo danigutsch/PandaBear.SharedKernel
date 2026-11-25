@@ -1,4 +1,4 @@
-namespace PandaBear.ServiceDefaults.Tests;
+namespace SharedKernel.ServiceDefaults.Tests;
 
 /// <summary>Lists the handlers of an HttpClient pipeline.</summary>
 internal static class HandlerChain

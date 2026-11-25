@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// Names the meter, counter, tags, tag values and log event identifiers of the page views, so a host can alert on lost page views

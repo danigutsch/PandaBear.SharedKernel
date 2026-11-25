@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// One reviewed exception that lets a CI tool count a bounded set of findings as accepted instead of blocking or advisory.

@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Provides scheduling history schema and deterministic identifiers for PostgreSQL tests.</summary>
 internal static class PostgreSqlScheduleRunStoreTestData

@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using static PandaBear.PageSections.Blazor.Tests.SectionFixtures;
+using SharedKernel.BuildingBlocks;
+using static SharedKernel.PageSections.Blazor.Tests.SectionFixtures;
 
-namespace PandaBear.PageSections.Blazor.Tests;
+namespace SharedKernel.PageSections.Blazor.Tests;
 
 /// <summary>
 /// Tests how sections render: each on the band of its tone, its parts in the model's fixed order through the site components, a named

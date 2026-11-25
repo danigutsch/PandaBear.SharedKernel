@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>A string writer whose asynchronous line write always fails with an <see cref="OperationCanceledException"/>.</summary>
 internal sealed class CancellationThrowingTextWriter : StringWriter

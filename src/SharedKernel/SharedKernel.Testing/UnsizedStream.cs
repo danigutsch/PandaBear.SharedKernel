@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>A read-only stream that does not report its length, like a response body sent without Content-Length.</summary>
 public sealed class UnsizedStream(byte[] content) : Stream

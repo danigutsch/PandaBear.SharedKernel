@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>Test client for an HTTP/1.1 loopback request whose declared body can stay incomplete.</summary>
 public sealed class LoopbackHttpBodyRequest : IDisposable

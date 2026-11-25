@@ -1,7 +1,7 @@
 using Npgsql;
 using Xunit;
 
-namespace PandaBear.Npgsql.Testing;
+namespace SharedKernel.Npgsql.Testing;
 
 /// <summary>Base class for tests that each get their own isolated PostgreSQL database, leased in InitializeAsync and dropped in DisposeAsync.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture that supplies the per-test database.</param>

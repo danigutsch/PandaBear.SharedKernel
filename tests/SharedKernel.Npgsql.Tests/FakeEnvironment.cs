@@ -1,6 +1,6 @@
-using PandaBear.TestServices.Host;
+using SharedKernel.TestServices.Host;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Stands in for the process environment, so a test never changes a process-wide variable.</summary>
 internal static class FakeEnvironment

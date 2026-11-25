@@ -1,11 +1,11 @@
-using PandaBear.Testing;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Review;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Review;
 using Terminal.Gui.App;
-using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
+using static SharedKernel.VaultManager.Tool.Tests.Review.ReviewVaults;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>
 /// Runs the review window with the real dialogs on a terminal smaller than the dialogs need, such as one that reports a

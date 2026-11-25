@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>A group of matched items that needs a decision.</summary>
 /// <param name="Key">Group key, which field decisions name.</param>

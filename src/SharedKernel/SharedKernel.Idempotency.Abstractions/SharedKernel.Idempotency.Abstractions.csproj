@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Idempotency.Abstractions</PackageId>
         <Description>Validated idempotency identities and storage-neutral lifecycle contracts.</Description>
-        <RootNamespace>PandaBear.Idempotency</RootNamespace>
+        <RootNamespace>SharedKernel.Idempotency</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

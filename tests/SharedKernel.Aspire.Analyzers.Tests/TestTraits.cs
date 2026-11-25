@@ -1,4 +1,4 @@
-namespace PandaBear.Aspire.Analyzers.Tests;
+namespace SharedKernel.Aspire.Analyzers.Tests;
 
 /// <summary>
 /// Trait values that tag the Aspire analyzer tests by component and capability.

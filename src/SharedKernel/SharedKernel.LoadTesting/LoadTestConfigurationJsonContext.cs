@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>
 /// Source-generated metadata for the load-test configuration file. Property names are camelCase and match exactly. A

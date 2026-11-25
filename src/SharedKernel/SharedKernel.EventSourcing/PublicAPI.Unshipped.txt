@@ -1,106 +1,106 @@
 #nullable enable
-PandaBear.EventSourcing.EventEnvelope
-PandaBear.EventSourcing.EventEnvelope.CausationEventId.get -> System.Guid?
-PandaBear.EventSourcing.EventEnvelope.CausationEventId.init -> void
-PandaBear.EventSourcing.EventEnvelope.Data.get -> object!
-PandaBear.EventSourcing.EventEnvelope.Data.init -> void
-PandaBear.EventSourcing.EventEnvelope.EventEnvelope(PandaBear.EventSourcing.StreamId StreamId, long Position, PandaBear.EventSourcing.StreamRevision Revision, System.Guid EventId, string! EventType, object! Data, System.DateTimeOffset RecordedAt) -> void
-PandaBear.EventSourcing.EventEnvelope.EventId.get -> System.Guid
-PandaBear.EventSourcing.EventEnvelope.EventId.init -> void
-PandaBear.EventSourcing.EventEnvelope.EventType.get -> string!
-PandaBear.EventSourcing.EventEnvelope.EventType.init -> void
-PandaBear.EventSourcing.EventEnvelope.RecordedAt.get -> System.DateTimeOffset
-PandaBear.EventSourcing.EventEnvelope.RecordedAt.init -> void
-PandaBear.EventSourcing.EventEnvelope.Position.get -> long
-PandaBear.EventSourcing.EventEnvelope.Position.init -> void
-PandaBear.EventSourcing.EventEnvelope.Revision.get -> PandaBear.EventSourcing.StreamRevision
-PandaBear.EventSourcing.EventEnvelope.Revision.init -> void
-PandaBear.EventSourcing.EventEnvelope.StreamId.get -> PandaBear.EventSourcing.StreamId
-PandaBear.EventSourcing.EventEnvelope.StreamId.init -> void
-PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>
-PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>.ClearUncommittedEvents() -> void
-PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>.EventSourcedAggregateRoot() -> void
-PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>.GetUncommittedEvents() -> System.Collections.Generic.IReadOnlyCollection<object!>!
-abstract PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>.Id.get -> TId
-PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>.Replay(System.Collections.Generic.IEnumerable<object!>! events) -> void
-PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>.Version.get -> long
-PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>.AddEvent(object! domainEvent) -> void
-abstract PandaBear.EventSourcing.EventSourcedAggregateRoot<TId>.ApplyEvent(object! domainEvent) -> void
-PandaBear.EventSourcing.ExpectedStreamRevision
-PandaBear.EventSourcing.ExpectedStreamRevisionConflictException
-PandaBear.EventSourcing.ExpectedStreamRevisionConflictException.ActualRevision.get -> PandaBear.EventSourcing.StreamRevision?
-PandaBear.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedRevision.get -> PandaBear.EventSourcing.ExpectedStreamRevision
-PandaBear.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException() -> void
-PandaBear.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(PandaBear.EventSourcing.StreamId streamId, PandaBear.EventSourcing.ExpectedStreamRevision expectedRevision, PandaBear.EventSourcing.StreamRevision? actualRevision) -> void
-PandaBear.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(string! message) -> void
-PandaBear.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(string! message, System.Exception! innerException) -> void
-PandaBear.EventSourcing.ExpectedStreamRevisionConflictException.StreamId.get -> PandaBear.EventSourcing.StreamId
-PandaBear.EventSourcing.ExpectedStreamRevision.ExpectedStreamRevision() -> void
-PandaBear.EventSourcing.ExpectedStreamRevision.RequiresEmptyStream.get -> bool
-PandaBear.EventSourcing.ExpectedStreamRevision.Value.get -> long?
-PandaBear.EventSourcing.IEventSerializer
-PandaBear.EventSourcing.IEventSerializer.Deserialize(string! eventType, string! payloadJson) -> object!
-PandaBear.EventSourcing.IEventSerializer.GetEventType(object! eventData) -> string!
-PandaBear.EventSourcing.IEventSerializer.Serialize(object! eventData) -> string!
-PandaBear.EventSourcing.IEventStore
-PandaBear.EventSourcing.IEventStore.Append(PandaBear.EventSourcing.StreamId streamId, PandaBear.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<PandaBear.EventSourcing.EventEnvelope!>!>
-PandaBear.EventSourcing.IEventStore.Append(PandaBear.EventSourcing.StreamId streamId, PandaBear.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Guid causationEventId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<PandaBear.EventSourcing.EventEnvelope!>!>
-PandaBear.EventSourcing.IEventStore.Load(PandaBear.EventSourcing.StreamId streamId, PandaBear.EventSourcing.StreamRevision? afterRevision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<PandaBear.EventSourcing.EventEnvelope!>!>
-PandaBear.EventSourcing.IEventStore.LoadAfter(long position, int maxCount, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<PandaBear.EventSourcing.EventEnvelope!>!>
-PandaBear.EventSourcing.IProjection
-PandaBear.EventSourcing.IProjection.Apply(PandaBear.EventSourcing.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.EventSourcing.IProjection.Name.get -> string!
-PandaBear.EventSourcing.IProjectionCheckpointStore
-PandaBear.EventSourcing.IProjectionCheckpointStore.GetCheckpoint(string! projectionName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.EventSourcing.ProjectionCheckpoint?>
-PandaBear.EventSourcing.IProjectionCheckpointStore.Save(PandaBear.EventSourcing.ProjectionCheckpoint! checkpoint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.EventSourcing.ProjectionCheckpoint
-PandaBear.EventSourcing.ProjectionCheckpoint.Position.get -> long
-PandaBear.EventSourcing.ProjectionCheckpoint.Position.init -> void
-PandaBear.EventSourcing.ProjectionCheckpoint.ProjectionCheckpoint(string! ProjectionName, long Position) -> void
-PandaBear.EventSourcing.ProjectionCheckpoint.ProjectionName.get -> string!
-PandaBear.EventSourcing.ProjectionCheckpoint.ProjectionName.init -> void
-PandaBear.EventSourcing.StreamId
-static PandaBear.EventSourcing.StreamId.From(string? value) -> PandaBear.EventSourcing.StreamId
-PandaBear.EventSourcing.StreamId.StreamId() -> void
-override PandaBear.EventSourcing.StreamId.ToString() -> string!
-PandaBear.EventSourcing.StreamId.Value.get -> string!
-PandaBear.EventSourcing.StreamRevision
-static PandaBear.EventSourcing.StreamRevision.From(long value) -> PandaBear.EventSourcing.StreamRevision
-PandaBear.EventSourcing.StreamRevision.StreamRevision() -> void
-PandaBear.EventSourcing.StreamRevision.Value.get -> long
-static PandaBear.EventSourcing.ExpectedStreamRevision.Any.get -> PandaBear.EventSourcing.ExpectedStreamRevision
-static PandaBear.EventSourcing.ExpectedStreamRevision.From(PandaBear.EventSourcing.StreamRevision value) -> PandaBear.EventSourcing.ExpectedStreamRevision
-static PandaBear.EventSourcing.ExpectedStreamRevision.NoStream.get -> PandaBear.EventSourcing.ExpectedStreamRevision
-PandaBear.EventSourcing.EventEnvelope.<Clone>$() -> PandaBear.EventSourcing.EventEnvelope!
-PandaBear.EventSourcing.EventEnvelope.Deconstruct(out PandaBear.EventSourcing.StreamId StreamId, out long Position, out PandaBear.EventSourcing.StreamRevision Revision, out System.Guid EventId, out string! EventType, out object! Data, out System.DateTimeOffset RecordedAt) -> void
-PandaBear.EventSourcing.EventEnvelope.Equals(PandaBear.EventSourcing.EventEnvelope? other) -> bool
-PandaBear.EventSourcing.ExpectedStreamRevision.Equals(PandaBear.EventSourcing.ExpectedStreamRevision other) -> bool
-PandaBear.EventSourcing.ProjectionCheckpoint.<Clone>$() -> PandaBear.EventSourcing.ProjectionCheckpoint!
-PandaBear.EventSourcing.ProjectionCheckpoint.Deconstruct(out string! ProjectionName, out long Position) -> void
-PandaBear.EventSourcing.ProjectionCheckpoint.Equals(PandaBear.EventSourcing.ProjectionCheckpoint? other) -> bool
-PandaBear.EventSourcing.StreamId.Equals(PandaBear.EventSourcing.StreamId other) -> bool
-PandaBear.EventSourcing.StreamRevision.Equals(PandaBear.EventSourcing.StreamRevision other) -> bool
-override PandaBear.EventSourcing.EventEnvelope.Equals(object? obj) -> bool
-override PandaBear.EventSourcing.EventEnvelope.GetHashCode() -> int
-override PandaBear.EventSourcing.EventEnvelope.ToString() -> string!
-override PandaBear.EventSourcing.ExpectedStreamRevision.GetHashCode() -> int
-override PandaBear.EventSourcing.ProjectionCheckpoint.Equals(object? obj) -> bool
-override PandaBear.EventSourcing.ProjectionCheckpoint.GetHashCode() -> int
-override PandaBear.EventSourcing.ProjectionCheckpoint.ToString() -> string!
-override PandaBear.EventSourcing.StreamId.GetHashCode() -> int
-override PandaBear.EventSourcing.StreamRevision.GetHashCode() -> int
-static PandaBear.EventSourcing.EventEnvelope.operator !=(PandaBear.EventSourcing.EventEnvelope? left, PandaBear.EventSourcing.EventEnvelope? right) -> bool
-static PandaBear.EventSourcing.EventEnvelope.operator ==(PandaBear.EventSourcing.EventEnvelope? left, PandaBear.EventSourcing.EventEnvelope? right) -> bool
-static PandaBear.EventSourcing.ExpectedStreamRevision.operator !=(PandaBear.EventSourcing.ExpectedStreamRevision left, PandaBear.EventSourcing.ExpectedStreamRevision right) -> bool
-static PandaBear.EventSourcing.ExpectedStreamRevision.operator ==(PandaBear.EventSourcing.ExpectedStreamRevision left, PandaBear.EventSourcing.ExpectedStreamRevision right) -> bool
-static PandaBear.EventSourcing.ProjectionCheckpoint.operator !=(PandaBear.EventSourcing.ProjectionCheckpoint? left, PandaBear.EventSourcing.ProjectionCheckpoint? right) -> bool
-static PandaBear.EventSourcing.ProjectionCheckpoint.operator ==(PandaBear.EventSourcing.ProjectionCheckpoint? left, PandaBear.EventSourcing.ProjectionCheckpoint? right) -> bool
-static PandaBear.EventSourcing.StreamId.operator !=(PandaBear.EventSourcing.StreamId left, PandaBear.EventSourcing.StreamId right) -> bool
-static PandaBear.EventSourcing.StreamId.operator ==(PandaBear.EventSourcing.StreamId left, PandaBear.EventSourcing.StreamId right) -> bool
-static PandaBear.EventSourcing.StreamRevision.operator !=(PandaBear.EventSourcing.StreamRevision left, PandaBear.EventSourcing.StreamRevision right) -> bool
-static PandaBear.EventSourcing.StreamRevision.operator ==(PandaBear.EventSourcing.StreamRevision left, PandaBear.EventSourcing.StreamRevision right) -> bool
-~override PandaBear.EventSourcing.ExpectedStreamRevision.Equals(object obj) -> bool
-~override PandaBear.EventSourcing.ExpectedStreamRevision.ToString() -> string
-~override PandaBear.EventSourcing.StreamId.Equals(object obj) -> bool
-~override PandaBear.EventSourcing.StreamRevision.Equals(object obj) -> bool
-~override PandaBear.EventSourcing.StreamRevision.ToString() -> string
+SharedKernel.EventSourcing.EventEnvelope
+SharedKernel.EventSourcing.EventEnvelope.CausationEventId.get -> System.Guid?
+SharedKernel.EventSourcing.EventEnvelope.CausationEventId.init -> void
+SharedKernel.EventSourcing.EventEnvelope.Data.get -> object!
+SharedKernel.EventSourcing.EventEnvelope.Data.init -> void
+SharedKernel.EventSourcing.EventEnvelope.EventEnvelope(SharedKernel.EventSourcing.StreamId StreamId, long Position, SharedKernel.EventSourcing.StreamRevision Revision, System.Guid EventId, string! EventType, object! Data, System.DateTimeOffset RecordedAt) -> void
+SharedKernel.EventSourcing.EventEnvelope.EventId.get -> System.Guid
+SharedKernel.EventSourcing.EventEnvelope.EventId.init -> void
+SharedKernel.EventSourcing.EventEnvelope.EventType.get -> string!
+SharedKernel.EventSourcing.EventEnvelope.EventType.init -> void
+SharedKernel.EventSourcing.EventEnvelope.RecordedAt.get -> System.DateTimeOffset
+SharedKernel.EventSourcing.EventEnvelope.RecordedAt.init -> void
+SharedKernel.EventSourcing.EventEnvelope.Position.get -> long
+SharedKernel.EventSourcing.EventEnvelope.Position.init -> void
+SharedKernel.EventSourcing.EventEnvelope.Revision.get -> SharedKernel.EventSourcing.StreamRevision
+SharedKernel.EventSourcing.EventEnvelope.Revision.init -> void
+SharedKernel.EventSourcing.EventEnvelope.StreamId.get -> SharedKernel.EventSourcing.StreamId
+SharedKernel.EventSourcing.EventEnvelope.StreamId.init -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.ClearUncommittedEvents() -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.EventSourcedAggregateRoot() -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.GetUncommittedEvents() -> System.Collections.Generic.IReadOnlyCollection<object!>!
+abstract SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Id.get -> TId
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Replay(System.Collections.Generic.IEnumerable<object!>! events) -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Version.get -> long
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.AddEvent(object! domainEvent) -> void
+abstract SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.ApplyEvent(object! domainEvent) -> void
+SharedKernel.EventSourcing.ExpectedStreamRevision
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ActualRevision.get -> SharedKernel.EventSourcing.StreamRevision?
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedRevision.get -> SharedKernel.EventSourcing.ExpectedStreamRevision
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException() -> void
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, SharedKernel.EventSourcing.StreamRevision? actualRevision) -> void
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(string! message) -> void
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(string! message, System.Exception! innerException) -> void
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.StreamId.get -> SharedKernel.EventSourcing.StreamId
+SharedKernel.EventSourcing.ExpectedStreamRevision.ExpectedStreamRevision() -> void
+SharedKernel.EventSourcing.ExpectedStreamRevision.RequiresEmptyStream.get -> bool
+SharedKernel.EventSourcing.ExpectedStreamRevision.Value.get -> long?
+SharedKernel.EventSourcing.IEventSerializer
+SharedKernel.EventSourcing.IEventSerializer.Deserialize(string! eventType, string! payloadJson) -> object!
+SharedKernel.EventSourcing.IEventSerializer.GetEventType(object! eventData) -> string!
+SharedKernel.EventSourcing.IEventSerializer.Serialize(object! eventData) -> string!
+SharedKernel.EventSourcing.IEventStore
+SharedKernel.EventSourcing.IEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
+SharedKernel.EventSourcing.IEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Guid causationEventId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
+SharedKernel.EventSourcing.IEventStore.Load(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.StreamRevision? afterRevision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
+SharedKernel.EventSourcing.IEventStore.LoadAfter(long position, int maxCount, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
+SharedKernel.EventSourcing.IProjection
+SharedKernel.EventSourcing.IProjection.Apply(SharedKernel.EventSourcing.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.EventSourcing.IProjection.Name.get -> string!
+SharedKernel.EventSourcing.IProjectionCheckpointStore
+SharedKernel.EventSourcing.IProjectionCheckpointStore.GetCheckpoint(string! projectionName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.EventSourcing.ProjectionCheckpoint?>
+SharedKernel.EventSourcing.IProjectionCheckpointStore.Save(SharedKernel.EventSourcing.ProjectionCheckpoint! checkpoint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.EventSourcing.ProjectionCheckpoint
+SharedKernel.EventSourcing.ProjectionCheckpoint.Position.get -> long
+SharedKernel.EventSourcing.ProjectionCheckpoint.Position.init -> void
+SharedKernel.EventSourcing.ProjectionCheckpoint.ProjectionCheckpoint(string! ProjectionName, long Position) -> void
+SharedKernel.EventSourcing.ProjectionCheckpoint.ProjectionName.get -> string!
+SharedKernel.EventSourcing.ProjectionCheckpoint.ProjectionName.init -> void
+SharedKernel.EventSourcing.StreamId
+static SharedKernel.EventSourcing.StreamId.From(string? value) -> SharedKernel.EventSourcing.StreamId
+SharedKernel.EventSourcing.StreamId.StreamId() -> void
+override SharedKernel.EventSourcing.StreamId.ToString() -> string!
+SharedKernel.EventSourcing.StreamId.Value.get -> string!
+SharedKernel.EventSourcing.StreamRevision
+static SharedKernel.EventSourcing.StreamRevision.From(long value) -> SharedKernel.EventSourcing.StreamRevision
+SharedKernel.EventSourcing.StreamRevision.StreamRevision() -> void
+SharedKernel.EventSourcing.StreamRevision.Value.get -> long
+static SharedKernel.EventSourcing.ExpectedStreamRevision.Any.get -> SharedKernel.EventSourcing.ExpectedStreamRevision
+static SharedKernel.EventSourcing.ExpectedStreamRevision.From(SharedKernel.EventSourcing.StreamRevision value) -> SharedKernel.EventSourcing.ExpectedStreamRevision
+static SharedKernel.EventSourcing.ExpectedStreamRevision.NoStream.get -> SharedKernel.EventSourcing.ExpectedStreamRevision
+SharedKernel.EventSourcing.EventEnvelope.<Clone>$() -> SharedKernel.EventSourcing.EventEnvelope!
+SharedKernel.EventSourcing.EventEnvelope.Deconstruct(out SharedKernel.EventSourcing.StreamId StreamId, out long Position, out SharedKernel.EventSourcing.StreamRevision Revision, out System.Guid EventId, out string! EventType, out object! Data, out System.DateTimeOffset RecordedAt) -> void
+SharedKernel.EventSourcing.EventEnvelope.Equals(SharedKernel.EventSourcing.EventEnvelope? other) -> bool
+SharedKernel.EventSourcing.ExpectedStreamRevision.Equals(SharedKernel.EventSourcing.ExpectedStreamRevision other) -> bool
+SharedKernel.EventSourcing.ProjectionCheckpoint.<Clone>$() -> SharedKernel.EventSourcing.ProjectionCheckpoint!
+SharedKernel.EventSourcing.ProjectionCheckpoint.Deconstruct(out string! ProjectionName, out long Position) -> void
+SharedKernel.EventSourcing.ProjectionCheckpoint.Equals(SharedKernel.EventSourcing.ProjectionCheckpoint? other) -> bool
+SharedKernel.EventSourcing.StreamId.Equals(SharedKernel.EventSourcing.StreamId other) -> bool
+SharedKernel.EventSourcing.StreamRevision.Equals(SharedKernel.EventSourcing.StreamRevision other) -> bool
+override SharedKernel.EventSourcing.EventEnvelope.Equals(object? obj) -> bool
+override SharedKernel.EventSourcing.EventEnvelope.GetHashCode() -> int
+override SharedKernel.EventSourcing.EventEnvelope.ToString() -> string!
+override SharedKernel.EventSourcing.ExpectedStreamRevision.GetHashCode() -> int
+override SharedKernel.EventSourcing.ProjectionCheckpoint.Equals(object? obj) -> bool
+override SharedKernel.EventSourcing.ProjectionCheckpoint.GetHashCode() -> int
+override SharedKernel.EventSourcing.ProjectionCheckpoint.ToString() -> string!
+override SharedKernel.EventSourcing.StreamId.GetHashCode() -> int
+override SharedKernel.EventSourcing.StreamRevision.GetHashCode() -> int
+static SharedKernel.EventSourcing.EventEnvelope.operator !=(SharedKernel.EventSourcing.EventEnvelope? left, SharedKernel.EventSourcing.EventEnvelope? right) -> bool
+static SharedKernel.EventSourcing.EventEnvelope.operator ==(SharedKernel.EventSourcing.EventEnvelope? left, SharedKernel.EventSourcing.EventEnvelope? right) -> bool
+static SharedKernel.EventSourcing.ExpectedStreamRevision.operator !=(SharedKernel.EventSourcing.ExpectedStreamRevision left, SharedKernel.EventSourcing.ExpectedStreamRevision right) -> bool
+static SharedKernel.EventSourcing.ExpectedStreamRevision.operator ==(SharedKernel.EventSourcing.ExpectedStreamRevision left, SharedKernel.EventSourcing.ExpectedStreamRevision right) -> bool
+static SharedKernel.EventSourcing.ProjectionCheckpoint.operator !=(SharedKernel.EventSourcing.ProjectionCheckpoint? left, SharedKernel.EventSourcing.ProjectionCheckpoint? right) -> bool
+static SharedKernel.EventSourcing.ProjectionCheckpoint.operator ==(SharedKernel.EventSourcing.ProjectionCheckpoint? left, SharedKernel.EventSourcing.ProjectionCheckpoint? right) -> bool
+static SharedKernel.EventSourcing.StreamId.operator !=(SharedKernel.EventSourcing.StreamId left, SharedKernel.EventSourcing.StreamId right) -> bool
+static SharedKernel.EventSourcing.StreamId.operator ==(SharedKernel.EventSourcing.StreamId left, SharedKernel.EventSourcing.StreamId right) -> bool
+static SharedKernel.EventSourcing.StreamRevision.operator !=(SharedKernel.EventSourcing.StreamRevision left, SharedKernel.EventSourcing.StreamRevision right) -> bool
+static SharedKernel.EventSourcing.StreamRevision.operator ==(SharedKernel.EventSourcing.StreamRevision left, SharedKernel.EventSourcing.StreamRevision right) -> bool
+~override SharedKernel.EventSourcing.ExpectedStreamRevision.Equals(object obj) -> bool
+~override SharedKernel.EventSourcing.ExpectedStreamRevision.ToString() -> string
+~override SharedKernel.EventSourcing.StreamId.Equals(object obj) -> bool
+~override SharedKernel.EventSourcing.StreamRevision.Equals(object obj) -> bool
+~override SharedKernel.EventSourcing.StreamRevision.ToString() -> string

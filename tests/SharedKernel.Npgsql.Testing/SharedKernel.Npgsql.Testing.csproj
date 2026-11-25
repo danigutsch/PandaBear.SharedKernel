@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>PandaBear.Npgsql.Testing</RootNamespace>
+        <RootNamespace>SharedKernel.Npgsql.Testing</RootNamespace>
         <IsPackable>true</IsPackable>
         <PackageId>PandaBear.SharedKernel.Npgsql.Testing</PackageId>
         <Description>PostgreSQL integration-test database leases and native xUnit fixture support.</Description>

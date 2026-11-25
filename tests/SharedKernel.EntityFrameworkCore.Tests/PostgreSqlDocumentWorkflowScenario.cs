@@ -2,15 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using Npgsql;
-using PandaBear.AuditTrail;
-using PandaBear.DocumentWorkflow;
-using PandaBear.DocumentWorkflow.EntityFrameworkCore;
-using PandaBear.EntityFrameworkCore.Npgsql;
-using PandaBear.Idempotency.EntityFrameworkCore;
-using PandaBear.Mediator;
-using PandaBear.Results;
+using SharedKernel.AuditTrail;
+using SharedKernel.DocumentWorkflow;
+using SharedKernel.DocumentWorkflow.EntityFrameworkCore;
+using SharedKernel.EntityFrameworkCore.Npgsql;
+using SharedKernel.Idempotency.EntityFrameworkCore;
+using SharedKernel.Mediator;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Provides fresh units of work for the neutral document repository tests.</summary>
 internal sealed class PostgreSqlDocumentWorkflowScenario : IAsyncDisposable

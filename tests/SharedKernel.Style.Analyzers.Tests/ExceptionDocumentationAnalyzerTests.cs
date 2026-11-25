@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Style.Analyzers.Tests;
+namespace SharedKernel.Style.Analyzers.Tests;
 
 /// <summary>Tests for the SKSTYLE018 rule that requires documented exceptions on documented members that throw.</summary>
 public sealed class ExceptionDocumentationAnalyzerTests

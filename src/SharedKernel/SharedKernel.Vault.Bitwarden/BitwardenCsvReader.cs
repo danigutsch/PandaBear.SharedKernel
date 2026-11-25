@@ -1,9 +1,9 @@
 using System.Globalization;
-using PandaBear.Vault.Csv;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Csv;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>
 /// Reads Bitwarden CSV exports. Individual exports have <c>folder</c> and <c>favorite</c> columns; organization exports

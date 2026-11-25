@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The deterministic comparison of two evaluated solution restore graphs.</summary>
 /// <param name="SchemaVersion">The report format version.</param>

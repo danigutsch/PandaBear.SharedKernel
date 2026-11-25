@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency.EntityFrameworkCore;
+namespace SharedKernel.Idempotency.EntityFrameworkCore;
 
 /// <summary>
 /// Validates the opaque retention owner key of an entry. Only ASCII letters, digits and <c>. _ : -</c> are accepted so

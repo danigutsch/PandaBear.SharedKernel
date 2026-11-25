@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Matching;
+namespace SharedKernel.Vault.Tests.Matching;
 
 /// <summary>Builds small items for matcher tests.</summary>
 internal static class MatchFixture

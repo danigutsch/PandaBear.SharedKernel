@@ -1,9 +1,9 @@
 using System.Text.Json;
-using PandaBear.IO;
-using PandaBear.InputNormalization;
-using PandaBear.Versioning;
+using SharedKernel.IO;
+using SharedKernel.InputNormalization;
+using SharedKernel.Versioning;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Records the revision and the SHA-256 hash of each Release portable PDB of a build, and verifies a checkout against

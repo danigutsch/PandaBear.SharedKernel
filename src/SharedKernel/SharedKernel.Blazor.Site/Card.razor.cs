@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A card (<c>article</c>) with an optional image, an optional eyebrow, a heading that can be a link covering the card, text, and an

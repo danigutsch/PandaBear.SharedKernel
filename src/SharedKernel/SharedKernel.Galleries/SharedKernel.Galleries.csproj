@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Galleries</PackageId>
         <Description>Photo albums: per-culture titles, slugs and publication, an ordered photo sequence with a cover, publish rules, and paged read views.</Description>
-        <RootNamespace>PandaBear.Galleries</RootNamespace>
+        <RootNamespace>SharedKernel.Galleries</RootNamespace>
         <PackageTags>gallery;albums;photos;localization;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

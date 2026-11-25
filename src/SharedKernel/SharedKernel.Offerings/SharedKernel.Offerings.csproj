@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Offerings</PackageId>
         <Description>Sellable programmes such as tours: availability and dates, priced lines, conditions, app-defined metrics, language-neutral steps, translated text with publish rules, public views, listing groups, display sentences and schema.org JSON-LD.</Description>
-        <RootNamespace>PandaBear.Offerings</RootNamespace>
+        <RootNamespace>SharedKernel.Offerings</RootNamespace>
         <PackageTags>offerings;tours;pricing;localization;json-ld;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

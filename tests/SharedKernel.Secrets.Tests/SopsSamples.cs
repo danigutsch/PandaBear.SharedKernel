@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Builds SOPS documents in the layout that sops writes, with placeholder ciphertext and realistic age envelopes.</summary>
 internal static class SopsSamples

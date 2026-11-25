@@ -3,12 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PandaBear.EntityFrameworkCore;
-using PandaBear.Idempotency;
-using PandaBear.Idempotency.EntityFrameworkCore;
-using PandaBear.InputNormalization;
+using SharedKernel.EntityFrameworkCore;
+using SharedKernel.Idempotency;
+using SharedKernel.Idempotency.EntityFrameworkCore;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Provides registration helpers for the EF Core integration event outbox.

@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.EntityFrameworkCore;
+namespace SharedKernel.Mediator.EntityFrameworkCore;
 
 /// <summary>
 /// Runs after <see cref="ResultTransactionBehavior{TRequest, TResponse}"/> committed a command.

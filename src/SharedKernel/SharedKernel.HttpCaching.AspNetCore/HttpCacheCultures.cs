@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.HttpCaching.AspNetCore;
+namespace SharedKernel.HttpCaching.AspNetCore;
 
 /// <summary>
 /// Provides canonical culture values used by HTTP cache query-key normalization.

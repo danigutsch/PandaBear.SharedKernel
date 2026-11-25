@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace PandaBear.Packages.Tool.Tests;
+namespace SharedKernel.Packages.Tool.Tests;
 
 /// <summary>Runs the tool in a temporary repository with fake package tools.</summary>
 internal static class PackagesToolHarness

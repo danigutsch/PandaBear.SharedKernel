@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden.Tests;
+namespace SharedKernel.Vault.Bitwarden.Tests;
 
 /// <summary>Tests the reader for Bitwarden JSON exports.</summary>
 public sealed class BitwardenJsonReaderTests

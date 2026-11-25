@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Builds the OpenAPI targets of <c>.config/sharedkernel-ci.json</c> with their generate or refresh property, through the

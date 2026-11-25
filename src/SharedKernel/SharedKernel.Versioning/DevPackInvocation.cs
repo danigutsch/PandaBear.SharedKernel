@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>One planned <c>dotnet pack</c> call of a dev pack.</summary>
 /// <param name="Step">The planned step.</param>

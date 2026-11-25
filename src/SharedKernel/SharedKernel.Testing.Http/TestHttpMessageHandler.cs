@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>
 /// Captures HTTP requests and returns deterministic responses for tests.

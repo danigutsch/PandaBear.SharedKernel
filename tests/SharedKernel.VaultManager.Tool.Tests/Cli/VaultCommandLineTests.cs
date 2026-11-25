@@ -1,6 +1,6 @@
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests the vault command tree: its subcommands, help and version output, argument validation, and printable error text.</summary>
 public sealed class VaultCommandLineTests

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>Converts a computed CSS colour, as Chromium reports it, to the <c>#rrggbb</c> form the contrast math reads.</summary>
 internal static class ComputedColor

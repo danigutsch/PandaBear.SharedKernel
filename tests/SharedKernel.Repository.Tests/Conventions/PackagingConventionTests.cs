@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>Guards the package metadata, analyzer layout, source generator, and non-packable project conventions of the repository.</summary>
 public static class PackagingConventionTests

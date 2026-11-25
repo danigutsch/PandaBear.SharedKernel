@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.RateLimiting;
+namespace SharedKernel.AspNetCore.RateLimiting;
 
 /// <summary>
 /// Registers the opt-in rate-limit rejection telemetry.

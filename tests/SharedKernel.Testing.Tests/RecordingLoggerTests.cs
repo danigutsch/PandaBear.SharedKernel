@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
-using PandaBear.Testing.Logging;
+using SharedKernel.Testing.Logging;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the shared recording and throwing loggers.</summary>
 public sealed class RecordingLoggerTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency;
+namespace SharedKernel.Idempotency;
 
 /// <summary>
 /// Represents the namespace in which idempotency keys are unique.

@@ -1,4 +1,4 @@
-namespace PandaBear.Encodings.Tests;
+namespace SharedKernel.Encodings.Tests;
 
 /// <summary>Tests RFC 4648 Base32.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.EncodingsCapability)]

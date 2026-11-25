@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Tests removing inherited variables from a child process environment.</summary>
 public sealed class ProcessEnvironmentTests

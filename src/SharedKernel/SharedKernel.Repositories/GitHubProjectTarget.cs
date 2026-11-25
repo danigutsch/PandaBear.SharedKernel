@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>GitHub project that roadmap items are synchronized to.</summary>
 /// <param name="Id">Project node ID.</param>

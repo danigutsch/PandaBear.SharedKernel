@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Aspire.Hosting.Testing;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>
 /// A fixture whose Aspire builder cannot be created: it counts every attempt and fails it, so a test that makes the

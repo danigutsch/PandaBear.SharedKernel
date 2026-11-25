@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.ServiceDefaults</PackageId>
         <Description>Aspire service defaults for SharedKernel hosts: service discovery, HTTP resilience, private-by-default OpenTelemetry, and health endpoints.</Description>
-        <RootNamespace>PandaBear.ServiceDefaults</RootNamespace>
+        <RootNamespace>SharedKernel.ServiceDefaults</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspire;service-defaults;opentelemetry;health-checks;service-discovery;resilience;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

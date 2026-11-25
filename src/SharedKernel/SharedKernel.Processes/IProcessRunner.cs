@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>Runs a child process to completion. Hosts use <see cref="SystemProcessRunner"/> or <see cref="BoundedProcessRunner"/>; tests replace it with a fake.</summary>
 public interface IProcessRunner

@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace PandaBear.Aspire.Hosting.Umami.Tests;
+namespace SharedKernel.Aspire.Hosting.Umami.Tests;
 
 /// <summary>
 /// Reads a website's statistics back from Umami 3.4.1 as its dashboard does: <c>POST /api/auth/login</c> as <c>admin</c> with the

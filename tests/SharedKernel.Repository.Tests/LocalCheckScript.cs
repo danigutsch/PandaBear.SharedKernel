@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Answers the Git and dotnet commands of <c>local-check</c> for a <see cref="RepositoryTestScope"/>, and fails the ones a test names.</summary>
 internal sealed class LocalCheckScript

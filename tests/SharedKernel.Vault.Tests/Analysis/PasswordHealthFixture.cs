@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Analysis;
+namespace SharedKernel.Vault.Tests.Analysis;
 
 /// <summary>Builds login items for password health tests.</summary>
 internal static class PasswordHealthFixture

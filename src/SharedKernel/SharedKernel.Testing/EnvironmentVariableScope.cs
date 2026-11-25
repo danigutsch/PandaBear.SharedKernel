@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Temporarily sets a process environment variable and restores its previous value.</summary>
 /// <remarks>Dispose nested scopes in reverse order. Serialize tests that change process environment variables.</remarks>

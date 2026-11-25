@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>What the adapter keeps of one OSV vulnerability record.</summary>
 /// <param name="Withdrawn">Whether the database withdrew the record.</param>

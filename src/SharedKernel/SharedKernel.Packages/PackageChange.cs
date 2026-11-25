@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>One difference between a requirement and the installed packages.</summary>
 public sealed class PackageChange : ValueObject

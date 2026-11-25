@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Testing.Logging;
+namespace SharedKernel.Testing.Logging;
 
 /// <summary>An <see cref="ILoggerProvider" /> whose loggers all write into one shared <see cref="RecordingLogger" />, so records from every category keep their logging order.</summary>
 public sealed class RecordingLoggerProvider : ILoggerProvider

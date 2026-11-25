@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Tests the documentation tool's command line: command tree, help and version output, option parsing, and the exit codes and messages of generate, verify and check.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.CommandLineCapability)]

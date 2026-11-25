@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Verifies a pinned package candidate against a clean library checkout, then stages its packages from a forge release or

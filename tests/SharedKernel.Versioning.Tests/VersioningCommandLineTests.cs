@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Tests parsing, help output, dispatch, and error handling of the versioning command line, and that documented command lines still parse.

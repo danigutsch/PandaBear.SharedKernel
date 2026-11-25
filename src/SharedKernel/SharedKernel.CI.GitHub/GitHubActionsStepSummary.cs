@@ -1,4 +1,4 @@
-namespace PandaBear.CI.GitHub;
+namespace SharedKernel.CI.GitHub;
 
 /// <summary>
 /// Appends Markdown to the file that GitHub Actions names in <c>GITHUB_STEP_SUMMARY</c>, which the run page shows as the

@@ -6,9 +6,9 @@ meter `SharedKernel.AspNetCore`. Packages remain preview (prerelease). Nothing h
 
 | Registration | Package | Namespace |
 | --- | --- | --- |
-| `AddUnhandledExceptionHandler` | `PandaBear.SharedKernel.AspNetCore` | `PandaBear.AspNetCore` |
-| `AddAuthenticationEventTelemetry` | `PandaBear.SharedKernel.AspNetCore.Authentication` | `PandaBear.AspNetCore.Authentication` |
-| `AddRateLimitEventTelemetry` | `PandaBear.SharedKernel.AspNetCore.RateLimiting` | `PandaBear.AspNetCore.RateLimiting` |
+| `AddUnhandledExceptionHandler` | `PandaBear.SharedKernel.AspNetCore` | `SharedKernel.AspNetCore` |
+| `AddAuthenticationEventTelemetry` | `PandaBear.SharedKernel.AspNetCore.Authentication` | `SharedKernel.AspNetCore.Authentication` |
+| `AddRateLimitEventTelemetry` | `PandaBear.SharedKernel.AspNetCore.RateLimiting` | `SharedKernel.AspNetCore.RateLimiting` |
 
 ## Register
 

@@ -1,11 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using PandaBear.DocumentWorkflow.EntityFrameworkCore;
-using PandaBear.Mediator;
-using PandaBear.Mediator.EntityFrameworkCore;
-using PandaBear.Results;
+using SharedKernel.DocumentWorkflow.EntityFrameworkCore;
+using SharedKernel.Mediator;
+using SharedKernel.Mediator.EntityFrameworkCore;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Makes the test host own the result-aware finalization transaction.</summary>
 /// <param name="context">The document and audit context.</param>

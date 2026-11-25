@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>Keeps the route template tag bounded: a template, never a URL, query string or credential.</summary>
 internal static class RouteTemplateNormalizer

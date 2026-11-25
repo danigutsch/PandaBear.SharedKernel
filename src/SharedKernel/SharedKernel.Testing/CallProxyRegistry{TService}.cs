@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Holds the factory of the generated hooks of one service interface, registered by a generated module initializer.</summary>
 /// <typeparam name="TService">The service interface.</typeparam>

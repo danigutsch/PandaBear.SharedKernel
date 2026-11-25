@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// Records every timer and fires at once each one due within <paramref name="fireWithin"/>; later timers never fire.

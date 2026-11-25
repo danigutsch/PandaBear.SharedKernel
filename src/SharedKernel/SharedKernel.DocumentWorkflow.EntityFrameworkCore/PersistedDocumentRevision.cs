@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Pairs a validated document revision with its storage concurrency version.</summary>
 /// <param name="Revision">The validated document workflow revision.</param>

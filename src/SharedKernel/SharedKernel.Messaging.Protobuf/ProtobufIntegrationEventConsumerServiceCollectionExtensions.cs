@@ -1,9 +1,9 @@
 using Google.Protobuf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using PandaBear.Messaging.IntegrationEvents;
+using SharedKernel.Messaging.IntegrationEvents;
 
-namespace PandaBear.Messaging.Protobuf;
+namespace SharedKernel.Messaging.Protobuf;
 
 /// <summary>
 /// Registers consumers for Protobuf integration events.

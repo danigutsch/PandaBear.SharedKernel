@@ -1,6 +1,6 @@
-using PandaBear.Markdown;
+using SharedKernel.Markdown;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Renders a list of links to headings in a Markdown document.</summary>
 internal static class MarkdownTableOfContents

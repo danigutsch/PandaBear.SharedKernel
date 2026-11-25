@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Representative NuGet assets documents for comparison tests.</summary>
 internal static class NuGetRestoreGraphTestAssets

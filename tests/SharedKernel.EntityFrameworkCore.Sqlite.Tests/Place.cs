@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>A searchable entity with a plain name, an optional note and a value-converted code.</summary>
 public sealed class Place

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.CI.GitHub.Tests;
+namespace SharedKernel.CI.GitHub.Tests;
 
 /// <summary>Guards how the GitHub release store lists and deletes releases through the REST API.</summary>
 public sealed class GitHubReleaseStoreTests

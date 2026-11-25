@@ -1,6 +1,6 @@
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Reads small files whole, refusing one that is larger than its limit even if it grows while it is read.</summary>
 internal static class BoundedFile

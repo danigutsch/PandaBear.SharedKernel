@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentWorkflow.Tests;
+namespace SharedKernel.DocumentWorkflow.Tests;
 
 /// <summary>Proves a neutral document workflow can round-trip persisted state safely.</summary>
 public sealed class DocumentRevisionSnapshotTests

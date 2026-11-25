@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Protects the lock identity contract while carrying its numeric value as a distinct type.</summary>
 [TestScope(TestScope.Unit)]

@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>What a trial decryption with one identity found out.</summary>
 public enum SopsTrialOutcome

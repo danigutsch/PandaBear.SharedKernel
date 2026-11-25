@@ -17,7 +17,7 @@ dotnet add package PandaBear.SharedKernel.Results --version <validated-candidate
 ## Example
 
 ```csharp
-using PandaBear.Results;
+using SharedKernel.Results;
 
 public static class Example
 {
@@ -44,7 +44,7 @@ every other state as not successful; `!IsFailure` does not mean success (for exa
 
 Check success/failure before accessing payloads; propagate cancellation in asynchronous flows. Keep business validation in its owning domain. Registry publication remains deferred.
 
-Package ID: `PandaBear.SharedKernel.Results`. C# namespace: `PandaBear.Results`. Assembly/project identity: `SharedKernel.Results`.
+Package ID: `PandaBear.SharedKernel.Results`. C# namespace: `SharedKernel.Results`. Assembly/project identity: `SharedKernel.Results`.
 
 ## Reading validation errors
 

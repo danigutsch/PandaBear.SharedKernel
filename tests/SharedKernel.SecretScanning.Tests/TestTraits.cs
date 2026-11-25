@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Trait values used to tag secret scanning tests.</summary>
 internal static class TestTraits

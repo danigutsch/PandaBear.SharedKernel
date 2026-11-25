@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>
 /// The field paths of section validation errors, ViajantesTurismo V2's. A section's fields follow its path (see <see cref="Section"/>), such

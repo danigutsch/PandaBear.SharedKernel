@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>warning-summary</c> command, which combines warning reports into a Markdown table.</summary>
 public sealed class WarningSummaryTests

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Renders a <see cref="ResponsiveImage" /> as an <c>img</c>, or as a <c>picture</c> when it has sources.</summary>
 internal static class ResponsiveImageMarkup

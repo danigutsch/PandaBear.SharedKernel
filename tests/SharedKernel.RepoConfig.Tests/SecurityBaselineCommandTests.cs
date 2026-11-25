@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>security baseline</c> command's document policy checks and the <c>security</c> option parser.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Messaging.Protobuf;
+namespace SharedKernel.Messaging.Protobuf;
 
 /// <summary>
 /// Delivers Protobuf envelopes to their registered handlers and passes every other envelope to the publisher that was registered before it.

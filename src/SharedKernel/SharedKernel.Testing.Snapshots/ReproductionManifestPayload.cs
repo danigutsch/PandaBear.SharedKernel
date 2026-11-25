@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Snapshots;
+namespace SharedKernel.Testing.Snapshots;
 
 /// <summary>The versioned JSON representation of one reproduction attempt.</summary>
 /// <param name="SchemaVersion">The manifest schema version.</param>

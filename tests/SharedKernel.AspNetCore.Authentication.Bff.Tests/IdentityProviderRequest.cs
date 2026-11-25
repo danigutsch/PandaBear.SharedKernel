@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>One request the fake identity provider received.</summary>
 /// <param name="Uri">The endpoint called.</param>

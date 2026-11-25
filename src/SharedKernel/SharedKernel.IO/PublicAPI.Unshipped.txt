@@ -1,40 +1,40 @@
 #nullable enable
-PandaBear.IO.BoundedReader
-static PandaBear.IO.BoundedReader.ReadFile(string! path, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!
-static PandaBear.IO.BoundedReader.ReadToEnd(System.IO.Stream! source, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!
-PandaBear.IO.FilePaths
-const PandaBear.IO.FilePaths.MaxLinks = 40 -> int
-static PandaBear.IO.FilePaths.MayNameSameFile(string! first, string! second) -> bool
-static PandaBear.IO.FilePaths.ResolveLinks(string! path) -> string!
-PandaBear.IO.RepositoryPath
-PandaBear.IO.RepositoryPath.Equals(PandaBear.IO.RepositoryPath other) -> bool
-~override PandaBear.IO.RepositoryPath.Equals(object obj) -> bool
-override PandaBear.IO.RepositoryPath.GetHashCode() -> int
-static PandaBear.IO.RepositoryPath.IsValid(string? value) -> bool
-static PandaBear.IO.RepositoryPath.Parse(string? value) -> PandaBear.IO.RepositoryPath
-PandaBear.IO.RepositoryPath.RepositoryPath() -> void
-PandaBear.IO.RepositoryPath.ResolveUnder(string! root) -> string!
-override PandaBear.IO.RepositoryPath.ToString() -> string!
-static PandaBear.IO.RepositoryPath.TryParse(string? value, out PandaBear.IO.RepositoryPath path) -> bool
-PandaBear.IO.RepositoryPath.Value.get -> string!
-static PandaBear.IO.RepositoryPath.operator !=(PandaBear.IO.RepositoryPath left, PandaBear.IO.RepositoryPath right) -> bool
-static PandaBear.IO.RepositoryPath.operator ==(PandaBear.IO.RepositoryPath left, PandaBear.IO.RepositoryPath right) -> bool
-PandaBear.IO.SecureFile
-static PandaBear.IO.SecureFile.WriteAllText(string! path, System.ReadOnlySpan<char> contents, bool overwrite, System.Threading.CancellationToken ct) -> void
-static PandaBear.IO.SecureFile.WriteAllText(string! path, string! contents, bool overwrite) -> void
-PandaBear.IO.SeekableContent
-PandaBear.IO.SeekableContent.Content.get -> System.IO.Stream!
-static PandaBear.IO.SeekableContent.Create(System.IO.Stream! source, long maxLength, int memoryThreshold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.IO.SeekableContent!>
-PandaBear.IO.SeekableContent.Dispose() -> void
-PandaBear.IO.SeekableContent.DisposeAsync() -> System.Threading.Tasks.ValueTask
-PandaBear.IO.AtomicFile
-static PandaBear.IO.AtomicFile.CreateIfAbsent(string! path, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<bool>
-static PandaBear.IO.AtomicFile.Replace(string! path, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-static PandaBear.IO.AtomicFile.Replace(string! path, string! temporaryFilePrefix, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.IO.ArtifactManifest
-PandaBear.IO.VerifiedArtifact
-static PandaBear.IO.ArtifactManifest.Read<T>(string! path, int maxBytes, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T!>! typeInfo, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<(T! Manifest, string! Directory, string! Digest)>!
-static PandaBear.IO.VerifiedArtifact.Read(string! directory, string! path, string! sha256, int maxBytes, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.ReadOnlyMemory<byte>>!
-static PandaBear.IO.VerifiedArtifact.Verify(string! directory, string! path, string! sha256, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static PandaBear.IO.BoundedReader.ReadContent(System.Net.Http.HttpContent! content, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!
-static PandaBear.IO.AtomicFile.Replace(string! path, System.ReadOnlySpan<byte> content) -> void
+SharedKernel.IO.BoundedReader
+static SharedKernel.IO.BoundedReader.ReadFile(string! path, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!
+static SharedKernel.IO.BoundedReader.ReadToEnd(System.IO.Stream! source, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!
+SharedKernel.IO.FilePaths
+const SharedKernel.IO.FilePaths.MaxLinks = 40 -> int
+static SharedKernel.IO.FilePaths.MayNameSameFile(string! first, string! second) -> bool
+static SharedKernel.IO.FilePaths.ResolveLinks(string! path) -> string!
+SharedKernel.IO.RepositoryPath
+SharedKernel.IO.RepositoryPath.Equals(SharedKernel.IO.RepositoryPath other) -> bool
+~override SharedKernel.IO.RepositoryPath.Equals(object obj) -> bool
+override SharedKernel.IO.RepositoryPath.GetHashCode() -> int
+static SharedKernel.IO.RepositoryPath.IsValid(string? value) -> bool
+static SharedKernel.IO.RepositoryPath.Parse(string? value) -> SharedKernel.IO.RepositoryPath
+SharedKernel.IO.RepositoryPath.RepositoryPath() -> void
+SharedKernel.IO.RepositoryPath.ResolveUnder(string! root) -> string!
+override SharedKernel.IO.RepositoryPath.ToString() -> string!
+static SharedKernel.IO.RepositoryPath.TryParse(string? value, out SharedKernel.IO.RepositoryPath path) -> bool
+SharedKernel.IO.RepositoryPath.Value.get -> string!
+static SharedKernel.IO.RepositoryPath.operator !=(SharedKernel.IO.RepositoryPath left, SharedKernel.IO.RepositoryPath right) -> bool
+static SharedKernel.IO.RepositoryPath.operator ==(SharedKernel.IO.RepositoryPath left, SharedKernel.IO.RepositoryPath right) -> bool
+SharedKernel.IO.SecureFile
+static SharedKernel.IO.SecureFile.WriteAllText(string! path, System.ReadOnlySpan<char> contents, bool overwrite, System.Threading.CancellationToken ct) -> void
+static SharedKernel.IO.SecureFile.WriteAllText(string! path, string! contents, bool overwrite) -> void
+SharedKernel.IO.SeekableContent
+SharedKernel.IO.SeekableContent.Content.get -> System.IO.Stream!
+static SharedKernel.IO.SeekableContent.Create(System.IO.Stream! source, long maxLength, int memoryThreshold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.IO.SeekableContent!>
+SharedKernel.IO.SeekableContent.Dispose() -> void
+SharedKernel.IO.SeekableContent.DisposeAsync() -> System.Threading.Tasks.ValueTask
+SharedKernel.IO.AtomicFile
+static SharedKernel.IO.AtomicFile.CreateIfAbsent(string! path, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<bool>
+static SharedKernel.IO.AtomicFile.Replace(string! path, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+static SharedKernel.IO.AtomicFile.Replace(string! path, string! temporaryFilePrefix, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.IO.ArtifactManifest
+SharedKernel.IO.VerifiedArtifact
+static SharedKernel.IO.ArtifactManifest.Read<T>(string! path, int maxBytes, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T!>! typeInfo, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<(T! Manifest, string! Directory, string! Digest)>!
+static SharedKernel.IO.VerifiedArtifact.Read(string! directory, string! path, string! sha256, int maxBytes, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.ReadOnlyMemory<byte>>!
+static SharedKernel.IO.VerifiedArtifact.Verify(string! directory, string! path, string! sha256, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static SharedKernel.IO.BoundedReader.ReadContent(System.Net.Http.HttpContent! content, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!
+static SharedKernel.IO.AtomicFile.Replace(string! path, System.ReadOnlySpan<byte> content) -> void

@@ -1,4 +1,4 @@
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Creates executable files for the executable resolver tests.</summary>
 internal static class PathExecutableResolverTestFiles

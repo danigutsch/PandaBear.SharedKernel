@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.ServiceDiscovery;
 
-namespace PandaBear.ServiceDefaults.Tests;
+namespace SharedKernel.ServiceDefaults.Tests;
 
 /// <summary>Tests the HttpClient part of the service defaults: service discovery and the standard resilience handler.</summary>
 public sealed class HttpClientDefaultsTests

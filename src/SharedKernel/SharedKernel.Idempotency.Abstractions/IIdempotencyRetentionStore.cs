@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency;
+namespace SharedKernel.Idempotency;
 
 /// <summary>
 /// Purges expired idempotency entries while retaining the entries that a hold or a missing retention owner protects.

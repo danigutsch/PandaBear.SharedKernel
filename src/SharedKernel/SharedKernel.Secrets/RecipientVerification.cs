@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The outcome of comparing a SOPS file's key holders with the recipient set of its creation rule.</summary>
 public sealed class RecipientVerification

@@ -18,8 +18,8 @@ Each operation takes an options record and writes its result lines to a `TextWri
 host passes; the engine reads no environment variable and no console.
 
 ```csharp
-using PandaBear.Processes;
-using PandaBear.Versioning;
+using SharedKernel.Processes;
+using SharedKernel.Versioning;
 
 var runner = new SystemProcessRunner();
 var resolver = PathExecutableResolver.Default;
@@ -55,6 +55,6 @@ lowercase hexadecimal hash that the manifest records.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Versioning`. C# namespace: `PandaBear.Versioning`. Assembly/project identity: `SharedKernel.Versioning`.
+Package ID: `PandaBear.SharedKernel.Versioning`. C# namespace: `SharedKernel.Versioning`. Assembly/project identity: `SharedKernel.Versioning`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

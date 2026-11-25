@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Bitwarden.Tests;
+namespace SharedKernel.Vault.Bitwarden.Tests;
 
 /// <summary>Builds a Bitwarden zip export whose attachment folders match one, several, or no item.</summary>
 internal static class BitwardenZipFixture

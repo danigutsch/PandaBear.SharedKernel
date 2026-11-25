@@ -104,6 +104,6 @@ dotnet codefix SharedKernel.slnx --diagnostic SKTEST006
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.CodeFixRunner`. C# namespace: `PandaBear.Testing.CodeFixRunner`. Assembly/project identity: `SharedKernel.Testing.CodeFixRunner`.
+Package ID: `PandaBear.SharedKernel.Testing.CodeFixRunner`. C# namespace: `SharedKernel.Testing.CodeFixRunner`. Assembly/project identity: `SharedKernel.Testing.CodeFixRunner`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

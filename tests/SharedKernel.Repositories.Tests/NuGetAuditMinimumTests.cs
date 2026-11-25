@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Verifies the ordering and completeness rules of the automatic audit search.</summary>
 public sealed class NuGetAuditMinimumTests

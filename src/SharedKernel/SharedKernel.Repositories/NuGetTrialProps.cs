@@ -1,9 +1,9 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Edits only explicitly selected central declaration spans in a trial checkout.</summary>
 internal static class NuGetTrialProps

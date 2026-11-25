@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Installs Playwright browsers with the <c>playwright.ps1</c> in the build output of a project, found through its evaluated <c>OutputPath</c>.</summary>
 public sealed class PlaywrightInstaller

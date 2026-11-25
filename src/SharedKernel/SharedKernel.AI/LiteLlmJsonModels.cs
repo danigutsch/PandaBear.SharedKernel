@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace PandaBear.AI;
+namespace SharedKernel.AI;
 
 /// <summary>Chat completion request body sent to the LiteLLM proxy.</summary>
 /// <param name="Model">Name of the model the proxy routes the request to.</param>

@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 /// <summary>
 /// The test method name segments that SKTEST002 accepts outside the sentence-style lowercase form.

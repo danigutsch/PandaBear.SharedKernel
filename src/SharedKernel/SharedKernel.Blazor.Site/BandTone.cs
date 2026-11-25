@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The background of a <see cref="Band" />.</summary>
 public enum BandTone

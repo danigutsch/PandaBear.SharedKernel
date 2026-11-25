@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The search and sharing metadata of a page, rendered into the host's <c>HeadOutlet</c>: title, description, robots directive,

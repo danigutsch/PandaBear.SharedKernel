@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests creation and validation of ISO 3166-1 country codes.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

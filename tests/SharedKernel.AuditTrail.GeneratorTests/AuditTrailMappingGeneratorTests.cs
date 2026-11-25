@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.AuditTrail.GeneratorTests;
+namespace SharedKernel.AuditTrail.GeneratorTests;
 
 /// <summary>
 /// Tests that AuditTrailMappingGenerator emits dispatch handlers for valid audit mappings and AUDIT001 or AUDIT002 errors for invalid ones.
@@ -45,9 +45,9 @@ public sealed class AuditTrailMappingGeneratorTests
         generatedSource.ShouldContain("auditTrailSink.Append(", StringComparison.Ordinal);
         generatedSource.ShouldContain("IDomainEventDispatchHandler", StringComparison.Ordinal);
         generatedSource.ShouldContain("TryAddEnumerable", StringComparison.Ordinal);
-        generatedSource.ShouldContain("TryAddScoped<global::PandaBear.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldContain("ServiceDescriptor.Scoped<global::PandaBear.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("ServiceDescriptor.Singleton<global::PandaBear.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
+        generatedSource.ShouldContain("TryAddScoped<global::SharedKernel.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
+        generatedSource.ShouldContain("ServiceDescriptor.Scoped<global::SharedKernel.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("ServiceDescriptor.Singleton<global::SharedKernel.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("IntegrationEvent", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("CloudEvent", StringComparison.Ordinal);
     }

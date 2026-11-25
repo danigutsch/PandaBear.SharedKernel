@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.UploadSanitizing.Tests.Fonts;
+namespace SharedKernel.UploadSanitizing.Tests.Fonts;
 
 /// <summary>Assertions on font sanitizer results.</summary>
 internal static class FontAssertions

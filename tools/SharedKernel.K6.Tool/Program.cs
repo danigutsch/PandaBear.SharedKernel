@@ -1,9 +1,9 @@
 using System.Collections;
 using System.CommandLine;
-using PandaBear.K6.Tool;
-using PandaBear.LoadTesting;
-using PandaBear.LoadTesting.K6;
-using PandaBear.Processes;
+using SharedKernel.K6.Tool;
+using SharedKernel.LoadTesting;
+using SharedKernel.LoadTesting.K6;
+using SharedKernel.Processes;
 
 var configuration = new InvocationConfiguration
 {

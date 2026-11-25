@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Creates GitHub responses for the sync tests.</summary>
 internal static class GitHubSyncTestResponseFactory

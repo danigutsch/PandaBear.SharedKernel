@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Unvalidated text of an offering in one culture. Lists are one line per item; <see langword="null"/> is none.</summary>
 public sealed record OfferingTranslationDefinition

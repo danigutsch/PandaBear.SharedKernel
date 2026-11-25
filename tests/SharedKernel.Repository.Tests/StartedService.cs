@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>The start information of a service process, as the CI tool requested it.</summary>
 /// <param name="FileName">The executable that the tool asked to start, before the fake host replaced it with a script.</param>

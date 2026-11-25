@@ -1,4 +1,4 @@
-namespace PandaBear.UploadSanitizing;
+namespace SharedKernel.UploadSanitizing;
 
 /// <summary>Reads an upload from a stream into memory, never more than a limit plus one byte, so a stream that is too long is detected.</summary>
 internal static class UploadReader

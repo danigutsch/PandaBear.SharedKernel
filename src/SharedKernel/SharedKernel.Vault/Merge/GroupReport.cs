@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>Changed fields of one merged group.</summary>
 /// <param name="GroupKey">Group key.</param>

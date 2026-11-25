@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>An async-disposable that records its disposal order once, optionally returning a faulted task, to test disposal sequencing and failure handling.</summary>
 /// <param name="name">The name appended to <paramref name="disposalOrder" /> when this instance is disposed.</param>

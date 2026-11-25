@@ -1,7 +1,7 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A numbered list of steps, such as the days of an itinerary: an <c>ol</c> (<c>site-step-list</c>) with <c>role="list"</c>, because

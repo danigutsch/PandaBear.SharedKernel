@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.GitHub;
+namespace SharedKernel.GitHub;
 
 /// <summary>
 /// The GitHub token that a command reads from <c>GH_TOKEN</c> or <c>GITHUB_TOKEN</c>, in that order, as

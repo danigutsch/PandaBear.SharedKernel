@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Writes the invalid pins that stage-candidate must reject before it runs Git or changes a file.</summary>
 internal static class CandidatePinCases

@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>GraphQL response that lists the field values of a project item.</summary>
 /// <param name="Data">Response payload.</param>

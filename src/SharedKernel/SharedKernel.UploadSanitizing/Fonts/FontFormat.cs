@@ -1,4 +1,4 @@
-namespace PandaBear.UploadSanitizing.Fonts;
+namespace SharedKernel.UploadSanitizing.Fonts;
 
 /// <summary>The font formats <see cref="FontSanitizer"/> accepts, recognized by their leading bytes, never by file name or declared content type.</summary>
 public enum FontFormat

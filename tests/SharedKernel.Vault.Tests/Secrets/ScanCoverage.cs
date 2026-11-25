@@ -1,7 +1,7 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>
 /// Checks the findings of a large text against the secrets it holds. A pattern match that exceeds its timeout twice in a

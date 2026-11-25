@@ -4,7 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Sandbox.ClaudeCode;
+namespace SharedKernel.Sandbox.ClaudeCode;
 
 /// <summary>
 /// The text of a Claude Code settings file as a JSON object. Every key that is not managed stays as it is, in order, and

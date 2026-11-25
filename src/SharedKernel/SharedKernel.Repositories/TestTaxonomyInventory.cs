@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The tracked project inventory and its production and test directories.</summary>
 /// <param name="Version">The inventory schema version.</param>

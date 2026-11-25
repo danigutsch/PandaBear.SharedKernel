@@ -1,45 +1,45 @@
 #nullable enable
-const PandaBear.Testing.Logging.ThrowingLogger<T>.Secret = "logger-secret" -> string!
-PandaBear.Testing.Logging.RecordedLog
-PandaBear.Testing.Logging.RecordedLog.EventId.get -> Microsoft.Extensions.Logging.EventId
-PandaBear.Testing.Logging.RecordedLog.EventId.init -> void
-PandaBear.Testing.Logging.RecordedLog.Exception.get -> System.Exception?
-PandaBear.Testing.Logging.RecordedLog.Exception.init -> void
-PandaBear.Testing.Logging.RecordedLog.Level.get -> Microsoft.Extensions.Logging.LogLevel
-PandaBear.Testing.Logging.RecordedLog.Level.init -> void
-PandaBear.Testing.Logging.RecordedLog.Message.get -> string!
-PandaBear.Testing.Logging.RecordedLog.Message.init -> void
-PandaBear.Testing.Logging.RecordedLog.RecordedLog(Microsoft.Extensions.Logging.LogLevel Level, Microsoft.Extensions.Logging.EventId EventId, string! Message, System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>! State, System.Exception? Exception) -> void
-PandaBear.Testing.Logging.RecordedLog.State.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>!
-PandaBear.Testing.Logging.RecordedLog.State.init -> void
-PandaBear.Testing.Logging.RecordingLogger
-PandaBear.Testing.Logging.RecordingLogger.BeginScope<TState>(TState state) -> System.IDisposable?
-PandaBear.Testing.Logging.RecordingLogger.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
-PandaBear.Testing.Logging.RecordingLogger.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string!>! formatter) -> void
-PandaBear.Testing.Logging.RecordingLogger.MinimumLevel.get -> Microsoft.Extensions.Logging.LogLevel
-PandaBear.Testing.Logging.RecordingLogger.MinimumLevel.set -> void
-PandaBear.Testing.Logging.RecordingLogger.RecordingLogger() -> void
-PandaBear.Testing.Logging.RecordingLogger.Records.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Logging.RecordedLog!>!
-PandaBear.Testing.Logging.RecordingLogger.Scopes.get -> System.Collections.Generic.IReadOnlyList<object!>!
-PandaBear.Testing.Logging.RecordingLogger<T>
-PandaBear.Testing.Logging.RecordingLogger<T>.RecordingLogger() -> void
-PandaBear.Testing.Logging.ThrowingLogger<T>
-PandaBear.Testing.Logging.ThrowingLogger<T>.BeginScope<TState>(TState state) -> System.IDisposable?
-PandaBear.Testing.Logging.ThrowingLogger<T>.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
-PandaBear.Testing.Logging.ThrowingLogger<T>.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string!>! formatter) -> void
-PandaBear.Testing.Logging.ThrowingLogger<T>.ThrowingLogger() -> void
-PandaBear.Testing.Logging.RecordingLoggerProvider
-PandaBear.Testing.Logging.RecordingLoggerProvider.CategoryNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Testing.Logging.RecordingLoggerProvider.CreateLogger(string! categoryName) -> Microsoft.Extensions.Logging.ILogger!
-PandaBear.Testing.Logging.RecordingLoggerProvider.Dispose() -> void
-PandaBear.Testing.Logging.RecordingLoggerProvider.Logger.get -> PandaBear.Testing.Logging.RecordingLogger!
-PandaBear.Testing.Logging.RecordingLoggerProvider.RecordingLoggerProvider() -> void
-PandaBear.Testing.Logging.RecordingLoggerProvider.Records.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Logging.RecordedLog!>!
-PandaBear.Testing.Logging.RecordedLog.<Clone>$() -> PandaBear.Testing.Logging.RecordedLog!
-PandaBear.Testing.Logging.RecordedLog.Deconstruct(out Microsoft.Extensions.Logging.LogLevel Level, out Microsoft.Extensions.Logging.EventId EventId, out string! Message, out System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>! State, out System.Exception? Exception) -> void
-PandaBear.Testing.Logging.RecordedLog.Equals(PandaBear.Testing.Logging.RecordedLog? other) -> bool
-override PandaBear.Testing.Logging.RecordedLog.Equals(object? obj) -> bool
-override PandaBear.Testing.Logging.RecordedLog.GetHashCode() -> int
-override PandaBear.Testing.Logging.RecordedLog.ToString() -> string!
-static PandaBear.Testing.Logging.RecordedLog.operator !=(PandaBear.Testing.Logging.RecordedLog? left, PandaBear.Testing.Logging.RecordedLog? right) -> bool
-static PandaBear.Testing.Logging.RecordedLog.operator ==(PandaBear.Testing.Logging.RecordedLog? left, PandaBear.Testing.Logging.RecordedLog? right) -> bool
+const SharedKernel.Testing.Logging.ThrowingLogger<T>.Secret = "logger-secret" -> string!
+SharedKernel.Testing.Logging.RecordedLog
+SharedKernel.Testing.Logging.RecordedLog.EventId.get -> Microsoft.Extensions.Logging.EventId
+SharedKernel.Testing.Logging.RecordedLog.EventId.init -> void
+SharedKernel.Testing.Logging.RecordedLog.Exception.get -> System.Exception?
+SharedKernel.Testing.Logging.RecordedLog.Exception.init -> void
+SharedKernel.Testing.Logging.RecordedLog.Level.get -> Microsoft.Extensions.Logging.LogLevel
+SharedKernel.Testing.Logging.RecordedLog.Level.init -> void
+SharedKernel.Testing.Logging.RecordedLog.Message.get -> string!
+SharedKernel.Testing.Logging.RecordedLog.Message.init -> void
+SharedKernel.Testing.Logging.RecordedLog.RecordedLog(Microsoft.Extensions.Logging.LogLevel Level, Microsoft.Extensions.Logging.EventId EventId, string! Message, System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>! State, System.Exception? Exception) -> void
+SharedKernel.Testing.Logging.RecordedLog.State.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>!
+SharedKernel.Testing.Logging.RecordedLog.State.init -> void
+SharedKernel.Testing.Logging.RecordingLogger
+SharedKernel.Testing.Logging.RecordingLogger.BeginScope<TState>(TState state) -> System.IDisposable?
+SharedKernel.Testing.Logging.RecordingLogger.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
+SharedKernel.Testing.Logging.RecordingLogger.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string!>! formatter) -> void
+SharedKernel.Testing.Logging.RecordingLogger.MinimumLevel.get -> Microsoft.Extensions.Logging.LogLevel
+SharedKernel.Testing.Logging.RecordingLogger.MinimumLevel.set -> void
+SharedKernel.Testing.Logging.RecordingLogger.RecordingLogger() -> void
+SharedKernel.Testing.Logging.RecordingLogger.Records.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Logging.RecordedLog!>!
+SharedKernel.Testing.Logging.RecordingLogger.Scopes.get -> System.Collections.Generic.IReadOnlyList<object!>!
+SharedKernel.Testing.Logging.RecordingLogger<T>
+SharedKernel.Testing.Logging.RecordingLogger<T>.RecordingLogger() -> void
+SharedKernel.Testing.Logging.ThrowingLogger<T>
+SharedKernel.Testing.Logging.ThrowingLogger<T>.BeginScope<TState>(TState state) -> System.IDisposable?
+SharedKernel.Testing.Logging.ThrowingLogger<T>.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
+SharedKernel.Testing.Logging.ThrowingLogger<T>.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string!>! formatter) -> void
+SharedKernel.Testing.Logging.ThrowingLogger<T>.ThrowingLogger() -> void
+SharedKernel.Testing.Logging.RecordingLoggerProvider
+SharedKernel.Testing.Logging.RecordingLoggerProvider.CategoryNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Testing.Logging.RecordingLoggerProvider.CreateLogger(string! categoryName) -> Microsoft.Extensions.Logging.ILogger!
+SharedKernel.Testing.Logging.RecordingLoggerProvider.Dispose() -> void
+SharedKernel.Testing.Logging.RecordingLoggerProvider.Logger.get -> SharedKernel.Testing.Logging.RecordingLogger!
+SharedKernel.Testing.Logging.RecordingLoggerProvider.RecordingLoggerProvider() -> void
+SharedKernel.Testing.Logging.RecordingLoggerProvider.Records.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Logging.RecordedLog!>!
+SharedKernel.Testing.Logging.RecordedLog.<Clone>$() -> SharedKernel.Testing.Logging.RecordedLog!
+SharedKernel.Testing.Logging.RecordedLog.Deconstruct(out Microsoft.Extensions.Logging.LogLevel Level, out Microsoft.Extensions.Logging.EventId EventId, out string! Message, out System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>! State, out System.Exception? Exception) -> void
+SharedKernel.Testing.Logging.RecordedLog.Equals(SharedKernel.Testing.Logging.RecordedLog? other) -> bool
+override SharedKernel.Testing.Logging.RecordedLog.Equals(object? obj) -> bool
+override SharedKernel.Testing.Logging.RecordedLog.GetHashCode() -> int
+override SharedKernel.Testing.Logging.RecordedLog.ToString() -> string!
+static SharedKernel.Testing.Logging.RecordedLog.operator !=(SharedKernel.Testing.Logging.RecordedLog? left, SharedKernel.Testing.Logging.RecordedLog? right) -> bool
+static SharedKernel.Testing.Logging.RecordedLog.operator ==(SharedKernel.Testing.Logging.RecordedLog? left, SharedKernel.Testing.Logging.RecordedLog? right) -> bool

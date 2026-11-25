@@ -1,4 +1,4 @@
-namespace PandaBear.IO;
+namespace SharedKernel.IO;
 
 /// <summary>
 /// Reads a whole file, stream or HTTP content into memory only when it holds no more than a limit, for small inputs such as

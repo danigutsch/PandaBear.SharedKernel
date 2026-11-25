@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>Identifies an exclusive position in a scheduling run history.</summary>
 /// <param name="StartedAt">The last row's start observation timestamp.</param>

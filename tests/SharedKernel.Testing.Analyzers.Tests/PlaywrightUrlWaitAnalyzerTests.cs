@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST020 rule that reports Playwright's racy <c>WaitForURLAsync</c> string waits on pages.</summary>
 public sealed class PlaywrightUrlWaitAnalyzerTests

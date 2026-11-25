@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing.Data;
+namespace SharedKernel.Testing.Data;
 
 /// <summary>
 /// Creates deterministic-format unique identifiers for test-owned data.

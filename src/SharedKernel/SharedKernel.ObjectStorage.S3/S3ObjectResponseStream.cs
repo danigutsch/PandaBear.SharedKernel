@@ -1,6 +1,6 @@
 using Amazon.S3.Model;
 
-namespace PandaBear.ObjectStorage.S3;
+namespace SharedKernel.ObjectStorage.S3;
 
 /// <summary>
 /// Disposes the S3 response together with the stream returned to callers.

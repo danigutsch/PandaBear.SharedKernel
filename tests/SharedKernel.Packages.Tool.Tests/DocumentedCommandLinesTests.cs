@@ -1,6 +1,6 @@
 using System.CommandLine.Help;
 
-namespace PandaBear.Packages.Tool.Tests;
+namespace SharedKernel.Packages.Tool.Tests;
 
 /// <summary>Tests that the tool README documents only command lines that the tool accepts.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

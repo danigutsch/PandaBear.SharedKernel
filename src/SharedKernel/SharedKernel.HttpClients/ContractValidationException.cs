@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>
 /// Represents an HTTP 400 validation response, including a payload that cannot provide usable field errors.

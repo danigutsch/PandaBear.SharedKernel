@@ -326,6 +326,6 @@ apply to analyzer projects.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Versioning.Tool`. C# namespace: `PandaBear.Versioning.Tool`. Assembly/project identity: `SharedKernel.Versioning.Tool`.
+Package ID: `PandaBear.SharedKernel.Versioning.Tool`. C# namespace: `SharedKernel.Versioning.Tool`. Assembly/project identity: `SharedKernel.Versioning.Tool`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

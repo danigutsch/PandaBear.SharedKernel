@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace PandaBear.PlaywrightMcp.Tool.Tests;
+namespace SharedKernel.PlaywrightMcp.Tool.Tests;
 
 /// <summary>Tests how the tool runs, cleans up, and reports on the container engine through the command line, with fake process runners.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

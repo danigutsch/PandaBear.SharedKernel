@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.ObjectStorage.FileSystem.Tests;
+namespace SharedKernel.ObjectStorage.FileSystem.Tests;
 
 /// <summary>Exercises the file store through its provider-neutral contract.</summary>
 public sealed class FileSystemObjectStoreTests

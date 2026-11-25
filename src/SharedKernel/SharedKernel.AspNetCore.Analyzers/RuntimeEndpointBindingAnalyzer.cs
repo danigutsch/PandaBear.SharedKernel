@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.AspNetCore.Analyzers;
+namespace SharedKernel.AspNetCore.Analyzers;
 
 /// <summary>Checks that intentional Minimal API runtime binding has explicit AOT and trimming annotations.</summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]

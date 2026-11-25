@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PandaBear.Mediator;
-using PandaBear.Mediator.EntityFrameworkCore;
-using PandaBear.Results;
+using SharedKernel.Mediator;
+using SharedKernel.Mediator.EntityFrameworkCore;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Consumer-style subclass of the result transaction behavior used by the tests.

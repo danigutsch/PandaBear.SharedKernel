@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Records what happened in a scope, in order.</summary>
 internal sealed class ScopeLog

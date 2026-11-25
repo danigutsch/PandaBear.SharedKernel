@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Analyzer project for misuse of `PandaBear.Results.Result` and `Result<T>`.
+Analyzer project for misuse of `SharedKernel.Results.Result` and `Result<T>`.
 
 ## Purpose
 
@@ -82,6 +82,6 @@ This package owns Result-pattern misuse diagnostics. The shape of methods that r
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Results.Analyzers`. C# namespace: `PandaBear.Results.Analyzers`. Assembly/project identity: `SharedKernel.Results.Analyzers`.
+Package ID: `PandaBear.SharedKernel.Results.Analyzers`. C# namespace: `SharedKernel.Results.Analyzers`. Assembly/project identity: `SharedKernel.Results.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

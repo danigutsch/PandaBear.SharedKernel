@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.CI.Forgejo.Tests;
+namespace SharedKernel.CI.Forgejo.Tests;
 
 /// <summary>Writes release lists as the Forgejo releases API returns them.</summary>
 internal static class Releases

@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.ObjectStorage;
+namespace SharedKernel.Testing.ObjectStorage;
 
 /// <summary>A write that <see cref="InMemoryObjectStore" /> completed, and how its content stream looked when the store received it.</summary>
 /// <param name="ObjectKey">The object key of the request.</param>

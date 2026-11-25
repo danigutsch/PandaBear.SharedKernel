@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace PandaBear.PlaywrightMcp.Tool;
+namespace SharedKernel.PlaywrightMcp.Tool;
 
 /// <summary>Builds the command-line interface of the Playwright MCP tool.</summary>
 internal static class PlaywrightMcpCommandLine

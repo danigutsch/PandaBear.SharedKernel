@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.TestServices.Host;
+using SharedKernel.TestServices.Host;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests resolving and publishing the ready file through which the owner host hands over the values of its services. Each test uses its own temporary directory, removed on disposal.</summary>
 public sealed class ReadyFileTests : IDisposable

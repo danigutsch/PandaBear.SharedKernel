@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the case-insensitive reference code, such as a tour identifier.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

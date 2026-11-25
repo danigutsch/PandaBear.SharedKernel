@@ -1,4 +1,4 @@
 #nullable enable
-PandaBear.AuditTrail.SourceGenerator.AuditTrailMappingGenerator
-PandaBear.AuditTrail.SourceGenerator.AuditTrailMappingGenerator.AuditTrailMappingGenerator() -> void
-PandaBear.AuditTrail.SourceGenerator.AuditTrailMappingGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
+SharedKernel.AuditTrail.SourceGenerator.AuditTrailMappingGenerator
+SharedKernel.AuditTrail.SourceGenerator.AuditTrailMappingGenerator.AuditTrailMappingGenerator() -> void
+SharedKernel.AuditTrail.SourceGenerator.AuditTrailMappingGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void

@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>Where <see cref="Money.ToDisplayString(IFormatProvider, MoneyDisplayOptions)"/> puts the currency symbol.</summary>
 public enum MoneySymbolPlacement

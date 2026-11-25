@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Creates the code fix workspaces of the testing analyzer tests, whose documents use xUnit.</summary>
 internal static class CodeFixTestWorkspace
@@ -27,7 +27,7 @@ internal static class CodeFixTestWorkspace
             AssemblyName = assemblyName,
             DefaultUsings = includeDefaultUsings ? DefaultUsings : string.Empty,
             AdditionalReferences = [Xunit],
-            DocumentPath = filePath ?? Path.Combine(Path.GetTempPath(), "PandaBear.Testing.CodeFixes.Tests", Guid.NewGuid().ToString("N"), "Test0.cs"),
+            DocumentPath = filePath ?? Path.Combine(Path.GetTempPath(), "SharedKernel.Testing.CodeFixes.Tests", Guid.NewGuid().ToString("N"), "Test0.cs"),
             DocumentationMode = documentationMode,
         });
 }

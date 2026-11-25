@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Testing.AspNetCore;
+using SharedKernel.Testing.AspNetCore;
 using Xunit;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>
 /// One run of the application's real entry point on Kestrel, shared by the browser tests of a class. Use it as an xUnit class fixture and

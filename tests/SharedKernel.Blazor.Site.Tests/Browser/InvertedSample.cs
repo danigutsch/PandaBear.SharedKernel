@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Playwright;
-using PandaBear.Blazor.Site.Theming;
+using SharedKernel.Blazor.Site.Theming;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// A page for the tests of the primary colour's inversion: a primary band with a plain card (outline more look, primary button link) and

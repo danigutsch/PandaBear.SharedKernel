@@ -1,6 +1,6 @@
-using static PandaBear.PageSections.Tests.PageSectionFixtures;
+using static SharedKernel.PageSections.Tests.PageSectionFixtures;
 
-namespace PandaBear.PageSections.Tests;
+namespace SharedKernel.PageSections.Tests;
 
 /// <summary>Tests the rules of a translation's list of sections: the count, the heading levels and publishing.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

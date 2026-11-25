@@ -3,7 +3,7 @@
 using System.Net;
 using System.Net.Mime;
 
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>Transfers an upstream streaming response to a caller-owned result.</summary>
 public static class HttpResponseBody

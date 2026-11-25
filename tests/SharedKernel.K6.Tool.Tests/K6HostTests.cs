@@ -1,4 +1,4 @@
-namespace PandaBear.K6.Tool.Tests;
+namespace SharedKernel.K6.Tool.Tests;
 
 /// <summary>Tests the managed host that a scenario can start before k6 runs.</summary>
 [Trait(TestTraitNames.ScopeName, "integration")]

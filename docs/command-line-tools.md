@@ -100,7 +100,7 @@ non-interactive commands and to how they start a UI.
   variables.
 - The file is strict JSON of at most 1 MiB with `"version": 1`. Property names are camelCase and match exactly;
   comments, trailing commas, and unknown or repeated properties are errors. Read it with
-  `PandaBear.ConfigurationFiles.JsonConfigurationFile` and a source-generated `JsonSerializerContext` that sets
+  `SharedKernel.ConfigurationFiles.JsonConfigurationFile` and a source-generated `JsonSerializerContext` that sets
   `UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow` and `AllowDuplicateProperties = false`. Errors name the
   file and the JSON path of the problem. A leading UTF-8 byte order mark is ignored.
 - A command fails when the file lacks the section it needs.
@@ -220,7 +220,7 @@ incrementally. Each wrapped tool and the libraries it wraps:
   `GH_TOKEN` or `GITHUB_TOKEN`, as [`gh`](https://cli.github.com/manual/gh_help_environment) does, and a Forgejo token
   from `FORGEJO_TOKEN`. Every child process that needs no forge access starts without any of them, nor gh's GitHub
   Enterprise Server tokens `GH_ENTERPRISE_TOKEN` and `GITHUB_ENTERPRISE_TOKEN`, through
-  `PandaBear.Processes.ProcessEnvironment.RemoveForgeTokens`.
+  `SharedKernel.Processes.ProcessEnvironment.RemoveForgeTokens`.
 - Do not use `SecureString` ([DE0001](https://github.com/dotnet/platform-compat/blob/master/docs/DE0001.md)).
   Keep secret bytes in arrays you own and clear them with
   [`CryptographicOperations.ZeroMemory`](https://learn.microsoft.com/dotnet/api/system.security.cryptography.cryptographicoperations.zeromemory).
@@ -252,9 +252,9 @@ incrementally. Each wrapped tool and the libraries it wraps:
 
 ## Adding a tool
 
-1. Create the engine `src/SharedKernel/SharedKernel.<Name>` in the `PandaBear.<Name>` namespace, with PublicAPI files,
+1. Create the engine `src/SharedKernel/SharedKernel.<Name>` in the `SharedKernel.<Name>` namespace, with PublicAPI files,
    a README, and a lock-file decision (a generic core plus one `SharedKernel.<Name>.<Provider>` library per verified
-   provider, as the [tool engines ADR](adr/20261115-tool-engines-and-thin-wrappers.md) decides), and `tools/SharedKernel.<Name>.Tool` in the `PandaBear.<Name>.Tool` namespace,
+   provider, as the [tool engines ADR](adr/20261115-tool-engines-and-thin-wrappers.md) decides), and `tools/SharedKernel.<Name>.Tool` in the `SharedKernel.<Name>.Tool` namespace,
    with the packaging properties above, the `sharedkernel-<name>` command name, the
    `PandaBear.SharedKernel.<Name>.Tool` package ID, and a `ProjectReference` to the engine. Add them and
    `tests/SharedKernel.<Name>.Tool.Tests` to `SharedKernel.slnx`.

@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.SecretScanning;
+using SharedKernel.SecretScanning;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>A detected secret, described only by its location. It never holds the secret value.</summary>
 public sealed record SecretFinding

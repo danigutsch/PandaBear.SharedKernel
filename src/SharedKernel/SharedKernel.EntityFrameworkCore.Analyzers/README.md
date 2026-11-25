@@ -14,7 +14,7 @@ can answer with a field error. A unique index without a rule still enforces uniq
 raw provider exception and the client gets a server error.
 
 Reference this package only in projects that use `SharedKernel.EntityFrameworkCore`. The analyzer reports nothing when the
-compilation does not reference `PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions`.
+compilation does not reference `SharedKernel.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions`.
 
 ## Diagnostics
 
@@ -67,6 +67,6 @@ This package owns Entity Framework Core model configuration diagnostics. Keep re
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.EntityFrameworkCore.Analyzers`. C# namespace: `PandaBear.EntityFrameworkCore.Analyzers`. Assembly/project identity: `SharedKernel.EntityFrameworkCore.Analyzers`.
+Package ID: `PandaBear.SharedKernel.EntityFrameworkCore.Analyzers`. C# namespace: `SharedKernel.EntityFrameworkCore.Analyzers`. Assembly/project identity: `SharedKernel.EntityFrameworkCore.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

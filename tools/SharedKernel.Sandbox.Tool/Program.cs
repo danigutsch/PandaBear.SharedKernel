@@ -1,5 +1,5 @@
-using PandaBear.Sandbox;
-using PandaBear.Sandbox.Tool;
+using SharedKernel.Sandbox;
+using SharedKernel.Sandbox.Tool;
 
 return await SandboxCommandLine
     .Create(Environment.CurrentDirectory, new SystemSandboxEnvironment())

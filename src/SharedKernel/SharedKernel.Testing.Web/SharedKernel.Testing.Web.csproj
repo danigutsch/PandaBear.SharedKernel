@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Web</PackageId>
         <Description>Reusable bUnit element assertions for SharedKernel web test suites.</Description>
-        <RootNamespace>PandaBear.Testing.Web</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.Web</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;bunit;web;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The coverage of one source line, merged over every report that names it.</summary>
 /// <param name="Hit">Whether a test executed the line.</param>

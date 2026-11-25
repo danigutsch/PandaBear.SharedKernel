@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>The inventory fixture’s strict serialization contract.</summary>
 [JsonSourceGenerationOptions(

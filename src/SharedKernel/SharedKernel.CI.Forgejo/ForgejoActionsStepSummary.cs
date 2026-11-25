@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Forgejo;
+namespace SharedKernel.CI.Forgejo;
 
 /// <summary>
 /// Appends Markdown to the file that Forgejo Actions names in <c>FORGEJO_STEP_SUMMARY</c> (a program that writes

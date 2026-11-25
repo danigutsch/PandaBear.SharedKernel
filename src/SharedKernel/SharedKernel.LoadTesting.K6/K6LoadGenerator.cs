@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.LoadTesting.K6;
+namespace SharedKernel.LoadTesting.K6;
 
 /// <summary>
 /// Runs <see href="https://grafana.com/docs/k6/latest/">k6</see> as the load generator of a

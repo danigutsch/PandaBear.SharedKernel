@@ -1,4 +1,4 @@
-namespace PandaBear.Style.CodeFixes.Tests;
+namespace SharedKernel.Style.CodeFixes.Tests;
 
 /// <summary>Tests that the SKSTYLE011 unbounded I/O diagnostic has no automatic fix.</summary>
 public sealed class UnboundedIoCodeFixTests

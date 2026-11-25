@@ -8,9 +8,9 @@ Aggregate contracts, domain events, reusable identity interfaces, and value obje
 
 ## Decision
 
-`PandaBear.Domain` owns aggregate-root contracts, `IDomainEvent`, and typed in-process domain-event dispatch. `PandaBear.BuildingBlocks` owns reusable identity interfaces and value objects. Keep mechanical identity support opt-in; generators do not own business validation.
+`SharedKernel.Domain` owns aggregate-root contracts, `IDomainEvent`, and typed in-process domain-event dispatch. `SharedKernel.BuildingBlocks` owns reusable identity interfaces and value objects. Keep mechanical identity support opt-in; generators do not own business validation.
 
-Keep package capabilities focused and provider-independent. Add a reusable primitive only when its boundary and current use are clear; a value object specific to one business belongs with its owner. Source namespaces use `PandaBear.*`; assembly/project identities retain `SharedKernel.*`, and package IDs use `PandaBear.SharedKernel.*` as recorded in the [namespace decision](20261020-pandabear-namespaces.md).
+Keep package capabilities focused and provider-independent. Add a reusable primitive only when its boundary and current use are clear; a value object specific to one business belongs with its owner. Source namespaces and assembly/project identities use `SharedKernel.*`, and package IDs use `PandaBear.SharedKernel.*` as recorded in the [namespace decision](20261124-sharedkernel-namespaces.md).
 
 ## Consequences and alternatives
 

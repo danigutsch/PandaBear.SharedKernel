@@ -28,7 +28,7 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 - `SKTEST014` introduces a collision-free named local and an explicit `ShouldNotBeNull` guard before the assertion. It supports standalone block statements and checks that the rewritten invocation compiles and binds to the repository assertion API.
 - `SKTEST013` and `SKTEST015` provide diagnostic guidance; selecting a semantic target or browser assertion migration remains explicit.
 - `SKTEST017` adds the forwarding `userMessage` overload after the assertion. It is offered only when the overload binds to the original and to a static `WithUserMessage` helper of the matching shape, no extension `GetAwaiter` makes the result awaitable, the overload adds no compiler warnings or errors, and it covers the assertion; Fix All is unavailable.
-- `SKTEST022` replaces `new StringWriter()` and `new StringWriter(CultureInfo.InvariantCulture)` with `new InvariantStringWriter()` and adds `using PandaBear.Testing;` when the compilation references `PandaBear.SharedKernel.Testing`. A writer over a `StringBuilder` or with another format provider receives no fix; Fix All is unavailable.
+- `SKTEST022` replaces `new StringWriter()` and `new StringWriter(CultureInfo.InvariantCulture)` with `new InvariantStringWriter()` and adds `using SharedKernel.Testing;` when the compilation references `PandaBear.SharedKernel.Testing`. A writer over a `StringBuilder` or with another format provider receives no fix; Fix All is unavailable.
 
 The naming fix preserves canonical keywords and diagnostic identifiers. See
 [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for examples.
@@ -57,6 +57,6 @@ optional-technology fixes here.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.CodeFixes`. C# namespace: `PandaBear.Testing.CodeFixes`. Assembly/project identity: `SharedKernel.Testing.CodeFixes`.
+Package ID: `PandaBear.SharedKernel.Testing.CodeFixes`. C# namespace: `SharedKernel.Testing.CodeFixes`. Assembly/project identity: `SharedKernel.Testing.CodeFixes`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

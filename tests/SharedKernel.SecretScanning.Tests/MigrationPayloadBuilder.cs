@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Writes Google Authenticator migration payloads (protobuf) for decoder tests.</summary>
 internal static class MigrationPayloadBuilder

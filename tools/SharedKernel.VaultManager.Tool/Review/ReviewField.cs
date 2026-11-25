@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Vault.Merge;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>
 /// One field of a match group, with the value of every member side by side. Values are display text: secret values show

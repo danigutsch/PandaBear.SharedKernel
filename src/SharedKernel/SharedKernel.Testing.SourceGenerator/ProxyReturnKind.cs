@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>How a proxied method returns, which decides how the proxy awaits it and whether it has a result.</summary>
 internal enum ProxyReturnKind

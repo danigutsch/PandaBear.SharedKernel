@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>Options of <see cref="CsvWriter"/>.</summary>
 public sealed record CsvWriteOptions

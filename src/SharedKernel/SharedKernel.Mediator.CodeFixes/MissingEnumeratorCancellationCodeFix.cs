@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace PandaBear.Mediator.CodeFixes;
+namespace SharedKernel.Mediator.CodeFixes;
 
 /// <summary>
 /// Adds <c>[EnumeratorCancellation]</c> to async stream handler and pipeline <c>Handle(...)</c> methods.

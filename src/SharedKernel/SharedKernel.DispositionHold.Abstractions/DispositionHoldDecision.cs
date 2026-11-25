@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>
 /// The outcome of a guard check. A clear decision is the only one that permits disposition.

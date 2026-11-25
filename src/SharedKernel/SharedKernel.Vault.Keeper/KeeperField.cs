@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>Typed or custom field of a Keeper record.</summary>
 /// <param name="Type">Keeper field type without the <c>$</c> prefix, or empty for a plain custom field.</param>

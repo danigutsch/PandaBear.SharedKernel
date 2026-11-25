@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Net;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers for the GitHub sub-issue command tests.</summary>
 internal static class GitHubSubissueTestOperations

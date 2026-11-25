@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>An unvalidated question of a section's frequently asked questions.</summary>
 /// <param name="Question">The question, one line; required.</param>

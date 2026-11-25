@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using PandaBear.InputNormalization;
-using PandaBear.Processes;
+using SharedKernel.InputNormalization;
+using SharedKernel.Processes;
 
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>Runs a trusted test command with private local rootless Podman storage and networking.</summary>
 public static class IsolatedPodman

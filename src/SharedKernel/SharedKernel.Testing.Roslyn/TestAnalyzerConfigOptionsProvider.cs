@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Testing.Roslyn;
+namespace SharedKernel.Testing.Roslyn;
 
 /// <summary>
 /// An <see cref="AnalyzerConfigOptionsProvider"/> backed by an in-memory dictionary, suitable for use in Roslyn analyzer and generator tests.

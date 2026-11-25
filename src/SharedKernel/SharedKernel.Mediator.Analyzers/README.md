@@ -156,6 +156,6 @@ rules or test-only rules here.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Mediator.Analyzers`. C# namespace: `PandaBear.Mediator.Analyzers`. Assembly/project identity: `SharedKernel.Mediator.Analyzers`.
+Package ID: `PandaBear.SharedKernel.Mediator.Analyzers`. C# namespace: `SharedKernel.Mediator.Analyzers`. Assembly/project identity: `SharedKernel.Mediator.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

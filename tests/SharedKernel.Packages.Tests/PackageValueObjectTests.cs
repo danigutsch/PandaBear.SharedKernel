@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the validated package name and version.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

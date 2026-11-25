@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Tests which projects the incremental local pack rebuilds, in which order, and the cache eviction guard.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

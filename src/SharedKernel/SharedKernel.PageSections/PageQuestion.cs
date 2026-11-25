@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>A question of a section's frequently asked questions, with its answer's paragraphs.</summary>
 public sealed class PageQuestion : IEquatable<PageQuestion>

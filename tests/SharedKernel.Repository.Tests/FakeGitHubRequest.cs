@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Records what a request to <see cref="FakeGitHubReleasesApi"/> carried.</summary>
 /// <param name="Method">The HTTP method.</param>

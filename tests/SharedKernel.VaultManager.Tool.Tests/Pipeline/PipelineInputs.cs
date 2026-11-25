@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
+namespace SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 /// <summary>Builds synthetic Keeper Commander and Bitwarden exports for pipeline tests and writes them to disk.</summary>
 internal static class PipelineInputs

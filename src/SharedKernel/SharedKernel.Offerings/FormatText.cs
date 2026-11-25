@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Checks the composite formats an application gives.</summary>
 internal static class FormatText

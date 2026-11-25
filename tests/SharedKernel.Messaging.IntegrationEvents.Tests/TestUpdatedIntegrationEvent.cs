@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>Integration event fixture with the "test.event.updated" event type at version 1.</summary>
 /// <param name="EventId">Unique identifier of the event instance.</param>

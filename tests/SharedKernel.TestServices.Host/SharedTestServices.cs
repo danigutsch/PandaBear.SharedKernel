@@ -1,9 +1,9 @@
 using Aspire.Hosting.Testing;
-using PandaBear.Aspire.Hosting.Umami.Testing;
-using PandaBear.IntegrationTesting;
-using PandaBear.Npgsql.Testing;
+using SharedKernel.Aspire.Hosting.Umami.Testing;
+using SharedKernel.IntegrationTesting;
+using SharedKernel.Npgsql.Testing;
 
-namespace PandaBear.TestServices.Host;
+namespace SharedKernel.TestServices.Host;
 
 /// <summary>
 /// Composes and starts every service that the test assemblies of this repository share, once: the PostgreSQL server, and Umami with its

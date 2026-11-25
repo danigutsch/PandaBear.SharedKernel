@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Result payload whose <see cref="ToString" /> throws, proving an assertion never formats the value it checks.</summary>
 internal sealed class UnformattableResultPayload

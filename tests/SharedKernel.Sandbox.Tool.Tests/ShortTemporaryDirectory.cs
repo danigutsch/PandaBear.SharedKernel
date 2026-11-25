@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tool.Tests;
+namespace SharedKernel.Sandbox.Tool.Tests;
 
 /// <summary>A directory under the temporary folder with a short name, because a socket path must stay under about 100 bytes; deleted on disposal.</summary>
 internal sealed class ShortTemporaryDirectory : IDisposable

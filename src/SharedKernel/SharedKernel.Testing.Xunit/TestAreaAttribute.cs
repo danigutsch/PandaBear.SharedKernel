@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Declares the bounded context or product area a test belongs to. Emits the <c>Area</c> trait, like <c>[Trait("Area", ...)]</c>.

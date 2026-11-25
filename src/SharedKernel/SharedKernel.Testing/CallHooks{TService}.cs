@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// The hooks of one <see cref="CallProxy"/> over <typeparamref name="TService"/>. Its members are generated: each method of the interface

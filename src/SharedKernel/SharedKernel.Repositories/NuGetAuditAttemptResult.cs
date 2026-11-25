@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>How a trial outcome affects the proof of a minimum.</summary>
 internal enum NuGetAuditAttemptResult

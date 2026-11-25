@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>A fake clock, a recording cache and a data protection provider for ticket store tests.</summary>
 internal sealed class TicketStoreTestContext

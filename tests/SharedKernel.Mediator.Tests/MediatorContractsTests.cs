@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>
 /// Tests that the Mediator request, handler, notification, stream, and sender contracts have the assignability and attribute shapes callers depend on.

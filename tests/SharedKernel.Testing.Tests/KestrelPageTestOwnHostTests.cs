@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests that a browser test starts an application of its own by default and exposes the application's services.</summary>
 public sealed class KestrelPageTestOwnHostTests : OwnHostPageTest

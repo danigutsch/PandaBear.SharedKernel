@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Reads files as they were at a base revision, through git: an absolute git path, arguments one by one, no shell, an environment with no user

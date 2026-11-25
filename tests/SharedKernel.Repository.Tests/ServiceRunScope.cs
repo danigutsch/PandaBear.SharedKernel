@@ -1,6 +1,6 @@
 using System.Runtime.Versioning;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// A repository whose <c>database</c> slice runs a service that is a fake host, and a validation plan that selects the slice

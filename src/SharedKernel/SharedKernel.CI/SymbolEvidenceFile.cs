@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The symbol evidence that <c>coverage record-symbols</c> writes and <c>coverage verify</c> checks.</summary>
 /// <param name="Revision">The Git commit that the build compiled.</param>

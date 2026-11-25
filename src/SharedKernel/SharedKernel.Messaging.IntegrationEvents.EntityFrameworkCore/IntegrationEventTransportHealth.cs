@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Aggregates a consumer's durable terminal failures and retry backlog.</summary>
 /// <param name="TerminalCount">Number of poisoned messages for the selected consumer.</param>

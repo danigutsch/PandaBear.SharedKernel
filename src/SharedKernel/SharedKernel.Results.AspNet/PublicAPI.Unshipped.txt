@@ -1,16 +1,16 @@
 #nullable enable
 
-PandaBear.Results.AspNet.ResultStatusHttpExtensions
-static PandaBear.Results.AspNet.ResultStatusHttpExtensions.ToHttpStatusCode(this PandaBear.Results.ResultStatus status) -> int
-PandaBear.Results.AspNet.ResultHttpExtensions
-static PandaBear.Results.AspNet.ResultHttpExtensions.ToHttpResult(this PandaBear.Results.Result result) -> Microsoft.AspNetCore.Http.IResult!
-static PandaBear.Results.AspNet.ResultHttpExtensions.ToHttpResult<T>(this PandaBear.Results.Result<T> result) -> Microsoft.AspNetCore.Http.IResult!
-const PandaBear.Results.AspNet.ResultHttpExtensions.InternalServerErrorDetail = "An unexpected error occurred." -> string!
-const PandaBear.Results.AspNet.ResultHttpExtensions.ServiceUnavailableDetail = "The service is temporarily unavailable." -> string!
-PandaBear.Results.AspNet.ConcurrencyHeaders
-static PandaBear.Results.AspNet.ConcurrencyHeaders.ETag(long version) -> string!
-static PandaBear.Results.AspNet.ConcurrencyHeaders.ReadVersion(Microsoft.AspNetCore.Http.HttpRequest! request) -> PandaBear.Results.Result<long>
-static PandaBear.Results.AspNet.ConcurrencyHeaders.Update(Microsoft.AspNetCore.Http.HttpRequest! request, System.Func<long, System.Threading.Tasks.ValueTask<PandaBear.Results.Result>>! send) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Http.IResult!>!
-PandaBear.Results.AspNet.VersionedResultHttpExtensions
-static PandaBear.Results.AspNet.VersionedResultHttpExtensions.ToCreatedHttpResult<TValue, TBody>(this PandaBear.Results.Result<TValue> result, System.Func<TValue, string!>! location, System.Func<TValue, TBody>! body) -> Microsoft.AspNetCore.Http.IResult!
-static PandaBear.Results.AspNet.VersionedResultHttpExtensions.ToHttpResult<T>(this PandaBear.Results.Result<T> result, System.Func<T, long>! version) -> Microsoft.AspNetCore.Http.IResult!
+SharedKernel.Results.AspNet.ResultStatusHttpExtensions
+static SharedKernel.Results.AspNet.ResultStatusHttpExtensions.ToHttpStatusCode(this SharedKernel.Results.ResultStatus status) -> int
+SharedKernel.Results.AspNet.ResultHttpExtensions
+static SharedKernel.Results.AspNet.ResultHttpExtensions.ToHttpResult(this SharedKernel.Results.Result result) -> Microsoft.AspNetCore.Http.IResult!
+static SharedKernel.Results.AspNet.ResultHttpExtensions.ToHttpResult<T>(this SharedKernel.Results.Result<T> result) -> Microsoft.AspNetCore.Http.IResult!
+const SharedKernel.Results.AspNet.ResultHttpExtensions.InternalServerErrorDetail = "An unexpected error occurred." -> string!
+const SharedKernel.Results.AspNet.ResultHttpExtensions.ServiceUnavailableDetail = "The service is temporarily unavailable." -> string!
+SharedKernel.Results.AspNet.ConcurrencyHeaders
+static SharedKernel.Results.AspNet.ConcurrencyHeaders.ETag(long version) -> string!
+static SharedKernel.Results.AspNet.ConcurrencyHeaders.ReadVersion(Microsoft.AspNetCore.Http.HttpRequest! request) -> SharedKernel.Results.Result<long>
+static SharedKernel.Results.AspNet.ConcurrencyHeaders.Update(Microsoft.AspNetCore.Http.HttpRequest! request, System.Func<long, System.Threading.Tasks.ValueTask<SharedKernel.Results.Result>>! send) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Http.IResult!>!
+SharedKernel.Results.AspNet.VersionedResultHttpExtensions
+static SharedKernel.Results.AspNet.VersionedResultHttpExtensions.ToCreatedHttpResult<TValue, TBody>(this SharedKernel.Results.Result<TValue> result, System.Func<TValue, string!>! location, System.Func<TValue, TBody>! body) -> Microsoft.AspNetCore.Http.IResult!
+static SharedKernel.Results.AspNet.VersionedResultHttpExtensions.ToHttpResult<T>(this SharedKernel.Results.Result<T> result, System.Func<T, long>! version) -> Microsoft.AspNetCore.Http.IResult!

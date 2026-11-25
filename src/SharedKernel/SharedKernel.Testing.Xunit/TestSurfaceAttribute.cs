@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Declares the surface a test exercises, such as an API description or a transport. Emits the <c>Surface</c> trait, like <c>[Trait("Surface", ...)]</c>.

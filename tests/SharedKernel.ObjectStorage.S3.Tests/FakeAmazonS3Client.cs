@@ -2,7 +2,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>Records S3 operations and returns canned responses so the S3 object store can be tested without a server.</summary>
 internal sealed class FakeAmazonS3Client : AmazonS3Client

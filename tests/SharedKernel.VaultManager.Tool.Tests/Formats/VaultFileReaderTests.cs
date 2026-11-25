@@ -1,8 +1,8 @@
-using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.Testing;
+using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.VaultManager.Tool.Tests.Formats;
+namespace SharedKernel.VaultManager.Tool.Tests.Formats;
 
 /// <summary>Tests that the vault file reader picks the reader for a file's format and reports unreadable input.</summary>
 public sealed class VaultFileReaderTests : IDisposable

@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>local-check</c> command: its lanes, its report of what could not run, its exit codes, and its refusal to pass having checked nothing.</summary>
 public sealed class LocalCheckTests

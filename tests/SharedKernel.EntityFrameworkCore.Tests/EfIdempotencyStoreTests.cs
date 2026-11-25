@@ -1,7 +1,7 @@
-using PandaBear.Idempotency;
-using PandaBear.Idempotency.EntityFrameworkCore;
+using SharedKernel.Idempotency;
+using SharedKernel.Idempotency.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests EfIdempotencyStore and IdempotencyEntryEntity against an in-memory context.

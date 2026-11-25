@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Forgejo;
+namespace SharedKernel.CI.Forgejo;
 
 /// <summary>The properties of a Forgejo release that prerelease pruning reads from the releases API.</summary>
 /// <param name="Id">The release ID that the delete endpoint takes.</param>

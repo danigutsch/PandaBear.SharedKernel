@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One image of an <see cref="ImageGrid" />.</summary>
 /// <param name="Image">The image, with its width, height, accessibility decision and optional responsive sources.</param>

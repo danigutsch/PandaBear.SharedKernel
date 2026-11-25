@@ -9,7 +9,7 @@ A minimal Entity Framework Core context and entity for SharedKernel test suites.
 ## Usage
 
 ```csharp
-using PandaBear.Testing.EntityFrameworkCore;
+using SharedKernel.Testing.EntityFrameworkCore;
 
 var options = new DbContextOptionsBuilder<TestDbContext>()
     .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))

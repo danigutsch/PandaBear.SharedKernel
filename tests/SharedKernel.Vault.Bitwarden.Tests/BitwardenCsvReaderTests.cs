@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden.Tests;
+namespace SharedKernel.Vault.Bitwarden.Tests;
 
 /// <summary>Tests the reader for Bitwarden CSV exports.</summary>
 public sealed class BitwardenCsvReaderTests

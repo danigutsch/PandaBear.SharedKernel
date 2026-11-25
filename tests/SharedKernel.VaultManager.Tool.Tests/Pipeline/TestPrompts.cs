@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
+namespace SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 /// <summary>
 /// Command environment for tests: records every prompt and answers new-password prompts. File password prompts are

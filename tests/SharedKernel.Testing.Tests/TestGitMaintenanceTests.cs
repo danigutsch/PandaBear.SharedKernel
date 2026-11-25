@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>
 /// Tests that the git that test setup runs starts no background maintenance, which would keep rewriting

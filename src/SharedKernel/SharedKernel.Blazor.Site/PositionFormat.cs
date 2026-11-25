@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Checks a composite format that writes a 1-based position as <c>{0}</c>, such as <c>Day {0}</c> or <c>step-{0}</c>.</summary>
 public static class PositionFormat

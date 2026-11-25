@@ -2,10 +2,10 @@ using System.Diagnostics.Metrics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PandaBear.Testing.Logging;
-using PandaBear.Testing.Metrics;
+using SharedKernel.Testing.Logging;
+using SharedKernel.Testing.Metrics;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>Builds the page-view services with the Umami target, without a web server, to drive the queues and the dispatcher directly.</summary>
 internal static class SenderTestServices

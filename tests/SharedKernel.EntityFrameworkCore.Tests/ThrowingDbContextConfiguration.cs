@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>A configuration whose every callback throws, proving that applying configurations must not instantiate or invoke it.</summary>
 internal sealed class ThrowingDbContextConfiguration : IDbContextConfiguration<TestDbContext>

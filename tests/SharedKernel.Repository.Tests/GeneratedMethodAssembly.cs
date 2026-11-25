@@ -3,7 +3,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Builds the metadata-only assembly that sits beside a test symbol file, with one method that the compiler may have generated.</summary>
 internal static class GeneratedMethodAssembly

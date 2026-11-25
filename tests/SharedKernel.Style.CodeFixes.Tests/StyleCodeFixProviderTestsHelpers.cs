@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace PandaBear.Style.CodeFixes.Tests;
+namespace SharedKernel.Style.CodeFixes.Tests;
 
 /// <summary>Reflection and Roslyn workspace helpers for testing internal parts of the style code fix provider.</summary>
 internal static class StyleCodeFixProviderTestsHelpers
@@ -15,7 +15,7 @@ internal static class StyleCodeFixProviderTestsHelpers
     /// <param name="updatedName">Name the method received after renaming.</param>
     public static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
     {
-        var codeFixType = typeof(StyleCodeFixProvider).Assembly.GetType("PandaBear.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
+        var codeFixType = typeof(StyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
         _ = codeFixType.ShouldNotBeNull();
         var method = codeFixType.GetMethod("IsRenamedMethodMatch", BindingFlags.NonPublic | BindingFlags.Static);
         _ = method.ShouldNotBeNull();
@@ -70,7 +70,7 @@ internal static class StyleCodeFixProviderTestsHelpers
             string updatedName,
             CancellationToken ct)
     {
-        var organizerType = typeof(StyleCodeFixProvider).Assembly.GetType("PandaBear.Style.CodeFixes.MethodOverloadGroupOrganizer");
+        var organizerType = typeof(StyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.MethodOverloadGroupOrganizer");
         _ = organizerType.ShouldNotBeNull();
         var organizeMethod = organizerType.GetMethod("Organize", BindingFlags.Public | BindingFlags.Static);
         _ = organizeMethod.ShouldNotBeNull();

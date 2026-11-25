@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests cards in Chromium, on a phone (375px) and a desktop (1280px) viewport: the more look beside a button link, actions at the bottom

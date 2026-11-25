@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Records what a page's reload and local removal callbacks were asked to do.</summary>
 internal sealed class ListDeleteProbe

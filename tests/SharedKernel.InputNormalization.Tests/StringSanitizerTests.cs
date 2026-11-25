@@ -1,5 +1,5 @@
 
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Unit tests for StringSanitizer sanitization of text, notes, collections, and keys.</summary>
 public class StringSanitizerTests

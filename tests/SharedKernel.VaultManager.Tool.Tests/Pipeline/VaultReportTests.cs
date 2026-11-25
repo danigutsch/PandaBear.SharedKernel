@@ -1,11 +1,11 @@
 using System.Text.Json.Nodes;
-using PandaBear.Testing;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
+namespace SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 /// <summary>Tests the Markdown vault report produced from a pipeline result.</summary>
 public sealed class VaultReportTests : IDisposable

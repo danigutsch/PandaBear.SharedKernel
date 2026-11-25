@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Snapshot of the roadmap input files that detects any change between planning and writing.</summary>
 public sealed class RoadmapWriteInputSnapshot

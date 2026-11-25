@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Selects the test projects that a change affects since a base revision, as <c>.config/sharedkernel-ci.json</c>

@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.IO.Enumeration;
 using System.Text;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Verifies the local links, Markdown anchors, and issue references of documentation files in the working tree.

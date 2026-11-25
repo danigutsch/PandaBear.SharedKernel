@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>Defines environment-variable names understood by .NET web hosts.</summary>
 public static class HostEnvironmentVariableNames

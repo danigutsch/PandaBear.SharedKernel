@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Vault.Bitwarden.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.Vault.Bitwarden.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.SecretScanning.Tests" />
-        <Using Include="PandaBear.Vault.Tests" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.SecretScanning.Tests" />
+        <Using Include="SharedKernel.Vault.Tests" />
         <Using Include="Xunit" />
     </ItemGroup>
 

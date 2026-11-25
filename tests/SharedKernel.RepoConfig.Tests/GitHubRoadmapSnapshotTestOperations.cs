@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers that build GitHub roadmap snapshots and the HTTP responses that serve them.</summary>
 internal static class GitHubRoadmapSnapshotTestOperations

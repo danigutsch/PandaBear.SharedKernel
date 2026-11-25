@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Claims due outbox messages for one relay so concurrent relays do not publish the same message.</summary>
 internal interface IIntegrationEventOutboxClaimStrategy<TContext>

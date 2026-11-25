@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Tests how private keys are inspected and converted to SSH key items.</summary>
 public sealed class SshKeyConverterTests

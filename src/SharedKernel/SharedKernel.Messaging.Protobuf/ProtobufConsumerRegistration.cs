@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Messaging.Protobuf;
+namespace SharedKernel.Messaging.Protobuf;
 
 /// <summary>Binds one Protobuf integration event type to the delegate that deserializes its payload and runs its handler.</summary>
 /// <param name="EventType">The stable event type identifier.</param>

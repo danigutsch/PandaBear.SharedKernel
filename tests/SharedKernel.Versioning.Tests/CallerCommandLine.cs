@@ -3,7 +3,7 @@ using System.CommandLine.Help;
 using System.CommandLine.Parsing;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Extracts the versioning tool command lines that workflows and the README run or document, and parses them for tests.

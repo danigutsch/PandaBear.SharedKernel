@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A canonical URL slug: lowercase ASCII letters and digits joined by single hyphens, for example <c>viagem-a-patagonia</c>.</summary>
 public sealed class Slug : ValueObject

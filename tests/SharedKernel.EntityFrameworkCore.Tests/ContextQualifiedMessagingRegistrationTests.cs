@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests that context-qualified messaging registrations keep outboxes, idempotency stores, transports and relays separate per DbContext.

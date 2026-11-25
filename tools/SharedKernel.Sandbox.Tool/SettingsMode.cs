@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tool;
+namespace SharedKernel.Sandbox.Tool;
 
 /// <summary>What the settings command does with the plan.</summary>
 internal enum SettingsMode

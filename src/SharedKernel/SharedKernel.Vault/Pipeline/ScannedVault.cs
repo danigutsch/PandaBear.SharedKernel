@@ -1,6 +1,6 @@
-using PandaBear.Vault.Formats;
+using SharedKernel.Vault.Formats;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>Scanned items and every warning raised while reading and scanning them.</summary>
 /// <param name="InputPaths">Input files the items were read from, in order. An output may not be one of them.</param>

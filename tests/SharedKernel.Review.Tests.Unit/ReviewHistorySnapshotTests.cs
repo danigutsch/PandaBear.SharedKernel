@@ -1,4 +1,4 @@
-namespace PandaBear.Review.Tests;
+namespace SharedKernel.Review.Tests;
 
 /// <summary>Verifies replay of persisted review evidence.</summary>
 public sealed class ReviewHistorySnapshotTests

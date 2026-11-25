@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Observes requested and returned sizes of asynchronous reads from a borrowed stream.</summary>
 /// <remarks>

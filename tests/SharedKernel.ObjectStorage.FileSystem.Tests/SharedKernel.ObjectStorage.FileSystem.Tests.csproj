@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.ObjectStorage.FileSystem.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.ObjectStorage.FileSystem.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing" />
         <Using Include="Xunit" />
     </ItemGroup>
 

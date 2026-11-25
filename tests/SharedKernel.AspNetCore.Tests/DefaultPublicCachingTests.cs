@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Builder;
-using PandaBear.HttpCaching.AspNetCore;
+using SharedKernel.HttpCaching.AspNetCore;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>
 /// Tests the default public caching middleware: only an anonymous GET or HEAD answered 200 without its own cache header and without cookies

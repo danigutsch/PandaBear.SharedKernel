@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.LoadTesting.K6.Tests;
+namespace SharedKernel.LoadTesting.K6.Tests;
 
 /// <summary>A temporary root with a run directory, and the prepared k6 runs that point into it.</summary>
 internal sealed class K6RunWorkspace : IDisposable

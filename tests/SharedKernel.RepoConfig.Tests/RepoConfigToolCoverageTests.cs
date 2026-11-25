@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the repo config command line for argument errors, init, diff, set, get, GitHub sync failures, and verify output.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

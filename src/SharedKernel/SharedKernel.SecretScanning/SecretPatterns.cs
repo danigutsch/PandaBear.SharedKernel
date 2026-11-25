@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// Source-generated patterns for secret detection. Every pattern uses explicit ASCII classes, bounded quantifiers,

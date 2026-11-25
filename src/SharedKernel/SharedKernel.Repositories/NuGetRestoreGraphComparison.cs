@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text.Json;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Compares restored solution dependencies against current SDK evaluations.</summary>
 public static class NuGetRestoreGraphComparison

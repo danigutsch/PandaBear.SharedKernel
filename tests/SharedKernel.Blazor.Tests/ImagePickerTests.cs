@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using static PandaBear.Blazor.Tests.PickerRendering;
+using static SharedKernel.Blazor.Tests.PickerRendering;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>
 /// Tests the image picker: it shows the chosen images from the page's catalog a page at a time, searches the library only after the

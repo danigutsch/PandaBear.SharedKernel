@@ -1,4 +1,4 @@
-namespace PandaBear.ConfigurationFiles.Tests;
+namespace SharedKernel.ConfigurationFiles.Tests;
 
 /// <summary>Writes <c>.config/sample.json</c> under a temporary root.</summary>
 internal static class SampleFile

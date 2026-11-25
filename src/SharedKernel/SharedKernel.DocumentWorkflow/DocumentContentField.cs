@@ -1,6 +1,6 @@
-using PandaBear.DocumentRendering;
+using SharedKernel.DocumentRendering;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Represents a stable, classified field in a draft.</summary>
 /// <param name="Id">The field identifier within the draft.</param>

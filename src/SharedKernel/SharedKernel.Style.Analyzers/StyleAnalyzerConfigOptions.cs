@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Style.Analyzers;
+namespace SharedKernel.Style.Analyzers;
 
 /// <summary>
 /// Captures the analyzer-config switches that shape style-rule behavior, such as async-suffix handling and public-member documentation.

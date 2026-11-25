@@ -1,6 +1,6 @@
 using Aspire.Hosting;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests WithSelfOrigin: a resource receives the URL of one of its own endpoints, never a hard-coded address.</summary>
 public sealed class SelfOriginTests

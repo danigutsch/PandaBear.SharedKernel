@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Drives the roadmap automation service against a temporary workspace with scripted GitHub snapshots and a fake Git repository.</summary>
 internal static class RoadmapAutomationTestSetup

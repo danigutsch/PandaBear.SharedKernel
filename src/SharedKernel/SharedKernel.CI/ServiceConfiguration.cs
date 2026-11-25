@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// A process that a slice starts once before its tests run and stops after them, such as the servers that the slice's test

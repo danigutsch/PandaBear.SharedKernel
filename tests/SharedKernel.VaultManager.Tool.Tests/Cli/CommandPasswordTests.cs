@@ -1,8 +1,8 @@
-using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.Testing;
+using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests how the commands ask for, refuse, and handle failures of passwords.</summary>
 public sealed class CommandPasswordTests : IDisposable

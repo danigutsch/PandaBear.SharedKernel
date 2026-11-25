@@ -1,6 +1,6 @@
-using PandaBear.Domain;
+using SharedKernel.Domain;
 
-namespace PandaBear.Testing.Domain;
+namespace SharedKernel.Testing.Domain;
 
 /// <summary>
 /// Dispatcher test double that stores every dispatched event instead of publishing it.

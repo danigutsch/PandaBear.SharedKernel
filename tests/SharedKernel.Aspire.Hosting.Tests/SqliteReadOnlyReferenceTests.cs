@@ -2,7 +2,7 @@ using System.Data.Common;
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests giving a resource read-only access to a SQLite database file that another resource owns.</summary>
 public sealed class SqliteReadOnlyReferenceTests

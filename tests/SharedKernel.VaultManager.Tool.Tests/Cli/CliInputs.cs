@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using PandaBear.Vault.Bitwarden;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.Vault.Bitwarden;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Writes synthetic exports for command-line tests. Secret-shaped values are built at test runtime.</summary>
 internal static class CliInputs

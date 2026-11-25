@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>What <c>run</c> runs and how.</summary>
 /// <param name="Slices">The slices to run; none runs every required slice of the plan.</param>

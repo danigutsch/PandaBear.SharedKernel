@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// A directory beside the output, on the same volume, where packages are verified before they move into the output. Its

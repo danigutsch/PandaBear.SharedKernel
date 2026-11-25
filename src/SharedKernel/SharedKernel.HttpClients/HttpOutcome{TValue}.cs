@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>
 /// Represents the outcome of an HTTP request that materializes a response value.

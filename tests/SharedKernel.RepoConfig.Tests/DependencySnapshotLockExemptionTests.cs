@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>lockExemptProjects</c> policy of the <c>dependency snapshot</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

@@ -1,7 +1,7 @@
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>
 /// Registers the meters and activity sources of every SharedKernel package by name prefix. Each package names its meter and

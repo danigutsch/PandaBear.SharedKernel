@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// An xUnit assembly (or class) fixture for system tests: it starts an Aspire application per profile on the first demand, once per test

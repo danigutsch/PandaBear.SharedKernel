@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>
 /// Tests that the browser tests of a class given a <see cref="KestrelHostFixture{TEntryPoint}"/> share its application: whichever test runs

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the bounded slice of a list that a search or a page returns.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

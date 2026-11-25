@@ -1,7 +1,7 @@
 using System.CommandLine.Parsing;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Finds <c>repo</c> command lines in the repository workflows.</summary>
 internal static partial class RepoConfigToolCallers

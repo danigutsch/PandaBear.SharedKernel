@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>The consumer policy in <c>.config/sharedkernel-packages.json</c>.</summary>
 /// <param name="Version">Format version; only <c>1</c> is supported.</param>

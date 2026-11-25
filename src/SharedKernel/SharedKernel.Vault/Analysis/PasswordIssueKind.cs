@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Analysis;
+namespace SharedKernel.Vault.Analysis;
 
 /// <summary>Password weaknesses.</summary>
 public enum PasswordIssueKind

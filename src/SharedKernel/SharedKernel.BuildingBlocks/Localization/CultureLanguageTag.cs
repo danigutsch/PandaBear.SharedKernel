@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The language tag that one culture declares, for <see cref="CultureLanguageTags.Create"/>: the culture <c>pt</c> (the content key and

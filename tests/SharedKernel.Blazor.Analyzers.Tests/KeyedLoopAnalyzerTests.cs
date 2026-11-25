@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Analyzers.Tests;
+namespace SharedKernel.Blazor.Analyzers.Tests;
 
 /// <summary>Tests that the analyzer reports component loops that render rows, items or components without a key (SKBLZ003) only where intended.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]

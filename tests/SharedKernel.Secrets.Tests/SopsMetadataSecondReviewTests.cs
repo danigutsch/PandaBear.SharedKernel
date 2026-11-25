@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the second security review: setting spellings, unknown properties, comments, and malformed ciphertext values.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

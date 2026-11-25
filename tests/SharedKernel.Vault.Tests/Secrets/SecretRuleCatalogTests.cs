@@ -1,6 +1,6 @@
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Tests the catalog of secret rules and the patterns used outside it.</summary>
 public sealed class SecretRuleCatalogTests

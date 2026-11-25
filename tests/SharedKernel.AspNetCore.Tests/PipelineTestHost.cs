@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>A loopback host whose pipeline a test builds, with a client that never follows redirects.</summary>
 internal sealed class PipelineTestHost : IAsyncDisposable

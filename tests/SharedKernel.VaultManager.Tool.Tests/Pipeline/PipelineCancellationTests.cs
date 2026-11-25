@@ -1,8 +1,8 @@
-using PandaBear.Testing;
-using PandaBear.Vault.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
+namespace SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 /// <summary>Tests that <see cref="VaultPipeline"/> stops with <see cref="OperationCanceledException"/> and leaves no output when its token is canceled.</summary>
 public sealed class PipelineCancellationTests : IDisposable

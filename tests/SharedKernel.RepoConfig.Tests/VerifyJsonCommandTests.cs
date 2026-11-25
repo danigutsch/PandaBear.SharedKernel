@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// Tests the verify-json command against seeded Git repositories of JSON and JSONC files.

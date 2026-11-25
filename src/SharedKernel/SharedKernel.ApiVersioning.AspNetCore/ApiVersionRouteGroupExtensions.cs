@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
-namespace PandaBear.ApiVersioning.AspNetCore;
+namespace SharedKernel.ApiVersioning.AspNetCore;
 
 /// <summary>
 /// Adds ASP.NET Core route helpers for API contract versions.

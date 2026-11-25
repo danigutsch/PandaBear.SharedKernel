@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Tests collecting only the failed results of a validation step with ValidationErrors.AddIfFailed.

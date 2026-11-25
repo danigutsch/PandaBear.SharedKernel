@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The side of a <see cref="Split" /> on which its media column lies from the <c>48rem</c> breakpoint on. The side is visual only: in

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Playwright;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// The statically rendered <see cref="LayoutSample" /> styled by the package's <c>site.css</c>, open in Chromium at a viewport width,

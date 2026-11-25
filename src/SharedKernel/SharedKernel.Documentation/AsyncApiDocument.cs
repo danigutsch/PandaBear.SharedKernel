@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Schema;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Renders and verifies generated AsyncAPI 3 JSON artifacts.</summary>
 public static class AsyncApiDocument

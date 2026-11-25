@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>User corrections to automatic matching.</summary>
 /// <param name="Links">Pairs that must end up in the same group.</param>

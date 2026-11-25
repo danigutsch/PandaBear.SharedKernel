@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>What a run of the tool produced.</summary>
 /// <param name="ExitCode">The exit code.</param>

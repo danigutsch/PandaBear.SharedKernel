@@ -1,6 +1,6 @@
 // Adapted from ViajantesTurismo under its MIT license. See LICENSE.ViajantesTurismo.txt.
 
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>A non-owning request body view that applies the request deadline to reads.</summary>
 internal sealed class DeadlineRequestBody(Stream body, CancellationToken ct) : Stream

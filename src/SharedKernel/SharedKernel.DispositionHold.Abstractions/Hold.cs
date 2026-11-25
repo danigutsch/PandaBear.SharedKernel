@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>
 /// A hold that blocks deletion or anonymization of whatever its <see cref="Scope" /> names. It records who placed and

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>Factory for canned JSON <see cref="HttpResponseMessage" /> instances used by the HTTP outcome mapper tests.</summary>
 internal static class HttpOutcomeMapperTestResponses

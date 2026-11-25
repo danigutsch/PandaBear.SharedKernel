@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.Encodings;
+using SharedKernel.Encodings;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// Normalizes authenticator secrets to the forms Bitwarden accepts in <c>login.totp</c>, and decodes Google

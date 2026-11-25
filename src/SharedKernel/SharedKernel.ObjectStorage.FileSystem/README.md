@@ -19,4 +19,4 @@ can support reconciliation. Give each store a consistent temporary prefix across
 The filesystem's name and case rules apply to storage. Direct-upload ticket requests raise `NotSupportedException`.
 
 Package ID `PandaBear.SharedKernel.ObjectStorage.FileSystem`. Namespace
-`PandaBear.ObjectStorage.FileSystem`.
+`SharedKernel.ObjectStorage.FileSystem`.

@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests the ordered transaction-scoped PostgreSQL advisory locks.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture that supplies the per-test database.</param>

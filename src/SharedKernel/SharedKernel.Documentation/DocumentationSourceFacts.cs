@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Reads identifiers and arguments out of C# source with Roslyn syntax parsing, so documentation can be checked against code without compiling it.</summary>
 internal static class DocumentationSourceFacts

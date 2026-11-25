@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Snapshots;
+namespace SharedKernel.Testing.Snapshots;
 
 /// <summary>Identifies an approved observation and its diagnostic resource states.</summary>
 /// <param name="Result">The fixture's registered execution result.</param>

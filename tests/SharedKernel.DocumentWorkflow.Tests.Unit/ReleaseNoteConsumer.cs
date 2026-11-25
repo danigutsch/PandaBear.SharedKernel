@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.DocumentWorkflow.Tests;
+namespace SharedKernel.DocumentWorkflow.Tests;
 
 /// <summary>Supplies a neutral release-note source and template.</summary>
 internal sealed class ReleaseNoteConsumer : IDocumentSource<string>, IDocumentTemplate<string>, IDocumentArtifactStore

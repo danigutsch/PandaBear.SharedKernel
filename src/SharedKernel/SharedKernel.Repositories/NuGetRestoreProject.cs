@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The availability and content of one evaluated project graph.</summary>
 /// <param name="LockExempt">Whether evaluated project settings explicitly disable package lock files.</param>

@@ -1,7 +1,7 @@
 using System.Text;
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>verify --base</c>, which compares each label's enc with a base revision read through git.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

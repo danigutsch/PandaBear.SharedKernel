@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Proves a faulty logger, meter factory or listener never breaks the host's flow or handlers.</summary>
 public sealed class TelemetryFailSafeTests

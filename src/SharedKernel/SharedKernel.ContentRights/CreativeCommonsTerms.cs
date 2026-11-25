@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>Identifies supported Creative Commons terms from an explicit declaration and its official URL.</summary>
 internal static class CreativeCommonsTerms

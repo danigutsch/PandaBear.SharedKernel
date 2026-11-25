@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Identifies the checkout and SDK used to evaluate a restored graph.</summary>
 /// <param name="Revision">The checked-out commit.</param>

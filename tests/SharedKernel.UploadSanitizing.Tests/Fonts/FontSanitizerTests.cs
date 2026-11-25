@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.UploadSanitizing.Tests.Fonts;
+namespace SharedKernel.UploadSanitizing.Tests.Fonts;
 
 /// <summary>
 /// Tests the WOFF2 checks of <see cref="FontSanitizer"/>: a sound font is returned unchanged with its format, extension and media type, and

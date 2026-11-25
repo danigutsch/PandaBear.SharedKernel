@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi;
 
-namespace PandaBear.OpenApi;
+namespace SharedKernel.OpenApi;
 
 /// <summary>
 /// Documents optimistic concurrency with entity tags: a read that returns an <c>ETag</c>, and a write that requires it back in
-/// <c>If-Match</c> and answers 400, 412 or 428 problems (see <c>PandaBear.HttpCaching.AspNetCore.IfMatchCondition</c>).
+/// <c>If-Match</c> and answers 400, 412 or 428 problems (see <c>SharedKernel.HttpCaching.AspNetCore.IfMatchCondition</c>).
 /// </summary>
 public static class ConditionalRequestEndpointExtensions
 {

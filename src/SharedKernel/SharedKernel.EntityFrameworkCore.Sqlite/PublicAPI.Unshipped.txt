@@ -1,17 +1,17 @@
 #nullable enable
-PandaBear.EntityFrameworkCore.Sqlite.SqliteServiceCollectionExtensions
-PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser
-PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser.SqliteUniqueViolationParser() -> void
-PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser.TryParse(Microsoft.EntityFrameworkCore.DbUpdateException! exception, out PandaBear.EntityFrameworkCore.UniqueViolation! violation) -> bool
-static PandaBear.EntityFrameworkCore.Sqlite.SqliteServiceCollectionExtensions.AddSqliteUniqueViolationParser(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-const PandaBear.EntityFrameworkCore.Sqlite.SearchFold.FunctionName = "sharedkernel_search_fold" -> string!
-PandaBear.EntityFrameworkCore.Sqlite.SearchFold
-PandaBear.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions
-PandaBear.EntityFrameworkCore.Sqlite.SearchFoldModelBuilderExtensions
-const PandaBear.EntityFrameworkCore.Sqlite.SearchFold.EscapeCharacter = "\\" -> string!
-static PandaBear.EntityFrameworkCore.Sqlite.SearchFold.ContainsPattern(string? input) -> string?
-static PandaBear.EntityFrameworkCore.Sqlite.SearchFold.Of(string? text) -> string!
-static PandaBear.EntityFrameworkCore.Sqlite.SearchFold.Register(Microsoft.Data.Sqlite.SqliteConnection! connection) -> void
-static PandaBear.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions.AddSearchFold(this Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!
-static PandaBear.EntityFrameworkCore.Sqlite.SearchFoldModelBuilderExtensions.HasSearchFoldFunction(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!
-static PandaBear.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions.AddSearchFold<TContext>(this Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<TContext!>! optionsBuilder) -> Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<TContext!>!
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteServiceCollectionExtensions
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser.SqliteUniqueViolationParser() -> void
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser.TryParse(Microsoft.EntityFrameworkCore.DbUpdateException! exception, out SharedKernel.EntityFrameworkCore.UniqueViolation! violation) -> bool
+static SharedKernel.EntityFrameworkCore.Sqlite.SqliteServiceCollectionExtensions.AddSqliteUniqueViolationParser(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+const SharedKernel.EntityFrameworkCore.Sqlite.SearchFold.FunctionName = "sharedkernel_search_fold" -> string!
+SharedKernel.EntityFrameworkCore.Sqlite.SearchFold
+SharedKernel.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions
+SharedKernel.EntityFrameworkCore.Sqlite.SearchFoldModelBuilderExtensions
+const SharedKernel.EntityFrameworkCore.Sqlite.SearchFold.EscapeCharacter = "\\" -> string!
+static SharedKernel.EntityFrameworkCore.Sqlite.SearchFold.ContainsPattern(string? input) -> string?
+static SharedKernel.EntityFrameworkCore.Sqlite.SearchFold.Of(string? text) -> string!
+static SharedKernel.EntityFrameworkCore.Sqlite.SearchFold.Register(Microsoft.Data.Sqlite.SqliteConnection! connection) -> void
+static SharedKernel.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions.AddSearchFold(this Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!
+static SharedKernel.EntityFrameworkCore.Sqlite.SearchFoldModelBuilderExtensions.HasSearchFoldFunction(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!
+static SharedKernel.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions.AddSearchFold<TContext>(this Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<TContext!>! optionsBuilder) -> Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<TContext!>!

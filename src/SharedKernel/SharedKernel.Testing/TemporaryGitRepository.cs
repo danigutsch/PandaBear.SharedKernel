@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>A disposable Git repository in a temporary directory, isolated from the user's Git configuration, with signing disabled.</summary>
 public sealed class TemporaryGitRepository : IDisposable

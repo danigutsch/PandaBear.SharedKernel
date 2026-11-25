@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Verifies a repository: every SOPS-encrypted file in the repository, whatever its name or directory, is judged against the first creation rule

@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Runs external processes for tests.</summary>
 public static class TestProcess

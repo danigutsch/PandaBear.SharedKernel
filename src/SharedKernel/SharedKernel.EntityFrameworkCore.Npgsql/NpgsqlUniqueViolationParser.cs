@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace PandaBear.EntityFrameworkCore.Npgsql;
+namespace SharedKernel.EntityFrameworkCore.Npgsql;
 
 /// <summary>
 /// Recognizes PostgreSQL unique and primary-key violations: a <see cref="PostgresException"/> with SQLSTATE <c>23505</c>

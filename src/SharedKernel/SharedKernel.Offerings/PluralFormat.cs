@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// A count's composite format in the two plural forms Portuguese and English need: <paramref name="One"/> for exactly one, and

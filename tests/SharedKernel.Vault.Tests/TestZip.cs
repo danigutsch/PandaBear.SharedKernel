@@ -1,6 +1,6 @@
 using System.IO.Compression;
 
-namespace PandaBear.Vault.Tests;
+namespace SharedKernel.Vault.Tests;
 
 /// <summary>Builds in-memory zip archives and byte payloads for tests.</summary>
 internal static class TestZip

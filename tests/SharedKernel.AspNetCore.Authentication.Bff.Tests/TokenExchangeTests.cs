@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Tests RFC 8693 token exchange: the request, caching per session and audience, and failures.</summary>
 public sealed class TokenExchangeTests

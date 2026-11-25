@@ -1,6 +1,6 @@
-using PandaBear.Testing.AspNetCore.TestApp;
+using SharedKernel.Testing.AspNetCore.TestApp;
 
-namespace PandaBear.Testing.AspNetCore.Tests;
+namespace SharedKernel.Testing.AspNetCore.Tests;
 
 /// <summary>Scopes the worker fixture's test hooks and counts disposed host providers.</summary>
 internal sealed class WorkerFixtureScope : IDisposable

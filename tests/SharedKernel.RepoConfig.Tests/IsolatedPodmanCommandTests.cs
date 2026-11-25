@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Runtime.Versioning;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the opt-in isolated Podman command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

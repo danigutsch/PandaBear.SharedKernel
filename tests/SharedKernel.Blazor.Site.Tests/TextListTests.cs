@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the plain list of lines.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

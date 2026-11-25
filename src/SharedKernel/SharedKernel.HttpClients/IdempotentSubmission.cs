@@ -1,6 +1,6 @@
-using PandaBear.Idempotency;
+using SharedKernel.Idempotency;
 
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>Retains one explicit HTTP command and idempotency key while its commit outcome is unknown.</summary>
 /// <typeparam name="T">The response contract.</typeparam>

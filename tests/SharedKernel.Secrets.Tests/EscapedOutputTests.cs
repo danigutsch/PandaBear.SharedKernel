@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests that output escapes control characters.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

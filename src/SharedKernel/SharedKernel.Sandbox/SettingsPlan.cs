@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>The result of comparing the desired entries with a settings file.</summary>
 /// <param name="Changes">The edits needed; empty when the file is already in line.</param>

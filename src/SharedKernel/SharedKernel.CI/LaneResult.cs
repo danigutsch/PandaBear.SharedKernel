@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>What one lane of <c>local-check</c> did.</summary>
 /// <param name="Name">The lane: <c>whitespace</c>, <c>build</c>, or <c>tests</c>.</param>

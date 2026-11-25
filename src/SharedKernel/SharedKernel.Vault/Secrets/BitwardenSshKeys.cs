@@ -1,8 +1,8 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>
 /// Converts private keys with <see cref="SshKeyConverter"/> into Bitwarden SSH key data, and refuses a key that does not fit

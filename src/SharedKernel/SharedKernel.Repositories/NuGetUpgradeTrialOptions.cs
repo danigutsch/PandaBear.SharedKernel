@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Specifies a dependency trial and the review artifacts to produce.</summary>
 /// <param name="Root">The Git checkout to inspect.</param>

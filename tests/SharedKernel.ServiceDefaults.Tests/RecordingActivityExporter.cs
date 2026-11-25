@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using OpenTelemetry;
 
-namespace PandaBear.ServiceDefaults.Tests;
+namespace SharedKernel.ServiceDefaults.Tests;
 
 /// <summary>Keeps every exported span in memory.</summary>
 internal sealed class RecordingActivityExporter : BaseExporter<Activity>

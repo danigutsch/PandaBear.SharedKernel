@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.Branding;
+namespace SharedKernel.Branding;
 
 /// <summary>
 /// Represents validated reusable branding settings.

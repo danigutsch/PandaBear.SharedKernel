@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Globalization;
 using Microsoft.Playwright;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>A browser page on the <see cref="PreviewHost" /> that records every Content-Security-Policy violation the browser reports.</summary>
 internal sealed class PreviewPage : IAsyncDisposable

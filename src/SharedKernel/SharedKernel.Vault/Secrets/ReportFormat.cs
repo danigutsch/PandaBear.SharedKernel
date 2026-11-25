@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>Findings report output format.</summary>
 internal enum ReportFormat

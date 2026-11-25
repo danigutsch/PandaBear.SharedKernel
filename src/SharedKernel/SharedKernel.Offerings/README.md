@@ -24,7 +24,7 @@ dotnet add package PandaBear.SharedKernel.Offerings --version <validated-candida
 application: its price kinds and its metric kinds. Alias the closed type once and store the enums by name:
 
 ```csharp
-using TourOffering = PandaBear.Offerings.Offering<System.Guid, TourPriceKind, TourMetric>;
+using TourOffering = SharedKernel.Offerings.Offering<System.Guid, TourPriceKind, TourMetric>;
 ```
 
 | Member | Meaning |
@@ -212,6 +212,6 @@ are left out, since an offering has days, not times. Render it in a `<script typ
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Offerings`. C# namespace: `PandaBear.Offerings`. Assembly/project identity: `SharedKernel.Offerings`.
+Package ID: `PandaBear.SharedKernel.Offerings`. C# namespace: `SharedKernel.Offerings`. Assembly/project identity: `SharedKernel.Offerings`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

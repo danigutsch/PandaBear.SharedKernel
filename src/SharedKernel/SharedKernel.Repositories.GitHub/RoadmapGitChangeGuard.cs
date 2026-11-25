@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Captures the git working-tree changes of a roadmap run and later verifies they are unchanged.</summary>
 internal static class RoadmapGitChangeGuard

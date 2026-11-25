@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Maps a language and features to the baseline configuration that <c>new</c> writes.</summary>
 internal static class NewRepositoryCatalog

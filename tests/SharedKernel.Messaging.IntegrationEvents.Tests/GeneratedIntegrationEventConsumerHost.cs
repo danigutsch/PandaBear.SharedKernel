@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Messaging.Protobuf;
-using PandaBear.Messaging.Protobuf.TestContracts;
+using SharedKernel.Messaging.Protobuf;
+using SharedKernel.Messaging.Protobuf.TestContracts;
 
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>
 /// A service provider with scoped capturing handlers, JSON consumers for both test events, a Protobuf consumer and the generated integration event registrations, used to test generated dispatch.

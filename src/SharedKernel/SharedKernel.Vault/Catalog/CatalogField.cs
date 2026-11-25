@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>Text custom field of a catalog item.</summary>
 /// <param name="Name">Field name.</param>

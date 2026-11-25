@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>Contains one page of scheduling run metadata, newest first.</summary>
 /// <param name="Runs">The selected observations.</param>

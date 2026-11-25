@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The kind of an <see cref="AgeRecipient"/>.</summary>
 public enum AgeRecipientKind

@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>One price of a public view.</summary>
 /// <typeparam name="TPriceKind">The application's price kind enum.</typeparam>

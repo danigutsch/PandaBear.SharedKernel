@@ -1,6 +1,6 @@
 using Google.Protobuf;
 
-namespace PandaBear.Messaging.Protobuf.Tests;
+namespace SharedKernel.Messaging.Protobuf.Tests;
 
 /// <summary>Tests Protobuf payload serialization, JSON fallback, and the errors for unsupported events.</summary>
 public sealed class ProtobufIntegrationEventSerializerTests

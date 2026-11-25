@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the ISO 4217 allow-list and minor units of currencies.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

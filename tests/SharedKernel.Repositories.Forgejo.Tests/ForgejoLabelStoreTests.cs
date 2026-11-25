@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Repositories.Forgejo.Tests;
+namespace SharedKernel.Repositories.Forgejo.Tests;
 
 /// <summary>Guards how the Forgejo label store reads, creates, and updates labels through the Forgejo API.</summary>
 public sealed class ForgejoLabelStoreTests

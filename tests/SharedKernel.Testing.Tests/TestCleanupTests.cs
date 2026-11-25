@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>
 /// Tests that test cleanup attempts every resource or action in order and reports every failure: none, the only one as it is, or all of

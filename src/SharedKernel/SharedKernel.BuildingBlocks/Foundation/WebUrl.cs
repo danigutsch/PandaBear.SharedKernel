@@ -1,7 +1,7 @@
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// An absolute <c>http</c> or <c>https</c> web address that is safe to render as a link, such as a sign-up form or a social

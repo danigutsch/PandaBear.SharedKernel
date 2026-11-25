@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the bounded search state of a picker over a large option set.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

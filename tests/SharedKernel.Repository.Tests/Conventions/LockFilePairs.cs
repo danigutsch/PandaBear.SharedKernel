@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>Reads the resolved <c>Id@Version</c> pairs of lock files and restored assets for the lock file policy tests.</summary>
 internal static class LockFilePairs

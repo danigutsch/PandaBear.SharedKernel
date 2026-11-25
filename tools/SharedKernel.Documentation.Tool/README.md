@@ -74,6 +74,6 @@ Results go to standard output. Failures, stale-file lists, and command-line erro
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Documentation.Tool`. C# namespace: `PandaBear.Documentation.Tool`. Assembly/project identity: `SharedKernel.Documentation.Tool`.
+Package ID: `PandaBear.SharedKernel.Documentation.Tool`. C# namespace: `SharedKernel.Documentation.Tool`. Assembly/project identity: `SharedKernel.Documentation.Tool`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

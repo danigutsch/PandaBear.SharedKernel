@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests that the pinned PostgreSQL and Redis coordinates name the images the Aspire integrations use, and pin them by digest.</summary>
 public sealed class PinnedImageTagTests

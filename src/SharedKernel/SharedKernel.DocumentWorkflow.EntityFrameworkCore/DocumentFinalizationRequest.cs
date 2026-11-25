@@ -1,7 +1,7 @@
-using PandaBear.Idempotency;
-using PandaBear.Review;
+using SharedKernel.Idempotency;
+using SharedKernel.Review;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Finalizes the exact approved revision identified by a host-authorized operator.</summary>
 /// <param name="LineageId">The document lineage.</param>

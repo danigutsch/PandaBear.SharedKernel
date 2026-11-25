@@ -1,8 +1,8 @@
 using System.Net;
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using Xunit.Sdk;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the Created and Location assertions.</summary>
 public sealed class HttpCreatedLocationAssertionTests

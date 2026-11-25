@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The actual SUT, test type, dependencies, capabilities, and CI lane for a seam.</summary>
 /// <param name="Sut">The project under test, as registered in the inventory.</param>

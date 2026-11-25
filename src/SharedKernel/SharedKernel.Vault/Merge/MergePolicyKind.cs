@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>How the merger picks a winner when members hold different values for a field.</summary>
 public enum MergePolicyKind

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>Recorded inputs intended for public attribution after the caller reviews them.</summary>
 public sealed class ContentAttributionDefinition

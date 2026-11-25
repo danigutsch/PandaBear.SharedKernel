@@ -1,6 +1,6 @@
 extern alias testingcodefixes;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests how the SKTEST002 test-name rule treats canonical technical keywords such as API, HTTP2 and ValueTask.</summary>
 public sealed class TestMethodKeywordTests
@@ -44,7 +44,7 @@ public sealed class TestMethodKeywordTests
         var source = $"public sealed class SampleTests {{ [Fact] public void {original}() {{ }} }}";
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKTEST002", original);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);

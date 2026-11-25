@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the label, control and validation message of one form field.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

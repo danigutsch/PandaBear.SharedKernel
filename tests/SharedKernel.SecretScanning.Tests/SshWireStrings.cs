@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Splits an SSH wire-format blob into its length-prefixed strings.</summary>
 internal static class SshWireStrings

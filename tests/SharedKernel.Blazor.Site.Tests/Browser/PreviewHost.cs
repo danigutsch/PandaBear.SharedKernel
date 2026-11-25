@@ -1,6 +1,6 @@
-using PandaBear.AspNetCore;
+using SharedKernel.AspNetCore;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>A loopback Interactive Server host that serves <see cref="PreviewDocument" /> under a policy without <c>'unsafe-inline'</c>.</summary>
 internal sealed class PreviewHost : IAsyncDisposable

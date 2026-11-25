@@ -9,9 +9,9 @@ using OpenTelemetry;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using PandaBear.Observability;
+using SharedKernel.Observability;
 
-namespace PandaBear.ServiceDefaults;
+namespace SharedKernel.ServiceDefaults;
 
 /// <summary>
 /// Aspire service defaults for SharedKernel hosts. They follow the Aspire service-defaults contract (OpenTelemetry, health checks, service

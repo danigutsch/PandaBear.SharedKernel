@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the source bundle that <see cref="PackageInventory.CheckUpdates"/> uses.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

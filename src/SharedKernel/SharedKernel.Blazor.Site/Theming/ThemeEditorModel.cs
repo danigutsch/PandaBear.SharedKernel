@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// The mutable form model of a theme editor: plain fields that bind to inputs, mapped to the theme value objects with every

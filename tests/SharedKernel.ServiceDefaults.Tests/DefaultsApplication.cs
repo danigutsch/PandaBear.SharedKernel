@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 
-namespace PandaBear.ServiceDefaults.Tests;
+namespace SharedKernel.ServiceDefaults.Tests;
 
 /// <summary>Builds an in-memory web application that uses the service defaults and maps <c>/ping</c>.</summary>
 internal static class DefaultsApplication

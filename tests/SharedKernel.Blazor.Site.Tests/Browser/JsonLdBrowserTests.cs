@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>Tests in Chromium that the JSON-LD script of a statically rendered page stays one script; they skip when the browser is not installed.</summary>
 [Testing.TestScope(Testing.TestScope.System)]

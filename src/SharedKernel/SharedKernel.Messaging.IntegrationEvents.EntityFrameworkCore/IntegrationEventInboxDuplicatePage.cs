@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>A bounded page of completed duplicate observations for one consumer.</summary>
 /// <param name="Rows">The metadata for the current page.</param>

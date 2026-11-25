@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Tests the optional scope initializer of <see cref="ScopedSender"/>.</summary>
 public sealed class ScopedSenderInitializerTests

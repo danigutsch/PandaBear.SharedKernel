@@ -8,7 +8,7 @@ Protobuf support for integration-event messaging, at the two layers CloudEvents 
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Messaging.Protobuf`. C# namespace: `PandaBear.Messaging.Protobuf`. Assembly/project identity: `SharedKernel.Messaging.Protobuf`.
+Package ID: `PandaBear.SharedKernel.Messaging.Protobuf`. C# namespace: `SharedKernel.Messaging.Protobuf`. Assembly/project identity: `SharedKernel.Messaging.Protobuf`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

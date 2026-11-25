@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary><c>text/plain</c> HTTP content that throws <see cref="NotSupportedException" /> when serialized or opened as a stream and records that it was touched.</summary>
 internal sealed class ContractHttpValidationNotSupportedContent : HttpContent

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// How tall a <see cref="HeroLayout.Cover" /> hero with an image is at least; its content can make it taller. A cover without an image is

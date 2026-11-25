@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Which repository and version kind <see cref="ReleaseHistory.CalculateVersion"/> calculates for.</summary>
 /// <param name="RepoRoot">The Git repository root.</param>

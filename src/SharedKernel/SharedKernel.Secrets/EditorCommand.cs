@@ -1,7 +1,7 @@
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// The editor that <c>sops edit</c> starts, from the text of <c>VISUAL</c> or <c>EDITOR</c>: an absolute program path and

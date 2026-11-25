@@ -2,7 +2,7 @@
 
 Date: 2026-10-27. Status: accepted.
 
-Blazor applications repeat three patterns: mapping a failed HTTP outcome to user copy and showing server validation errors, reporting handled UI failures, and showing accessible upload status. The helpers live in a new package, `PandaBear.SharedKernel.Blazor` (namespace `PandaBear.Blazor`), rather than in `SharedKernel.HttpClients`.
+Blazor applications repeat three patterns: mapping a failed HTTP outcome to user copy and showing server validation errors, reporting handled UI failures, and showing accessible upload status. The helpers live in a new package, `PandaBear.SharedKernel.Blazor` (namespace `SharedKernel.Blazor`), rather than in `SharedKernel.HttpClients`.
 
 ## Why a new package
 

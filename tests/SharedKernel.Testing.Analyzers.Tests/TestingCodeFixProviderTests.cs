@@ -2,7 +2,7 @@ extern alias testingcodefixes;
 
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the code actions TestingCodeFixProvider offers for the testing diagnostics, and the diagnostics it advertises as fixable.</summary>
 public sealed class TestingCodeFixProviderTests
@@ -33,7 +33,7 @@ public sealed class TestingCodeFixProviderTests
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(diagnosticId, "Sample()");
 
         // Act
@@ -67,7 +67,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
         // Act
@@ -98,7 +98,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Some_Title()");
 
         // Act
@@ -133,7 +133,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
         // Act
@@ -162,7 +162,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
         // Act
@@ -189,7 +189,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Tour()");
 
         // Act
@@ -216,7 +216,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "UsesHTTP2TimeoutFallback()");
 
         // Act
@@ -234,7 +234,7 @@ public sealed class TestingCodeFixProviderTests
     public void Fix_all_is_not_advertised_for_testing_code_fixes()
     {
         // Arrange
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var supportedScopes = provider.GetFixAllProvider().GetSupportedFixAllScopes();
@@ -247,7 +247,7 @@ public sealed class TestingCodeFixProviderTests
     public void Provider_advertises_warning_suppression_diagnostic()
     {
         // Arrange
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var fixableDiagnosticIds = provider.FixableDiagnosticIds;
@@ -276,7 +276,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(WarningSuppressionDiagnosticId, "#pragma warning disable CA1822");
 
         // Act
@@ -310,7 +310,7 @@ public sealed class TestingCodeFixProviderTests
             .Add("TraitValue", "Smoke");
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitRequiredTraitDiagnosticId,
             "Creates_a_tour_when_the_request_is_valid()",
@@ -343,7 +343,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitRequiredTraitDiagnosticId,
             "Creates_a_tour_when_the_request_is_valid()");
@@ -359,7 +359,7 @@ public sealed class TestingCodeFixProviderTests
     public void Provider_advertises_serial_justification_diagnostic()
     {
         // Arrange
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var fixableDiagnosticIds = provider.FixableDiagnosticIds;
@@ -372,7 +372,7 @@ public sealed class TestingCodeFixProviderTests
     public void Provider_advertises_assertion_wrapper_diagnostic()
     {
         // Arrange
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var fixableDiagnosticIds = provider.FixableDiagnosticIds;
@@ -385,7 +385,7 @@ public sealed class TestingCodeFixProviderTests
     public void Provider_advertises_trait_constant_usage_diagnostic()
     {
         // Arrange
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var fixableDiagnosticIds = provider.FixableDiagnosticIds;
@@ -398,7 +398,7 @@ public sealed class TestingCodeFixProviderTests
     public void Provider_advertises_helper_method_diagnostic()
     {
         // Arrange
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var fixableDiagnosticIds = provider.FixableDiagnosticIds;
@@ -411,7 +411,7 @@ public sealed class TestingCodeFixProviderTests
     public void Provider_advertises_user_message_overload_diagnostic()
     {
         // Arrange
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var fixableDiagnosticIds = provider.FixableDiagnosticIds;
@@ -448,7 +448,7 @@ public sealed class TestingCodeFixProviderTests
             """.ReplaceLineEndings("\r\n");
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -495,7 +495,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "static int CreateTourId()");
@@ -536,7 +536,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int @switch()");
@@ -579,7 +579,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -620,7 +620,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -663,7 +663,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private int CreateTourId()");
@@ -700,7 +700,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -735,7 +735,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "internal static int CreateTourId()");
@@ -774,7 +774,7 @@ public sealed class TestingCodeFixProviderTests
         var helperFilePath = Path.Combine(tempDirectory.Path, "TourLoaderTestsHelpers.cs");
         await File.WriteAllTextAsync(helperFilePath, string.Empty, TestContext.Current.CancellationToken);
         var workspace = CodeFixTestWorkspace.Create(source, filePath: sourcePath);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -815,7 +815,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             helperDeclaration);
@@ -862,7 +862,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId(string value)");
@@ -908,7 +908,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId(string value)");
@@ -946,7 +946,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId(string value)");
@@ -963,7 +963,7 @@ public sealed class TestingCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace PandaBear.Testing
+            namespace SharedKernel.Testing
             {
                 public static class TestTraitNames
                 {
@@ -985,9 +985,9 @@ public sealed class TestingCodeFixProviderTests
         var workspace = CodeFixTestWorkspace.Create(source);
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new TestingAnalyzer());
         var diagnostic = analyzerDiagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
-        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
+        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
 
         // Act
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -996,7 +996,7 @@ public sealed class TestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("[Trait(global::PandaBear.Testing.TestTraitNames.CategoryName, \"Smoke\")]", StringComparison.Ordinal);
+        updatedText.ShouldContain("[Trait(global::SharedKernel.Testing.TestTraitNames.CategoryName, \"Smoke\")]", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1017,7 +1017,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitTraitConstantUsageDiagnosticId,
             "\"Category\"");
@@ -1068,7 +1068,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var sourceText = await workspace.GetDocumentText();
         var diagnostics = await workspace.GetAnalyzerDiagnostics(new TestingAnalyzer());
         var diagnostic = diagnostics
@@ -1082,7 +1082,7 @@ public sealed class TestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("using PandaBear.Testing.Assertions;", StringComparison.Ordinal);
+        updatedText.ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
         updatedText.ShouldContain(expectedRewrite, StringComparison.Ordinal);
     }
 
@@ -1103,7 +1103,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Multiple");
 
         // Act
@@ -1130,7 +1130,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Equal");
 
         // Act
@@ -1157,7 +1157,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Single");
 
         // Act
@@ -1181,7 +1181,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitSerialJustificationDiagnosticId,
             "SerialDatabaseCollection");
@@ -1193,7 +1193,7 @@ public sealed class TestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("[global::PandaBear.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
         updatedText.ShouldContain("[global::Xunit.CollectionDefinition(\"Serial database\", DisableParallelization = true)]", StringComparison.Ordinal);
         var justificationPrecedesCollectionDefinition = updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) <
             updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal);
@@ -1212,7 +1212,7 @@ public sealed class TestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitSerialJustificationDiagnosticId,
             "SerialDatabaseCollection");
@@ -1224,7 +1224,7 @@ public sealed class TestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("[global::PandaBear.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
         updatedText.ShouldContain("public sealed record SerialDatabaseCollection;", StringComparison.Ordinal);
         var justificationPrecedesCollectionDefinition = updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) <
             updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal);

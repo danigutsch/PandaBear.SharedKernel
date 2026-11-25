@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Forms;
-using static PandaBear.Blazor.Tests.ServerValidationFixtures;
+using static SharedKernel.Blazor.Tests.ServerValidationFixtures;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests applying server validation errors to an <see cref="EditContext" />.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

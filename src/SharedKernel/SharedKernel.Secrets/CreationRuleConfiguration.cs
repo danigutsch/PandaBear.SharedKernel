@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>One creation rule in <c>.config/sharedkernel-secrets.json</c>.</summary>
 /// <param name="PathRegex">The unanchored path expression, compiled non-backtracking.</param>

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Forms;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// The state of a form that submits to a server: whether it is saving, the field errors shown on the fields and in an

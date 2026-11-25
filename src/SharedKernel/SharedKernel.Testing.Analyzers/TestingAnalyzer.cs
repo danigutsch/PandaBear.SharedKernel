@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 /// <summary>
 /// Reports diagnostics for repository-specific testing rules.
@@ -84,11 +84,11 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor XunitAssertionWrapperRule = new(
         TestingDiagnosticIds.XunitAssertionWrapper,
         title: "Test code should use repository assertion wrappers",
-        messageFormat: "Use PandaBear.Testing.Assertions instead of direct xUnit assertion '{0}'",
+        messageFormat: "Use SharedKernel.Testing.Assertions instead of direct xUnit assertion '{0}'",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules require assertion calls to go through PandaBear.Testing.Assertions so test diagnostics and nullability behavior stay consistent.");
+        description: "Repository testing rules require assertion calls to go through SharedKernel.Testing.Assertions so test diagnostics and nullability behavior stay consistent.");
 
     private static readonly DiagnosticDescriptor XunitArrangeActAssertMarkersRule = new(
         TestingDiagnosticIds.XunitArrangeActAssertMarkers,
@@ -289,11 +289,11 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
         }
 
         var replacements = ImmutableArray.CreateBuilder<string>();
-        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("PandaBear.Testing.TestTraitNames"), literalValue, replacements);
+        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.TestTraitNames"), literalValue, replacements);
 
         if (includeTraitValues)
         {
-            AddConstantsFromType(context.Compilation.GetTypeByMetadataName("PandaBear.Testing.TestTraitValues"), literalValue, replacements);
+            AddConstantsFromType(context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.TestTraitValues"), literalValue, replacements);
         }
 
         return TryGetSingleReplacement(replacements);
@@ -416,7 +416,7 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
         }
 
         if (name.StartsWith("Should", StringComparison.Ordinal)
-            && method.ContainingNamespace.ToDisplayString().StartsWith("PandaBear.Testing.", StringComparison.Ordinal))
+            && method.ContainingNamespace.ToDisplayString().StartsWith("SharedKernel.Testing.", StringComparison.Ordinal))
         {
             if (invocation.Expression is MemberAccessExpressionSyntax { Expression: ParenthesizedExpressionSyntax })
             {
@@ -461,7 +461,7 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
 
             var isExceptionAssertion = method.ContainingType.ToDisplayString() == "Xunit.Assert"
                     && method.Name.StartsWith("Throws", StringComparison.Ordinal)
-                || method.ContainingType.ToDisplayString() == "PandaBear.Testing.Assertions.ShouldAssertionExtensions"
+                || method.ContainingType.ToDisplayString() == "SharedKernel.Testing.Assertions.ShouldAssertionExtensions"
                     && method.Name.StartsWith("ShouldThrow", StringComparison.Ordinal);
             if (isExceptionAssertion && (candidate.Span.Contains(lambda.Span)
                 || local is not null && candidate.DescendantNodes().OfType<IdentifierNameSyntax>().Any(identifier =>

@@ -1,8 +1,8 @@
-using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.Testing;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests the scan command's summary output, report file handling, and refusal to overwrite inputs.</summary>
 public sealed class ScanCommandTests : IDisposable

@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>What a catalog item holds besides its editable parts. <c>apply</c> ignores it.</summary>
 /// <param name="Type">Item type.</param>

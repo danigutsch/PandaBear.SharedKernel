@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Forms;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests which fixed message a form shows for each kind of failed save and for client messages it cannot list.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

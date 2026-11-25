@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>
 /// An agent settings file in its own format, opened for <see cref="SettingsMerger"/>. The merger decides what to add,

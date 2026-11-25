@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.DocumentRendering.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.DocumentRendering.Tests</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <Using Include="PandaBear.DocumentRendering" />
-        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="SharedKernel.DocumentRendering" />
+        <Using Include="SharedKernel.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
     <ItemGroup>

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Source-generated JSON serialization context for the GitHub project responses.</summary>
 [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]

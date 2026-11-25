@@ -1,10 +1,10 @@
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using Xunit.Sdk;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the assertions that deserialize the JSON body of an OK or Created response.</summary>
 public sealed class HttpJsonSuccessAssertionTests

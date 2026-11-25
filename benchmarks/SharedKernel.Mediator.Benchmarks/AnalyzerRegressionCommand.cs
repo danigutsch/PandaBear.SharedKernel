@@ -6,12 +6,12 @@ using System.Text.Json;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using PandaBear.Aspire.Analyzers;
-using PandaBear.Mediator.Analyzers;
-using PandaBear.Style.Analyzers;
-using PandaBear.Testing.Analyzers;
+using SharedKernel.Aspire.Analyzers;
+using SharedKernel.Mediator.Analyzers;
+using SharedKernel.Style.Analyzers;
+using SharedKernel.Testing.Analyzers;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>Collects or checks analyzer performance baselines for the mediator analyzers.</summary>
 internal static class AnalyzerRegressionCommand

@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>A process that the runner starts before the load generator, waits for, and stops after it.</summary>
 /// <param name="Command">The command name, resolved from the absolute directories of <c>PATH</c>.</param>

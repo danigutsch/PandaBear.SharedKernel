@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PandaBear.Testing.Packaging;
+namespace SharedKernel.Testing.Packaging;
 
 /// <summary>
 /// Creates isolated consumer projects that restore packages from a temporary local NuGet feed. Package-specific project content and assertions stay with the calling test project.

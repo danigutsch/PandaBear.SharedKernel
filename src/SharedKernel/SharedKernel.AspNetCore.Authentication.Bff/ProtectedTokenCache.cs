@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Keeps user tokens and exchanged tokens in the distributed cache, protected with Data Protection under a purpose bound
@@ -12,6 +12,7 @@ namespace PandaBear.AspNetCore.Authentication.Bff;
 /// </summary>
 internal sealed class ProtectedTokenCache
 {
+    // These persisted purposes are shared by running versions and survive namespace changes.
     private const string UserTokensPurpose = "PandaBear.AspNetCore.Authentication.Bff.UserTokens.v1";
     private const string ExchangedTokenPurpose = "PandaBear.AspNetCore.Authentication.Bff.ExchangedToken.v1";
     private const byte FormatVersion = 1;

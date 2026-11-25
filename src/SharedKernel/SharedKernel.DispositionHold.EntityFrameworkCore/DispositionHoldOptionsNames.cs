@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.DispositionHold.EntityFrameworkCore;
+namespace SharedKernel.DispositionHold.EntityFrameworkCore;
 
 /// <summary>Builds the named-options key under which per-context hold storage options are registered.</summary>
 internal static class DispositionHoldOptionsNames

@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>A private key converted into Bitwarden SSH key data, or why it was not converted.</summary>
 /// <param name="Key">The SSH key data, or <see langword="null"/>.</param>

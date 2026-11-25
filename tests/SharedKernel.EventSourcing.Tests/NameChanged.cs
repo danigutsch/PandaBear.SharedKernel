@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing.Tests;
+namespace SharedKernel.EventSourcing.Tests;
 
 /// <summary>A test domain event recording a new aggregate name.</summary>
 /// <param name="Name">The new name.</param>

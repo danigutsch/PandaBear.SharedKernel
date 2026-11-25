@@ -1,8 +1,8 @@
 using System.Text.Json;
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Reads the globally installed npm packages with <c>npm ls --global --depth=0 --json</c>. It changes nothing.</summary>
 public sealed class NpmPackageReader : IPackageReader

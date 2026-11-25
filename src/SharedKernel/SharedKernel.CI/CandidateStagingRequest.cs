@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The resolved options of one candidate staging.</summary>
 /// <param name="Root">The consumer repository root, whose <c>global.json</c> must match the library's.</param>

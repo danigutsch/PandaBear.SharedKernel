@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Canned OSV answers in the shape that api.osv.dev returned when the adapter was written.</summary>
 internal static class OsvAnswers

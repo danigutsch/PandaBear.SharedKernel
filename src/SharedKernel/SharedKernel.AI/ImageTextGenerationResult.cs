@@ -1,4 +1,4 @@
-namespace PandaBear.AI;
+namespace SharedKernel.AI;
 
 /// <summary>
 /// Contains AI-generated draft image accessibility text.

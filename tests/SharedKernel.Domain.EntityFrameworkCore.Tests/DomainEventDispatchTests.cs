@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.EntityFrameworkCore;
+using SharedKernel.EntityFrameworkCore;
 
-namespace PandaBear.Domain.EntityFrameworkCore.Tests;
+namespace SharedKernel.Domain.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests that the domain-event dispatch save interceptor publishes events of saved aggregates through the registered dispatcher.

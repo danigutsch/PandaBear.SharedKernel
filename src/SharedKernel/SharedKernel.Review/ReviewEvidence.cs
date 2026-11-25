@@ -1,4 +1,4 @@
-namespace PandaBear.Review;
+namespace SharedKernel.Review;
 
 /// <summary>Captures an immutable human decision or automated advisory about a content revision.</summary>
 public sealed class ReviewEvidence

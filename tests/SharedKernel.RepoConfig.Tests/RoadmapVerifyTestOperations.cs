@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Runs <c>verify</c> on a temporary workspace through the command line.</summary>
 internal static class RoadmapVerifyTestOperations

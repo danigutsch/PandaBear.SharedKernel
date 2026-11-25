@@ -66,6 +66,6 @@ code.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Aspire.Hosting.K6`. C# namespace: `PandaBear.Aspire.Hosting.K6`. Assembly/project identity: `SharedKernel.Aspire.Hosting.K6`.
+Package ID: `PandaBear.SharedKernel.Aspire.Hosting.K6`. C# namespace: `SharedKernel.Aspire.Hosting.K6`. Assembly/project identity: `SharedKernel.Aspire.Hosting.K6`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

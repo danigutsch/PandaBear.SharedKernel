@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>Keeps the last lines each resource of an application logged, so a failed wait or test can say why.</summary>
 internal sealed class ResourceLogTail : IAsyncDisposable

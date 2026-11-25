@@ -3,10 +3,10 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using PandaBear.Forgejo;
-using PandaBear.IO;
+using SharedKernel.Forgejo;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories.Forgejo;
+namespace SharedKernel.Repositories.Forgejo;
 
 /// <summary>
 /// The labels of a Forgejo repository, read and written through the labels API of

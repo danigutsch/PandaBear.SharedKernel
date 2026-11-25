@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.ConfigurationFiles.Tests;
+namespace SharedKernel.ConfigurationFiles.Tests;
 
 /// <summary>Tests reading strict JSON configuration files.</summary>
 public sealed class JsonConfigurationFileTests

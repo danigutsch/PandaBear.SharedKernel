@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Domain.GeneratorTests;
+namespace SharedKernel.Domain.GeneratorTests;
 
 /// <summary>Tests that the model identity generator emits Equals and GetHashCode for opted-in partial classes and reports SKMDL001 to SKMDL009 for unsupported shapes.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
@@ -215,7 +215,7 @@ public sealed class ModelIdentityGeneratorTests
     {
         // Arrange
         const string source = """
-            using ModelSupport = PandaBear.Domain.GenerateModelSupportAttribute;
+            using ModelSupport = SharedKernel.Domain.GenerateModelSupportAttribute;
 
             namespace Demo;
 
@@ -240,7 +240,7 @@ public sealed class ModelIdentityGeneratorTests
     {
         // Arrange
         const string source = """
-            using CustomerIdentity = PandaBear.BuildingBlocks.IIdentified<int>;
+            using CustomerIdentity = SharedKernel.BuildingBlocks.IIdentified<int>;
 
             [assembly: GenerateModelSupportDefaults(Identity = true)]
 

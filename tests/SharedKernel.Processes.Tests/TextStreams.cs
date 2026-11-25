@@ -1,4 +1,4 @@
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Creates in-memory readers that stand in for a process's output streams.</summary>
 internal static class TextStreams

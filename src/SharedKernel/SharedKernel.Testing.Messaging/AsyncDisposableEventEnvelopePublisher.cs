@@ -1,6 +1,6 @@
-using PandaBear.Messaging;
+using SharedKernel.Messaging;
 
-namespace PandaBear.Testing.Messaging;
+namespace SharedKernel.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher that ignores published envelopes and counts how often it is asynchronously disposed.

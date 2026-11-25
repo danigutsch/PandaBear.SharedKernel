@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the security scanner that is installed on the machine. The tests run only when requested.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

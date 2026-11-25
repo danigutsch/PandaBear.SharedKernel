@@ -1,7 +1,7 @@
 using System.Text;
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Runs the whole tool against the real age, age-keygen, and sops with throwaway keys. Skips when a program is missing.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

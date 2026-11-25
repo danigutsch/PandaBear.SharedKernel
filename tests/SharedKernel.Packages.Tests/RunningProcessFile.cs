@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Reads the process ID that a test script wrote to a file and checks whether that process still runs.</summary>
 internal static class RunningProcessFile

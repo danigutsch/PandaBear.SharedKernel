@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using PandaBear.Idempotency;
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Idempotency;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Exercises completed integration event inbox observations in PostgreSQL.</summary>
 [Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]

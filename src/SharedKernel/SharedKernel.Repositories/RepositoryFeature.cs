@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// A group of baseline files or Git settings that <c>new</c> can write. Only the catalog values exist, so a parsed

@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Tests the forge-neutral run output file and step summary file.</summary>
 public sealed class RunOutputFilesTests

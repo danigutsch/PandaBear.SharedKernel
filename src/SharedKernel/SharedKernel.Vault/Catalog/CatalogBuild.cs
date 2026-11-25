@@ -1,6 +1,6 @@
-using PandaBear.Vault.Merge;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>A catalog made by <see cref="CatalogBuilder"/>.</summary>
 /// <param name="Catalog">The catalog.</param>

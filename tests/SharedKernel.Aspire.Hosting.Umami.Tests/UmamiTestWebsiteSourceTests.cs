@@ -1,6 +1,6 @@
-using PandaBear.Aspire.Hosting.Umami.Testing;
+using SharedKernel.Aspire.Hosting.Umami.Testing;
 
-namespace PandaBear.Aspire.Hosting.Umami.Tests;
+namespace SharedKernel.Aspire.Hosting.Umami.Tests;
 
 /// <summary>Tests UmamiTestWebsiteSource, which borrows the website named in the environment or starts an Umami once on first demand.</summary>
 public sealed class UmamiTestWebsiteSourceTests

@@ -1,8 +1,8 @@
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The tracked project, <c>Directory.Build.props</c>, and <c>Directory.Build.targets</c> files of a repository, read and

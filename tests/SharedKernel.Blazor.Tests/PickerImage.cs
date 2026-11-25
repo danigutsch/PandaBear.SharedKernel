@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>An image option of the picker tests.</summary>
 /// <param name="Id">The key.</param>

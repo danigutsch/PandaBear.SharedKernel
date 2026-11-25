@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Maps the application rule names carried by <see cref="BuildingBlocks.UniqueConstraintViolationException"/> to the field and

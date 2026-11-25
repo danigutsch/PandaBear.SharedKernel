@@ -1,6 +1,6 @@
-using PandaBear.ContentRights;
+using SharedKernel.ContentRights;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Shared photo rights inputs for standalone and gallery rendering tests.</summary>
 internal static class PhotoCreditFixture

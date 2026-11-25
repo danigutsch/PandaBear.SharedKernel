@@ -32,7 +32,7 @@ The package now also exposes an optional activity-based observability behavior:
 ## Concurrency conflict handling
 
 `ConcurrencyConflictBehavior<TRequest, TResponse>` lets a command that returns `Result` or `Result<T>` stay free of try/catch for
-optimistic-concurrency failures. When the request throws `PandaBear.BuildingBlocks.ConcurrencyConflictException` (a row changed or
+optimistic-concurrency failures. When the request throws `SharedKernel.BuildingBlocks.ConcurrencyConflictException` (a row changed or
 disappeared since it was read), the behavior returns a failed result with `ResultStatus.Conflict`, the error code
 `ResultErrorCodes.ConcurrencyConflict` (`concurrency_conflict`) and the fixed message `ConflictMessage`
 (`The data was changed or removed by someone else. Reload it and try again.`); the HTTP and UI edges then map it through the existing
@@ -71,7 +71,7 @@ public sealed class ConflictBehavior<TRequest, TResponse> : ConcurrencyConflictB
 
 `UniqueViolationBehavior<TRequest, TResponse>` is the race-safety net for "create if it does not exist yet" commands that return
 `Result` or `Result<T>`. When two concurrent requests pass the same existence check, the loser's save throws
-`PandaBear.BuildingBlocks.UniqueConstraintViolationException` (thrown by `SaveChangesTranslatingConflicts`); the behavior turns it into a
+`SharedKernel.BuildingBlocks.UniqueConstraintViolationException` (thrown by `SaveChangesTranslatingConflicts`); the behavior turns it into a
 failed result instead of a 500.
 
 - **Converts:** only `UniqueConstraintViolationException`. A rule that is mapped becomes `ResultStatus.Invalid` with one field error (the
@@ -133,7 +133,7 @@ dispatch, and steady-state dispatch metrics.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Mediator`. C# namespace: `PandaBear.Mediator`. Assembly/project identity: `SharedKernel.Mediator`.
+Package ID: `PandaBear.SharedKernel.Mediator`. C# namespace: `SharedKernel.Mediator`. Assembly/project identity: `SharedKernel.Mediator`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

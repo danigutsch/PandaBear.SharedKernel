@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.DocumentRendering.Pdf.Chromium;
+using SharedKernel.DocumentRendering.Pdf.Chromium;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Supplies the locally qualified runtime, fixtures, and artifact directory.</summary>
 internal static class ChromiumPdfTestRuntime

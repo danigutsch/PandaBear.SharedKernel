@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the keyboard focus of a list page whose inline delete confirmation opens, closes and deletes.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

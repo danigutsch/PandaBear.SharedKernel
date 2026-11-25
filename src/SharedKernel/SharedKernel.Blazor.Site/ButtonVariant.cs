@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The visual style of a <see cref="ButtonLink" />.</summary>
 public enum ButtonVariant

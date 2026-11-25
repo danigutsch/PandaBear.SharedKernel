@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>The consumer policy in the load-test configuration file.</summary>
 /// <param name="Version">Format version; only <c>1</c> is supported.</param>

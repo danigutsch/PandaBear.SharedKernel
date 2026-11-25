@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
-using PandaBear.BuildingBlocks;
-using PandaBear.ContentRights;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.ContentRights;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Displays approved attribution in full or as a compact credit with a link or disclosure.</summary>
 public sealed partial class PhotoCredit

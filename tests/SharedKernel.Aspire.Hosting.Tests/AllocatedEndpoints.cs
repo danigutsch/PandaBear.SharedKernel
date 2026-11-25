@@ -1,6 +1,6 @@
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Gives endpoints the address that the orchestrator would allocate when the application starts.</summary>
 internal static class AllocatedEndpoints

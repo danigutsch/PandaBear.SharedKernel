@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Tests that running the mediator generator repeatedly or over reordered declarations yields identical sources and diagnostics.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DispatchCapability)]

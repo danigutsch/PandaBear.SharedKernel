@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Tests the stream-backed form-file fake used for non-seekable uploads.</summary>
 public sealed class StreamFormFileTests

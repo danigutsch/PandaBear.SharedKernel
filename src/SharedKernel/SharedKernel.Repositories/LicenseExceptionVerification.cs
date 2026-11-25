@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The outcome of <see cref="LicenseExceptionVerifier.Verify(string, CancellationToken)"/>.</summary>
 /// <param name="Issues">The approval and lock-file mismatches.</param>

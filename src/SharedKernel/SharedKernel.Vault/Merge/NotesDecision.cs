@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// How the notes of an item are handled in a catalog. The zero value is <see cref="Pending"/>, so notes are withheld until

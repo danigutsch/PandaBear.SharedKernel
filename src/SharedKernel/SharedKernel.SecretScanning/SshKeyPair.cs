@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>An SSH key converted by <see cref="SshKeyConverter"/>.</summary>
 /// <param name="PrivateKey">The private key, in OpenSSH or PKCS#8 PEM form.</param>

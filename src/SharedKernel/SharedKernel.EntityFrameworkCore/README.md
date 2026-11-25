@@ -55,7 +55,7 @@ dotnet add package PandaBear.SharedKernel.EntityFrameworkCore --version <validat
 ```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.EntityFrameworkCore;
+using SharedKernel.EntityFrameworkCore;
 
 public sealed class AppDbContext : DbContext;
 public sealed class AppConfiguration : IDbContextConfiguration<AppDbContext>;
@@ -74,7 +74,7 @@ guard. Report that loss as an application rule instead of a provider exception, 
 
 1. Name the rule next to the index, in the infrastructure model configuration: `builder.HasIndex(c => c.Email).HasUniqueRule("customer.email")`.
 2. Save through `dbContext.SaveChangesTranslatingUniqueViolations(parser, ct)`. A violation of a tagged index throws
-   `PandaBear.BuildingBlocks.UniqueConstraintViolationException` with `Rule` set (the provider exception is the inner exception).
+   `SharedKernel.BuildingBlocks.UniqueConstraintViolationException` with `Rule` set (the provider exception is the inner exception).
    Violations of untagged indexes and every other failure propagate unchanged.
 3. Catch `UniqueConstraintViolationException` in the application handler and return the same validation result as the pre-check.
 
@@ -87,13 +87,13 @@ constraint name (the index database name) or by table and every column, ignoring
 
 `dbContext.SaveChangesTranslatingConflicts(parser, ct)` behaves like `SaveChangesTranslatingUniqueViolations` and additionally
 translates `DbUpdateConcurrencyException` (an update or delete whose row changed or disappeared since it was read, or whose
-concurrency token no longer matches) into `PandaBear.BuildingBlocks.ConcurrencyConflictException`. The provider exception is kept as
+concurrency token no longer matches) into `SharedKernel.BuildingBlocks.ConcurrencyConflictException`. The provider exception is kept as
 the inner exception and the message never contains data values. Catch it in the application handler and report a conflict instead of
 an unexpected failure. `SaveChangesTranslatingUniqueViolations` is unchanged and does not translate conflicts.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.EntityFrameworkCore`. C# namespace: `PandaBear.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.EntityFrameworkCore`.
+Package ID: `PandaBear.SharedKernel.EntityFrameworkCore`. C# namespace: `SharedKernel.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.EntityFrameworkCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

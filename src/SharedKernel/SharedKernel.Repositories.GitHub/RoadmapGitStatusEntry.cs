@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>One parsed entry of git status porcelain v2 output.</summary>
 /// <param name="RecordType">Porcelain record type marker.</param>

@@ -9,7 +9,7 @@ Domain event dispatcher and dispatch handler fakes for SharedKernel test suites.
 ## Usage
 
 ```csharp
-using PandaBear.Testing.Domain;
+using SharedKernel.Testing.Domain;
 
 var dispatcher = new RecordingDomainEventDispatcher();
 await publisher.Publish(aggregate, dispatcher, ct);
@@ -20,6 +20,6 @@ dispatcher.Dispatched.ShouldHaveSingleItem();
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Domain`. C# namespace: `PandaBear.Testing.Domain`. Assembly/project identity: `SharedKernel.Testing.Domain`.
+Package ID: `PandaBear.SharedKernel.Testing.Domain`. C# namespace: `SharedKernel.Testing.Domain`. Assembly/project identity: `SharedKernel.Testing.Domain`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>
 /// The Content-Security-Policy nonce of the current request: a CSP3 <c>'nonce-…'</c> source that lets an inline <c>style</c> or

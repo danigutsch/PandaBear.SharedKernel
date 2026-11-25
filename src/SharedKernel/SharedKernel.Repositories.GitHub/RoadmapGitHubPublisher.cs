@@ -2,9 +2,9 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using PandaBear.GitHub;
+using SharedKernel.GitHub;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Publishes verified roadmap changes to GitHub through the REST API as a signed-off commit, branch, and pull request.</summary>
 internal sealed class RoadmapGitHubPublisher

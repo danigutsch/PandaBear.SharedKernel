@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Engine tests split from the command-line tests in GitHubRoadmapReferenceTests.</summary>
 public sealed class GitHubRoadmapReferencePlanTests

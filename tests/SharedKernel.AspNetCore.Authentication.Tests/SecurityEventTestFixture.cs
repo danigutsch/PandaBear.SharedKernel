@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.Authentication.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Tests;
 
 /// <summary>Builds a service provider with the authentication-event telemetry, a recording logger and a metric collector.</summary>
 internal sealed class SecurityEventTestFixture : IDisposable

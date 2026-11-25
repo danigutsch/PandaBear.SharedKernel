@@ -1,6 +1,6 @@
-using static PandaBear.PageSections.Tests.PageSectionFixtures;
+using static SharedKernel.PageSections.Tests.PageSectionFixtures;
 
-namespace PandaBear.PageSections.Tests;
+namespace SharedKernel.PageSections.Tests;
 
 /// <summary>Tests the parts of one page section and their rules, ported from ViajantesTurismo V2.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

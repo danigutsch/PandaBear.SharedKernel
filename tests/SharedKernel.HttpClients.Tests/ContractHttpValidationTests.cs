@@ -2,9 +2,9 @@ using System.Net.Http.Headers;
 using System.Net;
 using System.Text.Json;
 using System.Text;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>Tests how contract HTTP validation turns failed responses into HTTP or validation exceptions and how it bounds and sanitizes validation problem bodies.</summary>
 public sealed class ContractHttpValidationTests

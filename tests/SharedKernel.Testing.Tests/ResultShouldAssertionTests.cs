@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the Should assertions that check whether a <see cref="Result" /> succeeded or failed with an expected status and code.</summary>
 public sealed class ResultShouldAssertionTests

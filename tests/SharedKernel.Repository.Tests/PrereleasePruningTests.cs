@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Net;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Tests <c>prune-prereleases</c> against an in-memory GitHub releases API, so no test reaches the network.</summary>
 public sealed class PrereleasePruningTests

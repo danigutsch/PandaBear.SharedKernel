@@ -50,8 +50,8 @@ dotnet add package PandaBear.SharedKernel.AspNetCore.Localization --version <val
 
 ```csharp
 using Microsoft.AspNetCore.Localization;
-using PandaBear.AspNetCore.Localization;
-using PandaBear.BuildingBlocks;
+using SharedKernel.AspNetCore.Localization;
+using SharedKernel.BuildingBlocks;
 
 var supported = SupportedCultures.Create(
     ContentCulture.Restore("pt"),
@@ -112,7 +112,7 @@ Pass `languageTags.LanguageTagOf(culture)`.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AspNetCore.Localization`. C# namespace: `PandaBear.AspNetCore.Localization`. Assembly/project
+Package ID: `PandaBear.SharedKernel.AspNetCore.Localization`. C# namespace: `SharedKernel.AspNetCore.Localization`. Assembly/project
 identity: `SharedKernel.AspNetCore.Localization`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured

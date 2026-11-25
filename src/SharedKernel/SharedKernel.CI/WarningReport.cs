@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// The warning totals of one CI tool, written by a verification step and read by <c>warning-summary</c>. Any step can write

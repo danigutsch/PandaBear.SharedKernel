@@ -1,14 +1,14 @@
 using System.Globalization;
-using PandaBear.IO;
-using PandaBear.Vault.Analysis;
-using PandaBear.Vault.Attachments;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
+using SharedKernel.IO;
+using SharedKernel.Vault.Analysis;
+using SharedKernel.Vault.Attachments;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>
 /// Runs the vault pipeline: read, normalize SSH keys, scan, place accepted findings, match, merge, analyze, and write.

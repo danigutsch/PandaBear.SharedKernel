@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// How an <see cref="ActionRow" /> places its actions in their row from the <c>48rem</c> breakpoint on, and on which side it stacks them

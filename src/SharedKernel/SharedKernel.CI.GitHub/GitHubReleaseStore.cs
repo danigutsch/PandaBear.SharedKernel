@@ -2,10 +2,10 @@ using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using PandaBear.GitHub;
-using PandaBear.IO;
+using SharedKernel.GitHub;
+using SharedKernel.IO;
 
-namespace PandaBear.CI.GitHub;
+namespace SharedKernel.CI.GitHub;
 
 /// <summary>
 /// Lists and deletes the releases of a GitHub repository through the

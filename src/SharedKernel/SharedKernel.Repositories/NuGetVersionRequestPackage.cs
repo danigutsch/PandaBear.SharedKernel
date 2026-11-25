@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>One direct owner's evaluated source scopes and versions before the trial.</summary>
 /// <param name="Package">The direct package ID.</param>

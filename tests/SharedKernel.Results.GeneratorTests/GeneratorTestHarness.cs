@@ -1,9 +1,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Results.SourceGenerator;
-using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
+using SharedKernel.Results.SourceGenerator;
+using SharedHarness = SharedKernel.Testing.Roslyn.GeneratorTestHarness;
 
-namespace PandaBear.Results.GeneratorTests;
+namespace SharedKernel.Results.GeneratorTests;
 
 /// <summary>
 /// Results-specific wrapper over the shared Roslyn test harness that builds compilations referencing the Results assembly and runs the error catalog generator.
@@ -14,7 +14,7 @@ internal static class GeneratorTestHarness
 
     private const string DefaultUsings = """
         using System;
-        using PandaBear.Results;
+        using SharedKernel.Results;
 
         """;
 

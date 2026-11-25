@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Checks that a roadmap automation plan is still current before result files are written or pushed.</summary>
 internal static class RoadmapAutomationPlanValidator

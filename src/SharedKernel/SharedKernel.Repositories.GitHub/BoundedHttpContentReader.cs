@@ -1,6 +1,6 @@
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Reads HTTP content while enforcing a maximum size.</summary>
 internal static class BoundedHttpContentReader

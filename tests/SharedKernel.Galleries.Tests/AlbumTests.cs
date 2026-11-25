@@ -1,6 +1,6 @@
-using static PandaBear.Galleries.Tests.AlbumFixtures;
+using static SharedKernel.Galleries.Tests.AlbumFixtures;
 
-namespace PandaBear.Galleries.Tests;
+namespace SharedKernel.Galleries.Tests;
 
 /// <summary>Tests creating and validating an album.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi;
 
-namespace PandaBear.OpenApi;
+namespace SharedKernel.OpenApi;
 
 /// <summary>Documents response locations for endpoints that return resource or operation URIs.</summary>
 public static class LocationResponseEndpointExtensions

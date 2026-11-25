@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Records what a request to <see cref="FakeReleaseServer"/> carried.</summary>
 /// <param name="Uri">The absolute address that the request asked for.</param>

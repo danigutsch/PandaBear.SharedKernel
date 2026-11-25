@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Analyzers.Tests;
+namespace SharedKernel.Results.Analyzers.Tests;
 
 /// <summary>Builds the source snippets used by the Results analyzer tests.</summary>
 internal static class ResultSources

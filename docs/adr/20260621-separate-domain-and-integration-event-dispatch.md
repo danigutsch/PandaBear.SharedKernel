@@ -10,7 +10,7 @@ The original design used separate dispatcher/handler adapters over mediator capa
 
 ## Superseding decision
 
-Preserve the conceptual event distinction while using direct generated domain-to-outbox mappings and closed typed integration-event delivery. Domain dispatch belongs in `PandaBear.Domain`; transport-neutral integration contracts belong in `PandaBear.Messaging.IntegrationEvents`. Durable outbox/inbox mechanics and external transport composition remain explicit provider responsibilities.
+Preserve the conceptual event distinction while using direct generated domain-to-outbox mappings and closed typed integration-event delivery. Domain dispatch belongs in `SharedKernel.Domain`; transport-neutral integration contracts belong in `SharedKernel.Messaging.IntegrationEvents`. Durable outbox/inbox mechanics and external transport composition remain explicit provider responsibilities.
 
 Do not restore superseded runtime adapters merely to retain the historical implementation. Reusing a generic notification contract for every event was rejected because it hides lifecycle differences; automatic conversion was rejected because internal facts do not define external contracts.
 

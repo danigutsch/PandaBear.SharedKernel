@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>The exit code and captured output streams of one in-process code fix runner invocation.</summary>
 /// <param name="ExitCode">The process exit code returned by the command.</param>

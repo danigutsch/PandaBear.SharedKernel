@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Builds a small repository for testing taxonomy declarations against tracked files.</summary>
 internal static class TestTaxonomyTestRepository

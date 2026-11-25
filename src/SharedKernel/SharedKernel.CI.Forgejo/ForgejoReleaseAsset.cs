@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Forgejo;
+namespace SharedKernel.CI.Forgejo;
 
 /// <summary>The properties of a release attachment that the asset locator reads from the Forgejo releases API.</summary>
 /// <param name="Name">The file name of the attachment.</param>

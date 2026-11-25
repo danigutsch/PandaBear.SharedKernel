@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Aggregates unpublished outbox messages and their retry backlog.</summary>
 /// <param name="PendingCount">Number of unpublished messages, including retries and claimed messages.</param>

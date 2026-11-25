@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// The hooks of one method that returns no value: <see langword="void"/>, <see cref="Task"/> or <see cref="ValueTask"/>. Hooks run in

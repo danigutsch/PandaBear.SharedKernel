@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets.Age.Tests;
+namespace SharedKernel.Secrets.Age.Tests;
 
 /// <summary>An <see cref="IToolRunner"/> that answers every call with a canned result, or throws, and records the requests.</summary>
 internal sealed class FakeToolRunner(Func<ToolRequest, ToolResult> respond) : IToolRunner

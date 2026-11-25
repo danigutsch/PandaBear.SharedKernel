@@ -1,5 +1,5 @@
 
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>Tests that S3 object store options validation rejects each invalid setting.</summary>
 public sealed class S3ObjectStoreOptionsValidatorTests

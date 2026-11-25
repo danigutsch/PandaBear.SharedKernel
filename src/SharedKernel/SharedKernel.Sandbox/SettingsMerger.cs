@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>
 /// Merges the desired entries into an agent settings file. Only the entries the tool is asked for are added (or, for

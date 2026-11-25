@@ -1,7 +1,7 @@
 using System.CommandLine.Parsing;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Reads the tool README from the repository the tests were built from.</summary>
 internal static class ToolReadme

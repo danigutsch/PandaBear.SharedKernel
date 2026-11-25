@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A native <c>details</c> and <c>summary</c> disclosure. Stack several for an accordion, or give them the same <c>name</c>

@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST018 rule that requires one valid test scope on every xUnit test method.</summary>
 public sealed class TestScopeAnalyzerTests
@@ -78,7 +78,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         var source = $$"""
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Demo;
 
@@ -107,7 +107,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         var source = $$"""
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             {{assemblyAttribute}}
 
@@ -134,7 +134,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Demo;
 
@@ -163,7 +163,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Demo;
 
@@ -264,7 +264,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Demo;
 
@@ -290,7 +290,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Demo;
 
@@ -318,7 +318,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Demo;
 
@@ -345,7 +345,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Demo;
 
@@ -372,7 +372,7 @@ public sealed class TestScopeAnalyzerTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Demo;
 

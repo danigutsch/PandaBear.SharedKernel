@@ -1,9 +1,9 @@
-using PandaBear.Mediator;
-using PandaBear.Mediator.EntityFrameworkCore;
-using PandaBear.Results;
-using PortableDeclaration = PandaBear.Mediator.Transactions.ITransactionLockDeclaration;
+using SharedKernel.Mediator;
+using SharedKernel.Mediator.EntityFrameworkCore;
+using SharedKernel.Results;
+using PortableDeclaration = SharedKernel.Mediator.Transactions.ITransactionLockDeclaration;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>A command declaring locks through both the current and compatible EF contract.</summary>
 /// <param name="PortableLocks">Names from the persistence-free contract.</param>

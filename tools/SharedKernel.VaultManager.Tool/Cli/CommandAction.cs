@@ -1,8 +1,8 @@
 using System.CommandLine;
-using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>Runs the synchronous work of a command for System.CommandLine and maps its failures to exit codes.</summary>
 internal static class CommandAction

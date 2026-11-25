@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Reflection helpers that build malformed results for the error conversion tests.

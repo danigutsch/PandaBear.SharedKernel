@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>
 /// Thrown when a guard cannot determine hold state. Callers must treat it as a refusal to dispose of data.

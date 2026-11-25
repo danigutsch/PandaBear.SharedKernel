@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// Tells a component whether a parameter changed between calls of <c>OnParametersSetAsync</c>. Blazor keeps one component

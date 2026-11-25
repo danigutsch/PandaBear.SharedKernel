@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>A response body for the success assertion tests.</summary>
 /// <param name="Id">The identifier.</param>

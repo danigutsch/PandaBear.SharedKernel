@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Compares requirements with installed packages. It reads nothing and changes nothing.</summary>
 public static class PackagePlanner

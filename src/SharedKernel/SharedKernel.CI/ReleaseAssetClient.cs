@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Downloads public release assets over HTTPS only. It follows at most five redirects, each to HTTPS, retries 408, 429,

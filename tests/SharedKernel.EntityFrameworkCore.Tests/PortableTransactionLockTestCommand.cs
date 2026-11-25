@@ -1,8 +1,8 @@
-using PandaBear.Mediator;
-using PandaBear.Mediator.Transactions;
-using PandaBear.Results;
+using SharedKernel.Mediator;
+using SharedKernel.Mediator.Transactions;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>A command that declares locks through the persistence-free mediator contract.</summary>
 /// <param name="TransactionLocks">The advisory lock names.</param>

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.Results.AspNet.Tests;
+namespace SharedKernel.Results.AspNet.Tests;
 
 /// <summary>Builds requests and contexts for the concurrency header tests.</summary>
 internal static class ConcurrencyTestSupport

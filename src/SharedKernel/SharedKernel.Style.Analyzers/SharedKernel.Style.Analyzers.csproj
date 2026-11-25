@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Style.Analyzers</PackageId>
         <Description>Analyzers for repository style conventions.</Description>
-        <RootNamespace>PandaBear.Style.Analyzers</RootNamespace>
+        <RootNamespace>SharedKernel.Style.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>style;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

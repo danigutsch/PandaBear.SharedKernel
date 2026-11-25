@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using static PandaBear.Blazor.Tests.PickerRendering;
+using static SharedKernel.Blazor.Tests.PickerRendering;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>
 /// Tests the image picker when a change waits for the options of the page it shows: a second change made meanwhile is kept, a change

@@ -1,8 +1,8 @@
 using System.Text.Json;
-using PandaBear.BuildingBlocks;
-using PandaBear.ContentRights;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.ContentRights;
 
-namespace PandaBear.AspNetCore.Seo.Tests;
+namespace SharedKernel.AspNetCore.Seo.Tests;
 
 /// <summary>Exercises structured data for caller-approved photo credits.</summary>
 public sealed class PhotoLicenseJsonLdTests

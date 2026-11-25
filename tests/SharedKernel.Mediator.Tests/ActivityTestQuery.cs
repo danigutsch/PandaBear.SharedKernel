@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>
 /// Query request carrying an integer id that the activity behavior tests dispatch through the behavior under test.

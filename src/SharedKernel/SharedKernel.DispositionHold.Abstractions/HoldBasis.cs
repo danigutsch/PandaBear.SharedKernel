@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>
 /// Names why a disposition hold restrains deletion or anonymization. The values are jurisdiction-neutral categories;

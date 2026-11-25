@@ -1,6 +1,6 @@
 # SharedKernel.Testing.AI
 
-`PandaBear.SharedKernel.Testing.AI` provides `PandaBear.Testing.AI.TestImageTextGenerator` for
+`PandaBear.SharedKernel.Testing.AI` provides `SharedKernel.Testing.AI.TestImageTextGenerator` for
 tests that depend on the SharedKernel `IImageTextGenerator` contract.
 
 Supply a fixed `ImageTextGenerationResult` to the constructor. Set `Exception` in the object

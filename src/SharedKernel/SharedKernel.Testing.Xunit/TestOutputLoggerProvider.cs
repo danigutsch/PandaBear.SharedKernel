@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// An <see cref="ILoggerProvider"/> that writes each entry to the output of the xUnit test it belongs to, never to the process console:

@@ -53,6 +53,6 @@ database schema.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Observability.Npgsql`. C# namespace: `PandaBear.Observability.Npgsql`. Assembly/project identity: `SharedKernel.Observability.Npgsql`.
+Package ID: `PandaBear.SharedKernel.Observability.Npgsql`. C# namespace: `SharedKernel.Observability.Npgsql`. Assembly/project identity: `SharedKernel.Observability.Npgsql`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>A small service the <see cref="CallProxy"/> tests wrap.</summary>
 public interface ICallProbe : ICallProbeBase

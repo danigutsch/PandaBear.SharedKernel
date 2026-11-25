@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests HypermediaLink validation, equality, and wire shape.</summary>
 public sealed class HypermediaLinkTests

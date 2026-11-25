@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Npgsql;
 
-namespace PandaBear.Npgsql.Testing;
+namespace SharedKernel.Npgsql.Testing;
 
 /// <summary>Owns an isolated PostgreSQL test database and its default data source.</summary>
 public sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.CodeFixes.Tests;
+namespace SharedKernel.Blazor.CodeFixes.Tests;
 
 /// <summary>Component sources that inject <c>ISender</c> for the SKBLZ002 code fix tests.</summary>
 internal static class SenderSources
@@ -8,7 +8,7 @@ internal static class SenderSources
     /// <returns>The component source.</returns>
     public static string Component(string use) => $$"""
         using Microsoft.AspNetCore.Components;
-        using PandaBear.Mediator;
+        using SharedKernel.Mediator;
 
         namespace Demo;
 

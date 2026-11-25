@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The lowest price of an offering in a line of text, such as "a partir de 1.234,50 €": a <c>p</c> (<c>site-from-price</c>) of the

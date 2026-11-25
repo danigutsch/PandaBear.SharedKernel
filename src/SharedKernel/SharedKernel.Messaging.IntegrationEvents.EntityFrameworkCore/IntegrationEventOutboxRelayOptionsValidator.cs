@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Rejects relay and consumer options with a non-positive batch size, poll interval, attempt limit, or claim lease duration.</summary>
 internal sealed class IntegrationEventOutboxRelayOptionsValidator : IValidateOptions<IntegrationEventOutboxRelayOptions>

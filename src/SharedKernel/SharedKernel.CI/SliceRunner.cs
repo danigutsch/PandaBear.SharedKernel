@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Restores, builds, and tests the selected test projects of the validation plan through one solution filter, after the

@@ -1,8 +1,8 @@
 using System.Text;
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Merge;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>
 /// A secret finding of a group member as the review shows it. <see cref="Value"/> is <see cref="ReviewText.Mask"/>

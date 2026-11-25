@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>verify-commit-message</c> command for pull request events and commit message files.</summary>
 public sealed class CommitMessageVerificationTests

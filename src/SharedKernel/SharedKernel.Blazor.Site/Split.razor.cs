@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// Text beside media, such as photos, without a heading of its own: a plain <c>div</c>, never a landmark, with the text in

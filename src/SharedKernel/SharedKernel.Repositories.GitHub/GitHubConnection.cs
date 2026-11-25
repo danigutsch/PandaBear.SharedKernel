@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
-using PandaBear.GitHub;
+using SharedKernel.GitHub;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>
 /// Supplies the HTTP client that the GitHub operations of this package send their requests with. A connection either

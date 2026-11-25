@@ -1,11 +1,11 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>
 /// Applies an edited catalog to the vault it was made from. Only what the catalog shows changes: names, folders, additional

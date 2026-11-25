@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>Reads version information of the running application.</summary>
 internal static class ApplicationVersionProvider

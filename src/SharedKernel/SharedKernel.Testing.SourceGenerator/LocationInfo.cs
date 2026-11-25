@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>A source location without its syntax tree, so a cached model does not keep old trees alive.</summary>
 /// <param name="FilePath">The path of the source file.</param>

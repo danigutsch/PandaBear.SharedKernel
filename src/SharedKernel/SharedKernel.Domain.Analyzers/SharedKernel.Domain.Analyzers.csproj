@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Domain.Analyzers</PackageId>
         <Description>Analyzers for SharedKernel domain-model encapsulation conventions.</Description>
-        <RootNamespace>PandaBear.Domain.Analyzers</RootNamespace>
+        <RootNamespace>SharedKernel.Domain.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>ddd;domain;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

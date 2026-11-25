@@ -1,9 +1,9 @@
-PandaBear.Testing.EntityFrameworkCore.TestDbContext
-PandaBear.Testing.EntityFrameworkCore.TestDbContext.Entities.get -> Microsoft.EntityFrameworkCore.DbSet<PandaBear.Testing.EntityFrameworkCore.TestEntity!>!
-PandaBear.Testing.EntityFrameworkCore.TestDbContext.TestDbContext(Microsoft.EntityFrameworkCore.DbContextOptions<PandaBear.Testing.EntityFrameworkCore.TestDbContext!>! options) -> void
-PandaBear.Testing.EntityFrameworkCore.TestEntity
-PandaBear.Testing.EntityFrameworkCore.TestEntity.Id.get -> int
-PandaBear.Testing.EntityFrameworkCore.TestEntity.Id.set -> void
-PandaBear.Testing.EntityFrameworkCore.TestEntity.Name.get -> string!
-PandaBear.Testing.EntityFrameworkCore.TestEntity.Name.set -> void
-PandaBear.Testing.EntityFrameworkCore.TestEntity.TestEntity() -> void
+SharedKernel.Testing.EntityFrameworkCore.TestDbContext
+SharedKernel.Testing.EntityFrameworkCore.TestDbContext.Entities.get -> Microsoft.EntityFrameworkCore.DbSet<SharedKernel.Testing.EntityFrameworkCore.TestEntity!>!
+SharedKernel.Testing.EntityFrameworkCore.TestDbContext.TestDbContext(Microsoft.EntityFrameworkCore.DbContextOptions<SharedKernel.Testing.EntityFrameworkCore.TestDbContext!>! options) -> void
+SharedKernel.Testing.EntityFrameworkCore.TestEntity
+SharedKernel.Testing.EntityFrameworkCore.TestEntity.Id.get -> int
+SharedKernel.Testing.EntityFrameworkCore.TestEntity.Id.set -> void
+SharedKernel.Testing.EntityFrameworkCore.TestEntity.Name.get -> string!
+SharedKernel.Testing.EntityFrameworkCore.TestEntity.Name.set -> void
+SharedKernel.Testing.EntityFrameworkCore.TestEntity.TestEntity() -> void

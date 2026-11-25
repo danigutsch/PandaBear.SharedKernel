@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.AspNetCore.Localization;
+namespace SharedKernel.AspNetCore.Localization;
 
 /// <summary>
 /// Reads, adds, and swaps the leading culture segment of a request path such as <c>/pt/tours</c>.

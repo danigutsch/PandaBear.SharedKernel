@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// A repository label, as the <c>labels</c> section of the consumer configuration declares it and as a forge reports it.

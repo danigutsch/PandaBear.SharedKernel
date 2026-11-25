@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Tests that the package inventory reads restored assets for source projects that keep no lock file, and guards against uncovered packages.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

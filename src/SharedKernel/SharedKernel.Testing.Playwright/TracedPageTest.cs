@@ -2,7 +2,7 @@ using Microsoft.Playwright;
 using Microsoft.Playwright.Xunit.v3;
 using Xunit;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>
 /// A Playwright test with its own browser context and <see cref="PageDiagnostics"/>, recording a trace; when the test fails, a full-page

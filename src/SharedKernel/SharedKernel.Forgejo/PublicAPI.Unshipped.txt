@@ -1,32 +1,32 @@
 #nullable enable
-PandaBear.Forgejo.ForgejoApiClient
-PandaBear.Forgejo.ForgejoToken
-static PandaBear.Forgejo.ForgejoApiClient.ApiBase(System.Uri! server) -> System.Uri!
-static PandaBear.Forgejo.ForgejoApiClient.Create(System.Net.Http.HttpMessageHandler! handler, System.Uri! server, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> System.Net.Http.HttpClient!
-static PandaBear.Forgejo.ForgejoToken.Find(System.Func<string!, string?>! getEnvironmentVariable) -> string?
-static PandaBear.Forgejo.ForgejoToken.IsTokenVariable(string! name) -> bool
-static PandaBear.Forgejo.ForgejoToken.RemoveFrom(System.Diagnostics.ProcessStartInfo! startInfo) -> void
-static PandaBear.Forgejo.ForgejoToken.VariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Forgejo.ForgejoRepositoryName
-static PandaBear.Forgejo.ForgejoRepositoryName.Parse(string! repository, string! paramName) -> (string! Owner, string! Name)
-static PandaBear.Forgejo.ForgejoRepositoryName.TryParse(string! repository, out string! owner, out string! name) -> bool
-PandaBear.Forgejo.ForgejoPage<T>
-PandaBear.Forgejo.ForgejoPage<T>.ForgejoPage(System.Collections.Generic.IReadOnlyList<T>! Items, string? Link, long? TotalCount) -> void
-PandaBear.Forgejo.ForgejoPage<T>.Items.get -> System.Collections.Generic.IReadOnlyList<T>!
-PandaBear.Forgejo.ForgejoPage<T>.Items.init -> void
-PandaBear.Forgejo.ForgejoPage<T>.Link.get -> string?
-PandaBear.Forgejo.ForgejoPage<T>.Link.init -> void
-PandaBear.Forgejo.ForgejoPage<T>.TotalCount.get -> long?
-PandaBear.Forgejo.ForgejoPage<T>.TotalCount.init -> void
-PandaBear.Forgejo.ForgejoPager
-const PandaBear.Forgejo.ForgejoPager.PageSize = 50 -> int
-static PandaBear.Forgejo.ForgejoPager.Page<T>(System.Collections.Generic.IReadOnlyList<T>! items, System.Net.Http.Headers.HttpResponseHeaders! headers) -> PandaBear.Forgejo.ForgejoPage<T>!
-static PandaBear.Forgejo.ForgejoPager.ReadAll<T>(System.Func<int, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.Forgejo.ForgejoPage<T>!>!>! readPage, int maxPages, string! description, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<T>!>!
-PandaBear.Forgejo.ForgejoPage<T>.<Clone>$() -> PandaBear.Forgejo.ForgejoPage<T>!
-PandaBear.Forgejo.ForgejoPage<T>.Deconstruct(out System.Collections.Generic.IReadOnlyList<T>! Items, out string? Link, out long? TotalCount) -> void
-PandaBear.Forgejo.ForgejoPage<T>.Equals(PandaBear.Forgejo.ForgejoPage<T>? other) -> bool
-override PandaBear.Forgejo.ForgejoPage<T>.Equals(object? obj) -> bool
-override PandaBear.Forgejo.ForgejoPage<T>.GetHashCode() -> int
-override PandaBear.Forgejo.ForgejoPage<T>.ToString() -> string!
-static PandaBear.Forgejo.ForgejoPage<T>.operator !=(PandaBear.Forgejo.ForgejoPage<T>? left, PandaBear.Forgejo.ForgejoPage<T>? right) -> bool
-static PandaBear.Forgejo.ForgejoPage<T>.operator ==(PandaBear.Forgejo.ForgejoPage<T>? left, PandaBear.Forgejo.ForgejoPage<T>? right) -> bool
+SharedKernel.Forgejo.ForgejoApiClient
+SharedKernel.Forgejo.ForgejoToken
+static SharedKernel.Forgejo.ForgejoApiClient.ApiBase(System.Uri! server) -> System.Uri!
+static SharedKernel.Forgejo.ForgejoApiClient.Create(System.Net.Http.HttpMessageHandler! handler, System.Uri! server, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> System.Net.Http.HttpClient!
+static SharedKernel.Forgejo.ForgejoToken.Find(System.Func<string!, string?>! getEnvironmentVariable) -> string?
+static SharedKernel.Forgejo.ForgejoToken.IsTokenVariable(string! name) -> bool
+static SharedKernel.Forgejo.ForgejoToken.RemoveFrom(System.Diagnostics.ProcessStartInfo! startInfo) -> void
+static SharedKernel.Forgejo.ForgejoToken.VariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Forgejo.ForgejoRepositoryName
+static SharedKernel.Forgejo.ForgejoRepositoryName.Parse(string! repository, string! paramName) -> (string! Owner, string! Name)
+static SharedKernel.Forgejo.ForgejoRepositoryName.TryParse(string! repository, out string! owner, out string! name) -> bool
+SharedKernel.Forgejo.ForgejoPage<T>
+SharedKernel.Forgejo.ForgejoPage<T>.ForgejoPage(System.Collections.Generic.IReadOnlyList<T>! Items, string? Link, long? TotalCount) -> void
+SharedKernel.Forgejo.ForgejoPage<T>.Items.get -> System.Collections.Generic.IReadOnlyList<T>!
+SharedKernel.Forgejo.ForgejoPage<T>.Items.init -> void
+SharedKernel.Forgejo.ForgejoPage<T>.Link.get -> string?
+SharedKernel.Forgejo.ForgejoPage<T>.Link.init -> void
+SharedKernel.Forgejo.ForgejoPage<T>.TotalCount.get -> long?
+SharedKernel.Forgejo.ForgejoPage<T>.TotalCount.init -> void
+SharedKernel.Forgejo.ForgejoPager
+const SharedKernel.Forgejo.ForgejoPager.PageSize = 50 -> int
+static SharedKernel.Forgejo.ForgejoPager.Page<T>(System.Collections.Generic.IReadOnlyList<T>! items, System.Net.Http.Headers.HttpResponseHeaders! headers) -> SharedKernel.Forgejo.ForgejoPage<T>!
+static SharedKernel.Forgejo.ForgejoPager.ReadAll<T>(System.Func<int, System.Threading.CancellationToken, System.Threading.Tasks.Task<SharedKernel.Forgejo.ForgejoPage<T>!>!>! readPage, int maxPages, string! description, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<T>!>!
+SharedKernel.Forgejo.ForgejoPage<T>.<Clone>$() -> SharedKernel.Forgejo.ForgejoPage<T>!
+SharedKernel.Forgejo.ForgejoPage<T>.Deconstruct(out System.Collections.Generic.IReadOnlyList<T>! Items, out string? Link, out long? TotalCount) -> void
+SharedKernel.Forgejo.ForgejoPage<T>.Equals(SharedKernel.Forgejo.ForgejoPage<T>? other) -> bool
+override SharedKernel.Forgejo.ForgejoPage<T>.Equals(object? obj) -> bool
+override SharedKernel.Forgejo.ForgejoPage<T>.GetHashCode() -> int
+override SharedKernel.Forgejo.ForgejoPage<T>.ToString() -> string!
+static SharedKernel.Forgejo.ForgejoPage<T>.operator !=(SharedKernel.Forgejo.ForgejoPage<T>? left, SharedKernel.Forgejo.ForgejoPage<T>? right) -> bool
+static SharedKernel.Forgejo.ForgejoPage<T>.operator ==(SharedKernel.Forgejo.ForgejoPage<T>? left, SharedKernel.Forgejo.ForgejoPage<T>? right) -> bool

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Autofill URI match detection, numbered like Bitwarden.</summary>
 public enum UriMatch

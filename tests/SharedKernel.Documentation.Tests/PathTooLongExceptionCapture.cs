@@ -1,6 +1,6 @@
 using System.Runtime.ExceptionServices;
 
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Records the first and any later <see cref="IOException" /> thrown on the creating thread, even when the code under test catches them.</summary>
 internal sealed class PathTooLongExceptionCapture : IDisposable

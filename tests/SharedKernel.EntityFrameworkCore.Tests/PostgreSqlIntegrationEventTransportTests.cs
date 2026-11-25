@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// PostgreSQL tests of integration event transport claiming, duplicate rejection, consuming, retries and poison handling.

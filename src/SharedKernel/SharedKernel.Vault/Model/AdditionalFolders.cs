@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>
 /// The Text custom field that lists, one per line, the other folders of an item. A Bitwarden individual vault holds one

@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using PandaBear.BuildingBlocks;
-using PandaBear.EntityFrameworkCore.Npgsql;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.EntityFrameworkCore.Npgsql;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests on a real PostgreSQL server that <see cref="DbContextUniqueViolationExtensions.SaveChangesTranslatingUniqueViolations"/> with the

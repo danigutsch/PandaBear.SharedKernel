@@ -76,7 +76,7 @@ does not report production code or non-test helper methods.
 matching constant can be identified from `SharedKernel.Testing` trait constants or a project-local
 `TestTraits` type in the current namespace chain.
 
-When `PandaBear.Testing.TestScopeAttribute` is referenced, `SKTEST009` treats the typed attribute as the canonical form of a
+When `SharedKernel.Testing.TestScopeAttribute` is referenced, `SKTEST009` treats the typed attribute as the canonical form of a
 literal `[Trait("Scope", "<value>")]` with a `TestScope` value and offers to replace the whole attribute. Constants and
 values outside the `TestScope` set keep the normal constant advice.
 
@@ -132,14 +132,14 @@ neither build test projects nor declare test assertions should not need this pac
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Analyzers`. C# namespace: `PandaBear.Testing.Analyzers`. Assembly/project identity: `SharedKernel.Testing.Analyzers`.
+Package ID: `PandaBear.SharedKernel.Testing.Analyzers`. C# namespace: `SharedKernel.Testing.Analyzers`. Assembly/project identity: `SharedKernel.Testing.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 
 ## SKTEST011
 
 This suggestion applies inside xUnit facts and theories to an adjacent, single-variable lambda
-local used exactly once by `PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow`
+local used exactly once by `SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow`
 or `ShouldThrowAssignableTo`. The diagnostic and code fix share the same semantic checks.
 The fix removes the local and calls the existing static extension method with the inline lambda.
 Roslyn must bind that call to the exact same constructed overload before a suggestion is offered.
@@ -314,7 +314,7 @@ dotnet_diagnostic.SKTEST018.severity = warning
 ```
 
 The code fix, offered only for a missing scope, adds one action per allowed scope to the test class. It writes the typed
-attribute when `PandaBear.Testing.TestScopeAttribute` is referenced and `[Trait("Scope", ...)]` otherwise.
+attribute when `SharedKernel.Testing.TestScopeAttribute` is referenced and `[Trait("Scope", ...)]` otherwise.
 
 ## SKTEST019 (retired)
 
@@ -358,7 +358,7 @@ fails only on Windows. The rule reports each creation of `System.IO.StringWriter
 whose object initializer does not set `NewLine`, in a compilation that references xUnit. Derived writers and
 `InvariantStringWriter` are not reported.
 
-Use `PandaBear.Testing.InvariantStringWriter` from `PandaBear.SharedKernel.Testing`, which ends lines with `"\n"` and formats
+Use `SharedKernel.Testing.InvariantStringWriter` from `PandaBear.SharedKernel.Testing`, which ends lines with `"\n"` and formats
 with the invariant culture on every operating system. When a test needs a specific line ending, set it explicitly:
 `new StringWriter(CultureInfo.InvariantCulture) { NewLine = "\r\n" }`. The code fix replaces `new StringWriter()` and
 `new StringWriter(CultureInfo.InvariantCulture)` with `new InvariantStringWriter()` when the compilation references

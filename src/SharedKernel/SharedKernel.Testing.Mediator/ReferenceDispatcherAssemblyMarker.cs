@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Mediator;
+namespace SharedKernel.Testing.Mediator;
 
 /// <summary>
 /// Marks the test-only reference-dispatcher assembly.

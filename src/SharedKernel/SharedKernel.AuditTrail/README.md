@@ -16,6 +16,6 @@ Implement `IAuditTrailEntry` for an audit record and `IAuditTrailSink<TAuditTrai
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AuditTrail`. C# namespace: `PandaBear.AuditTrail`. Assembly/project identity: `SharedKernel.AuditTrail`.
+Package ID: `PandaBear.SharedKernel.AuditTrail`. C# namespace: `SharedKernel.AuditTrail`. Assembly/project identity: `SharedKernel.AuditTrail`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

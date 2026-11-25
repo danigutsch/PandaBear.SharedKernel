@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.InputNormalization</PackageId>
         <Description>Reusable input normalization helpers for shared-kernel workflows.</Description>
-        <RootNamespace>PandaBear.InputNormalization</RootNamespace>
+        <RootNamespace>SharedKernel.InputNormalization</RootNamespace>
         <PackageTags>input-normalization;validation;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the caller-supplied copy mapping for HTTP outcomes.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

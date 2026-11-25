@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Vault.Attachments;
+using SharedKernel.Vault.Attachments;
 
-namespace PandaBear.Vault.Tests.Attachments;
+namespace SharedKernel.Vault.Tests.Attachments;
 
 /// <summary>Tests extraction of text from attachments within size and line limits.</summary>
 public sealed class TextExtractorTests

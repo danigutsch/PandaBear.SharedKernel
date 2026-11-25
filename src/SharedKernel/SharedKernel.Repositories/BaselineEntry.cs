@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>A managed file with its desired content and how its current content compares.</summary>
 /// <param name="Path">Repository-relative path.</param>

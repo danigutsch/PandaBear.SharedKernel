@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>Verifies that localized credits remain visible and operable in Chromium.</summary>
 [Testing.TestScope(Testing.TestScope.System)]

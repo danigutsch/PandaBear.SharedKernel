@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Branding.Tests;
+namespace SharedKernel.Branding.Tests;
 
 /// <summary>
 /// Tests validation and normalization performed by BrandingSettings.Create.

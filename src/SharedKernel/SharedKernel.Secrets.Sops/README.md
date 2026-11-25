@@ -12,9 +12,9 @@ cryptography and makes no network request; install and pin `sops` yourself.
 ## Usage
 
 ```csharp
-using PandaBear.Processes;
-using PandaBear.Secrets;
-using PandaBear.Secrets.Sops;
+using SharedKernel.Processes;
+using SharedKernel.Secrets;
+using SharedKernel.Secrets.Sops;
 
 var sops = ProcessSopsTool.Find(new SystemToolRunner(), PathExecutableResolver.Default);
 var identity = AgeIdentityRef.Create("/home/me/.config/age/work.txt").Value;

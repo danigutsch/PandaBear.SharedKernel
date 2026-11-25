@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tool.Tests;
+namespace SharedKernel.Sandbox.Tool.Tests;
 
 /// <summary>Tests the real probes in a separate tool process with a chosen temporary folder.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

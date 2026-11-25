@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.CI.Forgejo.Tests;
+namespace SharedKernel.CI.Forgejo.Tests;
 
 /// <summary>Guards how the Forgejo release store lists and deletes releases through the API.</summary>
 public sealed class ForgejoReleaseStoreTests

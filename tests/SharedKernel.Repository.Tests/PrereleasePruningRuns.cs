@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Runs <c>prune-prereleases</c> through the real command tree against a <see cref="FakeGitHubReleasesApi"/>.</summary>
 internal static class PrereleasePruningRuns

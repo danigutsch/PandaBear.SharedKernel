@@ -1,2 +1,2 @@
-[assembly: Trait(PandaBear.Testing.TestTraitNames.ScopeName, "unit")]
-[assembly: Trait(PandaBear.Testing.TestTraitNames.AreaName, PandaBear.Blazor.Analyzers.Tests.TestTraits.BlazorAnalyzersComponent)]
+[assembly: Trait(SharedKernel.Testing.TestTraitNames.ScopeName, "unit")]
+[assembly: Trait(SharedKernel.Testing.TestTraitNames.AreaName, SharedKernel.Blazor.Analyzers.Tests.TestTraits.BlazorAnalyzersComponent)]

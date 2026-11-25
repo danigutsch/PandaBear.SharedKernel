@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>
 /// Guards the telemetry standard in <c>docs/telemetry.md</c>: meters and activity sources are named after the package that creates

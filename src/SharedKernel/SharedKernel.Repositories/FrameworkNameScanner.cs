@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Finds the .NET framework names, such as <c>net11.0</c> or <c>net11.0-windows</c>, in the text of a project, props,

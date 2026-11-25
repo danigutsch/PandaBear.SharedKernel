@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging;
+namespace SharedKernel.Messaging;
 
 /// <summary>
 /// Describes how an event payload is represented in an envelope.

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Formats byte counts in messages.</summary>
 internal static class DataSize

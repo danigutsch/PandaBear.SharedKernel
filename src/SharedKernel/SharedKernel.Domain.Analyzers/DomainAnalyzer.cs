@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace PandaBear.Domain.Analyzers;
+namespace SharedKernel.Domain.Analyzers;
 
 /// <summary>
 /// Reports diagnostics for SharedKernel domain-model encapsulation conventions.

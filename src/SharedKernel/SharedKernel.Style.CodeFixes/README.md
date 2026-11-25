@@ -57,7 +57,7 @@ not-found detail.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Style.CodeFixes`. C# namespace: `PandaBear.Style.CodeFixes`. Assembly/project identity: `SharedKernel.Style.CodeFixes`.
+Package ID: `PandaBear.SharedKernel.Style.CodeFixes`. C# namespace: `SharedKernel.Style.CodeFixes`. Assembly/project identity: `SharedKernel.Style.CodeFixes`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

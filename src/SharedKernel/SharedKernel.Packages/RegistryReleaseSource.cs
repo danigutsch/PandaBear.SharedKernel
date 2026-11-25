@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// Release dates and newest stable versions from the public registries of cargo (crates.io) and npm. apt and Flatpak have

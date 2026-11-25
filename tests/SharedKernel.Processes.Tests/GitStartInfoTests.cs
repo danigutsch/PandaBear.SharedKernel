@@ -1,4 +1,4 @@
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Tests the description of a git run that cannot prompt and receives no credentials.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

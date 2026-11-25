@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>The application's rules for its albums: the cultures they are written in, the most photos an album holds, and text lengths.</summary>
 public sealed class AlbumRules

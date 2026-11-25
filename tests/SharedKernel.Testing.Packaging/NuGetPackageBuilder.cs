@@ -1,6 +1,6 @@
 using System.IO.Compression;
 
-namespace PandaBear.Testing.Packaging;
+namespace SharedKernel.Testing.Packaging;
 
 /// <summary>
 /// Builds lightweight NuGet package files for packaging tests.

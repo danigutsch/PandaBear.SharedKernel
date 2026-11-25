@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Projects application-owned source data to structured document content.</summary>
 /// <typeparam name="TSource">The application-owned source model.</typeparam>

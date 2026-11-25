@@ -1,14 +1,14 @@
 using System.Security.Cryptography;
-using PandaBear.SecretScanning;
-using PandaBear.Testing;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.VaultManager.Tool.Review;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
+using SharedKernel.SecretScanning;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Review.ReviewVaults;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Tests the review session: grouping and filtering, masked and revealed values, field and finding decisions, and linking and splitting items.</summary>
 public sealed class ReviewSessionTests : IDisposable

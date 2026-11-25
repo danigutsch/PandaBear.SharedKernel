@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Test host with OpenTelemetry logging, the log privacy processor and a capturing exporter wired in, disposed together.</summary>
 internal sealed class PrivacyLogTestScope : IDisposable

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>
 /// An image library for the picker tests: images 1 to N labelled "Photo 0001" onwards with a thumbnail at <c>/thumbs/{id}.webp</c>,

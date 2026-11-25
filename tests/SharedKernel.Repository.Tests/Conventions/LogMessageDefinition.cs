@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>One <c>[LoggerMessage]</c> definition in the library sources.</summary>
 /// <param name="Package">The package folder, which is the assembly name.</param>

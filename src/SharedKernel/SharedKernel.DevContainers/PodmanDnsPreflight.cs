@@ -2,10 +2,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.InputNormalization;
-using PandaBear.Processes;
+using SharedKernel.InputNormalization;
+using SharedKernel.Processes;
 
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>Checks that Podman container DNS can start before tests need it.</summary>
 public static class PodmanDnsPreflight

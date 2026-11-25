@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Guards <c>verify-consumer</c>.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

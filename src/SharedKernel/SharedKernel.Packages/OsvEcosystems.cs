@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Maps a package manager to the ecosystem name that OSV (osv.dev) uses.</summary>
 public static class OsvEcosystems

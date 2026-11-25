@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden.Tests;
+namespace SharedKernel.Vault.Bitwarden.Tests;
 
 /// <summary>Reads the Bitwarden sample vault that is copied next to the test assembly.</summary>
 internal static class BitwardenFixture

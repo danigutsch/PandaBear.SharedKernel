@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing;
+namespace SharedKernel.EventSourcing;
 
 /// <summary>
 /// Identifies an event stream.

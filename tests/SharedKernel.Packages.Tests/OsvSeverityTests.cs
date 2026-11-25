@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the mapping of OSV severity data to <see cref="AdvisorySeverity"/>.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

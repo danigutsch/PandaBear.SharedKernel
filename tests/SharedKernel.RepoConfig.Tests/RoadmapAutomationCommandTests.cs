@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>automation</c> command group for argument errors, required environment, workflow outputs, and publish previews.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

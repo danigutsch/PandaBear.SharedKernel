@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>A Linux background process whose parent never reaps it, so its exit is not observable after it is killed.</summary>
 internal sealed class UnreapedProcess : IDisposable

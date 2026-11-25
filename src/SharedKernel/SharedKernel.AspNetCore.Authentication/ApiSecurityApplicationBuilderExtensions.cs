@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
-using PandaBear.OpenApi;
+using SharedKernel.OpenApi;
 
-namespace PandaBear.AspNetCore.Authentication;
+namespace SharedKernel.AspNetCore.Authentication;
 
 /// <summary>
 /// Configures API authentication and authorization middleware.

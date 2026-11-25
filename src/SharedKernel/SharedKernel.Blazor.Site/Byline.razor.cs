@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>A person: a round photo, the name and the job title, in reading order.</summary>
 public sealed partial class Byline

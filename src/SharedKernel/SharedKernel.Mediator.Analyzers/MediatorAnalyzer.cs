@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using PandaBear.Mediator.SourceGenerator;
+using SharedKernel.Mediator.SourceGenerator;
 
-namespace PandaBear.Mediator.Analyzers;
+namespace SharedKernel.Mediator.Analyzers;
 
 /// <summary>
 /// Reports declaration and usage diagnostics for implemented mediator features.

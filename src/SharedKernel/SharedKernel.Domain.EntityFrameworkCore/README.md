@@ -21,7 +21,7 @@ dotnet add package PandaBear.SharedKernel.Domain.EntityFrameworkCore --version <
 ```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Domain.EntityFrameworkCore;
+using SharedKernel.Domain.EntityFrameworkCore;
 
 public static class Example
 {
@@ -34,6 +34,6 @@ public sealed class AppDbContext : DbContext;
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Domain.EntityFrameworkCore`. C# namespace: `PandaBear.Domain.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.Domain.EntityFrameworkCore`.
+Package ID: `PandaBear.SharedKernel.Domain.EntityFrameworkCore`. C# namespace: `SharedKernel.Domain.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.Domain.EntityFrameworkCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

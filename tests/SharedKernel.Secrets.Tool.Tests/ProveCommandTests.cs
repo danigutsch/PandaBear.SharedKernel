@@ -1,6 +1,6 @@
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>recipients check --prove-with-identity</c> and <c>--prove-absent-identity</c> with a fake sops and real identity files.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

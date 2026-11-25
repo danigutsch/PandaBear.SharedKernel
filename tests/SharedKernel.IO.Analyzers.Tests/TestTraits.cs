@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Analyzers.Tests;
+namespace SharedKernel.IO.Analyzers.Tests;
 
 /// <summary>
 /// Trait values that tag the IO analyzer tests by component and capability.

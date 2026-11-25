@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Snapshots;
+namespace SharedKernel.Testing.Snapshots;
 
 /// <summary>
 /// Normalizes text before snapshot or approval comparison.

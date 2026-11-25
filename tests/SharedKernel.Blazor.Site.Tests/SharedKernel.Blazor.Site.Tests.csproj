@@ -2,17 +2,17 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Blazor.Site.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.Blazor.Site.Tests</RootNamespace>
         <!-- The browser tests host an Interactive Server page, which needs the framework's blazor.web.js static web asset. -->
         <RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
     </PropertyGroup>
 
     <ItemGroup>
         <Using Include="Bunit" />
-        <Using Include="PandaBear.Blazor.Site" />
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing.Web" />
-        <Using Include="PandaBear.Testing.Playwright" />
+        <Using Include="SharedKernel.Blazor.Site" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Web" />
+        <Using Include="SharedKernel.Testing.Playwright" />
         <Using Include="Xunit" />
     </ItemGroup>
 

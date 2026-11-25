@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Renders the error summary component for tests.</summary>
 internal static class ErrorSummaryRendering

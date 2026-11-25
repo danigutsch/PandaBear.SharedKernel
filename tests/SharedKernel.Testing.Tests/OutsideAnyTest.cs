@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Runs work outside any xUnit test, as a server's request threads or background work do.</summary>
 internal static class OutsideAnyTest

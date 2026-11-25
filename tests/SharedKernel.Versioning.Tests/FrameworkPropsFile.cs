@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Writes a root <c>Directory.Build.props</c> with a single property group for framework-reading tests.</summary>
 internal static class FrameworkPropsFile

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A short status, such as "Open" or "Sold out", after the GOV.UK tag: a <c>strong</c> element (<c>site-status</c>) whose

@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.PackageConsumptionTests;
+namespace SharedKernel.Mediator.PackageConsumptionTests;
 
 /// <summary>Writes a consumer project that references the packed mediator abstractions, runtime and source generator packages.</summary>
 internal static class GeneratedMediatorPackageConsumerProjects
@@ -12,7 +12,7 @@ internal static class GeneratedMediatorPackageConsumerProjects
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
             using Microsoft.Extensions.DependencyInjection;
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Consumer;
 
@@ -79,7 +79,7 @@ internal static class GeneratedMediatorPackageConsumerProjects
             using System.Globalization;
             using Consumer;
             using Microsoft.Extensions.DependencyInjection;
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             using var harness = MediatorHarness.Create();
 

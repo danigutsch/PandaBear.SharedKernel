@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>The field and message a mapped unique rule produces.</summary>
 /// <param name="Field">The field name.</param>

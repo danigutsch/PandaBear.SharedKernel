@@ -3,7 +3,7 @@
 A dependency-free bounded seekable lease for multi-pass uploads and imports. Targets .NET 10.
 
 ```csharp
-using PandaBear.IO;
+using SharedKernel.IO;
 
 await using var lease = await SeekableContent.Create(input, maxLength, memoryThreshold, ct);
 await Validate(lease.Content, ct);
@@ -51,7 +51,7 @@ system follows them, and `FilePaths.MayNameSameFile` tells whether two paths may
 case-sensitive system can mount a case-insensitive volume. Use it to refuse writing an output over one of the inputs.
 
 ```csharp
-using PandaBear.IO;
+using SharedKernel.IO;
 
 if (FilePaths.MayNameSameFile(outputPath, inputPath))
 {

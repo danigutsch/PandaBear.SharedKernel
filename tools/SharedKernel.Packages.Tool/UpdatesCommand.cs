@@ -1,8 +1,8 @@
 using System.CommandLine;
 using System.Globalization;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Packages.Tool;
+namespace SharedKernel.Packages.Tool;
 
 /// <summary>
 /// Implements <c>updates</c>: has <see cref="PackageInventory"/> judge the newest stable version of each declared cargo

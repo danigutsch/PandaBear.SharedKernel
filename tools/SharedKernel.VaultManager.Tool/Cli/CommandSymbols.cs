@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>Arguments and options that several commands share.</summary>
 internal static class CommandSymbols

@@ -1,1 +1,1 @@
-[assembly: AssemblyFixture(typeof(PandaBear.EntityFrameworkCore.Tests.PostgreSqlFixture))]
+[assembly: AssemblyFixture(typeof(SharedKernel.EntityFrameworkCore.Tests.PostgreSqlFixture))]

@@ -1,6 +1,6 @@
-using PandaBear.Processes.Tests;
+using SharedKernel.Processes.Tests;
 
-namespace PandaBear.DevContainers.Tests;
+namespace SharedKernel.DevContainers.Tests;
 
 /// <summary>
 /// Tests that the <c>git</c> that finds the common directory of a linked worktree gets no prompt and none of the host's

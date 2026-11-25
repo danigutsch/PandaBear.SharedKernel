@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>A long-running shell or PowerShell child that records its process ID and start time so tests can tell whether that exact process is still alive.</summary>
 internal sealed class CancellableChildProcess : IAsyncDisposable

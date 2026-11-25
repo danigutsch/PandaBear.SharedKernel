@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The editor fields of one colour token; both empty on a hover colour means derived.</summary>
 public sealed class ThemeColorFields

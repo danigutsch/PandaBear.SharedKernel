@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Tests that the Git change guard accepts only digest-bound changes under <c>roadmap/</c> and rejects unsafe paths, links, submodules, copies, and malformed status.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

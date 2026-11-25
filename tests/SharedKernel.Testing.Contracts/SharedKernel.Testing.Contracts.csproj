@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.Contracts</PackageId>
         <Description>Reusable contract test marker and trait contracts.</Description>
-        <RootNamespace>PandaBear.Testing.Contracts</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.Contracts</RootNamespace>
         <IsPackable>true</IsPackable>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

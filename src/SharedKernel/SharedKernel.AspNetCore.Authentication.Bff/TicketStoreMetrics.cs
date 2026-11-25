@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>Records ticket store failures using only the operation that failed.</summary>
 internal static class TicketStoreMetrics

@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using static PandaBear.AspNetCore.Authentication.Bff.TicketStoreMetrics;
+using static SharedKernel.AspNetCore.Authentication.Bff.TicketStoreMetrics;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Keeps cookie authentication tickets in an <see cref="IDistributedCache" />, protected with Data Protection; the browser
@@ -28,6 +28,7 @@ namespace PandaBear.AspNetCore.Authentication.Bff;
 /// </remarks>
 public sealed partial class ServerSideTicketStore : ITicketStore
 {
+    // This persisted purpose is shared by running versions and survives namespace changes.
     private const string ProtectorPurpose = "PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.v1";
     private const string SessionStartedItem = ".sharedkernel.bff.session-started";
 

@@ -1,6 +1,6 @@
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>A browser test that is never started, so tests can read what it exposes before it starts.</summary>
 internal sealed class KestrelPageTestProbe : KestrelPageTest<Program>

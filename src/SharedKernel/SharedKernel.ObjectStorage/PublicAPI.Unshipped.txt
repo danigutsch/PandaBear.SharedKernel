@@ -1,161 +1,161 @@
 #nullable enable
-override PandaBear.ObjectStorage.ObjectStorageKey.ToString() -> string!
-override PandaBear.ObjectStorage.ObjectStoragePrefix.ToString() -> string!
-PandaBear.ObjectStorage.IObjectStore
-PandaBear.ObjectStorage.IObjectStore.CreateUploadUrl(PandaBear.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectUploadTicket!>
-PandaBear.ObjectStorage.IObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.ObjectStorage.IObjectStore.Exists(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
-PandaBear.ObjectStorage.IObjectStore.GetPublicUri(string! objectKey) -> System.Uri!
-PandaBear.ObjectStorage.IObjectStore.ListKeys(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
-PandaBear.ObjectStorage.IObjectStore.ListObjects(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!>
-PandaBear.ObjectStorage.IObjectStore.OpenRead(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectReadResult!>
-PandaBear.ObjectStorage.IObjectStore.Put(PandaBear.ObjectStorage.ObjectWriteRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectWriteResult!>
-PandaBear.ObjectStorage.ObjectInventoryItem
-PandaBear.ObjectStorage.ObjectInventoryItem.LastModifiedAt.get -> System.DateTimeOffset
-PandaBear.ObjectStorage.ObjectInventoryItem.LastModifiedAt.init -> void
-PandaBear.ObjectStorage.ObjectInventoryItem.ObjectInventoryItem(string! ObjectKey, System.DateTimeOffset LastModifiedAt) -> void
-PandaBear.ObjectStorage.ObjectInventoryItem.ObjectKey.get -> string!
-PandaBear.ObjectStorage.ObjectInventoryItem.ObjectKey.init -> void
-PandaBear.ObjectStorage.ObjectReadResult
-PandaBear.ObjectStorage.ObjectReadResult.Checksum.get -> string?
-PandaBear.ObjectStorage.ObjectReadResult.Checksum.init -> void
-PandaBear.ObjectStorage.ObjectReadResult.Content.get -> System.IO.Stream!
-PandaBear.ObjectStorage.ObjectReadResult.Content.init -> void
-PandaBear.ObjectStorage.ObjectReadResult.ContentType.get -> string!
-PandaBear.ObjectStorage.ObjectReadResult.ContentType.init -> void
-PandaBear.ObjectStorage.ObjectReadResult.Dispose() -> void
-PandaBear.ObjectStorage.ObjectReadResult.Length.get -> long
-PandaBear.ObjectStorage.ObjectReadResult.Length.init -> void
-PandaBear.ObjectStorage.ObjectReadResult.ObjectKey.get -> string!
-PandaBear.ObjectStorage.ObjectReadResult.ObjectKey.init -> void
-PandaBear.ObjectStorage.ObjectReadResult.ObjectReadResult(string! ObjectKey, System.IO.Stream! Content, string! ContentType, long Length, string? Checksum = null) -> void
-PandaBear.ObjectStorage.ObjectStorageKey
-PandaBear.ObjectStorage.ObjectStorageKey.ObjectStorageKey() -> void
-PandaBear.ObjectStorage.ObjectStorageKey.ToEscapedPath() -> string!
-PandaBear.ObjectStorage.ObjectStorageKey.Value.get -> string!
-PandaBear.ObjectStorage.ObjectStoragePrefix
-PandaBear.ObjectStorage.ObjectStoragePrefix.ObjectStoragePrefix() -> void
-PandaBear.ObjectStorage.ObjectStoragePrefix.Value.get -> string!
-PandaBear.ObjectStorage.ObjectStoreValueExtensions
-PandaBear.ObjectStorage.ObjectUploadRequest
-PandaBear.ObjectStorage.ObjectUploadRequest.ContentType.get -> string!
-PandaBear.ObjectStorage.ObjectUploadRequest.ContentType.init -> void
-PandaBear.ObjectStorage.ObjectUploadRequest.ExpiresAfter.get -> System.TimeSpan
-PandaBear.ObjectStorage.ObjectUploadRequest.ExpiresAfter.init -> void
-PandaBear.ObjectStorage.ObjectUploadRequest.Length.get -> long
-PandaBear.ObjectStorage.ObjectUploadRequest.Length.init -> void
-PandaBear.ObjectStorage.ObjectUploadRequest.ObjectKey.get -> string!
-PandaBear.ObjectStorage.ObjectUploadRequest.ObjectKey.init -> void
-PandaBear.ObjectStorage.ObjectUploadRequest.ObjectUploadRequest(string! ObjectKey, string! ContentType, long Length, System.TimeSpan ExpiresAfter) -> void
-PandaBear.ObjectStorage.ObjectUploadTicket
-PandaBear.ObjectStorage.ObjectUploadTicket.ExpiresAt.get -> System.DateTimeOffset
-PandaBear.ObjectStorage.ObjectUploadTicket.ExpiresAt.init -> void
-PandaBear.ObjectStorage.ObjectUploadTicket.ObjectKey.get -> string!
-PandaBear.ObjectStorage.ObjectUploadTicket.ObjectKey.init -> void
-PandaBear.ObjectStorage.ObjectUploadTicket.ObjectUploadTicket(string! ObjectKey, System.Uri! UploadUri, System.DateTimeOffset ExpiresAt, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! RequiredHeaders) -> void
-PandaBear.ObjectStorage.ObjectUploadTicket.RequiredHeaders.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
-PandaBear.ObjectStorage.ObjectUploadTicket.RequiredHeaders.init -> void
-PandaBear.ObjectStorage.ObjectUploadTicket.UploadUri.get -> System.Uri!
-PandaBear.ObjectStorage.ObjectUploadTicket.UploadUri.init -> void
-PandaBear.ObjectStorage.ObjectWriteRequest
-PandaBear.ObjectStorage.ObjectWriteRequest.Checksum.get -> string?
-PandaBear.ObjectStorage.ObjectWriteRequest.Checksum.init -> void
-PandaBear.ObjectStorage.ObjectWriteRequest.Content.get -> System.IO.Stream!
-PandaBear.ObjectStorage.ObjectWriteRequest.Content.init -> void
-PandaBear.ObjectStorage.ObjectWriteRequest.ContentType.get -> string!
-PandaBear.ObjectStorage.ObjectWriteRequest.ContentType.init -> void
-PandaBear.ObjectStorage.ObjectWriteRequest.Length.get -> long
-PandaBear.ObjectStorage.ObjectWriteRequest.Length.init -> void
-PandaBear.ObjectStorage.ObjectWriteRequest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
-PandaBear.ObjectStorage.ObjectWriteRequest.Metadata.init -> void
-PandaBear.ObjectStorage.ObjectWriteRequest.ObjectKey.get -> string!
-PandaBear.ObjectStorage.ObjectWriteRequest.ObjectKey.init -> void
-PandaBear.ObjectStorage.ObjectWriteRequest.ObjectWriteRequest(string! ObjectKey, System.IO.Stream! Content, string! ContentType, long Length, string? Checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata = null) -> void
-PandaBear.ObjectStorage.ObjectWriteResult
-PandaBear.ObjectStorage.ObjectWriteResult.Checksum.get -> string?
-PandaBear.ObjectStorage.ObjectWriteResult.Checksum.init -> void
-PandaBear.ObjectStorage.ObjectWriteResult.ContentType.get -> string!
-PandaBear.ObjectStorage.ObjectWriteResult.ContentType.init -> void
-PandaBear.ObjectStorage.ObjectWriteResult.Length.get -> long
-PandaBear.ObjectStorage.ObjectWriteResult.Length.init -> void
-PandaBear.ObjectStorage.ObjectWriteResult.ObjectKey.get -> string!
-PandaBear.ObjectStorage.ObjectWriteResult.ObjectKey.init -> void
-PandaBear.ObjectStorage.ObjectWriteResult.ObjectWriteResult(string! ObjectKey, System.Uri! StorageUri, System.Uri! PublicUri, string! ContentType, long Length, string? Checksum) -> void
-PandaBear.ObjectStorage.ObjectWriteResult.PublicUri.get -> System.Uri!
-PandaBear.ObjectStorage.ObjectWriteResult.PublicUri.init -> void
-PandaBear.ObjectStorage.ObjectWriteResult.StorageUri.get -> System.Uri!
-PandaBear.ObjectStorage.ObjectWriteResult.StorageUri.init -> void
-static PandaBear.ObjectStorage.ObjectStorageKey.From(string! value, int maxLength = 2147483647) -> PandaBear.ObjectStorage.ObjectStorageKey
-static PandaBear.ObjectStorage.ObjectStorageKey.TryFrom(string? value, out PandaBear.ObjectStorage.ObjectStorageKey key, int maxLength = 2147483647) -> bool
-static PandaBear.ObjectStorage.ObjectStoragePrefix.From(string! value, int maxLength = 2147483647) -> PandaBear.ObjectStorage.ObjectStoragePrefix
-static PandaBear.ObjectStorage.ObjectStoragePrefix.TryFrom(string? value, out PandaBear.ObjectStorage.ObjectStoragePrefix prefix, int maxLength = 2147483647) -> bool
-static PandaBear.ObjectStorage.ObjectStoreValueExtensions.Delete(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-static PandaBear.ObjectStorage.ObjectStoreValueExtensions.Exists(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
-static PandaBear.ObjectStorage.ObjectStoreValueExtensions.GetPublicUri(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey) -> System.Uri!
-static PandaBear.ObjectStorage.ObjectStoreValueExtensions.ListKeys(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStoragePrefix prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
-static PandaBear.ObjectStorage.ObjectStoreValueExtensions.ListObjects(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStoragePrefix prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!>
-static PandaBear.ObjectStorage.ObjectStoreValueExtensions.OpenRead(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectReadResult!>
-static PandaBear.ObjectStorage.ObjectWriteRequest.Create(PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.IO.Stream! content, string! contentType, long length, string? checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> PandaBear.ObjectStorage.ObjectWriteRequest!
-static PandaBear.ObjectStorage.ObjectUploadRequest.Create(PandaBear.ObjectStorage.ObjectStorageKey objectKey, string! contentType, long length, System.TimeSpan expiresAfter) -> PandaBear.ObjectStorage.ObjectUploadRequest!
-PandaBear.ObjectStorage.ObjectInventoryItem.<Clone>$() -> PandaBear.ObjectStorage.ObjectInventoryItem!
-PandaBear.ObjectStorage.ObjectInventoryItem.Deconstruct(out string! ObjectKey, out System.DateTimeOffset LastModifiedAt) -> void
-PandaBear.ObjectStorage.ObjectInventoryItem.Equals(PandaBear.ObjectStorage.ObjectInventoryItem? other) -> bool
-PandaBear.ObjectStorage.ObjectReadResult.<Clone>$() -> PandaBear.ObjectStorage.ObjectReadResult!
-PandaBear.ObjectStorage.ObjectReadResult.Deconstruct(out string! ObjectKey, out System.IO.Stream! Content, out string! ContentType, out long Length, out string? Checksum) -> void
-PandaBear.ObjectStorage.ObjectReadResult.Equals(PandaBear.ObjectStorage.ObjectReadResult? other) -> bool
-PandaBear.ObjectStorage.ObjectStorageKey.Equals(PandaBear.ObjectStorage.ObjectStorageKey other) -> bool
-PandaBear.ObjectStorage.ObjectStoragePrefix.Equals(PandaBear.ObjectStorage.ObjectStoragePrefix other) -> bool
-PandaBear.ObjectStorage.ObjectUploadRequest.<Clone>$() -> PandaBear.ObjectStorage.ObjectUploadRequest!
-PandaBear.ObjectStorage.ObjectUploadRequest.Deconstruct(out string! ObjectKey, out string! ContentType, out long Length, out System.TimeSpan ExpiresAfter) -> void
-PandaBear.ObjectStorage.ObjectUploadRequest.Equals(PandaBear.ObjectStorage.ObjectUploadRequest? other) -> bool
-PandaBear.ObjectStorage.ObjectUploadTicket.<Clone>$() -> PandaBear.ObjectStorage.ObjectUploadTicket!
-PandaBear.ObjectStorage.ObjectUploadTicket.Deconstruct(out string! ObjectKey, out System.Uri! UploadUri, out System.DateTimeOffset ExpiresAt, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! RequiredHeaders) -> void
-PandaBear.ObjectStorage.ObjectUploadTicket.Equals(PandaBear.ObjectStorage.ObjectUploadTicket? other) -> bool
-PandaBear.ObjectStorage.ObjectWriteRequest.<Clone>$() -> PandaBear.ObjectStorage.ObjectWriteRequest!
-PandaBear.ObjectStorage.ObjectWriteRequest.Deconstruct(out string! ObjectKey, out System.IO.Stream! Content, out string! ContentType, out long Length, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata) -> void
-PandaBear.ObjectStorage.ObjectWriteRequest.Equals(PandaBear.ObjectStorage.ObjectWriteRequest? other) -> bool
-PandaBear.ObjectStorage.ObjectWriteResult.<Clone>$() -> PandaBear.ObjectStorage.ObjectWriteResult!
-PandaBear.ObjectStorage.ObjectWriteResult.Deconstruct(out string! ObjectKey, out System.Uri! StorageUri, out System.Uri! PublicUri, out string! ContentType, out long Length, out string? Checksum) -> void
-PandaBear.ObjectStorage.ObjectWriteResult.Equals(PandaBear.ObjectStorage.ObjectWriteResult? other) -> bool
-override PandaBear.ObjectStorage.ObjectInventoryItem.Equals(object? obj) -> bool
-override PandaBear.ObjectStorage.ObjectInventoryItem.GetHashCode() -> int
-override PandaBear.ObjectStorage.ObjectInventoryItem.ToString() -> string!
-override PandaBear.ObjectStorage.ObjectReadResult.Equals(object? obj) -> bool
-override PandaBear.ObjectStorage.ObjectReadResult.GetHashCode() -> int
-override PandaBear.ObjectStorage.ObjectReadResult.ToString() -> string!
-override PandaBear.ObjectStorage.ObjectStorageKey.GetHashCode() -> int
-override PandaBear.ObjectStorage.ObjectStoragePrefix.GetHashCode() -> int
-override PandaBear.ObjectStorage.ObjectUploadRequest.Equals(object? obj) -> bool
-override PandaBear.ObjectStorage.ObjectUploadRequest.GetHashCode() -> int
-override PandaBear.ObjectStorage.ObjectUploadRequest.ToString() -> string!
-override PandaBear.ObjectStorage.ObjectUploadTicket.Equals(object? obj) -> bool
-override PandaBear.ObjectStorage.ObjectUploadTicket.GetHashCode() -> int
-override PandaBear.ObjectStorage.ObjectUploadTicket.ToString() -> string!
-override PandaBear.ObjectStorage.ObjectWriteRequest.Equals(object? obj) -> bool
-override PandaBear.ObjectStorage.ObjectWriteRequest.GetHashCode() -> int
-override PandaBear.ObjectStorage.ObjectWriteRequest.ToString() -> string!
-override PandaBear.ObjectStorage.ObjectWriteResult.Equals(object? obj) -> bool
-override PandaBear.ObjectStorage.ObjectWriteResult.GetHashCode() -> int
-override PandaBear.ObjectStorage.ObjectWriteResult.ToString() -> string!
-static PandaBear.ObjectStorage.ObjectInventoryItem.operator !=(PandaBear.ObjectStorage.ObjectInventoryItem? left, PandaBear.ObjectStorage.ObjectInventoryItem? right) -> bool
-static PandaBear.ObjectStorage.ObjectInventoryItem.operator ==(PandaBear.ObjectStorage.ObjectInventoryItem? left, PandaBear.ObjectStorage.ObjectInventoryItem? right) -> bool
-static PandaBear.ObjectStorage.ObjectReadResult.operator !=(PandaBear.ObjectStorage.ObjectReadResult? left, PandaBear.ObjectStorage.ObjectReadResult? right) -> bool
-static PandaBear.ObjectStorage.ObjectReadResult.operator ==(PandaBear.ObjectStorage.ObjectReadResult? left, PandaBear.ObjectStorage.ObjectReadResult? right) -> bool
-static PandaBear.ObjectStorage.ObjectStorageKey.operator !=(PandaBear.ObjectStorage.ObjectStorageKey left, PandaBear.ObjectStorage.ObjectStorageKey right) -> bool
-static PandaBear.ObjectStorage.ObjectStorageKey.operator ==(PandaBear.ObjectStorage.ObjectStorageKey left, PandaBear.ObjectStorage.ObjectStorageKey right) -> bool
-static PandaBear.ObjectStorage.ObjectStoragePrefix.operator !=(PandaBear.ObjectStorage.ObjectStoragePrefix left, PandaBear.ObjectStorage.ObjectStoragePrefix right) -> bool
-static PandaBear.ObjectStorage.ObjectStoragePrefix.operator ==(PandaBear.ObjectStorage.ObjectStoragePrefix left, PandaBear.ObjectStorage.ObjectStoragePrefix right) -> bool
-static PandaBear.ObjectStorage.ObjectUploadRequest.operator !=(PandaBear.ObjectStorage.ObjectUploadRequest? left, PandaBear.ObjectStorage.ObjectUploadRequest? right) -> bool
-static PandaBear.ObjectStorage.ObjectUploadRequest.operator ==(PandaBear.ObjectStorage.ObjectUploadRequest? left, PandaBear.ObjectStorage.ObjectUploadRequest? right) -> bool
-static PandaBear.ObjectStorage.ObjectUploadTicket.operator !=(PandaBear.ObjectStorage.ObjectUploadTicket? left, PandaBear.ObjectStorage.ObjectUploadTicket? right) -> bool
-static PandaBear.ObjectStorage.ObjectUploadTicket.operator ==(PandaBear.ObjectStorage.ObjectUploadTicket? left, PandaBear.ObjectStorage.ObjectUploadTicket? right) -> bool
-static PandaBear.ObjectStorage.ObjectWriteRequest.operator !=(PandaBear.ObjectStorage.ObjectWriteRequest? left, PandaBear.ObjectStorage.ObjectWriteRequest? right) -> bool
-static PandaBear.ObjectStorage.ObjectWriteRequest.operator ==(PandaBear.ObjectStorage.ObjectWriteRequest? left, PandaBear.ObjectStorage.ObjectWriteRequest? right) -> bool
-static PandaBear.ObjectStorage.ObjectWriteResult.operator !=(PandaBear.ObjectStorage.ObjectWriteResult? left, PandaBear.ObjectStorage.ObjectWriteResult? right) -> bool
-static PandaBear.ObjectStorage.ObjectWriteResult.operator ==(PandaBear.ObjectStorage.ObjectWriteResult? left, PandaBear.ObjectStorage.ObjectWriteResult? right) -> bool
-~override PandaBear.ObjectStorage.ObjectStorageKey.Equals(object obj) -> bool
-~override PandaBear.ObjectStorage.ObjectStoragePrefix.Equals(object obj) -> bool
-PandaBear.ObjectStorage.ObjectInventoryReport
-PandaBear.ObjectStorage.ObjectInventoryReport.MissingObjectKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.ObjectStorage.ObjectInventoryReport.OrphanObjects.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!
-static PandaBear.ObjectStorage.ObjectInventoryReport.Compare(System.Collections.Generic.IEnumerable<PandaBear.ObjectStorage.ObjectInventoryItem!>! inventory, System.Collections.Generic.IEnumerable<string!>! referencedKeys) -> PandaBear.ObjectStorage.ObjectInventoryReport!
+override SharedKernel.ObjectStorage.ObjectStorageKey.ToString() -> string!
+override SharedKernel.ObjectStorage.ObjectStoragePrefix.ToString() -> string!
+SharedKernel.ObjectStorage.IObjectStore
+SharedKernel.ObjectStorage.IObjectStore.CreateUploadUrl(SharedKernel.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectUploadTicket!>
+SharedKernel.ObjectStorage.IObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.ObjectStorage.IObjectStore.Exists(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
+SharedKernel.ObjectStorage.IObjectStore.GetPublicUri(string! objectKey) -> System.Uri!
+SharedKernel.ObjectStorage.IObjectStore.ListKeys(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
+SharedKernel.ObjectStorage.IObjectStore.ListObjects(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<SharedKernel.ObjectStorage.ObjectInventoryItem!>!>
+SharedKernel.ObjectStorage.IObjectStore.OpenRead(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectReadResult!>
+SharedKernel.ObjectStorage.IObjectStore.Put(SharedKernel.ObjectStorage.ObjectWriteRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectWriteResult!>
+SharedKernel.ObjectStorage.ObjectInventoryItem
+SharedKernel.ObjectStorage.ObjectInventoryItem.LastModifiedAt.get -> System.DateTimeOffset
+SharedKernel.ObjectStorage.ObjectInventoryItem.LastModifiedAt.init -> void
+SharedKernel.ObjectStorage.ObjectInventoryItem.ObjectInventoryItem(string! ObjectKey, System.DateTimeOffset LastModifiedAt) -> void
+SharedKernel.ObjectStorage.ObjectInventoryItem.ObjectKey.get -> string!
+SharedKernel.ObjectStorage.ObjectInventoryItem.ObjectKey.init -> void
+SharedKernel.ObjectStorage.ObjectReadResult
+SharedKernel.ObjectStorage.ObjectReadResult.Checksum.get -> string?
+SharedKernel.ObjectStorage.ObjectReadResult.Checksum.init -> void
+SharedKernel.ObjectStorage.ObjectReadResult.Content.get -> System.IO.Stream!
+SharedKernel.ObjectStorage.ObjectReadResult.Content.init -> void
+SharedKernel.ObjectStorage.ObjectReadResult.ContentType.get -> string!
+SharedKernel.ObjectStorage.ObjectReadResult.ContentType.init -> void
+SharedKernel.ObjectStorage.ObjectReadResult.Dispose() -> void
+SharedKernel.ObjectStorage.ObjectReadResult.Length.get -> long
+SharedKernel.ObjectStorage.ObjectReadResult.Length.init -> void
+SharedKernel.ObjectStorage.ObjectReadResult.ObjectKey.get -> string!
+SharedKernel.ObjectStorage.ObjectReadResult.ObjectKey.init -> void
+SharedKernel.ObjectStorage.ObjectReadResult.ObjectReadResult(string! ObjectKey, System.IO.Stream! Content, string! ContentType, long Length, string? Checksum = null) -> void
+SharedKernel.ObjectStorage.ObjectStorageKey
+SharedKernel.ObjectStorage.ObjectStorageKey.ObjectStorageKey() -> void
+SharedKernel.ObjectStorage.ObjectStorageKey.ToEscapedPath() -> string!
+SharedKernel.ObjectStorage.ObjectStorageKey.Value.get -> string!
+SharedKernel.ObjectStorage.ObjectStoragePrefix
+SharedKernel.ObjectStorage.ObjectStoragePrefix.ObjectStoragePrefix() -> void
+SharedKernel.ObjectStorage.ObjectStoragePrefix.Value.get -> string!
+SharedKernel.ObjectStorage.ObjectStoreValueExtensions
+SharedKernel.ObjectStorage.ObjectUploadRequest
+SharedKernel.ObjectStorage.ObjectUploadRequest.ContentType.get -> string!
+SharedKernel.ObjectStorage.ObjectUploadRequest.ContentType.init -> void
+SharedKernel.ObjectStorage.ObjectUploadRequest.ExpiresAfter.get -> System.TimeSpan
+SharedKernel.ObjectStorage.ObjectUploadRequest.ExpiresAfter.init -> void
+SharedKernel.ObjectStorage.ObjectUploadRequest.Length.get -> long
+SharedKernel.ObjectStorage.ObjectUploadRequest.Length.init -> void
+SharedKernel.ObjectStorage.ObjectUploadRequest.ObjectKey.get -> string!
+SharedKernel.ObjectStorage.ObjectUploadRequest.ObjectKey.init -> void
+SharedKernel.ObjectStorage.ObjectUploadRequest.ObjectUploadRequest(string! ObjectKey, string! ContentType, long Length, System.TimeSpan ExpiresAfter) -> void
+SharedKernel.ObjectStorage.ObjectUploadTicket
+SharedKernel.ObjectStorage.ObjectUploadTicket.ExpiresAt.get -> System.DateTimeOffset
+SharedKernel.ObjectStorage.ObjectUploadTicket.ExpiresAt.init -> void
+SharedKernel.ObjectStorage.ObjectUploadTicket.ObjectKey.get -> string!
+SharedKernel.ObjectStorage.ObjectUploadTicket.ObjectKey.init -> void
+SharedKernel.ObjectStorage.ObjectUploadTicket.ObjectUploadTicket(string! ObjectKey, System.Uri! UploadUri, System.DateTimeOffset ExpiresAt, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! RequiredHeaders) -> void
+SharedKernel.ObjectStorage.ObjectUploadTicket.RequiredHeaders.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+SharedKernel.ObjectStorage.ObjectUploadTicket.RequiredHeaders.init -> void
+SharedKernel.ObjectStorage.ObjectUploadTicket.UploadUri.get -> System.Uri!
+SharedKernel.ObjectStorage.ObjectUploadTicket.UploadUri.init -> void
+SharedKernel.ObjectStorage.ObjectWriteRequest
+SharedKernel.ObjectStorage.ObjectWriteRequest.Checksum.get -> string?
+SharedKernel.ObjectStorage.ObjectWriteRequest.Checksum.init -> void
+SharedKernel.ObjectStorage.ObjectWriteRequest.Content.get -> System.IO.Stream!
+SharedKernel.ObjectStorage.ObjectWriteRequest.Content.init -> void
+SharedKernel.ObjectStorage.ObjectWriteRequest.ContentType.get -> string!
+SharedKernel.ObjectStorage.ObjectWriteRequest.ContentType.init -> void
+SharedKernel.ObjectStorage.ObjectWriteRequest.Length.get -> long
+SharedKernel.ObjectStorage.ObjectWriteRequest.Length.init -> void
+SharedKernel.ObjectStorage.ObjectWriteRequest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+SharedKernel.ObjectStorage.ObjectWriteRequest.Metadata.init -> void
+SharedKernel.ObjectStorage.ObjectWriteRequest.ObjectKey.get -> string!
+SharedKernel.ObjectStorage.ObjectWriteRequest.ObjectKey.init -> void
+SharedKernel.ObjectStorage.ObjectWriteRequest.ObjectWriteRequest(string! ObjectKey, System.IO.Stream! Content, string! ContentType, long Length, string? Checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata = null) -> void
+SharedKernel.ObjectStorage.ObjectWriteResult
+SharedKernel.ObjectStorage.ObjectWriteResult.Checksum.get -> string?
+SharedKernel.ObjectStorage.ObjectWriteResult.Checksum.init -> void
+SharedKernel.ObjectStorage.ObjectWriteResult.ContentType.get -> string!
+SharedKernel.ObjectStorage.ObjectWriteResult.ContentType.init -> void
+SharedKernel.ObjectStorage.ObjectWriteResult.Length.get -> long
+SharedKernel.ObjectStorage.ObjectWriteResult.Length.init -> void
+SharedKernel.ObjectStorage.ObjectWriteResult.ObjectKey.get -> string!
+SharedKernel.ObjectStorage.ObjectWriteResult.ObjectKey.init -> void
+SharedKernel.ObjectStorage.ObjectWriteResult.ObjectWriteResult(string! ObjectKey, System.Uri! StorageUri, System.Uri! PublicUri, string! ContentType, long Length, string? Checksum) -> void
+SharedKernel.ObjectStorage.ObjectWriteResult.PublicUri.get -> System.Uri!
+SharedKernel.ObjectStorage.ObjectWriteResult.PublicUri.init -> void
+SharedKernel.ObjectStorage.ObjectWriteResult.StorageUri.get -> System.Uri!
+SharedKernel.ObjectStorage.ObjectWriteResult.StorageUri.init -> void
+static SharedKernel.ObjectStorage.ObjectStorageKey.From(string! value, int maxLength = 2147483647) -> SharedKernel.ObjectStorage.ObjectStorageKey
+static SharedKernel.ObjectStorage.ObjectStorageKey.TryFrom(string? value, out SharedKernel.ObjectStorage.ObjectStorageKey key, int maxLength = 2147483647) -> bool
+static SharedKernel.ObjectStorage.ObjectStoragePrefix.From(string! value, int maxLength = 2147483647) -> SharedKernel.ObjectStorage.ObjectStoragePrefix
+static SharedKernel.ObjectStorage.ObjectStoragePrefix.TryFrom(string? value, out SharedKernel.ObjectStorage.ObjectStoragePrefix prefix, int maxLength = 2147483647) -> bool
+static SharedKernel.ObjectStorage.ObjectStoreValueExtensions.Delete(this SharedKernel.ObjectStorage.IObjectStore! store, SharedKernel.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+static SharedKernel.ObjectStorage.ObjectStoreValueExtensions.Exists(this SharedKernel.ObjectStorage.IObjectStore! store, SharedKernel.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
+static SharedKernel.ObjectStorage.ObjectStoreValueExtensions.GetPublicUri(this SharedKernel.ObjectStorage.IObjectStore! store, SharedKernel.ObjectStorage.ObjectStorageKey objectKey) -> System.Uri!
+static SharedKernel.ObjectStorage.ObjectStoreValueExtensions.ListKeys(this SharedKernel.ObjectStorage.IObjectStore! store, SharedKernel.ObjectStorage.ObjectStoragePrefix prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
+static SharedKernel.ObjectStorage.ObjectStoreValueExtensions.ListObjects(this SharedKernel.ObjectStorage.IObjectStore! store, SharedKernel.ObjectStorage.ObjectStoragePrefix prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<SharedKernel.ObjectStorage.ObjectInventoryItem!>!>
+static SharedKernel.ObjectStorage.ObjectStoreValueExtensions.OpenRead(this SharedKernel.ObjectStorage.IObjectStore! store, SharedKernel.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectReadResult!>
+static SharedKernel.ObjectStorage.ObjectWriteRequest.Create(SharedKernel.ObjectStorage.ObjectStorageKey objectKey, System.IO.Stream! content, string! contentType, long length, string? checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> SharedKernel.ObjectStorage.ObjectWriteRequest!
+static SharedKernel.ObjectStorage.ObjectUploadRequest.Create(SharedKernel.ObjectStorage.ObjectStorageKey objectKey, string! contentType, long length, System.TimeSpan expiresAfter) -> SharedKernel.ObjectStorage.ObjectUploadRequest!
+SharedKernel.ObjectStorage.ObjectInventoryItem.<Clone>$() -> SharedKernel.ObjectStorage.ObjectInventoryItem!
+SharedKernel.ObjectStorage.ObjectInventoryItem.Deconstruct(out string! ObjectKey, out System.DateTimeOffset LastModifiedAt) -> void
+SharedKernel.ObjectStorage.ObjectInventoryItem.Equals(SharedKernel.ObjectStorage.ObjectInventoryItem? other) -> bool
+SharedKernel.ObjectStorage.ObjectReadResult.<Clone>$() -> SharedKernel.ObjectStorage.ObjectReadResult!
+SharedKernel.ObjectStorage.ObjectReadResult.Deconstruct(out string! ObjectKey, out System.IO.Stream! Content, out string! ContentType, out long Length, out string? Checksum) -> void
+SharedKernel.ObjectStorage.ObjectReadResult.Equals(SharedKernel.ObjectStorage.ObjectReadResult? other) -> bool
+SharedKernel.ObjectStorage.ObjectStorageKey.Equals(SharedKernel.ObjectStorage.ObjectStorageKey other) -> bool
+SharedKernel.ObjectStorage.ObjectStoragePrefix.Equals(SharedKernel.ObjectStorage.ObjectStoragePrefix other) -> bool
+SharedKernel.ObjectStorage.ObjectUploadRequest.<Clone>$() -> SharedKernel.ObjectStorage.ObjectUploadRequest!
+SharedKernel.ObjectStorage.ObjectUploadRequest.Deconstruct(out string! ObjectKey, out string! ContentType, out long Length, out System.TimeSpan ExpiresAfter) -> void
+SharedKernel.ObjectStorage.ObjectUploadRequest.Equals(SharedKernel.ObjectStorage.ObjectUploadRequest? other) -> bool
+SharedKernel.ObjectStorage.ObjectUploadTicket.<Clone>$() -> SharedKernel.ObjectStorage.ObjectUploadTicket!
+SharedKernel.ObjectStorage.ObjectUploadTicket.Deconstruct(out string! ObjectKey, out System.Uri! UploadUri, out System.DateTimeOffset ExpiresAt, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! RequiredHeaders) -> void
+SharedKernel.ObjectStorage.ObjectUploadTicket.Equals(SharedKernel.ObjectStorage.ObjectUploadTicket? other) -> bool
+SharedKernel.ObjectStorage.ObjectWriteRequest.<Clone>$() -> SharedKernel.ObjectStorage.ObjectWriteRequest!
+SharedKernel.ObjectStorage.ObjectWriteRequest.Deconstruct(out string! ObjectKey, out System.IO.Stream! Content, out string! ContentType, out long Length, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata) -> void
+SharedKernel.ObjectStorage.ObjectWriteRequest.Equals(SharedKernel.ObjectStorage.ObjectWriteRequest? other) -> bool
+SharedKernel.ObjectStorage.ObjectWriteResult.<Clone>$() -> SharedKernel.ObjectStorage.ObjectWriteResult!
+SharedKernel.ObjectStorage.ObjectWriteResult.Deconstruct(out string! ObjectKey, out System.Uri! StorageUri, out System.Uri! PublicUri, out string! ContentType, out long Length, out string? Checksum) -> void
+SharedKernel.ObjectStorage.ObjectWriteResult.Equals(SharedKernel.ObjectStorage.ObjectWriteResult? other) -> bool
+override SharedKernel.ObjectStorage.ObjectInventoryItem.Equals(object? obj) -> bool
+override SharedKernel.ObjectStorage.ObjectInventoryItem.GetHashCode() -> int
+override SharedKernel.ObjectStorage.ObjectInventoryItem.ToString() -> string!
+override SharedKernel.ObjectStorage.ObjectReadResult.Equals(object? obj) -> bool
+override SharedKernel.ObjectStorage.ObjectReadResult.GetHashCode() -> int
+override SharedKernel.ObjectStorage.ObjectReadResult.ToString() -> string!
+override SharedKernel.ObjectStorage.ObjectStorageKey.GetHashCode() -> int
+override SharedKernel.ObjectStorage.ObjectStoragePrefix.GetHashCode() -> int
+override SharedKernel.ObjectStorage.ObjectUploadRequest.Equals(object? obj) -> bool
+override SharedKernel.ObjectStorage.ObjectUploadRequest.GetHashCode() -> int
+override SharedKernel.ObjectStorage.ObjectUploadRequest.ToString() -> string!
+override SharedKernel.ObjectStorage.ObjectUploadTicket.Equals(object? obj) -> bool
+override SharedKernel.ObjectStorage.ObjectUploadTicket.GetHashCode() -> int
+override SharedKernel.ObjectStorage.ObjectUploadTicket.ToString() -> string!
+override SharedKernel.ObjectStorage.ObjectWriteRequest.Equals(object? obj) -> bool
+override SharedKernel.ObjectStorage.ObjectWriteRequest.GetHashCode() -> int
+override SharedKernel.ObjectStorage.ObjectWriteRequest.ToString() -> string!
+override SharedKernel.ObjectStorage.ObjectWriteResult.Equals(object? obj) -> bool
+override SharedKernel.ObjectStorage.ObjectWriteResult.GetHashCode() -> int
+override SharedKernel.ObjectStorage.ObjectWriteResult.ToString() -> string!
+static SharedKernel.ObjectStorage.ObjectInventoryItem.operator !=(SharedKernel.ObjectStorage.ObjectInventoryItem? left, SharedKernel.ObjectStorage.ObjectInventoryItem? right) -> bool
+static SharedKernel.ObjectStorage.ObjectInventoryItem.operator ==(SharedKernel.ObjectStorage.ObjectInventoryItem? left, SharedKernel.ObjectStorage.ObjectInventoryItem? right) -> bool
+static SharedKernel.ObjectStorage.ObjectReadResult.operator !=(SharedKernel.ObjectStorage.ObjectReadResult? left, SharedKernel.ObjectStorage.ObjectReadResult? right) -> bool
+static SharedKernel.ObjectStorage.ObjectReadResult.operator ==(SharedKernel.ObjectStorage.ObjectReadResult? left, SharedKernel.ObjectStorage.ObjectReadResult? right) -> bool
+static SharedKernel.ObjectStorage.ObjectStorageKey.operator !=(SharedKernel.ObjectStorage.ObjectStorageKey left, SharedKernel.ObjectStorage.ObjectStorageKey right) -> bool
+static SharedKernel.ObjectStorage.ObjectStorageKey.operator ==(SharedKernel.ObjectStorage.ObjectStorageKey left, SharedKernel.ObjectStorage.ObjectStorageKey right) -> bool
+static SharedKernel.ObjectStorage.ObjectStoragePrefix.operator !=(SharedKernel.ObjectStorage.ObjectStoragePrefix left, SharedKernel.ObjectStorage.ObjectStoragePrefix right) -> bool
+static SharedKernel.ObjectStorage.ObjectStoragePrefix.operator ==(SharedKernel.ObjectStorage.ObjectStoragePrefix left, SharedKernel.ObjectStorage.ObjectStoragePrefix right) -> bool
+static SharedKernel.ObjectStorage.ObjectUploadRequest.operator !=(SharedKernel.ObjectStorage.ObjectUploadRequest? left, SharedKernel.ObjectStorage.ObjectUploadRequest? right) -> bool
+static SharedKernel.ObjectStorage.ObjectUploadRequest.operator ==(SharedKernel.ObjectStorage.ObjectUploadRequest? left, SharedKernel.ObjectStorage.ObjectUploadRequest? right) -> bool
+static SharedKernel.ObjectStorage.ObjectUploadTicket.operator !=(SharedKernel.ObjectStorage.ObjectUploadTicket? left, SharedKernel.ObjectStorage.ObjectUploadTicket? right) -> bool
+static SharedKernel.ObjectStorage.ObjectUploadTicket.operator ==(SharedKernel.ObjectStorage.ObjectUploadTicket? left, SharedKernel.ObjectStorage.ObjectUploadTicket? right) -> bool
+static SharedKernel.ObjectStorage.ObjectWriteRequest.operator !=(SharedKernel.ObjectStorage.ObjectWriteRequest? left, SharedKernel.ObjectStorage.ObjectWriteRequest? right) -> bool
+static SharedKernel.ObjectStorage.ObjectWriteRequest.operator ==(SharedKernel.ObjectStorage.ObjectWriteRequest? left, SharedKernel.ObjectStorage.ObjectWriteRequest? right) -> bool
+static SharedKernel.ObjectStorage.ObjectWriteResult.operator !=(SharedKernel.ObjectStorage.ObjectWriteResult? left, SharedKernel.ObjectStorage.ObjectWriteResult? right) -> bool
+static SharedKernel.ObjectStorage.ObjectWriteResult.operator ==(SharedKernel.ObjectStorage.ObjectWriteResult? left, SharedKernel.ObjectStorage.ObjectWriteResult? right) -> bool
+~override SharedKernel.ObjectStorage.ObjectStorageKey.Equals(object obj) -> bool
+~override SharedKernel.ObjectStorage.ObjectStoragePrefix.Equals(object obj) -> bool
+SharedKernel.ObjectStorage.ObjectInventoryReport
+SharedKernel.ObjectStorage.ObjectInventoryReport.MissingObjectKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.ObjectStorage.ObjectInventoryReport.OrphanObjects.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ObjectStorage.ObjectInventoryItem!>!
+static SharedKernel.ObjectStorage.ObjectInventoryReport.Compare(System.Collections.Generic.IEnumerable<SharedKernel.ObjectStorage.ObjectInventoryItem!>! inventory, System.Collections.Generic.IEnumerable<string!>! referencedKeys) -> SharedKernel.ObjectStorage.ObjectInventoryReport!

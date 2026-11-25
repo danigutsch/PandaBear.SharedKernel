@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests creation and validation of postal addresses.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

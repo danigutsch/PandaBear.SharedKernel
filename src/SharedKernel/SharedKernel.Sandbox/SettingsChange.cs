@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>One edit that a settings plan would make, or one managed entry that drifted.</summary>
 /// <param name="Kind">What happens to the entry.</param>

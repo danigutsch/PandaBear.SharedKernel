@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Tests the validation of <see cref="UniqueRuleMap"/>.</summary>
 public sealed class UniqueRuleMapTests

@@ -1,4 +1,4 @@
-namespace PandaBear.OpenApi;
+namespace SharedKernel.OpenApi;
 
 /// <summary>
 /// Describes one named OpenAPI document and the route prefix it includes.

@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Builds SSH public key blobs and recipient lines with chosen structure.</summary>
 internal static class SshKeyBlobs

@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>
 /// Tests the non-throwing sanitizers: malformed UTF-16, such as a lone surrogate from a truncated or hostile form field, is reported as

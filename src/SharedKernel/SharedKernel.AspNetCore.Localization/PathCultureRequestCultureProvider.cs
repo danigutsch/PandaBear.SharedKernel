@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.AspNetCore.Localization;
+namespace SharedKernel.AspNetCore.Localization;
 
 /// <summary>
 /// Determines the request culture from the first path segment (<c>/pt/...</c>, <c>/en/...</c>) against a <see cref="SupportedCultures" /> set.

@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the safe relative path of an encrypted file.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

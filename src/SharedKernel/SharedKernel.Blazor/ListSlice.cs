@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// A bounded part of a larger list: the items a query returned, at most the number it was asked to take, and the total number of

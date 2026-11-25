@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Personal identity data.</summary>
 public sealed record IdentityData

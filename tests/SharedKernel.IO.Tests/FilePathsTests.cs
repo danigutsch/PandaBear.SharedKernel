@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>Tests the detection of two paths that name the same file through symbolic links.</summary>
 public sealed class FilePathsTests : IDisposable

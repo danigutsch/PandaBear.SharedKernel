@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Builds NUL-terminated <c>git status --porcelain=v2 -z</c> records for tests.</summary>
 internal static class RoadmapGitStatusTestData

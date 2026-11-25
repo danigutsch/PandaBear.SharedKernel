@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Tests the boundary between evaluated NuGet proposals and tracked central props.</summary>
 public sealed class NuGetTrialPropsTests

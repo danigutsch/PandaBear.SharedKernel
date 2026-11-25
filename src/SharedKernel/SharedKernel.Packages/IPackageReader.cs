@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Reads the packages that one package manager reports as installed. Implementations change nothing.</summary>
 public interface IPackageReader

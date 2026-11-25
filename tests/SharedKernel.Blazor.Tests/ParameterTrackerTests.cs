@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the helper that tells a component whether a route or component parameter really changed.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

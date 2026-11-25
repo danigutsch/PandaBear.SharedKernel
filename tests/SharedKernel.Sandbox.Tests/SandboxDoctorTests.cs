@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Tests the doctor against a scripted environment.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

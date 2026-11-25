@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Blazor.Analyzers;
+namespace SharedKernel.Blazor.Analyzers;
 
 /// <summary>
 /// Finds the busy-flag pattern in a block: <c>flag = true;</c>, one or more statements that await, then <c>flag = false;</c>

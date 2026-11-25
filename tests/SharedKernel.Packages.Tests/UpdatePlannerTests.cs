@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using static PandaBear.Packages.Tests.PackageFactory;
+using SharedKernel.Results;
+using static SharedKernel.Packages.Tests.PackageFactory;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests that the planner joins the sources to the policy and fails when any source fails.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

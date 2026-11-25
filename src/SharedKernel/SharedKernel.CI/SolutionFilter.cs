@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Writes solution filters (<c>.slnf</c>), which <c>dotnet restore</c>, <c>dotnet build</c>, and <c>dotnet test --solution</c>

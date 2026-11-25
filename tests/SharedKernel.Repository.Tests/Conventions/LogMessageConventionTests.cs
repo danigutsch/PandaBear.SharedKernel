@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>
 /// Guards the log standard in <c>docs/telemetry.md</c>: every <c>[LoggerMessage]</c> has an explicit event id inside its package's

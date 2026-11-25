@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Attachments;
+namespace SharedKernel.Vault.Attachments;
 
 /// <summary>Bounds applied while reading an archive.</summary>
 public sealed record ArchiveLimits

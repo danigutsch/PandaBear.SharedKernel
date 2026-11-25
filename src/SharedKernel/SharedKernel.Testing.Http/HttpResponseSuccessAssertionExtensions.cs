@@ -4,9 +4,9 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Xunit.Sdk;
-using static PandaBear.Testing.Assertions.UserMessageAssertions;
+using static SharedKernel.Testing.Assertions.UserMessageAssertions;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>Provides assertions for successful HTTP responses: statuses, JSON bodies, created locations, files, and cache headers.</summary>
 /// <remarks>

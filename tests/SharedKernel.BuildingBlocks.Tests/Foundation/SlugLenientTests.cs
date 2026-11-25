@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the lenient slug factory, which turns any text into a slug instead of rejecting unsafe characters.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

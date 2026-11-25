@@ -1,6 +1,6 @@
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.ObjectStorage.FileSystem;
+namespace SharedKernel.ObjectStorage.FileSystem;
 
 /// <summary>Stores objects under a caller-owned directory and publishes their bytes atomically.</summary>
 /// <remarks>The application owns the directory, key policy, metadata, and public addresses. Use a storage directory

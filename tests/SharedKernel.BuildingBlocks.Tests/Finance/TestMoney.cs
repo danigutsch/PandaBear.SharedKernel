@@ -1,5 +1,5 @@
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// A value object made of an amount and a currency code, used in value object equality tests.

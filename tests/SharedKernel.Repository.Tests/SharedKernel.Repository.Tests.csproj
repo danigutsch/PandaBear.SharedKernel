@@ -2,9 +2,9 @@
   <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
   <ItemGroup>
     <Using Include="Xunit" />
-    <Using Include="PandaBear.CI" />
-    <Using Include="PandaBear.Testing" />
-    <Using Include="PandaBear.Testing.Assertions" />
+    <Using Include="SharedKernel.CI" />
+    <Using Include="SharedKernel.Testing" />
+    <Using Include="SharedKernel.Testing.Assertions" />
     <PackageReference Include="coverlet.MTP" PrivateAssets="all" />
     <PackageReference Include="xunit.v3.mtp-v2" />
     <ProjectReference Include="../../tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj" />

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.Results.AspNet;
+namespace SharedKernel.Results.AspNet;
 
 /// <summary>Converts results to responses that carry a record version or a created location.</summary>
 public static class VersionedResultHttpExtensions

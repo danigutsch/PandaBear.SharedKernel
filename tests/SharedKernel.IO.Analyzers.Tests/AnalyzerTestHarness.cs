@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.IO.Analyzers.Tests;
+namespace SharedKernel.IO.Analyzers.Tests;
 
 /// <summary>
 /// Builds in-memory compilations and runs IOAnalyzer over them for the IO analyzer tests.

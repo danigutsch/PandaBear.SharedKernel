@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests that decrypted bytes never print themselves and are cleared on disposal.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

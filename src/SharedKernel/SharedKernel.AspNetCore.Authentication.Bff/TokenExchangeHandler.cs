@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Exchanges the current user's access token for one audience (RFC 8693) and attaches the result as a Bearer Authorization

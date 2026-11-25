@@ -1,9 +1,9 @@
 #nullable enable
-PandaBear.Domain.Analyzers.DomainDiagnosticIds
-const PandaBear.Domain.Analyzers.DomainDiagnosticIds.AmbientClock = "SKDOM003" -> string!
-const PandaBear.Domain.Analyzers.DomainDiagnosticIds.MutableCollectionExposure = "SKDOM002" -> string!
-const PandaBear.Domain.Analyzers.DomainDiagnosticIds.NonPrivateSetter = "SKDOM001" -> string!
-PandaBear.Domain.Analyzers.DomainAnalyzer
-PandaBear.Domain.Analyzers.DomainAnalyzer.DomainAnalyzer() -> void
-override PandaBear.Domain.Analyzers.DomainAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
-override PandaBear.Domain.Analyzers.DomainAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+SharedKernel.Domain.Analyzers.DomainDiagnosticIds
+const SharedKernel.Domain.Analyzers.DomainDiagnosticIds.AmbientClock = "SKDOM003" -> string!
+const SharedKernel.Domain.Analyzers.DomainDiagnosticIds.MutableCollectionExposure = "SKDOM002" -> string!
+const SharedKernel.Domain.Analyzers.DomainDiagnosticIds.NonPrivateSetter = "SKDOM001" -> string!
+SharedKernel.Domain.Analyzers.DomainAnalyzer
+SharedKernel.Domain.Analyzers.DomainAnalyzer.DomainAnalyzer() -> void
+override SharedKernel.Domain.Analyzers.DomainAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override SharedKernel.Domain.Analyzers.DomainAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

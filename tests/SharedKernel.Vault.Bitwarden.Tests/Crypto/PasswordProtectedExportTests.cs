@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
 using Konscious.Security.Cryptography;
-using PandaBear.Vault.Bitwarden.Crypto;
+using SharedKernel.Vault.Bitwarden.Crypto;
 
-namespace PandaBear.Vault.Bitwarden.Tests.Crypto;
+namespace SharedKernel.Vault.Bitwarden.Tests.Crypto;
 
 /// <summary>Tests the encryption and decryption of Bitwarden password-protected exports.</summary>
 public sealed class PasswordProtectedExportTests

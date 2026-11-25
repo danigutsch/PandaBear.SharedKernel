@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.EntityFrameworkCore</PackageId>
         <Description>Reusable Entity Framework Core composition, registration, and transaction primitives for shared-kernel workflows.</Description>
-        <RootNamespace>PandaBear.EntityFrameworkCore</RootNamespace>
+        <RootNamespace>SharedKernel.EntityFrameworkCore</RootNamespace>
         <PackageTags>entity-framework-core;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

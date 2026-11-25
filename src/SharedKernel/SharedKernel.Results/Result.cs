@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Results;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Represents the result of an operation that can succeed or fail.

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using static PandaBear.Blazor.Tests.PickerRendering;
+using static SharedKernel.Blazor.Tests.PickerRendering;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>
 /// Tests the image picker's search: it waits for the debounce, asks for a longer query below the shortest length, and announces only

@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tool;
+namespace SharedKernel.Documentation.Tool;
 
 /// <summary>Entry point of the documentation tool.</summary>
 internal static class Program

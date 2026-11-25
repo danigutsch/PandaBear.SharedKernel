@@ -1,7 +1,7 @@
 using Npgsql;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.EventSourcing.Npgsql;
+namespace SharedKernel.EventSourcing.Npgsql;
 
 /// <summary>Resolves and quotes the PostgreSQL schema name used by event sourcing.</summary>
 internal static class PostgreSqlNames

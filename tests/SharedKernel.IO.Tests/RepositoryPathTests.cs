@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>Tests validation and resolution of repository-relative paths.</summary>
 public sealed class RepositoryPathTests

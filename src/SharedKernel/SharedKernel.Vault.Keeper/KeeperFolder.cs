@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>Folder placement of a Keeper record.</summary>
 /// <param name="SharedFolder">Shared folder path with backslash separators, or <see langword="null"/>.</param>

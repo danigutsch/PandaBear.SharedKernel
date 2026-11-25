@@ -2,14 +2,14 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 public sealed partial class TestingAnalyzer
 {
     private static readonly DiagnosticDescriptor StringWriterNewLineRule = new(
         TestingDiagnosticIds.StringWriterNewLine,
         "Capture text with InvariantStringWriter",
-        "Use PandaBear.Testing.InvariantStringWriter instead of StringWriter, or set NewLine in the initializer; the captured text ends lines with the platform line ending",
+        "Use SharedKernel.Testing.InvariantStringWriter instead of StringWriter, or set NewLine in the initializer; the captured text ends lines with the platform line ending",
         TestingCategory, DiagnosticSeverity.Warning, true,
         description: "A StringWriter ends each line with Environment.NewLine, which is \"\\r\\n\" on Windows and \"\\n\" elsewhere, so a test that compares the captured text with a \"\\n\" expectation fails only on Windows. InvariantStringWriter ends lines with \"\\n\" and formats with the invariant culture on every operating system. A test that needs a specific line ending sets NewLine in the object initializer.",
         helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Testing.Analyzers/README.md#sktest022");

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Checks that an enum parameter holds one of its declared values, so a cast such as <c>(HeroLayout)9</c> is refused.</summary>
 public static class EnumParameter

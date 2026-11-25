@@ -1,2 +1,2 @@
-[assembly: Trait(PandaBear.Testing.TestTraitNames.ScopeName, "unit")]
-[assembly: Trait(PandaBear.Testing.TestTraitNames.AreaName, PandaBear.Domain.Analyzers.Tests.TestTraits.DomainAnalyzersComponent)]
+[assembly: Trait(SharedKernel.Testing.TestTraitNames.ScopeName, "unit")]
+[assembly: Trait(SharedKernel.Testing.TestTraitNames.AreaName, SharedKernel.Domain.Analyzers.Tests.TestTraits.DomainAnalyzersComponent)]

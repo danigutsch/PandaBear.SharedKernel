@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Reconciles roadmap items with GitHub issue state.</summary>
 public sealed class GitHubRoadmapReconciler

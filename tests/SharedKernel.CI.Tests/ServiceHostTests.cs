@@ -1,5 +1,5 @@
 
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards what the CI tool hands a service process and how it reads the values the process writes.</summary>
 public sealed class ServiceHostTests

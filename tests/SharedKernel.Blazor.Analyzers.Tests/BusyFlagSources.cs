@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Analyzers.Tests;
+namespace SharedKernel.Blazor.Analyzers.Tests;
 
 /// <summary>Builds component sources around a method body for the busy-flag analyzer tests.</summary>
 internal static class BusyFlagSources

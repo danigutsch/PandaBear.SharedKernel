@@ -4,7 +4,7 @@ using Terminal.Gui.App;
 using Terminal.Gui.ViewBase;
 using Terminal.Gui.Views;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>Modal Terminal.Gui dialogs of the review window.</summary>
 /// <param name="app">Application that runs the dialogs.</param>

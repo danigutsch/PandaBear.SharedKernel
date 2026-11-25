@@ -1,8 +1,8 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A link address that is safe to write into <c>href</c>: a relative address, an absolute <c>http</c> or <c>https</c> address

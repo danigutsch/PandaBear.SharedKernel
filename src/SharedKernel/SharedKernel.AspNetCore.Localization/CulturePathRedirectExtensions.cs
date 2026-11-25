@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.AspNetCore.Localization;
+namespace SharedKernel.AspNetCore.Localization;
 
 /// <summary>
 /// Adds the culture path redirect middleware and the remembered-choice cookie writer.

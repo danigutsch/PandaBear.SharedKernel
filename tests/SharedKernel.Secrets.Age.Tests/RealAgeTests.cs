@@ -1,7 +1,7 @@
 using System.Runtime.Versioning;
 using System.Text;
 
-namespace PandaBear.Secrets.Age.Tests;
+namespace SharedKernel.Secrets.Age.Tests;
 
 /// <summary>
 /// Runs the adapter against the real age and age-keygen programs with throwaway keys in temporary directories.

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Creates synthetic stream-dispatch benchmark sources for generated-style mediator comparisons.
@@ -23,7 +23,7 @@ internal static class StreamDispatchBenchmarkSourceFactory
         return $$"""
             #nullable enable
 
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Runtime.CompilerServices;
             using System.Threading.Channels;
 

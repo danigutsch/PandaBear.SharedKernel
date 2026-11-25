@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.Protobuf;
+namespace SharedKernel.Messaging.Protobuf;
 
 /// <summary>
 /// Marks a Protobuf integration event type whose delivery the integration event source generator already emits, so the runtime consumer defers to the generated publisher.

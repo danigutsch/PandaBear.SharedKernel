@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Reads the central package versions of <c>Directory.Packages.props</c> that a project of one target framework uses.</summary>
 internal static partial class CentralPackageVersions

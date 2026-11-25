@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace PandaBear.TestServices.Host;
+namespace SharedKernel.TestServices.Host;
 
 /// <summary>
 /// Tells the host when its owner wants it to stop: standard input reached end-of-file, which is what the owner causes by

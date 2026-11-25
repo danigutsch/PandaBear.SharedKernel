@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Reads positive operation authorization evidence from configured OpenAPI documents.</summary>
 internal sealed class OpenApiRouteAuthorization(

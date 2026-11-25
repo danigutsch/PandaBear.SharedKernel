@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// Disposable temporary directory that builds a fake repository of .csproj files, a solution, and CI test slice manifests for CI test selection tests.

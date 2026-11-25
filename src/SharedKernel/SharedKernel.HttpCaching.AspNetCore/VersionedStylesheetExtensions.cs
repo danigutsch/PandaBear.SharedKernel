@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace PandaBear.HttpCaching.AspNetCore;
+namespace SharedKernel.HttpCaching.AspNetCore;
 
 /// <summary>Serves caller-owned versioned stylesheets.</summary>
 public static class VersionedStylesheetExtensions

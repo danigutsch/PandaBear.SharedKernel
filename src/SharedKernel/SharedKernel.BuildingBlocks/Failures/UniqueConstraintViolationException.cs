@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// Signals that a save violated a uniqueness rule that the persistence layer enforces, typically because a concurrent

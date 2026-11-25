@@ -1,7 +1,7 @@
 using Npgsql;
 using NpgsqlTypes;
 
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>Records and reads durable scheduling observations in an application-owned PostgreSQL relation.</summary>
 /// <remarks>Hosts supply observed outcomes. Observation windows represent the freshness of a report.</remarks>

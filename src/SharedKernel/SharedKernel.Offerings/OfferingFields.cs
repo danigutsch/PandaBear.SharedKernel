@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// The field paths of offering validation errors, so an application can place each error on its control. Metric paths use the kind's

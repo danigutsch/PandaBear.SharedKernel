@@ -2,7 +2,7 @@ extern alias testingcodefixes;
 
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST022 code fix that replaces a platform line ending StringWriter with InvariantStringWriter.</summary>
 public sealed class StringWriterNewLineCodeFixTests
@@ -20,7 +20,7 @@ public sealed class StringWriterNewLineCodeFixTests
         var source = StringWriterNewLineTestSource.Create(creation);
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, creation);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -32,7 +32,7 @@ public sealed class StringWriterNewLineCodeFixTests
 
         // Assert
         updated.ShouldContain($"TextWriter writer = {expected};", StringComparison.Ordinal);
-        updated.ShouldContain("using PandaBear.Testing;", StringComparison.Ordinal);
+        updated.ShouldContain("using SharedKernel.Testing;", StringComparison.Ordinal);
         compilerErrors.ShouldBeEmpty();
         analyzerDiagnostics.ShouldNotContain(static d => d.Id == DiagnosticId);
     }
@@ -52,7 +52,7 @@ public sealed class StringWriterNewLineCodeFixTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "new()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -74,7 +74,7 @@ public sealed class StringWriterNewLineCodeFixTests
         var source = StringWriterNewLineTestSource.Create(creation);
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, creation);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);

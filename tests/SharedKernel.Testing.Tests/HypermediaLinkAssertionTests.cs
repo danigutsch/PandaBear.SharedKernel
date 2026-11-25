@@ -1,6 +1,6 @@
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the hypermedia link assertions on parsed JSON payloads.</summary>
 public sealed class HypermediaLinkAssertionTests

@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// The side effects of the CI engine: how it runs and finds child processes such as <c>git</c> and <c>dotnet</c>, how it

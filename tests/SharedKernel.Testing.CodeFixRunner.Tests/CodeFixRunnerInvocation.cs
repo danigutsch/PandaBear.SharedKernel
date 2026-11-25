@@ -1,7 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Help;
 
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>Parses and invokes the real code-fix runner command tree with captured output.</summary>
 internal static class CodeFixRunnerInvocation

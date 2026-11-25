@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>What the policy says about one update candidate.</summary>
 public enum UpdateDecisionKind

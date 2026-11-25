@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The credits of a site's images, such as on a credits page: a <c>ul</c> (<c>site-credits-list</c>) with <c>role="list"</c>, because

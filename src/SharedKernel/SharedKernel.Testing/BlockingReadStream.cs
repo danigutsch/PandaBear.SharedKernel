@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Non-seekable, read-only stream that serves a prefix, then blocks the next read until the test calls <see cref="Release" />, the

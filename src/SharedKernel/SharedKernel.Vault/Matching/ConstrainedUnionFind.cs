@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>Union-find over item indexes that refuses unions joining a forbidden pair.</summary>
 /// <param name="count">Number of items.</param>

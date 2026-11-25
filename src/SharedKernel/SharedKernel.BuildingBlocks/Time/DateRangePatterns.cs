@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The composite formats a <see cref="DateOnlyRange"/> is displayed with, chosen by what its first and last day share. In each, <c>{0}</c>

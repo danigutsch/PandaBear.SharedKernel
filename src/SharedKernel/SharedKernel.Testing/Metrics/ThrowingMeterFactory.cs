@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.Testing.Metrics;
+namespace SharedKernel.Testing.Metrics;
 
 /// <summary>A meter factory that cannot create a meter.</summary>
 public sealed class ThrowingMeterFactory : IMeterFactory

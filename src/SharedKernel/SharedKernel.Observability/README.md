@@ -72,7 +72,7 @@ OpenTelemetry-only logging and adds one host-owned attribute policy:
 ```csharp
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PandaBear.Observability;
+using SharedKernel.Observability;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Logging.ClearProviders();
@@ -101,6 +101,6 @@ those events separately. Disable scope collection when scopes may contain privat
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Observability`. C# namespace: `PandaBear.Observability`. Assembly/project identity: `SharedKernel.Observability`.
+Package ID: `PandaBear.SharedKernel.Observability`. C# namespace: `SharedKernel.Observability`. Assembly/project identity: `SharedKernel.Observability`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

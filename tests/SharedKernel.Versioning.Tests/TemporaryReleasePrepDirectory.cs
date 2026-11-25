@@ -1,5 +1,5 @@
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Disposable temporary directory with a package folder, an output folder, and helpers that write candidate packages, tool packages, and consumption samples for release preparation tests.
@@ -120,7 +120,7 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
     /// </summary>
     public async Task WriteUnpackableSharedKernelProject(CancellationToken ct)
     {
-        var projectDirectory = Path.Combine(Root, "src", "SharedKernel", "PandaBear.Sample");
+        var projectDirectory = Path.Combine(Root, "src", "SharedKernel", "SharedKernel.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),

@@ -2,9 +2,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.AspNetCore.Analyzers.Tests;
+namespace SharedKernel.AspNetCore.Analyzers.Tests;
 
 /// <summary>Exercises the effective method selected by Roslyn end-to-end.</summary>
 public sealed class InterceptedEndpointBindingTests

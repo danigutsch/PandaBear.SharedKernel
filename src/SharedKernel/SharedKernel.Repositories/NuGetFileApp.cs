@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The SDK-evaluated direct dependencies of a tracked standalone C# application.</summary>
 /// <param name="Path">The application source path relative to its checkout.</param>

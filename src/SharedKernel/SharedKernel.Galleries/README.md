@@ -101,6 +101,6 @@ if (view is null || view.Page(pageQuery, pageSize: 24) is not { Window.IsOutOfRa
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Galleries`. C# namespace: `PandaBear.Galleries`. Assembly/project identity: `SharedKernel.Galleries`.
+Package ID: `PandaBear.SharedKernel.Galleries`. C# namespace: `SharedKernel.Galleries`. Assembly/project identity: `SharedKernel.Galleries`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

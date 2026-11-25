@@ -1,9 +1,9 @@
 using BenchmarkDotNet.Running;
 
-namespace PandaBear.Results.Benchmarks;
+namespace SharedKernel.Results.Benchmarks;
 
 /// <summary>
-/// Runs the PandaBear.Results benchmark suite.
+/// Runs the SharedKernel.Results benchmark suite.
 /// </summary>
 internal static class Program
 {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Compliance.Classification;
 
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>Classifies a logging parameter as credential data.</summary>
 [AttributeUsage(AttributeTargets.Parameter)]

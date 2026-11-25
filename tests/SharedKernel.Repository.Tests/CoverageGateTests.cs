@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards <c>coverage record-symbols</c> and <c>coverage verify</c>.</summary>
 public sealed class CoverageGateTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.CloudEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests;
 
 /// <summary>
 /// Integration event with type "admin.tour.created" and version 1, used to test CloudEvents mapping.

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>A form model for server validation tests.</summary>
 internal sealed class ServerValidationModel

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Records text written from any thread and reports the text written through the end of the first line.</summary>
 internal sealed class FirstLineWriter : TextWriter

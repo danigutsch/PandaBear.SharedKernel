@@ -1,9 +1,9 @@
 using BenchmarkDotNet.Attributes;
 
-namespace PandaBear.Results.Benchmarks;
+namespace SharedKernel.Results.Benchmarks;
 
 /// <summary>
-/// Measures core PandaBear.Results creation paths.
+/// Measures core SharedKernel.Results creation paths.
 /// </summary>
 [MemoryDiagnoser]
 public class ResultCreationBenchmarks

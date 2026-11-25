@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests that <see cref="TestScopeAttribute" /> emits the same trait as <c>[Trait("Scope", ...)]</c>.</summary>
 [TestScope(TestScope.Unit)]

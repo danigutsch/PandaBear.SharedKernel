@@ -3,9 +3,9 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using PandaBear.GitHub;
+using SharedKernel.GitHub;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>
 /// Links an existing issue to a parent in the same GitHub repository without replacing another parent.

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace PandaBear.EntityFrameworkCore.Npgsql;
+namespace SharedKernel.EntityFrameworkCore.Npgsql;
 
 /// <summary>Registers PostgreSQL support services.</summary>
 public static class NpgsqlServiceCollectionExtensions

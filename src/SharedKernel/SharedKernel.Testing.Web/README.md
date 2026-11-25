@@ -12,6 +12,6 @@ Use `BunitElementAssertions.HasClass` with the element class list and expected c
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Web`. C# namespace: `PandaBear.Testing.Web`. Assembly/project identity: `SharedKernel.Testing.Web`.
+Package ID: `PandaBear.SharedKernel.Testing.Web`. C# namespace: `SharedKernel.Testing.Web`. Assembly/project identity: `SharedKernel.Testing.Web`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

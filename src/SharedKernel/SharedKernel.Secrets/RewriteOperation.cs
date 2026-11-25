@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Produces a new version of an encrypted file with sops: new recipients, a new data key, or an edited document. Each

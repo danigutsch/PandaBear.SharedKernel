@@ -1,6 +1,6 @@
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests Eventually, which retries an assertion until it passes or a timeout ends it, instead of a fixed sleep.</summary>
 public sealed class EventuallyTests

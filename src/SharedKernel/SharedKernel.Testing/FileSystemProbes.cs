@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Detects file-system capabilities once per process so tests can skip when the host lacks them. A probe that cannot run reports the capability as missing.</summary>
 public static class FileSystemProbes

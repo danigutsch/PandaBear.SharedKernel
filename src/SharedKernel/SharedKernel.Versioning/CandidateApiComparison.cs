@@ -3,10 +3,10 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml;
-using PandaBear.IO;
-using PandaBear.Processes;
+using SharedKernel.IO;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Compares the package API surface recorded by two candidate manifests.</summary>
 internal static class CandidateApiComparison

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The page footer (<c>contentinfo</c> landmark) with a content slot and a legal line, its lines a small gap apart. Its

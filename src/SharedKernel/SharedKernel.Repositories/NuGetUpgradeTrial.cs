@@ -2,9 +2,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Runs a repository-selected NuGet upgrade in an isolated checkout and prepares review evidence.</summary>
 public static class NuGetUpgradeTrial

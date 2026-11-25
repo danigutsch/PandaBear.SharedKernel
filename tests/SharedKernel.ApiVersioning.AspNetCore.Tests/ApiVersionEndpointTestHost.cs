@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
-namespace PandaBear.ApiVersioning.AspNetCore.Tests;
+namespace SharedKernel.ApiVersioning.AspNetCore.Tests;
 
 /// <summary>Helpers for inspecting the endpoints registered on a test web application.</summary>
 internal static class ApiVersionEndpointTestHost

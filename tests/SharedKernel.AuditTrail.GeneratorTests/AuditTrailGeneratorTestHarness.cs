@@ -2,10 +2,10 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.AuditTrail.SourceGenerator;
-using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
+using SharedKernel.AuditTrail.SourceGenerator;
+using SharedHarness = SharedKernel.Testing.Roslyn.GeneratorTestHarness;
 
-namespace PandaBear.AuditTrail.GeneratorTests;
+namespace SharedKernel.AuditTrail.GeneratorTests;
 
 /// <summary>
 /// Compiles audit trail sources and runs AuditTrailMappingGenerator over them for the generator tests.
@@ -19,8 +19,8 @@ internal static class AuditTrailGeneratorTestHarness
 
     private const string DefaultUsings = """
         using System;
-        using PandaBear.AuditTrail;
-        using PandaBear.Domain;
+        using SharedKernel.AuditTrail;
+        using SharedKernel.Domain;
 
         """;
 

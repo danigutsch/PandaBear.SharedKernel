@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.Testing.Contracts;
+namespace SharedKernel.Testing.Contracts;
 
 /// <summary>
 /// HTTP content that records whether it has been disposed.

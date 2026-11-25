@@ -1,6 +1,6 @@
-using PandaBear.DispositionHold.EntityFrameworkCore;
+using SharedKernel.DispositionHold.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Tests the validation of the disposition hold storage options, whose names are written into SQL text.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.ProviderGuardCategory)]

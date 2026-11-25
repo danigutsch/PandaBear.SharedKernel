@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Describes the version and private artifact committed by finalization.</summary>
 /// <param name="LineageId">The document lineage.</param>

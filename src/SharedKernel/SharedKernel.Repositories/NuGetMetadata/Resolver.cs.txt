@@ -6,7 +6,7 @@ using NuGet.Credentials;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using PandaBear.Repositories;
+using SharedKernel.Repositories;
 
 await using var input = File.OpenRead(args[0]);
 var request = await JsonSerializer.DeserializeAsync(input, ResolverJsonContext.Default.NuGetVersionRequest).ConfigureAwait(false);

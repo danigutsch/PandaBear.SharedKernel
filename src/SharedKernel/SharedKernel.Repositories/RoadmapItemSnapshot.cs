@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Read-only view of one roadmap item file, including its triage scores, relationships, and GitHub issue reference.</summary>
 /// <param name="Id">Roadmap item id.</param>

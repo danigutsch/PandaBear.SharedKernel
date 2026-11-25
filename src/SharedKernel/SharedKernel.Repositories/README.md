@@ -14,7 +14,7 @@ documents the configuration format and every check.
 ## Usage
 
 ```csharp
-using PandaBear.Repositories;
+using SharedKernel.Repositories;
 
 var links = await LinkVerifier.Verify(rootPath, [], cancellationToken);
 foreach (var issue in links.Issues)
@@ -51,6 +51,6 @@ foreach (var issue in links.Issues)
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Repositories`. C# namespace: `PandaBear.Repositories`. Assembly/project identity: `SharedKernel.Repositories`.
+Package ID: `PandaBear.SharedKernel.Repositories`. C# namespace: `SharedKernel.Repositories`. Assembly/project identity: `SharedKernel.Repositories`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

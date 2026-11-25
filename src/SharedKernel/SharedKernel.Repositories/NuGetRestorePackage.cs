@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>A resolved package in one framework and runtime target.</summary>
 /// <param name="Version">The selected package version.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage.S3;
+namespace SharedKernel.ObjectStorage.S3;
 
 /// <summary>
 /// Configures the authenticated S3-compatible object store.

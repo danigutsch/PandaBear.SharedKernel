@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.BuildingBlocks</PackageId>
         <Description>Reusable value-object and workflow building blocks for shared-kernel workflows.</Description>
-        <RootNamespace>PandaBear.BuildingBlocks</RootNamespace>
+        <RootNamespace>SharedKernel.BuildingBlocks</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

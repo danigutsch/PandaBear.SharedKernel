@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 /// <summary>
 /// Shares conservative delegate rewrite validation between the diagnostic and its code fix.
@@ -31,7 +31,7 @@ internal static class AssertionDelegateInlining
 
         if (model.GetSymbolInfo(invocation, cancellationToken).Symbol is not IMethodSymbol method
             || method.ContainingAssembly.Identity.Name != "SharedKernel.Testing.Assertions"
-            || method.ContainingType.ToDisplayString() != "PandaBear.Testing.Assertions.ShouldAssertionExtensions"
+            || method.ContainingType.ToDisplayString() != "SharedKernel.Testing.Assertions.ShouldAssertionExtensions"
             || method.Name is not ("ShouldThrow" or "ShouldThrowAssignableTo")
             || invocation.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not { } testMethod
             || model.GetDeclaredSymbol(testMethod, cancellationToken) is not IMethodSymbol testSymbol
@@ -115,7 +115,7 @@ internal static class AssertionDelegateInlining
 
         var candidate = invocation.WithExpression(SyntaxFactory.MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
-            SyntaxFactory.ParseName("global::PandaBear.Testing.Assertions.ShouldAssertionExtensions"),
+            SyntaxFactory.ParseName("global::SharedKernel.Testing.Assertions.ShouldAssertionExtensions"),
             name.WithoutTrivia())).WithArgumentList(arguments);
         if (model.GetSpeculativeSymbolInfo(invocation.SpanStart, candidate, SpeculativeBindingOption.BindAsExpression).Symbol is not IMethodSymbol rebound
             || !SymbolEqualityComparer.Default.Equals(original, rebound))

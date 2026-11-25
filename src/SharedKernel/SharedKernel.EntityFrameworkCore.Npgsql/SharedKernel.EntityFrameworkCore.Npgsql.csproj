@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.EntityFrameworkCore.Npgsql</PackageId>
         <Description>PostgreSQL support for shared-kernel Entity Framework Core primitives, starting with unique-violation recognition.</Description>
-        <RootNamespace>PandaBear.EntityFrameworkCore.Npgsql</RootNamespace>
+        <RootNamespace>SharedKernel.EntityFrameworkCore.Npgsql</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>entity-framework-core;npgsql;postgresql;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

@@ -1,6 +1,6 @@
-using PandaBear.Processes;
-using PandaBear.Secrets;
-using PandaBear.Secrets.Tool;
+using SharedKernel.Processes;
+using SharedKernel.Secrets;
+using SharedKernel.Secrets.Tool;
 
 return await SecretsCommandLine
     .Create(new SecretsEnvironment(

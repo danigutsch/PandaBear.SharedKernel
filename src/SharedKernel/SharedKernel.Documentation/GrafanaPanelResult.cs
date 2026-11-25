@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>The outcome of verifying one expected or observed panel.</summary>
 public sealed class GrafanaPanelResult

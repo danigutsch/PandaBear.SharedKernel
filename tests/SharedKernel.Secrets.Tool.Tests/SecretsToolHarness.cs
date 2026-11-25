@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Runs the tool with fake programs, fake standard streams, and a temporary repository.</summary>
 internal static class SecretsToolHarness

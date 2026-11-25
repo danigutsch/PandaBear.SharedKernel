@@ -2,9 +2,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// The <c>candidate.json</c> of a package candidate: its library revision, package version, the SHA-256 hash of each

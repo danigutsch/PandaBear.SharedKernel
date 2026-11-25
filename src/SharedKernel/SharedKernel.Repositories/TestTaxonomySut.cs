@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>A production project, its direct owner, and the types of tests it requires.</summary>
 /// <param name="Path">The tracked project path relative to the repository root.</param>

@@ -1,7 +1,7 @@
 using Google.Protobuf.WellKnownTypes;
-using PandaBear.Messaging.IntegrationEvents;
+using SharedKernel.Messaging.IntegrationEvents;
 
-namespace PandaBear.Messaging.Protobuf.TestContracts;
+namespace SharedKernel.Messaging.Protobuf.TestContracts;
 
 /// <summary>The integration event contract of the <c>TourCreated</c> message that protoc generates from <c>Protos/tour_created.proto</c>.</summary>
 public sealed partial class TourCreated : IIntegrationEvent

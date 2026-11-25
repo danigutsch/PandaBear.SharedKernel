@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// Unvalidated offering data, as an editor entered it, and the round-trip form of a stored offering (see

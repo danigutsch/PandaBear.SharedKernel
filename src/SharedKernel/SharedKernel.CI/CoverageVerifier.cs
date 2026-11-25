@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Records the Release symbols of a build, and verifies the changed-code coverage of Cobertura reports with the coverage

@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Hint names of the source files the mediator generator emits.</summary>
 internal static class GeneratedHintNames

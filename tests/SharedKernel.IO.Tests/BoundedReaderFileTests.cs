@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>Tests whole-file reads that refuse files over a limit.</summary>
 public sealed class BoundedReaderFileTests

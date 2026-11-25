@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
-using PandaBear.Idempotency.EntityFrameworkCore;
+using SharedKernel.Idempotency.EntityFrameworkCore;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Builds the atomic, parameterized PostgreSQL write for a retained completed duplicate observation.</summary>
 internal static class IntegrationEventInboxDuplicateSql

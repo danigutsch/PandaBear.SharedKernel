@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Creates the external commands of the versioning engine with a fake <c>git</c>.</summary>
 internal static class FakeGitCommands

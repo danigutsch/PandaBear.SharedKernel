@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The editor fields of one typography role; an empty field keeps the default theme's value.</summary>
 public sealed class TypographyFields

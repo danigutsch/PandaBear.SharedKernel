@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Wraps a service through a type parameter, which the CallProxy generator cannot see through.</summary>
 internal static class CallProxyIndirection

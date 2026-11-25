@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.EntityFrameworkCore;
+namespace SharedKernel.Mediator.EntityFrameworkCore;
 
 /// <summary>
 /// The original EF adapter contract for commands that need PostgreSQL transaction-scoped advisory locks.

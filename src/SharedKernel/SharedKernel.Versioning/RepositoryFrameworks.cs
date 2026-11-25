@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Reads the target frameworks a repository builds for from its root <c>Directory.Build.props</c>.</summary>
 public static class RepositoryFrameworks

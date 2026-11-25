@@ -1,8 +1,8 @@
 using System.Text;
-using PandaBear.IO;
-using PandaBear.Results;
+using SharedKernel.IO;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Reads the key holders of a SOPS file from disk, without a process and without decrypting.</summary>
 public static class SopsFileReader

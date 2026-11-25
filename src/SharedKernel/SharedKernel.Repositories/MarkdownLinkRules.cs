@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using PandaBear.Markdown;
+using SharedKernel.Markdown;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The text rules of <c>verify-links</c>: lines, fenced code, headings and their anchors, link targets, and issue and

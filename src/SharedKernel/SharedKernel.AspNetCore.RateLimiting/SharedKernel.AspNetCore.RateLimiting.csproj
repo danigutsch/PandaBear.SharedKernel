@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore.RateLimiting</PackageId>
         <Description>Remote-IP fixed-window rate-limit policies and rate-limit rejection telemetry for ASP.NET Core.</Description>
-        <RootNamespace>PandaBear.AspNetCore.RateLimiting</RootNamespace>
+        <RootNamespace>SharedKernel.AspNetCore.RateLimiting</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;rate-limiting;security;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

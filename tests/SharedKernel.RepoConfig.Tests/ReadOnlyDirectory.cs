@@ -1,6 +1,6 @@
 using System.Runtime.Versioning;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>A directory that cannot be written to until it is disposed.</summary>
 [UnsupportedOSPlatform("windows")]

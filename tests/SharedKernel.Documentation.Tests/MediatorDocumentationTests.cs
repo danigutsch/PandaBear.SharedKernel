@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Exercises the generated mediator topology through the documentation generator.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
@@ -8,7 +8,7 @@ public sealed class MediatorDocumentationTests
     private const string ConfigurationPath = "docs/architecture/generated-diagrams.json";
     private const string TopologyPath = "obj/generated/SharedKernel.Mediator.Generated.CallGraph.g.cs";
     private const string GraphTemplate = """"
-        namespace PandaBear.Mediator.Generated;
+        namespace SharedKernel.Mediator.Generated;
         internal static class MediatorCallGraph
         {
             public static string Json { get; } = """$GRAPH""";
@@ -28,7 +28,7 @@ public sealed class MediatorDocumentationTests
         """;
 
     private const string Graph = """"
-        namespace PandaBear.Mediator.Generated;
+        namespace SharedKernel.Mediator.Generated;
         internal static class MediatorCallGraph
         {
             public static string Json { get; } =
@@ -141,8 +141,8 @@ public sealed class MediatorDocumentationTests
     }
 
     [Theory]
-    [InlineData("namespace PandaBear.Mediator.Generated;")]
-    [InlineData("namespace PandaBear.Mediator.Generated; internal static class MediatorCallGraph { public static string Json { get; } = Other.Json; }")]
+    [InlineData("namespace SharedKernel.Mediator.Generated;")]
+    [InlineData("namespace SharedKernel.Mediator.Generated; internal static class MediatorCallGraph { public static string Json { get; } = Other.Json; }")]
     public void Run_requires_a_generated_mediator_graph_literal(string source)
     {
         // Arrange

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Aspire.Hosting.Umami.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.Aspire.Hosting.Umami.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,8 +10,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Testing" />
-        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing" />
+        <Using Include="SharedKernel.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 

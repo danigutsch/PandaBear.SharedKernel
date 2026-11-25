@@ -1,74 +1,74 @@
 #nullable enable
-const PandaBear.UploadSanitizing.Fonts.FontSanitizer.MalformedMessage = "The font file is damaged or uses a structure that is not accepted." -> string!
-const PandaBear.UploadSanitizing.Fonts.FontSanitizer.NotAFontMessage = "The file must be a font in an accepted format." -> string!
-const PandaBear.UploadSanitizing.Fonts.FontSanitizer.TooLargeMessage = "The font file is larger than the accepted size." -> string!
-const PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytesLimit = 2147483590 -> long
-const PandaBear.UploadSanitizing.Images.ImageSanitizer.AnimatedMessage = "The image must be a still image; animated images are not accepted." -> string!
-const PandaBear.UploadSanitizing.Images.ImageSanitizer.DimensionsTooLargeMessage = "The image is wider or taller than the accepted size." -> string!
-const PandaBear.UploadSanitizing.Images.ImageSanitizer.MalformedMessage = "The image file is damaged or uses a structure that is not accepted." -> string!
-const PandaBear.UploadSanitizing.Images.ImageSanitizer.NotAnImageMessage = "The file must be an image in an accepted format." -> string!
-const PandaBear.UploadSanitizing.Images.ImageSanitizer.TooLargeMessage = "The image file is larger than the accepted size." -> string!
-const PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytesLimit = 2147483590 -> long
-PandaBear.UploadSanitizing.Fonts.FontFormat
-PandaBear.UploadSanitizing.Fonts.FontFormat.Woff2 = 0 -> PandaBear.UploadSanitizing.Fonts.FontFormat
-PandaBear.UploadSanitizing.Fonts.FontSanitizer
-PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions
-PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Field.get -> string!
-PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Field.init -> void
-PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytes.get -> long
-PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytes.init -> void
-PandaBear.UploadSanitizing.Fonts.SanitizedFont
-PandaBear.UploadSanitizing.Fonts.SanitizedFont.Bytes.get -> System.ReadOnlyMemory<byte>
-PandaBear.UploadSanitizing.Fonts.SanitizedFont.ContentType.get -> string!
-PandaBear.UploadSanitizing.Fonts.SanitizedFont.FileExtension.get -> string!
-PandaBear.UploadSanitizing.Fonts.SanitizedFont.Format.get -> PandaBear.UploadSanitizing.Fonts.FontFormat
-PandaBear.UploadSanitizing.Images.ImageFormat
-PandaBear.UploadSanitizing.Images.ImageFormat.Avif = 3 -> PandaBear.UploadSanitizing.Images.ImageFormat
-PandaBear.UploadSanitizing.Images.ImageFormat.Jpeg = 0 -> PandaBear.UploadSanitizing.Images.ImageFormat
-PandaBear.UploadSanitizing.Images.ImageFormat.Png = 1 -> PandaBear.UploadSanitizing.Images.ImageFormat
-PandaBear.UploadSanitizing.Images.ImageFormat.Webp = 2 -> PandaBear.UploadSanitizing.Images.ImageFormat
-PandaBear.UploadSanitizing.Images.ImageSanitizer
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.AllowAvif.get -> bool
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.AllowAvif.init -> void
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Field.get -> string!
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Field.init -> void
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytes.get -> long
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytes.init -> void
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxDimension.get -> int
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxDimension.init -> void
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.RejectAnimation.get -> bool
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.RejectAnimation.init -> void
-PandaBear.UploadSanitizing.Images.SanitizedImage
-PandaBear.UploadSanitizing.Images.SanitizedImage.Bytes.get -> System.ReadOnlyMemory<byte>
-PandaBear.UploadSanitizing.Images.SanitizedImage.ContentType.get -> string!
-PandaBear.UploadSanitizing.Images.SanitizedImage.FileExtension.get -> string!
-PandaBear.UploadSanitizing.Images.SanitizedImage.Format.get -> PandaBear.UploadSanitizing.Images.ImageFormat
-PandaBear.UploadSanitizing.Images.SanitizedImage.Height.get -> int
-PandaBear.UploadSanitizing.Images.SanitizedImage.IsAnimated.get -> bool
-PandaBear.UploadSanitizing.Images.SanitizedImage.MetadataRemoved.get -> bool
-PandaBear.UploadSanitizing.Images.SanitizedImage.Width.get -> int
-static PandaBear.UploadSanitizing.Fonts.FontSanitizer.Sanitize(System.IO.Stream! content, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions! options, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.UploadSanitizing.Fonts.SanitizedFont!>>!
-static PandaBear.UploadSanitizing.Fonts.FontSanitizer.Sanitize(System.ReadOnlySpan<byte> data, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Fonts.SanitizedFont!>
-static PandaBear.UploadSanitizing.Fonts.FontSanitizer.SanitizeInPlace(System.Memory<byte> buffer, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Fonts.SanitizedFont!>
-static PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Default.get -> PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions!
-static PandaBear.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.IO.Stream! content, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>>!
-static PandaBear.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.ReadOnlySpan<byte> data, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>
-static PandaBear.UploadSanitizing.Images.ImageSanitizer.SanitizeInPlace(System.Memory<byte> buffer, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>
-static PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Default.get -> PandaBear.UploadSanitizing.Images.ImageSanitizerOptions!
-PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.<Clone>$() -> PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions!
-PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Equals(PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? other) -> bool
-PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.FontSanitizerOptions() -> void
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.<Clone>$() -> PandaBear.UploadSanitizing.Images.ImageSanitizerOptions!
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Equals(PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? other) -> bool
-PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.ImageSanitizerOptions() -> void
-override PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Equals(object? obj) -> bool
-override PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.GetHashCode() -> int
-override PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.ToString() -> string!
-override PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Equals(object? obj) -> bool
-override PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.GetHashCode() -> int
-override PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.ToString() -> string!
-static PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.operator !=(PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? left, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? right) -> bool
-static PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.operator ==(PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? left, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? right) -> bool
-static PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.operator !=(PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? left, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? right) -> bool
-static PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.operator ==(PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? left, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? right) -> bool
+const SharedKernel.UploadSanitizing.Fonts.FontSanitizer.MalformedMessage = "The font file is damaged or uses a structure that is not accepted." -> string!
+const SharedKernel.UploadSanitizing.Fonts.FontSanitizer.NotAFontMessage = "The file must be a font in an accepted format." -> string!
+const SharedKernel.UploadSanitizing.Fonts.FontSanitizer.TooLargeMessage = "The font file is larger than the accepted size." -> string!
+const SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytesLimit = 2147483590 -> long
+const SharedKernel.UploadSanitizing.Images.ImageSanitizer.AnimatedMessage = "The image must be a still image; animated images are not accepted." -> string!
+const SharedKernel.UploadSanitizing.Images.ImageSanitizer.DimensionsTooLargeMessage = "The image is wider or taller than the accepted size." -> string!
+const SharedKernel.UploadSanitizing.Images.ImageSanitizer.MalformedMessage = "The image file is damaged or uses a structure that is not accepted." -> string!
+const SharedKernel.UploadSanitizing.Images.ImageSanitizer.NotAnImageMessage = "The file must be an image in an accepted format." -> string!
+const SharedKernel.UploadSanitizing.Images.ImageSanitizer.TooLargeMessage = "The image file is larger than the accepted size." -> string!
+const SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytesLimit = 2147483590 -> long
+SharedKernel.UploadSanitizing.Fonts.FontFormat
+SharedKernel.UploadSanitizing.Fonts.FontFormat.Woff2 = 0 -> SharedKernel.UploadSanitizing.Fonts.FontFormat
+SharedKernel.UploadSanitizing.Fonts.FontSanitizer
+SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions
+SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.Field.get -> string!
+SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.Field.init -> void
+SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytes.get -> long
+SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytes.init -> void
+SharedKernel.UploadSanitizing.Fonts.SanitizedFont
+SharedKernel.UploadSanitizing.Fonts.SanitizedFont.Bytes.get -> System.ReadOnlyMemory<byte>
+SharedKernel.UploadSanitizing.Fonts.SanitizedFont.ContentType.get -> string!
+SharedKernel.UploadSanitizing.Fonts.SanitizedFont.FileExtension.get -> string!
+SharedKernel.UploadSanitizing.Fonts.SanitizedFont.Format.get -> SharedKernel.UploadSanitizing.Fonts.FontFormat
+SharedKernel.UploadSanitizing.Images.ImageFormat
+SharedKernel.UploadSanitizing.Images.ImageFormat.Avif = 3 -> SharedKernel.UploadSanitizing.Images.ImageFormat
+SharedKernel.UploadSanitizing.Images.ImageFormat.Jpeg = 0 -> SharedKernel.UploadSanitizing.Images.ImageFormat
+SharedKernel.UploadSanitizing.Images.ImageFormat.Png = 1 -> SharedKernel.UploadSanitizing.Images.ImageFormat
+SharedKernel.UploadSanitizing.Images.ImageFormat.Webp = 2 -> SharedKernel.UploadSanitizing.Images.ImageFormat
+SharedKernel.UploadSanitizing.Images.ImageSanitizer
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.AllowAvif.get -> bool
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.AllowAvif.init -> void
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.Field.get -> string!
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.Field.init -> void
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytes.get -> long
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytes.init -> void
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.MaxDimension.get -> int
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.MaxDimension.init -> void
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.RejectAnimation.get -> bool
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.RejectAnimation.init -> void
+SharedKernel.UploadSanitizing.Images.SanitizedImage
+SharedKernel.UploadSanitizing.Images.SanitizedImage.Bytes.get -> System.ReadOnlyMemory<byte>
+SharedKernel.UploadSanitizing.Images.SanitizedImage.ContentType.get -> string!
+SharedKernel.UploadSanitizing.Images.SanitizedImage.FileExtension.get -> string!
+SharedKernel.UploadSanitizing.Images.SanitizedImage.Format.get -> SharedKernel.UploadSanitizing.Images.ImageFormat
+SharedKernel.UploadSanitizing.Images.SanitizedImage.Height.get -> int
+SharedKernel.UploadSanitizing.Images.SanitizedImage.IsAnimated.get -> bool
+SharedKernel.UploadSanitizing.Images.SanitizedImage.MetadataRemoved.get -> bool
+SharedKernel.UploadSanitizing.Images.SanitizedImage.Width.get -> int
+static SharedKernel.UploadSanitizing.Fonts.FontSanitizer.Sanitize(System.IO.Stream! content, SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions! options, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<SharedKernel.UploadSanitizing.Fonts.SanitizedFont!>>!
+static SharedKernel.UploadSanitizing.Fonts.FontSanitizer.Sanitize(System.ReadOnlySpan<byte> data, SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions! options) -> SharedKernel.Results.Result<SharedKernel.UploadSanitizing.Fonts.SanitizedFont!>
+static SharedKernel.UploadSanitizing.Fonts.FontSanitizer.SanitizeInPlace(System.Memory<byte> buffer, SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions! options) -> SharedKernel.Results.Result<SharedKernel.UploadSanitizing.Fonts.SanitizedFont!>
+static SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.Default.get -> SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions!
+static SharedKernel.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.IO.Stream! content, SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions! options, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<SharedKernel.UploadSanitizing.Images.SanitizedImage!>>!
+static SharedKernel.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.ReadOnlySpan<byte> data, SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions! options) -> SharedKernel.Results.Result<SharedKernel.UploadSanitizing.Images.SanitizedImage!>
+static SharedKernel.UploadSanitizing.Images.ImageSanitizer.SanitizeInPlace(System.Memory<byte> buffer, SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions! options) -> SharedKernel.Results.Result<SharedKernel.UploadSanitizing.Images.SanitizedImage!>
+static SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.Default.get -> SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions!
+SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.<Clone>$() -> SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions!
+SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.Equals(SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions? other) -> bool
+SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.FontSanitizerOptions() -> void
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.<Clone>$() -> SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions!
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.Equals(SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions? other) -> bool
+SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.ImageSanitizerOptions() -> void
+override SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.Equals(object? obj) -> bool
+override SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.GetHashCode() -> int
+override SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.ToString() -> string!
+override SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.Equals(object? obj) -> bool
+override SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.GetHashCode() -> int
+override SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.ToString() -> string!
+static SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.operator !=(SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions? left, SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions? right) -> bool
+static SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions.operator ==(SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions? left, SharedKernel.UploadSanitizing.Fonts.FontSanitizerOptions? right) -> bool
+static SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.operator !=(SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions? left, SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions? right) -> bool
+static SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions.operator ==(SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions? left, SharedKernel.UploadSanitizing.Images.ImageSanitizerOptions? right) -> bool

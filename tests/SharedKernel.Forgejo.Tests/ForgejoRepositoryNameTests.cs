@@ -1,4 +1,4 @@
-namespace PandaBear.Forgejo.Tests;
+namespace SharedKernel.Forgejo.Tests;
 
 /// <summary>Tests the check of the <c>owner/name</c> form that becomes part of request addresses.</summary>
 public sealed class ForgejoRepositoryNameTests

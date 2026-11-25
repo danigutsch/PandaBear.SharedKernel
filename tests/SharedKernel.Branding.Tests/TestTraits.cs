@@ -1,4 +1,4 @@
-namespace PandaBear.Branding.Tests;
+namespace SharedKernel.Branding.Tests;
 
 /// <summary>
 /// Trait values that tag the branding tests by component and capability.

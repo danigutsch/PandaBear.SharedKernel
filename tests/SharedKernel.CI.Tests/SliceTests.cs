@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Reads the selected test projects of a slice from a plan.</summary>
 internal static class SliceTests

@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>Result of a merge.</summary>
 /// <param name="Merged">One item per group. Unresolved fields hold a provisional value and keep every other value.</param>

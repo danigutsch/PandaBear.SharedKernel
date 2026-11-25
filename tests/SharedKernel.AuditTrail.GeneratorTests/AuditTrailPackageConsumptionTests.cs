@@ -1,4 +1,4 @@
-namespace PandaBear.AuditTrail.GeneratorTests;
+namespace SharedKernel.AuditTrail.GeneratorTests;
 
 /// <summary>
 /// Tests that the packed audit trail source generator package works in a consumer project.

@@ -1,5 +1,5 @@
 
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards each selection rule of <c>select</c> and its fail-closed fallback to full validation.</summary>
 public sealed class ProjectSelectorTests : IDisposable

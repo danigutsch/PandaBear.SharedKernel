@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>A step of the spacing scale, the <c>--site-space-1</c> to <c>--site-space-6</c> tokens, or no space.</summary>
 public enum SiteSpace

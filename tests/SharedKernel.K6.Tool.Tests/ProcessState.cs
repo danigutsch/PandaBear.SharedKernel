@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.K6.Tool.Tests;
+namespace SharedKernel.K6.Tool.Tests;
 
 /// <summary>Reports whether a process that a fake executable recorded is still running.</summary>
 internal static class ProcessState

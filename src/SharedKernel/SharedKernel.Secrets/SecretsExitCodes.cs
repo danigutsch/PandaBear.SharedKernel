@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The exit codes that every <see cref="SecretsRepository"/> operation returns.</summary>
 public static class SecretsExitCodes

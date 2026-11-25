@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>
 /// Query request whose response is a generic list, so the activity behavior tests can check how generic type names are tagged.

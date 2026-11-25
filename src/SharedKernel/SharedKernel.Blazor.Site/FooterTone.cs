@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The background of a <see cref="SiteFooter" />.</summary>
 public enum FooterTone

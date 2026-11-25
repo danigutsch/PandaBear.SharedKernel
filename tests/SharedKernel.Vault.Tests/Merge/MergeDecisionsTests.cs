@@ -1,8 +1,8 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.Vault.Tests.Merge;
+namespace SharedKernel.Vault.Tests.Merge;
 
 /// <summary>Tests how <see cref="MergeDecisions"/> applies finding decisions, finds field choices, and rebuilds pending entries.</summary>
 public sealed class MergeDecisionsTests

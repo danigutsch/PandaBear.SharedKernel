@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.IO;
+namespace SharedKernel.IO;
 
 /// <summary>
 /// A repository-relative path that a configuration file names: segments separated by <c>/</c>, none of them empty,

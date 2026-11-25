@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Tests how the release history reads versions and breaking-change markers from Git.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

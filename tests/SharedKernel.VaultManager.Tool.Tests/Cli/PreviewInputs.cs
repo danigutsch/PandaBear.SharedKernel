@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>
 /// A vault and its catalog with shared notes for the apply preview tests. The login holds a password, a TOTP, notes, a

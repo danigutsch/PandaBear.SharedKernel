@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage.FileSystem;
+namespace SharedKernel.ObjectStorage.FileSystem;
 
 /// <summary>Application policy for the filesystem object store.</summary>
 /// <param name="rootPath">The root directory available to the storage process.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The result of checking a theme against the rules: errors that block <see cref="SiteTheme.Create" />, warnings, and every contrast check.</summary>
 public sealed class SiteThemeReview

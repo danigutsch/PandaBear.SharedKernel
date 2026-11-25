@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Tests the digest that identifies a GitHub issue snapshot.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

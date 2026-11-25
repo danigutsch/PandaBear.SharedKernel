@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Tests that the ASP.NET Core error and security telemetry uses the names of the SharedKernel telemetry standard.</summary>
 public sealed class AspNetCoreTelemetryNameTests

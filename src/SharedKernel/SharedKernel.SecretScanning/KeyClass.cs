@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Meaning of the label in a <c>label: value</c> notes line.</summary>
 internal enum KeyClass

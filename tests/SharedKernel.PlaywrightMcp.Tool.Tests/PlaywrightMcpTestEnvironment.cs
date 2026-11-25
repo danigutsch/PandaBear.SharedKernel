@@ -1,7 +1,7 @@
 using System.CommandLine;
 using System.Diagnostics;
 
-namespace PandaBear.PlaywrightMcp.Tool.Tests;
+namespace SharedKernel.PlaywrightMcp.Tool.Tests;
 
 /// <summary>A fake environment, executable lookup, and output writers for invoking the Playwright MCP command line without starting real processes.</summary>
 internal sealed class PlaywrightMcpTestEnvironment : IExecutableResolver

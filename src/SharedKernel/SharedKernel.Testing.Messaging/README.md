@@ -9,7 +9,7 @@ Event envelope publisher and integration event handler fakes for SharedKernel te
 ## Usage
 
 ```csharp
-using PandaBear.Testing.Messaging;
+using SharedKernel.Testing.Messaging;
 
 var publisher = new RecordingEventEnvelopePublisher();
 await relay.Run(publisher, ct);
@@ -20,6 +20,6 @@ publisher.Published.ShouldHaveSingleItem();
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Messaging`. C# namespace: `PandaBear.Testing.Messaging`. Assembly/project identity: `SharedKernel.Testing.Messaging`.
+Package ID: `PandaBear.SharedKernel.Testing.Messaging`. C# namespace: `SharedKernel.Testing.Messaging`. Assembly/project identity: `SharedKernel.Testing.Messaging`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

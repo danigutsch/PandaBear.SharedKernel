@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Tests the PostgreSQL unquoted identifier rule that storage options and SQL names share.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]

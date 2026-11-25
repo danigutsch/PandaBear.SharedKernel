@@ -1,7 +1,7 @@
 using System.Collections.Frozen;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>An officially assigned ISO 3166-1 alpha-2 country code in upper case, for example <c>BR</c>; it names a country, not a person's legal status.</summary>
 public sealed class CountryCode : ValueObject

@@ -2,7 +2,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>
 /// Answers the three Umami 3.4.1 routes that provisioning uses, as the Umami source does: <c>POST /api/auth/login</c>,

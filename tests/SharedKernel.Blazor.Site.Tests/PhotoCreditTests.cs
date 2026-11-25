@@ -1,8 +1,8 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.ContentRights;
-using static PandaBear.Blazor.Site.Tests.PhotoCreditFixture;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.ContentRights;
+using static SharedKernel.Blazor.Site.Tests.PhotoCreditFixture;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests reusable compact photo credits and the standalone photo credits page.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

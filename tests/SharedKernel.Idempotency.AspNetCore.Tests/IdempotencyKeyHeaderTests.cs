@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using PandaBear.Testing;
+using SharedKernel.Results;
+using SharedKernel.Testing;
 
-namespace PandaBear.Idempotency.AspNetCore.Tests;
+namespace SharedKernel.Idempotency.AspNetCore.Tests;
 
 /// <summary>Tests creation and validation of the <c>Idempotency-Key</c> header value object.</summary>
 [Trait(TestTraitNames.ScopeName, "unit")]

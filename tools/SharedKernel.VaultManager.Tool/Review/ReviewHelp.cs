@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>Formats the key list of the review help.</summary>
 internal static class ReviewHelp

@@ -28,6 +28,6 @@ repository-wide style fixes, test-only fixes, or mediator fixes here.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Aspire.CodeFixes`. C# namespace: `PandaBear.Aspire.CodeFixes`. Assembly/project identity: `SharedKernel.Aspire.CodeFixes`.
+Package ID: `PandaBear.SharedKernel.Aspire.CodeFixes`. C# namespace: `SharedKernel.Aspire.CodeFixes`. Assembly/project identity: `SharedKernel.Aspire.CodeFixes`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

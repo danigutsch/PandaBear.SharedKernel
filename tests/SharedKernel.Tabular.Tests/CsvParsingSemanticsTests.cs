@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>Tests for the parsing rules kept from the simple dialect: trailing line breaks, empty fields, header matching and null guards.</summary>
 public sealed class CsvParsingSemanticsTests

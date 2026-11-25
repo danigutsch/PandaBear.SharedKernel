@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>A timer that fires once on the thread pool as soon as it is created, or never.</summary>
 internal sealed class ImmediateTimer : ITimer

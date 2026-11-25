@@ -1,9 +1,9 @@
 using System.Globalization;
 using Microsoft.CodeAnalysis;
-using PandaBear.AspNetCore.CodeFixes;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.AspNetCore.CodeFixes;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.AspNetCore.Analyzers.Tests;
+namespace SharedKernel.AspNetCore.Analyzers.Tests;
 
 /// <summary>Exercises runtime mapping diagnostics and fixes against ASP.NET Core framework symbols.</summary>
 public sealed class RuntimeEndpointBindingTests

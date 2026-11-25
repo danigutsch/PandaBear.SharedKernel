@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>Catalog entry of one item. Every property except <see cref="Key"/> and <see cref="Info"/> may be edited.</summary>
 /// <param name="Key">Origin key of the item, from <see cref="Matching.OriginKeys"/>. It identifies the item and may not change.</param>

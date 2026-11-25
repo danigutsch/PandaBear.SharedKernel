@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Roslyn</PackageId>
         <Description>Reusable Roslyn test helpers for analyzer, code fix, and generator test suites.</Description>
-        <RootNamespace>PandaBear.Testing.Roslyn</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.Roslyn</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;roslyn;analyzers;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Merge;
+namespace SharedKernel.Vault.Tests.Merge;
 
 /// <summary>
 /// Fixed merge fixture: Keeper item K is older and carries <see cref="ItemOrigin.Modified"/>; Bitwarden item B is

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A round call-to-action link fixed in the bottom corner of the window, such as a chat link. Its content is a decorative icon; the

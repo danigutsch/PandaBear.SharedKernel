@@ -1,9 +1,9 @@
 using System.Globalization;
-using PandaBear.Vault.Analysis;
-using PandaBear.Vault.Model;
-using static PandaBear.Vault.Tests.Analysis.PasswordHealthFixture;
+using SharedKernel.Vault.Analysis;
+using SharedKernel.Vault.Model;
+using static SharedKernel.Vault.Tests.Analysis.PasswordHealthFixture;
 
-namespace PandaBear.Vault.Tests.Analysis;
+namespace SharedKernel.Vault.Tests.Analysis;
 
 /// <summary>Tests the password health findings: reuse, weak passwords, and passwords equal to the item name or user name.</summary>
 public sealed class PasswordHealthReportTests

@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A range of calendar days from a first day to a last day, both included. A missing date (the default value) is reported as required.</summary>
 public sealed class DateOnlyRange : ValueObject

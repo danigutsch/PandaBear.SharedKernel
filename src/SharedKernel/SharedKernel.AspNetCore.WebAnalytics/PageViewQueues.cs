@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// The queues of every target. The targets are created on first use, after the host checked the settings at start, and each page view

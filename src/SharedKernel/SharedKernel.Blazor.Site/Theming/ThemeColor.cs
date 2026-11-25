@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>One colour token with a value for each scheme, rendered as <c>light-dark(light, dark)</c>.</summary>
 public sealed class ThemeColor : ValueObject

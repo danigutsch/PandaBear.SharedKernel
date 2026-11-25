@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Reads whether a Linux process still runs from <c>/proc</c>.</summary>
 internal static class LinuxProcessState

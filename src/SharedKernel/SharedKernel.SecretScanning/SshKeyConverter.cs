@@ -3,7 +3,7 @@ using System.Formats.Asn1;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// Converts private keys into an OpenSSH or PKCS#8 private key, its public key line, and its fingerprint with the BCL only.

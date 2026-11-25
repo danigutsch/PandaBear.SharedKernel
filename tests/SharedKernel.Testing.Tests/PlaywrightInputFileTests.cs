@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests choosing a file in a Blazor InputFile whose change listener is attached late, in Chromium; the browser tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>

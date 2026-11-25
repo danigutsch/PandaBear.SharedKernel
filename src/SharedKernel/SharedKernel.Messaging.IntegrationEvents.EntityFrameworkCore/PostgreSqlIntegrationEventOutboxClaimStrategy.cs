@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Claims outbox messages with a single atomic PostgreSQL statement that skips rows locked by other relays.</summary>
 internal sealed class PostgreSqlIntegrationEventOutboxClaimStrategy<TContext>

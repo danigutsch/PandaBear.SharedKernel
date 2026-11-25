@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
-using PandaBear.ObjectStorage;
-using PandaBear.Npgsql;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
+using SharedKernel.ObjectStorage;
+using SharedKernel.Npgsql;
 
 var bookingResult = CreateBooking("VT-42", "Ada Lovelace");
 var bookingMessage = bookingResult.Match(

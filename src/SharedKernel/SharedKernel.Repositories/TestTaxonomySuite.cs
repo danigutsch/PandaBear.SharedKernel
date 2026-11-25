@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>A test project and the seams it exercises.</summary>
 /// <param name="Path">The tracked test project path relative to the repository root.</param>

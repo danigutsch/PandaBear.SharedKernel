@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
-namespace PandaBear.IO;
+namespace SharedKernel.IO;
 
 /// <summary>Reads the caller's typed manifest and records the digest of the exact bytes read.</summary>
 public static class ArtifactManifest

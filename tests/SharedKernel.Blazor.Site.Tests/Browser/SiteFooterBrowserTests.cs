@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests the primary footer, its separated lists and the tap targets in Chromium, on a phone (390px) and a desktop (1280px) viewport;

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Parses OSV records for tests.</summary>
 internal static class OsvRecords

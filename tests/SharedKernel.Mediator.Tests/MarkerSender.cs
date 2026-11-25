@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>A sender that answers with the value held by its scope's <see cref="ScopeMarker"/>.</summary>
 internal sealed class MarkerSender : ISender

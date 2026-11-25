@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.AspNetCore</PackageId>
         <Description>ASP.NET Core web application factory helpers for SharedKernel tests.</Description>
-        <RootNamespace>PandaBear.Testing.AspNetCore</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;aspnetcore;webapplicationfactory;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

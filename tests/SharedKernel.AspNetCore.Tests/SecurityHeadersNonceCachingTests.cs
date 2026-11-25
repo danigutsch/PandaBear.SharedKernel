@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>
 /// Tests that a response whose Content-Security-Policy carries the request's nonce never leaves as publicly cacheable, whichever order the

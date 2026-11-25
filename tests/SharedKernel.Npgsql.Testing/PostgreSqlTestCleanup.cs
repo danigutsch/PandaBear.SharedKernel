@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ExceptionServices;
 
-namespace PandaBear.Npgsql.Testing;
+namespace SharedKernel.Npgsql.Testing;
 
 /// <summary>Runs test cleanup actions so that every action is attempted and no failure is lost.</summary>
 internal static class PostgreSqlTestCleanup

@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>Provides accessibility assertions using an IBM Equal Access browser bundle.</summary>
 /// <remarks>Use a reviewed local browser bundle in a test after the state under test is interactive.

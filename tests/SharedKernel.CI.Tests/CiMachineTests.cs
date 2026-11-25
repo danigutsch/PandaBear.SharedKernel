@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards how the CI engine runs child processes: output capture, failures, cancellation, timeouts, and streaming.</summary>
 public sealed class CiMachineTests

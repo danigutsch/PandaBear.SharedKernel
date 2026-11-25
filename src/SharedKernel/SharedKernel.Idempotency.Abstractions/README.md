@@ -37,7 +37,7 @@ specific database provider.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Idempotency.Abstractions`. C# namespace: `PandaBear.Idempotency`. Assembly/project identity: `SharedKernel.Idempotency.Abstractions`.
+Package ID: `PandaBear.SharedKernel.Idempotency.Abstractions`. C# namespace: `SharedKernel.Idempotency`. Assembly/project identity: `SharedKernel.Idempotency.Abstractions`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 
@@ -55,6 +55,6 @@ fingerprinting, authorization binding, transaction boundaries, and replay interp
 ## Preview migration
 
 The package ID replaces `PandaBear.SharedKernel.Idempotency`. Update direct package references and
-lock files together. The `PandaBear.Idempotency` namespace remains unchanged. The project and assembly are now
+lock files together. The `SharedKernel.Idempotency` namespace remains unchanged. The project and assembly are now
 `SharedKernel.Idempotency.Abstractions`. Request fingerprint helpers have moved to the consuming application; preserve
 its existing framing when migrating persisted records. Do not install both package identities.

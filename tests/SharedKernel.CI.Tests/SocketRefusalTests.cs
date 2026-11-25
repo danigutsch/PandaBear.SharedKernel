@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards how a local check recognizes a sandbox that refuses Unix domain sockets.</summary>
 public sealed class SocketRefusalTests

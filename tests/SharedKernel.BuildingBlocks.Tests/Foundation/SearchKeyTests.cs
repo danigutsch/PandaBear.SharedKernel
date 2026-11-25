@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the accent- and case-insensitive search key of a text.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

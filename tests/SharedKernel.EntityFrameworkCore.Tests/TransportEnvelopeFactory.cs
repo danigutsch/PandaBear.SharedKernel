@@ -1,7 +1,7 @@
-using PandaBear.Messaging;
-using PandaBear.Messaging.IntegrationEvents.CloudEvents;
+using SharedKernel.Messaging;
+using SharedKernel.Messaging.IntegrationEvents.CloudEvents;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Builds integration event envelopes for transport tests.</summary>
 internal static class TransportEnvelopeFactory

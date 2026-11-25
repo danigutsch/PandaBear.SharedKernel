@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>The IDs of the diagnostics the CallProxy generator reports.</summary>
 internal static class CallProxyDiagnosticIds

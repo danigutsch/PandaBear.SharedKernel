@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>Inputs, decisions, and output of one pipeline run.</summary>
 /// <param name="Inputs">Vault export files, in order.</param>

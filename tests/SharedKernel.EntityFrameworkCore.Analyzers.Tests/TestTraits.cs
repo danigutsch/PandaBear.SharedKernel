@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Analyzers.Tests;
+namespace SharedKernel.EntityFrameworkCore.Analyzers.Tests;
 
 /// <summary>Trait names and values shared by the Entity Framework Core analyzer tests.</summary>
 internal static class TestTraits

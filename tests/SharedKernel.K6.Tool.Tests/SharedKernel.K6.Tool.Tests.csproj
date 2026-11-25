@@ -2,14 +2,14 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.K6.Tool.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.K6.Tool.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Processes" />
-        <Using Include="PandaBear.Testing" />
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.K6.Tool" />
+        <Using Include="SharedKernel.Processes" />
+        <Using Include="SharedKernel.Testing" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.K6.Tool" />
         <Using Include="Xunit" />
     </ItemGroup>
 

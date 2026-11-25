@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// A SOPS creation rule: files whose path matches a regular expression are encrypted to exactly one recipient set, and that

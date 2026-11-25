@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Tests normalizing TOTP secrets and URIs and decoding migration payloads.</summary>
 public sealed class TotpUriTests

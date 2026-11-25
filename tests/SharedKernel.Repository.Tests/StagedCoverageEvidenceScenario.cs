@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Exercises coverage capture and staged measurement through the CI command tree.</summary>
 internal sealed class StagedCoverageEvidenceScenario : IDisposable

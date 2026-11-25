@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>A planned file replacement that applies only when the file still has the expected content.</summary>
 /// <param name="Path">Path of the file to write.</param>

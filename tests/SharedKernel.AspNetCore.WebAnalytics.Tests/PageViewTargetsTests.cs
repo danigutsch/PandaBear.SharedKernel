@@ -2,9 +2,9 @@ using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>
 /// Tests that a target exists only when its own setting is present, like the OTLP exporter of the service defaults: without a target

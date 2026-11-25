@@ -7,9 +7,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
-using PandaBear.AspNetCore.Analyzers;
+using SharedKernel.AspNetCore.Analyzers;
 
-namespace PandaBear.AspNetCore.CodeFixes;
+namespace SharedKernel.AspNetCore.CodeFixes;
 
 /// <summary>Adds the missing annotations for a reviewed runtime endpoint binding.</summary>
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RuntimeEndpointBindingCodeFixProvider))]

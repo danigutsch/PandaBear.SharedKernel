@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Temporarily sets the current culture and UI culture of the running thread and restores both on disposal.</summary>
 /// <remarks>

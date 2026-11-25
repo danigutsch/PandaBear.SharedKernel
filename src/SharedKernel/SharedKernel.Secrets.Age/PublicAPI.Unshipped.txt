@@ -1,7 +1,7 @@
 #nullable enable
-PandaBear.Secrets.Age.ProcessAgeTool
-PandaBear.Secrets.Age.ProcessAgeTool.Decrypt(PandaBear.Secrets.AgeIdentityRef! identity, System.ReadOnlyMemory<byte> ciphertext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
-PandaBear.Secrets.Age.ProcessAgeTool.Encrypt(PandaBear.Secrets.AgeRecipientSet! recipients, System.ReadOnlyMemory<byte> plaintext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
-static PandaBear.Secrets.Age.ProcessAgeTool.Find(PandaBear.Secrets.IToolRunner! runner, PandaBear.Processes.IExecutableResolver! executableResolver) -> PandaBear.Secrets.Age.ProcessAgeTool!
-PandaBear.Secrets.Age.ProcessAgeTool.GenerateIdentity(PandaBear.Secrets.AgeIdentityRef! destination, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.AgeRecipient!>>!
-PandaBear.Secrets.Age.ProcessAgeTool.ProcessAgeTool(PandaBear.Secrets.IToolRunner! runner, string! agePath, string! ageKeygenPath) -> void
+SharedKernel.Secrets.Age.ProcessAgeTool
+SharedKernel.Secrets.Age.ProcessAgeTool.Decrypt(SharedKernel.Secrets.AgeIdentityRef! identity, System.ReadOnlyMemory<byte> ciphertext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<SharedKernel.Secrets.SecretBytes!>>!
+SharedKernel.Secrets.Age.ProcessAgeTool.Encrypt(SharedKernel.Secrets.AgeRecipientSet! recipients, System.ReadOnlyMemory<byte> plaintext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<string!>>!
+static SharedKernel.Secrets.Age.ProcessAgeTool.Find(SharedKernel.Secrets.IToolRunner! runner, SharedKernel.Processes.IExecutableResolver! executableResolver) -> SharedKernel.Secrets.Age.ProcessAgeTool!
+SharedKernel.Secrets.Age.ProcessAgeTool.GenerateIdentity(SharedKernel.Secrets.AgeIdentityRef! destination, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<SharedKernel.Secrets.AgeRecipient!>>!
+SharedKernel.Secrets.Age.ProcessAgeTool.ProcessAgeTool(SharedKernel.Secrets.IToolRunner! runner, string! agePath, string! ageKeygenPath) -> void

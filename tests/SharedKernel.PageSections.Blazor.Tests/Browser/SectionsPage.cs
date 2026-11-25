@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace PandaBear.PageSections.Blazor.Tests.Browser;
+namespace SharedKernel.PageSections.Blazor.Tests.Browser;
 
 /// <summary>
 /// Sections rendered as static server-side rendering does, styled by the site package's <c>site.css</c> and open in Chromium at a

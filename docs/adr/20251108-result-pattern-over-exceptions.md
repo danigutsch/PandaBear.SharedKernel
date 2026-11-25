@@ -8,7 +8,7 @@ Expected validation and business failures need explicit, testable return paths. 
 
 ## Decision
 
-Use `PandaBear.Results.Result` and `Result<T>` to represent expected success or failure, with `ResultStatus`, structured error details, and validation errors. Reserve exceptions for argument-contract violations and exceptional failures rather than ordinary negative outcomes. Document stable exception conditions using the [exception documentation policy](../EXCEPTION_DOCUMENTATION.md).
+Use `SharedKernel.Results.Result` and `Result<T>` to represent expected success or failure, with `ResultStatus`, structured error details, and validation errors. Reserve exceptions for argument-contract violations and exceptional failures rather than ordinary negative outcomes. Document stable exception conditions using the [exception documentation policy](../EXCEPTION_DOCUMENTATION.md).
 
 Callers inspect success/failure before accessing payloads. Composition helpers keep error propagation explicit across synchronous, task, and value-task flows. HTTP status mapping belongs in the ASP.NET adapter, not the transport-neutral result package. Consumers own their business error catalogs and validation rules.
 

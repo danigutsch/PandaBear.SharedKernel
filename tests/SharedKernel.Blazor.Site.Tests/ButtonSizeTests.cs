@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the size of a link styled as a button.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

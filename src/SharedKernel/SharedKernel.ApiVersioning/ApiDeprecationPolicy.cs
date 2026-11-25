@@ -1,4 +1,4 @@
-namespace PandaBear.ApiVersioning;
+namespace SharedKernel.ApiVersioning;
 
 /// <summary>
 /// Describes deprecation metadata for an API contract version.

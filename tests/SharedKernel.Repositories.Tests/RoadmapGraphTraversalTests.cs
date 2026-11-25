@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Tests that the blocker and parent cycle checks report exactly the cycle members and use linear work and bounded stack space on large graphs.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

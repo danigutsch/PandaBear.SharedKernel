@@ -1,4 +1,4 @@
-namespace PandaBear.Style.CodeFixes.Tests;
+namespace SharedKernel.Style.CodeFixes.Tests;
 
 /// <summary>Tests the SKSTYLE016 code fix that renames a file to match its top-level type.</summary>
 public sealed class RenameFileCodeFixTests

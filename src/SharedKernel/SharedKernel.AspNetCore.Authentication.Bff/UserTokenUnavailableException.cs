@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Thrown by the access-token and token-exchange <see cref="DelegatingHandler" />s when no token can be attached; the

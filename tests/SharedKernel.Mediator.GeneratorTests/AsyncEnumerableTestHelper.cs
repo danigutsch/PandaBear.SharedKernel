@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Helpers for consuming asynchronous sequences in generator runtime tests.</summary>
 internal static class AsyncEnumerableTestHelper

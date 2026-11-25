@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using PandaBear.Npgsql;
-using PandaBear.Results;
+using SharedKernel.Npgsql;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Helpers for <see cref="ResultTransactionBehaviorTests"/>.</summary>
 internal static class ResultTransactionBehaviorTestsHelpers

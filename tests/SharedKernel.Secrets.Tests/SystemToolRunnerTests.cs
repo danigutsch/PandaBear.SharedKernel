@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the real process runner with small Unix tools.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

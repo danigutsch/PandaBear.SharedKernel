@@ -1,54 +1,54 @@
 #nullable enable
-const PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants.Spec = "cloudevents" -> string!
-const PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants.SpecVersion = "1.0" -> string!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.CloudEventEnvelope(string! Id, System.Uri! Source, string! Type, string! SpecVersion, System.DateTimeOffset Time, string? Subject, string? DataContentType, System.Uri? DataSchema, int Version, TIntegrationEvent Data) -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Data.get -> TIntegrationEvent
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Data.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataContentType.get -> string?
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataContentType.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataSchema.get -> System.Uri?
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataSchema.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Id.get -> string!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Id.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Source.get -> System.Uri!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Source.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.SpecVersion.get -> string!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.SpecVersion.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Subject.get -> string?
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Subject.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Time.get -> System.DateTimeOffset
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Time.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Type.get -> string!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Type.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Version.get -> int
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Version.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMapper
-static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMapper.ToCloudEvent<TIntegrationEvent>(TIntegrationEvent integrationEvent, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata! metadata) -> PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.CloudEventMetadata(System.Uri! Source, string? Subject = null, string? DataContentType = null, System.Uri? DataSchema = null) -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataContentType.get -> string?
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataContentType.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataSchema.get -> System.Uri?
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataSchema.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Source.get -> System.Uri!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Source.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Subject.get -> string?
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Subject.init -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.<Clone>$() -> PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Deconstruct(out string! Id, out System.Uri! Source, out string! Type, out string! SpecVersion, out System.DateTimeOffset Time, out string? Subject, out string? DataContentType, out System.Uri? DataSchema, out int Version, out TIntegrationEvent Data) -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Equals(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? other) -> bool
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.<Clone>$() -> PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata!
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Deconstruct(out System.Uri! Source, out string? Subject, out string? DataContentType, out System.Uri? DataSchema) -> void
-PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Equals(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? other) -> bool
-override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Equals(object? obj) -> bool
-override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.GetHashCode() -> int
-override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.ToString() -> string!
-override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Equals(object? obj) -> bool
-override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.GetHashCode() -> int
-override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.ToString() -> string!
-static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.operator !=(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? left, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? right) -> bool
-static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.operator ==(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? left, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? right) -> bool
-static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.operator !=(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? left, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? right) -> bool
-static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.operator ==(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? left, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? right) -> bool
+const SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants.Spec = "cloudevents" -> string!
+const SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants.SpecVersion = "1.0" -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.CloudEventEnvelope(string! Id, System.Uri! Source, string! Type, string! SpecVersion, System.DateTimeOffset Time, string? Subject, string? DataContentType, System.Uri? DataSchema, int Version, TIntegrationEvent Data) -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Data.get -> TIntegrationEvent
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Data.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataContentType.get -> string?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataContentType.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataSchema.get -> System.Uri?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataSchema.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Id.get -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Id.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Source.get -> System.Uri!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Source.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.SpecVersion.get -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.SpecVersion.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Subject.get -> string?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Subject.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Time.get -> System.DateTimeOffset
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Time.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Type.get -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Type.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Version.get -> int
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Version.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMapper
+static SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMapper.ToCloudEvent<TIntegrationEvent>(TIntegrationEvent integrationEvent, SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata! metadata) -> SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.CloudEventMetadata(System.Uri! Source, string? Subject = null, string? DataContentType = null, System.Uri? DataSchema = null) -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataContentType.get -> string?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataContentType.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataSchema.get -> System.Uri?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataSchema.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Source.get -> System.Uri!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Source.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Subject.get -> string?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Subject.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.<Clone>$() -> SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Deconstruct(out string! Id, out System.Uri! Source, out string! Type, out string! SpecVersion, out System.DateTimeOffset Time, out string? Subject, out string? DataContentType, out System.Uri? DataSchema, out int Version, out TIntegrationEvent Data) -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Equals(SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? other) -> bool
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.<Clone>$() -> SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Deconstruct(out System.Uri! Source, out string? Subject, out string? DataContentType, out System.Uri? DataSchema) -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Equals(SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? other) -> bool
+override SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Equals(object? obj) -> bool
+override SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.GetHashCode() -> int
+override SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.ToString() -> string!
+override SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Equals(object? obj) -> bool
+override SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.GetHashCode() -> int
+override SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.ToString() -> string!
+static SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.operator !=(SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? left, SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? right) -> bool
+static SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.operator ==(SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? left, SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? right) -> bool
+static SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.operator !=(SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? left, SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? right) -> bool
+static SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.operator ==(SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? left, SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? right) -> bool

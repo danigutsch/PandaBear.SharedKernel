@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.Testing.Http;
-using PandaBear.Testing.Logging;
-using PandaBear.Testing.Metrics;
+using SharedKernel.Testing.Http;
+using SharedKernel.Testing.Logging;
+using SharedKernel.Testing.Metrics;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>
 /// Tests the bounded queue of each target and the background dispatcher: a full queue drops and counts for its own target only, stopping

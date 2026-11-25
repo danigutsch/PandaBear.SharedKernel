@@ -2,7 +2,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the composed Grafana LGTM observability stack: default names, resource registration and OTLP routing through the collector gateway.</summary>
 public sealed class GrafanaLgtmStackTests

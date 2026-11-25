@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the expiring in-memory cache.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

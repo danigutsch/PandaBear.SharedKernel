@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace PandaBear.PlaywrightMcp.Tool.Tests;
+namespace SharedKernel.PlaywrightMcp.Tool.Tests;
 
 /// <summary>The built Playwright MCP tool running as a separate process, with its output captured.</summary>
 internal sealed class PlaywrightMcpToolProcess : IAsyncDisposable

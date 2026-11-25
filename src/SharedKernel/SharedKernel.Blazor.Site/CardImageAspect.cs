@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The aspect ratio a <see cref="Card" /> crops its image to.</summary>
 public enum CardImageAspect

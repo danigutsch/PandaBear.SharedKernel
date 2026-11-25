@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Identifies the checkouts and optional CI receipts for a restore graph comparison.</summary>
 /// <param name="BaselineRoot">The baseline Git checkout.</param>

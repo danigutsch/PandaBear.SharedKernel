@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Help;
 using System.CommandLine.Parsing;
 
-namespace PandaBear.PlaywrightMcp.Tool.Tests;
+namespace SharedKernel.PlaywrightMcp.Tool.Tests;
 
 /// <summary>Finds and classifies the tool command lines that the tool README documents.</summary>
 internal static class DocumentedCommandLines

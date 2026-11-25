@@ -1,10 +1,10 @@
-using PandaBear.Vault.Catalog;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using static PandaBear.Vault.Tests.Catalog.CatalogChangeRun;
-using static PandaBear.Vault.Tests.Catalog.CatalogFixture;
+using SharedKernel.Vault.Catalog;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using static SharedKernel.Vault.Tests.Catalog.CatalogChangeRun;
+using static SharedKernel.Vault.Tests.Catalog.CatalogFixture;
 
-namespace PandaBear.Vault.Tests.Catalog;
+namespace SharedKernel.Vault.Tests.Catalog;
 
 /// <summary>Tests the description of changes that applying a catalog makes.</summary>
 public sealed class CatalogChangesTests

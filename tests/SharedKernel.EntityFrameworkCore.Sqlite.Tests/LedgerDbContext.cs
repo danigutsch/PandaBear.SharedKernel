@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>A context whose schema comes only from the hand-written <see cref="CreateLedger"/> migration.</summary>
 /// <param name="options">The options.</param>

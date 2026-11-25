@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// The hooks of one method that returns a value, synchronously or as <see cref="Task{TResult}"/> or <see cref="ValueTask{TResult}"/>.

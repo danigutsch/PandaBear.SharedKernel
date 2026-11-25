@@ -1,8 +1,8 @@
 using Microsoft.CodeAnalysis;
-using PandaBear.Blazor.Analyzers;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Blazor.Analyzers;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Blazor.CodeFixes.Tests;
+namespace SharedKernel.Blazor.CodeFixes.Tests;
 
 /// <summary>Tests the code fixes for the Blazor component analyzers.</summary>
 public sealed class BlazorCodeFixTests
@@ -138,7 +138,7 @@ public sealed class BlazorCodeFixTests
         // Arrange
         const string source = """
             using Microsoft.AspNetCore.Components;
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 

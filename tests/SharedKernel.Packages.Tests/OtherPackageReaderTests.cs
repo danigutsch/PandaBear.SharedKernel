@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the cargo, npm, and Flatpak readers against canned tool output.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

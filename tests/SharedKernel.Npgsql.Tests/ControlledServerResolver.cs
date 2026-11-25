@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Resolves a server connection string only when the test releases it, and counts the resolutions.</summary>
 internal sealed class ControlledServerResolver(string connectionString)

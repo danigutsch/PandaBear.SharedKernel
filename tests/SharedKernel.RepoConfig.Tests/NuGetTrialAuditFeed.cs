@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Serves synthetic NuGet Audit V3 metadata from a loopback address.</summary>
 internal sealed class NuGetTrialAuditFeed : IAsyncDisposable

@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>Modal questions and messages of the review window. Messages hold no vault values.</summary>
 internal interface IReviewDialogs

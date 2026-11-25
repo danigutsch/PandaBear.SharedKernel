@@ -1,17 +1,17 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Playwright;
-using PandaBear.Testing.Data;
-using PandaBear.Testing.Http;
-using PandaBear.Testing.Playwright;
-using PandaBear.Testing.Roslyn;
-using PandaBear.Testing.Snapshots;
-using PandaBear.Testing.Web;
+using SharedKernel.Testing.Data;
+using SharedKernel.Testing.Http;
+using SharedKernel.Testing.Playwright;
+using SharedKernel.Testing.Roslyn;
+using SharedKernel.Testing.Snapshots;
+using SharedKernel.Testing.Web;
 using System.Collections.Immutable;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the shared testing helpers for unique IDs, HTTP responses, snapshots, bUnit, Playwright, Roslyn options, and the Should assertion wrappers.</summary>
 public sealed class TestingHelperTests
@@ -174,7 +174,7 @@ public sealed class TestingHelperTests
     {
         // Arrange
         var provider = new TestAnalyzerConfigOptionsProvider(
-            ImmutableDictionary<string, string>.Empty.Add("build_property.RootNamespace", "PandaBear.Testing.Tests"));
+            ImmutableDictionary<string, string>.Empty.Add("build_property.RootNamespace", "SharedKernel.Testing.Tests"));
 
         // Act
         var options = provider.GlobalOptions;
@@ -184,7 +184,7 @@ public sealed class TestingHelperTests
 
         // Assert
         exists.ShouldBeTrue();
-        value.ShouldBe("PandaBear.Testing.Tests");
+        value.ShouldBe("SharedKernel.Testing.Tests");
         syntaxTreeOptions.ShouldBeSameAs(TestAnalyzerConfigOptions.Empty);
     }
 

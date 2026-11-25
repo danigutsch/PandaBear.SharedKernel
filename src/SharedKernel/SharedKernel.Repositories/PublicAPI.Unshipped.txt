@@ -1,444 +1,444 @@
 #nullable enable
-PandaBear.Repositories.NuGetPinInspection
-PandaBear.Repositories.NuGetUpgradeTrial
-PandaBear.Repositories.NuGetUpgradeTrialOptions
-PandaBear.Repositories.NuGetUpgradeTrialOptions.<Clone>$() -> PandaBear.Repositories.NuGetUpgradeTrialOptions!
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Build.get -> bool
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Build.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.CoordinatedPackages.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.NuGetUpgradeTrialOptions.CoordinatedPackages.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Deconstruct(out string! Root, out string! PlanPath, out string! PropsPath, out string? RemovePin, out System.Collections.Generic.IReadOnlyList<string!>! Updates, out bool Vulnerable, out System.Collections.Generic.IReadOnlyList<string!>! LocalSources, out bool Build, out bool Test) -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Equals(PandaBear.Repositories.NuGetUpgradeTrialOptions? other) -> bool
-PandaBear.Repositories.NuGetUpgradeTrialOptions.LocalSources.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.NuGetUpgradeTrialOptions.LocalSources.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.NuGetUpgradeTrialOptions(string! Root, string! PlanPath, string! PropsPath, string? RemovePin, System.Collections.Generic.IReadOnlyList<string!>! Updates, bool Vulnerable, System.Collections.Generic.IReadOnlyList<string!>! LocalSources, bool Build, bool Test) -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.PlanPath.get -> string!
-PandaBear.Repositories.NuGetUpgradeTrialOptions.PlanPath.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.PropsPath.get -> string!
-PandaBear.Repositories.NuGetUpgradeTrialOptions.PropsPath.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.ProposePinUpdates.get -> bool
-PandaBear.Repositories.NuGetUpgradeTrialOptions.ProposePinUpdates.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.RemovePin.get -> string?
-PandaBear.Repositories.NuGetUpgradeTrialOptions.RemovePin.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Root.get -> string!
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Root.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Test.get -> bool
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Test.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Updates.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Updates.init -> void
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Vulnerable.get -> bool
-PandaBear.Repositories.NuGetUpgradeTrialOptions.Vulnerable.init -> void
-override PandaBear.Repositories.NuGetUpgradeTrialOptions.Equals(object? obj) -> bool
-override PandaBear.Repositories.NuGetUpgradeTrialOptions.GetHashCode() -> int
-override PandaBear.Repositories.NuGetUpgradeTrialOptions.ToString() -> string!
-static PandaBear.Repositories.NuGetPinInspection.Run(string! root, string! packageId, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-PandaBear.Repositories.NuGetRestoreGraphComparison
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.<Clone>$() -> PandaBear.Repositories.NuGetRestoreGraphComparisonOptions!
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.BaselineRoot.get -> string!
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.BaselineRoot.init -> void
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.BaselineVerification.get -> string?
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.BaselineVerification.init -> void
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.CandidateRoot.get -> string!
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.CandidateRoot.init -> void
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.CandidateVerification.get -> string?
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.CandidateVerification.init -> void
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.Deconstruct(out string! BaselineRoot, out string! CandidateRoot, out string! OutputPath, out string? BaselineVerification, out string? CandidateVerification) -> void
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.Equals(PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? other) -> bool
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.NuGetRestoreGraphComparisonOptions(string! BaselineRoot, string! CandidateRoot, string! OutputPath, string? BaselineVerification, string? CandidateVerification) -> void
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.OutputPath.get -> string!
-PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.OutputPath.init -> void
-const PandaBear.Repositories.ActionPinVerifier.DefaultManifestPath = ".github/action-pins.json" -> string!
-const PandaBear.Repositories.ConsumerConfigurationFile.RelativePath = ".config/sharedkernel-repo.json" -> string!
-const PandaBear.Repositories.GherkinVerifier.MaxFileBytes = 67108864 -> int
-const PandaBear.Repositories.JsonVerifier.MaxFileBytes = 67108864 -> int
-const PandaBear.Repositories.RoadmapConfigSetter.GitHubRepositoryKey = "github.repository" -> string!
-const PandaBear.Repositories.RoadmapPaths.Config = "roadmap/config.json" -> string!
-const PandaBear.Repositories.RoadmapPaths.ConfigSchema = "roadmap/schema/roadmap-config.schema.json" -> string!
-const PandaBear.Repositories.RoadmapPaths.DefaultItem = "roadmap/items/RM-001-roadmap-gitops.json" -> string!
-const PandaBear.Repositories.RoadmapPaths.DefaultTheme = "roadmap/themes/repo-operations.json" -> string!
-const PandaBear.Repositories.RoadmapPaths.Items = "roadmap/items" -> string!
-const PandaBear.Repositories.RoadmapPaths.ItemSchema = "roadmap/schema/roadmap-item.schema.json" -> string!
-const PandaBear.Repositories.RoadmapPaths.Order = "roadmap/order.json" -> string!
-const PandaBear.Repositories.RoadmapPaths.Reconciliation = "roadmap/reconciliation" -> string!
-const PandaBear.Repositories.RoadmapPaths.Roadmap = "roadmap" -> string!
-const PandaBear.Repositories.RoadmapPaths.RoadmapReadme = "roadmap/README.md" -> string!
-const PandaBear.Repositories.RoadmapPaths.Schema = "roadmap/schema" -> string!
-const PandaBear.Repositories.RoadmapPaths.Themes = "roadmap/themes" -> string!
-const PandaBear.Repositories.RoadmapTemplates.ConfigJson = "{\n  \"$schema\": \"./schema/roadmap-config.schema.json\",\n  \"schemaVersion\": \"1.0\",\n  \"sourceOfTruth\": \"repository\",\n  \"itemIdPrefix\": \"RM\",\n  \"allowed\": {\n    \"types\": [\n      \"epic\",\n      \"issue\",\n      \"feature\",\n      \"enabler\",\n      \"blocker\",\n      \"risk\",\n      \"documentation\"\n    ],\n    \"statuses\": [\n      \"proposed\",\n      \"ready\",\n      \"in_progress\",\n      \"done\",\n      \"dropped\"\n    ]\n  },\n  \"project\": {\n    \"ordering\": \"order\",\n    \"blockedBy\": \"blockedBy\",\n    \"closedStatuses\": [\n      \"done\",\n      \"dropped\"\n    ]\n  },\n  \"scoring\": {\n    \"model\": \"RICE\",\n    \"formula\": \"reach * impact * confidence / effort\"\n  },\n  \"integrations\": {\n    \"github\": {\n      \"enabled\": false,\n      \"sourceOfTruth\": \"projection\",\n      \"intake\": {\n        \"theme\": \"repo-operations\",\n        \"openStatus\": \"proposed\",\n        \"closedStatus\": \"done\"\n      }\n    }\n  },\n  \"automation\": {\n    \"pullRequestBody\": \"Refresh the roadmap from the reviewed GitHub reconciliation.\"\n  }\n}" -> string!
-const PandaBear.Repositories.RoadmapTemplates.ConfigSchemaJson = "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"title\": \"Roadmap configuration\",\n  \"type\": \"object\",\n  \"required\": [\n    \"schemaVersion\",\n    \"sourceOfTruth\",\n    \"itemIdPrefix\",\n    \"allowed\",\n    \"project\",\n    \"scoring\",\n    \"integrations\"\n  ],\n  \"properties\": {\n    \"schemaVersion\": {\n      \"type\": \"string\"\n    },\n    \"sourceOfTruth\": {\n      \"const\": \"repository\"\n    },\n    \"itemIdPrefix\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"pattern\": \"^[A-Za-z0-9_-]+$\"\n    },\n    \"allowed\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"types\",\n        \"statuses\"\n      ],\n      \"properties\": {\n        \"types\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"minItems\": 1,\n          \"uniqueItems\": true\n        },\n        \"statuses\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"minItems\": 1,\n          \"uniqueItems\": true\n        }\n      }\n    },\n    \"scoring\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"model\",\n        \"formula\"\n      ],\n      \"properties\": {\n        \"model\": {\n          \"const\": \"RICE\"\n        },\n        \"formula\": {\n          \"const\": \"reach * impact * confidence / effort\"\n        },\n        \"ranges\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"reach\": {\n              \"type\": \"string\"\n            },\n            \"impact\": {\n              \"type\": \"string\"\n            },\n            \"confidence\": {\n              \"type\": \"string\"\n            },\n            \"effort\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    },\n    \"project\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"ordering\",\n        \"blockedBy\",\n        \"closedStatuses\"\n      ],\n      \"properties\": {\n        \"ordering\": {\n          \"const\": \"order\"\n        },\n        \"blockedBy\": {\n          \"const\": \"blockedBy\"\n        },\n        \"closedStatuses\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"minItems\": 1,\n          \"uniqueItems\": true\n        }\n      },\n      \"additionalProperties\": false\n    },\n    \"integrations\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"github\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"enabled\": {\n              \"type\": \"boolean\"\n            },\n            \"repository\": {\n              \"type\": \"string\"\n            },\n            \"sourceOfTruth\": {\n              \"const\": \"projection\"\n            },\n            \"intake\": {\n              \"type\": \"object\",\n              \"required\": [\n                \"theme\",\n                \"openStatus\",\n                \"closedStatus\"\n              ],\n              \"properties\": {\n                \"theme\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"openStatus\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"closedStatus\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"notPlannedStatus\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                }\n              },\n              \"additionalProperties\": false\n            },\n            \"projectV2\": {\n              \"type\": \"object\",\n              \"required\": [\n                \"id\",\n                \"owner\",\n                \"number\"\n              ],\n              \"properties\": {\n                \"id\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"owner\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"number\": {\n                  \"type\": \"integer\",\n                  \"minimum\": 1\n                }\n              },\n              \"additionalProperties\": false\n            }\n          },\n          \"additionalProperties\": false\n        }\n      }\n    },\n    \"automation\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"pullRequestBody\"\n      ],\n      \"properties\": {\n        \"pullRequestBody\": {\n          \"type\": \"string\",\n          \"minLength\": 1,\n          \"maxLength\": 65536,\n          \"pattern\": \"\\\\S\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  }\n}" -> string!
-const PandaBear.Repositories.RoadmapTemplates.DefaultItemJson = "{\n  \"$schema\": \"../schema/roadmap-item.schema.json\",\n  \"id\": \"RM-001\",\n  \"title\": \"Establish GitOps roadmap and repo configuration tooling\",\n  \"type\": \"epic\",\n  \"status\": \"ready\",\n  \"order\": 10,\n  \"theme\": \"repo-operations\",\n  \"outcome\": \"Roadmap intent and prioritization are managed through reviewed repository changes and projected into GitHub for execution.\",\n  \"scoring\": {\n    \"reach\": 20,\n    \"impact\": 4,\n    \"confidence\": 0.8,\n    \"effort\": 5\n  },\n  \"blockedBy\": [],\n  \"blocks\": [],\n  \"dependencies\": [],\n  \"tags\": [\n    \"gitops\",\n    \"roadmap\",\n    \"repo-config\"\n  ],\n  \"labels\": [\n    \"area: tooling\",\n    \"configuration\",\n    \"documentation\"\n  ]\n}" -> string!
-const PandaBear.Repositories.RoadmapTemplates.DefaultThemeJson = "{\n  \"id\": \"repo-operations\",\n  \"title\": \"Repository operations\",\n  \"description\": \"Repository structure, contributor workflow, local tooling, and planning automation.\"\n}" -> string!
-const PandaBear.Repositories.RoadmapTemplates.ItemSchemaJson = "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"title\": \"Roadmap item\",\n  \"type\": \"object\",\n  \"required\": [\n    \"id\",\n    \"title\",\n    \"type\",\n    \"status\",\n    \"theme\",\n    \"outcome\",\n    \"blockedBy\",\n    \"blocks\",\n    \"dependencies\",\n    \"tags\",\n    \"labels\"\n  ],\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\",\n      \"minLength\": 1\n    },\n    \"title\": {\n      \"type\": \"string\",\n      \"minLength\": 1\n    },\n    \"type\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"string\"\n    },\n    \"triage\": {\n      \"const\": \"untriaged\"\n    },\n    \"order\": {\n      \"type\": \"integer\",\n      \"minimum\": 1\n    },\n    \"parent\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"pattern\": \"\\\\S\"\n    },\n    \"theme\": {\n      \"type\": \"string\",\n      \"minLength\": 1\n    },\n    \"outcome\": {\n      \"type\": \"string\",\n      \"minLength\": 1\n    },\n    \"size\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"XS\",\n        \"S\",\n        \"M\",\n        \"L\",\n        \"XL\"\n      ]\n    },\n    \"scoring\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"reach\",\n        \"impact\",\n        \"confidence\",\n        \"effort\"\n      ],\n      \"properties\": {\n        \"reach\": {\n          \"type\": \"number\",\n          \"minimum\": 0\n        },\n        \"impact\": {\n          \"type\": \"number\",\n          \"minimum\": 1,\n          \"maximum\": 5\n        },\n        \"confidence\": {\n          \"type\": \"number\",\n          \"minimum\": 0.1,\n          \"maximum\": 1\n        },\n        \"effort\": {\n          \"type\": \"number\",\n          \"exclusiveMinimum\": 0\n        }\n      }\n    },\n    \"dependencies\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"blockedBy\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"blocks\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"tags\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"labels\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"sources\": {\n      \"type\": \"array\"\n    },\n    \"integrations\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"github\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"issue\": {\n              \"oneOf\": [\n                {\n                  \"type\": \"integer\",\n                  \"minimum\": 1\n                },\n                {\n                  \"const\": \"create\"\n                }\n              ]\n            },\n            \"repository\": {\n              \"type\": \"string\",\n              \"pattern\": \"^(?![^/]*--)[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/(?!\\\\.{1,2}$)[A-Za-z0-9_.-]{1,100}$\"\n            },\n            \"nodeId\": {\n              \"type\": \"string\",\n              \"minLength\": 1,\n              \"pattern\": \"\\\\S\"\n            },\n            \"previousLocations\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": \"object\",\n                \"required\": [\n                  \"repository\",\n                  \"issue\"\n                ],\n                \"properties\": {\n                  \"repository\": {\n                    \"type\": \"string\",\n                    \"pattern\": \"^(?![^/]*--)[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/(?!\\\\.{1,2}$)[A-Za-z0-9_.-]{1,100}$\"\n                  },\n                  \"issue\": {\n                    \"type\": \"integer\",\n                    \"minimum\": 1\n                  }\n                },\n                \"additionalProperties\": false\n              },\n              \"uniqueItems\": true\n            },\n            \"previousNodeIds\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"pattern\": \"\\\\S\"\n              },\n              \"uniqueItems\": true\n            }\n          },\n          \"additionalProperties\": false,\n          \"allOf\": [\n            {\n              \"if\": {\n                \"required\": [\n                  \"issue\"\n                ],\n                \"properties\": {\n                  \"issue\": {\n                    \"const\": \"create\"\n                  }\n                }\n              },\n              \"then\": {\n                \"not\": {\n                  \"anyOf\": [\n                    {\n                      \"required\": [\n                        \"nodeId\"\n                      ]\n                    },\n                    {\n                      \"required\": [\n                        \"previousLocations\"\n                      ]\n                    },\n                    {\n                      \"required\": [\n                        \"previousNodeIds\"\n                      ]\n                    }\n                  ]\n                }\n              }\n            }\n          ],\n          \"dependentRequired\": {\n            \"repository\": [\n              \"issue\"\n            ],\n            \"nodeId\": [\n              \"issue\"\n            ],\n            \"previousLocations\": [\n              \"issue\"\n            ],\n            \"previousNodeIds\": [\n              \"issue\"\n            ]\n          }\n        }\n      }\n    }\n  },\n  \"allOf\": [\n    {\n      \"if\": {\n        \"required\": [\n          \"triage\"\n        ],\n        \"properties\": {\n          \"triage\": {\n            \"const\": \"untriaged\"\n          }\n        }\n      },\n      \"then\": {\n        \"not\": {\n          \"anyOf\": [\n            {\n              \"required\": [\n                \"order\"\n              ]\n            },\n            {\n              \"required\": [\n                \"scoring\"\n              ]\n            }\n          ]\n        }\n      },\n      \"else\": {\n        \"required\": [\n          \"order\",\n          \"scoring\"\n        ]\n      }\n    }\n  ]\n}" -> string!
-const PandaBear.Repositories.RoadmapTemplates.OrderJson = "{\n  \"ordering\": \"lower order values are higher priority\",\n  \"items\": [\n    \"RM-001\"\n  ]\n}" -> string!
-const PandaBear.Repositories.RoadmapTemplates.RoadmapReadme = "# Roadmap\n\nThis folder is the source of truth for roadmap intent and prioritization inputs.\nGitHub Issues and Projects are execution views derived from this data.\n\nKeep roadmap item IDs stable when GitHub issues move between repositories. Optional\n`integrations.github.repository` selects the issue repository; omission uses the configured\nrepository. `nodeId` is opaque, while `previousLocations` and `previousNodeIds` retain resolved\naliases. External issue mappings are read-only and retain local status, priority, and relationships.\n\nRun the repo config tool to verify the structure:\n\n```bash\ndotnet repo verify\n```" -> string!
-override PandaBear.Repositories.AtomicFileWrite.Equals(object? obj) -> bool
-override PandaBear.Repositories.AtomicFileWrite.GetHashCode() -> int
-override PandaBear.Repositories.AtomicFileWrite.ToString() -> string!
-override PandaBear.Repositories.GitHubIssueLocation.Equals(object? obj) -> bool
-override PandaBear.Repositories.GitHubIssueLocation.GetHashCode() -> int
-override PandaBear.Repositories.GitHubIssueLocation.ToString() -> string!
-override PandaBear.Repositories.GitHubProjectTarget.Equals(object? obj) -> bool
-override PandaBear.Repositories.GitHubProjectTarget.GetHashCode() -> int
-override PandaBear.Repositories.GitHubProjectTarget.ToString() -> string!
-override PandaBear.Repositories.LicenseExceptionVerification.Equals(object? obj) -> bool
-override PandaBear.Repositories.LicenseExceptionVerification.GetHashCode() -> int
-override PandaBear.Repositories.LicenseExceptionVerification.ToString() -> string!
-override PandaBear.Repositories.LinkVerification.Equals(object? obj) -> bool
-override PandaBear.Repositories.LinkVerification.GetHashCode() -> int
-override PandaBear.Repositories.LinkVerification.ToString() -> string!
-override PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.Equals(object? obj) -> bool
-override PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.GetHashCode() -> int
-override PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.ToString() -> string!
-override PandaBear.Repositories.RepositoryFeature.Equals(object? obj) -> bool
-override PandaBear.Repositories.RepositoryFeature.GetHashCode() -> int
-override PandaBear.Repositories.RepositoryFeature.ToString() -> string!
-override PandaBear.Repositories.RepositoryLabel.Equals(object? obj) -> bool
-override PandaBear.Repositories.RepositoryLabel.GetHashCode() -> int
-override PandaBear.Repositories.RepositoryLabel.ToString() -> string!
-override PandaBear.Repositories.RepositoryLanguage.Equals(object? obj) -> bool
-override PandaBear.Repositories.RepositoryLanguage.GetHashCode() -> int
-override PandaBear.Repositories.RepositoryLanguage.ToString() -> string!
-override PandaBear.Repositories.RoadmapGitCommandResult.Equals(object? obj) -> bool
-override PandaBear.Repositories.RoadmapGitCommandResult.GetHashCode() -> int
-override PandaBear.Repositories.RoadmapGitCommandResult.ToString() -> string!
-override PandaBear.Repositories.RoadmapItemSnapshot.Equals(object? obj) -> bool
-override PandaBear.Repositories.RoadmapItemSnapshot.GetHashCode() -> int
-override PandaBear.Repositories.RoadmapItemSnapshot.ToString() -> string!
-override PandaBear.Repositories.VerificationIssue.Equals(object? obj) -> bool
-override PandaBear.Repositories.VerificationIssue.GetHashCode() -> int
-override PandaBear.Repositories.VerificationIssue.ToString() -> string!
-PandaBear.Repositories.ActionPinVerifier
-PandaBear.Repositories.AtomicFileWrite
-PandaBear.Repositories.AtomicFileWrite.<Clone>$() -> PandaBear.Repositories.AtomicFileWrite!
-PandaBear.Repositories.AtomicFileWrite.AtomicFileWrite(string! Path, string! Content, string? ExpectedContent) -> void
-PandaBear.Repositories.AtomicFileWrite.Content.get -> string!
-PandaBear.Repositories.AtomicFileWrite.Content.init -> void
-PandaBear.Repositories.AtomicFileWrite.Deconstruct(out string! Path, out string! Content, out string? ExpectedContent) -> void
-PandaBear.Repositories.AtomicFileWrite.Equals(PandaBear.Repositories.AtomicFileWrite? other) -> bool
-PandaBear.Repositories.AtomicFileWrite.ExpectedContent.get -> string?
-PandaBear.Repositories.AtomicFileWrite.ExpectedContent.init -> void
-PandaBear.Repositories.AtomicFileWrite.Path.get -> string!
-PandaBear.Repositories.AtomicFileWrite.Path.init -> void
-PandaBear.Repositories.ConsumerConfigurationFile
-PandaBear.Repositories.DependabotIgnoreVerifier
-PandaBear.Repositories.GherkinVerifier
-PandaBear.Repositories.GitHubIssueLocation
-PandaBear.Repositories.GitHubIssueLocation.<Clone>$() -> PandaBear.Repositories.GitHubIssueLocation!
-PandaBear.Repositories.GitHubIssueLocation.Deconstruct(out string! Repository, out int Issue) -> void
-PandaBear.Repositories.GitHubIssueLocation.Equals(PandaBear.Repositories.GitHubIssueLocation? other) -> bool
-PandaBear.Repositories.GitHubIssueLocation.GitHubIssueLocation(string! Repository, int Issue) -> void
-PandaBear.Repositories.GitHubIssueLocation.Issue.get -> int
-PandaBear.Repositories.GitHubIssueLocation.Issue.init -> void
-PandaBear.Repositories.GitHubIssueLocation.Repository.get -> string!
-PandaBear.Repositories.GitHubIssueLocation.Repository.init -> void
-PandaBear.Repositories.GitHubProjectTarget
-PandaBear.Repositories.GitHubProjectTarget.<Clone>$() -> PandaBear.Repositories.GitHubProjectTarget!
-PandaBear.Repositories.GitHubProjectTarget.Deconstruct(out string! Id, out string! Owner, out int Number) -> void
-PandaBear.Repositories.GitHubProjectTarget.Equals(PandaBear.Repositories.GitHubProjectTarget? other) -> bool
-PandaBear.Repositories.GitHubProjectTarget.GitHubProjectTarget(string! Id, string! Owner, int Number) -> void
-PandaBear.Repositories.GitHubProjectTarget.Id.get -> string!
-PandaBear.Repositories.GitHubProjectTarget.Id.init -> void
-PandaBear.Repositories.GitHubProjectTarget.Number.get -> int
-PandaBear.Repositories.GitHubProjectTarget.Number.init -> void
-PandaBear.Repositories.GitHubProjectTarget.Owner.get -> string!
-PandaBear.Repositories.GitHubProjectTarget.Owner.init -> void
-PandaBear.Repositories.GitHubRepositoryName
-PandaBear.Repositories.GitHubRoadmapItemReference
-PandaBear.Repositories.IRepositoryLabelStore
-PandaBear.Repositories.IRepositoryLabelStore.Create(PandaBear.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-PandaBear.Repositories.IRepositoryLabelStore.List(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RepositoryLabel!>!>!
-PandaBear.Repositories.IRepositoryLabelStore.Repository.get -> string!
-PandaBear.Repositories.IRepositoryLabelStore.Update(string! currentName, PandaBear.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-PandaBear.Repositories.JsonVerifier
-PandaBear.Repositories.LicenseExceptionVerification
-PandaBear.Repositories.LicenseExceptionVerification.<Clone>$() -> PandaBear.Repositories.LicenseExceptionVerification!
-PandaBear.Repositories.LicenseExceptionVerification.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>! Issues, out System.Collections.Generic.IReadOnlyList<string!>! PackageUrls) -> void
-PandaBear.Repositories.LicenseExceptionVerification.Equals(PandaBear.Repositories.LicenseExceptionVerification? other) -> bool
-PandaBear.Repositories.LicenseExceptionVerification.Issues.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!
-PandaBear.Repositories.LicenseExceptionVerification.Issues.init -> void
-PandaBear.Repositories.LicenseExceptionVerification.LicenseExceptionVerification(System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>! Issues, System.Collections.Generic.IReadOnlyList<string!>! PackageUrls) -> void
-PandaBear.Repositories.LicenseExceptionVerification.PackageUrls.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.LicenseExceptionVerification.PackageUrls.init -> void
-PandaBear.Repositories.LicenseExceptionVerifier
-PandaBear.Repositories.LineEndingVerifier
-PandaBear.Repositories.LinkVerification
-PandaBear.Repositories.LinkVerification.<Clone>$() -> PandaBear.Repositories.LinkVerification!
-PandaBear.Repositories.LinkVerification.Deconstruct(out int FileCount, out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>! Issues) -> void
-PandaBear.Repositories.LinkVerification.Equals(PandaBear.Repositories.LinkVerification? other) -> bool
-PandaBear.Repositories.LinkVerification.FileCount.get -> int
-PandaBear.Repositories.LinkVerification.FileCount.init -> void
-PandaBear.Repositories.LinkVerification.Issues.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!
-PandaBear.Repositories.LinkVerification.Issues.init -> void
-PandaBear.Repositories.LinkVerification.LinkVerification(int FileCount, System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>! Issues) -> void
-PandaBear.Repositories.LinkVerifier
-PandaBear.Repositories.RepositoryBaseline
-PandaBear.Repositories.RepositoryFeature
-PandaBear.Repositories.RepositoryFeature.<Clone>$() -> PandaBear.Repositories.RepositoryFeature!
-PandaBear.Repositories.RepositoryFeature.Equals(PandaBear.Repositories.RepositoryFeature? other) -> bool
-PandaBear.Repositories.RepositoryFeature.Id.get -> string!
-PandaBear.Repositories.RepositoryFeature.NeedsSdkVersion.get -> bool
-PandaBear.Repositories.RepositoryFeature.RequiredLanguage.get -> PandaBear.Repositories.RepositoryLanguage?
-PandaBear.Repositories.RepositoryFeature.SelectedByDefault.get -> bool
-PandaBear.Repositories.RepositoryLabel
-PandaBear.Repositories.RepositoryLabel.<Clone>$() -> PandaBear.Repositories.RepositoryLabel!
-PandaBear.Repositories.RepositoryLabel.Color.get -> string!
-PandaBear.Repositories.RepositoryLabel.Color.init -> void
-PandaBear.Repositories.RepositoryLabel.Deconstruct(out string! Name, out string! Color, out string! Description) -> void
-PandaBear.Repositories.RepositoryLabel.Description.get -> string!
-PandaBear.Repositories.RepositoryLabel.Description.init -> void
-PandaBear.Repositories.RepositoryLabel.Equals(PandaBear.Repositories.RepositoryLabel? other) -> bool
-PandaBear.Repositories.RepositoryLabel.Name.get -> string!
-PandaBear.Repositories.RepositoryLabel.Name.init -> void
-PandaBear.Repositories.RepositoryLabel.RepositoryLabel(string! Name, string! Color, string! Description) -> void
-PandaBear.Repositories.RepositoryLabelSync
-PandaBear.Repositories.RepositoryLanguage
-PandaBear.Repositories.RepositoryLanguage.<Clone>$() -> PandaBear.Repositories.RepositoryLanguage!
-PandaBear.Repositories.RepositoryLanguage.Equals(PandaBear.Repositories.RepositoryLanguage? other) -> bool
-PandaBear.Repositories.RepositoryLanguage.Id.get -> string!
-PandaBear.Repositories.RepositoryScaffold
-PandaBear.Repositories.RepositorySecurity
-PandaBear.Repositories.RoadmapConfigSetter
-PandaBear.Repositories.RoadmapGitCommandResult
-PandaBear.Repositories.RoadmapGitCommandResult.<Clone>$() -> PandaBear.Repositories.RoadmapGitCommandResult!
-PandaBear.Repositories.RoadmapGitCommandResult.Deconstruct(out int ExitCode, out System.ReadOnlyMemory<byte> StandardOutput, out string! StandardError, out bool OutputLimitExceeded, out bool ErrorLimitExceeded) -> void
-PandaBear.Repositories.RoadmapGitCommandResult.Equals(PandaBear.Repositories.RoadmapGitCommandResult? other) -> bool
-PandaBear.Repositories.RoadmapGitCommandResult.ErrorLimitExceeded.get -> bool
-PandaBear.Repositories.RoadmapGitCommandResult.ErrorLimitExceeded.init -> void
-PandaBear.Repositories.RoadmapGitCommandResult.ExitCode.get -> int
-PandaBear.Repositories.RoadmapGitCommandResult.ExitCode.init -> void
-PandaBear.Repositories.RoadmapGitCommandResult.OutputLimitExceeded.get -> bool
-PandaBear.Repositories.RoadmapGitCommandResult.OutputLimitExceeded.init -> void
-PandaBear.Repositories.RoadmapGitCommandResult.RoadmapGitCommandResult(int ExitCode, System.ReadOnlyMemory<byte> StandardOutput, string! StandardError, bool OutputLimitExceeded, bool ErrorLimitExceeded) -> void
-PandaBear.Repositories.RoadmapGitCommandResult.StandardError.get -> string!
-PandaBear.Repositories.RoadmapGitCommandResult.StandardError.init -> void
-PandaBear.Repositories.RoadmapGitCommandResult.StandardOutput.get -> System.ReadOnlyMemory<byte>
-PandaBear.Repositories.RoadmapGitCommandResult.StandardOutput.init -> void
-PandaBear.Repositories.RoadmapGitRepository
-PandaBear.Repositories.RoadmapGitRepository.CommittedPathExists(string! rootPath, string! revision, string! relativePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
-PandaBear.Repositories.RoadmapGitRepository.ReadCommittedFile(string! rootPath, string! revision, string! relativePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]!>!
-PandaBear.Repositories.RoadmapGitRepository.ReadCommittedRootPaths(string! rootPath, string! revision, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string![]!>!
-PandaBear.Repositories.RoadmapGitRepository.ReadHead(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
-PandaBear.Repositories.RoadmapGitRepository.ReadStatus(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]!>!
-PandaBear.Repositories.RoadmapGitRepository.RoadmapGitRepository() -> void
-PandaBear.Repositories.RoadmapGitRepository.RoadmapGitRepository(System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.Repositories.RoadmapGitCommandResult!>!>! run) -> void
-PandaBear.Repositories.RoadmapInitializer
-PandaBear.Repositories.RoadmapItemOrderingExtensions
-PandaBear.Repositories.RoadmapItemSnapshot
-PandaBear.Repositories.RoadmapItemSnapshot.<Clone>$() -> PandaBear.Repositories.RoadmapItemSnapshot!
-PandaBear.Repositories.RoadmapItemSnapshot.BlockedBy.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.RoadmapItemSnapshot.BlockedBy.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Blocks.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.RoadmapItemSnapshot.Blocks.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Confidence.get -> decimal?
-PandaBear.Repositories.RoadmapItemSnapshot.Confidence.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.CreateGitHubIssue.get -> bool
-PandaBear.Repositories.RoadmapItemSnapshot.CreateGitHubIssue.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Deconstruct(out string! Id, out string! Path, out string! Title, out string! Type, out string! Status, out string! Theme, out bool IsTriaged, out int? Order, out string? Parent, out decimal? Reach, out decimal? Impact, out decimal? Confidence, out decimal? Effort, out System.Collections.Generic.IReadOnlyList<string!>! BlockedBy, out System.Collections.Generic.IReadOnlyList<string!>! Blocks, out System.Collections.Generic.IReadOnlyList<string!>! Dependencies, out System.Collections.Generic.IReadOnlyList<string!>! Tags, out System.Collections.Generic.IReadOnlyList<string!>! Labels, out int? GitHubIssue, out bool CreateGitHubIssue) -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Dependencies.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.RoadmapItemSnapshot.Dependencies.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Effort.get -> decimal?
-PandaBear.Repositories.RoadmapItemSnapshot.Effort.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Equals(PandaBear.Repositories.RoadmapItemSnapshot? other) -> bool
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubIssue.get -> int?
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubIssue.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubNodeId.get -> string?
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubNodeId.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubReferenceReadOnly.get -> bool
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubReferenceReadOnly.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubReferenceUnresolved.get -> bool
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubReferenceUnresolved.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubRepository.get -> string?
-PandaBear.Repositories.RoadmapItemSnapshot.GitHubRepository.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.HasLocalGitHubIssue(string? repository) -> bool
-PandaBear.Repositories.RoadmapItemSnapshot.Id.get -> string!
-PandaBear.Repositories.RoadmapItemSnapshot.Id.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Impact.get -> decimal?
-PandaBear.Repositories.RoadmapItemSnapshot.Impact.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.IsTriaged.get -> bool
-PandaBear.Repositories.RoadmapItemSnapshot.IsTriaged.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Labels.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.RoadmapItemSnapshot.Labels.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Order.get -> int?
-PandaBear.Repositories.RoadmapItemSnapshot.Order.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Parent.get -> string?
-PandaBear.Repositories.RoadmapItemSnapshot.Parent.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Path.get -> string!
-PandaBear.Repositories.RoadmapItemSnapshot.Path.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.PreviousGitHubLocations.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHubIssueLocation!>!
-PandaBear.Repositories.RoadmapItemSnapshot.PreviousGitHubLocations.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.PreviousGitHubNodeIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.RoadmapItemSnapshot.PreviousGitHubNodeIds.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Reach.get -> decimal?
-PandaBear.Repositories.RoadmapItemSnapshot.Reach.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.RoadmapItemSnapshot(string! Id, string! Path, string! Title, string! Type, string! Status, string! Theme, bool IsTriaged, int? Order, string? Parent, decimal? Reach, decimal? Impact, decimal? Confidence, decimal? Effort, System.Collections.Generic.IReadOnlyList<string!>! BlockedBy, System.Collections.Generic.IReadOnlyList<string!>! Blocks, System.Collections.Generic.IReadOnlyList<string!>! Dependencies, System.Collections.Generic.IReadOnlyList<string!>! Tags, System.Collections.Generic.IReadOnlyList<string!>! Labels, int? GitHubIssue, bool CreateGitHubIssue) -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Score.get -> decimal?
-PandaBear.Repositories.RoadmapItemSnapshot.Status.get -> string!
-PandaBear.Repositories.RoadmapItemSnapshot.Status.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.RoadmapItemSnapshot.Tags.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Theme.get -> string!
-PandaBear.Repositories.RoadmapItemSnapshot.Theme.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Title.get -> string!
-PandaBear.Repositories.RoadmapItemSnapshot.Title.init -> void
-PandaBear.Repositories.RoadmapItemSnapshot.Type.get -> string!
-PandaBear.Repositories.RoadmapItemSnapshot.Type.init -> void
-PandaBear.Repositories.RoadmapPaths
-PandaBear.Repositories.RoadmapProject
-PandaBear.Repositories.RoadmapProject.AllowedStatuses.get -> System.Collections.Generic.IReadOnlySet<string!>!
-PandaBear.Repositories.RoadmapProject.AutomationPullRequestBody.get -> string?
-PandaBear.Repositories.RoadmapProject.BlockersOf(string! itemId) -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RoadmapItemSnapshot!>!
-PandaBear.Repositories.RoadmapProject.ClosedStatuses.get -> System.Collections.Generic.IReadOnlySet<string!>!
-PandaBear.Repositories.RoadmapProject.GetGitHubIssueNumbers() -> int[]!
-PandaBear.Repositories.RoadmapProject.GitHubEnabled.get -> bool
-PandaBear.Repositories.RoadmapProject.GitHubIntakeClosedStatus.get -> string?
-PandaBear.Repositories.RoadmapProject.GitHubIntakeNotPlannedStatus.get -> string?
-PandaBear.Repositories.RoadmapProject.GitHubIntakeOpenStatus.get -> string?
-PandaBear.Repositories.RoadmapProject.GitHubIntakeTheme.get -> string?
-PandaBear.Repositories.RoadmapProject.GitHubProjectTarget.get -> PandaBear.Repositories.GitHubProjectTarget?
-PandaBear.Repositories.RoadmapProject.GitHubRepository.get -> string?
-PandaBear.Repositories.RoadmapProject.IsClosed(PandaBear.Repositories.RoadmapItemSnapshot! item) -> bool
-PandaBear.Repositories.RoadmapProject.IsUnblocked(PandaBear.Repositories.RoadmapItemSnapshot! item) -> bool
-PandaBear.Repositories.RoadmapProject.ItemIdPrefix.get -> string!
-PandaBear.Repositories.RoadmapProject.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RoadmapItemSnapshot!>!
-PandaBear.Repositories.RoadmapProject.LabelCounts() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, int>>!
-PandaBear.Repositories.RoadmapProject.OpenItems(string? type = null) -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RoadmapItemSnapshot!>!
-PandaBear.Repositories.RoadmapProject.RootPath.get -> string!
-PandaBear.Repositories.RoadmapProject.TagCounts() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, int>>!
-PandaBear.Repositories.RoadmapProject.WithItems(System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RoadmapItemSnapshot!>! items) -> PandaBear.Repositories.RoadmapProject!
-PandaBear.Repositories.RoadmapTemplates
-PandaBear.Repositories.RoadmapVerifier
-PandaBear.Repositories.RoadmapWriteInputSnapshot
-PandaBear.Repositories.RoadmapWriteInputSnapshot.Digest.get -> string!
-PandaBear.Repositories.RoadmapWriteInputSnapshot.GetExpectedContent(string! path) -> string?
-PandaBear.Repositories.RoadmapWriteInputSnapshot.Verify() -> void
-PandaBear.Repositories.RollbackFileWriteBatch
-PandaBear.Repositories.SecurityScanner
-PandaBear.Repositories.TextEncodingVerifier
-PandaBear.Repositories.VerificationIssue
-PandaBear.Repositories.TestTaxonomyVerifier
-PandaBear.Repositories.VerificationIssue.<Clone>$() -> PandaBear.Repositories.VerificationIssue!
-PandaBear.Repositories.VerificationIssue.Deconstruct(out string! Path, out string! Message) -> void
-PandaBear.Repositories.VerificationIssue.Equals(PandaBear.Repositories.VerificationIssue? other) -> bool
-PandaBear.Repositories.VerificationIssue.Message.get -> string!
-PandaBear.Repositories.VerificationIssue.Message.init -> void
-PandaBear.Repositories.VerificationIssue.Path.get -> string!
-PandaBear.Repositories.VerificationIssue.Path.init -> void
-PandaBear.Repositories.VerificationIssue.VerificationIssue(string! Path, string! Message) -> void
-static PandaBear.Repositories.ActionPinVerifier.Verify(string! rootPath, string? manifestPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
-static PandaBear.Repositories.TestTaxonomyVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
-static PandaBear.Repositories.AtomicFileWrite.operator !=(PandaBear.Repositories.AtomicFileWrite? left, PandaBear.Repositories.AtomicFileWrite? right) -> bool
-static PandaBear.Repositories.AtomicFileWrite.operator ==(PandaBear.Repositories.AtomicFileWrite? left, PandaBear.Repositories.AtomicFileWrite? right) -> bool
-static PandaBear.Repositories.ConsumerConfigurationFile.ParseLockExemptProjects(byte[]! content) -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Repositories.DependabotIgnoreVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
-static PandaBear.Repositories.GherkinVerifier.Verify(string! rootPath, System.Collections.Generic.IReadOnlyList<string!>! paths, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
-static PandaBear.Repositories.GitHubIssueLocation.operator !=(PandaBear.Repositories.GitHubIssueLocation? left, PandaBear.Repositories.GitHubIssueLocation? right) -> bool
-static PandaBear.Repositories.GitHubIssueLocation.operator ==(PandaBear.Repositories.GitHubIssueLocation? left, PandaBear.Repositories.GitHubIssueLocation? right) -> bool
-static PandaBear.Repositories.GitHubProjectTarget.operator !=(PandaBear.Repositories.GitHubProjectTarget? left, PandaBear.Repositories.GitHubProjectTarget? right) -> bool
-static PandaBear.Repositories.GitHubProjectTarget.operator ==(PandaBear.Repositories.GitHubProjectTarget? left, PandaBear.Repositories.GitHubProjectTarget? right) -> bool
-static PandaBear.Repositories.GitHubRepositoryName.IsValid(string! value) -> bool
-static PandaBear.Repositories.GitHubRoadmapItemReference.Read(PandaBear.Repositories.RoadmapItemSnapshot! item, System.Text.Json.JsonElement root) -> PandaBear.Repositories.RoadmapItemSnapshot!
-static PandaBear.Repositories.JsonVerifier.DescribeInvalidJson(System.Text.Json.JsonException! exception) -> string!
-static PandaBear.Repositories.JsonVerifier.DescribeInvalidUtf8(System.ReadOnlySpan<byte> content) -> string!
-static PandaBear.Repositories.JsonVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
-static PandaBear.Repositories.LicenseExceptionVerification.operator !=(PandaBear.Repositories.LicenseExceptionVerification? left, PandaBear.Repositories.LicenseExceptionVerification? right) -> bool
-static PandaBear.Repositories.LicenseExceptionVerification.operator ==(PandaBear.Repositories.LicenseExceptionVerification? left, PandaBear.Repositories.LicenseExceptionVerification? right) -> bool
-static PandaBear.Repositories.LicenseExceptionVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.LicenseExceptionVerification!>!
-static PandaBear.Repositories.LineEndingVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
-static PandaBear.Repositories.LinkVerification.operator !=(PandaBear.Repositories.LinkVerification? left, PandaBear.Repositories.LinkVerification? right) -> bool
-static PandaBear.Repositories.LinkVerification.operator ==(PandaBear.Repositories.LinkVerification? left, PandaBear.Repositories.LinkVerification? right) -> bool
-static PandaBear.Repositories.LinkVerifier.Verify(string! rootPath, System.Collections.Generic.IReadOnlyList<string!>! paths, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.LinkVerification!>!
-static PandaBear.Repositories.NuGetRestoreGraphComparison.Run(PandaBear.Repositories.NuGetRestoreGraphComparisonOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-static PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.operator !=(PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? left, PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? right) -> bool
-static PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.operator ==(PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? left, PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? right) -> bool
-static PandaBear.Repositories.NuGetUpgradeTrial.Run(PandaBear.Repositories.NuGetUpgradeTrialOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-static PandaBear.Repositories.NuGetUpgradeTrialOptions.operator !=(PandaBear.Repositories.NuGetUpgradeTrialOptions? left, PandaBear.Repositories.NuGetUpgradeTrialOptions? right) -> bool
-static PandaBear.Repositories.NuGetUpgradeTrialOptions.operator ==(PandaBear.Repositories.NuGetUpgradeTrialOptions? left, PandaBear.Repositories.NuGetUpgradeTrialOptions? right) -> bool
-static PandaBear.Repositories.RepositoryBaseline.Apply(string! rootPath, bool force, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-static PandaBear.Repositories.RepositoryBaseline.Verify(string! rootPath, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-static PandaBear.Repositories.RepositoryFeature.All.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RepositoryFeature!>!
-static PandaBear.Repositories.RepositoryFeature.DefaultsFor(PandaBear.Repositories.RepositoryLanguage! language) -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RepositoryFeature!>!
-static PandaBear.Repositories.RepositoryFeature.operator !=(PandaBear.Repositories.RepositoryFeature? left, PandaBear.Repositories.RepositoryFeature? right) -> bool
-static PandaBear.Repositories.RepositoryFeature.operator ==(PandaBear.Repositories.RepositoryFeature? left, PandaBear.Repositories.RepositoryFeature? right) -> bool
-static PandaBear.Repositories.RepositoryFeature.TryParse(string? text, out PandaBear.Repositories.RepositoryFeature? feature) -> bool
-static PandaBear.Repositories.RepositoryLabel.operator !=(PandaBear.Repositories.RepositoryLabel? left, PandaBear.Repositories.RepositoryLabel? right) -> bool
-static PandaBear.Repositories.RepositoryLabel.operator ==(PandaBear.Repositories.RepositoryLabel? left, PandaBear.Repositories.RepositoryLabel? right) -> bool
-static PandaBear.Repositories.RepositoryLabelSync.Run(string! rootPath, PandaBear.Repositories.IRepositoryLabelStore! store, bool force, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-static PandaBear.Repositories.RepositoryLanguage.All.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RepositoryLanguage!>!
-static PandaBear.Repositories.RepositoryLanguage.operator !=(PandaBear.Repositories.RepositoryLanguage? left, PandaBear.Repositories.RepositoryLanguage? right) -> bool
-static PandaBear.Repositories.RepositoryLanguage.operator ==(PandaBear.Repositories.RepositoryLanguage? left, PandaBear.Repositories.RepositoryLanguage? right) -> bool
-static PandaBear.Repositories.RepositoryLanguage.TryParse(string? text, out PandaBear.Repositories.RepositoryLanguage? language) -> bool
-static PandaBear.Repositories.RepositoryScaffold.Run(string! rootPath, string? name, string! defaultBranch, string! language, string? sdkVersion, System.Collections.Generic.IReadOnlyList<string!>! featureIds, bool force, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-static PandaBear.Repositories.RepositorySecurity.Run(string! root, string? destination, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-static PandaBear.Repositories.RoadmapConfigSetter.Set(string! rootPath, string! key, string! value) -> void
-static PandaBear.Repositories.RoadmapGitCommandResult.operator !=(PandaBear.Repositories.RoadmapGitCommandResult? left, PandaBear.Repositories.RoadmapGitCommandResult? right) -> bool
-static PandaBear.Repositories.RoadmapGitCommandResult.operator ==(PandaBear.Repositories.RoadmapGitCommandResult? left, PandaBear.Repositories.RoadmapGitCommandResult? right) -> bool
-static PandaBear.Repositories.RoadmapInitializer.Initialize(string! rootPath) -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Repositories.RoadmapItemOrderingExtensions.OrderByPriority(this System.Collections.Generic.IEnumerable<PandaBear.Repositories.RoadmapItemSnapshot!>! items) -> System.Linq.IOrderedEnumerable<PandaBear.Repositories.RoadmapItemSnapshot!>!
-static PandaBear.Repositories.RoadmapItemSnapshot.operator !=(PandaBear.Repositories.RoadmapItemSnapshot? left, PandaBear.Repositories.RoadmapItemSnapshot? right) -> bool
-static PandaBear.Repositories.RoadmapItemSnapshot.operator ==(PandaBear.Repositories.RoadmapItemSnapshot? left, PandaBear.Repositories.RoadmapItemSnapshot? right) -> bool
-static PandaBear.Repositories.RoadmapPaths.Normalize(string! path) -> string!
-static PandaBear.Repositories.RoadmapPaths.RelativeTo(string! rootPath, string! fullPath) -> string!
-static PandaBear.Repositories.RoadmapProject.Load(string! rootPath) -> PandaBear.Repositories.RoadmapProject!
-static PandaBear.Repositories.RoadmapProject.ReadItemContent(string! relativePath, string! content) -> PandaBear.Repositories.RoadmapItemSnapshot!
-static PandaBear.Repositories.RoadmapVerifier.Verify(string! rootPath) -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!
-static PandaBear.Repositories.RoadmapVerifier.VerifyItemGraph(System.Collections.Generic.IReadOnlyCollection<PandaBear.Repositories.RoadmapItemSnapshot!>! items) -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!
-static PandaBear.Repositories.RoadmapWriteInputSnapshot.Capture(string! rootPath) -> PandaBear.Repositories.RoadmapWriteInputSnapshot!
-static PandaBear.Repositories.RollbackFileWriteBatch.Apply(string! lockScope, System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.AtomicFileWrite!>! writes, System.Action? verifyPreconditions = null) -> void
-static PandaBear.Repositories.RollbackFileWriteBatch.ValidateWritePath(string! normalizedScope, string! normalizedPath) -> void
-static PandaBear.Repositories.SecurityScanner.Run(string! root, string! destination, System.IO.TextWriter! output, System.IO.TextWriter! error, string? executable, System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, System.Threading.Tasks.Task<int>!>! runProcess, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-static PandaBear.Repositories.SecurityScanner.Run(string! root, string! destination, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-static PandaBear.Repositories.TextEncodingVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
-static PandaBear.Repositories.VerificationIssue.operator !=(PandaBear.Repositories.VerificationIssue? left, PandaBear.Repositories.VerificationIssue? right) -> bool
-static PandaBear.Repositories.VerificationIssue.operator ==(PandaBear.Repositories.VerificationIssue? left, PandaBear.Repositories.VerificationIssue? right) -> bool
-static readonly PandaBear.Repositories.RepositoryFeature.Agents -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.BuildProps -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.Editorconfig -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.Gitattributes -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.GitConfig -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.Gitignore -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.GlobalJson -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.Hooks -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.NugetConfig -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.Readme -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryFeature.SignedCommits -> PandaBear.Repositories.RepositoryFeature!
-static readonly PandaBear.Repositories.RepositoryLanguage.Dotnet -> PandaBear.Repositories.RepositoryLanguage!
-static readonly PandaBear.Repositories.RepositoryLanguage.None -> PandaBear.Repositories.RepositoryLanguage!
-static readonly PandaBear.Repositories.RoadmapPaths.RequiredDirectories -> string![]!
-static readonly PandaBear.Repositories.RoadmapPaths.RequiredFiles -> string![]!
-PandaBear.Repositories.TargetFrameworkConfiguration
-PandaBear.Repositories.TargetFrameworkConfiguration.<Clone>$() -> PandaBear.Repositories.TargetFrameworkConfiguration!
-PandaBear.Repositories.TargetFrameworkConfiguration.CommandFiles.get -> System.Collections.Generic.IReadOnlyList<string!>?
-PandaBear.Repositories.TargetFrameworkConfiguration.CommandFiles.init -> void
-PandaBear.Repositories.TargetFrameworkConfiguration.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>! Projects, out System.Collections.Generic.IReadOnlyList<string!>? CommandFiles, out string? FrameworkProperties) -> void
-PandaBear.Repositories.TargetFrameworkConfiguration.Equals(PandaBear.Repositories.TargetFrameworkConfiguration? other) -> bool
-PandaBear.Repositories.TargetFrameworkConfiguration.FindError() -> string?
-PandaBear.Repositories.TargetFrameworkConfiguration.FrameworkProperties.get -> string?
-PandaBear.Repositories.TargetFrameworkConfiguration.FrameworkProperties.init -> void
-PandaBear.Repositories.TargetFrameworkConfiguration.Projects.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>!
-PandaBear.Repositories.TargetFrameworkConfiguration.Projects.init -> void
-PandaBear.Repositories.TargetFrameworkConfiguration.TargetFrameworkConfiguration(System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>! Projects, System.Collections.Generic.IReadOnlyList<string!>? CommandFiles = null, string? FrameworkProperties = null) -> void
-PandaBear.Repositories.TargetFrameworkRule
-PandaBear.Repositories.TargetFrameworkRule.<Clone>$() -> PandaBear.Repositories.TargetFrameworkRule!
-PandaBear.Repositories.TargetFrameworkRule.Deconstruct(out string! Include, out System.Collections.Generic.IReadOnlyList<string!>! Frameworks, out string? RollForward) -> void
-PandaBear.Repositories.TargetFrameworkRule.Equals(PandaBear.Repositories.TargetFrameworkRule? other) -> bool
-PandaBear.Repositories.TargetFrameworkRule.Frameworks.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Repositories.TargetFrameworkRule.Frameworks.init -> void
-PandaBear.Repositories.TargetFrameworkRule.Include.get -> string!
-PandaBear.Repositories.TargetFrameworkRule.Include.init -> void
-PandaBear.Repositories.TargetFrameworkRule.RollForward.get -> string?
-PandaBear.Repositories.TargetFrameworkRule.RollForward.init -> void
-PandaBear.Repositories.TargetFrameworkRule.TargetFrameworkRule(string! Include, System.Collections.Generic.IReadOnlyList<string!>! Frameworks, string? RollForward = null) -> void
-PandaBear.Repositories.TargetFrameworkVerifier
-override PandaBear.Repositories.TargetFrameworkConfiguration.Equals(object? obj) -> bool
-override PandaBear.Repositories.TargetFrameworkConfiguration.GetHashCode() -> int
-override PandaBear.Repositories.TargetFrameworkConfiguration.ToString() -> string!
-override PandaBear.Repositories.TargetFrameworkRule.Equals(object? obj) -> bool
-override PandaBear.Repositories.TargetFrameworkRule.GetHashCode() -> int
-override PandaBear.Repositories.TargetFrameworkRule.ToString() -> string!
-static PandaBear.Repositories.TargetFrameworkConfiguration.operator !=(PandaBear.Repositories.TargetFrameworkConfiguration? left, PandaBear.Repositories.TargetFrameworkConfiguration? right) -> bool
-static PandaBear.Repositories.TargetFrameworkConfiguration.operator ==(PandaBear.Repositories.TargetFrameworkConfiguration? left, PandaBear.Repositories.TargetFrameworkConfiguration? right) -> bool
-static PandaBear.Repositories.TargetFrameworkRule.operator !=(PandaBear.Repositories.TargetFrameworkRule? left, PandaBear.Repositories.TargetFrameworkRule? right) -> bool
-static PandaBear.Repositories.TargetFrameworkRule.operator ==(PandaBear.Repositories.TargetFrameworkRule? left, PandaBear.Repositories.TargetFrameworkRule? right) -> bool
-static PandaBear.Repositories.TargetFrameworkVerifier.Verify(string! rootPath, PandaBear.Repositories.TargetFrameworkConfiguration! configuration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
-static PandaBear.Repositories.TargetFrameworkVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
+SharedKernel.Repositories.NuGetPinInspection
+SharedKernel.Repositories.NuGetUpgradeTrial
+SharedKernel.Repositories.NuGetUpgradeTrialOptions
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.<Clone>$() -> SharedKernel.Repositories.NuGetUpgradeTrialOptions!
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Build.get -> bool
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Build.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.CoordinatedPackages.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.CoordinatedPackages.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Deconstruct(out string! Root, out string! PlanPath, out string! PropsPath, out string? RemovePin, out System.Collections.Generic.IReadOnlyList<string!>! Updates, out bool Vulnerable, out System.Collections.Generic.IReadOnlyList<string!>! LocalSources, out bool Build, out bool Test) -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Equals(SharedKernel.Repositories.NuGetUpgradeTrialOptions? other) -> bool
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.LocalSources.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.LocalSources.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.NuGetUpgradeTrialOptions(string! Root, string! PlanPath, string! PropsPath, string? RemovePin, System.Collections.Generic.IReadOnlyList<string!>! Updates, bool Vulnerable, System.Collections.Generic.IReadOnlyList<string!>! LocalSources, bool Build, bool Test) -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.PlanPath.get -> string!
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.PlanPath.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.PropsPath.get -> string!
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.PropsPath.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.ProposePinUpdates.get -> bool
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.ProposePinUpdates.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.RemovePin.get -> string?
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.RemovePin.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Root.get -> string!
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Root.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Test.get -> bool
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Test.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Updates.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Updates.init -> void
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Vulnerable.get -> bool
+SharedKernel.Repositories.NuGetUpgradeTrialOptions.Vulnerable.init -> void
+override SharedKernel.Repositories.NuGetUpgradeTrialOptions.Equals(object? obj) -> bool
+override SharedKernel.Repositories.NuGetUpgradeTrialOptions.GetHashCode() -> int
+override SharedKernel.Repositories.NuGetUpgradeTrialOptions.ToString() -> string!
+static SharedKernel.Repositories.NuGetPinInspection.Run(string! root, string! packageId, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+SharedKernel.Repositories.NuGetRestoreGraphComparison
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.<Clone>$() -> SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions!
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.BaselineRoot.get -> string!
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.BaselineRoot.init -> void
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.BaselineVerification.get -> string?
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.BaselineVerification.init -> void
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.CandidateRoot.get -> string!
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.CandidateRoot.init -> void
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.CandidateVerification.get -> string?
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.CandidateVerification.init -> void
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.Deconstruct(out string! BaselineRoot, out string! CandidateRoot, out string! OutputPath, out string? BaselineVerification, out string? CandidateVerification) -> void
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.Equals(SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions? other) -> bool
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.NuGetRestoreGraphComparisonOptions(string! BaselineRoot, string! CandidateRoot, string! OutputPath, string? BaselineVerification, string? CandidateVerification) -> void
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.OutputPath.get -> string!
+SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.OutputPath.init -> void
+const SharedKernel.Repositories.ActionPinVerifier.DefaultManifestPath = ".github/action-pins.json" -> string!
+const SharedKernel.Repositories.ConsumerConfigurationFile.RelativePath = ".config/sharedkernel-repo.json" -> string!
+const SharedKernel.Repositories.GherkinVerifier.MaxFileBytes = 67108864 -> int
+const SharedKernel.Repositories.JsonVerifier.MaxFileBytes = 67108864 -> int
+const SharedKernel.Repositories.RoadmapConfigSetter.GitHubRepositoryKey = "github.repository" -> string!
+const SharedKernel.Repositories.RoadmapPaths.Config = "roadmap/config.json" -> string!
+const SharedKernel.Repositories.RoadmapPaths.ConfigSchema = "roadmap/schema/roadmap-config.schema.json" -> string!
+const SharedKernel.Repositories.RoadmapPaths.DefaultItem = "roadmap/items/RM-001-roadmap-gitops.json" -> string!
+const SharedKernel.Repositories.RoadmapPaths.DefaultTheme = "roadmap/themes/repo-operations.json" -> string!
+const SharedKernel.Repositories.RoadmapPaths.Items = "roadmap/items" -> string!
+const SharedKernel.Repositories.RoadmapPaths.ItemSchema = "roadmap/schema/roadmap-item.schema.json" -> string!
+const SharedKernel.Repositories.RoadmapPaths.Order = "roadmap/order.json" -> string!
+const SharedKernel.Repositories.RoadmapPaths.Reconciliation = "roadmap/reconciliation" -> string!
+const SharedKernel.Repositories.RoadmapPaths.Roadmap = "roadmap" -> string!
+const SharedKernel.Repositories.RoadmapPaths.RoadmapReadme = "roadmap/README.md" -> string!
+const SharedKernel.Repositories.RoadmapPaths.Schema = "roadmap/schema" -> string!
+const SharedKernel.Repositories.RoadmapPaths.Themes = "roadmap/themes" -> string!
+const SharedKernel.Repositories.RoadmapTemplates.ConfigJson = "{\n  \"$schema\": \"./schema/roadmap-config.schema.json\",\n  \"schemaVersion\": \"1.0\",\n  \"sourceOfTruth\": \"repository\",\n  \"itemIdPrefix\": \"RM\",\n  \"allowed\": {\n    \"types\": [\n      \"epic\",\n      \"issue\",\n      \"feature\",\n      \"enabler\",\n      \"blocker\",\n      \"risk\",\n      \"documentation\"\n    ],\n    \"statuses\": [\n      \"proposed\",\n      \"ready\",\n      \"in_progress\",\n      \"done\",\n      \"dropped\"\n    ]\n  },\n  \"project\": {\n    \"ordering\": \"order\",\n    \"blockedBy\": \"blockedBy\",\n    \"closedStatuses\": [\n      \"done\",\n      \"dropped\"\n    ]\n  },\n  \"scoring\": {\n    \"model\": \"RICE\",\n    \"formula\": \"reach * impact * confidence / effort\"\n  },\n  \"integrations\": {\n    \"github\": {\n      \"enabled\": false,\n      \"sourceOfTruth\": \"projection\",\n      \"intake\": {\n        \"theme\": \"repo-operations\",\n        \"openStatus\": \"proposed\",\n        \"closedStatus\": \"done\"\n      }\n    }\n  },\n  \"automation\": {\n    \"pullRequestBody\": \"Refresh the roadmap from the reviewed GitHub reconciliation.\"\n  }\n}" -> string!
+const SharedKernel.Repositories.RoadmapTemplates.ConfigSchemaJson = "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"title\": \"Roadmap configuration\",\n  \"type\": \"object\",\n  \"required\": [\n    \"schemaVersion\",\n    \"sourceOfTruth\",\n    \"itemIdPrefix\",\n    \"allowed\",\n    \"project\",\n    \"scoring\",\n    \"integrations\"\n  ],\n  \"properties\": {\n    \"schemaVersion\": {\n      \"type\": \"string\"\n    },\n    \"sourceOfTruth\": {\n      \"const\": \"repository\"\n    },\n    \"itemIdPrefix\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"pattern\": \"^[A-Za-z0-9_-]+$\"\n    },\n    \"allowed\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"types\",\n        \"statuses\"\n      ],\n      \"properties\": {\n        \"types\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"minItems\": 1,\n          \"uniqueItems\": true\n        },\n        \"statuses\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"minItems\": 1,\n          \"uniqueItems\": true\n        }\n      }\n    },\n    \"scoring\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"model\",\n        \"formula\"\n      ],\n      \"properties\": {\n        \"model\": {\n          \"const\": \"RICE\"\n        },\n        \"formula\": {\n          \"const\": \"reach * impact * confidence / effort\"\n        },\n        \"ranges\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"reach\": {\n              \"type\": \"string\"\n            },\n            \"impact\": {\n              \"type\": \"string\"\n            },\n            \"confidence\": {\n              \"type\": \"string\"\n            },\n            \"effort\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    },\n    \"project\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"ordering\",\n        \"blockedBy\",\n        \"closedStatuses\"\n      ],\n      \"properties\": {\n        \"ordering\": {\n          \"const\": \"order\"\n        },\n        \"blockedBy\": {\n          \"const\": \"blockedBy\"\n        },\n        \"closedStatuses\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"minItems\": 1,\n          \"uniqueItems\": true\n        }\n      },\n      \"additionalProperties\": false\n    },\n    \"integrations\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"github\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"enabled\": {\n              \"type\": \"boolean\"\n            },\n            \"repository\": {\n              \"type\": \"string\"\n            },\n            \"sourceOfTruth\": {\n              \"const\": \"projection\"\n            },\n            \"intake\": {\n              \"type\": \"object\",\n              \"required\": [\n                \"theme\",\n                \"openStatus\",\n                \"closedStatus\"\n              ],\n              \"properties\": {\n                \"theme\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"openStatus\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"closedStatus\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"notPlannedStatus\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                }\n              },\n              \"additionalProperties\": false\n            },\n            \"projectV2\": {\n              \"type\": \"object\",\n              \"required\": [\n                \"id\",\n                \"owner\",\n                \"number\"\n              ],\n              \"properties\": {\n                \"id\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"owner\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"number\": {\n                  \"type\": \"integer\",\n                  \"minimum\": 1\n                }\n              },\n              \"additionalProperties\": false\n            }\n          },\n          \"additionalProperties\": false\n        }\n      }\n    },\n    \"automation\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"pullRequestBody\"\n      ],\n      \"properties\": {\n        \"pullRequestBody\": {\n          \"type\": \"string\",\n          \"minLength\": 1,\n          \"maxLength\": 65536,\n          \"pattern\": \"\\\\S\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  }\n}" -> string!
+const SharedKernel.Repositories.RoadmapTemplates.DefaultItemJson = "{\n  \"$schema\": \"../schema/roadmap-item.schema.json\",\n  \"id\": \"RM-001\",\n  \"title\": \"Establish GitOps roadmap and repo configuration tooling\",\n  \"type\": \"epic\",\n  \"status\": \"ready\",\n  \"order\": 10,\n  \"theme\": \"repo-operations\",\n  \"outcome\": \"Roadmap intent and prioritization are managed through reviewed repository changes and projected into GitHub for execution.\",\n  \"scoring\": {\n    \"reach\": 20,\n    \"impact\": 4,\n    \"confidence\": 0.8,\n    \"effort\": 5\n  },\n  \"blockedBy\": [],\n  \"blocks\": [],\n  \"dependencies\": [],\n  \"tags\": [\n    \"gitops\",\n    \"roadmap\",\n    \"repo-config\"\n  ],\n  \"labels\": [\n    \"area: tooling\",\n    \"configuration\",\n    \"documentation\"\n  ]\n}" -> string!
+const SharedKernel.Repositories.RoadmapTemplates.DefaultThemeJson = "{\n  \"id\": \"repo-operations\",\n  \"title\": \"Repository operations\",\n  \"description\": \"Repository structure, contributor workflow, local tooling, and planning automation.\"\n}" -> string!
+const SharedKernel.Repositories.RoadmapTemplates.ItemSchemaJson = "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"title\": \"Roadmap item\",\n  \"type\": \"object\",\n  \"required\": [\n    \"id\",\n    \"title\",\n    \"type\",\n    \"status\",\n    \"theme\",\n    \"outcome\",\n    \"blockedBy\",\n    \"blocks\",\n    \"dependencies\",\n    \"tags\",\n    \"labels\"\n  ],\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\",\n      \"minLength\": 1\n    },\n    \"title\": {\n      \"type\": \"string\",\n      \"minLength\": 1\n    },\n    \"type\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"string\"\n    },\n    \"triage\": {\n      \"const\": \"untriaged\"\n    },\n    \"order\": {\n      \"type\": \"integer\",\n      \"minimum\": 1\n    },\n    \"parent\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"pattern\": \"\\\\S\"\n    },\n    \"theme\": {\n      \"type\": \"string\",\n      \"minLength\": 1\n    },\n    \"outcome\": {\n      \"type\": \"string\",\n      \"minLength\": 1\n    },\n    \"size\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"XS\",\n        \"S\",\n        \"M\",\n        \"L\",\n        \"XL\"\n      ]\n    },\n    \"scoring\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"reach\",\n        \"impact\",\n        \"confidence\",\n        \"effort\"\n      ],\n      \"properties\": {\n        \"reach\": {\n          \"type\": \"number\",\n          \"minimum\": 0\n        },\n        \"impact\": {\n          \"type\": \"number\",\n          \"minimum\": 1,\n          \"maximum\": 5\n        },\n        \"confidence\": {\n          \"type\": \"number\",\n          \"minimum\": 0.1,\n          \"maximum\": 1\n        },\n        \"effort\": {\n          \"type\": \"number\",\n          \"exclusiveMinimum\": 0\n        }\n      }\n    },\n    \"dependencies\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"blockedBy\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"blocks\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"tags\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"labels\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"uniqueItems\": true\n    },\n    \"sources\": {\n      \"type\": \"array\"\n    },\n    \"integrations\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"github\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"issue\": {\n              \"oneOf\": [\n                {\n                  \"type\": \"integer\",\n                  \"minimum\": 1\n                },\n                {\n                  \"const\": \"create\"\n                }\n              ]\n            },\n            \"repository\": {\n              \"type\": \"string\",\n              \"pattern\": \"^(?![^/]*--)[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/(?!\\\\.{1,2}$)[A-Za-z0-9_.-]{1,100}$\"\n            },\n            \"nodeId\": {\n              \"type\": \"string\",\n              \"minLength\": 1,\n              \"pattern\": \"\\\\S\"\n            },\n            \"previousLocations\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": \"object\",\n                \"required\": [\n                  \"repository\",\n                  \"issue\"\n                ],\n                \"properties\": {\n                  \"repository\": {\n                    \"type\": \"string\",\n                    \"pattern\": \"^(?![^/]*--)[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/(?!\\\\.{1,2}$)[A-Za-z0-9_.-]{1,100}$\"\n                  },\n                  \"issue\": {\n                    \"type\": \"integer\",\n                    \"minimum\": 1\n                  }\n                },\n                \"additionalProperties\": false\n              },\n              \"uniqueItems\": true\n            },\n            \"previousNodeIds\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"pattern\": \"\\\\S\"\n              },\n              \"uniqueItems\": true\n            }\n          },\n          \"additionalProperties\": false,\n          \"allOf\": [\n            {\n              \"if\": {\n                \"required\": [\n                  \"issue\"\n                ],\n                \"properties\": {\n                  \"issue\": {\n                    \"const\": \"create\"\n                  }\n                }\n              },\n              \"then\": {\n                \"not\": {\n                  \"anyOf\": [\n                    {\n                      \"required\": [\n                        \"nodeId\"\n                      ]\n                    },\n                    {\n                      \"required\": [\n                        \"previousLocations\"\n                      ]\n                    },\n                    {\n                      \"required\": [\n                        \"previousNodeIds\"\n                      ]\n                    }\n                  ]\n                }\n              }\n            }\n          ],\n          \"dependentRequired\": {\n            \"repository\": [\n              \"issue\"\n            ],\n            \"nodeId\": [\n              \"issue\"\n            ],\n            \"previousLocations\": [\n              \"issue\"\n            ],\n            \"previousNodeIds\": [\n              \"issue\"\n            ]\n          }\n        }\n      }\n    }\n  },\n  \"allOf\": [\n    {\n      \"if\": {\n        \"required\": [\n          \"triage\"\n        ],\n        \"properties\": {\n          \"triage\": {\n            \"const\": \"untriaged\"\n          }\n        }\n      },\n      \"then\": {\n        \"not\": {\n          \"anyOf\": [\n            {\n              \"required\": [\n                \"order\"\n              ]\n            },\n            {\n              \"required\": [\n                \"scoring\"\n              ]\n            }\n          ]\n        }\n      },\n      \"else\": {\n        \"required\": [\n          \"order\",\n          \"scoring\"\n        ]\n      }\n    }\n  ]\n}" -> string!
+const SharedKernel.Repositories.RoadmapTemplates.OrderJson = "{\n  \"ordering\": \"lower order values are higher priority\",\n  \"items\": [\n    \"RM-001\"\n  ]\n}" -> string!
+const SharedKernel.Repositories.RoadmapTemplates.RoadmapReadme = "# Roadmap\n\nThis folder is the source of truth for roadmap intent and prioritization inputs.\nGitHub Issues and Projects are execution views derived from this data.\n\nKeep roadmap item IDs stable when GitHub issues move between repositories. Optional\n`integrations.github.repository` selects the issue repository; omission uses the configured\nrepository. `nodeId` is opaque, while `previousLocations` and `previousNodeIds` retain resolved\naliases. External issue mappings are read-only and retain local status, priority, and relationships.\n\nRun the repo config tool to verify the structure:\n\n```bash\ndotnet repo verify\n```" -> string!
+override SharedKernel.Repositories.AtomicFileWrite.Equals(object? obj) -> bool
+override SharedKernel.Repositories.AtomicFileWrite.GetHashCode() -> int
+override SharedKernel.Repositories.AtomicFileWrite.ToString() -> string!
+override SharedKernel.Repositories.GitHubIssueLocation.Equals(object? obj) -> bool
+override SharedKernel.Repositories.GitHubIssueLocation.GetHashCode() -> int
+override SharedKernel.Repositories.GitHubIssueLocation.ToString() -> string!
+override SharedKernel.Repositories.GitHubProjectTarget.Equals(object? obj) -> bool
+override SharedKernel.Repositories.GitHubProjectTarget.GetHashCode() -> int
+override SharedKernel.Repositories.GitHubProjectTarget.ToString() -> string!
+override SharedKernel.Repositories.LicenseExceptionVerification.Equals(object? obj) -> bool
+override SharedKernel.Repositories.LicenseExceptionVerification.GetHashCode() -> int
+override SharedKernel.Repositories.LicenseExceptionVerification.ToString() -> string!
+override SharedKernel.Repositories.LinkVerification.Equals(object? obj) -> bool
+override SharedKernel.Repositories.LinkVerification.GetHashCode() -> int
+override SharedKernel.Repositories.LinkVerification.ToString() -> string!
+override SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.Equals(object? obj) -> bool
+override SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.GetHashCode() -> int
+override SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.ToString() -> string!
+override SharedKernel.Repositories.RepositoryFeature.Equals(object? obj) -> bool
+override SharedKernel.Repositories.RepositoryFeature.GetHashCode() -> int
+override SharedKernel.Repositories.RepositoryFeature.ToString() -> string!
+override SharedKernel.Repositories.RepositoryLabel.Equals(object? obj) -> bool
+override SharedKernel.Repositories.RepositoryLabel.GetHashCode() -> int
+override SharedKernel.Repositories.RepositoryLabel.ToString() -> string!
+override SharedKernel.Repositories.RepositoryLanguage.Equals(object? obj) -> bool
+override SharedKernel.Repositories.RepositoryLanguage.GetHashCode() -> int
+override SharedKernel.Repositories.RepositoryLanguage.ToString() -> string!
+override SharedKernel.Repositories.RoadmapGitCommandResult.Equals(object? obj) -> bool
+override SharedKernel.Repositories.RoadmapGitCommandResult.GetHashCode() -> int
+override SharedKernel.Repositories.RoadmapGitCommandResult.ToString() -> string!
+override SharedKernel.Repositories.RoadmapItemSnapshot.Equals(object? obj) -> bool
+override SharedKernel.Repositories.RoadmapItemSnapshot.GetHashCode() -> int
+override SharedKernel.Repositories.RoadmapItemSnapshot.ToString() -> string!
+override SharedKernel.Repositories.VerificationIssue.Equals(object? obj) -> bool
+override SharedKernel.Repositories.VerificationIssue.GetHashCode() -> int
+override SharedKernel.Repositories.VerificationIssue.ToString() -> string!
+SharedKernel.Repositories.ActionPinVerifier
+SharedKernel.Repositories.AtomicFileWrite
+SharedKernel.Repositories.AtomicFileWrite.<Clone>$() -> SharedKernel.Repositories.AtomicFileWrite!
+SharedKernel.Repositories.AtomicFileWrite.AtomicFileWrite(string! Path, string! Content, string? ExpectedContent) -> void
+SharedKernel.Repositories.AtomicFileWrite.Content.get -> string!
+SharedKernel.Repositories.AtomicFileWrite.Content.init -> void
+SharedKernel.Repositories.AtomicFileWrite.Deconstruct(out string! Path, out string! Content, out string? ExpectedContent) -> void
+SharedKernel.Repositories.AtomicFileWrite.Equals(SharedKernel.Repositories.AtomicFileWrite? other) -> bool
+SharedKernel.Repositories.AtomicFileWrite.ExpectedContent.get -> string?
+SharedKernel.Repositories.AtomicFileWrite.ExpectedContent.init -> void
+SharedKernel.Repositories.AtomicFileWrite.Path.get -> string!
+SharedKernel.Repositories.AtomicFileWrite.Path.init -> void
+SharedKernel.Repositories.ConsumerConfigurationFile
+SharedKernel.Repositories.DependabotIgnoreVerifier
+SharedKernel.Repositories.GherkinVerifier
+SharedKernel.Repositories.GitHubIssueLocation
+SharedKernel.Repositories.GitHubIssueLocation.<Clone>$() -> SharedKernel.Repositories.GitHubIssueLocation!
+SharedKernel.Repositories.GitHubIssueLocation.Deconstruct(out string! Repository, out int Issue) -> void
+SharedKernel.Repositories.GitHubIssueLocation.Equals(SharedKernel.Repositories.GitHubIssueLocation? other) -> bool
+SharedKernel.Repositories.GitHubIssueLocation.GitHubIssueLocation(string! Repository, int Issue) -> void
+SharedKernel.Repositories.GitHubIssueLocation.Issue.get -> int
+SharedKernel.Repositories.GitHubIssueLocation.Issue.init -> void
+SharedKernel.Repositories.GitHubIssueLocation.Repository.get -> string!
+SharedKernel.Repositories.GitHubIssueLocation.Repository.init -> void
+SharedKernel.Repositories.GitHubProjectTarget
+SharedKernel.Repositories.GitHubProjectTarget.<Clone>$() -> SharedKernel.Repositories.GitHubProjectTarget!
+SharedKernel.Repositories.GitHubProjectTarget.Deconstruct(out string! Id, out string! Owner, out int Number) -> void
+SharedKernel.Repositories.GitHubProjectTarget.Equals(SharedKernel.Repositories.GitHubProjectTarget? other) -> bool
+SharedKernel.Repositories.GitHubProjectTarget.GitHubProjectTarget(string! Id, string! Owner, int Number) -> void
+SharedKernel.Repositories.GitHubProjectTarget.Id.get -> string!
+SharedKernel.Repositories.GitHubProjectTarget.Id.init -> void
+SharedKernel.Repositories.GitHubProjectTarget.Number.get -> int
+SharedKernel.Repositories.GitHubProjectTarget.Number.init -> void
+SharedKernel.Repositories.GitHubProjectTarget.Owner.get -> string!
+SharedKernel.Repositories.GitHubProjectTarget.Owner.init -> void
+SharedKernel.Repositories.GitHubRepositoryName
+SharedKernel.Repositories.GitHubRoadmapItemReference
+SharedKernel.Repositories.IRepositoryLabelStore
+SharedKernel.Repositories.IRepositoryLabelStore.Create(SharedKernel.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+SharedKernel.Repositories.IRepositoryLabelStore.List(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RepositoryLabel!>!>!
+SharedKernel.Repositories.IRepositoryLabelStore.Repository.get -> string!
+SharedKernel.Repositories.IRepositoryLabelStore.Update(string! currentName, SharedKernel.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+SharedKernel.Repositories.JsonVerifier
+SharedKernel.Repositories.LicenseExceptionVerification
+SharedKernel.Repositories.LicenseExceptionVerification.<Clone>$() -> SharedKernel.Repositories.LicenseExceptionVerification!
+SharedKernel.Repositories.LicenseExceptionVerification.Deconstruct(out System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>! Issues, out System.Collections.Generic.IReadOnlyList<string!>! PackageUrls) -> void
+SharedKernel.Repositories.LicenseExceptionVerification.Equals(SharedKernel.Repositories.LicenseExceptionVerification? other) -> bool
+SharedKernel.Repositories.LicenseExceptionVerification.Issues.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!
+SharedKernel.Repositories.LicenseExceptionVerification.Issues.init -> void
+SharedKernel.Repositories.LicenseExceptionVerification.LicenseExceptionVerification(System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>! Issues, System.Collections.Generic.IReadOnlyList<string!>! PackageUrls) -> void
+SharedKernel.Repositories.LicenseExceptionVerification.PackageUrls.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.LicenseExceptionVerification.PackageUrls.init -> void
+SharedKernel.Repositories.LicenseExceptionVerifier
+SharedKernel.Repositories.LineEndingVerifier
+SharedKernel.Repositories.LinkVerification
+SharedKernel.Repositories.LinkVerification.<Clone>$() -> SharedKernel.Repositories.LinkVerification!
+SharedKernel.Repositories.LinkVerification.Deconstruct(out int FileCount, out System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>! Issues) -> void
+SharedKernel.Repositories.LinkVerification.Equals(SharedKernel.Repositories.LinkVerification? other) -> bool
+SharedKernel.Repositories.LinkVerification.FileCount.get -> int
+SharedKernel.Repositories.LinkVerification.FileCount.init -> void
+SharedKernel.Repositories.LinkVerification.Issues.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!
+SharedKernel.Repositories.LinkVerification.Issues.init -> void
+SharedKernel.Repositories.LinkVerification.LinkVerification(int FileCount, System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>! Issues) -> void
+SharedKernel.Repositories.LinkVerifier
+SharedKernel.Repositories.RepositoryBaseline
+SharedKernel.Repositories.RepositoryFeature
+SharedKernel.Repositories.RepositoryFeature.<Clone>$() -> SharedKernel.Repositories.RepositoryFeature!
+SharedKernel.Repositories.RepositoryFeature.Equals(SharedKernel.Repositories.RepositoryFeature? other) -> bool
+SharedKernel.Repositories.RepositoryFeature.Id.get -> string!
+SharedKernel.Repositories.RepositoryFeature.NeedsSdkVersion.get -> bool
+SharedKernel.Repositories.RepositoryFeature.RequiredLanguage.get -> SharedKernel.Repositories.RepositoryLanguage?
+SharedKernel.Repositories.RepositoryFeature.SelectedByDefault.get -> bool
+SharedKernel.Repositories.RepositoryLabel
+SharedKernel.Repositories.RepositoryLabel.<Clone>$() -> SharedKernel.Repositories.RepositoryLabel!
+SharedKernel.Repositories.RepositoryLabel.Color.get -> string!
+SharedKernel.Repositories.RepositoryLabel.Color.init -> void
+SharedKernel.Repositories.RepositoryLabel.Deconstruct(out string! Name, out string! Color, out string! Description) -> void
+SharedKernel.Repositories.RepositoryLabel.Description.get -> string!
+SharedKernel.Repositories.RepositoryLabel.Description.init -> void
+SharedKernel.Repositories.RepositoryLabel.Equals(SharedKernel.Repositories.RepositoryLabel? other) -> bool
+SharedKernel.Repositories.RepositoryLabel.Name.get -> string!
+SharedKernel.Repositories.RepositoryLabel.Name.init -> void
+SharedKernel.Repositories.RepositoryLabel.RepositoryLabel(string! Name, string! Color, string! Description) -> void
+SharedKernel.Repositories.RepositoryLabelSync
+SharedKernel.Repositories.RepositoryLanguage
+SharedKernel.Repositories.RepositoryLanguage.<Clone>$() -> SharedKernel.Repositories.RepositoryLanguage!
+SharedKernel.Repositories.RepositoryLanguage.Equals(SharedKernel.Repositories.RepositoryLanguage? other) -> bool
+SharedKernel.Repositories.RepositoryLanguage.Id.get -> string!
+SharedKernel.Repositories.RepositoryScaffold
+SharedKernel.Repositories.RepositorySecurity
+SharedKernel.Repositories.RoadmapConfigSetter
+SharedKernel.Repositories.RoadmapGitCommandResult
+SharedKernel.Repositories.RoadmapGitCommandResult.<Clone>$() -> SharedKernel.Repositories.RoadmapGitCommandResult!
+SharedKernel.Repositories.RoadmapGitCommandResult.Deconstruct(out int ExitCode, out System.ReadOnlyMemory<byte> StandardOutput, out string! StandardError, out bool OutputLimitExceeded, out bool ErrorLimitExceeded) -> void
+SharedKernel.Repositories.RoadmapGitCommandResult.Equals(SharedKernel.Repositories.RoadmapGitCommandResult? other) -> bool
+SharedKernel.Repositories.RoadmapGitCommandResult.ErrorLimitExceeded.get -> bool
+SharedKernel.Repositories.RoadmapGitCommandResult.ErrorLimitExceeded.init -> void
+SharedKernel.Repositories.RoadmapGitCommandResult.ExitCode.get -> int
+SharedKernel.Repositories.RoadmapGitCommandResult.ExitCode.init -> void
+SharedKernel.Repositories.RoadmapGitCommandResult.OutputLimitExceeded.get -> bool
+SharedKernel.Repositories.RoadmapGitCommandResult.OutputLimitExceeded.init -> void
+SharedKernel.Repositories.RoadmapGitCommandResult.RoadmapGitCommandResult(int ExitCode, System.ReadOnlyMemory<byte> StandardOutput, string! StandardError, bool OutputLimitExceeded, bool ErrorLimitExceeded) -> void
+SharedKernel.Repositories.RoadmapGitCommandResult.StandardError.get -> string!
+SharedKernel.Repositories.RoadmapGitCommandResult.StandardError.init -> void
+SharedKernel.Repositories.RoadmapGitCommandResult.StandardOutput.get -> System.ReadOnlyMemory<byte>
+SharedKernel.Repositories.RoadmapGitCommandResult.StandardOutput.init -> void
+SharedKernel.Repositories.RoadmapGitRepository
+SharedKernel.Repositories.RoadmapGitRepository.CommittedPathExists(string! rootPath, string! revision, string! relativePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+SharedKernel.Repositories.RoadmapGitRepository.ReadCommittedFile(string! rootPath, string! revision, string! relativePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]!>!
+SharedKernel.Repositories.RoadmapGitRepository.ReadCommittedRootPaths(string! rootPath, string! revision, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string![]!>!
+SharedKernel.Repositories.RoadmapGitRepository.ReadHead(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+SharedKernel.Repositories.RoadmapGitRepository.ReadStatus(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]!>!
+SharedKernel.Repositories.RoadmapGitRepository.RoadmapGitRepository() -> void
+SharedKernel.Repositories.RoadmapGitRepository.RoadmapGitRepository(System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, System.Threading.Tasks.Task<SharedKernel.Repositories.RoadmapGitCommandResult!>!>! run) -> void
+SharedKernel.Repositories.RoadmapInitializer
+SharedKernel.Repositories.RoadmapItemOrderingExtensions
+SharedKernel.Repositories.RoadmapItemSnapshot
+SharedKernel.Repositories.RoadmapItemSnapshot.<Clone>$() -> SharedKernel.Repositories.RoadmapItemSnapshot!
+SharedKernel.Repositories.RoadmapItemSnapshot.BlockedBy.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.RoadmapItemSnapshot.BlockedBy.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Blocks.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.RoadmapItemSnapshot.Blocks.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Confidence.get -> decimal?
+SharedKernel.Repositories.RoadmapItemSnapshot.Confidence.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.CreateGitHubIssue.get -> bool
+SharedKernel.Repositories.RoadmapItemSnapshot.CreateGitHubIssue.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Deconstruct(out string! Id, out string! Path, out string! Title, out string! Type, out string! Status, out string! Theme, out bool IsTriaged, out int? Order, out string? Parent, out decimal? Reach, out decimal? Impact, out decimal? Confidence, out decimal? Effort, out System.Collections.Generic.IReadOnlyList<string!>! BlockedBy, out System.Collections.Generic.IReadOnlyList<string!>! Blocks, out System.Collections.Generic.IReadOnlyList<string!>! Dependencies, out System.Collections.Generic.IReadOnlyList<string!>! Tags, out System.Collections.Generic.IReadOnlyList<string!>! Labels, out int? GitHubIssue, out bool CreateGitHubIssue) -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Dependencies.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.RoadmapItemSnapshot.Dependencies.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Effort.get -> decimal?
+SharedKernel.Repositories.RoadmapItemSnapshot.Effort.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Equals(SharedKernel.Repositories.RoadmapItemSnapshot? other) -> bool
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubIssue.get -> int?
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubIssue.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubNodeId.get -> string?
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubNodeId.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubReferenceReadOnly.get -> bool
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubReferenceReadOnly.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubReferenceUnresolved.get -> bool
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubReferenceUnresolved.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubRepository.get -> string?
+SharedKernel.Repositories.RoadmapItemSnapshot.GitHubRepository.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.HasLocalGitHubIssue(string? repository) -> bool
+SharedKernel.Repositories.RoadmapItemSnapshot.Id.get -> string!
+SharedKernel.Repositories.RoadmapItemSnapshot.Id.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Impact.get -> decimal?
+SharedKernel.Repositories.RoadmapItemSnapshot.Impact.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.IsTriaged.get -> bool
+SharedKernel.Repositories.RoadmapItemSnapshot.IsTriaged.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Labels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.RoadmapItemSnapshot.Labels.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Order.get -> int?
+SharedKernel.Repositories.RoadmapItemSnapshot.Order.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Parent.get -> string?
+SharedKernel.Repositories.RoadmapItemSnapshot.Parent.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Path.get -> string!
+SharedKernel.Repositories.RoadmapItemSnapshot.Path.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.PreviousGitHubLocations.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.GitHubIssueLocation!>!
+SharedKernel.Repositories.RoadmapItemSnapshot.PreviousGitHubLocations.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.PreviousGitHubNodeIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.RoadmapItemSnapshot.PreviousGitHubNodeIds.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Reach.get -> decimal?
+SharedKernel.Repositories.RoadmapItemSnapshot.Reach.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.RoadmapItemSnapshot(string! Id, string! Path, string! Title, string! Type, string! Status, string! Theme, bool IsTriaged, int? Order, string? Parent, decimal? Reach, decimal? Impact, decimal? Confidence, decimal? Effort, System.Collections.Generic.IReadOnlyList<string!>! BlockedBy, System.Collections.Generic.IReadOnlyList<string!>! Blocks, System.Collections.Generic.IReadOnlyList<string!>! Dependencies, System.Collections.Generic.IReadOnlyList<string!>! Tags, System.Collections.Generic.IReadOnlyList<string!>! Labels, int? GitHubIssue, bool CreateGitHubIssue) -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Score.get -> decimal?
+SharedKernel.Repositories.RoadmapItemSnapshot.Status.get -> string!
+SharedKernel.Repositories.RoadmapItemSnapshot.Status.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.RoadmapItemSnapshot.Tags.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Theme.get -> string!
+SharedKernel.Repositories.RoadmapItemSnapshot.Theme.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Title.get -> string!
+SharedKernel.Repositories.RoadmapItemSnapshot.Title.init -> void
+SharedKernel.Repositories.RoadmapItemSnapshot.Type.get -> string!
+SharedKernel.Repositories.RoadmapItemSnapshot.Type.init -> void
+SharedKernel.Repositories.RoadmapPaths
+SharedKernel.Repositories.RoadmapProject
+SharedKernel.Repositories.RoadmapProject.AllowedStatuses.get -> System.Collections.Generic.IReadOnlySet<string!>!
+SharedKernel.Repositories.RoadmapProject.AutomationPullRequestBody.get -> string?
+SharedKernel.Repositories.RoadmapProject.BlockersOf(string! itemId) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RoadmapItemSnapshot!>!
+SharedKernel.Repositories.RoadmapProject.ClosedStatuses.get -> System.Collections.Generic.IReadOnlySet<string!>!
+SharedKernel.Repositories.RoadmapProject.GetGitHubIssueNumbers() -> int[]!
+SharedKernel.Repositories.RoadmapProject.GitHubEnabled.get -> bool
+SharedKernel.Repositories.RoadmapProject.GitHubIntakeClosedStatus.get -> string?
+SharedKernel.Repositories.RoadmapProject.GitHubIntakeNotPlannedStatus.get -> string?
+SharedKernel.Repositories.RoadmapProject.GitHubIntakeOpenStatus.get -> string?
+SharedKernel.Repositories.RoadmapProject.GitHubIntakeTheme.get -> string?
+SharedKernel.Repositories.RoadmapProject.GitHubProjectTarget.get -> SharedKernel.Repositories.GitHubProjectTarget?
+SharedKernel.Repositories.RoadmapProject.GitHubRepository.get -> string?
+SharedKernel.Repositories.RoadmapProject.IsClosed(SharedKernel.Repositories.RoadmapItemSnapshot! item) -> bool
+SharedKernel.Repositories.RoadmapProject.IsUnblocked(SharedKernel.Repositories.RoadmapItemSnapshot! item) -> bool
+SharedKernel.Repositories.RoadmapProject.ItemIdPrefix.get -> string!
+SharedKernel.Repositories.RoadmapProject.Items.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RoadmapItemSnapshot!>!
+SharedKernel.Repositories.RoadmapProject.LabelCounts() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, int>>!
+SharedKernel.Repositories.RoadmapProject.OpenItems(string? type = null) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RoadmapItemSnapshot!>!
+SharedKernel.Repositories.RoadmapProject.RootPath.get -> string!
+SharedKernel.Repositories.RoadmapProject.TagCounts() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, int>>!
+SharedKernel.Repositories.RoadmapProject.WithItems(System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RoadmapItemSnapshot!>! items) -> SharedKernel.Repositories.RoadmapProject!
+SharedKernel.Repositories.RoadmapTemplates
+SharedKernel.Repositories.RoadmapVerifier
+SharedKernel.Repositories.RoadmapWriteInputSnapshot
+SharedKernel.Repositories.RoadmapWriteInputSnapshot.Digest.get -> string!
+SharedKernel.Repositories.RoadmapWriteInputSnapshot.GetExpectedContent(string! path) -> string?
+SharedKernel.Repositories.RoadmapWriteInputSnapshot.Verify() -> void
+SharedKernel.Repositories.RollbackFileWriteBatch
+SharedKernel.Repositories.SecurityScanner
+SharedKernel.Repositories.TextEncodingVerifier
+SharedKernel.Repositories.VerificationIssue
+SharedKernel.Repositories.TestTaxonomyVerifier
+SharedKernel.Repositories.VerificationIssue.<Clone>$() -> SharedKernel.Repositories.VerificationIssue!
+SharedKernel.Repositories.VerificationIssue.Deconstruct(out string! Path, out string! Message) -> void
+SharedKernel.Repositories.VerificationIssue.Equals(SharedKernel.Repositories.VerificationIssue? other) -> bool
+SharedKernel.Repositories.VerificationIssue.Message.get -> string!
+SharedKernel.Repositories.VerificationIssue.Message.init -> void
+SharedKernel.Repositories.VerificationIssue.Path.get -> string!
+SharedKernel.Repositories.VerificationIssue.Path.init -> void
+SharedKernel.Repositories.VerificationIssue.VerificationIssue(string! Path, string! Message) -> void
+static SharedKernel.Repositories.ActionPinVerifier.Verify(string! rootPath, string? manifestPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+static SharedKernel.Repositories.TestTaxonomyVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+static SharedKernel.Repositories.AtomicFileWrite.operator !=(SharedKernel.Repositories.AtomicFileWrite? left, SharedKernel.Repositories.AtomicFileWrite? right) -> bool
+static SharedKernel.Repositories.AtomicFileWrite.operator ==(SharedKernel.Repositories.AtomicFileWrite? left, SharedKernel.Repositories.AtomicFileWrite? right) -> bool
+static SharedKernel.Repositories.ConsumerConfigurationFile.ParseLockExemptProjects(byte[]! content) -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Repositories.DependabotIgnoreVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+static SharedKernel.Repositories.GherkinVerifier.Verify(string! rootPath, System.Collections.Generic.IReadOnlyList<string!>! paths, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+static SharedKernel.Repositories.GitHubIssueLocation.operator !=(SharedKernel.Repositories.GitHubIssueLocation? left, SharedKernel.Repositories.GitHubIssueLocation? right) -> bool
+static SharedKernel.Repositories.GitHubIssueLocation.operator ==(SharedKernel.Repositories.GitHubIssueLocation? left, SharedKernel.Repositories.GitHubIssueLocation? right) -> bool
+static SharedKernel.Repositories.GitHubProjectTarget.operator !=(SharedKernel.Repositories.GitHubProjectTarget? left, SharedKernel.Repositories.GitHubProjectTarget? right) -> bool
+static SharedKernel.Repositories.GitHubProjectTarget.operator ==(SharedKernel.Repositories.GitHubProjectTarget? left, SharedKernel.Repositories.GitHubProjectTarget? right) -> bool
+static SharedKernel.Repositories.GitHubRepositoryName.IsValid(string! value) -> bool
+static SharedKernel.Repositories.GitHubRoadmapItemReference.Read(SharedKernel.Repositories.RoadmapItemSnapshot! item, System.Text.Json.JsonElement root) -> SharedKernel.Repositories.RoadmapItemSnapshot!
+static SharedKernel.Repositories.JsonVerifier.DescribeInvalidJson(System.Text.Json.JsonException! exception) -> string!
+static SharedKernel.Repositories.JsonVerifier.DescribeInvalidUtf8(System.ReadOnlySpan<byte> content) -> string!
+static SharedKernel.Repositories.JsonVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+static SharedKernel.Repositories.LicenseExceptionVerification.operator !=(SharedKernel.Repositories.LicenseExceptionVerification? left, SharedKernel.Repositories.LicenseExceptionVerification? right) -> bool
+static SharedKernel.Repositories.LicenseExceptionVerification.operator ==(SharedKernel.Repositories.LicenseExceptionVerification? left, SharedKernel.Repositories.LicenseExceptionVerification? right) -> bool
+static SharedKernel.Repositories.LicenseExceptionVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Repositories.LicenseExceptionVerification!>!
+static SharedKernel.Repositories.LineEndingVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+static SharedKernel.Repositories.LinkVerification.operator !=(SharedKernel.Repositories.LinkVerification? left, SharedKernel.Repositories.LinkVerification? right) -> bool
+static SharedKernel.Repositories.LinkVerification.operator ==(SharedKernel.Repositories.LinkVerification? left, SharedKernel.Repositories.LinkVerification? right) -> bool
+static SharedKernel.Repositories.LinkVerifier.Verify(string! rootPath, System.Collections.Generic.IReadOnlyList<string!>! paths, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Repositories.LinkVerification!>!
+static SharedKernel.Repositories.NuGetRestoreGraphComparison.Run(SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.operator !=(SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions? left, SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions? right) -> bool
+static SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions.operator ==(SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions? left, SharedKernel.Repositories.NuGetRestoreGraphComparisonOptions? right) -> bool
+static SharedKernel.Repositories.NuGetUpgradeTrial.Run(SharedKernel.Repositories.NuGetUpgradeTrialOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.NuGetUpgradeTrialOptions.operator !=(SharedKernel.Repositories.NuGetUpgradeTrialOptions? left, SharedKernel.Repositories.NuGetUpgradeTrialOptions? right) -> bool
+static SharedKernel.Repositories.NuGetUpgradeTrialOptions.operator ==(SharedKernel.Repositories.NuGetUpgradeTrialOptions? left, SharedKernel.Repositories.NuGetUpgradeTrialOptions? right) -> bool
+static SharedKernel.Repositories.RepositoryBaseline.Apply(string! rootPath, bool force, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.RepositoryBaseline.Verify(string! rootPath, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.RepositoryFeature.All.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RepositoryFeature!>!
+static SharedKernel.Repositories.RepositoryFeature.DefaultsFor(SharedKernel.Repositories.RepositoryLanguage! language) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RepositoryFeature!>!
+static SharedKernel.Repositories.RepositoryFeature.operator !=(SharedKernel.Repositories.RepositoryFeature? left, SharedKernel.Repositories.RepositoryFeature? right) -> bool
+static SharedKernel.Repositories.RepositoryFeature.operator ==(SharedKernel.Repositories.RepositoryFeature? left, SharedKernel.Repositories.RepositoryFeature? right) -> bool
+static SharedKernel.Repositories.RepositoryFeature.TryParse(string? text, out SharedKernel.Repositories.RepositoryFeature? feature) -> bool
+static SharedKernel.Repositories.RepositoryLabel.operator !=(SharedKernel.Repositories.RepositoryLabel? left, SharedKernel.Repositories.RepositoryLabel? right) -> bool
+static SharedKernel.Repositories.RepositoryLabel.operator ==(SharedKernel.Repositories.RepositoryLabel? left, SharedKernel.Repositories.RepositoryLabel? right) -> bool
+static SharedKernel.Repositories.RepositoryLabelSync.Run(string! rootPath, SharedKernel.Repositories.IRepositoryLabelStore! store, bool force, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+static SharedKernel.Repositories.RepositoryLanguage.All.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RepositoryLanguage!>!
+static SharedKernel.Repositories.RepositoryLanguage.operator !=(SharedKernel.Repositories.RepositoryLanguage? left, SharedKernel.Repositories.RepositoryLanguage? right) -> bool
+static SharedKernel.Repositories.RepositoryLanguage.operator ==(SharedKernel.Repositories.RepositoryLanguage? left, SharedKernel.Repositories.RepositoryLanguage? right) -> bool
+static SharedKernel.Repositories.RepositoryLanguage.TryParse(string? text, out SharedKernel.Repositories.RepositoryLanguage? language) -> bool
+static SharedKernel.Repositories.RepositoryScaffold.Run(string! rootPath, string? name, string! defaultBranch, string! language, string? sdkVersion, System.Collections.Generic.IReadOnlyList<string!>! featureIds, bool force, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.RepositorySecurity.Run(string! root, string? destination, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.RoadmapConfigSetter.Set(string! rootPath, string! key, string! value) -> void
+static SharedKernel.Repositories.RoadmapGitCommandResult.operator !=(SharedKernel.Repositories.RoadmapGitCommandResult? left, SharedKernel.Repositories.RoadmapGitCommandResult? right) -> bool
+static SharedKernel.Repositories.RoadmapGitCommandResult.operator ==(SharedKernel.Repositories.RoadmapGitCommandResult? left, SharedKernel.Repositories.RoadmapGitCommandResult? right) -> bool
+static SharedKernel.Repositories.RoadmapInitializer.Initialize(string! rootPath) -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Repositories.RoadmapItemOrderingExtensions.OrderByPriority(this System.Collections.Generic.IEnumerable<SharedKernel.Repositories.RoadmapItemSnapshot!>! items) -> System.Linq.IOrderedEnumerable<SharedKernel.Repositories.RoadmapItemSnapshot!>!
+static SharedKernel.Repositories.RoadmapItemSnapshot.operator !=(SharedKernel.Repositories.RoadmapItemSnapshot? left, SharedKernel.Repositories.RoadmapItemSnapshot? right) -> bool
+static SharedKernel.Repositories.RoadmapItemSnapshot.operator ==(SharedKernel.Repositories.RoadmapItemSnapshot? left, SharedKernel.Repositories.RoadmapItemSnapshot? right) -> bool
+static SharedKernel.Repositories.RoadmapPaths.Normalize(string! path) -> string!
+static SharedKernel.Repositories.RoadmapPaths.RelativeTo(string! rootPath, string! fullPath) -> string!
+static SharedKernel.Repositories.RoadmapProject.Load(string! rootPath) -> SharedKernel.Repositories.RoadmapProject!
+static SharedKernel.Repositories.RoadmapProject.ReadItemContent(string! relativePath, string! content) -> SharedKernel.Repositories.RoadmapItemSnapshot!
+static SharedKernel.Repositories.RoadmapVerifier.Verify(string! rootPath) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!
+static SharedKernel.Repositories.RoadmapVerifier.VerifyItemGraph(System.Collections.Generic.IReadOnlyCollection<SharedKernel.Repositories.RoadmapItemSnapshot!>! items) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!
+static SharedKernel.Repositories.RoadmapWriteInputSnapshot.Capture(string! rootPath) -> SharedKernel.Repositories.RoadmapWriteInputSnapshot!
+static SharedKernel.Repositories.RollbackFileWriteBatch.Apply(string! lockScope, System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.AtomicFileWrite!>! writes, System.Action? verifyPreconditions = null) -> void
+static SharedKernel.Repositories.RollbackFileWriteBatch.ValidateWritePath(string! normalizedScope, string! normalizedPath) -> void
+static SharedKernel.Repositories.SecurityScanner.Run(string! root, string! destination, System.IO.TextWriter! output, System.IO.TextWriter! error, string? executable, System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, System.Threading.Tasks.Task<int>!>! runProcess, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.SecurityScanner.Run(string! root, string! destination, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static SharedKernel.Repositories.TextEncodingVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+static SharedKernel.Repositories.VerificationIssue.operator !=(SharedKernel.Repositories.VerificationIssue? left, SharedKernel.Repositories.VerificationIssue? right) -> bool
+static SharedKernel.Repositories.VerificationIssue.operator ==(SharedKernel.Repositories.VerificationIssue? left, SharedKernel.Repositories.VerificationIssue? right) -> bool
+static readonly SharedKernel.Repositories.RepositoryFeature.Agents -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.BuildProps -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.Editorconfig -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.Gitattributes -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.GitConfig -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.Gitignore -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.GlobalJson -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.Hooks -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.NugetConfig -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.Readme -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.SignedCommits -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryLanguage.Dotnet -> SharedKernel.Repositories.RepositoryLanguage!
+static readonly SharedKernel.Repositories.RepositoryLanguage.None -> SharedKernel.Repositories.RepositoryLanguage!
+static readonly SharedKernel.Repositories.RoadmapPaths.RequiredDirectories -> string![]!
+static readonly SharedKernel.Repositories.RoadmapPaths.RequiredFiles -> string![]!
+SharedKernel.Repositories.TargetFrameworkConfiguration
+SharedKernel.Repositories.TargetFrameworkConfiguration.<Clone>$() -> SharedKernel.Repositories.TargetFrameworkConfiguration!
+SharedKernel.Repositories.TargetFrameworkConfiguration.CommandFiles.get -> System.Collections.Generic.IReadOnlyList<string!>?
+SharedKernel.Repositories.TargetFrameworkConfiguration.CommandFiles.init -> void
+SharedKernel.Repositories.TargetFrameworkConfiguration.Deconstruct(out System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.TargetFrameworkRule!>! Projects, out System.Collections.Generic.IReadOnlyList<string!>? CommandFiles, out string? FrameworkProperties) -> void
+SharedKernel.Repositories.TargetFrameworkConfiguration.Equals(SharedKernel.Repositories.TargetFrameworkConfiguration? other) -> bool
+SharedKernel.Repositories.TargetFrameworkConfiguration.FindError() -> string?
+SharedKernel.Repositories.TargetFrameworkConfiguration.FrameworkProperties.get -> string?
+SharedKernel.Repositories.TargetFrameworkConfiguration.FrameworkProperties.init -> void
+SharedKernel.Repositories.TargetFrameworkConfiguration.Projects.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.TargetFrameworkRule!>!
+SharedKernel.Repositories.TargetFrameworkConfiguration.Projects.init -> void
+SharedKernel.Repositories.TargetFrameworkConfiguration.TargetFrameworkConfiguration(System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.TargetFrameworkRule!>! Projects, System.Collections.Generic.IReadOnlyList<string!>? CommandFiles = null, string? FrameworkProperties = null) -> void
+SharedKernel.Repositories.TargetFrameworkRule
+SharedKernel.Repositories.TargetFrameworkRule.<Clone>$() -> SharedKernel.Repositories.TargetFrameworkRule!
+SharedKernel.Repositories.TargetFrameworkRule.Deconstruct(out string! Include, out System.Collections.Generic.IReadOnlyList<string!>! Frameworks, out string? RollForward) -> void
+SharedKernel.Repositories.TargetFrameworkRule.Equals(SharedKernel.Repositories.TargetFrameworkRule? other) -> bool
+SharedKernel.Repositories.TargetFrameworkRule.Frameworks.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.TargetFrameworkRule.Frameworks.init -> void
+SharedKernel.Repositories.TargetFrameworkRule.Include.get -> string!
+SharedKernel.Repositories.TargetFrameworkRule.Include.init -> void
+SharedKernel.Repositories.TargetFrameworkRule.RollForward.get -> string?
+SharedKernel.Repositories.TargetFrameworkRule.RollForward.init -> void
+SharedKernel.Repositories.TargetFrameworkRule.TargetFrameworkRule(string! Include, System.Collections.Generic.IReadOnlyList<string!>! Frameworks, string? RollForward = null) -> void
+SharedKernel.Repositories.TargetFrameworkVerifier
+override SharedKernel.Repositories.TargetFrameworkConfiguration.Equals(object? obj) -> bool
+override SharedKernel.Repositories.TargetFrameworkConfiguration.GetHashCode() -> int
+override SharedKernel.Repositories.TargetFrameworkConfiguration.ToString() -> string!
+override SharedKernel.Repositories.TargetFrameworkRule.Equals(object? obj) -> bool
+override SharedKernel.Repositories.TargetFrameworkRule.GetHashCode() -> int
+override SharedKernel.Repositories.TargetFrameworkRule.ToString() -> string!
+static SharedKernel.Repositories.TargetFrameworkConfiguration.operator !=(SharedKernel.Repositories.TargetFrameworkConfiguration? left, SharedKernel.Repositories.TargetFrameworkConfiguration? right) -> bool
+static SharedKernel.Repositories.TargetFrameworkConfiguration.operator ==(SharedKernel.Repositories.TargetFrameworkConfiguration? left, SharedKernel.Repositories.TargetFrameworkConfiguration? right) -> bool
+static SharedKernel.Repositories.TargetFrameworkRule.operator !=(SharedKernel.Repositories.TargetFrameworkRule? left, SharedKernel.Repositories.TargetFrameworkRule? right) -> bool
+static SharedKernel.Repositories.TargetFrameworkRule.operator ==(SharedKernel.Repositories.TargetFrameworkRule? left, SharedKernel.Repositories.TargetFrameworkRule? right) -> bool
+static SharedKernel.Repositories.TargetFrameworkVerifier.Verify(string! rootPath, SharedKernel.Repositories.TargetFrameworkConfiguration! configuration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
+static SharedKernel.Repositories.TargetFrameworkVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!

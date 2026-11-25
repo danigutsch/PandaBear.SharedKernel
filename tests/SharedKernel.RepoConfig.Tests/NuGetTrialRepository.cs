@@ -1,6 +1,6 @@
-using PandaBear.Testing.Packaging;
+using SharedKernel.Testing.Packaging;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Creates a disposable CPM solution using only small packages from its mapped local source.</summary>
 internal sealed class NuGetTrialRepository : IDisposable

@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace PandaBear.Results.SourceGenerator;
+namespace SharedKernel.Results.SourceGenerator;
 
 /// <summary>
 /// Discovers centralized <c>*Errors</c> classes and emits a generated error catalog for the current assembly.

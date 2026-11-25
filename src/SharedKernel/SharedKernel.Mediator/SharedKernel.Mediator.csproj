@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Mediator</PackageId>
         <Description>Runtime support surface for SharedKernel.Mediator.</Description>
-        <RootNamespace>PandaBear.Mediator</RootNamespace>
+        <RootNamespace>SharedKernel.Mediator</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>mediator;dependency-injection;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

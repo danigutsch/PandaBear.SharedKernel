@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>
 /// Tests that a 429 answer can be made final: it is neither retried, which would spend more of the quota that was just exhausted, nor

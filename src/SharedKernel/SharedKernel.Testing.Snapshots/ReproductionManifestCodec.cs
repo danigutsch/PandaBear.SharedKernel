@@ -2,9 +2,9 @@
 
 using System.Diagnostics;
 using System.Text.Json;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Testing.Snapshots;
+namespace SharedKernel.Testing.Snapshots;
 
 /// <summary>Reads and writes bounded manifests using the fixture's reviewed values.</summary>
 public static class ReproductionManifestCodec

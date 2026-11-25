@@ -4,14 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using PandaBear.Observability;
-using PandaBear.Observability.Tests;
+using SharedKernel.Observability;
+using SharedKernel.Observability.Tests;
 
 namespace ObservabilityConsumer;
 
 /// <summary>
 /// Tests that the non-generic <c>AddInstrumentation()</c> resolves beside the generic <c>AddInstrumentation&lt;T&gt;</c> overloads that
-/// OpenTelemetry declares on the same builders. The namespace lies outside <c>PandaBear</c>, as a consuming host's does, so both sets of
+/// OpenTelemetry declares on the same builders. The namespace lies outside <c>SharedKernel</c>, as a consuming host's does, so both sets of
 /// extensions come from using directives in the same scope and an ambiguous call would not compile.
 /// </summary>
 public sealed class InstrumentationOverloadTests

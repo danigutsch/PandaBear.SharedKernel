@@ -1,6 +1,6 @@
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Tests the secret findings report.</summary>
 public sealed class FindingsReportTests

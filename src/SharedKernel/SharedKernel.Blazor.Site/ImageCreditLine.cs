@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The short credit of one image, shown under it by <see cref="ImageCreditCaption" />, such as "Photo: Ana Lima" and "CC BY 4.0". Every

@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing</PackageId>
         <Description>Reusable test traits, environment and culture scopes, temporary-directory lifetimes, repository-file lookup, process fakes, and source-generated call proxies.</Description>
-        <RootNamespace>PandaBear.Testing</RootNamespace>
+        <RootNamespace>SharedKernel.Testing</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;traits;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

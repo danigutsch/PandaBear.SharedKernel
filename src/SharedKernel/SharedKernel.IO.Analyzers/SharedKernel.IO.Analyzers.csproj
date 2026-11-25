@@ -5,8 +5,8 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.IO.Analyzers</PackageId>
-        <Description>Analyzers for unbounded stream buffering and hand-rolled copy loops; steers to PandaBear.IO.SeekableContent.</Description>
-        <RootNamespace>PandaBear.IO.Analyzers</RootNamespace>
+        <Description>Analyzers for unbounded stream buffering and hand-rolled copy loops; steers to SharedKernel.IO.SeekableContent.</Description>
+        <RootNamespace>SharedKernel.IO.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>io;streams;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

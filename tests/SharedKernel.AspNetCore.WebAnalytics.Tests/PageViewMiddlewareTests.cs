@@ -1,9 +1,9 @@
 using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>Tests page views in a running site: what reaches Umami and every other target, and that no target can ever fail or change a page.</summary>
 public sealed class PageViewMiddlewareTests

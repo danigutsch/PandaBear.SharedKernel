@@ -1,7 +1,7 @@
 using System.Buffers.Binary;
 using System.Text;
 
-namespace PandaBear.ImageProcessing.Tests;
+namespace SharedKernel.ImageProcessing.Tests;
 
 /// <summary>
 /// Builds hand-crafted PNG and WebP container bytes for header-walk tests.

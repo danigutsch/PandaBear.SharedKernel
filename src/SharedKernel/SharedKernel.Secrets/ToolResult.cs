@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The result of a finished child process. Dispose it to overwrite the standard output bytes.</summary>
 public sealed class ToolResult : IDisposable

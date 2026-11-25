@@ -1,10 +1,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Mediator.SourceGenerator;
+using SharedKernel.Mediator.SourceGenerator;
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Creates benchmark compilations and runs the discovery generator against them.

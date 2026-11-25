@@ -1,5 +1,5 @@
 
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>Tests the packaging metadata of the code fix runner project.</summary>
 public sealed class CodeFixRunnerToolTests

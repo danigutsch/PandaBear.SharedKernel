@@ -1,8 +1,8 @@
 using System.Net;
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using Xunit.Sdk;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the status assertions for success responses and the failure messages that quote the body.</summary>
 public sealed class HttpStatusAssertionTests

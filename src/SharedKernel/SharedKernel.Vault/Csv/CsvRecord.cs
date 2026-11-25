@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Csv;
+namespace SharedKernel.Vault.Csv;
 
 /// <summary>One CSV record.</summary>
 /// <param name="LineNumber">One-based line on which the record starts.</param>

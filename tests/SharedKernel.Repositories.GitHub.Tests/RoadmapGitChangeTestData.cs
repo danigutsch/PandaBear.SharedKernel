@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Captured roadmap changes for publication tests.</summary>
 internal static class RoadmapGitChangeTestData

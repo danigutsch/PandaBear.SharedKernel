@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.OutputCaching;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>Records output-cache eviction while treating reads as misses and writes as no-ops.</summary>
 public sealed class RecordingOutputCacheStore : IOutputCacheStore

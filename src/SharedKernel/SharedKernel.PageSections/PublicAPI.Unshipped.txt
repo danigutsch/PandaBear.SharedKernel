@@ -1,281 +1,281 @@
 #nullable enable
-PandaBear.PageSections.LinkStyle
-PandaBear.PageSections.LinkStyle.Outline = 2 -> PandaBear.PageSections.LinkStyle
-PandaBear.PageSections.LinkStyle.Primary = 0 -> PandaBear.PageSections.LinkStyle
-PandaBear.PageSections.LinkStyle.Secondary = 1 -> PandaBear.PageSections.LinkStyle
-PandaBear.PageSections.NoExtra
-PandaBear.PageSections.NoExtra.Equals(PandaBear.PageSections.NoExtra other) -> bool
-PandaBear.PageSections.NoExtra.NoExtra() -> void
-PandaBear.PageSections.PageLink<TLink>
-PandaBear.PageSections.PageLink<TLink>.<Clone>$() -> PandaBear.PageSections.PageLink<TLink>!
-PandaBear.PageSections.PageLink<TLink>.Equals(PandaBear.PageSections.PageLink<TLink>? other) -> bool
-PandaBear.PageSections.PageLink<TLink>.Style.get -> PandaBear.PageSections.LinkStyle
-PandaBear.PageSections.PageLink<TLink>.Target.get -> TLink
-PandaBear.PageSections.PageLink<TLink>.Text.get -> string!
-PandaBear.PageSections.PagePerson<TImageId>
-PandaBear.PageSections.PagePerson<TImageId>.<Clone>$() -> PandaBear.PageSections.PagePerson<TImageId>!
-PandaBear.PageSections.PagePerson<TImageId>.Equals(PandaBear.PageSections.PagePerson<TImageId>? other) -> bool
-PandaBear.PageSections.PagePerson<TImageId>.ImageId.get -> TImageId?
-PandaBear.PageSections.PagePerson<TImageId>.Name.get -> string!
-PandaBear.PageSections.PagePerson<TImageId>.Role.get -> string?
-PandaBear.PageSections.PagePersonDefinition<TImageId>
-PandaBear.PageSections.PagePersonDefinition<TImageId>.<Clone>$() -> PandaBear.PageSections.PagePersonDefinition<TImageId>!
-PandaBear.PageSections.PagePersonDefinition<TImageId>.Deconstruct(out TImageId? ImageId, out string? Name, out string? Role) -> void
-PandaBear.PageSections.PagePersonDefinition<TImageId>.Equals(PandaBear.PageSections.PagePersonDefinition<TImageId>? other) -> bool
-PandaBear.PageSections.PagePersonDefinition<TImageId>.ImageId.get -> TImageId?
-PandaBear.PageSections.PagePersonDefinition<TImageId>.ImageId.init -> void
-PandaBear.PageSections.PagePersonDefinition<TImageId>.Name.get -> string?
-PandaBear.PageSections.PagePersonDefinition<TImageId>.Name.init -> void
-PandaBear.PageSections.PagePersonDefinition<TImageId>.PagePersonDefinition(TImageId? ImageId, string? Name, string? Role) -> void
-PandaBear.PageSections.PagePersonDefinition<TImageId>.Role.get -> string?
-PandaBear.PageSections.PagePersonDefinition<TImageId>.Role.init -> void
-PandaBear.PageSections.PageQuestion
-PandaBear.PageSections.PageQuestion.Answer.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.PageSections.PageQuestion.Equals(PandaBear.PageSections.PageQuestion? other) -> bool
-PandaBear.PageSections.PageQuestion.Question.get -> string!
-PandaBear.PageSections.PageQuestionDefinition
-PandaBear.PageSections.PageQuestionDefinition.<Clone>$() -> PandaBear.PageSections.PageQuestionDefinition!
-PandaBear.PageSections.PageQuestionDefinition.Answer.get -> string?
-PandaBear.PageSections.PageQuestionDefinition.Answer.init -> void
-PandaBear.PageSections.PageQuestionDefinition.Deconstruct(out string? Question, out string? Answer) -> void
-PandaBear.PageSections.PageQuestionDefinition.Equals(PandaBear.PageSections.PageQuestionDefinition? other) -> bool
-PandaBear.PageSections.PageQuestionDefinition.PageQuestionDefinition(string? Question, string? Answer) -> void
-PandaBear.PageSections.PageQuestionDefinition.Question.get -> string?
-PandaBear.PageSections.PageQuestionDefinition.Question.init -> void
-PandaBear.PageSections.PageQuote
-PandaBear.PageSections.PageQuote.<Clone>$() -> PandaBear.PageSections.PageQuote!
-PandaBear.PageSections.PageQuote.Cite.get -> string?
-PandaBear.PageSections.PageQuote.Equals(PandaBear.PageSections.PageQuote? other) -> bool
-PandaBear.PageSections.PageQuote.Text.get -> string!
-PandaBear.PageSections.PageQuoteDefinition
-PandaBear.PageSections.PageQuoteDefinition.<Clone>$() -> PandaBear.PageSections.PageQuoteDefinition!
-PandaBear.PageSections.PageQuoteDefinition.Cite.get -> string?
-PandaBear.PageSections.PageQuoteDefinition.Cite.init -> void
-PandaBear.PageSections.PageQuoteDefinition.Deconstruct(out string? Text, out string? Cite) -> void
-PandaBear.PageSections.PageQuoteDefinition.Equals(PandaBear.PageSections.PageQuoteDefinition? other) -> bool
-PandaBear.PageSections.PageQuoteDefinition.PageQuoteDefinition(string? Text, string? Cite) -> void
-PandaBear.PageSections.PageQuoteDefinition.Text.get -> string?
-PandaBear.PageSections.PageQuoteDefinition.Text.init -> void
-PandaBear.PageSections.PageSection
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.BackgroundImageId.get -> TImageId?
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Equals(PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>? other) -> bool
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Extra.get -> TExtra
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Eyebrow.get -> string?
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Heading.get -> string?
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.ImageLayout.get -> PandaBear.PageSections.SectionImageLayout
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.ImagesShown() -> System.Collections.Generic.IEnumerable<TImageId>!
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Level.get -> PandaBear.PageSections.SectionLevel
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Link.get -> PandaBear.PageSections.PageLink<TLink>?
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Person.get -> PandaBear.PageSections.PagePerson<TImageId>?
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Questions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuestion!>!
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Quotes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuote!>!
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Tone.get -> PandaBear.PageSections.SectionTone
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Video.get -> PandaBear.PageSections.PageVideo<TImageId>?
-PandaBear.PageSections.PageSectionFields
-PandaBear.PageSections.PageSectionList
-PandaBear.PageSections.PageSectionRules
-PandaBear.PageSections.PageSectionRules.MaxImages.get -> int
-PandaBear.PageSections.PageSectionRules.MaxImages.init -> void
-PandaBear.PageSections.PageSectionRules.MaxLineLength.get -> int
-PandaBear.PageSections.PageSectionRules.MaxLineLength.init -> void
-PandaBear.PageSections.PageSectionRules.MaxParagraphLength.get -> int
-PandaBear.PageSections.PageSectionRules.MaxParagraphLength.init -> void
-PandaBear.PageSections.PageSectionRules.MaxParagraphs.get -> int
-PandaBear.PageSections.PageSectionRules.MaxParagraphs.init -> void
-PandaBear.PageSections.PageSectionRules.MaxQuestions.get -> int
-PandaBear.PageSections.PageSectionRules.MaxQuestions.init -> void
-PandaBear.PageSections.PageSectionRules.MaxQuoteLength.get -> int
-PandaBear.PageSections.PageSectionRules.MaxQuoteLength.init -> void
-PandaBear.PageSections.PageSectionRules.MaxQuotes.get -> int
-PandaBear.PageSections.PageSectionRules.MaxQuotes.init -> void
-PandaBear.PageSections.PageSectionRules.MaxSections.get -> int
-PandaBear.PageSections.PageSectionRules.MaxSections.init -> void
-PandaBear.PageSections.PageSectionRules.MaxTitleLength.get -> int
-PandaBear.PageSections.PageSectionRules.MaxTitleLength.init -> void
-PandaBear.PageSections.PageSectionRules.PageSectionRules() -> void
-PandaBear.PageSections.PageVideo<TImageId>
-PandaBear.PageSections.PageVideo<TImageId>.<Clone>$() -> PandaBear.PageSections.PageVideo<TImageId>!
-PandaBear.PageSections.PageVideo<TImageId>.Address.get -> PandaBear.BuildingBlocks.WebUrl!
-PandaBear.PageSections.PageVideo<TImageId>.Equals(PandaBear.PageSections.PageVideo<TImageId>? other) -> bool
-PandaBear.PageSections.PageVideo<TImageId>.PosterImageId.get -> TImageId
-PandaBear.PageSections.PageVideo<TImageId>.Title.get -> string!
-PandaBear.PageSections.PageVideoDefinition<TImageId>
-PandaBear.PageSections.PageVideoDefinition<TImageId>.<Clone>$() -> PandaBear.PageSections.PageVideoDefinition<TImageId>!
-PandaBear.PageSections.PageVideoDefinition<TImageId>.Address.get -> string?
-PandaBear.PageSections.PageVideoDefinition<TImageId>.Address.init -> void
-PandaBear.PageSections.PageVideoDefinition<TImageId>.Deconstruct(out string? Address, out TImageId? PosterImageId, out string? Title) -> void
-PandaBear.PageSections.PageVideoDefinition<TImageId>.Equals(PandaBear.PageSections.PageVideoDefinition<TImageId>? other) -> bool
-PandaBear.PageSections.PageVideoDefinition<TImageId>.PageVideoDefinition(string? Address, TImageId? PosterImageId, string? Title) -> void
-PandaBear.PageSections.PageVideoDefinition<TImageId>.PosterImageId.get -> TImageId?
-PandaBear.PageSections.PageVideoDefinition<TImageId>.PosterImageId.init -> void
-PandaBear.PageSections.PageVideoDefinition<TImageId>.Title.get -> string?
-PandaBear.PageSections.PageVideoDefinition<TImageId>.Title.init -> void
-PandaBear.PageSections.SectionImageLayout
-PandaBear.PageSections.SectionImageLayout.BesideText = 1 -> PandaBear.PageSections.SectionImageLayout
-PandaBear.PageSections.SectionImageLayout.Mosaic = 0 -> PandaBear.PageSections.SectionImageLayout
-PandaBear.PageSections.SectionLevel
-PandaBear.PageSections.SectionLevel.Section = 0 -> PandaBear.PageSections.SectionLevel
-PandaBear.PageSections.SectionLevel.Subsection = 1 -> PandaBear.PageSections.SectionLevel
-PandaBear.PageSections.SectionTone
-PandaBear.PageSections.SectionTone.Image = 3 -> PandaBear.PageSections.SectionTone
-PandaBear.PageSections.SectionTone.Muted = 1 -> PandaBear.PageSections.SectionTone
-PandaBear.PageSections.SectionTone.Plain = 0 -> PandaBear.PageSections.SectionTone
-PandaBear.PageSections.SectionTone.Primary = 2 -> PandaBear.PageSections.SectionTone
-const PandaBear.PageSections.PageSectionFields.Address = "address" -> string!
-const PandaBear.PageSections.PageSectionFields.Answer = "answer" -> string!
-const PandaBear.PageSections.PageSectionFields.BackgroundImageId = "backgroundImageId" -> string!
-const PandaBear.PageSections.PageSectionFields.Cite = "cite" -> string!
-const PandaBear.PageSections.PageSectionFields.Eyebrow = "eyebrow" -> string!
-const PandaBear.PageSections.PageSectionFields.Heading = "heading" -> string!
-const PandaBear.PageSections.PageSectionFields.ImageId = "imageId" -> string!
-const PandaBear.PageSections.PageSectionFields.ImageIds = "imageIds" -> string!
-const PandaBear.PageSections.PageSectionFields.ImageLayout = "imageLayout" -> string!
-const PandaBear.PageSections.PageSectionFields.Level = "level" -> string!
-const PandaBear.PageSections.PageSectionFields.Link = "link" -> string!
-const PandaBear.PageSections.PageSectionFields.LinkText = "text" -> string!
-const PandaBear.PageSections.PageSectionFields.Name = "name" -> string!
-const PandaBear.PageSections.PageSectionFields.Person = "person" -> string!
-const PandaBear.PageSections.PageSectionFields.PosterImageId = "posterImageId" -> string!
-const PandaBear.PageSections.PageSectionFields.Question = "question" -> string!
-const PandaBear.PageSections.PageSectionFields.Questions = "questions" -> string!
-const PandaBear.PageSections.PageSectionFields.QuoteText = "text" -> string!
-const PandaBear.PageSections.PageSectionFields.Quotes = "quotes" -> string!
-const PandaBear.PageSections.PageSectionFields.Role = "role" -> string!
-const PandaBear.PageSections.PageSectionFields.Style = "style" -> string!
-const PandaBear.PageSections.PageSectionFields.Text = "text" -> string!
-const PandaBear.PageSections.PageSectionFields.Title = "title" -> string!
-const PandaBear.PageSections.PageSectionFields.Tone = "tone" -> string!
-const PandaBear.PageSections.PageSectionFields.Video = "video" -> string!
-override PandaBear.PageSections.NoExtra.GetHashCode() -> int
-override PandaBear.PageSections.PageLink<TLink>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageLink<TLink>.GetHashCode() -> int
-override PandaBear.PageSections.PageLink<TLink>.ToString() -> string!
-override PandaBear.PageSections.PagePerson<TImageId>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PagePerson<TImageId>.GetHashCode() -> int
-override PandaBear.PageSections.PagePerson<TImageId>.ToString() -> string!
-override PandaBear.PageSections.PagePersonDefinition<TImageId>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PagePersonDefinition<TImageId>.GetHashCode() -> int
-override PandaBear.PageSections.PagePersonDefinition<TImageId>.ToString() -> string!
-override PandaBear.PageSections.PageQuestion.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageQuestion.GetHashCode() -> int
-override PandaBear.PageSections.PageQuestionDefinition.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageQuestionDefinition.GetHashCode() -> int
-override PandaBear.PageSections.PageQuestionDefinition.ToString() -> string!
-override PandaBear.PageSections.PageQuote.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageQuote.GetHashCode() -> int
-override PandaBear.PageSections.PageQuote.ToString() -> string!
-override PandaBear.PageSections.PageQuoteDefinition.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageQuoteDefinition.GetHashCode() -> int
-override PandaBear.PageSections.PageQuoteDefinition.ToString() -> string!
-override PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.GetHashCode() -> int
-override PandaBear.PageSections.PageVideo<TImageId>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageVideo<TImageId>.GetHashCode() -> int
-override PandaBear.PageSections.PageVideo<TImageId>.ToString() -> string!
-override PandaBear.PageSections.PageVideoDefinition<TImageId>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageVideoDefinition<TImageId>.GetHashCode() -> int
-override PandaBear.PageSections.PageVideoDefinition<TImageId>.ToString() -> string!
-static PandaBear.PageSections.NoExtra.operator !=(PandaBear.PageSections.NoExtra left, PandaBear.PageSections.NoExtra right) -> bool
-static PandaBear.PageSections.NoExtra.operator ==(PandaBear.PageSections.NoExtra left, PandaBear.PageSections.NoExtra right) -> bool
-static PandaBear.PageSections.PageLink<TLink>.operator !=(PandaBear.PageSections.PageLink<TLink>? left, PandaBear.PageSections.PageLink<TLink>? right) -> bool
-static PandaBear.PageSections.PageLink<TLink>.operator ==(PandaBear.PageSections.PageLink<TLink>? left, PandaBear.PageSections.PageLink<TLink>? right) -> bool
-static PandaBear.PageSections.PagePerson<TImageId>.operator !=(PandaBear.PageSections.PagePerson<TImageId>? left, PandaBear.PageSections.PagePerson<TImageId>? right) -> bool
-static PandaBear.PageSections.PagePerson<TImageId>.operator ==(PandaBear.PageSections.PagePerson<TImageId>? left, PandaBear.PageSections.PagePerson<TImageId>? right) -> bool
-static PandaBear.PageSections.PagePersonDefinition<TImageId>.operator !=(PandaBear.PageSections.PagePersonDefinition<TImageId>? left, PandaBear.PageSections.PagePersonDefinition<TImageId>? right) -> bool
-static PandaBear.PageSections.PagePersonDefinition<TImageId>.operator ==(PandaBear.PageSections.PagePersonDefinition<TImageId>? left, PandaBear.PageSections.PagePersonDefinition<TImageId>? right) -> bool
-static PandaBear.PageSections.PageQuestionDefinition.operator !=(PandaBear.PageSections.PageQuestionDefinition? left, PandaBear.PageSections.PageQuestionDefinition? right) -> bool
-static PandaBear.PageSections.PageQuestionDefinition.operator ==(PandaBear.PageSections.PageQuestionDefinition? left, PandaBear.PageSections.PageQuestionDefinition? right) -> bool
-static PandaBear.PageSections.PageQuote.operator !=(PandaBear.PageSections.PageQuote? left, PandaBear.PageSections.PageQuote? right) -> bool
-static PandaBear.PageSections.PageQuote.operator ==(PandaBear.PageSections.PageQuote? left, PandaBear.PageSections.PageQuote? right) -> bool
-static PandaBear.PageSections.PageQuoteDefinition.operator !=(PandaBear.PageSections.PageQuoteDefinition? left, PandaBear.PageSections.PageQuoteDefinition? right) -> bool
-static PandaBear.PageSections.PageQuoteDefinition.operator ==(PandaBear.PageSections.PageQuoteDefinition? left, PandaBear.PageSections.PageQuoteDefinition? right) -> bool
-static PandaBear.PageSections.PageSectionFields.Images(PandaBear.BuildingBlocks.ContentCulture! culture) -> string!
-static PandaBear.PageSections.PageSectionFields.Section(string! prefix, int index) -> string!
-static PandaBear.PageSections.PageSectionList.FindIneligible<TImageId, TLink, TExtra>(System.Collections.Generic.IEnumerable<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!>! sections, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.IImageEligibility<TImageId>! images) -> System.Collections.Generic.IReadOnlyList<TImageId>!
-static PandaBear.PageSections.PageSectionList.ImagesShown<TImageId, TLink, TExtra>(System.Collections.Generic.IEnumerable<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!>! sections) -> System.Collections.Generic.IReadOnlyList<TImageId>!
-static PandaBear.PageSections.PageVideo<TImageId>.operator !=(PandaBear.PageSections.PageVideo<TImageId>? left, PandaBear.PageSections.PageVideo<TImageId>? right) -> bool
-static PandaBear.PageSections.PageVideo<TImageId>.operator ==(PandaBear.PageSections.PageVideo<TImageId>? left, PandaBear.PageSections.PageVideo<TImageId>? right) -> bool
-static PandaBear.PageSections.PageVideoDefinition<TImageId>.operator !=(PandaBear.PageSections.PageVideoDefinition<TImageId>? left, PandaBear.PageSections.PageVideoDefinition<TImageId>? right) -> bool
-static PandaBear.PageSections.PageVideoDefinition<TImageId>.operator ==(PandaBear.PageSections.PageVideoDefinition<TImageId>? left, PandaBear.PageSections.PageVideoDefinition<TImageId>? right) -> bool
-~override PandaBear.PageSections.NoExtra.Equals(object obj) -> bool
-~override PandaBear.PageSections.NoExtra.ToString() -> string
-PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>
-PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.CountsAsContent(TExtra extra) -> bool
-PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.ValidateExtra(TExtra extra, bool published, string! field) -> PandaBear.Results.Result<TExtra>
-PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.ValidateLink(TLinkInput! input, string! field) -> PandaBear.Results.Result<TLink>
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Deconstruct(out string? Text, out TLinkInput? Target, out PandaBear.PageSections.LinkStyle Style) -> void
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>.PageLinkDefinition(string? Text, TLinkInput? Target, PandaBear.PageSections.LinkStyle Style = PandaBear.PageSections.LinkStyle.Primary) -> void
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Style.get -> PandaBear.PageSections.LinkStyle
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Style.init -> void
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Target.get -> TLinkInput?
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Target.init -> void
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Text.get -> string?
-PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Text.init -> void
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.ToDefinition<TLinkInput>(System.Func<TLink, TLinkInput!>! linkInput) -> PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>!
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.BackgroundImageId.get -> TImageId?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.BackgroundImageId.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Extra.get -> TExtra
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Extra.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Eyebrow.get -> string?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Eyebrow.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Heading.get -> string?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Heading.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageIds.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageLayout.get -> PandaBear.PageSections.SectionImageLayout
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageLayout.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Level.get -> PandaBear.PageSections.SectionLevel
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Level.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Link.get -> PandaBear.PageSections.PageLinkDefinition<TLinkInput!>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Link.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.PageSectionDefinition() -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Person.get -> PandaBear.PageSections.PagePersonDefinition<TImageId>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Person.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Questions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuestionDefinition!>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Questions.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Quotes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuoteDefinition!>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Quotes.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Text.get -> string?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Text.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Tone.get -> PandaBear.PageSections.SectionTone
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Tone.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Video.get -> PandaBear.PageSections.PageVideoDefinition<TImageId>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Video.init -> void
-PandaBear.PageSections.PageSectionScope
-PandaBear.PageSections.PageSectionScope.<Clone>$() -> PandaBear.PageSections.PageSectionScope!
-PandaBear.PageSections.PageSectionScope.CheckImageEligibility.get -> bool
-PandaBear.PageSections.PageSectionScope.CheckImageEligibility.init -> void
-PandaBear.PageSections.PageSectionScope.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.PageSections.PageSectionScope.Deconstruct(out PandaBear.BuildingBlocks.ContentCulture! Culture, out bool Published, out string! FieldPrefix, out string! ImagesField) -> void
-PandaBear.PageSections.PageSectionScope.Equals(PandaBear.PageSections.PageSectionScope? other) -> bool
-PandaBear.PageSections.PageSectionScope.FieldPrefix.get -> string!
-PandaBear.PageSections.PageSectionScope.ImagesField.get -> string!
-PandaBear.PageSections.PageSectionScope.PageSectionScope(PandaBear.BuildingBlocks.ContentCulture! Culture, bool Published, string! FieldPrefix, string! ImagesField) -> void
-PandaBear.PageSections.PageSectionScope.Published.get -> bool
-PandaBear.PageSections.PageSectionScope.Published.init -> void
-override PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageLinkDefinition<TLinkInput>.GetHashCode() -> int
-override PandaBear.PageSections.PageLinkDefinition<TLinkInput>.ToString() -> string!
-override PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.GetHashCode() -> int
-override PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ToString() -> string!
-override PandaBear.PageSections.PageSectionScope.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageSectionScope.GetHashCode() -> int
-override PandaBear.PageSections.PageSectionScope.ToString() -> string!
-static PandaBear.PageSections.PageSection.Restore<TImageId, TLinkInput, TLink, TExtra>(PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>! definition, System.Func<TLinkInput!, TLink>! restoreLink) -> PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!
-static PandaBear.PageSections.PageSectionList.Create<TImageId, TLinkInput, TLink, TExtra>(System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>!>? definitions, PandaBear.PageSections.PageSectionRules! rules, PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput!, TLink, TExtra>! context, PandaBear.PageSections.PageSectionScope! scope) -> PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!>!>
-static PandaBear.PageSections.PageSectionScope.operator !=(PandaBear.PageSections.PageSectionScope? left, PandaBear.PageSections.PageSectionScope? right) -> bool
-static PandaBear.PageSections.PageSectionScope.operator ==(PandaBear.PageSections.PageSectionScope? left, PandaBear.PageSections.PageSectionScope? right) -> bool
-~PandaBear.PageSections.PageLinkDefinition<TLinkInput>.<Clone>$() -> PandaBear.PageSections.PageLinkDefinition<TLinkInput>!
-~PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Equals(PandaBear.PageSections.PageLinkDefinition<TLinkInput>? other) -> bool
-~PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.<Clone>$() -> PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>!
-~PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Equals(PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? other) -> bool
-~static PandaBear.PageSections.PageLinkDefinition<TLinkInput>.operator !=(PandaBear.PageSections.PageLinkDefinition<TLinkInput>? left, PandaBear.PageSections.PageLinkDefinition<TLinkInput>? right) -> bool
-~static PandaBear.PageSections.PageLinkDefinition<TLinkInput>.operator ==(PandaBear.PageSections.PageLinkDefinition<TLinkInput>? left, PandaBear.PageSections.PageLinkDefinition<TLinkInput>? right) -> bool
-~static PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.operator !=(PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? left, PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? right) -> bool
-~static PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.operator ==(PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? left, PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? right) -> bool
+SharedKernel.PageSections.LinkStyle
+SharedKernel.PageSections.LinkStyle.Outline = 2 -> SharedKernel.PageSections.LinkStyle
+SharedKernel.PageSections.LinkStyle.Primary = 0 -> SharedKernel.PageSections.LinkStyle
+SharedKernel.PageSections.LinkStyle.Secondary = 1 -> SharedKernel.PageSections.LinkStyle
+SharedKernel.PageSections.NoExtra
+SharedKernel.PageSections.NoExtra.Equals(SharedKernel.PageSections.NoExtra other) -> bool
+SharedKernel.PageSections.NoExtra.NoExtra() -> void
+SharedKernel.PageSections.PageLink<TLink>
+SharedKernel.PageSections.PageLink<TLink>.<Clone>$() -> SharedKernel.PageSections.PageLink<TLink>!
+SharedKernel.PageSections.PageLink<TLink>.Equals(SharedKernel.PageSections.PageLink<TLink>? other) -> bool
+SharedKernel.PageSections.PageLink<TLink>.Style.get -> SharedKernel.PageSections.LinkStyle
+SharedKernel.PageSections.PageLink<TLink>.Target.get -> TLink
+SharedKernel.PageSections.PageLink<TLink>.Text.get -> string!
+SharedKernel.PageSections.PagePerson<TImageId>
+SharedKernel.PageSections.PagePerson<TImageId>.<Clone>$() -> SharedKernel.PageSections.PagePerson<TImageId>!
+SharedKernel.PageSections.PagePerson<TImageId>.Equals(SharedKernel.PageSections.PagePerson<TImageId>? other) -> bool
+SharedKernel.PageSections.PagePerson<TImageId>.ImageId.get -> TImageId?
+SharedKernel.PageSections.PagePerson<TImageId>.Name.get -> string!
+SharedKernel.PageSections.PagePerson<TImageId>.Role.get -> string?
+SharedKernel.PageSections.PagePersonDefinition<TImageId>
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.<Clone>$() -> SharedKernel.PageSections.PagePersonDefinition<TImageId>!
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.Deconstruct(out TImageId? ImageId, out string? Name, out string? Role) -> void
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.Equals(SharedKernel.PageSections.PagePersonDefinition<TImageId>? other) -> bool
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.ImageId.get -> TImageId?
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.ImageId.init -> void
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.Name.get -> string?
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.Name.init -> void
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.PagePersonDefinition(TImageId? ImageId, string? Name, string? Role) -> void
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.Role.get -> string?
+SharedKernel.PageSections.PagePersonDefinition<TImageId>.Role.init -> void
+SharedKernel.PageSections.PageQuestion
+SharedKernel.PageSections.PageQuestion.Answer.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.PageSections.PageQuestion.Equals(SharedKernel.PageSections.PageQuestion? other) -> bool
+SharedKernel.PageSections.PageQuestion.Question.get -> string!
+SharedKernel.PageSections.PageQuestionDefinition
+SharedKernel.PageSections.PageQuestionDefinition.<Clone>$() -> SharedKernel.PageSections.PageQuestionDefinition!
+SharedKernel.PageSections.PageQuestionDefinition.Answer.get -> string?
+SharedKernel.PageSections.PageQuestionDefinition.Answer.init -> void
+SharedKernel.PageSections.PageQuestionDefinition.Deconstruct(out string? Question, out string? Answer) -> void
+SharedKernel.PageSections.PageQuestionDefinition.Equals(SharedKernel.PageSections.PageQuestionDefinition? other) -> bool
+SharedKernel.PageSections.PageQuestionDefinition.PageQuestionDefinition(string? Question, string? Answer) -> void
+SharedKernel.PageSections.PageQuestionDefinition.Question.get -> string?
+SharedKernel.PageSections.PageQuestionDefinition.Question.init -> void
+SharedKernel.PageSections.PageQuote
+SharedKernel.PageSections.PageQuote.<Clone>$() -> SharedKernel.PageSections.PageQuote!
+SharedKernel.PageSections.PageQuote.Cite.get -> string?
+SharedKernel.PageSections.PageQuote.Equals(SharedKernel.PageSections.PageQuote? other) -> bool
+SharedKernel.PageSections.PageQuote.Text.get -> string!
+SharedKernel.PageSections.PageQuoteDefinition
+SharedKernel.PageSections.PageQuoteDefinition.<Clone>$() -> SharedKernel.PageSections.PageQuoteDefinition!
+SharedKernel.PageSections.PageQuoteDefinition.Cite.get -> string?
+SharedKernel.PageSections.PageQuoteDefinition.Cite.init -> void
+SharedKernel.PageSections.PageQuoteDefinition.Deconstruct(out string? Text, out string? Cite) -> void
+SharedKernel.PageSections.PageQuoteDefinition.Equals(SharedKernel.PageSections.PageQuoteDefinition? other) -> bool
+SharedKernel.PageSections.PageQuoteDefinition.PageQuoteDefinition(string? Text, string? Cite) -> void
+SharedKernel.PageSections.PageQuoteDefinition.Text.get -> string?
+SharedKernel.PageSections.PageQuoteDefinition.Text.init -> void
+SharedKernel.PageSections.PageSection
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.BackgroundImageId.get -> TImageId?
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Equals(SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>? other) -> bool
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Extra.get -> TExtra
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Eyebrow.get -> string?
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Heading.get -> string?
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.ImageLayout.get -> SharedKernel.PageSections.SectionImageLayout
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.ImagesShown() -> System.Collections.Generic.IEnumerable<TImageId>!
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Level.get -> SharedKernel.PageSections.SectionLevel
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Link.get -> SharedKernel.PageSections.PageLink<TLink>?
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Person.get -> SharedKernel.PageSections.PagePerson<TImageId>?
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Questions.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.PageSections.PageQuestion!>!
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Quotes.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.PageSections.PageQuote!>!
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Tone.get -> SharedKernel.PageSections.SectionTone
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Video.get -> SharedKernel.PageSections.PageVideo<TImageId>?
+SharedKernel.PageSections.PageSectionFields
+SharedKernel.PageSections.PageSectionList
+SharedKernel.PageSections.PageSectionRules
+SharedKernel.PageSections.PageSectionRules.MaxImages.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxImages.init -> void
+SharedKernel.PageSections.PageSectionRules.MaxLineLength.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxLineLength.init -> void
+SharedKernel.PageSections.PageSectionRules.MaxParagraphLength.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxParagraphLength.init -> void
+SharedKernel.PageSections.PageSectionRules.MaxParagraphs.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxParagraphs.init -> void
+SharedKernel.PageSections.PageSectionRules.MaxQuestions.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxQuestions.init -> void
+SharedKernel.PageSections.PageSectionRules.MaxQuoteLength.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxQuoteLength.init -> void
+SharedKernel.PageSections.PageSectionRules.MaxQuotes.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxQuotes.init -> void
+SharedKernel.PageSections.PageSectionRules.MaxSections.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxSections.init -> void
+SharedKernel.PageSections.PageSectionRules.MaxTitleLength.get -> int
+SharedKernel.PageSections.PageSectionRules.MaxTitleLength.init -> void
+SharedKernel.PageSections.PageSectionRules.PageSectionRules() -> void
+SharedKernel.PageSections.PageVideo<TImageId>
+SharedKernel.PageSections.PageVideo<TImageId>.<Clone>$() -> SharedKernel.PageSections.PageVideo<TImageId>!
+SharedKernel.PageSections.PageVideo<TImageId>.Address.get -> SharedKernel.BuildingBlocks.WebUrl!
+SharedKernel.PageSections.PageVideo<TImageId>.Equals(SharedKernel.PageSections.PageVideo<TImageId>? other) -> bool
+SharedKernel.PageSections.PageVideo<TImageId>.PosterImageId.get -> TImageId
+SharedKernel.PageSections.PageVideo<TImageId>.Title.get -> string!
+SharedKernel.PageSections.PageVideoDefinition<TImageId>
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.<Clone>$() -> SharedKernel.PageSections.PageVideoDefinition<TImageId>!
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.Address.get -> string?
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.Address.init -> void
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.Deconstruct(out string? Address, out TImageId? PosterImageId, out string? Title) -> void
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.Equals(SharedKernel.PageSections.PageVideoDefinition<TImageId>? other) -> bool
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.PageVideoDefinition(string? Address, TImageId? PosterImageId, string? Title) -> void
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.PosterImageId.get -> TImageId?
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.PosterImageId.init -> void
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.Title.get -> string?
+SharedKernel.PageSections.PageVideoDefinition<TImageId>.Title.init -> void
+SharedKernel.PageSections.SectionImageLayout
+SharedKernel.PageSections.SectionImageLayout.BesideText = 1 -> SharedKernel.PageSections.SectionImageLayout
+SharedKernel.PageSections.SectionImageLayout.Mosaic = 0 -> SharedKernel.PageSections.SectionImageLayout
+SharedKernel.PageSections.SectionLevel
+SharedKernel.PageSections.SectionLevel.Section = 0 -> SharedKernel.PageSections.SectionLevel
+SharedKernel.PageSections.SectionLevel.Subsection = 1 -> SharedKernel.PageSections.SectionLevel
+SharedKernel.PageSections.SectionTone
+SharedKernel.PageSections.SectionTone.Image = 3 -> SharedKernel.PageSections.SectionTone
+SharedKernel.PageSections.SectionTone.Muted = 1 -> SharedKernel.PageSections.SectionTone
+SharedKernel.PageSections.SectionTone.Plain = 0 -> SharedKernel.PageSections.SectionTone
+SharedKernel.PageSections.SectionTone.Primary = 2 -> SharedKernel.PageSections.SectionTone
+const SharedKernel.PageSections.PageSectionFields.Address = "address" -> string!
+const SharedKernel.PageSections.PageSectionFields.Answer = "answer" -> string!
+const SharedKernel.PageSections.PageSectionFields.BackgroundImageId = "backgroundImageId" -> string!
+const SharedKernel.PageSections.PageSectionFields.Cite = "cite" -> string!
+const SharedKernel.PageSections.PageSectionFields.Eyebrow = "eyebrow" -> string!
+const SharedKernel.PageSections.PageSectionFields.Heading = "heading" -> string!
+const SharedKernel.PageSections.PageSectionFields.ImageId = "imageId" -> string!
+const SharedKernel.PageSections.PageSectionFields.ImageIds = "imageIds" -> string!
+const SharedKernel.PageSections.PageSectionFields.ImageLayout = "imageLayout" -> string!
+const SharedKernel.PageSections.PageSectionFields.Level = "level" -> string!
+const SharedKernel.PageSections.PageSectionFields.Link = "link" -> string!
+const SharedKernel.PageSections.PageSectionFields.LinkText = "text" -> string!
+const SharedKernel.PageSections.PageSectionFields.Name = "name" -> string!
+const SharedKernel.PageSections.PageSectionFields.Person = "person" -> string!
+const SharedKernel.PageSections.PageSectionFields.PosterImageId = "posterImageId" -> string!
+const SharedKernel.PageSections.PageSectionFields.Question = "question" -> string!
+const SharedKernel.PageSections.PageSectionFields.Questions = "questions" -> string!
+const SharedKernel.PageSections.PageSectionFields.QuoteText = "text" -> string!
+const SharedKernel.PageSections.PageSectionFields.Quotes = "quotes" -> string!
+const SharedKernel.PageSections.PageSectionFields.Role = "role" -> string!
+const SharedKernel.PageSections.PageSectionFields.Style = "style" -> string!
+const SharedKernel.PageSections.PageSectionFields.Text = "text" -> string!
+const SharedKernel.PageSections.PageSectionFields.Title = "title" -> string!
+const SharedKernel.PageSections.PageSectionFields.Tone = "tone" -> string!
+const SharedKernel.PageSections.PageSectionFields.Video = "video" -> string!
+override SharedKernel.PageSections.NoExtra.GetHashCode() -> int
+override SharedKernel.PageSections.PageLink<TLink>.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageLink<TLink>.GetHashCode() -> int
+override SharedKernel.PageSections.PageLink<TLink>.ToString() -> string!
+override SharedKernel.PageSections.PagePerson<TImageId>.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PagePerson<TImageId>.GetHashCode() -> int
+override SharedKernel.PageSections.PagePerson<TImageId>.ToString() -> string!
+override SharedKernel.PageSections.PagePersonDefinition<TImageId>.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PagePersonDefinition<TImageId>.GetHashCode() -> int
+override SharedKernel.PageSections.PagePersonDefinition<TImageId>.ToString() -> string!
+override SharedKernel.PageSections.PageQuestion.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageQuestion.GetHashCode() -> int
+override SharedKernel.PageSections.PageQuestionDefinition.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageQuestionDefinition.GetHashCode() -> int
+override SharedKernel.PageSections.PageQuestionDefinition.ToString() -> string!
+override SharedKernel.PageSections.PageQuote.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageQuote.GetHashCode() -> int
+override SharedKernel.PageSections.PageQuote.ToString() -> string!
+override SharedKernel.PageSections.PageQuoteDefinition.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageQuoteDefinition.GetHashCode() -> int
+override SharedKernel.PageSections.PageQuoteDefinition.ToString() -> string!
+override SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.GetHashCode() -> int
+override SharedKernel.PageSections.PageVideo<TImageId>.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageVideo<TImageId>.GetHashCode() -> int
+override SharedKernel.PageSections.PageVideo<TImageId>.ToString() -> string!
+override SharedKernel.PageSections.PageVideoDefinition<TImageId>.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageVideoDefinition<TImageId>.GetHashCode() -> int
+override SharedKernel.PageSections.PageVideoDefinition<TImageId>.ToString() -> string!
+static SharedKernel.PageSections.NoExtra.operator !=(SharedKernel.PageSections.NoExtra left, SharedKernel.PageSections.NoExtra right) -> bool
+static SharedKernel.PageSections.NoExtra.operator ==(SharedKernel.PageSections.NoExtra left, SharedKernel.PageSections.NoExtra right) -> bool
+static SharedKernel.PageSections.PageLink<TLink>.operator !=(SharedKernel.PageSections.PageLink<TLink>? left, SharedKernel.PageSections.PageLink<TLink>? right) -> bool
+static SharedKernel.PageSections.PageLink<TLink>.operator ==(SharedKernel.PageSections.PageLink<TLink>? left, SharedKernel.PageSections.PageLink<TLink>? right) -> bool
+static SharedKernel.PageSections.PagePerson<TImageId>.operator !=(SharedKernel.PageSections.PagePerson<TImageId>? left, SharedKernel.PageSections.PagePerson<TImageId>? right) -> bool
+static SharedKernel.PageSections.PagePerson<TImageId>.operator ==(SharedKernel.PageSections.PagePerson<TImageId>? left, SharedKernel.PageSections.PagePerson<TImageId>? right) -> bool
+static SharedKernel.PageSections.PagePersonDefinition<TImageId>.operator !=(SharedKernel.PageSections.PagePersonDefinition<TImageId>? left, SharedKernel.PageSections.PagePersonDefinition<TImageId>? right) -> bool
+static SharedKernel.PageSections.PagePersonDefinition<TImageId>.operator ==(SharedKernel.PageSections.PagePersonDefinition<TImageId>? left, SharedKernel.PageSections.PagePersonDefinition<TImageId>? right) -> bool
+static SharedKernel.PageSections.PageQuestionDefinition.operator !=(SharedKernel.PageSections.PageQuestionDefinition? left, SharedKernel.PageSections.PageQuestionDefinition? right) -> bool
+static SharedKernel.PageSections.PageQuestionDefinition.operator ==(SharedKernel.PageSections.PageQuestionDefinition? left, SharedKernel.PageSections.PageQuestionDefinition? right) -> bool
+static SharedKernel.PageSections.PageQuote.operator !=(SharedKernel.PageSections.PageQuote? left, SharedKernel.PageSections.PageQuote? right) -> bool
+static SharedKernel.PageSections.PageQuote.operator ==(SharedKernel.PageSections.PageQuote? left, SharedKernel.PageSections.PageQuote? right) -> bool
+static SharedKernel.PageSections.PageQuoteDefinition.operator !=(SharedKernel.PageSections.PageQuoteDefinition? left, SharedKernel.PageSections.PageQuoteDefinition? right) -> bool
+static SharedKernel.PageSections.PageQuoteDefinition.operator ==(SharedKernel.PageSections.PageQuoteDefinition? left, SharedKernel.PageSections.PageQuoteDefinition? right) -> bool
+static SharedKernel.PageSections.PageSectionFields.Images(SharedKernel.BuildingBlocks.ContentCulture! culture) -> string!
+static SharedKernel.PageSections.PageSectionFields.Section(string! prefix, int index) -> string!
+static SharedKernel.PageSections.PageSectionList.FindIneligible<TImageId, TLink, TExtra>(System.Collections.Generic.IEnumerable<SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>!>! sections, SharedKernel.BuildingBlocks.ContentCulture! culture, SharedKernel.BuildingBlocks.IImageEligibility<TImageId>! images) -> System.Collections.Generic.IReadOnlyList<TImageId>!
+static SharedKernel.PageSections.PageSectionList.ImagesShown<TImageId, TLink, TExtra>(System.Collections.Generic.IEnumerable<SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>!>! sections) -> System.Collections.Generic.IReadOnlyList<TImageId>!
+static SharedKernel.PageSections.PageVideo<TImageId>.operator !=(SharedKernel.PageSections.PageVideo<TImageId>? left, SharedKernel.PageSections.PageVideo<TImageId>? right) -> bool
+static SharedKernel.PageSections.PageVideo<TImageId>.operator ==(SharedKernel.PageSections.PageVideo<TImageId>? left, SharedKernel.PageSections.PageVideo<TImageId>? right) -> bool
+static SharedKernel.PageSections.PageVideoDefinition<TImageId>.operator !=(SharedKernel.PageSections.PageVideoDefinition<TImageId>? left, SharedKernel.PageSections.PageVideoDefinition<TImageId>? right) -> bool
+static SharedKernel.PageSections.PageVideoDefinition<TImageId>.operator ==(SharedKernel.PageSections.PageVideoDefinition<TImageId>? left, SharedKernel.PageSections.PageVideoDefinition<TImageId>? right) -> bool
+~override SharedKernel.PageSections.NoExtra.Equals(object obj) -> bool
+~override SharedKernel.PageSections.NoExtra.ToString() -> string
+SharedKernel.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>
+SharedKernel.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.CountsAsContent(TExtra extra) -> bool
+SharedKernel.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.ValidateExtra(TExtra extra, bool published, string! field) -> SharedKernel.Results.Result<TExtra>
+SharedKernel.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.ValidateLink(TLinkInput! input, string! field) -> SharedKernel.Results.Result<TLink>
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Deconstruct(out string? Text, out TLinkInput? Target, out SharedKernel.PageSections.LinkStyle Style) -> void
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.PageLinkDefinition(string? Text, TLinkInput? Target, SharedKernel.PageSections.LinkStyle Style = SharedKernel.PageSections.LinkStyle.Primary) -> void
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Style.get -> SharedKernel.PageSections.LinkStyle
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Style.init -> void
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Target.get -> TLinkInput?
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Target.init -> void
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Text.get -> string?
+SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Text.init -> void
+SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>.ToDefinition<TLinkInput>(System.Func<TLink, TLinkInput!>! linkInput) -> SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>!
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.BackgroundImageId.get -> TImageId?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.BackgroundImageId.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Extra.get -> TExtra
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Extra.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Eyebrow.get -> string?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Eyebrow.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Heading.get -> string?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Heading.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageIds.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageLayout.get -> SharedKernel.PageSections.SectionImageLayout
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageLayout.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Level.get -> SharedKernel.PageSections.SectionLevel
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Level.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Link.get -> SharedKernel.PageSections.PageLinkDefinition<TLinkInput!>?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Link.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.PageSectionDefinition() -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Person.get -> SharedKernel.PageSections.PagePersonDefinition<TImageId>?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Person.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Questions.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.PageSections.PageQuestionDefinition!>?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Questions.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Quotes.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.PageSections.PageQuoteDefinition!>?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Quotes.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Text.get -> string?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Text.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Tone.get -> SharedKernel.PageSections.SectionTone
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Tone.init -> void
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Video.get -> SharedKernel.PageSections.PageVideoDefinition<TImageId>?
+SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Video.init -> void
+SharedKernel.PageSections.PageSectionScope
+SharedKernel.PageSections.PageSectionScope.<Clone>$() -> SharedKernel.PageSections.PageSectionScope!
+SharedKernel.PageSections.PageSectionScope.CheckImageEligibility.get -> bool
+SharedKernel.PageSections.PageSectionScope.CheckImageEligibility.init -> void
+SharedKernel.PageSections.PageSectionScope.Culture.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.PageSections.PageSectionScope.Deconstruct(out SharedKernel.BuildingBlocks.ContentCulture! Culture, out bool Published, out string! FieldPrefix, out string! ImagesField) -> void
+SharedKernel.PageSections.PageSectionScope.Equals(SharedKernel.PageSections.PageSectionScope? other) -> bool
+SharedKernel.PageSections.PageSectionScope.FieldPrefix.get -> string!
+SharedKernel.PageSections.PageSectionScope.ImagesField.get -> string!
+SharedKernel.PageSections.PageSectionScope.PageSectionScope(SharedKernel.BuildingBlocks.ContentCulture! Culture, bool Published, string! FieldPrefix, string! ImagesField) -> void
+SharedKernel.PageSections.PageSectionScope.Published.get -> bool
+SharedKernel.PageSections.PageSectionScope.Published.init -> void
+override SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.GetHashCode() -> int
+override SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.ToString() -> string!
+override SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.GetHashCode() -> int
+override SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ToString() -> string!
+override SharedKernel.PageSections.PageSectionScope.Equals(object? obj) -> bool
+override SharedKernel.PageSections.PageSectionScope.GetHashCode() -> int
+override SharedKernel.PageSections.PageSectionScope.ToString() -> string!
+static SharedKernel.PageSections.PageSection.Restore<TImageId, TLinkInput, TLink, TExtra>(SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>! definition, System.Func<TLinkInput!, TLink>! restoreLink) -> SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>!
+static SharedKernel.PageSections.PageSectionList.Create<TImageId, TLinkInput, TLink, TExtra>(System.Collections.Generic.IReadOnlyList<SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>!>? definitions, SharedKernel.PageSections.PageSectionRules! rules, SharedKernel.PageSections.IPageSectionContext<TImageId, TLinkInput!, TLink, TExtra>! context, SharedKernel.PageSections.PageSectionScope! scope) -> SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.PageSections.PageSection<TImageId, TLink, TExtra>!>!>
+static SharedKernel.PageSections.PageSectionScope.operator !=(SharedKernel.PageSections.PageSectionScope? left, SharedKernel.PageSections.PageSectionScope? right) -> bool
+static SharedKernel.PageSections.PageSectionScope.operator ==(SharedKernel.PageSections.PageSectionScope? left, SharedKernel.PageSections.PageSectionScope? right) -> bool
+~SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.<Clone>$() -> SharedKernel.PageSections.PageLinkDefinition<TLinkInput>!
+~SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.Equals(SharedKernel.PageSections.PageLinkDefinition<TLinkInput>? other) -> bool
+~SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.<Clone>$() -> SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>!
+~SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Equals(SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? other) -> bool
+~static SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.operator !=(SharedKernel.PageSections.PageLinkDefinition<TLinkInput>? left, SharedKernel.PageSections.PageLinkDefinition<TLinkInput>? right) -> bool
+~static SharedKernel.PageSections.PageLinkDefinition<TLinkInput>.operator ==(SharedKernel.PageSections.PageLinkDefinition<TLinkInput>? left, SharedKernel.PageSections.PageLinkDefinition<TLinkInput>? right) -> bool
+~static SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.operator !=(SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? left, SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? right) -> bool
+~static SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.operator ==(SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? left, SharedKernel.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? right) -> bool

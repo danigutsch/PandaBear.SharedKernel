@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>Tests whole HTTP content reads that refuse content over a limit.</summary>
 public sealed class BoundedReaderContentTests

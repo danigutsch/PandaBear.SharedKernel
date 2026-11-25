@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Messaging.Protobuf</PackageId>
         <Description>Protobuf payload serialization and the CloudEvents Protobuf event format for integration-event messaging.</Description>
-        <RootNamespace>PandaBear.Messaging.Protobuf</RootNamespace>
+        <RootNamespace>SharedKernel.Messaging.Protobuf</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

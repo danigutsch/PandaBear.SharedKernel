@@ -1,6 +1,6 @@
-using PandaBear.Vault.Merge;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>Command-line values of a merge.</summary>
 /// <param name="Inputs">Vault export files, in order.</param>

@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the ClamAV container resource builder: image, endpoint, health check, definition storage, update daemon and consumer references.</summary>
 public sealed class ClamAvResourceTests

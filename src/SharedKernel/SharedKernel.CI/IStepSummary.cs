@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Appends Markdown to the summary of the current step of a forge's workflow run, such as the <c>GITHUB_STEP_SUMMARY</c>

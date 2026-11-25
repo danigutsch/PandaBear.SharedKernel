@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Web;
+namespace SharedKernel.Testing.Web;
 
 /// <summary>
 /// Shared assertions for rendered web element metadata.

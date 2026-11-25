@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The classes of the button look, shared by <see cref="ButtonLink" /> and the more look of a <see cref="Card" />, so both are identical.</summary>
 internal static class ButtonStyle

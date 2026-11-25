@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests how roadmap import and reconcile treat references to issues in other repositories.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

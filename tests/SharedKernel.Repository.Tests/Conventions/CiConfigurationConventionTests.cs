@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>
 /// Guards this repository's <c>.config/sharedkernel-ci.json</c> against selections that miss a package or a service, and against tests that

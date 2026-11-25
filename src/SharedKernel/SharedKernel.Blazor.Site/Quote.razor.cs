@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>A testimonial: a <c>blockquote</c> and the <c>cite</c> of its source in a <c>figcaption</c>.</summary>
 public sealed partial class Quote

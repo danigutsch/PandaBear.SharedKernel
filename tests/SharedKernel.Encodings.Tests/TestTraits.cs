@@ -1,4 +1,4 @@
-namespace PandaBear.Encodings.Tests;
+namespace SharedKernel.Encodings.Tests;
 
 /// <summary>Trait values used to tag encoding tests.</summary>
 internal static class TestTraits

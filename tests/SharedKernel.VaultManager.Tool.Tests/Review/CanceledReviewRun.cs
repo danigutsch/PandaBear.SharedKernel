@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>What happened when a review was canceled while a dialog was open.</summary>
 /// <param name="ExitCode">Exit code the review returned.</param>

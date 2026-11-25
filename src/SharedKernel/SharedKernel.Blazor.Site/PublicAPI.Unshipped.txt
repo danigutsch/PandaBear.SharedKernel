@@ -1,1194 +1,1194 @@
 #nullable enable
-PandaBear.Blazor.Site.AlbumIndex.CardStyle.get -> PandaBear.Blazor.Site.CardStyle
-PandaBear.Blazor.Site.AlbumIndex.CardStyle.set -> void
-PandaBear.Blazor.Site.AlbumIndex.Gap.get -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.AlbumIndex.Gap.set -> void
-PandaBear.Blazor.Site.AlbumIndex.ImageAspect.get -> PandaBear.Blazor.Site.CardImageAspect
-PandaBear.Blazor.Site.AlbumIndex.ImageAspect.set -> void
-PandaBear.Blazor.Site.AlbumIndex.ImageShadow.get -> PandaBear.Blazor.Site.CardImageShadow
-PandaBear.Blazor.Site.AlbumIndex.ImageShadow.set -> void
-PandaBear.Blazor.Site.AlbumIndex.ItemAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.AlbumIndex.ItemAlignment.set -> void
-PandaBear.Blazor.Site.AlbumIndex.MaxColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth?
-PandaBear.Blazor.Site.AlbumIndex.MaxColumnWidth.set -> void
-PandaBear.Blazor.Site.AlbumIndex.MinColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth
-PandaBear.Blazor.Site.AlbumIndex.MinColumnWidth.set -> void
-PandaBear.Blazor.Site.AlbumIndex.MoreSize.get -> PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.AlbumIndex.MoreSize.set -> void
-PandaBear.Blazor.Site.AlbumIndex.MoreText.get -> string?
-PandaBear.Blazor.Site.AlbumIndex.MoreText.set -> void
-PandaBear.Blazor.Site.AlbumIndex.MoreVariant.get -> PandaBear.Blazor.Site.ButtonVariant
-PandaBear.Blazor.Site.AlbumIndex.MoreVariant.set -> void
-PandaBear.Blazor.Site.AlbumIndex.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.AlbumIndex.TextAlignment.set -> void
-PandaBear.Blazor.Site.ButtonLink.Size.get -> PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.ButtonLink.Size.set -> void
-PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.ButtonSize.Compact = 1 -> PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.ButtonSize.Regular = 0 -> PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.Card.CardStyle.get -> PandaBear.Blazor.Site.CardStyle
-PandaBear.Blazor.Site.Card.CardStyle.set -> void
-PandaBear.Blazor.Site.Card.Eyebrow.get -> string?
-PandaBear.Blazor.Site.Card.Eyebrow.set -> void
-PandaBear.Blazor.Site.Card.ImageAspect.get -> PandaBear.Blazor.Site.CardImageAspect
-PandaBear.Blazor.Site.Card.ImageAspect.set -> void
-PandaBear.Blazor.Site.Card.ImageShadow.get -> PandaBear.Blazor.Site.CardImageShadow
-PandaBear.Blazor.Site.Card.ImageShadow.set -> void
-PandaBear.Blazor.Site.Card.MoreSize.get -> PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.Card.MoreSize.set -> void
-PandaBear.Blazor.Site.Card.MoreText.get -> string?
-PandaBear.Blazor.Site.Card.MoreText.set -> void
-PandaBear.Blazor.Site.Card.MoreVariant.get -> PandaBear.Blazor.Site.ButtonVariant
-PandaBear.Blazor.Site.Card.MoreVariant.set -> void
-PandaBear.Blazor.Site.Card.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.Card.TextAlignment.set -> void
-PandaBear.Blazor.Site.CardColumnWidth
-PandaBear.Blazor.Site.CardColumnWidth.Medium = 1 -> PandaBear.Blazor.Site.CardColumnWidth
-PandaBear.Blazor.Site.CardColumnWidth.Narrow = 0 -> PandaBear.Blazor.Site.CardColumnWidth
-PandaBear.Blazor.Site.CardColumnWidth.Wide = 2 -> PandaBear.Blazor.Site.CardColumnWidth
-PandaBear.Blazor.Site.CardGrid.Gap.get -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.CardGrid.Gap.set -> void
-PandaBear.Blazor.Site.CardGrid.ItemAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.CardGrid.ItemAlignment.set -> void
-PandaBear.Blazor.Site.CardGrid.MaxColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth?
-PandaBear.Blazor.Site.CardGrid.MaxColumnWidth.set -> void
-PandaBear.Blazor.Site.CardGrid.MinColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth
-PandaBear.Blazor.Site.CardGrid.MinColumnWidth.set -> void
-PandaBear.Blazor.Site.CardImageAspect
-PandaBear.Blazor.Site.CardImageAspect.FourByThree = 0 -> PandaBear.Blazor.Site.CardImageAspect
-PandaBear.Blazor.Site.CardImageAspect.Natural = 3 -> PandaBear.Blazor.Site.CardImageAspect
-PandaBear.Blazor.Site.CardImageAspect.SixteenByNine = 1 -> PandaBear.Blazor.Site.CardImageAspect
-PandaBear.Blazor.Site.CardImageAspect.Square = 2 -> PandaBear.Blazor.Site.CardImageAspect
-PandaBear.Blazor.Site.CardImageShadow
-PandaBear.Blazor.Site.CardImageShadow.None = 0 -> PandaBear.Blazor.Site.CardImageShadow
-PandaBear.Blazor.Site.CardImageShadow.Offset = 1 -> PandaBear.Blazor.Site.CardImageShadow
-PandaBear.Blazor.Site.CardStyle
-PandaBear.Blazor.Site.CardStyle.Boxed = 0 -> PandaBear.Blazor.Site.CardStyle
-PandaBear.Blazor.Site.CardStyle.Plain = 1 -> PandaBear.Blazor.Site.CardStyle
-PandaBear.Blazor.Site.FooterTone
-PandaBear.Blazor.Site.FooterTone.Default = 0 -> PandaBear.Blazor.Site.FooterTone
-PandaBear.Blazor.Site.FooterTone.Primary = 1 -> PandaBear.Blazor.Site.FooterTone
-PandaBear.Blazor.Site.Hero.Divider.get -> bool
-PandaBear.Blazor.Site.Hero.Divider.set -> void
-PandaBear.Blazor.Site.SeparatedList
-PandaBear.Blazor.Site.SeparatedList.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.SeparatedList.ChildContent.set -> void
-PandaBear.Blazor.Site.SeparatedList.SeparatedList() -> void
-PandaBear.Blazor.Site.SeparatedListItem
-PandaBear.Blazor.Site.SeparatedListItem.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.SeparatedListItem.ChildContent.set -> void
-PandaBear.Blazor.Site.SeparatedListItem.SeparatedListItem() -> void
-PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.SiteAlignment.Center = 1 -> PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.SiteAlignment.Start = 0 -> PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.SiteFooter.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.SiteFooter.TextAlignment.set -> void
-PandaBear.Blazor.Site.SiteFooter.Tone.get -> PandaBear.Blazor.Site.FooterTone
-PandaBear.Blazor.Site.SiteFooter.Tone.set -> void
-PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.SiteSpace.None = 0 -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.SiteSpace.Space1 = 1 -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.SiteSpace.Space2 = 2 -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.SiteSpace.Space3 = 3 -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.SiteSpace.Space4 = 4 -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.SiteSpace.Space5 = 5 -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.SiteSpace.Space6 = 6 -> PandaBear.Blazor.Site.SiteSpace
-PandaBear.Blazor.Site.Theming.ControlShape
-PandaBear.Blazor.Site.Theming.ControlShape.Pill = 2 -> PandaBear.Blazor.Site.Theming.ControlShape
-PandaBear.Blazor.Site.Theming.ControlShape.Rounded = 0 -> PandaBear.Blazor.Site.Theming.ControlShape
-PandaBear.Blazor.Site.Theming.ControlShape.Square = 1 -> PandaBear.Blazor.Site.Theming.ControlShape
-const PandaBear.Blazor.Site.Theming.FontSize.FluidFromWidth = 20 -> decimal
-const PandaBear.Blazor.Site.Theming.FontSize.FluidToWidth = 80 -> decimal
-const PandaBear.Blazor.Site.Theming.FontSize.Largest = 10 -> decimal
-const PandaBear.Blazor.Site.Theming.FontSize.Smallest = 0.5 -> decimal
-const PandaBear.Blazor.Site.Theming.SiteColors.DerivedHoverWeight = 0.2 -> double
-PandaBear.Blazor.Site.Theming.SiteShape
-PandaBear.Blazor.Site.Theming.SiteShape.Control.get -> PandaBear.Blazor.Site.Theming.ControlShape
-static PandaBear.Blazor.Site.Theming.SiteShape.Create(PandaBear.Blazor.Site.Theming.ControlShape control = PandaBear.Blazor.Site.Theming.ControlShape.Rounded, decimal dividerWidth = 4, decimal dividerThickness = 0.25, PandaBear.Blazor.Site.Theming.ThemeColorRole dividerColor = PandaBear.Blazor.Site.Theming.ThemeColorRole.Accent) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteShape!>
-static PandaBear.Blazor.Site.Theming.SiteShape.Default.get -> PandaBear.Blazor.Site.Theming.SiteShape!
-const PandaBear.Blazor.Site.Theming.SiteShape.DefaultDividerThickness = 0.25 -> decimal
-const PandaBear.Blazor.Site.Theming.SiteShape.DefaultDividerWidth = 4 -> decimal
-PandaBear.Blazor.Site.Theming.SiteShape.DividerColor.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.SiteShape.DividerThickness.get -> decimal
-PandaBear.Blazor.Site.Theming.SiteShape.DividerWidth.get -> decimal
-override PandaBear.Blazor.Site.Theming.SiteShape.ToString() -> string!
-static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null, PandaBear.Blazor.Site.Theming.SiteShape? shape = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
-static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, PandaBear.Blazor.Site.Theming.SiteShape? shape = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
-PandaBear.Blazor.Site.Theming.SiteTheme.Shape.get -> PandaBear.Blazor.Site.Theming.SiteShape!
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.HeadingColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ShapeVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.ControlShape.get -> PandaBear.Blazor.Site.Theming.ControlShape?
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.ControlShape.set -> void
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerColor.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole?
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerColor.set -> void
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerThickness.get -> decimal?
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerThickness.set -> void
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerWidth.get -> decimal?
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerWidth.set -> void
-const PandaBear.Blazor.Site.Theming.ThemeFont.MaxFamilyLength = 64 -> int
-const PandaBear.Blazor.Site.Theming.ThemeFont.MaxKeyLength = 32 -> int
-PandaBear.Blazor.Site.Theming.TypographyFields.Color.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole?
-PandaBear.Blazor.Site.Theming.TypographyFields.Color.set -> void
-PandaBear.Blazor.Site.Theming.TypographyRole.CardTitle = 11 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyStyle.Color.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole?
-static PandaBear.Blazor.Site.Theming.TypographyStyle.Create(string? fontKey = null, PandaBear.Blazor.Site.Theming.GenericFontFamily? fallback = null, PandaBear.Blazor.Site.Theming.FontSize? size = null, int? weight = null, decimal? lineHeight = null, decimal? letterSpacing = null, PandaBear.Blazor.Site.Theming.ThemeTextTransform? transform = null, bool? italic = null, PandaBear.Blazor.Site.Theming.ThemeColorRole? color = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.TypographyStyle!>
-const PandaBear.Blazor.Site.Theming.TypographyStyle.MaxLetterSpacing = 0.5 -> decimal
-const PandaBear.Blazor.Site.Theming.TypographyStyle.MaxLineHeight = 3 -> decimal
-const PandaBear.Blazor.Site.Theming.TypographyStyle.MinLetterSpacing = -0.1 -> decimal
-const PandaBear.Blazor.Site.Theming.TypographyStyle.MinLineHeight = 0.8 -> decimal
-override PandaBear.Blazor.Site.ImageAlternative.ToString() -> string!
-override PandaBear.Blazor.Site.ImageCandidate.ToString() -> string!
-override PandaBear.Blazor.Site.ImageSource.ToString() -> string!
-override PandaBear.Blazor.Site.LinkTarget.ToString() -> string!
-override PandaBear.Blazor.Site.ResponsiveImage.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.CssColor.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.FontSize.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.SiteTheme.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.ThemeColor.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.ThemeFont.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.ThemeFontFace.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.TypographyStyle.ToString() -> string!
-PandaBear.Blazor.Site.AlternateLink
-PandaBear.Blazor.Site.AlternateLink.AlternateLink(PandaBear.BuildingBlocks.ContentCulture! Culture, System.Uri! Href) -> void
-PandaBear.Blazor.Site.AlternateLink.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.Blazor.Site.AlternateLink.Culture.init -> void
-PandaBear.Blazor.Site.AlternateLink.Href.get -> System.Uri!
-PandaBear.Blazor.Site.AlternateLink.Href.init -> void
-PandaBear.Blazor.Site.ButtonLink
-PandaBear.Blazor.Site.ButtonLink.ButtonLink() -> void
-PandaBear.Blazor.Site.ButtonLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.ButtonLink.ChildContent.set -> void
-PandaBear.Blazor.Site.ButtonLink.Href.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.ButtonLink.Href.set -> void
-PandaBear.Blazor.Site.ButtonLink.NewTab.get -> bool
-PandaBear.Blazor.Site.ButtonLink.NewTab.set -> void
-PandaBear.Blazor.Site.ButtonLink.NewTabHint.get -> string!
-PandaBear.Blazor.Site.ButtonLink.NewTabHint.set -> void
-PandaBear.Blazor.Site.ButtonLink.Variant.get -> PandaBear.Blazor.Site.ButtonVariant
-PandaBear.Blazor.Site.ButtonLink.Variant.set -> void
-PandaBear.Blazor.Site.ButtonVariant
-PandaBear.Blazor.Site.ButtonVariant.Outline = 2 -> PandaBear.Blazor.Site.ButtonVariant
-PandaBear.Blazor.Site.ButtonVariant.Primary = 0 -> PandaBear.Blazor.Site.ButtonVariant
-PandaBear.Blazor.Site.ButtonVariant.Secondary = 1 -> PandaBear.Blazor.Site.ButtonVariant
-PandaBear.Blazor.Site.Card
-PandaBear.Blazor.Site.Card.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Card.Actions.set -> void
-PandaBear.Blazor.Site.Card.Card() -> void
-PandaBear.Blazor.Site.Card.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Card.ChildContent.set -> void
-PandaBear.Blazor.Site.Card.HeadingLevel.get -> int
-PandaBear.Blazor.Site.Card.HeadingLevel.set -> void
-PandaBear.Blazor.Site.Card.Href.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.Card.Href.set -> void
-PandaBear.Blazor.Site.Card.Image.get -> PandaBear.Blazor.Site.ResponsiveImage?
-PandaBear.Blazor.Site.Card.Image.set -> void
-PandaBear.Blazor.Site.Card.Title.get -> string!
-PandaBear.Blazor.Site.Card.Title.set -> void
-PandaBear.Blazor.Site.CardGrid
-PandaBear.Blazor.Site.CardGrid.CardGrid() -> void
-PandaBear.Blazor.Site.CardGrid.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.CardGrid.ChildContent.set -> void
-PandaBear.Blazor.Site.ContactCard
-PandaBear.Blazor.Site.ContactCard.AddressLines.get -> System.Collections.Generic.IReadOnlyList<string!>?
-PandaBear.Blazor.Site.ContactCard.AddressLines.set -> void
-PandaBear.Blazor.Site.ContactCard.ContactCard() -> void
-PandaBear.Blazor.Site.ContactCard.Email.get -> PandaBear.BuildingBlocks.EmailAddress?
-PandaBear.Blazor.Site.ContactCard.Email.set -> void
-PandaBear.Blazor.Site.ContactCard.HeadingLevel.get -> int
-PandaBear.Blazor.Site.ContactCard.HeadingLevel.set -> void
-PandaBear.Blazor.Site.ContactCard.Phone.get -> PandaBear.BuildingBlocks.PhoneNumber?
-PandaBear.Blazor.Site.ContactCard.Phone.set -> void
-PandaBear.Blazor.Site.ContactCard.Title.get -> string?
-PandaBear.Blazor.Site.ContactCard.Title.set -> void
-PandaBear.Blazor.Site.ContactCard.WhatsApp.get -> PandaBear.BuildingBlocks.PhoneNumber?
-PandaBear.Blazor.Site.ContactCard.WhatsApp.set -> void
-PandaBear.Blazor.Site.ContactCard.WhatsAppLabel.get -> string!
-PandaBear.Blazor.Site.ContactCard.WhatsAppLabel.set -> void
-PandaBear.Blazor.Site.Disclosure
-PandaBear.Blazor.Site.Disclosure.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Disclosure.ChildContent.set -> void
-PandaBear.Blazor.Site.Disclosure.Disclosure() -> void
-PandaBear.Blazor.Site.Disclosure.Open.get -> bool
-PandaBear.Blazor.Site.Disclosure.Open.set -> void
-PandaBear.Blazor.Site.Disclosure.Summary.get -> string!
-PandaBear.Blazor.Site.Disclosure.Summary.set -> void
-PandaBear.Blazor.Site.FactRow
-PandaBear.Blazor.Site.FactRow.FactRow(string! Label, string! Value) -> void
-PandaBear.Blazor.Site.FactRow.Label.get -> string!
-PandaBear.Blazor.Site.FactRow.Label.init -> void
-PandaBear.Blazor.Site.FactRow.Value.get -> string!
-PandaBear.Blazor.Site.FactRow.Value.init -> void
-PandaBear.Blazor.Site.FactsTable
-PandaBear.Blazor.Site.FactsTable.Caption.get -> string!
-PandaBear.Blazor.Site.FactsTable.Caption.set -> void
-PandaBear.Blazor.Site.FactsTable.FactsTable() -> void
-PandaBear.Blazor.Site.FactsTable.Rows.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactRow!>!
-PandaBear.Blazor.Site.FactsTable.Rows.set -> void
-PandaBear.Blazor.Site.GalleryImage
-PandaBear.Blazor.Site.GalleryImage.Caption.get -> string?
-PandaBear.Blazor.Site.GalleryImage.Caption.init -> void
-PandaBear.Blazor.Site.GalleryImage.GalleryImage(PandaBear.Blazor.Site.ResponsiveImage! Image, string? Caption = null) -> void
-PandaBear.Blazor.Site.GalleryImage.Image.get -> PandaBear.Blazor.Site.ResponsiveImage!
-PandaBear.Blazor.Site.GalleryImage.Image.init -> void
-PandaBear.Blazor.Site.GalleryImage.TextLanguage.get -> string?
-PandaBear.Blazor.Site.GalleryImage.TextLanguage.init -> void
-PandaBear.Blazor.Site.Hero
-PandaBear.Blazor.Site.Hero.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Hero.Actions.set -> void
-PandaBear.Blazor.Site.Hero.Eyebrow.get -> string?
-PandaBear.Blazor.Site.Hero.Eyebrow.set -> void
-PandaBear.Blazor.Site.Hero.Hero() -> void
-PandaBear.Blazor.Site.Hero.Image.get -> PandaBear.Blazor.Site.ResponsiveImage?
-PandaBear.Blazor.Site.Hero.Image.set -> void
-PandaBear.Blazor.Site.Hero.Subtitle.get -> string?
-PandaBear.Blazor.Site.Hero.Subtitle.set -> void
-PandaBear.Blazor.Site.Hero.Title.get -> string!
-PandaBear.Blazor.Site.Hero.Title.set -> void
-PandaBear.Blazor.Site.ImageAlternative
-PandaBear.Blazor.Site.ImageAlternative.IsDecorative.get -> bool
-PandaBear.Blazor.Site.ImageAlternative.Text.get -> string!
-PandaBear.Blazor.Site.ImageCandidate
-PandaBear.Blazor.Site.ImageCandidate.Density.get -> decimal?
-PandaBear.Blazor.Site.ImageCandidate.Src.get -> PandaBear.Blazor.Site.LinkTarget!
-PandaBear.Blazor.Site.ImageCandidate.Width.get -> int?
-PandaBear.Blazor.Site.ImageGrid
-PandaBear.Blazor.Site.ImageGrid.EagerCount.get -> int
-PandaBear.Blazor.Site.ImageGrid.EagerCount.set -> void
-PandaBear.Blazor.Site.ImageGrid.ImageGrid() -> void
-PandaBear.Blazor.Site.ImageGrid.Images.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.GalleryImage!>!
-PandaBear.Blazor.Site.ImageGrid.Images.set -> void
-PandaBear.Blazor.Site.ImageSource
-PandaBear.Blazor.Site.ImageSource.Candidates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.ImageCandidate!>!
-PandaBear.Blazor.Site.ImageSource.SrcSet.get -> string!
-PandaBear.Blazor.Site.ImageSource.Type.get -> string!
-PandaBear.Blazor.Site.ImageSource.UsesWidthDescriptors.get -> bool
-PandaBear.Blazor.Site.LanguageLink
-PandaBear.Blazor.Site.LanguageLink.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.Blazor.Site.LanguageLink.Culture.init -> void
-PandaBear.Blazor.Site.LanguageLink.Href.get -> PandaBear.Blazor.Site.LinkTarget!
-PandaBear.Blazor.Site.LanguageLink.Href.init -> void
-PandaBear.Blazor.Site.LanguageLink.IsCurrent.get -> bool
-PandaBear.Blazor.Site.LanguageLink.IsCurrent.init -> void
-PandaBear.Blazor.Site.LanguageLink.Label.get -> string!
-PandaBear.Blazor.Site.LanguageLink.Label.init -> void
-PandaBear.Blazor.Site.LanguageLink.LanguageLink(PandaBear.BuildingBlocks.ContentCulture! Culture, string! Label, PandaBear.Blazor.Site.LinkTarget! Href, bool IsCurrent = false) -> void
-PandaBear.Blazor.Site.LanguageSwitcher
-PandaBear.Blazor.Site.LanguageSwitcher.Label.get -> string!
-PandaBear.Blazor.Site.LanguageSwitcher.Label.set -> void
-PandaBear.Blazor.Site.LanguageSwitcher.Languages.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.LanguageLink!>!
-PandaBear.Blazor.Site.LanguageSwitcher.Languages.set -> void
-PandaBear.Blazor.Site.LanguageSwitcher.LanguageSwitcher() -> void
-PandaBear.Blazor.Site.LinkTarget
-PandaBear.Blazor.Site.LinkTarget.Value.get -> string!
-PandaBear.Blazor.Site.PageHead
-PandaBear.Blazor.Site.PageHead.Alternates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.AlternateLink!>!
-PandaBear.Blazor.Site.PageHead.Alternates.set -> void
-PandaBear.Blazor.Site.PageHead.CanonicalUrl.get -> System.Uri?
-PandaBear.Blazor.Site.PageHead.CanonicalUrl.set -> void
-PandaBear.Blazor.Site.PageHead.DefaultAlternateUrl.get -> System.Uri?
-PandaBear.Blazor.Site.PageHead.DefaultAlternateUrl.set -> void
-PandaBear.Blazor.Site.PageHead.Description.get -> string?
-PandaBear.Blazor.Site.PageHead.Description.set -> void
-PandaBear.Blazor.Site.PageHead.ImageUrl.get -> System.Uri?
-PandaBear.Blazor.Site.PageHead.ImageUrl.set -> void
-PandaBear.Blazor.Site.PageHead.Locale.get -> PandaBear.BuildingBlocks.ContentCulture?
-PandaBear.Blazor.Site.PageHead.Locale.set -> void
-PandaBear.Blazor.Site.PageHead.PageHead() -> void
-PandaBear.Blazor.Site.PageHead.Robots.get -> string?
-PandaBear.Blazor.Site.PageHead.Robots.set -> void
-PandaBear.Blazor.Site.PageHead.SiteName.get -> string?
-PandaBear.Blazor.Site.PageHead.SiteName.set -> void
-PandaBear.Blazor.Site.PageHead.Title.get -> string!
-PandaBear.Blazor.Site.PageHead.Title.set -> void
-PandaBear.Blazor.Site.Quote
-PandaBear.Blazor.Site.Quote.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Quote.ChildContent.set -> void
-PandaBear.Blazor.Site.Quote.Cite.get -> string?
-PandaBear.Blazor.Site.Quote.Cite.set -> void
-PandaBear.Blazor.Site.Quote.Quote() -> void
-PandaBear.Blazor.Site.ResponsiveImage
-PandaBear.Blazor.Site.ResponsiveImage.Alt.get -> PandaBear.Blazor.Site.ImageAlternative!
-PandaBear.Blazor.Site.ResponsiveImage.Height.get -> int
-PandaBear.Blazor.Site.ResponsiveImage.Sizes.get -> string?
-PandaBear.Blazor.Site.ResponsiveImage.Sources.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.ImageSource!>!
-PandaBear.Blazor.Site.ResponsiveImage.Src.get -> PandaBear.Blazor.Site.LinkTarget!
-PandaBear.Blazor.Site.ResponsiveImage.SrcSet.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.ImageCandidate!>!
-PandaBear.Blazor.Site.ResponsiveImage.UsesPicture.get -> bool
-PandaBear.Blazor.Site.ResponsiveImage.Width.get -> int
-PandaBear.Blazor.Site.Section
-PandaBear.Blazor.Site.Section.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Section.ChildContent.set -> void
-PandaBear.Blazor.Site.Section.Divider.get -> bool
-PandaBear.Blazor.Site.Section.Divider.set -> void
-PandaBear.Blazor.Site.Section.Eyebrow.get -> string?
-PandaBear.Blazor.Site.Section.Eyebrow.set -> void
-PandaBear.Blazor.Site.Section.Intro.get -> string?
-PandaBear.Blazor.Site.Section.Intro.set -> void
-PandaBear.Blazor.Site.Section.Level.get -> int
-PandaBear.Blazor.Site.Section.Level.set -> void
-PandaBear.Blazor.Site.Section.Section() -> void
-PandaBear.Blazor.Site.Section.Title.get -> string!
-PandaBear.Blazor.Site.Section.Title.set -> void
-PandaBear.Blazor.Site.SiteComponent
-PandaBear.Blazor.Site.SiteComponent.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
-PandaBear.Blazor.Site.SiteComponent.AdditionalAttributes.set -> void
-PandaBear.Blazor.Site.SiteComponent.Class.get -> string?
-PandaBear.Blazor.Site.SiteComponent.Class.set -> void
-PandaBear.Blazor.Site.SiteComponent.CssClass(string! own) -> string!
-PandaBear.Blazor.Site.SiteComponent.SiteComponent() -> void
-PandaBear.Blazor.Site.SiteFooter
-PandaBear.Blazor.Site.SiteFooter.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.SiteFooter.ChildContent.set -> void
-PandaBear.Blazor.Site.SiteFooter.Legal.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.SiteFooter.Legal.set -> void
-PandaBear.Blazor.Site.SiteFooter.SiteFooter() -> void
-PandaBear.Blazor.Site.SiteHeader
-PandaBear.Blazor.Site.SiteHeader.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.SiteHeader.Actions.set -> void
-PandaBear.Blazor.Site.SiteHeader.Brand.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.SiteHeader.Brand.set -> void
-PandaBear.Blazor.Site.SiteHeader.CurrentPath.get -> string?
-PandaBear.Blazor.Site.SiteHeader.CurrentPath.set -> void
-PandaBear.Blazor.Site.SiteHeader.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.SiteNavItem!>!
-PandaBear.Blazor.Site.SiteHeader.Items.set -> void
-PandaBear.Blazor.Site.SiteHeader.Label.get -> string!
-PandaBear.Blazor.Site.SiteHeader.Label.set -> void
-PandaBear.Blazor.Site.SiteHeader.SiteHeader() -> void
-PandaBear.Blazor.Site.SiteNavItem
-PandaBear.Blazor.Site.SiteNavItem.Children.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.SiteNavItem!>?
-PandaBear.Blazor.Site.SiteNavItem.Children.init -> void
-PandaBear.Blazor.Site.SiteNavItem.Href.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.SiteNavItem.Href.init -> void
-PandaBear.Blazor.Site.SiteNavItem.SiteNavItem(string! Text, PandaBear.Blazor.Site.LinkTarget? Href = null, System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.SiteNavItem!>? Children = null) -> void
-PandaBear.Blazor.Site.SiteNavItem.Text.get -> string!
-PandaBear.Blazor.Site.SiteNavItem.Text.init -> void
-PandaBear.Blazor.Site.SkipLink
-PandaBear.Blazor.Site.SkipLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.SkipLink.ChildContent.set -> void
-PandaBear.Blazor.Site.SkipLink.SkipLink() -> void
-PandaBear.Blazor.Site.SkipLink.TargetId.get -> string!
-PandaBear.Blazor.Site.SkipLink.TargetId.set -> void
-PandaBear.Blazor.Site.Theming.ColorScheme
-PandaBear.Blazor.Site.Theming.ColorScheme.Dark = 1 -> PandaBear.Blazor.Site.Theming.ColorScheme
-PandaBear.Blazor.Site.Theming.ColorScheme.Light = 0 -> PandaBear.Blazor.Site.Theming.ColorScheme
-PandaBear.Blazor.Site.Theming.ContrastCheck
-PandaBear.Blazor.Site.Theming.ContrastCheck.Background.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ContrastCheck.Background.init -> void
-PandaBear.Blazor.Site.Theming.ContrastCheck.ContrastCheck(PandaBear.Blazor.Site.Theming.ThemeColorRole Foreground, PandaBear.Blazor.Site.Theming.ThemeColorRole Background, PandaBear.Blazor.Site.Theming.ColorScheme Scheme, double Ratio, double Minimum, string! Criterion) -> void
-PandaBear.Blazor.Site.Theming.ContrastCheck.Criterion.get -> string!
-PandaBear.Blazor.Site.Theming.ContrastCheck.Criterion.init -> void
-PandaBear.Blazor.Site.Theming.ContrastCheck.Foreground.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ContrastCheck.Foreground.init -> void
-PandaBear.Blazor.Site.Theming.ContrastCheck.Minimum.get -> double
-PandaBear.Blazor.Site.Theming.ContrastCheck.Minimum.init -> void
-PandaBear.Blazor.Site.Theming.ContrastCheck.Passes.get -> bool
-PandaBear.Blazor.Site.Theming.ContrastCheck.Ratio.get -> double
-PandaBear.Blazor.Site.Theming.ContrastCheck.Ratio.init -> void
-PandaBear.Blazor.Site.Theming.ContrastCheck.Scheme.get -> PandaBear.Blazor.Site.Theming.ColorScheme
-PandaBear.Blazor.Site.Theming.ContrastCheck.Scheme.init -> void
-PandaBear.Blazor.Site.Theming.CssColor
-PandaBear.Blazor.Site.Theming.CssColor.ContrastRatio(PandaBear.Blazor.Site.Theming.CssColor! other) -> double
-PandaBear.Blazor.Site.Theming.CssColor.RelativeLuminance.get -> double
-PandaBear.Blazor.Site.Theming.CssColor.Value.get -> string!
-PandaBear.Blazor.Site.Theming.FontSize
-PandaBear.Blazor.Site.Theming.FontSize.IsFluid.get -> bool
-PandaBear.Blazor.Site.Theming.FontSize.Max.get -> decimal
-PandaBear.Blazor.Site.Theming.FontSize.Min.get -> decimal
-PandaBear.Blazor.Site.Theming.GenericFontFamily
-PandaBear.Blazor.Site.Theming.GenericFontFamily.Monospace = 2 -> PandaBear.Blazor.Site.Theming.GenericFontFamily
-PandaBear.Blazor.Site.Theming.GenericFontFamily.SansSerif = 0 -> PandaBear.Blazor.Site.Theming.GenericFontFamily
-PandaBear.Blazor.Site.Theming.GenericFontFamily.Serif = 1 -> PandaBear.Blazor.Site.Theming.GenericFontFamily
-PandaBear.Blazor.Site.Theming.SiteColors
-PandaBear.Blazor.Site.Theming.SiteColors.Accent.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.AccentHover.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.Border.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.Focus.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.IsDerived(PandaBear.Blazor.Site.Theming.ThemeColorRole role) -> bool
-PandaBear.Blazor.Site.Theming.SiteColors.Muted.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.OnAccent.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.OnPrimary.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.Primary.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.PrimaryHover.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.Surface.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.SurfaceAlt.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.Text.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.this[PandaBear.Blazor.Site.Theming.ThemeColorRole role].get -> PandaBear.Blazor.Site.Theming.ThemeColor!
-PandaBear.Blazor.Site.Theming.SiteColors.With(PandaBear.Blazor.Site.Theming.ThemeColorRole role, PandaBear.Blazor.Site.Theming.ThemeColor! color) -> PandaBear.Blazor.Site.Theming.SiteColors!
-PandaBear.Blazor.Site.Theming.SiteColors.WithDerived(PandaBear.Blazor.Site.Theming.ThemeColorRole role) -> PandaBear.Blazor.Site.Theming.SiteColors!
-PandaBear.Blazor.Site.Theming.SiteTheme
-PandaBear.Blazor.Site.Theming.SiteTheme.AllowsSmallText.get -> bool
-PandaBear.Blazor.Site.Theming.SiteTheme.Colors.get -> PandaBear.Blazor.Site.Theming.SiteColors!
-PandaBear.Blazor.Site.Theming.SiteTheme.Effective(PandaBear.Blazor.Site.Theming.TypographyRole role) -> PandaBear.Blazor.Site.Theming.TypographyStyle!
-PandaBear.Blazor.Site.Theming.SiteTheme.Font(string! key) -> PandaBear.Blazor.Site.Theming.ThemeFont?
-PandaBear.Blazor.Site.Theming.SiteTheme.Fonts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeFont!>!
-PandaBear.Blazor.Site.Theming.SiteTheme.Review(System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Blazor.Site.Theming.SiteThemeReview!
-PandaBear.Blazor.Site.Theming.SiteTheme.Typography.get -> PandaBear.Blazor.Site.Theming.SiteTypography!
-PandaBear.Blazor.Site.Theming.SiteThemeReview
-PandaBear.Blazor.Site.Theming.SiteThemeReview.Contrast.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ContrastCheck!>!
-PandaBear.Blazor.Site.Theming.SiteThemeReview.Errors.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeIssue!>!
-PandaBear.Blazor.Site.Theming.SiteThemeReview.HasErrors.get -> bool
-PandaBear.Blazor.Site.Theming.SiteThemeReview.ToValidationErrors() -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
-PandaBear.Blazor.Site.Theming.SiteThemeReview.Warnings.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeIssue!>!
-PandaBear.Blazor.Site.Theming.SiteThemeStylesheet
-PandaBear.Blazor.Site.Theming.SiteTypography
-PandaBear.Blazor.Site.Theming.SiteTypography.this[PandaBear.Blazor.Site.Theming.TypographyRole role].get -> PandaBear.Blazor.Site.Theming.TypographyStyle!
-PandaBear.Blazor.Site.Theming.SiteTypography.With(PandaBear.Blazor.Site.Theming.TypographyRole role, PandaBear.Blazor.Site.Theming.TypographyStyle! style) -> PandaBear.Blazor.Site.Theming.SiteTypography!
-PandaBear.Blazor.Site.Theming.ThemeColor
-PandaBear.Blazor.Site.Theming.ThemeColor.Dark.get -> PandaBear.Blazor.Site.Theming.CssColor!
-PandaBear.Blazor.Site.Theming.ThemeColor.For(PandaBear.Blazor.Site.Theming.ColorScheme scheme) -> PandaBear.Blazor.Site.Theming.CssColor!
-PandaBear.Blazor.Site.Theming.ThemeColor.Light.get -> PandaBear.Blazor.Site.Theming.CssColor!
-PandaBear.Blazor.Site.Theming.ThemeColorFields
-PandaBear.Blazor.Site.Theming.ThemeColorFields.Dark.get -> string?
-PandaBear.Blazor.Site.Theming.ThemeColorFields.Dark.set -> void
-PandaBear.Blazor.Site.Theming.ThemeColorFields.Light.get -> string?
-PandaBear.Blazor.Site.Theming.ThemeColorFields.Light.set -> void
-PandaBear.Blazor.Site.Theming.ThemeColorFields.ThemeColorFields() -> void
-PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.Accent = 3 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.AccentHover = 4 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.Border = 10 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.Focus = 11 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.Muted = 7 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.OnAccent = 5 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.OnPrimary = 2 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.Primary = 0 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.PrimaryHover = 1 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.Surface = 8 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.SurfaceAlt = 9 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeColorRole.Text = 6 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
-PandaBear.Blazor.Site.Theming.ThemeEditorModel
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.AllowSmallText.get -> bool
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.AllowSmallText.set -> void
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.Colors.get -> System.Collections.Generic.IReadOnlyDictionary<PandaBear.Blazor.Site.Theming.ThemeColorRole, PandaBear.Blazor.Site.Theming.ThemeColorFields!>!
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.Fonts.get -> System.Collections.ObjectModel.Collection<PandaBear.Blazor.Site.Theming.ThemeFontFields!>!
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.ThemeEditorModel() -> void
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.ToDraft() -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.ToTheme(System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.Typography.get -> System.Collections.Generic.IReadOnlyDictionary<PandaBear.Blazor.Site.Theming.TypographyRole, PandaBear.Blazor.Site.Theming.TypographyFields!>!
-PandaBear.Blazor.Site.Theming.ThemeFont
-PandaBear.Blazor.Site.Theming.ThemeFont.Faces.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeFontFace!>!
-PandaBear.Blazor.Site.Theming.ThemeFont.Family.get -> string!
-PandaBear.Blazor.Site.Theming.ThemeFont.Key.get -> string!
-PandaBear.Blazor.Site.Theming.ThemeFontFace
-PandaBear.Blazor.Site.Theming.ThemeFontFace.Src.get -> PandaBear.Blazor.Site.LinkTarget!
-PandaBear.Blazor.Site.Theming.ThemeFontFace.Style.get -> PandaBear.Blazor.Site.Theming.ThemeFontStyle
-PandaBear.Blazor.Site.Theming.ThemeFontFace.Weight.get -> int
-PandaBear.Blazor.Site.Theming.ThemeFontFaceFields
-PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Src.get -> string?
-PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Src.set -> void
-PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Style.get -> PandaBear.Blazor.Site.Theming.ThemeFontStyle
-PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Style.set -> void
-PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.ThemeFontFaceFields() -> void
-PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Weight.get -> int?
-PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Weight.set -> void
-PandaBear.Blazor.Site.Theming.ThemeFontFields
-PandaBear.Blazor.Site.Theming.ThemeFontFields.Faces.get -> System.Collections.ObjectModel.Collection<PandaBear.Blazor.Site.Theming.ThemeFontFaceFields!>!
-PandaBear.Blazor.Site.Theming.ThemeFontFields.Family.get -> string?
-PandaBear.Blazor.Site.Theming.ThemeFontFields.Family.set -> void
-PandaBear.Blazor.Site.Theming.ThemeFontFields.Key.get -> string?
-PandaBear.Blazor.Site.Theming.ThemeFontFields.Key.set -> void
-PandaBear.Blazor.Site.Theming.ThemeFontFields.ThemeFontFields() -> void
-PandaBear.Blazor.Site.Theming.ThemeFontStyle
-PandaBear.Blazor.Site.Theming.ThemeFontStyle.Italic = 1 -> PandaBear.Blazor.Site.Theming.ThemeFontStyle
-PandaBear.Blazor.Site.Theming.ThemeFontStyle.Normal = 0 -> PandaBear.Blazor.Site.Theming.ThemeFontStyle
-PandaBear.Blazor.Site.Theming.ThemeIssue
-PandaBear.Blazor.Site.Theming.ThemeIssue.Field.get -> string!
-PandaBear.Blazor.Site.Theming.ThemeIssue.Field.init -> void
-PandaBear.Blazor.Site.Theming.ThemeIssue.Message.get -> string!
-PandaBear.Blazor.Site.Theming.ThemeIssue.Message.init -> void
-PandaBear.Blazor.Site.Theming.ThemeIssue.ThemeIssue(string! Field, string! Message) -> void
-PandaBear.Blazor.Site.Theming.ThemePreview
-PandaBear.Blazor.Site.Theming.ThemePreview.ColorLabel.get -> System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>?
-PandaBear.Blazor.Site.Theming.ThemePreview.ColorLabel.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreview.Errors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
-PandaBear.Blazor.Site.Theming.ThemePreview.Errors.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreview.Narrow.get -> bool
-PandaBear.Blazor.Site.Theming.ThemePreview.Narrow.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreview.Nonce.get -> string?
-PandaBear.Blazor.Site.Theming.ThemePreview.Nonce.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreview.Scheme.get -> PandaBear.Blazor.Site.Theming.ColorScheme
-PandaBear.Blazor.Site.Theming.ThemePreview.Scheme.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreview.ScopeId.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreview.ScopeId.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreview.Texts.get -> PandaBear.Blazor.Site.Theming.ThemePreviewTexts!
-PandaBear.Blazor.Site.Theming.ThemePreview.Texts.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreview.Theme.get -> PandaBear.Blazor.Site.Theming.SiteTheme?
-PandaBear.Blazor.Site.Theming.ThemePreview.Theme.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreview.ThemePreview() -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.CardText.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.CardText.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.CardTitle.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.CardTitle.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ContrastCaption.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ContrastCaption.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.DarkScheme.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.DarkScheme.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Error.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Error.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Fail.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Fail.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading1.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading1.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading2.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading2.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading3.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading3.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Label.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Label.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.LightScheme.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.LightScheme.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Link.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Link.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationCurrent.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationCurrent.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationLabel.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationLabel.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationOther.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationOther.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.On.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.On.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.PairColumn.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.PairColumn.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Paragraph.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Paragraph.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Pass.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Pass.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.PrimaryButton.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.PrimaryButton.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.RatioColumn.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.RatioColumn.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.RequiredColumn.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.RequiredColumn.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ResultColumn.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ResultColumn.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.SecondaryButton.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.SecondaryButton.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Small.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Small.init -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ThemePreviewTexts() -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Warning.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Warning.init -> void
-PandaBear.Blazor.Site.Theming.ThemeTextTransform
-PandaBear.Blazor.Site.Theming.ThemeTextTransform.Capitalize = 2 -> PandaBear.Blazor.Site.Theming.ThemeTextTransform
-PandaBear.Blazor.Site.Theming.ThemeTextTransform.None = 0 -> PandaBear.Blazor.Site.Theming.ThemeTextTransform
-PandaBear.Blazor.Site.Theming.ThemeTextTransform.Uppercase = 1 -> PandaBear.Blazor.Site.Theming.ThemeTextTransform
-PandaBear.Blazor.Site.Theming.TypographyFields
-PandaBear.Blazor.Site.Theming.TypographyFields.Fallback.get -> PandaBear.Blazor.Site.Theming.GenericFontFamily?
-PandaBear.Blazor.Site.Theming.TypographyFields.Fallback.set -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.FontKey.get -> string?
-PandaBear.Blazor.Site.Theming.TypographyFields.FontKey.set -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.Italic.get -> bool?
-PandaBear.Blazor.Site.Theming.TypographyFields.Italic.set -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.LetterSpacing.get -> decimal?
-PandaBear.Blazor.Site.Theming.TypographyFields.LetterSpacing.set -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.LineHeight.get -> decimal?
-PandaBear.Blazor.Site.Theming.TypographyFields.LineHeight.set -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.SizeMax.get -> decimal?
-PandaBear.Blazor.Site.Theming.TypographyFields.SizeMax.set -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.SizeMin.get -> decimal?
-PandaBear.Blazor.Site.Theming.TypographyFields.SizeMin.set -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.Transform.get -> PandaBear.Blazor.Site.Theming.ThemeTextTransform?
-PandaBear.Blazor.Site.Theming.TypographyFields.Transform.set -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.TypographyFields() -> void
-PandaBear.Blazor.Site.Theming.TypographyFields.Weight.get -> int?
-PandaBear.Blazor.Site.Theming.TypographyFields.Weight.set -> void
-PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.Body = 6 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.Button = 9 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.H1 = 0 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.H2 = 1 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.H3 = 2 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.H4 = 3 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.H5 = 4 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.H6 = 5 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.Link = 8 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.Nav = 10 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyRole.Small = 7 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.Theming.TypographyStyle
-PandaBear.Blazor.Site.Theming.TypographyStyle.Fallback.get -> PandaBear.Blazor.Site.Theming.GenericFontFamily?
-PandaBear.Blazor.Site.Theming.TypographyStyle.FontKey.get -> string?
-PandaBear.Blazor.Site.Theming.TypographyStyle.Italic.get -> bool?
-PandaBear.Blazor.Site.Theming.TypographyStyle.LetterSpacing.get -> decimal?
-PandaBear.Blazor.Site.Theming.TypographyStyle.LineHeight.get -> decimal?
-PandaBear.Blazor.Site.Theming.TypographyStyle.SetsFamily.get -> bool
-PandaBear.Blazor.Site.Theming.TypographyStyle.Size.get -> PandaBear.Blazor.Site.Theming.FontSize?
-PandaBear.Blazor.Site.Theming.TypographyStyle.Transform.get -> PandaBear.Blazor.Site.Theming.ThemeTextTransform?
-PandaBear.Blazor.Site.Theming.TypographyStyle.Weight.get -> int?
-static PandaBear.Blazor.Site.ImageAlternative.Decorative() -> PandaBear.Blazor.Site.ImageAlternative!
-static PandaBear.Blazor.Site.ImageAlternative.Describe(string! text) -> PandaBear.Blazor.Site.ImageAlternative!
-static PandaBear.Blazor.Site.ImageCandidate.AtDensity(PandaBear.Blazor.Site.LinkTarget! src, decimal density) -> PandaBear.Blazor.Site.ImageCandidate!
-static PandaBear.Blazor.Site.ImageCandidate.AtWidth(PandaBear.Blazor.Site.LinkTarget! src, int width) -> PandaBear.Blazor.Site.ImageCandidate!
-static PandaBear.Blazor.Site.ImageSource.Create(string! type, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.ImageCandidate!>! candidates) -> PandaBear.Blazor.Site.ImageSource!
-static PandaBear.Blazor.Site.LinkTarget.Create(string? value) -> PandaBear.Results.Result<PandaBear.Blazor.Site.LinkTarget!>
-static PandaBear.Blazor.Site.LinkTarget.FromString(string! value) -> PandaBear.Blazor.Site.LinkTarget!
-const PandaBear.Blazor.Site.LinkTarget.MaxLength = 2048 -> int
-PandaBear.Blazor.Site.LinkTarget.IsImageSource.get -> bool
-PandaBear.Blazor.Site.Section.HeadingId.get -> string?
-PandaBear.Blazor.Site.Section.HeadingId.set -> void
-PandaBear.Blazor.Site.ContactCard.PhoneText.get -> string?
-PandaBear.Blazor.Site.ContactCard.PhoneText.set -> void
-static PandaBear.Blazor.Site.ResponsiveImage.Create(PandaBear.Blazor.Site.LinkTarget! src, int width, int height, PandaBear.Blazor.Site.ImageAlternative! alt, string? sizes = null, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.ImageCandidate!>? srcSet = null, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.ImageSource!>? sources = null) -> PandaBear.Blazor.Site.ResponsiveImage!
-PandaBear.Blazor.Site.ImageGrid.PrioritizeFirstImage.get -> bool
-PandaBear.Blazor.Site.ImageGrid.PrioritizeFirstImage.set -> void
-static PandaBear.Blazor.Site.Theming.CssColor.Create(string? value) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.CssColor!>
-static PandaBear.Blazor.Site.Theming.CssColor.FromString(string! value) -> PandaBear.Blazor.Site.Theming.CssColor!
-static PandaBear.Blazor.Site.Theming.FontSize.Fixed(decimal rem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
-static PandaBear.Blazor.Site.Theming.FontSize.Fluid(decimal minRem, decimal maxRem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
-static PandaBear.Blazor.Site.Theming.SiteColors.Create(PandaBear.Blazor.Site.Theming.ThemeColor! primary, PandaBear.Blazor.Site.Theming.ThemeColor! onPrimary, PandaBear.Blazor.Site.Theming.ThemeColor! accent, PandaBear.Blazor.Site.Theming.ThemeColor! onAccent, PandaBear.Blazor.Site.Theming.ThemeColor! text, PandaBear.Blazor.Site.Theming.ThemeColor! muted, PandaBear.Blazor.Site.Theming.ThemeColor! surface, PandaBear.Blazor.Site.Theming.ThemeColor! surfaceAlt, PandaBear.Blazor.Site.Theming.ThemeColor! border, PandaBear.Blazor.Site.Theming.ThemeColor! focus, PandaBear.Blazor.Site.Theming.ThemeColor? primaryHover = null, PandaBear.Blazor.Site.Theming.ThemeColor? accentHover = null) -> PandaBear.Blazor.Site.Theming.SiteColors!
-static PandaBear.Blazor.Site.Theming.SiteTheme.Default.get -> PandaBear.Blazor.Site.Theming.SiteTheme!
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.Hash(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> string!
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.Render(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> string!
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.RoleVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Blazor.Site.Theming.SiteTypography.Create(System.Collections.Generic.IReadOnlyDictionary<PandaBear.Blazor.Site.Theming.TypographyRole, PandaBear.Blazor.Site.Theming.TypographyStyle!>! styles) -> PandaBear.Blazor.Site.Theming.SiteTypography!
-static PandaBear.Blazor.Site.Theming.SiteTypography.Empty.get -> PandaBear.Blazor.Site.Theming.SiteTypography!
-static PandaBear.Blazor.Site.Theming.ThemeColor.Create(PandaBear.Blazor.Site.Theming.CssColor! light, PandaBear.Blazor.Site.Theming.CssColor! dark) -> PandaBear.Blazor.Site.Theming.ThemeColor!
-static PandaBear.Blazor.Site.Theming.ThemeEditorModel.FromTheme(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> PandaBear.Blazor.Site.Theming.ThemeEditorModel!
-static PandaBear.Blazor.Site.Theming.ThemeFont.Create(string? key, string? family, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFontFace!>! faces) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.ThemeFont!>
-static PandaBear.Blazor.Site.Theming.ThemeFontFace.Create(int weight, PandaBear.Blazor.Site.Theming.ThemeFontStyle style, PandaBear.Blazor.Site.LinkTarget! src) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.ThemeFontFace!>
-static PandaBear.Blazor.Site.Theming.TypographyStyle.Inherit.get -> PandaBear.Blazor.Site.Theming.TypographyStyle!
-override PandaBear.Blazor.Site.SiteComponent.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView parameters) -> System.Threading.Tasks.Task!
-PandaBear.Blazor.Site.AlternateLink.<Clone>$() -> PandaBear.Blazor.Site.AlternateLink!
-PandaBear.Blazor.Site.AlternateLink.Deconstruct(out PandaBear.BuildingBlocks.ContentCulture! Culture, out System.Uri! Href) -> void
-PandaBear.Blazor.Site.AlternateLink.Equals(PandaBear.Blazor.Site.AlternateLink? other) -> bool
-PandaBear.Blazor.Site.FactRow.<Clone>$() -> PandaBear.Blazor.Site.FactRow!
-PandaBear.Blazor.Site.FactRow.Deconstruct(out string! Label, out string! Value) -> void
-PandaBear.Blazor.Site.FactRow.Equals(PandaBear.Blazor.Site.FactRow? other) -> bool
-PandaBear.Blazor.Site.GalleryImage.<Clone>$() -> PandaBear.Blazor.Site.GalleryImage!
-PandaBear.Blazor.Site.GalleryImage.Deconstruct(out PandaBear.Blazor.Site.ResponsiveImage! Image, out string? Caption) -> void
-PandaBear.Blazor.Site.GalleryImage.Equals(PandaBear.Blazor.Site.GalleryImage? other) -> bool
-PandaBear.Blazor.Site.LanguageLink.<Clone>$() -> PandaBear.Blazor.Site.LanguageLink!
-PandaBear.Blazor.Site.LanguageLink.Deconstruct(out PandaBear.BuildingBlocks.ContentCulture! Culture, out string! Label, out PandaBear.Blazor.Site.LinkTarget! Href, out bool IsCurrent) -> void
-PandaBear.Blazor.Site.LanguageLink.Equals(PandaBear.Blazor.Site.LanguageLink? other) -> bool
-PandaBear.Blazor.Site.SiteNavItem.<Clone>$() -> PandaBear.Blazor.Site.SiteNavItem!
-PandaBear.Blazor.Site.SiteNavItem.Deconstruct(out string! Text, out PandaBear.Blazor.Site.LinkTarget? Href, out System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.SiteNavItem!>? Children) -> void
-PandaBear.Blazor.Site.SiteNavItem.Equals(PandaBear.Blazor.Site.SiteNavItem? other) -> bool
-PandaBear.Blazor.Site.Theming.ContrastCheck.<Clone>$() -> PandaBear.Blazor.Site.Theming.ContrastCheck!
-PandaBear.Blazor.Site.Theming.ContrastCheck.Deconstruct(out PandaBear.Blazor.Site.Theming.ThemeColorRole Foreground, out PandaBear.Blazor.Site.Theming.ThemeColorRole Background, out PandaBear.Blazor.Site.Theming.ColorScheme Scheme, out double Ratio, out double Minimum, out string! Criterion) -> void
-PandaBear.Blazor.Site.Theming.ContrastCheck.Equals(PandaBear.Blazor.Site.Theming.ContrastCheck? other) -> bool
-PandaBear.Blazor.Site.Theming.ThemeIssue.<Clone>$() -> PandaBear.Blazor.Site.Theming.ThemeIssue!
-PandaBear.Blazor.Site.Theming.ThemeIssue.Deconstruct(out string! Field, out string! Message) -> void
-PandaBear.Blazor.Site.Theming.ThemeIssue.Equals(PandaBear.Blazor.Site.Theming.ThemeIssue? other) -> bool
-override PandaBear.Blazor.Site.AlternateLink.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.AlternateLink.GetHashCode() -> int
-override PandaBear.Blazor.Site.AlternateLink.ToString() -> string!
-override PandaBear.Blazor.Site.FactRow.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.FactRow.GetHashCode() -> int
-override PandaBear.Blazor.Site.FactRow.ToString() -> string!
-override PandaBear.Blazor.Site.GalleryImage.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.GalleryImage.GetHashCode() -> int
-override PandaBear.Blazor.Site.GalleryImage.ToString() -> string!
-override PandaBear.Blazor.Site.LanguageLink.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.LanguageLink.GetHashCode() -> int
-override PandaBear.Blazor.Site.LanguageLink.ToString() -> string!
-override PandaBear.Blazor.Site.SiteNavItem.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.SiteNavItem.GetHashCode() -> int
-override PandaBear.Blazor.Site.SiteNavItem.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.ContrastCheck.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.Theming.ContrastCheck.GetHashCode() -> int
-override PandaBear.Blazor.Site.Theming.ContrastCheck.ToString() -> string!
-override PandaBear.Blazor.Site.Theming.ThemeIssue.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.Theming.ThemeIssue.GetHashCode() -> int
-override PandaBear.Blazor.Site.Theming.ThemeIssue.ToString() -> string!
-static PandaBear.Blazor.Site.AlternateLink.operator !=(PandaBear.Blazor.Site.AlternateLink? left, PandaBear.Blazor.Site.AlternateLink? right) -> bool
-static PandaBear.Blazor.Site.AlternateLink.operator ==(PandaBear.Blazor.Site.AlternateLink? left, PandaBear.Blazor.Site.AlternateLink? right) -> bool
-static PandaBear.Blazor.Site.FactRow.operator !=(PandaBear.Blazor.Site.FactRow? left, PandaBear.Blazor.Site.FactRow? right) -> bool
-static PandaBear.Blazor.Site.FactRow.operator ==(PandaBear.Blazor.Site.FactRow? left, PandaBear.Blazor.Site.FactRow? right) -> bool
-static PandaBear.Blazor.Site.GalleryImage.operator !=(PandaBear.Blazor.Site.GalleryImage? left, PandaBear.Blazor.Site.GalleryImage? right) -> bool
-static PandaBear.Blazor.Site.GalleryImage.operator ==(PandaBear.Blazor.Site.GalleryImage? left, PandaBear.Blazor.Site.GalleryImage? right) -> bool
-static PandaBear.Blazor.Site.LanguageLink.operator !=(PandaBear.Blazor.Site.LanguageLink? left, PandaBear.Blazor.Site.LanguageLink? right) -> bool
-static PandaBear.Blazor.Site.LanguageLink.operator ==(PandaBear.Blazor.Site.LanguageLink? left, PandaBear.Blazor.Site.LanguageLink? right) -> bool
-static PandaBear.Blazor.Site.SiteNavItem.operator !=(PandaBear.Blazor.Site.SiteNavItem? left, PandaBear.Blazor.Site.SiteNavItem? right) -> bool
-static PandaBear.Blazor.Site.SiteNavItem.operator ==(PandaBear.Blazor.Site.SiteNavItem? left, PandaBear.Blazor.Site.SiteNavItem? right) -> bool
-static PandaBear.Blazor.Site.Theming.ContrastCheck.operator !=(PandaBear.Blazor.Site.Theming.ContrastCheck? left, PandaBear.Blazor.Site.Theming.ContrastCheck? right) -> bool
-static PandaBear.Blazor.Site.Theming.ContrastCheck.operator ==(PandaBear.Blazor.Site.Theming.ContrastCheck? left, PandaBear.Blazor.Site.Theming.ContrastCheck? right) -> bool
-static PandaBear.Blazor.Site.Theming.ThemeIssue.operator !=(PandaBear.Blazor.Site.Theming.ThemeIssue? left, PandaBear.Blazor.Site.Theming.ThemeIssue? right) -> bool
-static PandaBear.Blazor.Site.Theming.ThemeIssue.operator ==(PandaBear.Blazor.Site.Theming.ThemeIssue? left, PandaBear.Blazor.Site.Theming.ThemeIssue? right) -> bool
-PandaBear.Blazor.Site.Theming.SiteScrim
-PandaBear.Blazor.Site.Theming.SiteScrim.Boost.get -> int
-PandaBear.Blazor.Site.Theming.SiteScrim.IsReachable.get -> bool
-PandaBear.Blazor.Site.Theming.SiteScrim.LargeText.get -> int
-PandaBear.Blazor.Site.Theming.SiteScrim.Text.get -> int
-const PandaBear.Blazor.Site.Theming.SiteScrim.LargeTextMinimum = 3 -> double
-const PandaBear.Blazor.Site.Theming.SiteScrim.TextMinimum = 4.5 -> double
-static PandaBear.Blazor.Site.Theming.SiteScrim.For(PandaBear.Blazor.Site.Theming.SiteColors! colors) -> PandaBear.Blazor.Site.Theming.SiteScrim!
-static PandaBear.Blazor.Site.Theming.SiteScrim.MinimumPercent(PandaBear.Blazor.Site.Theming.CssColor! foreground, PandaBear.Blazor.Site.Theming.CssColor! scrim, double minimum) -> int?
-static PandaBear.Blazor.Site.Theming.SiteScrim.WorstRatio(PandaBear.Blazor.Site.Theming.CssColor! foreground, PandaBear.Blazor.Site.Theming.CssColor! scrim, int percent) -> double
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ScrimVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Blazor.Site.Band
-PandaBear.Blazor.Site.Band.Band() -> void
-PandaBear.Blazor.Site.Band.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Band.ChildContent.set -> void
-PandaBear.Blazor.Site.Band.Image.get -> PandaBear.Blazor.Site.ResponsiveImage?
-PandaBear.Blazor.Site.Band.Image.set -> void
-PandaBear.Blazor.Site.Band.Tone.get -> PandaBear.Blazor.Site.BandTone
-PandaBear.Blazor.Site.Band.Tone.set -> void
-PandaBear.Blazor.Site.BandTone
-PandaBear.Blazor.Site.BandTone.Default = 0 -> PandaBear.Blazor.Site.BandTone
-PandaBear.Blazor.Site.BandTone.Image = 3 -> PandaBear.Blazor.Site.BandTone
-PandaBear.Blazor.Site.BandTone.Muted = 1 -> PandaBear.Blazor.Site.BandTone
-PandaBear.Blazor.Site.BandTone.Primary = 2 -> PandaBear.Blazor.Site.BandTone
-PandaBear.Blazor.Site.Byline
-PandaBear.Blazor.Site.Byline.Byline() -> void
-PandaBear.Blazor.Site.Byline.JobTitle.get -> string?
-PandaBear.Blazor.Site.Byline.JobTitle.set -> void
-PandaBear.Blazor.Site.Byline.Name.get -> string!
-PandaBear.Blazor.Site.Byline.Name.set -> void
-PandaBear.Blazor.Site.Byline.Photo.get -> PandaBear.Blazor.Site.ResponsiveImage?
-PandaBear.Blazor.Site.Byline.Photo.set -> void
-PandaBear.Blazor.Site.FloatingLink
-PandaBear.Blazor.Site.FloatingLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.FloatingLink.ChildContent.set -> void
-PandaBear.Blazor.Site.FloatingLink.FloatingLink() -> void
-PandaBear.Blazor.Site.FloatingLink.Href.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.FloatingLink.Href.set -> void
-PandaBear.Blazor.Site.FloatingLink.Label.get -> string!
-PandaBear.Blazor.Site.FloatingLink.Label.set -> void
-PandaBear.Blazor.Site.HeaderPlacement
-PandaBear.Blazor.Site.HeaderPlacement.Above = 0 -> PandaBear.Blazor.Site.HeaderPlacement
-PandaBear.Blazor.Site.HeaderPlacement.OverHero = 1 -> PandaBear.Blazor.Site.HeaderPlacement
-PandaBear.Blazor.Site.Hero.Layout.get -> PandaBear.Blazor.Site.HeroLayout
-PandaBear.Blazor.Site.Hero.Layout.set -> void
-PandaBear.Blazor.Site.HeroLayout
-PandaBear.Blazor.Site.HeroLayout.Cover = 1 -> PandaBear.Blazor.Site.HeroLayout
-PandaBear.Blazor.Site.HeroLayout.Split = 0 -> PandaBear.Blazor.Site.HeroLayout
-PandaBear.Blazor.Site.ImageGrid.Layout.get -> PandaBear.Blazor.Site.ImageGridLayout
-PandaBear.Blazor.Site.ImageGrid.Layout.set -> void
-PandaBear.Blazor.Site.ImageGridLayout
-PandaBear.Blazor.Site.ImageGridLayout.Grid = 0 -> PandaBear.Blazor.Site.ImageGridLayout
-PandaBear.Blazor.Site.ImageGridLayout.Mosaic = 1 -> PandaBear.Blazor.Site.ImageGridLayout
-PandaBear.Blazor.Site.Section.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Section.Media.set -> void
-PandaBear.Blazor.Site.SiteHeader.MenuLabel.get -> string?
-PandaBear.Blazor.Site.SiteHeader.MenuLabel.set -> void
-PandaBear.Blazor.Site.SiteHeader.Placement.get -> PandaBear.Blazor.Site.HeaderPlacement
-PandaBear.Blazor.Site.SiteHeader.Placement.set -> void
-PandaBear.Blazor.Site.VideoLink
-PandaBear.Blazor.Site.VideoLink.Href.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.VideoLink.Href.set -> void
-PandaBear.Blazor.Site.VideoLink.Poster.get -> PandaBear.Blazor.Site.ResponsiveImage?
-PandaBear.Blazor.Site.VideoLink.Poster.set -> void
-PandaBear.Blazor.Site.VideoLink.SiteHint.get -> string!
-PandaBear.Blazor.Site.VideoLink.SiteHint.set -> void
-PandaBear.Blazor.Site.VideoLink.Title.get -> string!
-PandaBear.Blazor.Site.VideoLink.Title.set -> void
-PandaBear.Blazor.Site.VideoLink.VideoLink() -> void
-PandaBear.Blazor.Site.CoverHeight
-PandaBear.Blazor.Site.CoverHeight.Landing = 1 -> PandaBear.Blazor.Site.CoverHeight
-PandaBear.Blazor.Site.CoverHeight.Page = 0 -> PandaBear.Blazor.Site.CoverHeight
-PandaBear.Blazor.Site.Hero.CoverHeight.get -> PandaBear.Blazor.Site.CoverHeight
-PandaBear.Blazor.Site.Hero.CoverHeight.set -> void
-PandaBear.Blazor.Site.Theming.SiteTheme.BrandHeight.get -> decimal
-PandaBear.Blazor.Site.Theming.SiteTheme.HeaderHeight.get -> decimal
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.get -> decimal?
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.set -> void
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Brand.get -> string!
-PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Brand.init -> void
-const PandaBear.Blazor.Site.Theming.SiteTheme.DefaultBrandHeight = 2.5 -> decimal
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.HeaderVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Blazor.Site.Split
-PandaBear.Blazor.Site.Split.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Split.ChildContent.set -> void
-PandaBear.Blazor.Site.Split.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.Split.Media.set -> void
-PandaBear.Blazor.Site.Split.Split() -> void
-PandaBear.Blazor.Site.Split.MediaSide.get -> PandaBear.Blazor.Site.SplitMediaSide
-PandaBear.Blazor.Site.Split.MediaSide.set -> void
-PandaBear.Blazor.Site.SplitMediaSide
-PandaBear.Blazor.Site.SplitMediaSide.End = 0 -> PandaBear.Blazor.Site.SplitMediaSide
-PandaBear.Blazor.Site.SplitMediaSide.Start = 1 -> PandaBear.Blazor.Site.SplitMediaSide
-PandaBear.Blazor.Site.FactCard
-PandaBear.Blazor.Site.FactCard.FactCard(string! Label, System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactValue!>! Values, Microsoft.AspNetCore.Components.RenderFragment? Icon = null) -> void
-PandaBear.Blazor.Site.FactCard.Icon.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.FactCard.Icon.init -> void
-PandaBear.Blazor.Site.FactCard.Label.get -> string!
-PandaBear.Blazor.Site.FactCard.Label.init -> void
-PandaBear.Blazor.Site.FactCard.Values.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactValue!>!
-PandaBear.Blazor.Site.FactCard.Values.init -> void
-PandaBear.Blazor.Site.FactGrid
-PandaBear.Blazor.Site.FactGrid.Cards.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>!
-PandaBear.Blazor.Site.FactGrid.Cards.set -> void
-PandaBear.Blazor.Site.FactGrid.FactGrid() -> void
-PandaBear.Blazor.Site.ActionRow
-PandaBear.Blazor.Site.ActionRow.ActionRow() -> void
-PandaBear.Blazor.Site.ActionRow.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.ActionRow.ChildContent.set -> void
-PandaBear.Blazor.Site.FactCard.<Clone>$() -> PandaBear.Blazor.Site.FactCard!
-PandaBear.Blazor.Site.FactCard.Deconstruct(out string! Label, out System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactValue!>! Values, out Microsoft.AspNetCore.Components.RenderFragment? Icon) -> void
-PandaBear.Blazor.Site.FactCard.Equals(PandaBear.Blazor.Site.FactCard? other) -> bool
-override PandaBear.Blazor.Site.FactCard.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.FactCard.GetHashCode() -> int
-override PandaBear.Blazor.Site.FactCard.ToString() -> string!
-static PandaBear.Blazor.Site.FactCard.operator !=(PandaBear.Blazor.Site.FactCard? left, PandaBear.Blazor.Site.FactCard? right) -> bool
-static PandaBear.Blazor.Site.FactCard.operator ==(PandaBear.Blazor.Site.FactCard? left, PandaBear.Blazor.Site.FactCard? right) -> bool
-static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.RenderVersioned(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> (string! Css, string! Version)
-PandaBear.Blazor.Site.FactValue
-PandaBear.Blazor.Site.FactValue.<Clone>$() -> PandaBear.Blazor.Site.FactValue!
-PandaBear.Blazor.Site.FactValue.Deconstruct(out string! Text, out PandaBear.Blazor.Site.LinkTarget? Link) -> void
-PandaBear.Blazor.Site.FactValue.Equals(PandaBear.Blazor.Site.FactValue? other) -> bool
-PandaBear.Blazor.Site.FactValue.FactValue(string! Text, PandaBear.Blazor.Site.LinkTarget? Link = null) -> void
-PandaBear.Blazor.Site.FactValue.Link.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.FactValue.Link.init -> void
-PandaBear.Blazor.Site.FactValue.Text.get -> string!
-PandaBear.Blazor.Site.FactValue.Text.init -> void
-override PandaBear.Blazor.Site.FactValue.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.FactValue.GetHashCode() -> int
-override PandaBear.Blazor.Site.FactValue.ToString() -> string!
-static PandaBear.Blazor.Site.FactValue.operator !=(PandaBear.Blazor.Site.FactValue? left, PandaBear.Blazor.Site.FactValue? right) -> bool
-static PandaBear.Blazor.Site.FactValue.operator ==(PandaBear.Blazor.Site.FactValue? left, PandaBear.Blazor.Site.FactValue? right) -> bool
-const PandaBear.Blazor.Site.Pager.MaxSurroundingPages = 10 -> int
-PandaBear.Blazor.Site.Pager
-PandaBear.Blazor.Site.Pager.Label.get -> string!
-PandaBear.Blazor.Site.Pager.Label.set -> void
-PandaBear.Blazor.Site.Pager.NextText.get -> string!
-PandaBear.Blazor.Site.Pager.NextText.set -> void
-PandaBear.Blazor.Site.Pager.PageHref.get -> System.Func<int, PandaBear.Blazor.Site.LinkTarget!>?
-PandaBear.Blazor.Site.Pager.PageHref.set -> void
-PandaBear.Blazor.Site.Pager.PageLabelFormat.get -> string?
-PandaBear.Blazor.Site.Pager.PageLabelFormat.set -> void
-PandaBear.Blazor.Site.Pager.Pager() -> void
-PandaBear.Blazor.Site.Pager.PreviousText.get -> string!
-PandaBear.Blazor.Site.Pager.PreviousText.set -> void
-PandaBear.Blazor.Site.Pager.SurroundingPages.get -> int
-PandaBear.Blazor.Site.Pager.SurroundingPages.set -> void
-PandaBear.Blazor.Site.Pager.Window.get -> PandaBear.BuildingBlocks.PageWindow
-PandaBear.Blazor.Site.Pager.Window.set -> void
-PandaBear.Blazor.Site.AlbumIndex
-PandaBear.Blazor.Site.AlbumIndex.AlbumIndex() -> void
-PandaBear.Blazor.Site.AlbumIndex.Albums.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.AlbumSummary!>!
-PandaBear.Blazor.Site.AlbumIndex.Albums.set -> void
-PandaBear.Blazor.Site.AlbumIndex.HeadingLevel.get -> int
-PandaBear.Blazor.Site.AlbumIndex.HeadingLevel.set -> void
-PandaBear.Blazor.Site.AlbumSection
-PandaBear.Blazor.Site.AlbumSection.AlbumSection() -> void
-PandaBear.Blazor.Site.AlbumSection.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.AlbumSection.ChildContent.set -> void
-PandaBear.Blazor.Site.AlbumSection.EagerCount.get -> int?
-PandaBear.Blazor.Site.AlbumSection.EagerCount.set -> void
-PandaBear.Blazor.Site.AlbumSection.Intro.get -> string?
-PandaBear.Blazor.Site.AlbumSection.Intro.set -> void
-PandaBear.Blazor.Site.AlbumSection.Layout.get -> PandaBear.Blazor.Site.ImageGridLayout
-PandaBear.Blazor.Site.AlbumSection.Layout.set -> void
-PandaBear.Blazor.Site.AlbumSection.Level.get -> int
-PandaBear.Blazor.Site.AlbumSection.Level.set -> void
-PandaBear.Blazor.Site.AlbumSection.NextText.get -> string!
-PandaBear.Blazor.Site.AlbumSection.NextText.set -> void
-PandaBear.Blazor.Site.AlbumSection.PageHref.get -> System.Func<int, PandaBear.Blazor.Site.LinkTarget!>?
-PandaBear.Blazor.Site.AlbumSection.PageHref.set -> void
-PandaBear.Blazor.Site.AlbumSection.PageLabelFormat.get -> string?
-PandaBear.Blazor.Site.AlbumSection.PageLabelFormat.set -> void
-PandaBear.Blazor.Site.AlbumSection.PagerLabel.get -> string!
-PandaBear.Blazor.Site.AlbumSection.PagerLabel.set -> void
-PandaBear.Blazor.Site.AlbumSection.Photos.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.GalleryImage!>!
-PandaBear.Blazor.Site.AlbumSection.Photos.set -> void
-PandaBear.Blazor.Site.AlbumSection.PreviousText.get -> string!
-PandaBear.Blazor.Site.AlbumSection.PreviousText.set -> void
-PandaBear.Blazor.Site.AlbumSection.Slug.get -> PandaBear.BuildingBlocks.Slug?
-PandaBear.Blazor.Site.AlbumSection.Slug.set -> void
-PandaBear.Blazor.Site.AlbumSection.Title.get -> string!
-PandaBear.Blazor.Site.AlbumSection.Title.set -> void
-PandaBear.Blazor.Site.AlbumSection.Window.get -> PandaBear.BuildingBlocks.PageWindow
-PandaBear.Blazor.Site.AlbumSection.Window.set -> void
-PandaBear.Blazor.Site.AlbumSummary
-PandaBear.Blazor.Site.AlbumSummary.<Clone>$() -> PandaBear.Blazor.Site.AlbumSummary!
-PandaBear.Blazor.Site.AlbumSummary.Cover.get -> PandaBear.Blazor.Site.ResponsiveImage?
-PandaBear.Blazor.Site.AlbumSummary.Cover.init -> void
-PandaBear.Blazor.Site.AlbumSummary.Equals(PandaBear.Blazor.Site.AlbumSummary? other) -> bool
-PandaBear.Blazor.Site.AlbumSummary.Href.get -> PandaBear.Blazor.Site.LinkTarget!
-PandaBear.Blazor.Site.AlbumSummary.Href.init -> void
-PandaBear.Blazor.Site.AlbumSummary.PhotoCountText.get -> string?
-PandaBear.Blazor.Site.AlbumSummary.PhotoCountText.init -> void
-PandaBear.Blazor.Site.AlbumSummary.Title.get -> string!
-PandaBear.Blazor.Site.AlbumSummary.Title.init -> void
-const PandaBear.Blazor.Site.AlbumSection.DefaultEagerCount = 4 -> int
-override PandaBear.Blazor.Site.AlbumSummary.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.AlbumSummary.GetHashCode() -> int
-override PandaBear.Blazor.Site.AlbumSummary.ToString() -> string!
-static PandaBear.Blazor.Site.AlbumSummary.operator !=(PandaBear.Blazor.Site.AlbumSummary? left, PandaBear.Blazor.Site.AlbumSummary? right) -> bool
-static PandaBear.Blazor.Site.AlbumSummary.operator ==(PandaBear.Blazor.Site.AlbumSummary? left, PandaBear.Blazor.Site.AlbumSummary? right) -> bool
-PandaBear.Blazor.Site.AlbumSection.TitleLanguage.get -> string?
-PandaBear.Blazor.Site.AlbumSection.TitleLanguage.set -> void
-PandaBear.Blazor.Site.AlbumSummary.AlbumSummary(string! Title, PandaBear.Blazor.Site.LinkTarget! Href, PandaBear.Blazor.Site.ResponsiveImage? Cover = null, string? PhotoCountText = null, string? TitleLanguage = null) -> void
-PandaBear.Blazor.Site.AlbumSummary.Deconstruct(out string! Title, out PandaBear.Blazor.Site.LinkTarget! Href, out PandaBear.Blazor.Site.ResponsiveImage? Cover, out string? PhotoCountText, out string? TitleLanguage) -> void
-PandaBear.Blazor.Site.AlbumSummary.TitleLanguage.get -> string?
-PandaBear.Blazor.Site.AlbumSummary.TitleLanguage.init -> void
-PandaBear.Blazor.Site.Card.TitleLanguage.get -> string?
-PandaBear.Blazor.Site.Card.TitleLanguage.set -> void
-PandaBear.Blazor.Site.Section.TitleLanguage.get -> string?
-PandaBear.Blazor.Site.Section.TitleLanguage.set -> void
-const PandaBear.Blazor.Site.AlbumIndex.DefaultEagerCount = 4 -> int
-const PandaBear.Blazor.Site.AlbumSection.DefaultMosaicEagerCount = 1 -> int
-PandaBear.Blazor.Site.AlbumIndex.EagerCount.get -> int
-PandaBear.Blazor.Site.AlbumIndex.EagerCount.set -> void
-PandaBear.Blazor.Site.AlbumSection.PrioritizeFirstImage.get -> bool
-PandaBear.Blazor.Site.AlbumSection.PrioritizeFirstImage.set -> void
-PandaBear.Blazor.Site.AlbumSection.SurroundingPages.get -> int
-PandaBear.Blazor.Site.AlbumSection.SurroundingPages.set -> void
-PandaBear.Blazor.Site.Card.EagerImage.get -> bool
-PandaBear.Blazor.Site.Card.EagerImage.set -> void
-const PandaBear.Blazor.Site.AlbumSection.DefaultThumbnailEagerCount = 6 -> int
-PandaBear.Blazor.Site.ActionRow.Justification.get -> PandaBear.Blazor.Site.ActionRowJustification
-PandaBear.Blazor.Site.ActionRow.Justification.set -> void
-PandaBear.Blazor.Site.ActionRowJustification
-PandaBear.Blazor.Site.ActionRowJustification.Between = 3 -> PandaBear.Blazor.Site.ActionRowJustification
-PandaBear.Blazor.Site.ActionRowJustification.Center = 1 -> PandaBear.Blazor.Site.ActionRowJustification
-PandaBear.Blazor.Site.ActionRowJustification.End = 2 -> PandaBear.Blazor.Site.ActionRowJustification
-PandaBear.Blazor.Site.ActionRowJustification.Start = 0 -> PandaBear.Blazor.Site.ActionRowJustification
-PandaBear.Blazor.Site.Band.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment?
-PandaBear.Blazor.Site.Band.TextAlignment.set -> void
-PandaBear.Blazor.Site.ImageGridLayout.Thumbnails = 2 -> PandaBear.Blazor.Site.ImageGridLayout
-PandaBear.Blazor.Site.Section.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment?
-PandaBear.Blazor.Site.Section.TextAlignment.set -> void
-PandaBear.Blazor.Site.Split.Alignment.get -> PandaBear.Blazor.Site.SiteAlignment
-PandaBear.Blazor.Site.Split.Alignment.set -> void
-const PandaBear.Blazor.Site.ImageGrid.ThumbnailSizes = "(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, (min-width: 30rem) 23vw, (min-width: 22.5rem) 31vw, 45vw" -> string!
-PandaBear.Blazor.Site.AlbumSection.Sizes.get -> string?
-PandaBear.Blazor.Site.AlbumSection.Sizes.set -> void
-PandaBear.Blazor.Site.GalleryImage.Href.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.GalleryImage.Href.init -> void
-PandaBear.Blazor.Site.ImageGrid.Sizes.get -> string?
-PandaBear.Blazor.Site.ImageGrid.Sizes.set -> void
-PandaBear.Blazor.Site.FactGrid.Layout.get -> PandaBear.Blazor.Site.FactGridLayout
-PandaBear.Blazor.Site.FactGrid.Layout.set -> void
-PandaBear.Blazor.Site.FactGridLayout
-PandaBear.Blazor.Site.FactGridLayout.Grid = 0 -> PandaBear.Blazor.Site.FactGridLayout
-PandaBear.Blazor.Site.FactGridLayout.Inline = 1 -> PandaBear.Blazor.Site.FactGridLayout
-PandaBear.Blazor.Site.StatusBadge
-PandaBear.Blazor.Site.StatusBadge.Label.get -> string?
-PandaBear.Blazor.Site.StatusBadge.Label.set -> void
-PandaBear.Blazor.Site.StatusBadge.StatusBadge() -> void
-PandaBear.Blazor.Site.StatusBadge.Text.get -> string!
-PandaBear.Blazor.Site.StatusBadge.Text.set -> void
-PandaBear.Blazor.Site.StatusBadge.Tone.get -> PandaBear.Blazor.Site.StatusTone
-PandaBear.Blazor.Site.StatusBadge.Tone.set -> void
-PandaBear.Blazor.Site.StatusTone
-PandaBear.Blazor.Site.StatusTone.Danger = 4 -> PandaBear.Blazor.Site.StatusTone
-PandaBear.Blazor.Site.StatusTone.Info = 1 -> PandaBear.Blazor.Site.StatusTone
-PandaBear.Blazor.Site.StatusTone.Neutral = 0 -> PandaBear.Blazor.Site.StatusTone
-PandaBear.Blazor.Site.StatusTone.Success = 2 -> PandaBear.Blazor.Site.StatusTone
-PandaBear.Blazor.Site.StatusTone.Warning = 3 -> PandaBear.Blazor.Site.StatusTone
-PandaBear.Blazor.Site.FromPrice
-PandaBear.Blazor.Site.FromPrice.AmountText.get -> string!
-PandaBear.Blazor.Site.FromPrice.AmountText.set -> void
-PandaBear.Blazor.Site.FromPrice.Format.get -> string!
-PandaBear.Blazor.Site.FromPrice.Format.set -> void
-PandaBear.Blazor.Site.FromPrice.FromPrice() -> void
-PandaBear.Blazor.Site.FromPrice.Value.get -> decimal
-PandaBear.Blazor.Site.FromPrice.Value.set -> void
-PandaBear.Blazor.Site.PriceItem
-PandaBear.Blazor.Site.PriceItem.<Clone>$() -> PandaBear.Blazor.Site.PriceItem!
-PandaBear.Blazor.Site.PriceItem.AmountText.get -> string!
-PandaBear.Blazor.Site.PriceItem.AmountText.init -> void
-PandaBear.Blazor.Site.PriceItem.Deconstruct(out string! Label, out string! AmountText, out decimal? Value, out string? Note) -> void
-PandaBear.Blazor.Site.PriceItem.Equals(PandaBear.Blazor.Site.PriceItem? other) -> bool
-PandaBear.Blazor.Site.PriceItem.Label.get -> string!
-PandaBear.Blazor.Site.PriceItem.Label.init -> void
-PandaBear.Blazor.Site.PriceItem.Note.get -> string?
-PandaBear.Blazor.Site.PriceItem.Note.init -> void
-PandaBear.Blazor.Site.PriceItem.PriceItem(string! Label, string! AmountText, decimal? Value, string? Note = null) -> void
-PandaBear.Blazor.Site.PriceItem.Value.get -> decimal?
-PandaBear.Blazor.Site.PriceItem.Value.init -> void
-PandaBear.Blazor.Site.PriceList
-PandaBear.Blazor.Site.PriceList.Conditions.get -> Microsoft.AspNetCore.Components.RenderFragment?
-PandaBear.Blazor.Site.PriceList.Conditions.set -> void
-PandaBear.Blazor.Site.PriceList.HeadingId.get -> string?
-PandaBear.Blazor.Site.PriceList.HeadingId.set -> void
-PandaBear.Blazor.Site.PriceList.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.PriceItem!>!
-PandaBear.Blazor.Site.PriceList.Items.set -> void
-PandaBear.Blazor.Site.PriceList.PriceList() -> void
-override PandaBear.Blazor.Site.PriceItem.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.PriceItem.GetHashCode() -> int
-override PandaBear.Blazor.Site.PriceItem.ToString() -> string!
-static PandaBear.Blazor.Site.PriceItem.operator !=(PandaBear.Blazor.Site.PriceItem? left, PandaBear.Blazor.Site.PriceItem? right) -> bool
-static PandaBear.Blazor.Site.PriceItem.operator ==(PandaBear.Blazor.Site.PriceItem? left, PandaBear.Blazor.Site.PriceItem? right) -> bool
-PandaBear.Blazor.Site.StepItem
-PandaBear.Blazor.Site.StepItem.<Clone>$() -> PandaBear.Blazor.Site.StepItem!
-PandaBear.Blazor.Site.StepItem.Deconstruct(out string! Title, out System.Collections.Generic.IReadOnlyList<string!>! Paragraphs, out string? Note, out PandaBear.Blazor.Site.GalleryImage? Image, out System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>! Facts) -> void
-PandaBear.Blazor.Site.StepItem.Equals(PandaBear.Blazor.Site.StepItem? other) -> bool
-PandaBear.Blazor.Site.StepItem.Facts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>!
-PandaBear.Blazor.Site.StepItem.Facts.init -> void
-PandaBear.Blazor.Site.StepItem.Image.get -> PandaBear.Blazor.Site.GalleryImage?
-PandaBear.Blazor.Site.StepItem.Image.init -> void
-PandaBear.Blazor.Site.StepItem.Note.get -> string?
-PandaBear.Blazor.Site.StepItem.Note.init -> void
-PandaBear.Blazor.Site.StepItem.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Blazor.Site.StepItem.Paragraphs.init -> void
-PandaBear.Blazor.Site.StepItem.StepItem(string! Title, System.Collections.Generic.IReadOnlyList<string!>! Paragraphs, string? Note, PandaBear.Blazor.Site.GalleryImage? Image, System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>! Facts) -> void
-PandaBear.Blazor.Site.StepItem.Title.get -> string!
-PandaBear.Blazor.Site.StepItem.Title.init -> void
-PandaBear.Blazor.Site.StepList
-PandaBear.Blazor.Site.StepList.Alternate.get -> bool
-PandaBear.Blazor.Site.StepList.Alternate.set -> void
-PandaBear.Blazor.Site.StepList.EagerCount.get -> int
-PandaBear.Blazor.Site.StepList.EagerCount.set -> void
-PandaBear.Blazor.Site.StepList.HeadingIdFormat.get -> string?
-PandaBear.Blazor.Site.StepList.HeadingIdFormat.set -> void
-PandaBear.Blazor.Site.StepList.HeadingLevel.get -> int
-PandaBear.Blazor.Site.StepList.HeadingLevel.set -> void
-PandaBear.Blazor.Site.StepList.NumberFormat.get -> string!
-PandaBear.Blazor.Site.StepList.NumberFormat.set -> void
-PandaBear.Blazor.Site.StepList.StepList() -> void
-PandaBear.Blazor.Site.StepList.Steps.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.StepItem!>!
-PandaBear.Blazor.Site.StepList.Steps.set -> void
-PandaBear.Blazor.Site.TextList
-PandaBear.Blazor.Site.TextList.Items.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Blazor.Site.TextList.Items.set -> void
-PandaBear.Blazor.Site.TextList.Ordered.get -> bool
-PandaBear.Blazor.Site.TextList.Ordered.set -> void
-PandaBear.Blazor.Site.TextList.TextList() -> void
-override PandaBear.Blazor.Site.StepItem.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.StepItem.GetHashCode() -> int
-override PandaBear.Blazor.Site.StepItem.ToString() -> string!
-static PandaBear.Blazor.Site.StepItem.operator !=(PandaBear.Blazor.Site.StepItem? left, PandaBear.Blazor.Site.StepItem? right) -> bool
-static PandaBear.Blazor.Site.StepItem.operator ==(PandaBear.Blazor.Site.StepItem? left, PandaBear.Blazor.Site.StepItem? right) -> bool
-PandaBear.Blazor.Site.JsonLd
-PandaBear.Blazor.Site.JsonLd.Data.get -> System.Text.Json.Nodes.JsonNode?
-PandaBear.Blazor.Site.JsonLd.Data.set -> void
-PandaBear.Blazor.Site.JsonLd.JsonLd() -> void
-PandaBear.Blazor.Site.CreditsList
-PandaBear.Blazor.Site.CreditsList.CreditsList() -> void
-PandaBear.Blazor.Site.CreditsList.Items.set -> void
-PandaBear.Blazor.Site.GalleryImage.Credit.init -> void
-PandaBear.Blazor.Site.Hero.TitleScale.get -> PandaBear.Blazor.Site.HeroTitleScale
-PandaBear.Blazor.Site.Hero.TitleScale.set -> void
-PandaBear.Blazor.Site.HeroTitleScale
-PandaBear.Blazor.Site.HeroTitleScale.Large = 1 -> PandaBear.Blazor.Site.HeroTitleScale
-PandaBear.Blazor.Site.HeroTitleScale.Regular = 0 -> PandaBear.Blazor.Site.HeroTitleScale
-PandaBear.Blazor.Site.Theming.TypographyRole.Brand = 12 -> PandaBear.Blazor.Site.Theming.TypographyRole
-PandaBear.Blazor.Site.CreditItem
-PandaBear.Blazor.Site.CreditItem.<Clone>$() -> PandaBear.Blazor.Site.CreditItem!
-PandaBear.Blazor.Site.CreditItem.Author.get -> string!
-PandaBear.Blazor.Site.CreditItem.Author.init -> void
-PandaBear.Blazor.Site.CreditItem.AuthorHref.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.CreditItem.AuthorHref.init -> void
-PandaBear.Blazor.Site.CreditItem.ChangesText.get -> string?
-PandaBear.Blazor.Site.CreditItem.ChangesText.init -> void
-PandaBear.Blazor.Site.CreditItem.CreditItem(string! Author, string! LicenseText) -> void
-PandaBear.Blazor.Site.CreditItem.Deconstruct(out string! Author, out string! LicenseText) -> void
-PandaBear.Blazor.Site.CreditItem.Equals(PandaBear.Blazor.Site.CreditItem? other) -> bool
-PandaBear.Blazor.Site.CreditItem.LicenseHref.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.CreditItem.LicenseHref.init -> void
-PandaBear.Blazor.Site.CreditItem.LicenseText.get -> string!
-PandaBear.Blazor.Site.CreditItem.LicenseText.init -> void
-PandaBear.Blazor.Site.CreditItem.SourceHref.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.CreditItem.SourceHref.init -> void
-PandaBear.Blazor.Site.CreditItem.Thumbnail.get -> PandaBear.Blazor.Site.ResponsiveImage?
-PandaBear.Blazor.Site.CreditItem.Thumbnail.init -> void
-PandaBear.Blazor.Site.CreditItem.Title.get -> string?
-PandaBear.Blazor.Site.CreditItem.Title.init -> void
-PandaBear.Blazor.Site.CreditsList.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.CreditItem!>!
-PandaBear.Blazor.Site.GalleryImage.Credit.get -> PandaBear.Blazor.Site.ImageCreditLine?
-PandaBear.Blazor.Site.ImageCreditCaption
-PandaBear.Blazor.Site.ImageCreditCaption.Credit.get -> PandaBear.Blazor.Site.ImageCreditLine?
-PandaBear.Blazor.Site.ImageCreditCaption.Credit.set -> void
-PandaBear.Blazor.Site.ImageCreditCaption.ImageCreditCaption() -> void
-PandaBear.Blazor.Site.ImageCreditLine
-PandaBear.Blazor.Site.ImageCreditLine.<Clone>$() -> PandaBear.Blazor.Site.ImageCreditLine!
-PandaBear.Blazor.Site.ImageCreditLine.CreditsHref.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.ImageCreditLine.CreditsHref.init -> void
-PandaBear.Blazor.Site.ImageCreditLine.Deconstruct(out string! Text, out string? LicenseText, out PandaBear.Blazor.Site.LinkTarget? LicenseHref, out PandaBear.Blazor.Site.LinkTarget? CreditsHref) -> void
-PandaBear.Blazor.Site.ImageCreditLine.Equals(PandaBear.Blazor.Site.ImageCreditLine? other) -> bool
-PandaBear.Blazor.Site.ImageCreditLine.ImageCreditLine(string! Text, string? LicenseText = null, PandaBear.Blazor.Site.LinkTarget? LicenseHref = null, PandaBear.Blazor.Site.LinkTarget? CreditsHref = null) -> void
-PandaBear.Blazor.Site.ImageCreditLine.LicenseHref.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.ImageCreditLine.LicenseHref.init -> void
-PandaBear.Blazor.Site.ImageCreditLine.LicenseText.get -> string?
-PandaBear.Blazor.Site.ImageCreditLine.LicenseText.init -> void
-PandaBear.Blazor.Site.ImageCreditLine.Text.get -> string!
-PandaBear.Blazor.Site.ImageCreditLine.Text.init -> void
-override PandaBear.Blazor.Site.CreditItem.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.CreditItem.GetHashCode() -> int
-override PandaBear.Blazor.Site.CreditItem.ToString() -> string!
-override PandaBear.Blazor.Site.ImageCreditLine.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.ImageCreditLine.GetHashCode() -> int
-override PandaBear.Blazor.Site.ImageCreditLine.ToString() -> string!
-static PandaBear.Blazor.Site.CreditItem.FromCredit(PandaBear.BuildingBlocks.ImageCredit! credit, string? changesText) -> PandaBear.Blazor.Site.CreditItem!
-static PandaBear.Blazor.Site.CreditItem.operator !=(PandaBear.Blazor.Site.CreditItem? left, PandaBear.Blazor.Site.CreditItem? right) -> bool
-static PandaBear.Blazor.Site.CreditItem.operator ==(PandaBear.Blazor.Site.CreditItem? left, PandaBear.Blazor.Site.CreditItem? right) -> bool
-static PandaBear.Blazor.Site.ImageCreditLine.FromCredit(PandaBear.BuildingBlocks.ImageCredit! credit, string! format, System.IFormatProvider! provider, PandaBear.Blazor.Site.LinkTarget? creditsHref = null) -> PandaBear.Blazor.Site.ImageCreditLine!
-static PandaBear.Blazor.Site.ImageCreditLine.operator !=(PandaBear.Blazor.Site.ImageCreditLine? left, PandaBear.Blazor.Site.ImageCreditLine? right) -> bool
-static PandaBear.Blazor.Site.ImageCreditLine.operator ==(PandaBear.Blazor.Site.ImageCreditLine? left, PandaBear.Blazor.Site.ImageCreditLine? right) -> bool
-PandaBear.Blazor.Site.EnumParameter
-PandaBear.Blazor.Site.ElementId
-PandaBear.Blazor.Site.PositionFormat
-static PandaBear.Blazor.Site.EnumParameter.RequireDefined<TEnum>(TEnum value, string! parameterName, string! message) -> void
-static PandaBear.Blazor.Site.EnumParameter.RequireDefined<TEnum>(TEnum? value, string! parameterName, string! message) -> void
-static PandaBear.Blazor.Site.ElementId.Require(string? id, string! parameterName) -> void
-static PandaBear.Blazor.Site.PositionFormat.Require(string? format, string! parameterName, System.Globalization.CultureInfo! culture) -> string!
-PandaBear.Blazor.Site.PhotoCredit
-PandaBear.Blazor.Site.PhotoCredit.Compact.get -> bool
-PandaBear.Blazor.Site.PhotoCredit.Compact.set -> void
-PandaBear.Blazor.Site.PhotoCredit.Item.get -> PandaBear.Blazor.Site.PhotoCreditItem!
-PandaBear.Blazor.Site.PhotoCredit.Item.set -> void
-PandaBear.Blazor.Site.PhotoCredit.Labels.get -> PandaBear.Blazor.Site.PhotoCreditLabels!
-PandaBear.Blazor.Site.PhotoCredit.Labels.set -> void
-PandaBear.Blazor.Site.PhotoCredit.PhotoCredit() -> void
-PandaBear.Blazor.Site.PhotoCreditItem
-PandaBear.Blazor.Site.PhotoCreditItem.<Clone>$() -> PandaBear.Blazor.Site.PhotoCreditItem!
-PandaBear.Blazor.Site.PhotoCreditItem.Credit.get -> PandaBear.ContentRights.PublicContentCredit!
-PandaBear.Blazor.Site.PhotoCreditItem.Credit.init -> void
-PandaBear.Blazor.Site.PhotoCreditItem.Deconstruct(out string! Id, out string! Title, out PandaBear.ContentRights.PublicContentCredit! Credit) -> void
-PandaBear.Blazor.Site.PhotoCreditItem.DetailsHref.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.PhotoCreditItem.DetailsHref.init -> void
-PandaBear.Blazor.Site.PhotoCreditItem.Equals(PandaBear.Blazor.Site.PhotoCreditItem? other) -> bool
-PandaBear.Blazor.Site.PhotoCreditItem.Id.get -> string!
-PandaBear.Blazor.Site.PhotoCreditItem.Id.init -> void
-PandaBear.Blazor.Site.PhotoCreditItem.PhotoCreditItem(string! Id, string! Title, PandaBear.ContentRights.PublicContentCredit! Credit) -> void
-PandaBear.Blazor.Site.PhotoCreditItem.TermsLabel.get -> string?
-PandaBear.Blazor.Site.PhotoCreditItem.TermsLabel.init -> void
-PandaBear.Blazor.Site.PhotoCreditItem.Title.get -> string!
-PandaBear.Blazor.Site.PhotoCreditItem.Title.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels
-PandaBear.Blazor.Site.PhotoCreditLabels.<Clone>$() -> PandaBear.Blazor.Site.PhotoCreditLabels!
-PandaBear.Blazor.Site.PhotoCreditLabels.CopyrightOwner.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.CopyrightOwner.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.Creator.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.Creator.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.Deconstruct(out string! Creator, out string! CopyrightOwner, out string! Licensor, out string! Designated, out string! Source, out string! Terms, out string! Details, out string! Modification, out string! PreviousModifications) -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.Designated.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.Designated.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.Details.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.Details.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.Equals(PandaBear.Blazor.Site.PhotoCreditLabels? other) -> bool
-PandaBear.Blazor.Site.PhotoCreditLabels.Licensor.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.Licensor.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.Modification.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.Modification.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.PhotoCreditLabels(string! Creator, string! CopyrightOwner, string! Licensor, string! Designated, string! Source, string! Terms, string! Details, string! Modification, string! PreviousModifications) -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.PreviousModifications.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.PreviousModifications.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.Source.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.Source.init -> void
-PandaBear.Blazor.Site.PhotoCreditLabels.Terms.get -> string!
-PandaBear.Blazor.Site.PhotoCreditLabels.Terms.init -> void
-PandaBear.Blazor.Site.PhotoCreditsPage
-PandaBear.Blazor.Site.PhotoCreditsPage.HeadingId.get -> string?
-PandaBear.Blazor.Site.PhotoCreditsPage.HeadingId.set -> void
-PandaBear.Blazor.Site.PhotoCreditsPage.Intro.get -> string?
-PandaBear.Blazor.Site.PhotoCreditsPage.Intro.set -> void
-PandaBear.Blazor.Site.PhotoCreditsPage.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.PhotoCreditItem!>!
-PandaBear.Blazor.Site.PhotoCreditsPage.Items.set -> void
-PandaBear.Blazor.Site.PhotoCreditsPage.Labels.get -> PandaBear.Blazor.Site.PhotoCreditLabels!
-PandaBear.Blazor.Site.PhotoCreditsPage.Labels.set -> void
-PandaBear.Blazor.Site.PhotoCreditsPage.Level.get -> int
-PandaBear.Blazor.Site.PhotoCreditsPage.Level.set -> void
-PandaBear.Blazor.Site.PhotoCreditsPage.PhotoCreditsPage() -> void
-PandaBear.Blazor.Site.PhotoCreditsPage.Title.get -> string!
-PandaBear.Blazor.Site.PhotoCreditsPage.Title.set -> void
-const PandaBear.Blazor.Site.PhotoCreditsPage.MaxItems = 100 -> int
-PandaBear.Blazor.Site.AlbumSection.CreditLabels.get -> PandaBear.Blazor.Site.PhotoCreditLabels?
-PandaBear.Blazor.Site.AlbumSection.CreditLabels.set -> void
-PandaBear.Blazor.Site.GalleryImage.ReviewedCredit.get -> PandaBear.Blazor.Site.PhotoCreditItem?
-PandaBear.Blazor.Site.GalleryImage.ReviewedCredit.init -> void
-PandaBear.Blazor.Site.ImageGrid.CreditLabels.get -> PandaBear.Blazor.Site.PhotoCreditLabels?
-PandaBear.Blazor.Site.ImageGrid.CreditLabels.set -> void
-override PandaBear.Blazor.Site.PhotoCreditItem.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.PhotoCreditItem.GetHashCode() -> int
-override PandaBear.Blazor.Site.PhotoCreditItem.ToString() -> string!
-override PandaBear.Blazor.Site.PhotoCreditLabels.Equals(object? obj) -> bool
-override PandaBear.Blazor.Site.PhotoCreditLabels.GetHashCode() -> int
-override PandaBear.Blazor.Site.PhotoCreditLabels.ToString() -> string!
-static PandaBear.Blazor.Site.PhotoCreditItem.operator !=(PandaBear.Blazor.Site.PhotoCreditItem? left, PandaBear.Blazor.Site.PhotoCreditItem? right) -> bool
-static PandaBear.Blazor.Site.PhotoCreditItem.operator ==(PandaBear.Blazor.Site.PhotoCreditItem? left, PandaBear.Blazor.Site.PhotoCreditItem? right) -> bool
-static PandaBear.Blazor.Site.PhotoCreditLabels.operator !=(PandaBear.Blazor.Site.PhotoCreditLabels? left, PandaBear.Blazor.Site.PhotoCreditLabels? right) -> bool
-static PandaBear.Blazor.Site.PhotoCreditLabels.operator ==(PandaBear.Blazor.Site.PhotoCreditLabels? left, PandaBear.Blazor.Site.PhotoCreditLabels? right) -> bool
+SharedKernel.Blazor.Site.AlbumIndex.CardStyle.get -> SharedKernel.Blazor.Site.CardStyle
+SharedKernel.Blazor.Site.AlbumIndex.CardStyle.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.Gap.get -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.AlbumIndex.Gap.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.ImageAspect.get -> SharedKernel.Blazor.Site.CardImageAspect
+SharedKernel.Blazor.Site.AlbumIndex.ImageAspect.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.ImageShadow.get -> SharedKernel.Blazor.Site.CardImageShadow
+SharedKernel.Blazor.Site.AlbumIndex.ImageShadow.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.ItemAlignment.get -> SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.AlbumIndex.ItemAlignment.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.MaxColumnWidth.get -> SharedKernel.Blazor.Site.CardColumnWidth?
+SharedKernel.Blazor.Site.AlbumIndex.MaxColumnWidth.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.MinColumnWidth.get -> SharedKernel.Blazor.Site.CardColumnWidth
+SharedKernel.Blazor.Site.AlbumIndex.MinColumnWidth.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.MoreSize.get -> SharedKernel.Blazor.Site.ButtonSize
+SharedKernel.Blazor.Site.AlbumIndex.MoreSize.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.MoreText.get -> string?
+SharedKernel.Blazor.Site.AlbumIndex.MoreText.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.MoreVariant.get -> SharedKernel.Blazor.Site.ButtonVariant
+SharedKernel.Blazor.Site.AlbumIndex.MoreVariant.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.TextAlignment.get -> SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.AlbumIndex.TextAlignment.set -> void
+SharedKernel.Blazor.Site.ButtonLink.Size.get -> SharedKernel.Blazor.Site.ButtonSize
+SharedKernel.Blazor.Site.ButtonLink.Size.set -> void
+SharedKernel.Blazor.Site.ButtonSize
+SharedKernel.Blazor.Site.ButtonSize.Compact = 1 -> SharedKernel.Blazor.Site.ButtonSize
+SharedKernel.Blazor.Site.ButtonSize.Regular = 0 -> SharedKernel.Blazor.Site.ButtonSize
+SharedKernel.Blazor.Site.Card.CardStyle.get -> SharedKernel.Blazor.Site.CardStyle
+SharedKernel.Blazor.Site.Card.CardStyle.set -> void
+SharedKernel.Blazor.Site.Card.Eyebrow.get -> string?
+SharedKernel.Blazor.Site.Card.Eyebrow.set -> void
+SharedKernel.Blazor.Site.Card.ImageAspect.get -> SharedKernel.Blazor.Site.CardImageAspect
+SharedKernel.Blazor.Site.Card.ImageAspect.set -> void
+SharedKernel.Blazor.Site.Card.ImageShadow.get -> SharedKernel.Blazor.Site.CardImageShadow
+SharedKernel.Blazor.Site.Card.ImageShadow.set -> void
+SharedKernel.Blazor.Site.Card.MoreSize.get -> SharedKernel.Blazor.Site.ButtonSize
+SharedKernel.Blazor.Site.Card.MoreSize.set -> void
+SharedKernel.Blazor.Site.Card.MoreText.get -> string?
+SharedKernel.Blazor.Site.Card.MoreText.set -> void
+SharedKernel.Blazor.Site.Card.MoreVariant.get -> SharedKernel.Blazor.Site.ButtonVariant
+SharedKernel.Blazor.Site.Card.MoreVariant.set -> void
+SharedKernel.Blazor.Site.Card.TextAlignment.get -> SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.Card.TextAlignment.set -> void
+SharedKernel.Blazor.Site.CardColumnWidth
+SharedKernel.Blazor.Site.CardColumnWidth.Medium = 1 -> SharedKernel.Blazor.Site.CardColumnWidth
+SharedKernel.Blazor.Site.CardColumnWidth.Narrow = 0 -> SharedKernel.Blazor.Site.CardColumnWidth
+SharedKernel.Blazor.Site.CardColumnWidth.Wide = 2 -> SharedKernel.Blazor.Site.CardColumnWidth
+SharedKernel.Blazor.Site.CardGrid.Gap.get -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.CardGrid.Gap.set -> void
+SharedKernel.Blazor.Site.CardGrid.ItemAlignment.get -> SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.CardGrid.ItemAlignment.set -> void
+SharedKernel.Blazor.Site.CardGrid.MaxColumnWidth.get -> SharedKernel.Blazor.Site.CardColumnWidth?
+SharedKernel.Blazor.Site.CardGrid.MaxColumnWidth.set -> void
+SharedKernel.Blazor.Site.CardGrid.MinColumnWidth.get -> SharedKernel.Blazor.Site.CardColumnWidth
+SharedKernel.Blazor.Site.CardGrid.MinColumnWidth.set -> void
+SharedKernel.Blazor.Site.CardImageAspect
+SharedKernel.Blazor.Site.CardImageAspect.FourByThree = 0 -> SharedKernel.Blazor.Site.CardImageAspect
+SharedKernel.Blazor.Site.CardImageAspect.Natural = 3 -> SharedKernel.Blazor.Site.CardImageAspect
+SharedKernel.Blazor.Site.CardImageAspect.SixteenByNine = 1 -> SharedKernel.Blazor.Site.CardImageAspect
+SharedKernel.Blazor.Site.CardImageAspect.Square = 2 -> SharedKernel.Blazor.Site.CardImageAspect
+SharedKernel.Blazor.Site.CardImageShadow
+SharedKernel.Blazor.Site.CardImageShadow.None = 0 -> SharedKernel.Blazor.Site.CardImageShadow
+SharedKernel.Blazor.Site.CardImageShadow.Offset = 1 -> SharedKernel.Blazor.Site.CardImageShadow
+SharedKernel.Blazor.Site.CardStyle
+SharedKernel.Blazor.Site.CardStyle.Boxed = 0 -> SharedKernel.Blazor.Site.CardStyle
+SharedKernel.Blazor.Site.CardStyle.Plain = 1 -> SharedKernel.Blazor.Site.CardStyle
+SharedKernel.Blazor.Site.FooterTone
+SharedKernel.Blazor.Site.FooterTone.Default = 0 -> SharedKernel.Blazor.Site.FooterTone
+SharedKernel.Blazor.Site.FooterTone.Primary = 1 -> SharedKernel.Blazor.Site.FooterTone
+SharedKernel.Blazor.Site.Hero.Divider.get -> bool
+SharedKernel.Blazor.Site.Hero.Divider.set -> void
+SharedKernel.Blazor.Site.SeparatedList
+SharedKernel.Blazor.Site.SeparatedList.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.SeparatedList.ChildContent.set -> void
+SharedKernel.Blazor.Site.SeparatedList.SeparatedList() -> void
+SharedKernel.Blazor.Site.SeparatedListItem
+SharedKernel.Blazor.Site.SeparatedListItem.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.SeparatedListItem.ChildContent.set -> void
+SharedKernel.Blazor.Site.SeparatedListItem.SeparatedListItem() -> void
+SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.SiteAlignment.Center = 1 -> SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.SiteAlignment.Start = 0 -> SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.SiteFooter.TextAlignment.get -> SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.SiteFooter.TextAlignment.set -> void
+SharedKernel.Blazor.Site.SiteFooter.Tone.get -> SharedKernel.Blazor.Site.FooterTone
+SharedKernel.Blazor.Site.SiteFooter.Tone.set -> void
+SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.SiteSpace.None = 0 -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.SiteSpace.Space1 = 1 -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.SiteSpace.Space2 = 2 -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.SiteSpace.Space3 = 3 -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.SiteSpace.Space4 = 4 -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.SiteSpace.Space5 = 5 -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.SiteSpace.Space6 = 6 -> SharedKernel.Blazor.Site.SiteSpace
+SharedKernel.Blazor.Site.Theming.ControlShape
+SharedKernel.Blazor.Site.Theming.ControlShape.Pill = 2 -> SharedKernel.Blazor.Site.Theming.ControlShape
+SharedKernel.Blazor.Site.Theming.ControlShape.Rounded = 0 -> SharedKernel.Blazor.Site.Theming.ControlShape
+SharedKernel.Blazor.Site.Theming.ControlShape.Square = 1 -> SharedKernel.Blazor.Site.Theming.ControlShape
+const SharedKernel.Blazor.Site.Theming.FontSize.FluidFromWidth = 20 -> decimal
+const SharedKernel.Blazor.Site.Theming.FontSize.FluidToWidth = 80 -> decimal
+const SharedKernel.Blazor.Site.Theming.FontSize.Largest = 10 -> decimal
+const SharedKernel.Blazor.Site.Theming.FontSize.Smallest = 0.5 -> decimal
+const SharedKernel.Blazor.Site.Theming.SiteColors.DerivedHoverWeight = 0.2 -> double
+SharedKernel.Blazor.Site.Theming.SiteShape
+SharedKernel.Blazor.Site.Theming.SiteShape.Control.get -> SharedKernel.Blazor.Site.Theming.ControlShape
+static SharedKernel.Blazor.Site.Theming.SiteShape.Create(SharedKernel.Blazor.Site.Theming.ControlShape control = SharedKernel.Blazor.Site.Theming.ControlShape.Rounded, decimal dividerWidth = 4, decimal dividerThickness = 0.25, SharedKernel.Blazor.Site.Theming.ThemeColorRole dividerColor = SharedKernel.Blazor.Site.Theming.ThemeColorRole.Accent) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.SiteShape!>
+static SharedKernel.Blazor.Site.Theming.SiteShape.Default.get -> SharedKernel.Blazor.Site.Theming.SiteShape!
+const SharedKernel.Blazor.Site.Theming.SiteShape.DefaultDividerThickness = 0.25 -> decimal
+const SharedKernel.Blazor.Site.Theming.SiteShape.DefaultDividerWidth = 4 -> decimal
+SharedKernel.Blazor.Site.Theming.SiteShape.DividerColor.get -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.SiteShape.DividerThickness.get -> decimal
+SharedKernel.Blazor.Site.Theming.SiteShape.DividerWidth.get -> decimal
+override SharedKernel.Blazor.Site.Theming.SiteShape.ToString() -> string!
+static SharedKernel.Blazor.Site.Theming.SiteTheme.Create(SharedKernel.Blazor.Site.Theming.SiteColors! colors, SharedKernel.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<SharedKernel.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, System.Func<SharedKernel.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null, SharedKernel.Blazor.Site.Theming.SiteShape? shape = null) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.SiteTheme!>
+static SharedKernel.Blazor.Site.Theming.SiteTheme.CreateDraft(SharedKernel.Blazor.Site.Theming.SiteColors! colors, SharedKernel.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<SharedKernel.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, SharedKernel.Blazor.Site.Theming.SiteShape? shape = null) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.SiteTheme!>
+SharedKernel.Blazor.Site.Theming.SiteTheme.Shape.get -> SharedKernel.Blazor.Site.Theming.SiteShape!
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.HeadingColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.ShapeVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.ControlShape.get -> SharedKernel.Blazor.Site.Theming.ControlShape?
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.ControlShape.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.DividerColor.get -> SharedKernel.Blazor.Site.Theming.ThemeColorRole?
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.DividerColor.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.DividerThickness.get -> decimal?
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.DividerThickness.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.DividerWidth.get -> decimal?
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.DividerWidth.set -> void
+const SharedKernel.Blazor.Site.Theming.ThemeFont.MaxFamilyLength = 64 -> int
+const SharedKernel.Blazor.Site.Theming.ThemeFont.MaxKeyLength = 32 -> int
+SharedKernel.Blazor.Site.Theming.TypographyFields.Color.get -> SharedKernel.Blazor.Site.Theming.ThemeColorRole?
+SharedKernel.Blazor.Site.Theming.TypographyFields.Color.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyRole.CardTitle = 11 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyStyle.Color.get -> SharedKernel.Blazor.Site.Theming.ThemeColorRole?
+static SharedKernel.Blazor.Site.Theming.TypographyStyle.Create(string? fontKey = null, SharedKernel.Blazor.Site.Theming.GenericFontFamily? fallback = null, SharedKernel.Blazor.Site.Theming.FontSize? size = null, int? weight = null, decimal? lineHeight = null, decimal? letterSpacing = null, SharedKernel.Blazor.Site.Theming.ThemeTextTransform? transform = null, bool? italic = null, SharedKernel.Blazor.Site.Theming.ThemeColorRole? color = null) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.TypographyStyle!>
+const SharedKernel.Blazor.Site.Theming.TypographyStyle.MaxLetterSpacing = 0.5 -> decimal
+const SharedKernel.Blazor.Site.Theming.TypographyStyle.MaxLineHeight = 3 -> decimal
+const SharedKernel.Blazor.Site.Theming.TypographyStyle.MinLetterSpacing = -0.1 -> decimal
+const SharedKernel.Blazor.Site.Theming.TypographyStyle.MinLineHeight = 0.8 -> decimal
+override SharedKernel.Blazor.Site.ImageAlternative.ToString() -> string!
+override SharedKernel.Blazor.Site.ImageCandidate.ToString() -> string!
+override SharedKernel.Blazor.Site.ImageSource.ToString() -> string!
+override SharedKernel.Blazor.Site.LinkTarget.ToString() -> string!
+override SharedKernel.Blazor.Site.ResponsiveImage.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.CssColor.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.FontSize.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.SiteTheme.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeColor.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeFont.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeFontFace.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.TypographyStyle.ToString() -> string!
+SharedKernel.Blazor.Site.AlternateLink
+SharedKernel.Blazor.Site.AlternateLink.AlternateLink(SharedKernel.BuildingBlocks.ContentCulture! Culture, System.Uri! Href) -> void
+SharedKernel.Blazor.Site.AlternateLink.Culture.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.Blazor.Site.AlternateLink.Culture.init -> void
+SharedKernel.Blazor.Site.AlternateLink.Href.get -> System.Uri!
+SharedKernel.Blazor.Site.AlternateLink.Href.init -> void
+SharedKernel.Blazor.Site.ButtonLink
+SharedKernel.Blazor.Site.ButtonLink.ButtonLink() -> void
+SharedKernel.Blazor.Site.ButtonLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.ButtonLink.ChildContent.set -> void
+SharedKernel.Blazor.Site.ButtonLink.Href.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.ButtonLink.Href.set -> void
+SharedKernel.Blazor.Site.ButtonLink.NewTab.get -> bool
+SharedKernel.Blazor.Site.ButtonLink.NewTab.set -> void
+SharedKernel.Blazor.Site.ButtonLink.NewTabHint.get -> string!
+SharedKernel.Blazor.Site.ButtonLink.NewTabHint.set -> void
+SharedKernel.Blazor.Site.ButtonLink.Variant.get -> SharedKernel.Blazor.Site.ButtonVariant
+SharedKernel.Blazor.Site.ButtonLink.Variant.set -> void
+SharedKernel.Blazor.Site.ButtonVariant
+SharedKernel.Blazor.Site.ButtonVariant.Outline = 2 -> SharedKernel.Blazor.Site.ButtonVariant
+SharedKernel.Blazor.Site.ButtonVariant.Primary = 0 -> SharedKernel.Blazor.Site.ButtonVariant
+SharedKernel.Blazor.Site.ButtonVariant.Secondary = 1 -> SharedKernel.Blazor.Site.ButtonVariant
+SharedKernel.Blazor.Site.Card
+SharedKernel.Blazor.Site.Card.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Card.Actions.set -> void
+SharedKernel.Blazor.Site.Card.Card() -> void
+SharedKernel.Blazor.Site.Card.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Card.ChildContent.set -> void
+SharedKernel.Blazor.Site.Card.HeadingLevel.get -> int
+SharedKernel.Blazor.Site.Card.HeadingLevel.set -> void
+SharedKernel.Blazor.Site.Card.Href.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.Card.Href.set -> void
+SharedKernel.Blazor.Site.Card.Image.get -> SharedKernel.Blazor.Site.ResponsiveImage?
+SharedKernel.Blazor.Site.Card.Image.set -> void
+SharedKernel.Blazor.Site.Card.Title.get -> string!
+SharedKernel.Blazor.Site.Card.Title.set -> void
+SharedKernel.Blazor.Site.CardGrid
+SharedKernel.Blazor.Site.CardGrid.CardGrid() -> void
+SharedKernel.Blazor.Site.CardGrid.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.CardGrid.ChildContent.set -> void
+SharedKernel.Blazor.Site.ContactCard
+SharedKernel.Blazor.Site.ContactCard.AddressLines.get -> System.Collections.Generic.IReadOnlyList<string!>?
+SharedKernel.Blazor.Site.ContactCard.AddressLines.set -> void
+SharedKernel.Blazor.Site.ContactCard.ContactCard() -> void
+SharedKernel.Blazor.Site.ContactCard.Email.get -> SharedKernel.BuildingBlocks.EmailAddress?
+SharedKernel.Blazor.Site.ContactCard.Email.set -> void
+SharedKernel.Blazor.Site.ContactCard.HeadingLevel.get -> int
+SharedKernel.Blazor.Site.ContactCard.HeadingLevel.set -> void
+SharedKernel.Blazor.Site.ContactCard.Phone.get -> SharedKernel.BuildingBlocks.PhoneNumber?
+SharedKernel.Blazor.Site.ContactCard.Phone.set -> void
+SharedKernel.Blazor.Site.ContactCard.Title.get -> string?
+SharedKernel.Blazor.Site.ContactCard.Title.set -> void
+SharedKernel.Blazor.Site.ContactCard.WhatsApp.get -> SharedKernel.BuildingBlocks.PhoneNumber?
+SharedKernel.Blazor.Site.ContactCard.WhatsApp.set -> void
+SharedKernel.Blazor.Site.ContactCard.WhatsAppLabel.get -> string!
+SharedKernel.Blazor.Site.ContactCard.WhatsAppLabel.set -> void
+SharedKernel.Blazor.Site.Disclosure
+SharedKernel.Blazor.Site.Disclosure.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Disclosure.ChildContent.set -> void
+SharedKernel.Blazor.Site.Disclosure.Disclosure() -> void
+SharedKernel.Blazor.Site.Disclosure.Open.get -> bool
+SharedKernel.Blazor.Site.Disclosure.Open.set -> void
+SharedKernel.Blazor.Site.Disclosure.Summary.get -> string!
+SharedKernel.Blazor.Site.Disclosure.Summary.set -> void
+SharedKernel.Blazor.Site.FactRow
+SharedKernel.Blazor.Site.FactRow.FactRow(string! Label, string! Value) -> void
+SharedKernel.Blazor.Site.FactRow.Label.get -> string!
+SharedKernel.Blazor.Site.FactRow.Label.init -> void
+SharedKernel.Blazor.Site.FactRow.Value.get -> string!
+SharedKernel.Blazor.Site.FactRow.Value.init -> void
+SharedKernel.Blazor.Site.FactsTable
+SharedKernel.Blazor.Site.FactsTable.Caption.get -> string!
+SharedKernel.Blazor.Site.FactsTable.Caption.set -> void
+SharedKernel.Blazor.Site.FactsTable.FactsTable() -> void
+SharedKernel.Blazor.Site.FactsTable.Rows.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.FactRow!>!
+SharedKernel.Blazor.Site.FactsTable.Rows.set -> void
+SharedKernel.Blazor.Site.GalleryImage
+SharedKernel.Blazor.Site.GalleryImage.Caption.get -> string?
+SharedKernel.Blazor.Site.GalleryImage.Caption.init -> void
+SharedKernel.Blazor.Site.GalleryImage.GalleryImage(SharedKernel.Blazor.Site.ResponsiveImage! Image, string? Caption = null) -> void
+SharedKernel.Blazor.Site.GalleryImage.Image.get -> SharedKernel.Blazor.Site.ResponsiveImage!
+SharedKernel.Blazor.Site.GalleryImage.Image.init -> void
+SharedKernel.Blazor.Site.GalleryImage.TextLanguage.get -> string?
+SharedKernel.Blazor.Site.GalleryImage.TextLanguage.init -> void
+SharedKernel.Blazor.Site.Hero
+SharedKernel.Blazor.Site.Hero.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Hero.Actions.set -> void
+SharedKernel.Blazor.Site.Hero.Eyebrow.get -> string?
+SharedKernel.Blazor.Site.Hero.Eyebrow.set -> void
+SharedKernel.Blazor.Site.Hero.Hero() -> void
+SharedKernel.Blazor.Site.Hero.Image.get -> SharedKernel.Blazor.Site.ResponsiveImage?
+SharedKernel.Blazor.Site.Hero.Image.set -> void
+SharedKernel.Blazor.Site.Hero.Subtitle.get -> string?
+SharedKernel.Blazor.Site.Hero.Subtitle.set -> void
+SharedKernel.Blazor.Site.Hero.Title.get -> string!
+SharedKernel.Blazor.Site.Hero.Title.set -> void
+SharedKernel.Blazor.Site.ImageAlternative
+SharedKernel.Blazor.Site.ImageAlternative.IsDecorative.get -> bool
+SharedKernel.Blazor.Site.ImageAlternative.Text.get -> string!
+SharedKernel.Blazor.Site.ImageCandidate
+SharedKernel.Blazor.Site.ImageCandidate.Density.get -> decimal?
+SharedKernel.Blazor.Site.ImageCandidate.Src.get -> SharedKernel.Blazor.Site.LinkTarget!
+SharedKernel.Blazor.Site.ImageCandidate.Width.get -> int?
+SharedKernel.Blazor.Site.ImageGrid
+SharedKernel.Blazor.Site.ImageGrid.EagerCount.get -> int
+SharedKernel.Blazor.Site.ImageGrid.EagerCount.set -> void
+SharedKernel.Blazor.Site.ImageGrid.ImageGrid() -> void
+SharedKernel.Blazor.Site.ImageGrid.Images.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.GalleryImage!>!
+SharedKernel.Blazor.Site.ImageGrid.Images.set -> void
+SharedKernel.Blazor.Site.ImageSource
+SharedKernel.Blazor.Site.ImageSource.Candidates.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.ImageCandidate!>!
+SharedKernel.Blazor.Site.ImageSource.SrcSet.get -> string!
+SharedKernel.Blazor.Site.ImageSource.Type.get -> string!
+SharedKernel.Blazor.Site.ImageSource.UsesWidthDescriptors.get -> bool
+SharedKernel.Blazor.Site.LanguageLink
+SharedKernel.Blazor.Site.LanguageLink.Culture.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.Blazor.Site.LanguageLink.Culture.init -> void
+SharedKernel.Blazor.Site.LanguageLink.Href.get -> SharedKernel.Blazor.Site.LinkTarget!
+SharedKernel.Blazor.Site.LanguageLink.Href.init -> void
+SharedKernel.Blazor.Site.LanguageLink.IsCurrent.get -> bool
+SharedKernel.Blazor.Site.LanguageLink.IsCurrent.init -> void
+SharedKernel.Blazor.Site.LanguageLink.Label.get -> string!
+SharedKernel.Blazor.Site.LanguageLink.Label.init -> void
+SharedKernel.Blazor.Site.LanguageLink.LanguageLink(SharedKernel.BuildingBlocks.ContentCulture! Culture, string! Label, SharedKernel.Blazor.Site.LinkTarget! Href, bool IsCurrent = false) -> void
+SharedKernel.Blazor.Site.LanguageSwitcher
+SharedKernel.Blazor.Site.LanguageSwitcher.Label.get -> string!
+SharedKernel.Blazor.Site.LanguageSwitcher.Label.set -> void
+SharedKernel.Blazor.Site.LanguageSwitcher.Languages.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.LanguageLink!>!
+SharedKernel.Blazor.Site.LanguageSwitcher.Languages.set -> void
+SharedKernel.Blazor.Site.LanguageSwitcher.LanguageSwitcher() -> void
+SharedKernel.Blazor.Site.LinkTarget
+SharedKernel.Blazor.Site.LinkTarget.Value.get -> string!
+SharedKernel.Blazor.Site.PageHead
+SharedKernel.Blazor.Site.PageHead.Alternates.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.AlternateLink!>!
+SharedKernel.Blazor.Site.PageHead.Alternates.set -> void
+SharedKernel.Blazor.Site.PageHead.CanonicalUrl.get -> System.Uri?
+SharedKernel.Blazor.Site.PageHead.CanonicalUrl.set -> void
+SharedKernel.Blazor.Site.PageHead.DefaultAlternateUrl.get -> System.Uri?
+SharedKernel.Blazor.Site.PageHead.DefaultAlternateUrl.set -> void
+SharedKernel.Blazor.Site.PageHead.Description.get -> string?
+SharedKernel.Blazor.Site.PageHead.Description.set -> void
+SharedKernel.Blazor.Site.PageHead.ImageUrl.get -> System.Uri?
+SharedKernel.Blazor.Site.PageHead.ImageUrl.set -> void
+SharedKernel.Blazor.Site.PageHead.Locale.get -> SharedKernel.BuildingBlocks.ContentCulture?
+SharedKernel.Blazor.Site.PageHead.Locale.set -> void
+SharedKernel.Blazor.Site.PageHead.PageHead() -> void
+SharedKernel.Blazor.Site.PageHead.Robots.get -> string?
+SharedKernel.Blazor.Site.PageHead.Robots.set -> void
+SharedKernel.Blazor.Site.PageHead.SiteName.get -> string?
+SharedKernel.Blazor.Site.PageHead.SiteName.set -> void
+SharedKernel.Blazor.Site.PageHead.Title.get -> string!
+SharedKernel.Blazor.Site.PageHead.Title.set -> void
+SharedKernel.Blazor.Site.Quote
+SharedKernel.Blazor.Site.Quote.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Quote.ChildContent.set -> void
+SharedKernel.Blazor.Site.Quote.Cite.get -> string?
+SharedKernel.Blazor.Site.Quote.Cite.set -> void
+SharedKernel.Blazor.Site.Quote.Quote() -> void
+SharedKernel.Blazor.Site.ResponsiveImage
+SharedKernel.Blazor.Site.ResponsiveImage.Alt.get -> SharedKernel.Blazor.Site.ImageAlternative!
+SharedKernel.Blazor.Site.ResponsiveImage.Height.get -> int
+SharedKernel.Blazor.Site.ResponsiveImage.Sizes.get -> string?
+SharedKernel.Blazor.Site.ResponsiveImage.Sources.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.ImageSource!>!
+SharedKernel.Blazor.Site.ResponsiveImage.Src.get -> SharedKernel.Blazor.Site.LinkTarget!
+SharedKernel.Blazor.Site.ResponsiveImage.SrcSet.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.ImageCandidate!>!
+SharedKernel.Blazor.Site.ResponsiveImage.UsesPicture.get -> bool
+SharedKernel.Blazor.Site.ResponsiveImage.Width.get -> int
+SharedKernel.Blazor.Site.Section
+SharedKernel.Blazor.Site.Section.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Section.ChildContent.set -> void
+SharedKernel.Blazor.Site.Section.Divider.get -> bool
+SharedKernel.Blazor.Site.Section.Divider.set -> void
+SharedKernel.Blazor.Site.Section.Eyebrow.get -> string?
+SharedKernel.Blazor.Site.Section.Eyebrow.set -> void
+SharedKernel.Blazor.Site.Section.Intro.get -> string?
+SharedKernel.Blazor.Site.Section.Intro.set -> void
+SharedKernel.Blazor.Site.Section.Level.get -> int
+SharedKernel.Blazor.Site.Section.Level.set -> void
+SharedKernel.Blazor.Site.Section.Section() -> void
+SharedKernel.Blazor.Site.Section.Title.get -> string!
+SharedKernel.Blazor.Site.Section.Title.set -> void
+SharedKernel.Blazor.Site.SiteComponent
+SharedKernel.Blazor.Site.SiteComponent.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
+SharedKernel.Blazor.Site.SiteComponent.AdditionalAttributes.set -> void
+SharedKernel.Blazor.Site.SiteComponent.Class.get -> string?
+SharedKernel.Blazor.Site.SiteComponent.Class.set -> void
+SharedKernel.Blazor.Site.SiteComponent.CssClass(string! own) -> string!
+SharedKernel.Blazor.Site.SiteComponent.SiteComponent() -> void
+SharedKernel.Blazor.Site.SiteFooter
+SharedKernel.Blazor.Site.SiteFooter.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.SiteFooter.ChildContent.set -> void
+SharedKernel.Blazor.Site.SiteFooter.Legal.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.SiteFooter.Legal.set -> void
+SharedKernel.Blazor.Site.SiteFooter.SiteFooter() -> void
+SharedKernel.Blazor.Site.SiteHeader
+SharedKernel.Blazor.Site.SiteHeader.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.SiteHeader.Actions.set -> void
+SharedKernel.Blazor.Site.SiteHeader.Brand.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.SiteHeader.Brand.set -> void
+SharedKernel.Blazor.Site.SiteHeader.CurrentPath.get -> string?
+SharedKernel.Blazor.Site.SiteHeader.CurrentPath.set -> void
+SharedKernel.Blazor.Site.SiteHeader.Items.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.SiteNavItem!>!
+SharedKernel.Blazor.Site.SiteHeader.Items.set -> void
+SharedKernel.Blazor.Site.SiteHeader.Label.get -> string!
+SharedKernel.Blazor.Site.SiteHeader.Label.set -> void
+SharedKernel.Blazor.Site.SiteHeader.SiteHeader() -> void
+SharedKernel.Blazor.Site.SiteNavItem
+SharedKernel.Blazor.Site.SiteNavItem.Children.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.SiteNavItem!>?
+SharedKernel.Blazor.Site.SiteNavItem.Children.init -> void
+SharedKernel.Blazor.Site.SiteNavItem.Href.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.SiteNavItem.Href.init -> void
+SharedKernel.Blazor.Site.SiteNavItem.SiteNavItem(string! Text, SharedKernel.Blazor.Site.LinkTarget? Href = null, System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.SiteNavItem!>? Children = null) -> void
+SharedKernel.Blazor.Site.SiteNavItem.Text.get -> string!
+SharedKernel.Blazor.Site.SiteNavItem.Text.init -> void
+SharedKernel.Blazor.Site.SkipLink
+SharedKernel.Blazor.Site.SkipLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.SkipLink.ChildContent.set -> void
+SharedKernel.Blazor.Site.SkipLink.SkipLink() -> void
+SharedKernel.Blazor.Site.SkipLink.TargetId.get -> string!
+SharedKernel.Blazor.Site.SkipLink.TargetId.set -> void
+SharedKernel.Blazor.Site.Theming.ColorScheme
+SharedKernel.Blazor.Site.Theming.ColorScheme.Dark = 1 -> SharedKernel.Blazor.Site.Theming.ColorScheme
+SharedKernel.Blazor.Site.Theming.ColorScheme.Light = 0 -> SharedKernel.Blazor.Site.Theming.ColorScheme
+SharedKernel.Blazor.Site.Theming.ContrastCheck
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Background.get -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Background.init -> void
+SharedKernel.Blazor.Site.Theming.ContrastCheck.ContrastCheck(SharedKernel.Blazor.Site.Theming.ThemeColorRole Foreground, SharedKernel.Blazor.Site.Theming.ThemeColorRole Background, SharedKernel.Blazor.Site.Theming.ColorScheme Scheme, double Ratio, double Minimum, string! Criterion) -> void
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Criterion.get -> string!
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Criterion.init -> void
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Foreground.get -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Foreground.init -> void
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Minimum.get -> double
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Minimum.init -> void
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Passes.get -> bool
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Ratio.get -> double
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Ratio.init -> void
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Scheme.get -> SharedKernel.Blazor.Site.Theming.ColorScheme
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Scheme.init -> void
+SharedKernel.Blazor.Site.Theming.CssColor
+SharedKernel.Blazor.Site.Theming.CssColor.ContrastRatio(SharedKernel.Blazor.Site.Theming.CssColor! other) -> double
+SharedKernel.Blazor.Site.Theming.CssColor.RelativeLuminance.get -> double
+SharedKernel.Blazor.Site.Theming.CssColor.Value.get -> string!
+SharedKernel.Blazor.Site.Theming.FontSize
+SharedKernel.Blazor.Site.Theming.FontSize.IsFluid.get -> bool
+SharedKernel.Blazor.Site.Theming.FontSize.Max.get -> decimal
+SharedKernel.Blazor.Site.Theming.FontSize.Min.get -> decimal
+SharedKernel.Blazor.Site.Theming.GenericFontFamily
+SharedKernel.Blazor.Site.Theming.GenericFontFamily.Monospace = 2 -> SharedKernel.Blazor.Site.Theming.GenericFontFamily
+SharedKernel.Blazor.Site.Theming.GenericFontFamily.SansSerif = 0 -> SharedKernel.Blazor.Site.Theming.GenericFontFamily
+SharedKernel.Blazor.Site.Theming.GenericFontFamily.Serif = 1 -> SharedKernel.Blazor.Site.Theming.GenericFontFamily
+SharedKernel.Blazor.Site.Theming.SiteColors
+SharedKernel.Blazor.Site.Theming.SiteColors.Accent.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.AccentHover.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.Border.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.Focus.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.IsDerived(SharedKernel.Blazor.Site.Theming.ThemeColorRole role) -> bool
+SharedKernel.Blazor.Site.Theming.SiteColors.Muted.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.OnAccent.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.OnPrimary.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.Primary.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.PrimaryHover.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.Surface.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.SurfaceAlt.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.Text.get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.this[SharedKernel.Blazor.Site.Theming.ThemeColorRole role].get -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+SharedKernel.Blazor.Site.Theming.SiteColors.With(SharedKernel.Blazor.Site.Theming.ThemeColorRole role, SharedKernel.Blazor.Site.Theming.ThemeColor! color) -> SharedKernel.Blazor.Site.Theming.SiteColors!
+SharedKernel.Blazor.Site.Theming.SiteColors.WithDerived(SharedKernel.Blazor.Site.Theming.ThemeColorRole role) -> SharedKernel.Blazor.Site.Theming.SiteColors!
+SharedKernel.Blazor.Site.Theming.SiteTheme
+SharedKernel.Blazor.Site.Theming.SiteTheme.AllowsSmallText.get -> bool
+SharedKernel.Blazor.Site.Theming.SiteTheme.Colors.get -> SharedKernel.Blazor.Site.Theming.SiteColors!
+SharedKernel.Blazor.Site.Theming.SiteTheme.Effective(SharedKernel.Blazor.Site.Theming.TypographyRole role) -> SharedKernel.Blazor.Site.Theming.TypographyStyle!
+SharedKernel.Blazor.Site.Theming.SiteTheme.Font(string! key) -> SharedKernel.Blazor.Site.Theming.ThemeFont?
+SharedKernel.Blazor.Site.Theming.SiteTheme.Fonts.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeFont!>!
+SharedKernel.Blazor.Site.Theming.SiteTheme.Review(System.Func<SharedKernel.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> SharedKernel.Blazor.Site.Theming.SiteThemeReview!
+SharedKernel.Blazor.Site.Theming.SiteTheme.Typography.get -> SharedKernel.Blazor.Site.Theming.SiteTypography!
+SharedKernel.Blazor.Site.Theming.SiteThemeReview
+SharedKernel.Blazor.Site.Theming.SiteThemeReview.Contrast.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ContrastCheck!>!
+SharedKernel.Blazor.Site.Theming.SiteThemeReview.Errors.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeIssue!>!
+SharedKernel.Blazor.Site.Theming.SiteThemeReview.HasErrors.get -> bool
+SharedKernel.Blazor.Site.Theming.SiteThemeReview.ToValidationErrors() -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
+SharedKernel.Blazor.Site.Theming.SiteThemeReview.Warnings.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeIssue!>!
+SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet
+SharedKernel.Blazor.Site.Theming.SiteTypography
+SharedKernel.Blazor.Site.Theming.SiteTypography.this[SharedKernel.Blazor.Site.Theming.TypographyRole role].get -> SharedKernel.Blazor.Site.Theming.TypographyStyle!
+SharedKernel.Blazor.Site.Theming.SiteTypography.With(SharedKernel.Blazor.Site.Theming.TypographyRole role, SharedKernel.Blazor.Site.Theming.TypographyStyle! style) -> SharedKernel.Blazor.Site.Theming.SiteTypography!
+SharedKernel.Blazor.Site.Theming.ThemeColor
+SharedKernel.Blazor.Site.Theming.ThemeColor.Dark.get -> SharedKernel.Blazor.Site.Theming.CssColor!
+SharedKernel.Blazor.Site.Theming.ThemeColor.For(SharedKernel.Blazor.Site.Theming.ColorScheme scheme) -> SharedKernel.Blazor.Site.Theming.CssColor!
+SharedKernel.Blazor.Site.Theming.ThemeColor.Light.get -> SharedKernel.Blazor.Site.Theming.CssColor!
+SharedKernel.Blazor.Site.Theming.ThemeColorFields
+SharedKernel.Blazor.Site.Theming.ThemeColorFields.Dark.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeColorFields.Dark.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeColorFields.Light.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeColorFields.Light.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeColorFields.ThemeColorFields() -> void
+SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.Accent = 3 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.AccentHover = 4 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.Border = 10 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.Focus = 11 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.Muted = 7 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.OnAccent = 5 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.OnPrimary = 2 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.Primary = 0 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.PrimaryHover = 1 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.Surface = 8 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.SurfaceAlt = 9 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeColorRole.Text = 6 -> SharedKernel.Blazor.Site.Theming.ThemeColorRole
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.AllowSmallText.get -> bool
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.AllowSmallText.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.Colors.get -> System.Collections.Generic.IReadOnlyDictionary<SharedKernel.Blazor.Site.Theming.ThemeColorRole, SharedKernel.Blazor.Site.Theming.ThemeColorFields!>!
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.Fonts.get -> System.Collections.ObjectModel.Collection<SharedKernel.Blazor.Site.Theming.ThemeFontFields!>!
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.ThemeEditorModel() -> void
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.ToDraft() -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.SiteTheme!>
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.ToTheme(System.Func<SharedKernel.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.SiteTheme!>
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.Typography.get -> System.Collections.Generic.IReadOnlyDictionary<SharedKernel.Blazor.Site.Theming.TypographyRole, SharedKernel.Blazor.Site.Theming.TypographyFields!>!
+SharedKernel.Blazor.Site.Theming.ThemeFont
+SharedKernel.Blazor.Site.Theming.ThemeFont.Faces.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeFontFace!>!
+SharedKernel.Blazor.Site.Theming.ThemeFont.Family.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemeFont.Key.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemeFontFace
+SharedKernel.Blazor.Site.Theming.ThemeFontFace.Src.get -> SharedKernel.Blazor.Site.LinkTarget!
+SharedKernel.Blazor.Site.Theming.ThemeFontFace.Style.get -> SharedKernel.Blazor.Site.Theming.ThemeFontStyle
+SharedKernel.Blazor.Site.Theming.ThemeFontFace.Weight.get -> int
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields.Src.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields.Src.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields.Style.get -> SharedKernel.Blazor.Site.Theming.ThemeFontStyle
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields.Style.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields.ThemeFontFaceFields() -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields.Weight.get -> int?
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields.Weight.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFields
+SharedKernel.Blazor.Site.Theming.ThemeFontFields.Faces.get -> System.Collections.ObjectModel.Collection<SharedKernel.Blazor.Site.Theming.ThemeFontFaceFields!>!
+SharedKernel.Blazor.Site.Theming.ThemeFontFields.Family.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeFontFields.Family.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFields.Key.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeFontFields.Key.set -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFields.ThemeFontFields() -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontStyle
+SharedKernel.Blazor.Site.Theming.ThemeFontStyle.Italic = 1 -> SharedKernel.Blazor.Site.Theming.ThemeFontStyle
+SharedKernel.Blazor.Site.Theming.ThemeFontStyle.Normal = 0 -> SharedKernel.Blazor.Site.Theming.ThemeFontStyle
+SharedKernel.Blazor.Site.Theming.ThemeIssue
+SharedKernel.Blazor.Site.Theming.ThemeIssue.Field.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemeIssue.Field.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeIssue.Message.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemeIssue.Message.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeIssue.ThemeIssue(string! Field, string! Message) -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview
+SharedKernel.Blazor.Site.Theming.ThemePreview.ColorLabel.get -> System.Func<SharedKernel.Blazor.Site.Theming.ThemeColorRole, string?>?
+SharedKernel.Blazor.Site.Theming.ThemePreview.ColorLabel.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview.Errors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
+SharedKernel.Blazor.Site.Theming.ThemePreview.Errors.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview.Narrow.get -> bool
+SharedKernel.Blazor.Site.Theming.ThemePreview.Narrow.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview.Nonce.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemePreview.Nonce.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview.Scheme.get -> SharedKernel.Blazor.Site.Theming.ColorScheme
+SharedKernel.Blazor.Site.Theming.ThemePreview.Scheme.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview.ScopeId.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreview.ScopeId.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview.Texts.get -> SharedKernel.Blazor.Site.Theming.ThemePreviewTexts!
+SharedKernel.Blazor.Site.Theming.ThemePreview.Texts.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview.Theme.get -> SharedKernel.Blazor.Site.Theming.SiteTheme?
+SharedKernel.Blazor.Site.Theming.ThemePreview.Theme.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreview.ThemePreview() -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.CardText.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.CardText.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.CardTitle.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.CardTitle.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.ContrastCaption.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.ContrastCaption.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.DarkScheme.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.DarkScheme.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Error.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Error.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Fail.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Fail.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Heading1.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Heading1.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Heading2.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Heading2.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Heading3.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Heading3.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Label.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Label.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.LightScheme.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.LightScheme.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Link.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Link.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.NavigationCurrent.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.NavigationCurrent.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.NavigationLabel.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.NavigationLabel.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.NavigationOther.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.NavigationOther.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.On.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.On.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.PairColumn.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.PairColumn.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Paragraph.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Paragraph.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Pass.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Pass.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.PrimaryButton.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.PrimaryButton.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.RatioColumn.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.RatioColumn.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.RequiredColumn.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.RequiredColumn.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.ResultColumn.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.ResultColumn.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.SecondaryButton.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.SecondaryButton.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Small.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Small.init -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.ThemePreviewTexts() -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Warning.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Warning.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeTextTransform
+SharedKernel.Blazor.Site.Theming.ThemeTextTransform.Capitalize = 2 -> SharedKernel.Blazor.Site.Theming.ThemeTextTransform
+SharedKernel.Blazor.Site.Theming.ThemeTextTransform.None = 0 -> SharedKernel.Blazor.Site.Theming.ThemeTextTransform
+SharedKernel.Blazor.Site.Theming.ThemeTextTransform.Uppercase = 1 -> SharedKernel.Blazor.Site.Theming.ThemeTextTransform
+SharedKernel.Blazor.Site.Theming.TypographyFields
+SharedKernel.Blazor.Site.Theming.TypographyFields.Fallback.get -> SharedKernel.Blazor.Site.Theming.GenericFontFamily?
+SharedKernel.Blazor.Site.Theming.TypographyFields.Fallback.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.FontKey.get -> string?
+SharedKernel.Blazor.Site.Theming.TypographyFields.FontKey.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.Italic.get -> bool?
+SharedKernel.Blazor.Site.Theming.TypographyFields.Italic.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.LetterSpacing.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyFields.LetterSpacing.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.LineHeight.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyFields.LineHeight.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.SizeMax.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyFields.SizeMax.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.SizeMin.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyFields.SizeMin.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.Transform.get -> SharedKernel.Blazor.Site.Theming.ThemeTextTransform?
+SharedKernel.Blazor.Site.Theming.TypographyFields.Transform.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.TypographyFields() -> void
+SharedKernel.Blazor.Site.Theming.TypographyFields.Weight.get -> int?
+SharedKernel.Blazor.Site.Theming.TypographyFields.Weight.set -> void
+SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.Body = 6 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.Button = 9 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.H1 = 0 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.H2 = 1 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.H3 = 2 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.H4 = 3 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.H5 = 4 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.H6 = 5 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.Link = 8 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.Nav = 10 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyRole.Small = 7 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.Theming.TypographyStyle
+SharedKernel.Blazor.Site.Theming.TypographyStyle.Fallback.get -> SharedKernel.Blazor.Site.Theming.GenericFontFamily?
+SharedKernel.Blazor.Site.Theming.TypographyStyle.FontKey.get -> string?
+SharedKernel.Blazor.Site.Theming.TypographyStyle.Italic.get -> bool?
+SharedKernel.Blazor.Site.Theming.TypographyStyle.LetterSpacing.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyStyle.LineHeight.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyStyle.SetsFamily.get -> bool
+SharedKernel.Blazor.Site.Theming.TypographyStyle.Size.get -> SharedKernel.Blazor.Site.Theming.FontSize?
+SharedKernel.Blazor.Site.Theming.TypographyStyle.Transform.get -> SharedKernel.Blazor.Site.Theming.ThemeTextTransform?
+SharedKernel.Blazor.Site.Theming.TypographyStyle.Weight.get -> int?
+static SharedKernel.Blazor.Site.ImageAlternative.Decorative() -> SharedKernel.Blazor.Site.ImageAlternative!
+static SharedKernel.Blazor.Site.ImageAlternative.Describe(string! text) -> SharedKernel.Blazor.Site.ImageAlternative!
+static SharedKernel.Blazor.Site.ImageCandidate.AtDensity(SharedKernel.Blazor.Site.LinkTarget! src, decimal density) -> SharedKernel.Blazor.Site.ImageCandidate!
+static SharedKernel.Blazor.Site.ImageCandidate.AtWidth(SharedKernel.Blazor.Site.LinkTarget! src, int width) -> SharedKernel.Blazor.Site.ImageCandidate!
+static SharedKernel.Blazor.Site.ImageSource.Create(string! type, System.Collections.Generic.IEnumerable<SharedKernel.Blazor.Site.ImageCandidate!>! candidates) -> SharedKernel.Blazor.Site.ImageSource!
+static SharedKernel.Blazor.Site.LinkTarget.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.LinkTarget!>
+static SharedKernel.Blazor.Site.LinkTarget.FromString(string! value) -> SharedKernel.Blazor.Site.LinkTarget!
+const SharedKernel.Blazor.Site.LinkTarget.MaxLength = 2048 -> int
+SharedKernel.Blazor.Site.LinkTarget.IsImageSource.get -> bool
+SharedKernel.Blazor.Site.Section.HeadingId.get -> string?
+SharedKernel.Blazor.Site.Section.HeadingId.set -> void
+SharedKernel.Blazor.Site.ContactCard.PhoneText.get -> string?
+SharedKernel.Blazor.Site.ContactCard.PhoneText.set -> void
+static SharedKernel.Blazor.Site.ResponsiveImage.Create(SharedKernel.Blazor.Site.LinkTarget! src, int width, int height, SharedKernel.Blazor.Site.ImageAlternative! alt, string? sizes = null, System.Collections.Generic.IEnumerable<SharedKernel.Blazor.Site.ImageCandidate!>? srcSet = null, System.Collections.Generic.IEnumerable<SharedKernel.Blazor.Site.ImageSource!>? sources = null) -> SharedKernel.Blazor.Site.ResponsiveImage!
+SharedKernel.Blazor.Site.ImageGrid.PrioritizeFirstImage.get -> bool
+SharedKernel.Blazor.Site.ImageGrid.PrioritizeFirstImage.set -> void
+static SharedKernel.Blazor.Site.Theming.CssColor.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.CssColor!>
+static SharedKernel.Blazor.Site.Theming.CssColor.FromString(string! value) -> SharedKernel.Blazor.Site.Theming.CssColor!
+static SharedKernel.Blazor.Site.Theming.FontSize.Fixed(decimal rem) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.FontSize!>
+static SharedKernel.Blazor.Site.Theming.FontSize.Fluid(decimal minRem, decimal maxRem) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.FontSize!>
+static SharedKernel.Blazor.Site.Theming.SiteColors.Create(SharedKernel.Blazor.Site.Theming.ThemeColor! primary, SharedKernel.Blazor.Site.Theming.ThemeColor! onPrimary, SharedKernel.Blazor.Site.Theming.ThemeColor! accent, SharedKernel.Blazor.Site.Theming.ThemeColor! onAccent, SharedKernel.Blazor.Site.Theming.ThemeColor! text, SharedKernel.Blazor.Site.Theming.ThemeColor! muted, SharedKernel.Blazor.Site.Theming.ThemeColor! surface, SharedKernel.Blazor.Site.Theming.ThemeColor! surfaceAlt, SharedKernel.Blazor.Site.Theming.ThemeColor! border, SharedKernel.Blazor.Site.Theming.ThemeColor! focus, SharedKernel.Blazor.Site.Theming.ThemeColor? primaryHover = null, SharedKernel.Blazor.Site.Theming.ThemeColor? accentHover = null) -> SharedKernel.Blazor.Site.Theming.SiteColors!
+static SharedKernel.Blazor.Site.Theming.SiteTheme.Default.get -> SharedKernel.Blazor.Site.Theming.SiteTheme!
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.ColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.Hash(SharedKernel.Blazor.Site.Theming.SiteTheme! theme) -> string!
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.Render(SharedKernel.Blazor.Site.Theming.SiteTheme! theme) -> string!
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.RoleVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Blazor.Site.Theming.SiteTypography.Create(System.Collections.Generic.IReadOnlyDictionary<SharedKernel.Blazor.Site.Theming.TypographyRole, SharedKernel.Blazor.Site.Theming.TypographyStyle!>! styles) -> SharedKernel.Blazor.Site.Theming.SiteTypography!
+static SharedKernel.Blazor.Site.Theming.SiteTypography.Empty.get -> SharedKernel.Blazor.Site.Theming.SiteTypography!
+static SharedKernel.Blazor.Site.Theming.ThemeColor.Create(SharedKernel.Blazor.Site.Theming.CssColor! light, SharedKernel.Blazor.Site.Theming.CssColor! dark) -> SharedKernel.Blazor.Site.Theming.ThemeColor!
+static SharedKernel.Blazor.Site.Theming.ThemeEditorModel.FromTheme(SharedKernel.Blazor.Site.Theming.SiteTheme! theme) -> SharedKernel.Blazor.Site.Theming.ThemeEditorModel!
+static SharedKernel.Blazor.Site.Theming.ThemeFont.Create(string? key, string? family, System.Collections.Generic.IEnumerable<SharedKernel.Blazor.Site.Theming.ThemeFontFace!>! faces) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.ThemeFont!>
+static SharedKernel.Blazor.Site.Theming.ThemeFontFace.Create(int weight, SharedKernel.Blazor.Site.Theming.ThemeFontStyle style, SharedKernel.Blazor.Site.LinkTarget! src) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.ThemeFontFace!>
+static SharedKernel.Blazor.Site.Theming.TypographyStyle.Inherit.get -> SharedKernel.Blazor.Site.Theming.TypographyStyle!
+override SharedKernel.Blazor.Site.SiteComponent.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView parameters) -> System.Threading.Tasks.Task!
+SharedKernel.Blazor.Site.AlternateLink.<Clone>$() -> SharedKernel.Blazor.Site.AlternateLink!
+SharedKernel.Blazor.Site.AlternateLink.Deconstruct(out SharedKernel.BuildingBlocks.ContentCulture! Culture, out System.Uri! Href) -> void
+SharedKernel.Blazor.Site.AlternateLink.Equals(SharedKernel.Blazor.Site.AlternateLink? other) -> bool
+SharedKernel.Blazor.Site.FactRow.<Clone>$() -> SharedKernel.Blazor.Site.FactRow!
+SharedKernel.Blazor.Site.FactRow.Deconstruct(out string! Label, out string! Value) -> void
+SharedKernel.Blazor.Site.FactRow.Equals(SharedKernel.Blazor.Site.FactRow? other) -> bool
+SharedKernel.Blazor.Site.GalleryImage.<Clone>$() -> SharedKernel.Blazor.Site.GalleryImage!
+SharedKernel.Blazor.Site.GalleryImage.Deconstruct(out SharedKernel.Blazor.Site.ResponsiveImage! Image, out string? Caption) -> void
+SharedKernel.Blazor.Site.GalleryImage.Equals(SharedKernel.Blazor.Site.GalleryImage? other) -> bool
+SharedKernel.Blazor.Site.LanguageLink.<Clone>$() -> SharedKernel.Blazor.Site.LanguageLink!
+SharedKernel.Blazor.Site.LanguageLink.Deconstruct(out SharedKernel.BuildingBlocks.ContentCulture! Culture, out string! Label, out SharedKernel.Blazor.Site.LinkTarget! Href, out bool IsCurrent) -> void
+SharedKernel.Blazor.Site.LanguageLink.Equals(SharedKernel.Blazor.Site.LanguageLink? other) -> bool
+SharedKernel.Blazor.Site.SiteNavItem.<Clone>$() -> SharedKernel.Blazor.Site.SiteNavItem!
+SharedKernel.Blazor.Site.SiteNavItem.Deconstruct(out string! Text, out SharedKernel.Blazor.Site.LinkTarget? Href, out System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.SiteNavItem!>? Children) -> void
+SharedKernel.Blazor.Site.SiteNavItem.Equals(SharedKernel.Blazor.Site.SiteNavItem? other) -> bool
+SharedKernel.Blazor.Site.Theming.ContrastCheck.<Clone>$() -> SharedKernel.Blazor.Site.Theming.ContrastCheck!
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Deconstruct(out SharedKernel.Blazor.Site.Theming.ThemeColorRole Foreground, out SharedKernel.Blazor.Site.Theming.ThemeColorRole Background, out SharedKernel.Blazor.Site.Theming.ColorScheme Scheme, out double Ratio, out double Minimum, out string! Criterion) -> void
+SharedKernel.Blazor.Site.Theming.ContrastCheck.Equals(SharedKernel.Blazor.Site.Theming.ContrastCheck? other) -> bool
+SharedKernel.Blazor.Site.Theming.ThemeIssue.<Clone>$() -> SharedKernel.Blazor.Site.Theming.ThemeIssue!
+SharedKernel.Blazor.Site.Theming.ThemeIssue.Deconstruct(out string! Field, out string! Message) -> void
+SharedKernel.Blazor.Site.Theming.ThemeIssue.Equals(SharedKernel.Blazor.Site.Theming.ThemeIssue? other) -> bool
+override SharedKernel.Blazor.Site.AlternateLink.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.AlternateLink.GetHashCode() -> int
+override SharedKernel.Blazor.Site.AlternateLink.ToString() -> string!
+override SharedKernel.Blazor.Site.FactRow.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.FactRow.GetHashCode() -> int
+override SharedKernel.Blazor.Site.FactRow.ToString() -> string!
+override SharedKernel.Blazor.Site.GalleryImage.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.GalleryImage.GetHashCode() -> int
+override SharedKernel.Blazor.Site.GalleryImage.ToString() -> string!
+override SharedKernel.Blazor.Site.LanguageLink.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.LanguageLink.GetHashCode() -> int
+override SharedKernel.Blazor.Site.LanguageLink.ToString() -> string!
+override SharedKernel.Blazor.Site.SiteNavItem.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.SiteNavItem.GetHashCode() -> int
+override SharedKernel.Blazor.Site.SiteNavItem.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ContrastCheck.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.ContrastCheck.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.ContrastCheck.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeIssue.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.ThemeIssue.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.ThemeIssue.ToString() -> string!
+static SharedKernel.Blazor.Site.AlternateLink.operator !=(SharedKernel.Blazor.Site.AlternateLink? left, SharedKernel.Blazor.Site.AlternateLink? right) -> bool
+static SharedKernel.Blazor.Site.AlternateLink.operator ==(SharedKernel.Blazor.Site.AlternateLink? left, SharedKernel.Blazor.Site.AlternateLink? right) -> bool
+static SharedKernel.Blazor.Site.FactRow.operator !=(SharedKernel.Blazor.Site.FactRow? left, SharedKernel.Blazor.Site.FactRow? right) -> bool
+static SharedKernel.Blazor.Site.FactRow.operator ==(SharedKernel.Blazor.Site.FactRow? left, SharedKernel.Blazor.Site.FactRow? right) -> bool
+static SharedKernel.Blazor.Site.GalleryImage.operator !=(SharedKernel.Blazor.Site.GalleryImage? left, SharedKernel.Blazor.Site.GalleryImage? right) -> bool
+static SharedKernel.Blazor.Site.GalleryImage.operator ==(SharedKernel.Blazor.Site.GalleryImage? left, SharedKernel.Blazor.Site.GalleryImage? right) -> bool
+static SharedKernel.Blazor.Site.LanguageLink.operator !=(SharedKernel.Blazor.Site.LanguageLink? left, SharedKernel.Blazor.Site.LanguageLink? right) -> bool
+static SharedKernel.Blazor.Site.LanguageLink.operator ==(SharedKernel.Blazor.Site.LanguageLink? left, SharedKernel.Blazor.Site.LanguageLink? right) -> bool
+static SharedKernel.Blazor.Site.SiteNavItem.operator !=(SharedKernel.Blazor.Site.SiteNavItem? left, SharedKernel.Blazor.Site.SiteNavItem? right) -> bool
+static SharedKernel.Blazor.Site.SiteNavItem.operator ==(SharedKernel.Blazor.Site.SiteNavItem? left, SharedKernel.Blazor.Site.SiteNavItem? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ContrastCheck.operator !=(SharedKernel.Blazor.Site.Theming.ContrastCheck? left, SharedKernel.Blazor.Site.Theming.ContrastCheck? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ContrastCheck.operator ==(SharedKernel.Blazor.Site.Theming.ContrastCheck? left, SharedKernel.Blazor.Site.Theming.ContrastCheck? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeIssue.operator !=(SharedKernel.Blazor.Site.Theming.ThemeIssue? left, SharedKernel.Blazor.Site.Theming.ThemeIssue? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeIssue.operator ==(SharedKernel.Blazor.Site.Theming.ThemeIssue? left, SharedKernel.Blazor.Site.Theming.ThemeIssue? right) -> bool
+SharedKernel.Blazor.Site.Theming.SiteScrim
+SharedKernel.Blazor.Site.Theming.SiteScrim.Boost.get -> int
+SharedKernel.Blazor.Site.Theming.SiteScrim.IsReachable.get -> bool
+SharedKernel.Blazor.Site.Theming.SiteScrim.LargeText.get -> int
+SharedKernel.Blazor.Site.Theming.SiteScrim.Text.get -> int
+const SharedKernel.Blazor.Site.Theming.SiteScrim.LargeTextMinimum = 3 -> double
+const SharedKernel.Blazor.Site.Theming.SiteScrim.TextMinimum = 4.5 -> double
+static SharedKernel.Blazor.Site.Theming.SiteScrim.For(SharedKernel.Blazor.Site.Theming.SiteColors! colors) -> SharedKernel.Blazor.Site.Theming.SiteScrim!
+static SharedKernel.Blazor.Site.Theming.SiteScrim.MinimumPercent(SharedKernel.Blazor.Site.Theming.CssColor! foreground, SharedKernel.Blazor.Site.Theming.CssColor! scrim, double minimum) -> int?
+static SharedKernel.Blazor.Site.Theming.SiteScrim.WorstRatio(SharedKernel.Blazor.Site.Theming.CssColor! foreground, SharedKernel.Blazor.Site.Theming.CssColor! scrim, int percent) -> double
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.ScrimVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Blazor.Site.Band
+SharedKernel.Blazor.Site.Band.Band() -> void
+SharedKernel.Blazor.Site.Band.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Band.ChildContent.set -> void
+SharedKernel.Blazor.Site.Band.Image.get -> SharedKernel.Blazor.Site.ResponsiveImage?
+SharedKernel.Blazor.Site.Band.Image.set -> void
+SharedKernel.Blazor.Site.Band.Tone.get -> SharedKernel.Blazor.Site.BandTone
+SharedKernel.Blazor.Site.Band.Tone.set -> void
+SharedKernel.Blazor.Site.BandTone
+SharedKernel.Blazor.Site.BandTone.Default = 0 -> SharedKernel.Blazor.Site.BandTone
+SharedKernel.Blazor.Site.BandTone.Image = 3 -> SharedKernel.Blazor.Site.BandTone
+SharedKernel.Blazor.Site.BandTone.Muted = 1 -> SharedKernel.Blazor.Site.BandTone
+SharedKernel.Blazor.Site.BandTone.Primary = 2 -> SharedKernel.Blazor.Site.BandTone
+SharedKernel.Blazor.Site.Byline
+SharedKernel.Blazor.Site.Byline.Byline() -> void
+SharedKernel.Blazor.Site.Byline.JobTitle.get -> string?
+SharedKernel.Blazor.Site.Byline.JobTitle.set -> void
+SharedKernel.Blazor.Site.Byline.Name.get -> string!
+SharedKernel.Blazor.Site.Byline.Name.set -> void
+SharedKernel.Blazor.Site.Byline.Photo.get -> SharedKernel.Blazor.Site.ResponsiveImage?
+SharedKernel.Blazor.Site.Byline.Photo.set -> void
+SharedKernel.Blazor.Site.FloatingLink
+SharedKernel.Blazor.Site.FloatingLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.FloatingLink.ChildContent.set -> void
+SharedKernel.Blazor.Site.FloatingLink.FloatingLink() -> void
+SharedKernel.Blazor.Site.FloatingLink.Href.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.FloatingLink.Href.set -> void
+SharedKernel.Blazor.Site.FloatingLink.Label.get -> string!
+SharedKernel.Blazor.Site.FloatingLink.Label.set -> void
+SharedKernel.Blazor.Site.HeaderPlacement
+SharedKernel.Blazor.Site.HeaderPlacement.Above = 0 -> SharedKernel.Blazor.Site.HeaderPlacement
+SharedKernel.Blazor.Site.HeaderPlacement.OverHero = 1 -> SharedKernel.Blazor.Site.HeaderPlacement
+SharedKernel.Blazor.Site.Hero.Layout.get -> SharedKernel.Blazor.Site.HeroLayout
+SharedKernel.Blazor.Site.Hero.Layout.set -> void
+SharedKernel.Blazor.Site.HeroLayout
+SharedKernel.Blazor.Site.HeroLayout.Cover = 1 -> SharedKernel.Blazor.Site.HeroLayout
+SharedKernel.Blazor.Site.HeroLayout.Split = 0 -> SharedKernel.Blazor.Site.HeroLayout
+SharedKernel.Blazor.Site.ImageGrid.Layout.get -> SharedKernel.Blazor.Site.ImageGridLayout
+SharedKernel.Blazor.Site.ImageGrid.Layout.set -> void
+SharedKernel.Blazor.Site.ImageGridLayout
+SharedKernel.Blazor.Site.ImageGridLayout.Grid = 0 -> SharedKernel.Blazor.Site.ImageGridLayout
+SharedKernel.Blazor.Site.ImageGridLayout.Mosaic = 1 -> SharedKernel.Blazor.Site.ImageGridLayout
+SharedKernel.Blazor.Site.Section.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Section.Media.set -> void
+SharedKernel.Blazor.Site.SiteHeader.MenuLabel.get -> string?
+SharedKernel.Blazor.Site.SiteHeader.MenuLabel.set -> void
+SharedKernel.Blazor.Site.SiteHeader.Placement.get -> SharedKernel.Blazor.Site.HeaderPlacement
+SharedKernel.Blazor.Site.SiteHeader.Placement.set -> void
+SharedKernel.Blazor.Site.VideoLink
+SharedKernel.Blazor.Site.VideoLink.Href.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.VideoLink.Href.set -> void
+SharedKernel.Blazor.Site.VideoLink.Poster.get -> SharedKernel.Blazor.Site.ResponsiveImage?
+SharedKernel.Blazor.Site.VideoLink.Poster.set -> void
+SharedKernel.Blazor.Site.VideoLink.SiteHint.get -> string!
+SharedKernel.Blazor.Site.VideoLink.SiteHint.set -> void
+SharedKernel.Blazor.Site.VideoLink.Title.get -> string!
+SharedKernel.Blazor.Site.VideoLink.Title.set -> void
+SharedKernel.Blazor.Site.VideoLink.VideoLink() -> void
+SharedKernel.Blazor.Site.CoverHeight
+SharedKernel.Blazor.Site.CoverHeight.Landing = 1 -> SharedKernel.Blazor.Site.CoverHeight
+SharedKernel.Blazor.Site.CoverHeight.Page = 0 -> SharedKernel.Blazor.Site.CoverHeight
+SharedKernel.Blazor.Site.Hero.CoverHeight.get -> SharedKernel.Blazor.Site.CoverHeight
+SharedKernel.Blazor.Site.Hero.CoverHeight.set -> void
+SharedKernel.Blazor.Site.Theming.SiteTheme.BrandHeight.get -> decimal
+SharedKernel.Blazor.Site.Theming.SiteTheme.HeaderHeight.get -> decimal
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.get -> decimal?
+SharedKernel.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.set -> void
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Brand.get -> string!
+SharedKernel.Blazor.Site.Theming.ThemePreviewTexts.Brand.init -> void
+const SharedKernel.Blazor.Site.Theming.SiteTheme.DefaultBrandHeight = 2.5 -> decimal
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.HeaderVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Blazor.Site.Split
+SharedKernel.Blazor.Site.Split.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Split.ChildContent.set -> void
+SharedKernel.Blazor.Site.Split.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.Split.Media.set -> void
+SharedKernel.Blazor.Site.Split.Split() -> void
+SharedKernel.Blazor.Site.Split.MediaSide.get -> SharedKernel.Blazor.Site.SplitMediaSide
+SharedKernel.Blazor.Site.Split.MediaSide.set -> void
+SharedKernel.Blazor.Site.SplitMediaSide
+SharedKernel.Blazor.Site.SplitMediaSide.End = 0 -> SharedKernel.Blazor.Site.SplitMediaSide
+SharedKernel.Blazor.Site.SplitMediaSide.Start = 1 -> SharedKernel.Blazor.Site.SplitMediaSide
+SharedKernel.Blazor.Site.FactCard
+SharedKernel.Blazor.Site.FactCard.FactCard(string! Label, System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.FactValue!>! Values, Microsoft.AspNetCore.Components.RenderFragment? Icon = null) -> void
+SharedKernel.Blazor.Site.FactCard.Icon.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.FactCard.Icon.init -> void
+SharedKernel.Blazor.Site.FactCard.Label.get -> string!
+SharedKernel.Blazor.Site.FactCard.Label.init -> void
+SharedKernel.Blazor.Site.FactCard.Values.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.FactValue!>!
+SharedKernel.Blazor.Site.FactCard.Values.init -> void
+SharedKernel.Blazor.Site.FactGrid
+SharedKernel.Blazor.Site.FactGrid.Cards.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.FactCard!>!
+SharedKernel.Blazor.Site.FactGrid.Cards.set -> void
+SharedKernel.Blazor.Site.FactGrid.FactGrid() -> void
+SharedKernel.Blazor.Site.ActionRow
+SharedKernel.Blazor.Site.ActionRow.ActionRow() -> void
+SharedKernel.Blazor.Site.ActionRow.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.ActionRow.ChildContent.set -> void
+SharedKernel.Blazor.Site.FactCard.<Clone>$() -> SharedKernel.Blazor.Site.FactCard!
+SharedKernel.Blazor.Site.FactCard.Deconstruct(out string! Label, out System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.FactValue!>! Values, out Microsoft.AspNetCore.Components.RenderFragment? Icon) -> void
+SharedKernel.Blazor.Site.FactCard.Equals(SharedKernel.Blazor.Site.FactCard? other) -> bool
+override SharedKernel.Blazor.Site.FactCard.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.FactCard.GetHashCode() -> int
+override SharedKernel.Blazor.Site.FactCard.ToString() -> string!
+static SharedKernel.Blazor.Site.FactCard.operator !=(SharedKernel.Blazor.Site.FactCard? left, SharedKernel.Blazor.Site.FactCard? right) -> bool
+static SharedKernel.Blazor.Site.FactCard.operator ==(SharedKernel.Blazor.Site.FactCard? left, SharedKernel.Blazor.Site.FactCard? right) -> bool
+static SharedKernel.Blazor.Site.Theming.SiteThemeStylesheet.RenderVersioned(SharedKernel.Blazor.Site.Theming.SiteTheme! theme) -> (string! Css, string! Version)
+SharedKernel.Blazor.Site.FactValue
+SharedKernel.Blazor.Site.FactValue.<Clone>$() -> SharedKernel.Blazor.Site.FactValue!
+SharedKernel.Blazor.Site.FactValue.Deconstruct(out string! Text, out SharedKernel.Blazor.Site.LinkTarget? Link) -> void
+SharedKernel.Blazor.Site.FactValue.Equals(SharedKernel.Blazor.Site.FactValue? other) -> bool
+SharedKernel.Blazor.Site.FactValue.FactValue(string! Text, SharedKernel.Blazor.Site.LinkTarget? Link = null) -> void
+SharedKernel.Blazor.Site.FactValue.Link.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.FactValue.Link.init -> void
+SharedKernel.Blazor.Site.FactValue.Text.get -> string!
+SharedKernel.Blazor.Site.FactValue.Text.init -> void
+override SharedKernel.Blazor.Site.FactValue.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.FactValue.GetHashCode() -> int
+override SharedKernel.Blazor.Site.FactValue.ToString() -> string!
+static SharedKernel.Blazor.Site.FactValue.operator !=(SharedKernel.Blazor.Site.FactValue? left, SharedKernel.Blazor.Site.FactValue? right) -> bool
+static SharedKernel.Blazor.Site.FactValue.operator ==(SharedKernel.Blazor.Site.FactValue? left, SharedKernel.Blazor.Site.FactValue? right) -> bool
+const SharedKernel.Blazor.Site.Pager.MaxSurroundingPages = 10 -> int
+SharedKernel.Blazor.Site.Pager
+SharedKernel.Blazor.Site.Pager.Label.get -> string!
+SharedKernel.Blazor.Site.Pager.Label.set -> void
+SharedKernel.Blazor.Site.Pager.NextText.get -> string!
+SharedKernel.Blazor.Site.Pager.NextText.set -> void
+SharedKernel.Blazor.Site.Pager.PageHref.get -> System.Func<int, SharedKernel.Blazor.Site.LinkTarget!>?
+SharedKernel.Blazor.Site.Pager.PageHref.set -> void
+SharedKernel.Blazor.Site.Pager.PageLabelFormat.get -> string?
+SharedKernel.Blazor.Site.Pager.PageLabelFormat.set -> void
+SharedKernel.Blazor.Site.Pager.Pager() -> void
+SharedKernel.Blazor.Site.Pager.PreviousText.get -> string!
+SharedKernel.Blazor.Site.Pager.PreviousText.set -> void
+SharedKernel.Blazor.Site.Pager.SurroundingPages.get -> int
+SharedKernel.Blazor.Site.Pager.SurroundingPages.set -> void
+SharedKernel.Blazor.Site.Pager.Window.get -> SharedKernel.BuildingBlocks.PageWindow
+SharedKernel.Blazor.Site.Pager.Window.set -> void
+SharedKernel.Blazor.Site.AlbumIndex
+SharedKernel.Blazor.Site.AlbumIndex.AlbumIndex() -> void
+SharedKernel.Blazor.Site.AlbumIndex.Albums.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.AlbumSummary!>!
+SharedKernel.Blazor.Site.AlbumIndex.Albums.set -> void
+SharedKernel.Blazor.Site.AlbumIndex.HeadingLevel.get -> int
+SharedKernel.Blazor.Site.AlbumIndex.HeadingLevel.set -> void
+SharedKernel.Blazor.Site.AlbumSection
+SharedKernel.Blazor.Site.AlbumSection.AlbumSection() -> void
+SharedKernel.Blazor.Site.AlbumSection.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.AlbumSection.ChildContent.set -> void
+SharedKernel.Blazor.Site.AlbumSection.EagerCount.get -> int?
+SharedKernel.Blazor.Site.AlbumSection.EagerCount.set -> void
+SharedKernel.Blazor.Site.AlbumSection.Intro.get -> string?
+SharedKernel.Blazor.Site.AlbumSection.Intro.set -> void
+SharedKernel.Blazor.Site.AlbumSection.Layout.get -> SharedKernel.Blazor.Site.ImageGridLayout
+SharedKernel.Blazor.Site.AlbumSection.Layout.set -> void
+SharedKernel.Blazor.Site.AlbumSection.Level.get -> int
+SharedKernel.Blazor.Site.AlbumSection.Level.set -> void
+SharedKernel.Blazor.Site.AlbumSection.NextText.get -> string!
+SharedKernel.Blazor.Site.AlbumSection.NextText.set -> void
+SharedKernel.Blazor.Site.AlbumSection.PageHref.get -> System.Func<int, SharedKernel.Blazor.Site.LinkTarget!>?
+SharedKernel.Blazor.Site.AlbumSection.PageHref.set -> void
+SharedKernel.Blazor.Site.AlbumSection.PageLabelFormat.get -> string?
+SharedKernel.Blazor.Site.AlbumSection.PageLabelFormat.set -> void
+SharedKernel.Blazor.Site.AlbumSection.PagerLabel.get -> string!
+SharedKernel.Blazor.Site.AlbumSection.PagerLabel.set -> void
+SharedKernel.Blazor.Site.AlbumSection.Photos.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.GalleryImage!>!
+SharedKernel.Blazor.Site.AlbumSection.Photos.set -> void
+SharedKernel.Blazor.Site.AlbumSection.PreviousText.get -> string!
+SharedKernel.Blazor.Site.AlbumSection.PreviousText.set -> void
+SharedKernel.Blazor.Site.AlbumSection.Slug.get -> SharedKernel.BuildingBlocks.Slug?
+SharedKernel.Blazor.Site.AlbumSection.Slug.set -> void
+SharedKernel.Blazor.Site.AlbumSection.Title.get -> string!
+SharedKernel.Blazor.Site.AlbumSection.Title.set -> void
+SharedKernel.Blazor.Site.AlbumSection.Window.get -> SharedKernel.BuildingBlocks.PageWindow
+SharedKernel.Blazor.Site.AlbumSection.Window.set -> void
+SharedKernel.Blazor.Site.AlbumSummary
+SharedKernel.Blazor.Site.AlbumSummary.<Clone>$() -> SharedKernel.Blazor.Site.AlbumSummary!
+SharedKernel.Blazor.Site.AlbumSummary.Cover.get -> SharedKernel.Blazor.Site.ResponsiveImage?
+SharedKernel.Blazor.Site.AlbumSummary.Cover.init -> void
+SharedKernel.Blazor.Site.AlbumSummary.Equals(SharedKernel.Blazor.Site.AlbumSummary? other) -> bool
+SharedKernel.Blazor.Site.AlbumSummary.Href.get -> SharedKernel.Blazor.Site.LinkTarget!
+SharedKernel.Blazor.Site.AlbumSummary.Href.init -> void
+SharedKernel.Blazor.Site.AlbumSummary.PhotoCountText.get -> string?
+SharedKernel.Blazor.Site.AlbumSummary.PhotoCountText.init -> void
+SharedKernel.Blazor.Site.AlbumSummary.Title.get -> string!
+SharedKernel.Blazor.Site.AlbumSummary.Title.init -> void
+const SharedKernel.Blazor.Site.AlbumSection.DefaultEagerCount = 4 -> int
+override SharedKernel.Blazor.Site.AlbumSummary.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.AlbumSummary.GetHashCode() -> int
+override SharedKernel.Blazor.Site.AlbumSummary.ToString() -> string!
+static SharedKernel.Blazor.Site.AlbumSummary.operator !=(SharedKernel.Blazor.Site.AlbumSummary? left, SharedKernel.Blazor.Site.AlbumSummary? right) -> bool
+static SharedKernel.Blazor.Site.AlbumSummary.operator ==(SharedKernel.Blazor.Site.AlbumSummary? left, SharedKernel.Blazor.Site.AlbumSummary? right) -> bool
+SharedKernel.Blazor.Site.AlbumSection.TitleLanguage.get -> string?
+SharedKernel.Blazor.Site.AlbumSection.TitleLanguage.set -> void
+SharedKernel.Blazor.Site.AlbumSummary.AlbumSummary(string! Title, SharedKernel.Blazor.Site.LinkTarget! Href, SharedKernel.Blazor.Site.ResponsiveImage? Cover = null, string? PhotoCountText = null, string? TitleLanguage = null) -> void
+SharedKernel.Blazor.Site.AlbumSummary.Deconstruct(out string! Title, out SharedKernel.Blazor.Site.LinkTarget! Href, out SharedKernel.Blazor.Site.ResponsiveImage? Cover, out string? PhotoCountText, out string? TitleLanguage) -> void
+SharedKernel.Blazor.Site.AlbumSummary.TitleLanguage.get -> string?
+SharedKernel.Blazor.Site.AlbumSummary.TitleLanguage.init -> void
+SharedKernel.Blazor.Site.Card.TitleLanguage.get -> string?
+SharedKernel.Blazor.Site.Card.TitleLanguage.set -> void
+SharedKernel.Blazor.Site.Section.TitleLanguage.get -> string?
+SharedKernel.Blazor.Site.Section.TitleLanguage.set -> void
+const SharedKernel.Blazor.Site.AlbumIndex.DefaultEagerCount = 4 -> int
+const SharedKernel.Blazor.Site.AlbumSection.DefaultMosaicEagerCount = 1 -> int
+SharedKernel.Blazor.Site.AlbumIndex.EagerCount.get -> int
+SharedKernel.Blazor.Site.AlbumIndex.EagerCount.set -> void
+SharedKernel.Blazor.Site.AlbumSection.PrioritizeFirstImage.get -> bool
+SharedKernel.Blazor.Site.AlbumSection.PrioritizeFirstImage.set -> void
+SharedKernel.Blazor.Site.AlbumSection.SurroundingPages.get -> int
+SharedKernel.Blazor.Site.AlbumSection.SurroundingPages.set -> void
+SharedKernel.Blazor.Site.Card.EagerImage.get -> bool
+SharedKernel.Blazor.Site.Card.EagerImage.set -> void
+const SharedKernel.Blazor.Site.AlbumSection.DefaultThumbnailEagerCount = 6 -> int
+SharedKernel.Blazor.Site.ActionRow.Justification.get -> SharedKernel.Blazor.Site.ActionRowJustification
+SharedKernel.Blazor.Site.ActionRow.Justification.set -> void
+SharedKernel.Blazor.Site.ActionRowJustification
+SharedKernel.Blazor.Site.ActionRowJustification.Between = 3 -> SharedKernel.Blazor.Site.ActionRowJustification
+SharedKernel.Blazor.Site.ActionRowJustification.Center = 1 -> SharedKernel.Blazor.Site.ActionRowJustification
+SharedKernel.Blazor.Site.ActionRowJustification.End = 2 -> SharedKernel.Blazor.Site.ActionRowJustification
+SharedKernel.Blazor.Site.ActionRowJustification.Start = 0 -> SharedKernel.Blazor.Site.ActionRowJustification
+SharedKernel.Blazor.Site.Band.TextAlignment.get -> SharedKernel.Blazor.Site.SiteAlignment?
+SharedKernel.Blazor.Site.Band.TextAlignment.set -> void
+SharedKernel.Blazor.Site.ImageGridLayout.Thumbnails = 2 -> SharedKernel.Blazor.Site.ImageGridLayout
+SharedKernel.Blazor.Site.Section.TextAlignment.get -> SharedKernel.Blazor.Site.SiteAlignment?
+SharedKernel.Blazor.Site.Section.TextAlignment.set -> void
+SharedKernel.Blazor.Site.Split.Alignment.get -> SharedKernel.Blazor.Site.SiteAlignment
+SharedKernel.Blazor.Site.Split.Alignment.set -> void
+const SharedKernel.Blazor.Site.ImageGrid.ThumbnailSizes = "(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, (min-width: 30rem) 23vw, (min-width: 22.5rem) 31vw, 45vw" -> string!
+SharedKernel.Blazor.Site.AlbumSection.Sizes.get -> string?
+SharedKernel.Blazor.Site.AlbumSection.Sizes.set -> void
+SharedKernel.Blazor.Site.GalleryImage.Href.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.GalleryImage.Href.init -> void
+SharedKernel.Blazor.Site.ImageGrid.Sizes.get -> string?
+SharedKernel.Blazor.Site.ImageGrid.Sizes.set -> void
+SharedKernel.Blazor.Site.FactGrid.Layout.get -> SharedKernel.Blazor.Site.FactGridLayout
+SharedKernel.Blazor.Site.FactGrid.Layout.set -> void
+SharedKernel.Blazor.Site.FactGridLayout
+SharedKernel.Blazor.Site.FactGridLayout.Grid = 0 -> SharedKernel.Blazor.Site.FactGridLayout
+SharedKernel.Blazor.Site.FactGridLayout.Inline = 1 -> SharedKernel.Blazor.Site.FactGridLayout
+SharedKernel.Blazor.Site.StatusBadge
+SharedKernel.Blazor.Site.StatusBadge.Label.get -> string?
+SharedKernel.Blazor.Site.StatusBadge.Label.set -> void
+SharedKernel.Blazor.Site.StatusBadge.StatusBadge() -> void
+SharedKernel.Blazor.Site.StatusBadge.Text.get -> string!
+SharedKernel.Blazor.Site.StatusBadge.Text.set -> void
+SharedKernel.Blazor.Site.StatusBadge.Tone.get -> SharedKernel.Blazor.Site.StatusTone
+SharedKernel.Blazor.Site.StatusBadge.Tone.set -> void
+SharedKernel.Blazor.Site.StatusTone
+SharedKernel.Blazor.Site.StatusTone.Danger = 4 -> SharedKernel.Blazor.Site.StatusTone
+SharedKernel.Blazor.Site.StatusTone.Info = 1 -> SharedKernel.Blazor.Site.StatusTone
+SharedKernel.Blazor.Site.StatusTone.Neutral = 0 -> SharedKernel.Blazor.Site.StatusTone
+SharedKernel.Blazor.Site.StatusTone.Success = 2 -> SharedKernel.Blazor.Site.StatusTone
+SharedKernel.Blazor.Site.StatusTone.Warning = 3 -> SharedKernel.Blazor.Site.StatusTone
+SharedKernel.Blazor.Site.FromPrice
+SharedKernel.Blazor.Site.FromPrice.AmountText.get -> string!
+SharedKernel.Blazor.Site.FromPrice.AmountText.set -> void
+SharedKernel.Blazor.Site.FromPrice.Format.get -> string!
+SharedKernel.Blazor.Site.FromPrice.Format.set -> void
+SharedKernel.Blazor.Site.FromPrice.FromPrice() -> void
+SharedKernel.Blazor.Site.FromPrice.Value.get -> decimal
+SharedKernel.Blazor.Site.FromPrice.Value.set -> void
+SharedKernel.Blazor.Site.PriceItem
+SharedKernel.Blazor.Site.PriceItem.<Clone>$() -> SharedKernel.Blazor.Site.PriceItem!
+SharedKernel.Blazor.Site.PriceItem.AmountText.get -> string!
+SharedKernel.Blazor.Site.PriceItem.AmountText.init -> void
+SharedKernel.Blazor.Site.PriceItem.Deconstruct(out string! Label, out string! AmountText, out decimal? Value, out string? Note) -> void
+SharedKernel.Blazor.Site.PriceItem.Equals(SharedKernel.Blazor.Site.PriceItem? other) -> bool
+SharedKernel.Blazor.Site.PriceItem.Label.get -> string!
+SharedKernel.Blazor.Site.PriceItem.Label.init -> void
+SharedKernel.Blazor.Site.PriceItem.Note.get -> string?
+SharedKernel.Blazor.Site.PriceItem.Note.init -> void
+SharedKernel.Blazor.Site.PriceItem.PriceItem(string! Label, string! AmountText, decimal? Value, string? Note = null) -> void
+SharedKernel.Blazor.Site.PriceItem.Value.get -> decimal?
+SharedKernel.Blazor.Site.PriceItem.Value.init -> void
+SharedKernel.Blazor.Site.PriceList
+SharedKernel.Blazor.Site.PriceList.Conditions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+SharedKernel.Blazor.Site.PriceList.Conditions.set -> void
+SharedKernel.Blazor.Site.PriceList.HeadingId.get -> string?
+SharedKernel.Blazor.Site.PriceList.HeadingId.set -> void
+SharedKernel.Blazor.Site.PriceList.Items.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.PriceItem!>!
+SharedKernel.Blazor.Site.PriceList.Items.set -> void
+SharedKernel.Blazor.Site.PriceList.PriceList() -> void
+override SharedKernel.Blazor.Site.PriceItem.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.PriceItem.GetHashCode() -> int
+override SharedKernel.Blazor.Site.PriceItem.ToString() -> string!
+static SharedKernel.Blazor.Site.PriceItem.operator !=(SharedKernel.Blazor.Site.PriceItem? left, SharedKernel.Blazor.Site.PriceItem? right) -> bool
+static SharedKernel.Blazor.Site.PriceItem.operator ==(SharedKernel.Blazor.Site.PriceItem? left, SharedKernel.Blazor.Site.PriceItem? right) -> bool
+SharedKernel.Blazor.Site.StepItem
+SharedKernel.Blazor.Site.StepItem.<Clone>$() -> SharedKernel.Blazor.Site.StepItem!
+SharedKernel.Blazor.Site.StepItem.Deconstruct(out string! Title, out System.Collections.Generic.IReadOnlyList<string!>! Paragraphs, out string? Note, out SharedKernel.Blazor.Site.GalleryImage? Image, out System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.FactCard!>! Facts) -> void
+SharedKernel.Blazor.Site.StepItem.Equals(SharedKernel.Blazor.Site.StepItem? other) -> bool
+SharedKernel.Blazor.Site.StepItem.Facts.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.FactCard!>!
+SharedKernel.Blazor.Site.StepItem.Facts.init -> void
+SharedKernel.Blazor.Site.StepItem.Image.get -> SharedKernel.Blazor.Site.GalleryImage?
+SharedKernel.Blazor.Site.StepItem.Image.init -> void
+SharedKernel.Blazor.Site.StepItem.Note.get -> string?
+SharedKernel.Blazor.Site.StepItem.Note.init -> void
+SharedKernel.Blazor.Site.StepItem.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Blazor.Site.StepItem.Paragraphs.init -> void
+SharedKernel.Blazor.Site.StepItem.StepItem(string! Title, System.Collections.Generic.IReadOnlyList<string!>! Paragraphs, string? Note, SharedKernel.Blazor.Site.GalleryImage? Image, System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.FactCard!>! Facts) -> void
+SharedKernel.Blazor.Site.StepItem.Title.get -> string!
+SharedKernel.Blazor.Site.StepItem.Title.init -> void
+SharedKernel.Blazor.Site.StepList
+SharedKernel.Blazor.Site.StepList.Alternate.get -> bool
+SharedKernel.Blazor.Site.StepList.Alternate.set -> void
+SharedKernel.Blazor.Site.StepList.EagerCount.get -> int
+SharedKernel.Blazor.Site.StepList.EagerCount.set -> void
+SharedKernel.Blazor.Site.StepList.HeadingIdFormat.get -> string?
+SharedKernel.Blazor.Site.StepList.HeadingIdFormat.set -> void
+SharedKernel.Blazor.Site.StepList.HeadingLevel.get -> int
+SharedKernel.Blazor.Site.StepList.HeadingLevel.set -> void
+SharedKernel.Blazor.Site.StepList.NumberFormat.get -> string!
+SharedKernel.Blazor.Site.StepList.NumberFormat.set -> void
+SharedKernel.Blazor.Site.StepList.StepList() -> void
+SharedKernel.Blazor.Site.StepList.Steps.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.StepItem!>!
+SharedKernel.Blazor.Site.StepList.Steps.set -> void
+SharedKernel.Blazor.Site.TextList
+SharedKernel.Blazor.Site.TextList.Items.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Blazor.Site.TextList.Items.set -> void
+SharedKernel.Blazor.Site.TextList.Ordered.get -> bool
+SharedKernel.Blazor.Site.TextList.Ordered.set -> void
+SharedKernel.Blazor.Site.TextList.TextList() -> void
+override SharedKernel.Blazor.Site.StepItem.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.StepItem.GetHashCode() -> int
+override SharedKernel.Blazor.Site.StepItem.ToString() -> string!
+static SharedKernel.Blazor.Site.StepItem.operator !=(SharedKernel.Blazor.Site.StepItem? left, SharedKernel.Blazor.Site.StepItem? right) -> bool
+static SharedKernel.Blazor.Site.StepItem.operator ==(SharedKernel.Blazor.Site.StepItem? left, SharedKernel.Blazor.Site.StepItem? right) -> bool
+SharedKernel.Blazor.Site.JsonLd
+SharedKernel.Blazor.Site.JsonLd.Data.get -> System.Text.Json.Nodes.JsonNode?
+SharedKernel.Blazor.Site.JsonLd.Data.set -> void
+SharedKernel.Blazor.Site.JsonLd.JsonLd() -> void
+SharedKernel.Blazor.Site.CreditsList
+SharedKernel.Blazor.Site.CreditsList.CreditsList() -> void
+SharedKernel.Blazor.Site.CreditsList.Items.set -> void
+SharedKernel.Blazor.Site.GalleryImage.Credit.init -> void
+SharedKernel.Blazor.Site.Hero.TitleScale.get -> SharedKernel.Blazor.Site.HeroTitleScale
+SharedKernel.Blazor.Site.Hero.TitleScale.set -> void
+SharedKernel.Blazor.Site.HeroTitleScale
+SharedKernel.Blazor.Site.HeroTitleScale.Large = 1 -> SharedKernel.Blazor.Site.HeroTitleScale
+SharedKernel.Blazor.Site.HeroTitleScale.Regular = 0 -> SharedKernel.Blazor.Site.HeroTitleScale
+SharedKernel.Blazor.Site.Theming.TypographyRole.Brand = 12 -> SharedKernel.Blazor.Site.Theming.TypographyRole
+SharedKernel.Blazor.Site.CreditItem
+SharedKernel.Blazor.Site.CreditItem.<Clone>$() -> SharedKernel.Blazor.Site.CreditItem!
+SharedKernel.Blazor.Site.CreditItem.Author.get -> string!
+SharedKernel.Blazor.Site.CreditItem.Author.init -> void
+SharedKernel.Blazor.Site.CreditItem.AuthorHref.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.CreditItem.AuthorHref.init -> void
+SharedKernel.Blazor.Site.CreditItem.ChangesText.get -> string?
+SharedKernel.Blazor.Site.CreditItem.ChangesText.init -> void
+SharedKernel.Blazor.Site.CreditItem.CreditItem(string! Author, string! LicenseText) -> void
+SharedKernel.Blazor.Site.CreditItem.Deconstruct(out string! Author, out string! LicenseText) -> void
+SharedKernel.Blazor.Site.CreditItem.Equals(SharedKernel.Blazor.Site.CreditItem? other) -> bool
+SharedKernel.Blazor.Site.CreditItem.LicenseHref.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.CreditItem.LicenseHref.init -> void
+SharedKernel.Blazor.Site.CreditItem.LicenseText.get -> string!
+SharedKernel.Blazor.Site.CreditItem.LicenseText.init -> void
+SharedKernel.Blazor.Site.CreditItem.SourceHref.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.CreditItem.SourceHref.init -> void
+SharedKernel.Blazor.Site.CreditItem.Thumbnail.get -> SharedKernel.Blazor.Site.ResponsiveImage?
+SharedKernel.Blazor.Site.CreditItem.Thumbnail.init -> void
+SharedKernel.Blazor.Site.CreditItem.Title.get -> string?
+SharedKernel.Blazor.Site.CreditItem.Title.init -> void
+SharedKernel.Blazor.Site.CreditsList.Items.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.CreditItem!>!
+SharedKernel.Blazor.Site.GalleryImage.Credit.get -> SharedKernel.Blazor.Site.ImageCreditLine?
+SharedKernel.Blazor.Site.ImageCreditCaption
+SharedKernel.Blazor.Site.ImageCreditCaption.Credit.get -> SharedKernel.Blazor.Site.ImageCreditLine?
+SharedKernel.Blazor.Site.ImageCreditCaption.Credit.set -> void
+SharedKernel.Blazor.Site.ImageCreditCaption.ImageCreditCaption() -> void
+SharedKernel.Blazor.Site.ImageCreditLine
+SharedKernel.Blazor.Site.ImageCreditLine.<Clone>$() -> SharedKernel.Blazor.Site.ImageCreditLine!
+SharedKernel.Blazor.Site.ImageCreditLine.CreditsHref.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.ImageCreditLine.CreditsHref.init -> void
+SharedKernel.Blazor.Site.ImageCreditLine.Deconstruct(out string! Text, out string? LicenseText, out SharedKernel.Blazor.Site.LinkTarget? LicenseHref, out SharedKernel.Blazor.Site.LinkTarget? CreditsHref) -> void
+SharedKernel.Blazor.Site.ImageCreditLine.Equals(SharedKernel.Blazor.Site.ImageCreditLine? other) -> bool
+SharedKernel.Blazor.Site.ImageCreditLine.ImageCreditLine(string! Text, string? LicenseText = null, SharedKernel.Blazor.Site.LinkTarget? LicenseHref = null, SharedKernel.Blazor.Site.LinkTarget? CreditsHref = null) -> void
+SharedKernel.Blazor.Site.ImageCreditLine.LicenseHref.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.ImageCreditLine.LicenseHref.init -> void
+SharedKernel.Blazor.Site.ImageCreditLine.LicenseText.get -> string?
+SharedKernel.Blazor.Site.ImageCreditLine.LicenseText.init -> void
+SharedKernel.Blazor.Site.ImageCreditLine.Text.get -> string!
+SharedKernel.Blazor.Site.ImageCreditLine.Text.init -> void
+override SharedKernel.Blazor.Site.CreditItem.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.CreditItem.GetHashCode() -> int
+override SharedKernel.Blazor.Site.CreditItem.ToString() -> string!
+override SharedKernel.Blazor.Site.ImageCreditLine.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.ImageCreditLine.GetHashCode() -> int
+override SharedKernel.Blazor.Site.ImageCreditLine.ToString() -> string!
+static SharedKernel.Blazor.Site.CreditItem.FromCredit(SharedKernel.BuildingBlocks.ImageCredit! credit, string? changesText) -> SharedKernel.Blazor.Site.CreditItem!
+static SharedKernel.Blazor.Site.CreditItem.operator !=(SharedKernel.Blazor.Site.CreditItem? left, SharedKernel.Blazor.Site.CreditItem? right) -> bool
+static SharedKernel.Blazor.Site.CreditItem.operator ==(SharedKernel.Blazor.Site.CreditItem? left, SharedKernel.Blazor.Site.CreditItem? right) -> bool
+static SharedKernel.Blazor.Site.ImageCreditLine.FromCredit(SharedKernel.BuildingBlocks.ImageCredit! credit, string! format, System.IFormatProvider! provider, SharedKernel.Blazor.Site.LinkTarget? creditsHref = null) -> SharedKernel.Blazor.Site.ImageCreditLine!
+static SharedKernel.Blazor.Site.ImageCreditLine.operator !=(SharedKernel.Blazor.Site.ImageCreditLine? left, SharedKernel.Blazor.Site.ImageCreditLine? right) -> bool
+static SharedKernel.Blazor.Site.ImageCreditLine.operator ==(SharedKernel.Blazor.Site.ImageCreditLine? left, SharedKernel.Blazor.Site.ImageCreditLine? right) -> bool
+SharedKernel.Blazor.Site.EnumParameter
+SharedKernel.Blazor.Site.ElementId
+SharedKernel.Blazor.Site.PositionFormat
+static SharedKernel.Blazor.Site.EnumParameter.RequireDefined<TEnum>(TEnum value, string! parameterName, string! message) -> void
+static SharedKernel.Blazor.Site.EnumParameter.RequireDefined<TEnum>(TEnum? value, string! parameterName, string! message) -> void
+static SharedKernel.Blazor.Site.ElementId.Require(string? id, string! parameterName) -> void
+static SharedKernel.Blazor.Site.PositionFormat.Require(string? format, string! parameterName, System.Globalization.CultureInfo! culture) -> string!
+SharedKernel.Blazor.Site.PhotoCredit
+SharedKernel.Blazor.Site.PhotoCredit.Compact.get -> bool
+SharedKernel.Blazor.Site.PhotoCredit.Compact.set -> void
+SharedKernel.Blazor.Site.PhotoCredit.Item.get -> SharedKernel.Blazor.Site.PhotoCreditItem!
+SharedKernel.Blazor.Site.PhotoCredit.Item.set -> void
+SharedKernel.Blazor.Site.PhotoCredit.Labels.get -> SharedKernel.Blazor.Site.PhotoCreditLabels!
+SharedKernel.Blazor.Site.PhotoCredit.Labels.set -> void
+SharedKernel.Blazor.Site.PhotoCredit.PhotoCredit() -> void
+SharedKernel.Blazor.Site.PhotoCreditItem
+SharedKernel.Blazor.Site.PhotoCreditItem.<Clone>$() -> SharedKernel.Blazor.Site.PhotoCreditItem!
+SharedKernel.Blazor.Site.PhotoCreditItem.Credit.get -> SharedKernel.ContentRights.PublicContentCredit!
+SharedKernel.Blazor.Site.PhotoCreditItem.Credit.init -> void
+SharedKernel.Blazor.Site.PhotoCreditItem.Deconstruct(out string! Id, out string! Title, out SharedKernel.ContentRights.PublicContentCredit! Credit) -> void
+SharedKernel.Blazor.Site.PhotoCreditItem.DetailsHref.get -> SharedKernel.Blazor.Site.LinkTarget?
+SharedKernel.Blazor.Site.PhotoCreditItem.DetailsHref.init -> void
+SharedKernel.Blazor.Site.PhotoCreditItem.Equals(SharedKernel.Blazor.Site.PhotoCreditItem? other) -> bool
+SharedKernel.Blazor.Site.PhotoCreditItem.Id.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditItem.Id.init -> void
+SharedKernel.Blazor.Site.PhotoCreditItem.PhotoCreditItem(string! Id, string! Title, SharedKernel.ContentRights.PublicContentCredit! Credit) -> void
+SharedKernel.Blazor.Site.PhotoCreditItem.TermsLabel.get -> string?
+SharedKernel.Blazor.Site.PhotoCreditItem.TermsLabel.init -> void
+SharedKernel.Blazor.Site.PhotoCreditItem.Title.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditItem.Title.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels
+SharedKernel.Blazor.Site.PhotoCreditLabels.<Clone>$() -> SharedKernel.Blazor.Site.PhotoCreditLabels!
+SharedKernel.Blazor.Site.PhotoCreditLabels.CopyrightOwner.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.CopyrightOwner.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.Creator.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.Creator.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.Deconstruct(out string! Creator, out string! CopyrightOwner, out string! Licensor, out string! Designated, out string! Source, out string! Terms, out string! Details, out string! Modification, out string! PreviousModifications) -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.Designated.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.Designated.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.Details.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.Details.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.Equals(SharedKernel.Blazor.Site.PhotoCreditLabels? other) -> bool
+SharedKernel.Blazor.Site.PhotoCreditLabels.Licensor.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.Licensor.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.Modification.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.Modification.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.PhotoCreditLabels(string! Creator, string! CopyrightOwner, string! Licensor, string! Designated, string! Source, string! Terms, string! Details, string! Modification, string! PreviousModifications) -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.PreviousModifications.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.PreviousModifications.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.Source.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.Source.init -> void
+SharedKernel.Blazor.Site.PhotoCreditLabels.Terms.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditLabels.Terms.init -> void
+SharedKernel.Blazor.Site.PhotoCreditsPage
+SharedKernel.Blazor.Site.PhotoCreditsPage.HeadingId.get -> string?
+SharedKernel.Blazor.Site.PhotoCreditsPage.HeadingId.set -> void
+SharedKernel.Blazor.Site.PhotoCreditsPage.Intro.get -> string?
+SharedKernel.Blazor.Site.PhotoCreditsPage.Intro.set -> void
+SharedKernel.Blazor.Site.PhotoCreditsPage.Items.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.PhotoCreditItem!>!
+SharedKernel.Blazor.Site.PhotoCreditsPage.Items.set -> void
+SharedKernel.Blazor.Site.PhotoCreditsPage.Labels.get -> SharedKernel.Blazor.Site.PhotoCreditLabels!
+SharedKernel.Blazor.Site.PhotoCreditsPage.Labels.set -> void
+SharedKernel.Blazor.Site.PhotoCreditsPage.Level.get -> int
+SharedKernel.Blazor.Site.PhotoCreditsPage.Level.set -> void
+SharedKernel.Blazor.Site.PhotoCreditsPage.PhotoCreditsPage() -> void
+SharedKernel.Blazor.Site.PhotoCreditsPage.Title.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditsPage.Title.set -> void
+const SharedKernel.Blazor.Site.PhotoCreditsPage.MaxItems = 100 -> int
+SharedKernel.Blazor.Site.AlbumSection.CreditLabels.get -> SharedKernel.Blazor.Site.PhotoCreditLabels?
+SharedKernel.Blazor.Site.AlbumSection.CreditLabels.set -> void
+SharedKernel.Blazor.Site.GalleryImage.ReviewedCredit.get -> SharedKernel.Blazor.Site.PhotoCreditItem?
+SharedKernel.Blazor.Site.GalleryImage.ReviewedCredit.init -> void
+SharedKernel.Blazor.Site.ImageGrid.CreditLabels.get -> SharedKernel.Blazor.Site.PhotoCreditLabels?
+SharedKernel.Blazor.Site.ImageGrid.CreditLabels.set -> void
+override SharedKernel.Blazor.Site.PhotoCreditItem.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.PhotoCreditItem.GetHashCode() -> int
+override SharedKernel.Blazor.Site.PhotoCreditItem.ToString() -> string!
+override SharedKernel.Blazor.Site.PhotoCreditLabels.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.PhotoCreditLabels.GetHashCode() -> int
+override SharedKernel.Blazor.Site.PhotoCreditLabels.ToString() -> string!
+static SharedKernel.Blazor.Site.PhotoCreditItem.operator !=(SharedKernel.Blazor.Site.PhotoCreditItem? left, SharedKernel.Blazor.Site.PhotoCreditItem? right) -> bool
+static SharedKernel.Blazor.Site.PhotoCreditItem.operator ==(SharedKernel.Blazor.Site.PhotoCreditItem? left, SharedKernel.Blazor.Site.PhotoCreditItem? right) -> bool
+static SharedKernel.Blazor.Site.PhotoCreditLabels.operator !=(SharedKernel.Blazor.Site.PhotoCreditLabels? left, SharedKernel.Blazor.Site.PhotoCreditLabels? right) -> bool
+static SharedKernel.Blazor.Site.PhotoCreditLabels.operator ==(SharedKernel.Blazor.Site.PhotoCreditLabels? left, SharedKernel.Blazor.Site.PhotoCreditLabels? right) -> bool

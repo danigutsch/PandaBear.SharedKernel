@@ -1,4 +1,4 @@
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>
 /// Locates a Dev Container CLI to start.

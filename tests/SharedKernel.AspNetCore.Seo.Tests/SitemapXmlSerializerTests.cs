@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.AspNetCore.Seo.Tests;
+namespace SharedKernel.AspNetCore.Seo.Tests;
 
 /// <summary>Characterizes the sitemap value types and XML serialization that moved into the Seo package.</summary>
 public sealed class SitemapXmlSerializerTests

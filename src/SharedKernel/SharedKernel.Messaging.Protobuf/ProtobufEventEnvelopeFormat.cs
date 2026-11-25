@@ -2,7 +2,7 @@ using System.Text.Json;
 using CloudNative.CloudEvents;
 using CloudNative.CloudEvents.Protobuf;
 
-namespace PandaBear.Messaging.Protobuf;
+namespace SharedKernel.Messaging.Protobuf;
 
 /// <summary>
 /// Encodes event envelopes in the CloudEvents Protobuf event format (<see cref="ProtobufContentTypes.EventFormat"/>) and decodes them back.

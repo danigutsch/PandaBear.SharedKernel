@@ -1,6 +1,6 @@
 using System.Runtime.Versioning;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// Guards what only a real tool process shows: how <c>run</c> ends a service when a signal cancels it, with the invocation

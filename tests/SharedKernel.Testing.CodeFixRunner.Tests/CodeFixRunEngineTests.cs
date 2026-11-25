@@ -1,5 +1,5 @@
 
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>Tests that <c>CodeFixRunEngine.Run</c> applies, skips and reports code fixes against temporary project files.</summary>
 public sealed class CodeFixRunEngineTests : IDisposable
@@ -24,7 +24,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
 
         // Assert
         fixedCount.ShouldBe(1);
-        updatedSource.ShouldContain("using PandaBear.Testing.Assertions;", StringComparison.Ordinal);
+        updatedSource.ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
         updatedSource.ShouldContain("(true).ShouldBeTrue()", StringComparison.Ordinal);
         updatedSource.ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
         string.IsNullOrWhiteSpace(error.ToString()).ShouldBeTrue(error.ToString());
@@ -120,7 +120,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
 
         // Assert
         fixedCount.ShouldBe(2);
-        updatedSource.ShouldContain("using PandaBear.Testing.Assertions;", StringComparison.Ordinal);
+        updatedSource.ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
         updatedSource.ShouldContain("(true).ShouldBeTrue();", StringComparison.Ordinal);
         updatedSource.ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
         updatedSource.ShouldNotContain("True(  true )", StringComparison.Ordinal);

@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
-using PandaBear.ApiVersioning;
+using SharedKernel.ApiVersioning;
 
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>
 /// Creates OpenAPI documents from a lightweight in-process ASP.NET Core host.

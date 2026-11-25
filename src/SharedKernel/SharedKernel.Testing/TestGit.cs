@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Runs Git for test setup without the user's global or system configuration, hooks, signing, prompts, or credentials.</summary>
 public static class TestGit

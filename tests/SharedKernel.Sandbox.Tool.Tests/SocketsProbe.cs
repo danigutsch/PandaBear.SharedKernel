@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tool.Tests;
+namespace SharedKernel.Sandbox.Tool.Tests;
 
 /// <summary>Tells tests whether this environment lets a process create, bind, connect, and use a Unix socket.</summary>
 internal static class SocketsProbe

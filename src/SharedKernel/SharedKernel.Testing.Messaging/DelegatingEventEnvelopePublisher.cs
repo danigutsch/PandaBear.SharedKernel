@@ -1,6 +1,6 @@
-using PandaBear.Messaging;
+using SharedKernel.Messaging;
 
-namespace PandaBear.Testing.Messaging;
+namespace SharedKernel.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher that forwards every envelope to the wrapped publisher.

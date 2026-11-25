@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Records whether an owner's versions were read from every eligible source.</summary>
 /// <param name="Package">The direct package ID.</param>

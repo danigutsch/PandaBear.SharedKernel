@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Prepares a sealed automation result with scripted GitHub responses and runs <c>automation publish-result</c> against it.</summary>
 internal static class RoadmapPublishResultTestOperations

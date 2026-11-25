@@ -1,4 +1,4 @@
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>Decides which telemetry attribute names carry data that must be redacted.</summary>
 internal static class TelemetryPrivacyAttributeClassifier

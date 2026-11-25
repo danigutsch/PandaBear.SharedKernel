@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Roadmap item id and vocabulary rules read from the repository configuration.</summary>
 /// <param name="ItemIdPrefix">Prefix every roadmap item id must start with.</param>

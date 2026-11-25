@@ -1,7 +1,7 @@
 using System.Buffers;
 using System.Buffers.Text;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Text helpers shared by detectors: entropy, character classes, line positions, and decoding.</summary>
 public static class SecretText

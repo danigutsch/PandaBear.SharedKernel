@@ -1,6 +1,6 @@
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>
 /// Clock that cancels a command when the merge reads the time, as Ctrl+C or SIGTERM does while the merge runs, away from

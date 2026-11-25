@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests creation and validation of email, phone and person-name value objects.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

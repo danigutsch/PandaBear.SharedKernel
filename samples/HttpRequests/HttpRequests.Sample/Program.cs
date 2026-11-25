@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
-using PandaBear.AspNetCore;
-using PandaBear.AspNetCore.Authentication;
-using PandaBear.HttpClients;
-using PandaBear.Idempotency;
+using SharedKernel.AspNetCore;
+using SharedKernel.AspNetCore.Authentication;
+using SharedKernel.HttpClients;
+using SharedKernel.Idempotency;
 
 var principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim(ApiAuthenticationDefaults.SubjectClaimType, "sample-subject")], "sample"));
 var subject = principal.GetSubjectId() ?? throw new InvalidOperationException("Subject lookup failed.");

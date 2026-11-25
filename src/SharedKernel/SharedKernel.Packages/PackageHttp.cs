@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Settings shared by the network sources.</summary>
 public static class PackageHttp

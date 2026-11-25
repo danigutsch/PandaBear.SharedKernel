@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Synchronizes roadmap items to GitHub issues and a GitHub project.</summary>
 public sealed class GitHubRoadmapSyncer

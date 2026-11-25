@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using PandaBear.ConfigurationFiles;
-using PandaBear.IO;
-using PandaBear.Processes;
+using SharedKernel.ConfigurationFiles;
+using SharedKernel.IO;
+using SharedKernel.Processes;
 
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>
 /// Reads and validates a load-test configuration file. Errors name the file and the JSON path of the problem.

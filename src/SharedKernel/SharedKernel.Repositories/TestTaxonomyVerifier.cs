@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Checks that a consumer declares what each tracked test project covers and where its seam is documented.</summary>
 public static class TestTaxonomyVerifier

@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>
 /// A program that generates load from a script, such as k6. <see cref="LoadTestRunner"/> reads the configuration,

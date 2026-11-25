@@ -1,9 +1,9 @@
 using System.Text.Json;
-using PandaBear.Vault.Attachments;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Csv;
+using SharedKernel.Vault.Attachments;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Csv;
 
-namespace PandaBear.VaultManager.Tool.Formats;
+namespace SharedKernel.VaultManager.Tool.Formats;
 
 /// <summary>Detects vault export formats from file content; file extensions are ignored.</summary>
 internal static class FormatDetector

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Tests.Pipeline;
+namespace SharedKernel.Vault.Tests.Pipeline;
 
 /// <summary>Builds secret-shaped pipeline fixtures at test runtime, so no literal codes or seeds live in the repository.</summary>
 internal static class PipelineSecrets

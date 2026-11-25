@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A link to a video on the site that hosts it, instead of an embedded player: a self-hosted poster with a play mark, the title and a

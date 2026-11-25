@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the browser diagnostics, the diagnosing interactive wait, the retrying fill and the failure artifacts in Chromium; they skip when the browser is not installed.</summary>
 public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>

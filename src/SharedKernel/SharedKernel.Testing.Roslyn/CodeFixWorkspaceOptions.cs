@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Testing.Roslyn;
+namespace SharedKernel.Testing.Roslyn;
 
 /// <summary>How a <see cref="CodeFixWorkspace"/> builds its project and documents.</summary>
 public sealed class CodeFixWorkspaceOptions

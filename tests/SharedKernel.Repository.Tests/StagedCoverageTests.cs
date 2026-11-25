@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Verifies local coverage reporting for the Git index.</summary>
 public sealed class StagedCoverageTests

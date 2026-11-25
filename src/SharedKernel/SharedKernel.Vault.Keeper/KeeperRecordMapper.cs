@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>
 /// Maps Keeper records to vault items. Field names, value formats, and item types follow Bitwarden's Keeper importer

@@ -1,7 +1,7 @@
 using System.Buffers.Binary;
 using System.Text;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Checks that bytes are exactly one SSH public key of a given type, with nothing after it.</summary>
 internal static class SshKeyBlob

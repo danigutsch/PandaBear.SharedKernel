@@ -34,4 +34,4 @@ the exact canonical content the reviewer saw. Persist history with a host-owned
 concurrency guard so a decision recorded against an older snapshot cannot overwrite
 newer state. The host also owns retention, publication, and signature policies.
 
-The package ID is `PandaBear.SharedKernel.Review` and the namespace is `PandaBear.Review`.
+The package ID is `PandaBear.SharedKernel.Review` and the namespace is `SharedKernel.Review`.

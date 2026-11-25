@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>What <see cref="CandidateValidator.Create"/> and <see cref="CandidateValidator.Validate"/> pack and validate.</summary>
 /// <param name="RepoRoot">The root of a clean, committed SharedKernel checkout.</param>

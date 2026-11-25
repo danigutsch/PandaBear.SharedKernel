@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Builds providers for the <see cref="ScopedSender"/> registration order tests.</summary>
 internal static class ScopedSenderOrderProviders

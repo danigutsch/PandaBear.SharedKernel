@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>An entity with a tagged single-column unique index, a tagged composite one, and an untagged one.</summary>
 public sealed class Account

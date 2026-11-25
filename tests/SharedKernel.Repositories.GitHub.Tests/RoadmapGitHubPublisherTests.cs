@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Tests the GitHub roadmap publisher's tree, commit, reference, and pull request requests and the checks it makes between them.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

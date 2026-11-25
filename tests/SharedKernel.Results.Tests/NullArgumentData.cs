@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Supplies null values of reference types without the compiler's nullability warnings, for argument-validation tests.

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Rejects values that look like secrets by shape but are identifiers, timestamps, paths, or placeholders.</summary>
 internal static class CandidateFilter

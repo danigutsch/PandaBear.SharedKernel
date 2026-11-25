@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Captures the verified package inputs and supplies ApiCompat process results.</summary>
 internal sealed class ComparisonApiCompatRunner(ProcessOutput packageResult) : IProcessRunner

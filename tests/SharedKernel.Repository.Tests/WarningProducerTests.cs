@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>warning-report</c> command, which writes a warning report for a step of the CI pipeline.</summary>
 public sealed class WarningProducerTests

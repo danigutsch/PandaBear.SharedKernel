@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>
 /// Trait values that tag the document rendering tests.

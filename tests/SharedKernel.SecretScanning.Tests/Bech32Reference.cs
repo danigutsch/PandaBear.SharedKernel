@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>BIP173 bech32 encoder used to build age identity fixtures at runtime.</summary>
 internal static class Bech32Reference

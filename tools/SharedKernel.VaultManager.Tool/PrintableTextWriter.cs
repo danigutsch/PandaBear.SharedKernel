@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.VaultManager.Tool;
+namespace SharedKernel.VaultManager.Tool;
 
 /// <summary>
 /// Writes text to another writer as <see cref="PrintableText.OneLine"/> does, except that line breaks stay: a line feed,

@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the private directory in which edit lets sops and the editor keep plaintext.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

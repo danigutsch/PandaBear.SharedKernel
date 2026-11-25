@@ -1,8 +1,8 @@
 using System.Globalization;
-using PandaBear.IO;
-using PandaBear.Processes;
+using SharedKernel.IO;
+using SharedKernel.Processes;
 
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>
 /// Runs a configured load-test scenario: reads and validates the configuration, checks the generator arguments and the

@@ -1,7 +1,7 @@
 using Aspire.Hosting.Testing;
 using Xunit;
 
-namespace PandaBear.Aspire.Hosting.Umami.Testing;
+namespace SharedKernel.Aspire.Hosting.Umami.Testing;
 
 /// <summary>Gives the tests of an assembly one Umami website, resolved on demand.</summary>
 /// <remarks>

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>Source-generated log messages for application version startup logging.</summary>
 internal static partial class ApplicationVersionLogger

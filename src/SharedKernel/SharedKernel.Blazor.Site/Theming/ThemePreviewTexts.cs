@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The texts of <see cref="ThemePreview" />, in English by default, so the caller can localize them.</summary>
 public sealed class ThemePreviewTexts

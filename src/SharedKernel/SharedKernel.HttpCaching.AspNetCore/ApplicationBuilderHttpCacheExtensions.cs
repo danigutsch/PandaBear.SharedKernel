@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.HttpCaching.AspNetCore;
+namespace SharedKernel.HttpCaching.AspNetCore;
 
 /// <summary>
 /// Applies response cache policies configured on route groups before endpoint execution.

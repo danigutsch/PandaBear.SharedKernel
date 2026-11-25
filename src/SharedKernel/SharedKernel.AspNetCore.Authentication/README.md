@@ -35,7 +35,7 @@ dotnet add package PandaBear.SharedKernel.AspNetCore.Authentication
 ```
 
 ```csharp
-using PandaBear.AspNetCore.Authentication;
+using SharedKernel.AspNetCore.Authentication;
 
 builder.Services.AddApiSecurity(
     builder.Configuration,
@@ -53,11 +53,11 @@ app.UseApiSecurity();
 
 ## Migrating from SharedKernel.AspNetCore
 
-All types moved out of `PandaBear.SharedKernel.AspNetCore` (namespace `PandaBear.AspNetCore`) into this package and
-namespace `PandaBear.AspNetCore.Authentication`: `ApiAuthenticationDefaults`, `ApiAuthenticationServiceCollectionExtensions`,
+All types moved out of `PandaBear.SharedKernel.AspNetCore` (namespace `SharedKernel.AspNetCore`) into this package and
+namespace `SharedKernel.AspNetCore.Authentication`: `ApiAuthenticationDefaults`, `ApiAuthenticationServiceCollectionExtensions`,
 `ApiBearerScheme`, `ApiSecurityApplicationBuilderExtensions`, `AuthorizationPolicyBuilderExtensions`,
 `ClaimsPrincipalExtensions` and `AntiforgerySignOutEndpointRouteBuilderExtensions`. Add the package reference and
-replace `using PandaBear.AspNetCore;` with `using PandaBear.AspNetCore.Authentication;` where these types are used.
+replace `using SharedKernel.AspNetCore;` with `using SharedKernel.AspNetCore.Authentication;` where these types are used.
 
 `AddSecurityEventTelemetry()` was split by concern: call `AddAuthenticationEventTelemetry()` from this package for the JWT
 bearer events and `AddRateLimitEventTelemetry()` from `PandaBear.SharedKernel.AspNetCore.RateLimiting` for rate-limit
@@ -65,7 +65,7 @@ rejections. Meter, instrument, tag and log event names are unchanged.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AspNetCore.Authentication`. C# namespace: `PandaBear.AspNetCore.Authentication`.
+Package ID: `PandaBear.SharedKernel.AspNetCore.Authentication`. C# namespace: `SharedKernel.AspNetCore.Authentication`.
 Assembly/project identity: `SharedKernel.AspNetCore.Authentication`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured

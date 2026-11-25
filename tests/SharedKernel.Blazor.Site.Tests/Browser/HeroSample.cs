@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>A page for the hero tests: a header whose brand is a text link, then a hero with a title, an optional subtitle and one action.</summary>
 public sealed class HeroSample : ComponentBase

@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>Outcome of <see cref="CatalogApplier.Apply"/>.</summary>
 /// <param name="Vault">The edited vault, or <see langword="null"/> when there are problems.</param>

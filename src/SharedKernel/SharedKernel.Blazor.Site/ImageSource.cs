@@ -1,7 +1,7 @@
 using System.Buffers;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// One <c>source</c> of a <c>picture</c>: a media type, such as <c>image/avif</c> or <c>image/webp</c>, and the files in that

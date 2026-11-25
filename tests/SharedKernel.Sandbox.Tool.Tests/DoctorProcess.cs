@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace PandaBear.Sandbox.Tool.Tests;
+namespace SharedKernel.Sandbox.Tool.Tests;
 
 /// <summary>
 /// Runs the built tool as a child process with a chosen temporary folder. .NET computes the socket folder of a named pipe once

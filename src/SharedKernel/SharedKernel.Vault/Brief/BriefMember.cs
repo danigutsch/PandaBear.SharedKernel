@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>A member of a brief group: an input item as the merge sees it, after accepted findings are placed.</summary>
 /// <param name="OriginKey">Origin key, which member choices and finding decisions name.</param>

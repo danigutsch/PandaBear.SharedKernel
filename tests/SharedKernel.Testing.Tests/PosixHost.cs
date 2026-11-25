@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Reports whether the host can run POSIX shell scripts, for <c>SkipUnless</c> conditions.</summary>
 internal static class PosixHost

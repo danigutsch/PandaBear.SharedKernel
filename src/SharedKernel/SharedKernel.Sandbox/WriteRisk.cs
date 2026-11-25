@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>What an <c>allowWrite</c> entry exposes beyond one tool's own folder.</summary>
 [Flags]

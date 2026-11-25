@@ -1,7 +1,7 @@
-using PandaBear.Processes;
-using PandaBear.Processes.Tests;
+using SharedKernel.Processes;
+using SharedKernel.Processes.Tests;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>
 /// Tests that every git caller of the library runs git the same way: no prompt and none of the host's tokens or Git

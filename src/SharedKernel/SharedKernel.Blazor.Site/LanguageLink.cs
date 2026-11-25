@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One language of a <see cref="LanguageSwitcher" />.</summary>
 /// <param name="Culture">The culture of the linked page, for example <c>pt-BR</c>.</param>

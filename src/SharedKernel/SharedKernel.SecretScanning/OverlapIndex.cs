@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// Locations of findings kept so far, hashed by field path and by fixed-size blocks of character offsets, so finding a

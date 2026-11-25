@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// One page view as every target receives it: what the server keeps of a page it answered. It carries the visitor's shortened address

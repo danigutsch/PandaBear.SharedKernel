@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Scoring rules used to prioritize roadmap items.</summary>
 /// <param name="FirstItemNumber">Number of the first prioritized item.</param>

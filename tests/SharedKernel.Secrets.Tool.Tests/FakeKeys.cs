@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Text shaped like age secret keys, which no key generator produced.</summary>
 internal static class FakeKeys

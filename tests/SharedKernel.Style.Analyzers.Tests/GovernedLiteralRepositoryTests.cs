@@ -1,7 +1,7 @@
 using System.Xml.Linq;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Style.Analyzers.Tests;
+namespace SharedKernel.Style.Analyzers.Tests;
 
 /// <summary>Repository-wide guard tests for the governed literal catalog.</summary>
 public sealed class GovernedLiteralRepositoryTests

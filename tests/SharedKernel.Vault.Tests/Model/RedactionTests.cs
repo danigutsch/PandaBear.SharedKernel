@@ -1,10 +1,10 @@
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Catalog;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Catalog;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Model;
+namespace SharedKernel.Vault.Tests.Model;
 
 /// <summary>Tests that <c>ToString</c> on public vault records hides secret values.</summary>
 public sealed class RedactionTests

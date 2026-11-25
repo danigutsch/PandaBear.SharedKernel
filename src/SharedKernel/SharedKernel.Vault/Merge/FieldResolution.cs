@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>How one changed field of a group was resolved.</summary>
 /// <param name="FieldPath">Field path.</param>

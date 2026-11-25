@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.IO.Enumeration;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Selects the test projects and non-test projects that a change affects, and selects every test project when the

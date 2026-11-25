@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>The proxy to generate for one service interface.</summary>
 /// <param name="Key">The fully qualified interface without nullable annotations, which identifies it.</param>

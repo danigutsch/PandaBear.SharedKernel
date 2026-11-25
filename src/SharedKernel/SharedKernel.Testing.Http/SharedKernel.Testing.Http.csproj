@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Http</PackageId>
         <Description>Reusable HTTP response helpers for SharedKernel test suites.</Description>
-        <RootNamespace>PandaBear.Testing.Http</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.Http</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;http;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

@@ -1,8 +1,8 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// An <see cref="IAdvisorySource"/> backed by OSV (https://osv.dev). It asks <c>/v1/querybatch</c> which vulnerabilities

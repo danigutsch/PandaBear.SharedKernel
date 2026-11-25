@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Source-generated metadata for <c>.config/sharedkernel-ci.json</c>. Property names are camelCase and match exactly.

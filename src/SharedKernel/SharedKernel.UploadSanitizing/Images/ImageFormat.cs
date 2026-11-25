@@ -1,4 +1,4 @@
-namespace PandaBear.UploadSanitizing.Images;
+namespace SharedKernel.UploadSanitizing.Images;
 
 /// <summary>The image formats <see cref="ImageSanitizer"/> accepts, recognized by their leading bytes, never by file name or declared content type.</summary>
 public enum ImageFormat

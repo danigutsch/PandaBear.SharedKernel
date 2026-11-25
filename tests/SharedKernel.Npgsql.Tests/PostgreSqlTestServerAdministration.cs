@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Administrative operations on the PostgreSQL test server that tests use to provoke specific cleanup behavior.</summary>
 internal static class PostgreSqlTestServerAdministration

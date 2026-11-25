@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace PandaBear;
+namespace SharedKernel;
 
 /// <summary>
 /// Holds the histogram bucket boundaries, in seconds, that every SharedKernel duration histogram advises, so durations from

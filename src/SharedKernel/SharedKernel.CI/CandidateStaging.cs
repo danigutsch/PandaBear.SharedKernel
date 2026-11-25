@@ -1,6 +1,6 @@
-using PandaBear.Versioning;
+using SharedKernel.Versioning;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Verifies a pinned candidate against a clean library checkout and stages its packages, from a directory or a forge

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// Finds blocks of two-factor recovery codes: 5 to 25 codes on up to 20 lines, every code with the same length and

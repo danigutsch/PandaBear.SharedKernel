@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests that the test server fixture starts its own server only on the first database request and caches the outcome.</summary>
 public sealed class PostgreSqlTestServerFixtureLazyStartTests

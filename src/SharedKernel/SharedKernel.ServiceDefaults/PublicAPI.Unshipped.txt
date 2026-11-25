@@ -1,21 +1,21 @@
 #nullable enable
-const PandaBear.ServiceDefaults.ServiceDefaultsExtensions.LiveTag = "live" -> string!
-PandaBear.ServiceDefaults.HealthEndpointExposure
-PandaBear.ServiceDefaults.HealthEndpointExposure.Always = 0 -> PandaBear.ServiceDefaults.HealthEndpointExposure
-PandaBear.ServiceDefaults.HealthEndpointExposure.DevelopmentOnly = 1 -> PandaBear.ServiceDefaults.HealthEndpointExposure
-PandaBear.ServiceDefaults.ServiceDefaultsExtensions
-PandaBear.ServiceDefaults.ServiceDefaultsOptions
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.AddResilience.get -> bool
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.AddResilience.set -> void
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.ConfigureResilience.get -> System.Action<Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions!>?
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.ConfigureResilience.set -> void
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.AlivePath.get -> string!
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.AlivePath.set -> void
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.Exposure.get -> PandaBear.ServiceDefaults.HealthEndpointExposure
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.Exposure.set -> void
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.HealthPath.get -> string!
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.HealthPath.set -> void
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.SensitiveTelemetryAttributes.get -> System.Collections.Generic.ISet<string!>!
-PandaBear.ServiceDefaults.ServiceDefaultsOptions.ServiceDefaultsOptions() -> void
-static PandaBear.ServiceDefaults.ServiceDefaultsExtensions.AddApplicationDefaults<TBuilder>(this TBuilder builder, System.Action<PandaBear.ServiceDefaults.ServiceDefaultsOptions!>? configure = null) -> TBuilder
-static PandaBear.ServiceDefaults.ServiceDefaultsExtensions.MapHealthEndpoints(this Microsoft.AspNetCore.Builder.WebApplication! app) -> Microsoft.AspNetCore.Builder.WebApplication!
+const SharedKernel.ServiceDefaults.ServiceDefaultsExtensions.LiveTag = "live" -> string!
+SharedKernel.ServiceDefaults.HealthEndpointExposure
+SharedKernel.ServiceDefaults.HealthEndpointExposure.Always = 0 -> SharedKernel.ServiceDefaults.HealthEndpointExposure
+SharedKernel.ServiceDefaults.HealthEndpointExposure.DevelopmentOnly = 1 -> SharedKernel.ServiceDefaults.HealthEndpointExposure
+SharedKernel.ServiceDefaults.ServiceDefaultsExtensions
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.AddResilience.get -> bool
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.AddResilience.set -> void
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.ConfigureResilience.get -> System.Action<Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions!>?
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.ConfigureResilience.set -> void
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.AlivePath.get -> string!
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.AlivePath.set -> void
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.Exposure.get -> SharedKernel.ServiceDefaults.HealthEndpointExposure
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.Exposure.set -> void
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.HealthPath.get -> string!
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.HealthPath.set -> void
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.SensitiveTelemetryAttributes.get -> System.Collections.Generic.ISet<string!>!
+SharedKernel.ServiceDefaults.ServiceDefaultsOptions.ServiceDefaultsOptions() -> void
+static SharedKernel.ServiceDefaults.ServiceDefaultsExtensions.AddApplicationDefaults<TBuilder>(this TBuilder builder, System.Action<SharedKernel.ServiceDefaults.ServiceDefaultsOptions!>? configure = null) -> TBuilder
+static SharedKernel.ServiceDefaults.ServiceDefaultsExtensions.MapHealthEndpoints(this Microsoft.AspNetCore.Builder.WebApplication! app) -> Microsoft.AspNetCore.Builder.WebApplication!

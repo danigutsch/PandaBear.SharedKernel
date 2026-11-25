@@ -1,8 +1,8 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Model;
-using static PandaBear.Vault.Tests.Matching.MatchFixture;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Model;
+using static SharedKernel.Vault.Tests.Matching.MatchFixture;
 
-namespace PandaBear.Vault.Tests.Matching;
+namespace SharedKernel.Vault.Tests.Matching;
 
 /// <summary>Tests <see cref="OriginKeys"/> key computation and its effect on duplicate matching.</summary>
 public sealed class OriginKeysTests

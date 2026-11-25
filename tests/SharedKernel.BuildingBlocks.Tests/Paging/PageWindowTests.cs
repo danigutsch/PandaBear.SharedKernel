@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the page window computed from a requested page number in the URL.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

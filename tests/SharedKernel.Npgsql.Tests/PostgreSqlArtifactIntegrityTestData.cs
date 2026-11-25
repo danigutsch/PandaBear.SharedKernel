@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Creates synthetic artifacts with independent schemas and SQL identifiers that require quoting.</summary>
 internal static class PostgreSqlArtifactIntegrityTestData

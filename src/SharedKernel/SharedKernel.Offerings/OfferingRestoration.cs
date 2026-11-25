@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
-using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Rebuilds stored offerings: structural checks only, no lengths, limits or publish rules.</summary>
 internal static class OfferingRestoration

@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// A measured fact of an offering or a step, of a kind the application defines (for a tour: distance, elevation gain, difficulty). It is

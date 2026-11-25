@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Hosting;
 
-namespace PandaBear.Testing.AspNetCore.Tests;
+namespace SharedKernel.Testing.AspNetCore.Tests;
 
 /// <summary>A hosted service that records whether the host started it.</summary>
 internal sealed class RecordingHostedService : IHostedService

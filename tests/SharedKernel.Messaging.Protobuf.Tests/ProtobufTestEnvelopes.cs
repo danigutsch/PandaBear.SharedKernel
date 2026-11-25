@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.Protobuf.Tests;
+namespace SharedKernel.Messaging.Protobuf.Tests;
 
 /// <summary>Creates CloudEvents event envelopes for the Protobuf event format tests.</summary>
 internal static class ProtobufTestEnvelopes

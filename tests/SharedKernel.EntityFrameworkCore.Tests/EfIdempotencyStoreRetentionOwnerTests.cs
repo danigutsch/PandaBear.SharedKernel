@@ -1,6 +1,6 @@
-using PandaBear.Idempotency.EntityFrameworkCore;
+using SharedKernel.Idempotency.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests that EfIdempotencyStore records and returns the retention owner and that the retention store validates its input.

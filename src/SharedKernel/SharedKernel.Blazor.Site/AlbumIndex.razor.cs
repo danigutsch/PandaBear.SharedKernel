@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The index of a site's photo albums: a <see cref="CardGrid" /> with one <see cref="Card" /> per album, whose heading links to the

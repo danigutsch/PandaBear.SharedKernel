@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The limits on the encrypted SOPS files that the engine reads.</summary>
 internal static class SopsFileLimits

@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>
 /// Handler for TestIntegrationEvent and TestUpdatedIntegrationEvent that records what it receives, how often it ran and whether it was disposed asynchronously.

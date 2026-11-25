@@ -12,10 +12,10 @@ only when its boundary and current use are clear.
 
 ## Decision
 
-- **Two model packages, each depending on BuildingBlocks only.** `SharedKernel.Offerings` (`PandaBear.Offerings`) models a sellable
+- **Two model packages, each depending on BuildingBlocks only.** `SharedKernel.Offerings` (`SharedKernel.Offerings`) models a sellable
   programme: schedule and availability, typed prices, group and payment conditions, metrics, language-neutral steps, images and
   translated text, with a public view, listing groups, display sentences and JSON-LD. `SharedKernel.PageSections`
-  (`PandaBear.PageSections`) models typed page sections and their validation. They are separate because they have different
+  (`SharedKernel.PageSections`) models typed page sections and their validation. They are separate because they have different
   consumers: a page that is not a tour uses sections, and the original application can adopt sections before its tours are localized.
   A tour page uses both, so neither references the other; the application composes them. Their renderers come later
   (`PageSections.Blazor`, and an `Offerings.Blazor` once both applications render the same tour template); the models reference no
@@ -56,7 +56,7 @@ The owner approved the proposal (2026-11-22) and these corrections, found while 
 - A section's button style is `LinkStyle` (Primary, Secondary, Outline; default Primary) in PageSections, not Blazor.Site's
   `ButtonVariant`, which a BuildingBlocks-only model cannot reference. The renderer maps one to the other.
 - The renderer is `PageSectionsView<TImageId, TLink, TExtra>` in `SharedKernel.PageSections.Blazor`, not `PageSections`: a type of that
-  name clashes with the `PandaBear.PageSections` namespace (CA1724), which the build treats as an error and this repository does not
+  name clashes with the `SharedKernel.PageSections` namespace (CA1724), which the build treats as an error and this repository does not
   suppress.
 - `ImagePicker<TKey, TOption>` in `SharedKernel.Blazor` takes the option's key from its `PickerCatalog` (built with the key function),
   so there is no separate `KeyOf` parameter that could disagree with the catalog. `SharedKernel.Blazor` references BuildingBlocks for

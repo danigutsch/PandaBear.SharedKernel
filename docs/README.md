@@ -35,7 +35,7 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Provider-specific modules](adr/20260624-provider-specific-sharedkernel-infrastructure-modules.md)
 - [Messaging terminology and composition](adr/20260705-messaging-event-abstractions.md)
 - [Generated messaging dispatch ownership](adr/20260719-generated-messaging-dispatch-ownership.md)
-- [Breaking namespace decision](adr/20261020-pandabear-namespaces.md)
+- [PandaBear namespace decision (superseded)](adr/20261020-pandabear-namespaces.md)
 - [Public Git hosting decision](adr/20261020-public-git-hosting.md)
 - [Classic extension methods](adr/20261026-classic-extension-methods.md)
 - [Blazor helpers package](adr/20261027-blazor-helpers-package.md)
@@ -50,3 +50,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Secrets engine and tool](adr/20261109-secrets-engine.md)
 - [Tool engines and thin wrappers](adr/20261115-tool-engines-and-thin-wrappers.md)
 - [Offerings and page sections](adr/20261122-offerings-and-page-sections.md)
+- [SharedKernel C# namespaces](adr/20261124-sharedkernel-namespaces.md)

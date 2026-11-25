@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Ordering helpers for roadmap item snapshots.</summary>
 public static class RoadmapItemOrderingExtensions

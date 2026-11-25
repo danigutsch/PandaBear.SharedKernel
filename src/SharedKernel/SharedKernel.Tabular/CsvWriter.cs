@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>
 /// Writes RFC 4180 CSV that <see cref="CsvDocument.Parse"/> reads back exactly: a value is quoted, with its quotes doubled, when it holds a

@@ -1,9 +1,9 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>
 /// Completes SSH key items for Bitwarden, which stores the private key, public key, and fingerprint together. An item

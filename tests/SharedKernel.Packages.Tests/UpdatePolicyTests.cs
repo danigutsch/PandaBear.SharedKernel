@@ -1,6 +1,6 @@
-using static PandaBear.Packages.Tests.PackageFactory;
+using static SharedKernel.Packages.Tests.PackageFactory;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the update policy: advisories first, then the minimum release age.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

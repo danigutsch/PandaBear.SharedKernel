@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The typography of every <see cref="TypographyRole" />; a role that is not given is <see cref="TypographyStyle.Inherit" />.</summary>
 public sealed class SiteTypography : ValueObject

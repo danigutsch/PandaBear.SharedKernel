@@ -1,6 +1,6 @@
 using Terminal.Gui.Input;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>
 /// Every key of the review UI. The window binds these keys and the help lists them, so the help shows exactly what the

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Waits for a child process to report its process ID through a file.</summary>
 internal static class ChildProcessId

@@ -26,7 +26,7 @@ Reference the stylesheet from the host page, then your own stylesheet that overr
 ```
 
 ```razor
-@using PandaBear.Blazor.Site
+@using SharedKernel.Blazor.Site
 
 <SkipLink>Skip to content</SkipLink>
 <SiteHeader Label="Main" Items="_nav" CurrentPath="@Navigation.ToBaseRelativePath(Navigation.Uri)">
@@ -522,7 +522,7 @@ text is on the primary colour.
   `ArgumentException`; there is no implicit conversion from text, so markup writes `Href="@LinkTarget.FromString("/tours")"` for an
   author-controlled literal, and code builds addresses from external data with `Create`. Accepted are:
   - relative addresses (`/tours`, `tours/one`, `?page=2`, `#top`), but not protocol-relative ones (`//host`);
-  - absolute `http` and `https` addresses that `PandaBear.BuildingBlocks.WebUrl` accepts: `//`, a host and no user information
+  - absolute `http` and `https` addresses that `SharedKernel.BuildingBlocks.WebUrl` accepts: `//`, a host and no user information
     (`https:host`, `https://user:pw@host` and `https://@host` are refused). The target keeps the address exactly as supplied,
     not `WebUrl`'s lower-cased scheme and host;
   - `mailto:` with exactly one address and no query or headers (`?`, `&`, `;`, `,` and `%` are refused);
@@ -530,7 +530,7 @@ text is on the primary colour.
 
   Every address is refused when it has white space anywhere (including `\u0085` and no-break space), a control character or a
   backslash, or is longer than `LinkTarget.MaxLength` (2048, the same as `WebUrl.MaxLength`). Root-relative checks reuse
-  `PandaBear.InputNormalization.WebAssetUriSanitizer`, which also refuses lone surrogates. Error messages never repeat the input.
+  `SharedKernel.InputNormalization.WebAssetUriSanitizer`, which also refuses lone surrogates. Error messages never repeat the input.
 - `ResponsiveImage` is the image of `Hero.Image`, `Card.Image` and `GalleryImage.Image`. `ResponsiveImage.Create(src, width,
   height, alt)` is one `img`; the optional `sizes`, `srcSet` and `sources` add responsive candidates:
   - `ImageCandidate.AtWidth(src, 640)` (`640w`) or `ImageCandidate.AtDensity(src, 2m)` (`2x`) is one `srcset` entry. One set uses
@@ -546,10 +546,10 @@ text is on the primary colour.
   (`ArgumentOutOfRangeException`), so the browser reserves the space and the layout does not shift.
 - `ImageAlternative` is the accessibility decision for an image: `ImageAlternative.Describe("what it shows")` or
   `ImageAlternative.Decorative()` (rendered as `alt=""`). `ResponsiveImage.Create` requires one (`ArgumentNullException`).
-- `ContactCard` takes `PandaBear.BuildingBlocks.EmailAddress` and `PhoneNumber`. It checks restored values again, so only digits reach a
+- `ContactCard` takes `SharedKernel.BuildingBlocks.EmailAddress` and `PhoneNumber`. It checks restored values again, so only digits reach a
   `tel:` or WhatsApp link and no query reaches a `mailto:` link.
 - `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`.
-- Cultures are `PandaBear.BuildingBlocks.ContentCulture` (`LanguageLink.Culture`, `AlternateLink.Culture`, `PageHead.Locale`), so the
+- Cultures are `SharedKernel.BuildingBlocks.ContentCulture` (`LanguageLink.Culture`, `AlternateLink.Culture`, `PageHead.Locale`), so the
   language-tag rule and canonical casing (`pt-br` becomes `pt-BR`) live in one place. `hreflang` and `lang` use the canonical name;
   `og:locale` writes the language and region with an underscore (`pt_BR`) and drops a script subtag (`zh-Hant-TW` gives `zh_TW`). Build cultures from input with `ContentCulture.Create`; `Restore` skips validation.
 
@@ -669,7 +669,7 @@ visible `:focus-visible` ring, is mobile first with a `48rem` layout breakpoint 
 
 ## Owner-editable theme
 
-`PandaBear.Blazor.Site.Theming` turns colours, typography and self-hosted fonts that a site owner edits into a second stylesheet
+`SharedKernel.Blazor.Site.Theming` turns colours, typography and self-hosted fonts that a site owner edits into a second stylesheet
 that `site.css` consumes. Without a theme nothing changes: every per-role variable falls back to the value `site.css` used before.
 
 ### Model
@@ -852,7 +852,7 @@ means derived.
 
 ### Mapping the earlier Branding settings
 
-`PandaBear.Branding.BrandingSettings` (the ViajantesTurismo Branding context) maps as follows: `PrimaryColor` to `primary`,
+`SharedKernel.Branding.BrandingSettings` (the ViajantesTurismo Branding context) maps as follows: `PrimaryColor` to `primary`,
 `AccentColor` to `accent`, `BackgroundColor` to `surface`, `TextColor` to `text`, each as the light value with a dark value chosen by
 the owner (or `SiteTheme.Default`'s); on-primary, on-accent, muted, surface-alt, border and focus come from `SiteTheme.Default` until
 edited, and `Create` reports any pair that the brand colours break. `HeadingFontFamily` and `BodyFontFamily` become the font keys of
@@ -861,6 +861,6 @@ fallback, and `Inter` maps to an uploaded `ThemeFont`. `BrandName` and `LogoUri`
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Blazor.Site`. C# namespace: `PandaBear.Blazor.Site`. Assembly/project identity: `SharedKernel.Blazor.Site`.
+Package ID: `PandaBear.SharedKernel.Blazor.Site`. C# namespace: `SharedKernel.Blazor.Site`. Assembly/project identity: `SharedKernel.Blazor.Site`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

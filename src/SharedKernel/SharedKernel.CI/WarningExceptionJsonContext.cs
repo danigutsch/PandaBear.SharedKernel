@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Source-generated metadata for the exception ledger. Reading rejects unknown, repeated, and missing properties.

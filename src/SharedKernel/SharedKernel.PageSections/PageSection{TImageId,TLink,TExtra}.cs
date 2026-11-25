@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>
 /// A validated page section on the band of its tone. Its parts show in a fixed order: the eyebrow and heading, the paragraphs, the

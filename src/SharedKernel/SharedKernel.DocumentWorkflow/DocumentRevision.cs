@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using PandaBear.Review;
+using SharedKernel.Results;
+using SharedKernel.Review;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Tracks the lifecycle and review evidence of one immutable document revision snapshot.</summary>
 public sealed record DocumentRevision

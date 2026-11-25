@@ -1,9 +1,9 @@
 #nullable enable
-const PandaBear.IO.Analyzers.IODiagnosticIds.HandRolledCopyLoop = "SKIO002" -> string!
-const PandaBear.IO.Analyzers.IODiagnosticIds.UnboundedBuffering = "SKIO001" -> string!
-PandaBear.IO.Analyzers.IODiagnosticIds
-PandaBear.IO.Analyzers.IOAnalyzer
-PandaBear.IO.Analyzers.IOAnalyzer.IOAnalyzer() -> void
-override PandaBear.IO.Analyzers.IOAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
-override PandaBear.IO.Analyzers.IOAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
-const PandaBear.IO.Analyzers.IODiagnosticIds.MissingRequestSizeLimit = "SKIO003" -> string!
+const SharedKernel.IO.Analyzers.IODiagnosticIds.HandRolledCopyLoop = "SKIO002" -> string!
+const SharedKernel.IO.Analyzers.IODiagnosticIds.UnboundedBuffering = "SKIO001" -> string!
+SharedKernel.IO.Analyzers.IODiagnosticIds
+SharedKernel.IO.Analyzers.IOAnalyzer
+SharedKernel.IO.Analyzers.IOAnalyzer.IOAnalyzer() -> void
+override SharedKernel.IO.Analyzers.IOAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override SharedKernel.IO.Analyzers.IOAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+const SharedKernel.IO.Analyzers.IODiagnosticIds.MissingRequestSizeLimit = "SKIO003" -> string!

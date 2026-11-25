@@ -75,7 +75,7 @@ dotnet add package PandaBear.SharedKernel.AspNetCore.Authentication.Bff
 ```
 
 ```csharp
-using PandaBear.AspNetCore.Authentication.Bff;
+using SharedKernel.AspNetCore.Authentication.Bff;
 
 builder.Services.AddDataProtection().PersistKeysTo...(); // shared by every instance
 builder.Services.AddStackExchangeRedisCache(...);        // or any IDistributedCache
@@ -129,7 +129,7 @@ package as follows.
 | `ProtectedDistributedTicketStore` | `ServerSideTicketStore` via `AddServerSideTicketStore(configure: o => { o.KeyPrefix = "management-ticket:"; o.AbsoluteLifetime = TimeSpan.FromHours(8); })`. Keys are still 32 random bytes, Base64Url, behind a prefix; protection is still key-bound; unreadable or expired tickets are still removed. The Data Protection purpose changed, so existing sessions sign in once more after the switch. |
 | `ManagementCookieTicketCacheEntry` (EF entity of the PostgreSQL-backed cache) | Unchanged: it is the storage of the application's `IDistributedCache`, which both stores keep using. |
 | `ProtectedDistributedUserTokenStore` (Duende `IUserTokenStore`, ~530 lines) | `UserTokenManager`. One protected token set per session replaces Duende's per-scope/resource entries: per-resource tokens come from token exchange. The `:revoked` marker and `ClearAll` become `SignOut`, which removes the tokens under the session lock. `ExecuteForActiveSession` is internal locking. DPoP stays unsupported. |
-| PostgreSQL advisory lock inside `ProtectedDistributedUserTokenStore` | An application `IUserSessionLock` built on `PandaBear.Npgsql`'s transaction advisory lock, registered before `AddUserTokenManagement`; or the in-process default when sessions stay on one instance. |
+| PostgreSQL advisory lock inside `ProtectedDistributedUserTokenStore` | An application `IUserSessionLock` built on `SharedKernel.Npgsql`'s transaction advisory lock, registered before `AddUserTokenManagement`; or the in-process default when sessions stay on one instance. |
 | `ProtectedDistributedAudienceTokenStore` | Internal exchanged-token cache of `UserTokenManager`: same source-token fingerprint binding, refresh one minute before expiry (`RefreshBeforeExpiry`), expiry capped at the session's end, removal at sign-out. The fixed audience list becomes the audiences registered with `AddTokenExchangeHandler`. |
 | `KeycloakAudienceTokenExchangeHandler` and `AddKeycloakAudienceTokenExchangeHandler(audience)` | `AddTokenExchangeHandler(audience, scope: audience)`. The request, the answer checks (Bearer, `issued_token_type` access token, a different token, a positive lifetime) and the HTTPS token-endpoint rule are kept. Drop the preceding `AddUserAccessTokenHandler()`: the handler gets the user token itself. |
 | `ManagementAuthenticationDefaults.KeycloakTokenExchangeHttpClientName` (no redirects) | `UserTokenManagementDefaults.IdentityProviderHttpClientName`: no redirects, plus a timeout and no retry handlers. |
@@ -147,7 +147,7 @@ PostgreSQL-hosted tests for the application's own lock and cache.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AspNetCore.Authentication.Bff`. C# namespace: `PandaBear.AspNetCore.Authentication.Bff`.
+Package ID: `PandaBear.SharedKernel.AspNetCore.Authentication.Bff`. C# namespace: `SharedKernel.AspNetCore.Authentication.Bff`.
 Assembly/project identity: `SharedKernel.AspNetCore.Authentication.Bff`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured

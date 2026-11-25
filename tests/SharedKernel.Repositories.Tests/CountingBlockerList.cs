@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>A read-only list that calls a callback each time an element is read by index or enumeration.</summary>
 /// <param name="values">The elements to expose.</param>

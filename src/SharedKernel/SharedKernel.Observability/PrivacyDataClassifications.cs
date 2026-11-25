@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Compliance.Classification;
 
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>
 /// Defines technical classifications used to redact sensitive application telemetry.

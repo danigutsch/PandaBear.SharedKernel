@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>Guards the YAML path parser that the packaging conventions use.</summary>
 public sealed class PackagingConventionParserTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// One child-process run: an absolute executable, its arguments, the only environment variables it receives, and the bytes

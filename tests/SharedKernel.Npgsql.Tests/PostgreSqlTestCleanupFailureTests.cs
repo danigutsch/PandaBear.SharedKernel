@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests how PostgreSqlTestCleanup combines or rethrows operation and cleanup failures.</summary>
 public sealed class PostgreSqlTestCleanupFailureTests

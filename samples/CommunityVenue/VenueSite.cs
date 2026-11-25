@@ -1,6 +1,6 @@
-using PandaBear.AspNetCore.Seo;
-using PandaBear.Blazor.Site;
-using PandaBear.BuildingBlocks;
+using SharedKernel.AspNetCore.Seo;
+using SharedKernel.Blazor.Site;
+using SharedKernel.BuildingBlocks;
 
 namespace CommunityVenue;
 

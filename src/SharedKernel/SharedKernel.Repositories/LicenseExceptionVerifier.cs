@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Unicode;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Verifies that license exceptions still match the reviewed approval values and the locked package versions.

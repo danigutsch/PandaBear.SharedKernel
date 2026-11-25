@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using static PandaBear.PageSections.Blazor.Tests.SectionFixtures;
+using static SharedKernel.PageSections.Blazor.Tests.SectionFixtures;
 
-namespace PandaBear.PageSections.Blazor.Tests.Browser;
+namespace SharedKernel.PageSections.Blazor.Tests.Browser;
 
 /// <summary>
 /// Tests rendered sections in Chromium on a phone (375px) and a desktop (1280px) viewport: what assistive technology is told, where the

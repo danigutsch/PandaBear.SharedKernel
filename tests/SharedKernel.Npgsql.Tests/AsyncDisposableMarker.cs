@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>An async-disposable test value that counts disposals and can fail them.</summary>
 /// <param name="disposeFailure">The exception returned as a faulted task from disposal, or null to complete successfully.</param>

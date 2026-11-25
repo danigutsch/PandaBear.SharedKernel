@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>One target added through <see cref="PageViewBuilder"/>, created when the page views first need it, after the settings were checked.</summary>
 /// <param name="create">Creates the target from the host's services.</param>

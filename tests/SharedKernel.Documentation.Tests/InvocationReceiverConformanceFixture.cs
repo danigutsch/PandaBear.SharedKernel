@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Creates an isolated conformance check for the two Catalog initialization call shapes.</summary>
 internal static class InvocationReceiverConformanceFixture

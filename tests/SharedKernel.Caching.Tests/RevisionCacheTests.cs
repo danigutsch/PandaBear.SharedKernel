@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Caching.Tests;
+namespace SharedKernel.Caching.Tests;
 
 /// <summary>
 /// Tests the revision-keyed read cache: values are reused while the shared revision is unchanged, the revision is read at most once per

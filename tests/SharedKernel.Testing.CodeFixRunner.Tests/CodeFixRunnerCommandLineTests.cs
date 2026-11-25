@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>Tests the code fix runner command line: option parsing, target validation, exit codes and what is written to standard output and error.</summary>
 public sealed class CodeFixRunnerCommandLineTests : IDisposable

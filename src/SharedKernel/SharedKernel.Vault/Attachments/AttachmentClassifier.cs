@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Unicode;
 
-namespace PandaBear.Vault.Attachments;
+namespace SharedKernel.Vault.Attachments;
 
 /// <summary>Detects the content kind of an attachment from its first bytes, then from its file extension.</summary>
 internal static class AttachmentClassifier

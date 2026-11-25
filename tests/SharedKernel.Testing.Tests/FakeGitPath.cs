@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Puts a directory with a fake <c>git</c> first on the process <c>PATH</c> for the length of a scope.</summary>
 internal static class FakeGitPath

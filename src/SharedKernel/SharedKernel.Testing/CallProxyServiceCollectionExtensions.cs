@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Replaces service registrations with <see cref="CallProxy"/> wrappers, so a test hooks the service the application resolves.</summary>
 public static class CallProxyServiceCollectionExtensions

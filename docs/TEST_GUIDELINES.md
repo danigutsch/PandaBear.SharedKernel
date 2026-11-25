@@ -7,7 +7,7 @@ act in a named local and check it under `// Assert`; an exception assertion that
 `SKTEST007` reports a complete marker set out of order.
 
 State why an assertion holds in its message instead of a comment. Every `Should*` assertion in
-`PandaBear.Testing.Assertions`, `PandaBear.Testing.Http`, and `PandaBear.Testing.Playwright` takes the reason as
+`SharedKernel.Testing.Assertions`, `SharedKernel.Testing.Http`, and `SharedKernel.Testing.Playwright` takes the reason as
 `userMessage` after its other arguments and before a trailing `CancellationToken`, and the failure message starts with
 it. Pass the values of a `params` assertion as an array to add a message. Name the argument (`userMessage: "..."`) when
 the argument before it is also a string. `ShouldBeTrue` and `ShouldBeFalse` take it as an optional argument.
@@ -34,7 +34,7 @@ Keep domain setup local and preserve cancellation, isolation, and cleanup assert
   statements, evaluates the projected receiver once, and fails explicitly when it is null.
   Intentional null expectations require guarding the parent explicitly instead, for example
   `value.ShouldNotBeNull().Title.ShouldBeNull()`; no projected-value fix is offered for those cases.
-- Use `await page.ShouldHaveTitle(expectedTitle)` from `PandaBear.Testing.Playwright` for default
+- Use `await page.ShouldHaveTitle(expectedTitle)` from `SharedKernel.Testing.Playwright` for default
   string title assertions. `SKTEST015` reports the equivalent direct Playwright call; a message given to
   `Expect(page, message)` moves to `ShouldHaveTitle(expectedTitle, userMessage)`. Regex titles,
   explicit options, and assertions without a matching repository wrapper remain outside this rule.
@@ -66,7 +66,7 @@ for time-dependent assertions rather than depending on elapsed real time.
 ## Captured output
 
 Capture the text a command-line tool, a console or any other `TextWriter` consumer writes with
-`PandaBear.Testing.InvariantStringWriter`. It ends each line with `"\n"` and formats with the invariant culture, so the
+`SharedKernel.Testing.InvariantStringWriter`. It ends each line with `"\n"` and formats with the invariant culture, so the
 captured text is the same on Linux, macOS and Windows and an expectation is written once with `"\n"`. A plain
 `StringWriter` ends lines with `Environment.NewLine`, so a `"\n"` expectation passes on Linux and fails only on Windows.
 Write expectations for captured lines with `"\n"`, not `Environment.NewLine`; keep `Environment.NewLine` only where the
@@ -80,7 +80,7 @@ such as one that checks a writer passes on its target's line ending, sets it in 
 
 Code under test logs to the output of the test it runs for, never to the process console. `dotnet test` (.NET 11 SDK)
 streams what a test process writes to its console for every test, passing or not, while the runner shows a test's own
-output only when the test fails. `PandaBear.Testing.TestOutputLoggerProvider` writes each entry to the test it belongs to
+output only when the test fails. `SharedKernel.Testing.TestOutputLoggerProvider` writes each entry to the test it belongs to
 (the test running where it is logged, else the test that created the provider); `WebApplicationTestHost`,
 `KestrelTestHost` and `AspireTestApplication` use it in place of the console logger. Add it to a service collection a test
 builds itself: `services.AddLogging(logging => logging.AddProvider(new TestOutputLoggerProvider()))`.

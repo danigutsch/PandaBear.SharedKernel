@@ -1,8 +1,8 @@
 using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
-using static PandaBear.Testing.Assertions.UserMessageAssertions;
+using static SharedKernel.Testing.Assertions.UserMessageAssertions;
 
-namespace PandaBear.Testing.Assertions;
+namespace SharedKernel.Testing.Assertions;
 
 /// <summary>Verifies generated GUID identity equality, including empty identities.</summary>
 public static class EntityIdentityShouldAssertionExtensions

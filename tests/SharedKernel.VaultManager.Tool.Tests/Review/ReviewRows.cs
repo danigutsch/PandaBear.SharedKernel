@@ -1,6 +1,6 @@
-using PandaBear.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Review;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Finds where a field or a finding sits in the tables of the review window.</summary>
 internal static class ReviewRows

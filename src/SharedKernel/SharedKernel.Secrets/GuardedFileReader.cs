@@ -1,6 +1,6 @@
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Reads a file's bytes with a size limit and a time limit. A FIFO or a device blocks on open or never ends, so the read runs on its own thread and is

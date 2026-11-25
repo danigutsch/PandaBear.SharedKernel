@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// The public view of a published offering in one culture, built by <see cref="Offering{TImageId, TPriceKind, TMetric}.PublishedIn"/>: the

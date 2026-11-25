@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.Vault.Tests.Attachments;
+namespace SharedKernel.Vault.Tests.Attachments;
 
 /// <summary>Sample attachments of each kind, whose private-key markers are assembled at runtime.</summary>
 internal static class AttachmentSamples

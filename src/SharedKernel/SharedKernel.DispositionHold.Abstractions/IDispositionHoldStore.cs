@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>
 /// Stores holds. Changes are staged and committed by the caller's unit of work, so placing or releasing a hold shares

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.AspNetCore.Localization.Tests;
+namespace SharedKernel.AspNetCore.Localization.Tests;
 
 /// <summary>Hosts the culture path redirect middleware in front of a terminal endpoint on an in-memory server.</summary>
 internal static class CulturePathRedirectTestApp

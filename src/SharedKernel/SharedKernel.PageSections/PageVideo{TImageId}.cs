@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>A video of a section: a poster image that links to the video's https address; the video is never embedded.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

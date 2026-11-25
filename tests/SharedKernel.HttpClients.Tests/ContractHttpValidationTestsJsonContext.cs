@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>Source-generated JSON serialization context, using web defaults, for the validation problem DTO the contract validation tests produce.</summary>
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]

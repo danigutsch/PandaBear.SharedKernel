@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>
 /// Reads RFC 4180 CSV, leniently: a field whose first character other than spaces and tabs is a quote is quoted, may hold commas, line

@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.UploadSanitizing.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.UploadSanitizing.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.UploadSanitizing.Fonts" />
-        <Using Include="PandaBear.UploadSanitizing.Images" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.UploadSanitizing.Fonts" />
+        <Using Include="SharedKernel.UploadSanitizing.Images" />
         <Using Include="Xunit" />
     </ItemGroup>
 

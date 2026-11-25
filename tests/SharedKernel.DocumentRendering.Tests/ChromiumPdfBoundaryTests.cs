@@ -1,8 +1,8 @@
 using Microsoft.Playwright;
-using PandaBear.DocumentRendering.Pdf.Chromium;
-using PandaBear.Testing;
+using SharedKernel.DocumentRendering.Pdf.Chromium;
+using SharedKernel.Testing;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Verifies error precedence and the bounded browser protocol shape.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]

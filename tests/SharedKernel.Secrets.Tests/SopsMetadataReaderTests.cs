@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests reading the key holders from SOPS metadata, including files it must refuse.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

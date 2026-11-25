@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Tests the roadmap automation service's plan, apply, and result-sealing steps against scripted GitHub snapshots.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

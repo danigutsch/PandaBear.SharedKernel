@@ -1,6 +1,6 @@
-using PandaBear.SecretScanning;
+using SharedKernel.SecretScanning;
 
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>A secret finding of a member, described by its location, never by its value.</summary>
 /// <param name="Id">Finding identifier, which finding decisions name.</param>

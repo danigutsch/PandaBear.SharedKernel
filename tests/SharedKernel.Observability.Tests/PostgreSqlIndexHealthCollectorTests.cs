@@ -1,7 +1,7 @@
 using Npgsql;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Unit tests for <see cref="PostgreSqlIndexHealthCollector"/> argument validation and cancellation.</summary>
 [TestScope(TestScope.Unit)]

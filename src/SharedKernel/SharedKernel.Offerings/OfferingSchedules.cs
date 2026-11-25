@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Checks availabilities and schedules handed to the readers.</summary>
 internal static class OfferingSchedules

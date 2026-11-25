@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>
 /// Provides structural accessibility assertions for a page in its current state.

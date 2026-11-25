@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>Attachment of a catalog item.</summary>
 /// <param name="Name">File name.</param>

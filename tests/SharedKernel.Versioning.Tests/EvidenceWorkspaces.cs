@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Deletes the package consumption evidence workspaces that an invocation names in its output or errors.</summary>
 internal sealed partial class EvidenceWorkspaces(CommandLineInvocation invocation) : IDisposable

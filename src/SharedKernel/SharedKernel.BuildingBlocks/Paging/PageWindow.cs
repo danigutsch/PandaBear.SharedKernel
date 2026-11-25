@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The page of a list that a request shows, computed from the page number in the URL, a fixed page size and the number of items.

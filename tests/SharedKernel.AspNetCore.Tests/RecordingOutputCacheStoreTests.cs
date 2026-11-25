@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Tests the recording output cache store used as a test double.</summary>
 public sealed class RecordingOutputCacheStoreTests

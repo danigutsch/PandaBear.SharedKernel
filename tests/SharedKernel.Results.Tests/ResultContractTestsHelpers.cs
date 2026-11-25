@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Generic helpers written against <see cref="IResultLike{TSelf}"/> for the result contract tests.

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the colour tokens and rules of the status badge in the stylesheet.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Checks that Result.Bind obeys the monad left identity, right identity, and associativity laws and short-circuits failures.

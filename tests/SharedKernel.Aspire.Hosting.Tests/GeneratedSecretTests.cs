@@ -1,6 +1,6 @@
 using Aspire.Hosting;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests AddGeneratedSecret: a secret parameter whose value is generated unless configuration supplies one.</summary>
 public sealed class GeneratedSecretTests

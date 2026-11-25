@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>Options of <see cref="CsvDocument.Parse"/> and <see cref="CsvDocument.ParseUtf8"/>.</summary>
 public sealed record CsvParseOptions

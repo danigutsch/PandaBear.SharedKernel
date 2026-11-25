@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>An <see cref="IToolRunner"/> that answers with a scripted result and records every request.</summary>
 internal sealed class ScriptedToolRunner(Func<ToolRequest, ToolResult> respond) : IToolRunner

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>
 /// The code points that <see cref="PrintableText"/> must neutralize, and a check of every code point against them.

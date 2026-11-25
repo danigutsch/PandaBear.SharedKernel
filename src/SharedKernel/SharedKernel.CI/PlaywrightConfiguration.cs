@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The Playwright browsers that a slice installs before its tests run.</summary>
 /// <param name="Project">The test project of the slice whose build output holds <c>playwright.ps1</c>.</param>

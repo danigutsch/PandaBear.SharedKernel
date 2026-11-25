@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The organization that provides an offering, as schema.org <c>Organization</c>.</summary>
 public sealed record StructuredDataOrganization

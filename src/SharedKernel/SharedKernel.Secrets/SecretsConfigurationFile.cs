@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.ConfigurationFiles;
+using SharedKernel.ConfigurationFiles;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Reads and validates <c>.config/sharedkernel-secrets.json</c> into a <see cref="SopsCreationRuleSet"/>. The file is strict

@@ -52,7 +52,7 @@ dotnet add package PandaBear.SharedKernel.Idempotency.EntityFrameworkCore --vers
 ```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Idempotency.EntityFrameworkCore;
+using SharedKernel.Idempotency.EntityFrameworkCore;
 
 public static class Example
 {
@@ -65,6 +65,6 @@ public sealed class AppDbContext : DbContext;
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Idempotency.EntityFrameworkCore`. C# namespace: `PandaBear.Idempotency.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.Idempotency.EntityFrameworkCore`.
+Package ID: `PandaBear.SharedKernel.Idempotency.EntityFrameworkCore`. C# namespace: `SharedKernel.Idempotency.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.Idempotency.EntityFrameworkCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

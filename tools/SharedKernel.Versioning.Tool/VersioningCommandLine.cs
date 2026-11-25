@@ -1,9 +1,9 @@
 using System.CommandLine;
 using System.Globalization;
-using PandaBear.CI;
-using PandaBear.Processes;
+using SharedKernel.CI;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tool;
+namespace SharedKernel.Versioning.Tool;
 
 /// <summary>Builds the command line of the versioning tool.</summary>
 internal static class VersioningCommandLine

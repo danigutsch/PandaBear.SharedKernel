@@ -1,8 +1,8 @@
 using System.CommandLine;
-using PandaBear.LoadTesting;
-using PandaBear.LoadTesting.K6;
+using SharedKernel.LoadTesting;
+using SharedKernel.LoadTesting.K6;
 
-namespace PandaBear.K6.Tool.Tests;
+namespace SharedKernel.K6.Tool.Tests;
 
 /// <summary>A temporary repository with a k6 configuration, fake executables, and a fake environment.</summary>
 internal sealed class K6TestRepository : IDisposable

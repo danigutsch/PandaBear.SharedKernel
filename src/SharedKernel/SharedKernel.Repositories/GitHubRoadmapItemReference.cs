@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Reads the GitHub issue reference of a roadmap item.</summary>
 public static class GitHubRoadmapItemReference

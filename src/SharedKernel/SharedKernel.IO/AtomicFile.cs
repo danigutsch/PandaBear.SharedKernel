@@ -1,4 +1,4 @@
-namespace PandaBear.IO;
+namespace SharedKernel.IO;
 
 /// <summary>Publishes file contents after a streaming write completes in the destination directory.</summary>
 public static class AtomicFile

@@ -1,5 +1,5 @@
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// A value object made of a first name, last name and age, used to test equality over several components.

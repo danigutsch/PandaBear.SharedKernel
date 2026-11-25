@@ -1,4 +1,4 @@
-namespace PandaBear.Observability.Npgsql;
+namespace SharedKernel.Observability.Npgsql;
 
 /// <summary>Explains the bounded reason for an index-health assessment.</summary>
 public enum PostgreSqlIndexHealthRecommendationReason

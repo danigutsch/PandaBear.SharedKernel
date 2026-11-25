@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>A package manager with declared packages whose program was not found.</summary>
 public sealed class MissingTool

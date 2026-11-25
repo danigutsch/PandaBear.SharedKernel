@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>SQL helpers used by the server fixture tests to identify the server and exercise a per-lease table.</summary>
 internal static class PostgreSqlTestServerFixtureTestQueries

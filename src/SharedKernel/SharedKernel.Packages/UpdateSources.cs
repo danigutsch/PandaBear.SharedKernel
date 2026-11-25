@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// The sources that <see cref="PackageInventory.CheckUpdates"/> asks, and the clock it decides at. Disposing it releases

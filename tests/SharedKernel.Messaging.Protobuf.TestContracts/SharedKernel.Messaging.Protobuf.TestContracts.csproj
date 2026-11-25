@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>PandaBear.Messaging.Protobuf.TestContracts</RootNamespace>
+        <RootNamespace>SharedKernel.Messaging.Protobuf.TestContracts</RootNamespace>
         <IsPackable>false</IsPackable>
         <!-- Test-support library: protoc generates the Protobuf integration events that the generator, serializer and consumer tests share. -->
     </PropertyGroup>

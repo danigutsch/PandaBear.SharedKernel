@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the stream that serves a prefix and then throws a chosen exception.</summary>
 public sealed class ThrowingReadStreamTests

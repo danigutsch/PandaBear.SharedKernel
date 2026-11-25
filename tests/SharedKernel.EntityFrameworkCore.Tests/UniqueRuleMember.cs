@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>A row with a rule-tagged unique email and an untagged unique nickname.</summary>
 public sealed class UniqueRuleMember

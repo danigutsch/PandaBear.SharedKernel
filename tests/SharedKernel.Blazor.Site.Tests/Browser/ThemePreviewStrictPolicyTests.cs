@@ -1,6 +1,6 @@
-using PandaBear.Blazor.Site.Theming;
+using SharedKernel.Blazor.Site.Theming;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests the theme preview in Chromium on an Interactive Server page whose policy is <c>style-src 'self' 'nonce-…'</c>, without

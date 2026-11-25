@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Inspects explicitly opted-in completed inbox duplicates in PostgreSQL.</summary>
 /// <remarks>These operations do not claim, restart or complete an inbox entry. The application owns access and retention.</remarks>

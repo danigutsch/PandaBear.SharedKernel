@@ -12,7 +12,7 @@ caller passes source-generated JSON metadata.
 
 ```csharp
 using System.Text.Json.Serialization;
-using PandaBear.ConfigurationFiles;
+using SharedKernel.ConfigurationFiles;
 
 var configuration = await JsonConfigurationFile.Read(
     root, ".config/sharedkernel-k6.json", K6ConfigurationJsonContext.Default.K6Configuration, cancellationToken);
@@ -31,7 +31,7 @@ if (configuration.Version != 1)
 internal sealed partial class K6ConfigurationJsonContext : JsonSerializerContext;
 ```
 
-- `Read` resolves the path under the root with `PandaBear.IO.RepositoryPath`, which refuses a symbolic link in the path
+- `Read` resolves the path under the root with `SharedKernel.IO.RepositoryPath`, which refuses a symbolic link in the path
   or its parents, reads at most 1 MiB, and deserializes it. `ReadOptional` returns `null` when the file does not exist.
 - `Parse` deserializes bytes the caller read itself, such as a file at a Git revision. A leading UTF-8 byte order mark
   is ignored.
@@ -46,6 +46,6 @@ internal sealed partial class K6ConfigurationJsonContext : JsonSerializerContext
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.ConfigurationFiles`. C# namespace: `PandaBear.ConfigurationFiles`. Assembly/project identity: `SharedKernel.ConfigurationFiles`.
+Package ID: `PandaBear.SharedKernel.ConfigurationFiles`. C# namespace: `SharedKernel.ConfigurationFiles`. Assembly/project identity: `SharedKernel.ConfigurationFiles`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

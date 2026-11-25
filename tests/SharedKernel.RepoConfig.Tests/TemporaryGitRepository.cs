@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// Disposable temporary Git repository with an isolated Git environment and helpers to stage, store, corrupt, and inspect repository state for RepoConfig tool tests.

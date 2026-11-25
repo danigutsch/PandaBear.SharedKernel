@@ -1,7 +1,7 @@
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A structurally valid email address, stored in lower case; not proof the mailbox exists or is owned by the user.</summary>
 public sealed class EmailAddress : ValueObject

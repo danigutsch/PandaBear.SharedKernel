@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>An installed package and the different version that its registry offers, before the release time is known.</summary>
 public sealed class PackageUpdate : ValueObject

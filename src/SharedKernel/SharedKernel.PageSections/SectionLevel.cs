@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>The level of a page section's heading under the page title.</summary>
 public enum SectionLevel

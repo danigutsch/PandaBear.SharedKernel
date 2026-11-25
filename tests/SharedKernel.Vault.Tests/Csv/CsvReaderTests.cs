@@ -1,6 +1,6 @@
-using PandaBear.Vault.Csv;
+using SharedKernel.Vault.Csv;
 
-namespace PandaBear.Vault.Tests.Csv;
+namespace SharedKernel.Vault.Tests.Csv;
 
 /// <summary>Tests the CSV parser used by the CSV format readers.</summary>
 public sealed class CsvReaderTests

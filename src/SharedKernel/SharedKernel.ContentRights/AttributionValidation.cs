@@ -1,8 +1,8 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>Validates public credit input while preserving supplied field values.</summary>
 internal static class AttributionValidation

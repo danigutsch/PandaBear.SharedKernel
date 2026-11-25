@@ -1,14 +1,14 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
-using PandaBear.SecretScanning;
-using PandaBear.Testing;
-using PandaBear.Vault.Merge;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.Review;
-using PandaBear.VaultManager.Tool.Tests.Cli;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.SecretScanning;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Merge;
+using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Tests.Cli;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Tests the <c>review</c> command: terminal and argument checks, password prompts, decisions and output files, and the messages it prints.</summary>
 public sealed class ReviewCommandTests : IDisposable

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Writes GitHub pull_request event files.</summary>
 internal static class PullRequestEvent

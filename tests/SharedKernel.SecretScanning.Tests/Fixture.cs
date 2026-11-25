@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Loads the sample files that are copied next to the test assembly.</summary>
 internal static class Fixture

@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Bounds what <c>stage-candidate --repository</c> downloads and how long it waits.</summary>
 /// <param name="MaxPackageBytes">The largest package; the largest package of a recent candidate is about 10 MiB.</param>

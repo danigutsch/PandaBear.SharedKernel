@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Builds <c>local-check</c> command lines and reads its report.</summary>
 internal static class LocalCheckReport

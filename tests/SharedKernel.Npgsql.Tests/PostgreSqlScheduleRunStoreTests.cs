@@ -1,6 +1,6 @@
-using static PandaBear.Npgsql.Tests.PostgreSqlScheduleRunStoreTestData;
+using static SharedKernel.Npgsql.Tests.PostgreSqlScheduleRunStoreTestData;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Exercises durable scheduling observations on an isolated PostgreSQL database.</summary>
 /// <param name="fixture">The fixture that supplies the per-test database.</param>

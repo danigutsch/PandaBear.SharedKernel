@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.ConfigurationFiles;
+using SharedKernel.ConfigurationFiles;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// The consumer policy in <c>.config/sharedkernel-packages.json</c>: the declared packages per package manager and the

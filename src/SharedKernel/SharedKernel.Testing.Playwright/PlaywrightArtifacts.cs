@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>Saves what explains a failed browser test: a full-page screenshot and the trace of the page's context.</summary>
 public static class PlaywrightArtifacts

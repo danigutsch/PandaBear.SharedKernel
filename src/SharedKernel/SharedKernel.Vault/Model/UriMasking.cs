@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>
 /// Masks the parts of a website address that can hold credentials or tokens: user info, the query, and the fragment. The

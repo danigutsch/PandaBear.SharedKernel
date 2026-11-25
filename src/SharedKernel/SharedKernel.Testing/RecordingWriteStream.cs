@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>A write-only stream recording the size of each write.</summary>
 public sealed class RecordingWriteStream : Stream

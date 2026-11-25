@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The accent- and case-insensitive search key of a text, for comparing user search text with stored text: <c>ESLOVÊNIA</c> and

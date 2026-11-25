@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>A symbolic link to a directory, removed on disposal.</summary>
 internal sealed class TemporaryLink : IDisposable

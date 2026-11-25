@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
 using System.Runtime.Versioning;
-using PandaBear.Testing.Http;
-using PandaBear.Testing.Logging;
+using SharedKernel.Testing.Http;
+using SharedKernel.Testing.Logging;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the edge cases of the shared stream, executable, logger and content doubles.</summary>
 public sealed class SharedTestDoubleRegressionTests

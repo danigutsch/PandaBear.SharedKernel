@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>A trust boundary in a data ownership diagram.</summary>
 /// <param name="id">The stable Mermaid identifier suffix of the boundary.</param>

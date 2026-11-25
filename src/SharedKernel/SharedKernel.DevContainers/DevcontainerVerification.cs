@@ -2,10 +2,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using PandaBear.InputNormalization;
-using PandaBear.Processes;
+using SharedKernel.InputNormalization;
+using SharedKernel.Processes;
 
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>
 /// Implements <c>verify-devcontainer</c>: starts the repository's dev container with the Dev Container CLI, runs the

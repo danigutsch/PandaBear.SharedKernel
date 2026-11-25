@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>User decision on one secret finding. It names the finding, never its value.</summary>
 /// <param name="FindingId">Finding identifier, as in <see cref="Secrets.SecretFinding.Id"/>.</param>

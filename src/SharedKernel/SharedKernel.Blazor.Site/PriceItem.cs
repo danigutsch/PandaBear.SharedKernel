@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One line of a <see cref="PriceList" />: what is priced, the amount as the application formats it, and its machine value.</summary>
 /// <param name="Label">What is priced, such as "Double room". It must not be blank.</param>

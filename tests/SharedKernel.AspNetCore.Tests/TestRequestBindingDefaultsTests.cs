@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Tests the default request-binding behavior that <c>AddTestRequestBindingDefaults</c> configures for test hosts.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.EndpointCategory)]

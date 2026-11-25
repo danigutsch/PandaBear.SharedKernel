@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the stable text IDs of the package managers.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

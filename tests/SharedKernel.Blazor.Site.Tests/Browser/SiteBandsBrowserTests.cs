@@ -1,6 +1,6 @@
-using PandaBear.Blazor.Site.Theming;
+using SharedKernel.Blazor.Site.Theming;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests the collapsible menu, the header over a cover hero, the bands and the floating link in Chromium on a phone (375px) and a

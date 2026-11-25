@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.AspNetCore.TestApp;
+namespace SharedKernel.Testing.AspNetCore.TestApp;
 
 /// <summary>Runs a Generic Host entry point for worker capture tests.</summary>
 internal static class WorkerFixture

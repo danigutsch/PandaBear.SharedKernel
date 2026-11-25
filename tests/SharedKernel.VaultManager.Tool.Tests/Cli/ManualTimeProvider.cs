@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>
 /// A <see cref="FakeTimeProvider"/> that starts at <see cref="PipelineInputs.Now"/> and reports the first timer it creates,

@@ -1,7 +1,7 @@
 using System.CommandLine;
-using PandaBear.PlaywrightMcp;
-using PandaBear.PlaywrightMcp.Tool;
-using PandaBear.Processes;
+using SharedKernel.PlaywrightMcp;
+using SharedKernel.PlaywrightMcp.Tool;
+using SharedKernel.Processes;
 
 var configuration = new InvocationConfiguration
 {

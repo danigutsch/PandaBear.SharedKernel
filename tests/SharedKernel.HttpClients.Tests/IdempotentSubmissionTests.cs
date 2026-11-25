@@ -1,4 +1,4 @@
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>Unit tests for IdempotentSubmission retention and release of a pending command across outcomes.</summary>
 public sealed class IdempotentSubmissionTests

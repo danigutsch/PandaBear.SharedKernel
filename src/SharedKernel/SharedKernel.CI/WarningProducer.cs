@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Writes the warning report of a CI step that has no log to classify, such as a linter or a test run: a failed step is one

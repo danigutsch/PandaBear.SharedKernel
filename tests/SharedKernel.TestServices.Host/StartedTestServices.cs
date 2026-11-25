@@ -1,4 +1,4 @@
-namespace PandaBear.TestServices.Host;
+namespace SharedKernel.TestServices.Host;
 
 /// <summary>The shared test services that the host started, the values it hands over for them, and the way to stop them.</summary>
 /// <param name="values">Each environment variable that the tests read, with its value, in the order of <see cref="SharedTestServices.Variables"/>.</param>

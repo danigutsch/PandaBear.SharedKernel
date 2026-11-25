@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Domain.CodeFixes</PackageId>
         <Description>Code fixes for SharedKernel domain-model encapsulation conventions.</Description>
-        <RootNamespace>PandaBear.Domain.CodeFixes</RootNamespace>
+        <RootNamespace>SharedKernel.Domain.CodeFixes</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>ddd;domain;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

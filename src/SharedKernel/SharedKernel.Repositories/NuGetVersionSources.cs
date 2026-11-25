@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The configuration files and source locations from an evaluated restore input.</summary>
 /// <param name="ConfigFiles">The configuration files, in SDK precedence order.</param>

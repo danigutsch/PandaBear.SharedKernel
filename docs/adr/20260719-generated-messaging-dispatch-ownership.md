@@ -25,8 +25,8 @@ adoption of another mediator framework or generation of business logic.
   scoped resolution until dispatch, avoiding constructor cycles without a general runtime registry.
 - Domain-event provider generators emit closed `IDomainEventDispatchHandler` implementations. The
   scoped `CompositeDomainEventDispatcher` composes outbox and audit handlers without registration-order
-  ownership of `IDomainEventDispatcher`. These APIs belong to `PandaBear.Domain`; the EF integration
-  belongs to `PandaBear.Domain.EntityFrameworkCore`.
+  ownership of `IDomainEventDispatcher`. These APIs belong to `SharedKernel.Domain`; the EF integration
+  belongs to `SharedKernel.Domain.EntityFrameworkCore`.
 - Each host supplies explicit `JsonTypeInfo<T>` metadata. Generated serializers and envelope publishers
   use closed typed cases instead of contract registration objects or dictionaries.
 - Background consumers retain the genuine scope boundaries. One consumer scope owns each claimed
@@ -39,7 +39,7 @@ adoption of another mediator framework or generation of business logic.
 
 ### Contract ownership
 
-Domain dispatch contracts live in the `PandaBear.Domain` namespace, with EF integration in `PandaBear.Domain.EntityFrameworkCore`. The corresponding package IDs are `PandaBear.SharedKernel.Domain` and `PandaBear.SharedKernel.Domain.EntityFrameworkCore`; namespaces and package identities are distinct. Superseded dispatch adapters are not retained through forwarding packages or compatibility namespaces. Review deliberate source breaks using the existing API gates and [namespace decision](20261020-pandabear-namespaces.md).
+Domain dispatch contracts live in the `SharedKernel.Domain` namespace, with EF integration in `SharedKernel.Domain.EntityFrameworkCore`. The corresponding package IDs are `PandaBear.SharedKernel.Domain` and `PandaBear.SharedKernel.Domain.EntityFrameworkCore`; namespaces and package identities are distinct. Superseded dispatch adapters are not retained through forwarding packages or compatibility namespaces. Review deliberate source breaks using the existing API gates and [namespace decision](20261124-sharedkernel-namespaces.md).
 
 ## Measured shape
 
@@ -89,4 +89,4 @@ skip the decorator and weaken duplicate-delivery protection.
 - [Separate Domain and Integration Event Dispatch](20260621-separate-domain-and-integration-event-dispatch.md)
 
 
-Reviewed for the standalone library: 2026-10-20. Namespaces above use `PandaBear.*`; project/assembly identities remain `SharedKernel.*` and package IDs remain `PandaBear.SharedKernel.*`.
+Reviewed for the standalone library: 2026-10-20. Namespaces above and project/assembly identities use `SharedKernel.*`; package IDs remain `PandaBear.SharedKernel.*`.

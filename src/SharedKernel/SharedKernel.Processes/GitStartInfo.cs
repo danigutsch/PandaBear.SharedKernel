@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>
 /// Describes a <c>git</c> run that cannot prompt and receives none of the host's credentials or Git redirections: the

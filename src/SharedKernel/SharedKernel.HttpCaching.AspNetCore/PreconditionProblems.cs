@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace PandaBear.HttpCaching.AspNetCore;
+namespace SharedKernel.HttpCaching.AspNetCore;
 
 /// <summary>
 /// Problem details for conditional writes: 428 Precondition Required when <c>If-Match</c> is missing, 400 when it is unusable, and 412

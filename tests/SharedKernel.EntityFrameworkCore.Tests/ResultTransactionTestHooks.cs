@@ -1,7 +1,7 @@
-using PandaBear.Mediator.EntityFrameworkCore;
-using PandaBear.Results;
+using SharedKernel.Mediator.EntityFrameworkCore;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Records outcome hook calls and can be told to fail.

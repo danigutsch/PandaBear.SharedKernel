@@ -1,6 +1,6 @@
-using PandaBear.Review;
+using SharedKernel.Review;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Supplies the typed state that a host persists for a document revision.</summary>
 /// <param name="LineageId">The lineage identity.</param>

@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>
 /// Command with no response used to check that command contracts are discovered as requests.

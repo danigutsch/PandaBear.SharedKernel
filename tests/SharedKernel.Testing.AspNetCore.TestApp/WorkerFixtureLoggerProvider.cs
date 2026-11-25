@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PandaBear.Testing.AspNetCore.TestApp;
+namespace SharedKernel.Testing.AspNetCore.TestApp;
 
 /// <summary>Observes when the service provider created by the worker fixture releases its services.</summary>
 internal sealed class WorkerFixtureLoggerProvider(Action onDispose) : ILoggerProvider

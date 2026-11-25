@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Attachments;
+namespace SharedKernel.Vault.Attachments;
 
 /// <summary>File entry of a validated archive.</summary>
 /// <param name="Path">Entry path with <c>/</c> separators.</param>

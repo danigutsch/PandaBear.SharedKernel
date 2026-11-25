@@ -1,6 +1,6 @@
 using System.Data.Common;
 
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// Resets PostgreSQL public-schema tables to a known baseline for integration tests.

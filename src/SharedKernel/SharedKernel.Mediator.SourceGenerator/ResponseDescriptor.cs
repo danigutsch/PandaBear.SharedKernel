@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Mediator.SourceGenerator;
+namespace SharedKernel.Mediator.SourceGenerator;
 
 /// <summary>
 /// Describes a discovered request or stream response type.

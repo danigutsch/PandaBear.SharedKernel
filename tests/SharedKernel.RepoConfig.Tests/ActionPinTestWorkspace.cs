@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Creates workspaces with an action pin manifest, a workflow, and an optional composite action.</summary>
 internal static class ActionPinTestWorkspace

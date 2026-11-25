@@ -14,7 +14,7 @@ describes the configuration format, the probes, and the risk flags.
 ## Usage
 
 ```csharp
-using PandaBear.Sandbox;
+using SharedKernel.Sandbox;
 
 var configuration = await SandboxConfigurationFile.Read(repositoryRoot, cancellationToken);
 var exitCode = await new SandboxDoctor(new SystemSandboxEnvironment()).Run(configuration, Console.Out, cancellationToken);
@@ -40,6 +40,6 @@ version 1 configuration format and the doctor's NuGet folder probe and socket ad
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Sandbox`. C# namespace: `PandaBear.Sandbox`. Assembly/project identity: `SharedKernel.Sandbox`.
+Package ID: `PandaBear.SharedKernel.Sandbox`. C# namespace: `SharedKernel.Sandbox`. Assembly/project identity: `SharedKernel.Sandbox`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

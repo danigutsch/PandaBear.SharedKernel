@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Parsed PEM-style block: label, RFC 1421 headers, and base64 body.</summary>
 /// <param name="Label">Label between <c>BEGIN</c> and the dashes, for example <c>RSA PRIVATE KEY</c>.</param>

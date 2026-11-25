@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>
 /// Runs the probes and says, for each, whether the environment allows the operation and what that means for .NET tools:

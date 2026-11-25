@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Runs a real child process from an absolute path without a shell. The child inherits <b>no</b> environment: it gets

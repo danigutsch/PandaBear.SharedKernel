@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using PandaBear.Idempotency.EntityFrameworkCore;
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Idempotency.EntityFrameworkCore;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests that the parameterless storage configurations, which <c>ApplyConfigurationsFromAssembly</c> can create, map to the default

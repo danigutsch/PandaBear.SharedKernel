@@ -82,6 +82,6 @@ cancellation.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.PlaywrightMcp.Tool`. C# namespace: `PandaBear.PlaywrightMcp.Tool`. Assembly/project identity: `SharedKernel.PlaywrightMcp.Tool`.
+Package ID: `PandaBear.SharedKernel.PlaywrightMcp.Tool`. C# namespace: `SharedKernel.PlaywrightMcp.Tool`. Assembly/project identity: `SharedKernel.PlaywrightMcp.Tool`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

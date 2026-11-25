@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Decides from a file's content whether it carries SOPS metadata, so a sops-encrypted file with an unexpected name is still judged.</summary>
 internal static class SopsSniffer

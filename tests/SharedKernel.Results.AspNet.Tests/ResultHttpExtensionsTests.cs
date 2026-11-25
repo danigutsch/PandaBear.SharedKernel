@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace PandaBear.Results.AspNet.Tests;
+namespace SharedKernel.Results.AspNet.Tests;
 
 /// <summary>Tests the conversion of results to HTTP responses.</summary>
 public sealed class ResultHttpExtensionsTests

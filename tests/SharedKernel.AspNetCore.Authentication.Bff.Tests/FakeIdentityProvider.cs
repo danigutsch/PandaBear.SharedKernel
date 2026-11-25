@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>A fake identity provider token, exchange and revocation endpoint that records every request.</summary>
 internal sealed class FakeIdentityProvider : HttpMessageHandler

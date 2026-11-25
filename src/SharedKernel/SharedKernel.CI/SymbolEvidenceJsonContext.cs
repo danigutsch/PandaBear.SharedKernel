@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Source-generated metadata for the symbol evidence file. Reading rejects unknown, repeated, and missing properties,

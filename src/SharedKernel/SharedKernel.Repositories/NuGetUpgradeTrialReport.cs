@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Describes the source snapshot, selected changes and candidate verification.</summary>
 /// <param name="SchemaVersion">The trial report schema version.</param>

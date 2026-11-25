@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Immutable, digest-sealed plan describing one roadmap maintenance run: the GitHub snapshot it was based on and the closed-item transitions it requires.</summary>
 public sealed class RoadmapAutomationPlan

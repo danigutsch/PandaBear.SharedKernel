@@ -26,7 +26,7 @@ dotnet add package PandaBear.SharedKernel.AspNetCore.RateLimiting
 ```
 
 ```csharp
-using PandaBear.AspNetCore.RateLimiting;
+using SharedKernel.AspNetCore.RateLimiting;
 
 builder.Services.AddRateLimiter(options =>
     options.AddRemoteIpFixedWindowPolicy("login", permitLimit: 5, window: TimeSpan.FromMinutes(1)));
@@ -40,8 +40,8 @@ app.MapPost("/login", () => Results.Ok()).RequireRateLimiting("login");
 ## Migrating from SharedKernel.AspNetCore
 
 `AspNetCoreRateLimitingExtensions` and `RemoteIpFixedWindowRateLimitPolicy` moved from `PandaBear.SharedKernel.AspNetCore`
-(namespace `PandaBear.AspNetCore`) into this package and namespace `PandaBear.AspNetCore.RateLimiting`. Add the package
-reference and replace `using PandaBear.AspNetCore;` with `using PandaBear.AspNetCore.RateLimiting;` where they are used.
+(namespace `SharedKernel.AspNetCore`) into this package and namespace `SharedKernel.AspNetCore.RateLimiting`. Add the package
+reference and replace `using SharedKernel.AspNetCore;` with `using SharedKernel.AspNetCore.RateLimiting;` where they are used.
 
 `AddSecurityEventTelemetry()` was split by concern: call `AddRateLimitEventTelemetry()` from this package for rate-limit
 rejections and `AddAuthenticationEventTelemetry()` from `PandaBear.SharedKernel.AspNetCore.Authentication` for JWT bearer
@@ -49,7 +49,7 @@ events. Meter, instrument, tag and log event names are unchanged.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AspNetCore.RateLimiting`. C# namespace: `PandaBear.AspNetCore.RateLimiting`.
+Package ID: `PandaBear.SharedKernel.AspNetCore.RateLimiting`. C# namespace: `SharedKernel.AspNetCore.RateLimiting`.
 Assembly/project identity: `SharedKernel.AspNetCore.RateLimiting`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured

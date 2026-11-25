@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Results.Analyzers.Tests;
+namespace SharedKernel.Results.Analyzers.Tests;
 
 /// <summary>Compiles test source against the default usings and runs the Results analyzer over it.</summary>
 internal static class AnalyzerTestHarness
@@ -15,8 +15,8 @@ internal static class AnalyzerTestHarness
         using Microsoft.AspNetCore.Builder;
         using Microsoft.AspNetCore.Http;
         using Microsoft.AspNetCore.Routing;
-        using PandaBear.Results;
-        using PandaBear.Results.AspNet;
+        using SharedKernel.Results;
+        using SharedKernel.Results.AspNet;
 
         """;
 
@@ -53,8 +53,8 @@ internal static class AnalyzerTestHarness
     {
         var compilation = Testing.Roslyn.AnalyzerTestHarness.CreateCompilation(
             source,
-            withResultsReference ? DefaultUsings : DefaultUsings.Replace("using PandaBear.Results;", string.Empty, StringComparison.Ordinal)
-                .Replace("using PandaBear.Results.AspNet;", string.Empty, StringComparison.Ordinal),
+            withResultsReference ? DefaultUsings : DefaultUsings.Replace("using SharedKernel.Results;", string.Empty, StringComparison.Ordinal)
+                .Replace("using SharedKernel.Results.AspNet;", string.Empty, StringComparison.Ordinal),
             assemblyName: "SharedKernel.Results.Analyzers.Tests.Dynamic");
         if (!withResultsReference)
         {

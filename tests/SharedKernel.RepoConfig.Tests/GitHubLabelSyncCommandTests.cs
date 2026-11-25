@@ -3,9 +3,9 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 
-using static PandaBear.RepoConfig.Tests.GitHubLabelSyncTestOperations;
+using static SharedKernel.RepoConfig.Tests.GitHubLabelSyncTestOperations;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>github sync-labels</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

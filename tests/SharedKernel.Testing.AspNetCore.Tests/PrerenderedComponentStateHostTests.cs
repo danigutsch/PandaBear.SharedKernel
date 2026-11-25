@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.AspNetCore.Tests;
+namespace SharedKernel.Testing.AspNetCore.Tests;
 
 /// <summary>Tests the prerendered state check against a real Blazor Web App page with an Interactive Server component.</summary>
 [Trait(TestTraitNames.ScopeName, "Integration")]

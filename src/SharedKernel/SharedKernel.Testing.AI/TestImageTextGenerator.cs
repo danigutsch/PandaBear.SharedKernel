@@ -1,6 +1,6 @@
-using PandaBear.AI;
+using SharedKernel.AI;
 
-namespace PandaBear.Testing.AI;
+namespace SharedKernel.Testing.AI;
 
 /// <summary>Returns configured image accessibility text and records the most recent accepted request.</summary>
 /// <param name="result">The result returned on a successful call.</param>

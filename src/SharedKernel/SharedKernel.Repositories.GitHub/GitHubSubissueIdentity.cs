@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Identity of a GitHub sub-issue.</summary>
 /// <param name="Id">Numeric issue ID.</param>

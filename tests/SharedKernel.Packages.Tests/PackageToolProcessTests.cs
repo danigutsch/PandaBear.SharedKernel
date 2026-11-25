@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests how the readers run a package tool: through the bounded runner, from the start information they build.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

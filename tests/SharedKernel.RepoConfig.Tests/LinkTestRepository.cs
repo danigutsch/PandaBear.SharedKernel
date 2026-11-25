@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Creates repositories and workspaces, and runs commands, for the link and line-ending verification tests.</summary>
 internal static class LinkTestRepository

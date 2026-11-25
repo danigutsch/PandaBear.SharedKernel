@@ -1,4 +1,4 @@
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>A party explicitly named in the public credit.</summary>
 /// <param name="Name">The party's public name as supplied.</param>

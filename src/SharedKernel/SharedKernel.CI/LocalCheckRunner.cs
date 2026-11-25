@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Checks the changed projects without a Unix domain socket: whitespace in folder mode, a build with node reuse off, and

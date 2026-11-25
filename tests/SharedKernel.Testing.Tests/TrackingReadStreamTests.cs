@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the read-size limit of the byte-array stream that records reads and disposal.</summary>
 public sealed class TrackingReadStreamTests

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Helpers for telemetry tests of the generated mediator.</summary>
 internal static class GeneratorTelemetryBehaviorTestsHelpers

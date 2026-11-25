@@ -1,8 +1,8 @@
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Formats;
 
-namespace PandaBear.VaultManager.Tool;
+namespace SharedKernel.VaultManager.Tool;
 
 /// <summary>
 /// Password prompts, terminal state, and clock shared by the commands and the review UI. Commands write their output

@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>A prepared run that <see cref="LoadTestRunner"/> hands to an <see cref="ILoadGenerator"/>.</summary>
 public sealed class LoadGeneratorRun

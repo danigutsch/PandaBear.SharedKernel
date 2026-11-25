@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Records the exceptions the exception-handler middleware passes on, without handling them.</summary>
 internal sealed class RecordingExceptionHandler : IExceptionHandler

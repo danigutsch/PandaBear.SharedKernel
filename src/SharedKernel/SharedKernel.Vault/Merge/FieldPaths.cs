@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// Paths that name item fields in decisions, conflicts, and reports. They follow Bitwarden export property names.

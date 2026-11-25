@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the Homebrew reader against canned <c>brew list --versions</c> output.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>Password prompts of a <see cref="VaultPipeline"/>. Passwords are never read from arguments or the environment.</summary>
 /// <param name="ReadPassword">Prompts for an existing password, such as the password of an input file, and returns it.</param>

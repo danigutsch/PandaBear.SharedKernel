@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The document formats whose SOPS metadata this library reads.</summary>
 public enum SopsFormat

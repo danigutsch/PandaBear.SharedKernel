@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers for the <c>new</c> command.</summary>
 internal static class NewTestOperations

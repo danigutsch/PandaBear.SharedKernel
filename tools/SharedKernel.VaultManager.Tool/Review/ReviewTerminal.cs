@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>The terminal the review UI runs in.</summary>
 /// <param name="OutputIsTerminal">Whether standard output is a terminal.</param>

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Pauses exactly one save after it has loaded its concurrency version.</summary>
 internal sealed class DocumentWorkflowSaveGate : SaveChangesInterceptor

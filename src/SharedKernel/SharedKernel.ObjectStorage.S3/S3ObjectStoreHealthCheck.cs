@@ -4,7 +4,7 @@ using Amazon.S3.Model;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.ObjectStorage.S3;
+namespace SharedKernel.ObjectStorage.S3;
 
 /// <summary>
 /// Health check that lists at most one key of the configured bucket, so it reports healthy only when the endpoint, credentials, and bucket work.

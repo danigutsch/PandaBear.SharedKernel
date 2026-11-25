@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Records the comparison and completeness of one relative project path.</summary>
 /// <param name="Project">The repository-relative project path.</param>

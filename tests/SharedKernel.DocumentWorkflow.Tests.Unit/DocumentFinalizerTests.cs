@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.DocumentWorkflow.Tests;
+namespace SharedKernel.DocumentWorkflow.Tests;
 
 /// <summary>Verifies artifact storage using the release-note consumer.</summary>
 public sealed class DocumentFinalizerTests

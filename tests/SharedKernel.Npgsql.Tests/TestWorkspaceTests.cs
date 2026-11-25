@@ -1,6 +1,6 @@
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests TestWorkspace, the private temporary folder that a test run's files live in and that is removed afterwards.</summary>
 public sealed class TestWorkspaceTests

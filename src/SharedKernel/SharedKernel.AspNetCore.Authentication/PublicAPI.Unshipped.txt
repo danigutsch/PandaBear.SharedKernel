@@ -1,41 +1,41 @@
 #nullable enable
-const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey = "Authentication:AllowHttpDevelopmentAuthority" -> string!
-const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.AuthorityConfigurationKey = "Authentication:Authority" -> string!
-const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.IssuerConfigurationKey = "Authentication:Issuer" -> string!
-const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.PermissionClaimType = "permission" -> string!
-const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.RolesClaimType = "roles" -> string!
-const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.SubjectClaimType = "sub" -> string!
-PandaBear.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions
-PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults
-PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions
-PandaBear.AspNetCore.Authentication.ApiBearerScheme
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.ApiBearerScheme(string! Name, string! Audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! PermissionsByRole) -> void
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.Audience.get -> string!
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.Audience.init -> void
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.Name.get -> string!
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.Name.init -> void
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.PermissionsByRole.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>!
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.PermissionsByRole.init -> void
-PandaBear.AspNetCore.Authentication.ApiSecurityApplicationBuilderExtensions
-PandaBear.AspNetCore.Authentication.AuthenticationEventTelemetryServiceCollectionExtensions
-PandaBear.AspNetCore.Authentication.AuthorizationPolicyBuilderExtensions
-PandaBear.AspNetCore.Authentication.ClaimsPrincipalExtensions
-static PandaBear.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, string! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
-static PandaBear.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, System.Uri! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
-static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiAuthorization(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.Authentication.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.Authentication.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.Authentication.ApiSecurityApplicationBuilderExtensions.UseApiSecurity(this Microsoft.AspNetCore.Builder.WebApplication! application) -> Microsoft.AspNetCore.Builder.WebApplication!
-static PandaBear.AspNetCore.Authentication.AuthenticationEventTelemetryServiceCollectionExtensions.AddAuthenticationEventTelemetry(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static PandaBear.AspNetCore.Authentication.AuthorizationPolicyBuilderExtensions.RequirePermission(this Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder! builder, string! permission) -> Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder!
-static PandaBear.AspNetCore.Authentication.ClaimsPrincipalExtensions.GetSubjectId(this System.Security.Claims.ClaimsPrincipal! principal) -> string?
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.<Clone>$() -> PandaBear.AspNetCore.Authentication.ApiBearerScheme!
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.Deconstruct(out string! Name, out string! Audience, out System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! PermissionsByRole) -> void
-PandaBear.AspNetCore.Authentication.ApiBearerScheme.Equals(PandaBear.AspNetCore.Authentication.ApiBearerScheme? other) -> bool
-override PandaBear.AspNetCore.Authentication.ApiBearerScheme.Equals(object? obj) -> bool
-override PandaBear.AspNetCore.Authentication.ApiBearerScheme.GetHashCode() -> int
-override PandaBear.AspNetCore.Authentication.ApiBearerScheme.ToString() -> string!
-static PandaBear.AspNetCore.Authentication.ApiBearerScheme.operator !=(PandaBear.AspNetCore.Authentication.ApiBearerScheme? left, PandaBear.AspNetCore.Authentication.ApiBearerScheme? right) -> bool
-static PandaBear.AspNetCore.Authentication.ApiBearerScheme.operator ==(PandaBear.AspNetCore.Authentication.ApiBearerScheme? left, PandaBear.AspNetCore.Authentication.ApiBearerScheme? right) -> bool
+const SharedKernel.AspNetCore.Authentication.ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey = "Authentication:AllowHttpDevelopmentAuthority" -> string!
+const SharedKernel.AspNetCore.Authentication.ApiAuthenticationDefaults.AuthorityConfigurationKey = "Authentication:Authority" -> string!
+const SharedKernel.AspNetCore.Authentication.ApiAuthenticationDefaults.IssuerConfigurationKey = "Authentication:Issuer" -> string!
+const SharedKernel.AspNetCore.Authentication.ApiAuthenticationDefaults.PermissionClaimType = "permission" -> string!
+const SharedKernel.AspNetCore.Authentication.ApiAuthenticationDefaults.RolesClaimType = "roles" -> string!
+const SharedKernel.AspNetCore.Authentication.ApiAuthenticationDefaults.SubjectClaimType = "sub" -> string!
+SharedKernel.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions
+SharedKernel.AspNetCore.Authentication.ApiAuthenticationDefaults
+SharedKernel.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.ApiBearerScheme(string! Name, string! Audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! PermissionsByRole) -> void
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.Audience.get -> string!
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.Audience.init -> void
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.Name.get -> string!
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.Name.init -> void
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.PermissionsByRole.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>!
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.PermissionsByRole.init -> void
+SharedKernel.AspNetCore.Authentication.ApiSecurityApplicationBuilderExtensions
+SharedKernel.AspNetCore.Authentication.AuthenticationEventTelemetryServiceCollectionExtensions
+SharedKernel.AspNetCore.Authentication.AuthorizationPolicyBuilderExtensions
+SharedKernel.AspNetCore.Authentication.ClaimsPrincipalExtensions
+static SharedKernel.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, string! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
+static SharedKernel.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, System.Uri! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
+static SharedKernel.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiAuthorization(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static SharedKernel.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static SharedKernel.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<SharedKernel.AspNetCore.Authentication.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static SharedKernel.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static SharedKernel.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<SharedKernel.AspNetCore.Authentication.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static SharedKernel.AspNetCore.Authentication.ApiSecurityApplicationBuilderExtensions.UseApiSecurity(this Microsoft.AspNetCore.Builder.WebApplication! application) -> Microsoft.AspNetCore.Builder.WebApplication!
+static SharedKernel.AspNetCore.Authentication.AuthenticationEventTelemetryServiceCollectionExtensions.AddAuthenticationEventTelemetry(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static SharedKernel.AspNetCore.Authentication.AuthorizationPolicyBuilderExtensions.RequirePermission(this Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder! builder, string! permission) -> Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder!
+static SharedKernel.AspNetCore.Authentication.ClaimsPrincipalExtensions.GetSubjectId(this System.Security.Claims.ClaimsPrincipal! principal) -> string?
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.<Clone>$() -> SharedKernel.AspNetCore.Authentication.ApiBearerScheme!
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.Deconstruct(out string! Name, out string! Audience, out System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! PermissionsByRole) -> void
+SharedKernel.AspNetCore.Authentication.ApiBearerScheme.Equals(SharedKernel.AspNetCore.Authentication.ApiBearerScheme? other) -> bool
+override SharedKernel.AspNetCore.Authentication.ApiBearerScheme.Equals(object? obj) -> bool
+override SharedKernel.AspNetCore.Authentication.ApiBearerScheme.GetHashCode() -> int
+override SharedKernel.AspNetCore.Authentication.ApiBearerScheme.ToString() -> string!
+static SharedKernel.AspNetCore.Authentication.ApiBearerScheme.operator !=(SharedKernel.AspNetCore.Authentication.ApiBearerScheme? left, SharedKernel.AspNetCore.Authentication.ApiBearerScheme? right) -> bool
+static SharedKernel.AspNetCore.Authentication.ApiBearerScheme.operator ==(SharedKernel.AspNetCore.Authentication.ApiBearerScheme? left, SharedKernel.AspNetCore.Authentication.ApiBearerScheme? right) -> bool

@@ -9,7 +9,7 @@ Reusable value-object and workflow building blocks shared by bounded contexts.
 ## Source layout
 
 Source files are grouped by topic. The folders are organization only: every public type keeps the single
-`PandaBear.BuildingBlocks` namespace, so moving between folders never changes the API.
+`SharedKernel.BuildingBlocks` namespace, so moving between folders never changes the API.
 
 | Folder | Contents |
 | --- | --- |
@@ -148,7 +148,7 @@ some of them and that can hide a scheme), backslashes, lone surrogates, text not
 addresses longer than `WebUrl.MaxLength` (2048) are rejected; the error names the `field` and `label` and never echoes the
 input. `Value` keeps the path, query and fragment as supplied and lower-cases the scheme and host, so
 `HTTPS://Example.ORG/Tours` becomes `https://example.org/Tours` and addresses that differ only there are equal. The checks
-reuse `PandaBear.InputNormalization.WebAssetUriSanitizer`, with an `http` address checked through its `https` form.
+reuse `SharedKernel.InputNormalization.WebAssetUriSanitizer`, with an `http` address checked through its `https` form.
 `WebUrl.CreateHttps` applies the same rules but accepts `https` only: an `http://` address is rejected like any other scheme
 (`{label} must be an absolute https address.`), for a link that must not downgrade, such as a video on another site.
 `WebUrl.Restore` rebuilds a stored value without validation.
@@ -211,7 +211,7 @@ it works with a consumer's source-generated `JsonSerializerContext` and needs no
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.BuildingBlocks`. C# namespace: `PandaBear.BuildingBlocks`. Assembly/project identity: `SharedKernel.BuildingBlocks`.
+Package ID: `PandaBear.SharedKernel.BuildingBlocks`. C# namespace: `SharedKernel.BuildingBlocks`. Assembly/project identity: `SharedKernel.BuildingBlocks`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 
@@ -226,7 +226,7 @@ never converts between currencies. Personal-data types redact `ToString()`. Vali
 use camel-case field names such as `firstName` and `postalCode`.
 
 ```csharp
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
 var email = EmailAddress.Create("  Ana@Example.com ");           // ana@example.com
 var phone = PhoneNumber.Create("+55 (11) 91234-5678");           // +5511912345678
@@ -247,12 +247,12 @@ var home = PostalAddress.Create(street, null, null, cep, city, state, "BR", new 
 
 ## Payment identifiers
 
-`Iban`, `Bic`, `Cpf`, `Cnpj`, and `PixKey` are immutable value objects in `PandaBear.BuildingBlocks`.
+`Iban`, `Bic`, `Cpf`, `Cnpj`, and `PixKey` are immutable value objects in `SharedKernel.BuildingBlocks`.
 Create them from canonical input through `Result<T>` factories; invalid input never becomes an instance.
 No additional package or runtime network connection is required.
 
 ```csharp
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
 var result = Iban.Create("DE89370400440532013000");
 if (result.IsSuccess)

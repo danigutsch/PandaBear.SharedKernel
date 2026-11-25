@@ -11,7 +11,7 @@ and NativeAOT-compatible.
 
 ```csharp
 using System.Net.Http.Headers;
-using PandaBear.Forgejo;
+using SharedKernel.Forgejo;
 
 using var client = ForgejoApiClient.Create(
     new SocketsHttpHandler { AllowAutoRedirect = false },
@@ -46,6 +46,6 @@ using var response = await client.GetAsync("repos/owner/name/releases?limit=50&p
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Forgejo`. C# namespace: `PandaBear.Forgejo`. Assembly/project identity: `SharedKernel.Forgejo`.
+Package ID: `PandaBear.SharedKernel.Forgejo`. C# namespace: `SharedKernel.Forgejo`. Assembly/project identity: `SharedKernel.Forgejo`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

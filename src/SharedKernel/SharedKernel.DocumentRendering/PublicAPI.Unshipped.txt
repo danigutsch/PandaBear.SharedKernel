@@ -1,161 +1,161 @@
 #nullable enable
-PandaBear.DocumentRendering.DocumentBlock
-PandaBear.DocumentRendering.DocumentBrandingSnapshot
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.AccentColor.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.AccentColor.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.BackgroundColor.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.BackgroundColor.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.BodyFontFamily.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.BodyFontFamily.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.BrandName.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.BrandName.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.Deconstruct(out string! Version, out string! BrandName, out System.Uri? LogoUri) -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.DocumentBrandingSnapshot(string! Version, string! BrandName, System.Uri? LogoUri) -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.DocumentBrandingSnapshot(string! Version, string! BrandName, System.Uri? LogoUri, string! PrimaryColor, string! AccentColor, string! BackgroundColor, string! TextColor, string! HeadingFontFamily, string! BodyFontFamily, string! FooterText) -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.FooterText.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.FooterText.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.HeadingFontFamily.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.HeadingFontFamily.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.LogoUri.get -> System.Uri?
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.LogoUri.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.PrimaryColor.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.PrimaryColor.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.TextColor.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.TextColor.init -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.Version.get -> string!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.Version.init -> void
-PandaBear.DocumentRendering.DocumentField
-PandaBear.DocumentRendering.DocumentField.DocumentField(string! Label, string! Value, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
-PandaBear.DocumentRendering.DocumentField.Label.get -> string!
-PandaBear.DocumentRendering.DocumentField.Label.init -> void
-PandaBear.DocumentRendering.DocumentField.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentField.PrivacyClassification.init -> void
-PandaBear.DocumentRendering.DocumentField.Value.get -> string!
-PandaBear.DocumentRendering.DocumentField.Value.init -> void
-PandaBear.DocumentRendering.DocumentLink
-PandaBear.DocumentRendering.DocumentLink.DocumentLink(string! Text, System.Uri! Target, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
-PandaBear.DocumentRendering.DocumentLink.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentLink.PrivacyClassification.init -> void
-PandaBear.DocumentRendering.DocumentLink.Target.get -> System.Uri!
-PandaBear.DocumentRendering.DocumentLink.Target.init -> void
-PandaBear.DocumentRendering.DocumentLink.Text.get -> string!
-PandaBear.DocumentRendering.DocumentLink.Text.init -> void
-PandaBear.DocumentRendering.DocumentList
-PandaBear.DocumentRendering.DocumentList.DocumentList(System.Collections.Generic.IReadOnlyList<string!>! Items, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
-PandaBear.DocumentRendering.DocumentList.IsOrdered.get -> bool
-PandaBear.DocumentRendering.DocumentList.IsOrdered.init -> void
-PandaBear.DocumentRendering.DocumentList.Items.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.DocumentRendering.DocumentList.Items.init -> void
-PandaBear.DocumentRendering.DocumentList.Label.get -> string?
-PandaBear.DocumentRendering.DocumentList.Label.init -> void
-PandaBear.DocumentRendering.DocumentList.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentList.PrivacyClassification.init -> void
-PandaBear.DocumentRendering.DocumentParagraph
-PandaBear.DocumentRendering.DocumentParagraph.DocumentParagraph(string! Text, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
-PandaBear.DocumentRendering.DocumentParagraph.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentParagraph.PrivacyClassification.init -> void
-PandaBear.DocumentRendering.DocumentParagraph.Text.get -> string!
-PandaBear.DocumentRendering.DocumentParagraph.Text.init -> void
-PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentPrivacyClassification.None = 0 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentPrivacyClassification.Operational = 2 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentPrivacyClassification.PersonalData = 3 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentPrivacyClassification.Public = 1 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentPrivacyClassification.SensitivePersonalData = 4 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
-PandaBear.DocumentRendering.DocumentRenderRequest
-PandaBear.DocumentRendering.DocumentRenderRequest.Branding.get -> PandaBear.DocumentRendering.DocumentBrandingSnapshot?
-PandaBear.DocumentRendering.DocumentRenderRequest.Branding.init -> void
-PandaBear.DocumentRendering.DocumentRenderRequest.DocumentRenderRequest(string! Language, string! Title, System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentSection!>! Sections, PandaBear.DocumentRendering.DocumentBrandingSnapshot? Branding) -> void
-PandaBear.DocumentRendering.DocumentRenderRequest.Language.get -> string!
-PandaBear.DocumentRendering.DocumentRenderRequest.Language.init -> void
-PandaBear.DocumentRendering.DocumentRenderRequest.Sections.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentSection!>!
-PandaBear.DocumentRendering.DocumentRenderRequest.Sections.init -> void
-PandaBear.DocumentRendering.DocumentRenderRequest.Title.get -> string!
-PandaBear.DocumentRendering.DocumentRenderRequest.Title.init -> void
-PandaBear.DocumentRendering.DocumentSection
-PandaBear.DocumentRendering.DocumentSection.DocumentSection(string! Heading, System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentField!>! Fields) -> void
-PandaBear.DocumentRendering.DocumentSection.Blocks.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentBlock!>!
-PandaBear.DocumentRendering.DocumentSection.Blocks.init -> void
-PandaBear.DocumentRendering.DocumentSection.Fields.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentField!>!
-PandaBear.DocumentRendering.DocumentSection.Fields.init -> void
-PandaBear.DocumentRendering.DocumentSection.Heading.get -> string!
-PandaBear.DocumentRendering.DocumentSection.Heading.init -> void
-PandaBear.DocumentRendering.DocumentSection.Lists.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentList!>!
-PandaBear.DocumentRendering.DocumentSection.Lists.init -> void
-PandaBear.DocumentRendering.DocumentSection.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentParagraph!>!
-PandaBear.DocumentRendering.DocumentSection.Paragraphs.init -> void
-PandaBear.DocumentRendering.HtmlDocumentRenderer
-PandaBear.DocumentRendering.HtmlDocumentRenderer.HtmlDocumentRenderer() -> void
-PandaBear.DocumentRendering.HtmlDocumentRenderer.Render(PandaBear.DocumentRendering.DocumentRenderRequest! request) -> byte[]!
-PandaBear.DocumentRendering.IDocumentRenderer
-PandaBear.DocumentRendering.IDocumentRenderer.Render(PandaBear.DocumentRendering.DocumentRenderRequest! request) -> byte[]!
-PandaBear.DocumentRendering.DocumentBlock.DocumentBlock(PandaBear.DocumentRendering.DocumentBlock! original) -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.<Clone>$() -> PandaBear.DocumentRendering.DocumentBrandingSnapshot!
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.Deconstruct(out string! Version, out string! BrandName, out System.Uri? LogoUri, out string! PrimaryColor, out string! AccentColor, out string! BackgroundColor, out string! TextColor, out string! HeadingFontFamily, out string! BodyFontFamily, out string! FooterText) -> void
-PandaBear.DocumentRendering.DocumentBrandingSnapshot.Equals(PandaBear.DocumentRendering.DocumentBrandingSnapshot? other) -> bool
-PandaBear.DocumentRendering.DocumentField.<Clone>$() -> PandaBear.DocumentRendering.DocumentField!
-PandaBear.DocumentRendering.DocumentField.Deconstruct(out string! Label, out string! Value, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
-PandaBear.DocumentRendering.DocumentField.Equals(PandaBear.DocumentRendering.DocumentField? other) -> bool
-PandaBear.DocumentRendering.DocumentLink.Deconstruct(out string! Text, out System.Uri! Target, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
-PandaBear.DocumentRendering.DocumentLink.Equals(PandaBear.DocumentRendering.DocumentLink? other) -> bool
-PandaBear.DocumentRendering.DocumentList.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Items, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
-PandaBear.DocumentRendering.DocumentList.Equals(PandaBear.DocumentRendering.DocumentList? other) -> bool
-PandaBear.DocumentRendering.DocumentParagraph.Deconstruct(out string! Text, out PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
-PandaBear.DocumentRendering.DocumentParagraph.Equals(PandaBear.DocumentRendering.DocumentParagraph? other) -> bool
-PandaBear.DocumentRendering.DocumentRenderRequest.<Clone>$() -> PandaBear.DocumentRendering.DocumentRenderRequest!
-PandaBear.DocumentRendering.DocumentRenderRequest.Deconstruct(out string! Language, out string! Title, out System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentSection!>! Sections, out PandaBear.DocumentRendering.DocumentBrandingSnapshot? Branding) -> void
-PandaBear.DocumentRendering.DocumentRenderRequest.Equals(PandaBear.DocumentRendering.DocumentRenderRequest? other) -> bool
-PandaBear.DocumentRendering.DocumentSection.<Clone>$() -> PandaBear.DocumentRendering.DocumentSection!
-PandaBear.DocumentRendering.DocumentSection.Deconstruct(out string! Heading, out System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentField!>! Fields) -> void
-PandaBear.DocumentRendering.DocumentSection.Equals(PandaBear.DocumentRendering.DocumentSection? other) -> bool
-abstract PandaBear.DocumentRendering.DocumentBlock.<Clone>$() -> PandaBear.DocumentRendering.DocumentBlock!
-override PandaBear.DocumentRendering.DocumentBlock.Equals(object? obj) -> bool
-override PandaBear.DocumentRendering.DocumentBlock.GetHashCode() -> int
-override PandaBear.DocumentRendering.DocumentBlock.ToString() -> string!
-override PandaBear.DocumentRendering.DocumentBrandingSnapshot.Equals(object? obj) -> bool
-override PandaBear.DocumentRendering.DocumentBrandingSnapshot.GetHashCode() -> int
-override PandaBear.DocumentRendering.DocumentBrandingSnapshot.ToString() -> string!
-override PandaBear.DocumentRendering.DocumentField.Equals(object? obj) -> bool
-override PandaBear.DocumentRendering.DocumentField.GetHashCode() -> int
-override PandaBear.DocumentRendering.DocumentField.ToString() -> string!
-override PandaBear.DocumentRendering.DocumentLink.<Clone>$() -> PandaBear.DocumentRendering.DocumentLink!
-override PandaBear.DocumentRendering.DocumentLink.Equals(object? obj) -> bool
-override PandaBear.DocumentRendering.DocumentLink.GetHashCode() -> int
-override PandaBear.DocumentRendering.DocumentLink.ToString() -> string!
-override PandaBear.DocumentRendering.DocumentList.<Clone>$() -> PandaBear.DocumentRendering.DocumentList!
-override PandaBear.DocumentRendering.DocumentList.Equals(object? obj) -> bool
-override PandaBear.DocumentRendering.DocumentList.GetHashCode() -> int
-override PandaBear.DocumentRendering.DocumentList.ToString() -> string!
-override PandaBear.DocumentRendering.DocumentParagraph.<Clone>$() -> PandaBear.DocumentRendering.DocumentParagraph!
-override PandaBear.DocumentRendering.DocumentParagraph.Equals(object? obj) -> bool
-override PandaBear.DocumentRendering.DocumentParagraph.GetHashCode() -> int
-override PandaBear.DocumentRendering.DocumentParagraph.ToString() -> string!
-override PandaBear.DocumentRendering.DocumentRenderRequest.Equals(object? obj) -> bool
-override PandaBear.DocumentRendering.DocumentRenderRequest.GetHashCode() -> int
-override PandaBear.DocumentRendering.DocumentRenderRequest.ToString() -> string!
-override PandaBear.DocumentRendering.DocumentSection.Equals(object? obj) -> bool
-override PandaBear.DocumentRendering.DocumentSection.GetHashCode() -> int
-override PandaBear.DocumentRendering.DocumentSection.ToString() -> string!
-override sealed PandaBear.DocumentRendering.DocumentLink.Equals(PandaBear.DocumentRendering.DocumentBlock? other) -> bool
-override sealed PandaBear.DocumentRendering.DocumentList.Equals(PandaBear.DocumentRendering.DocumentBlock? other) -> bool
-override sealed PandaBear.DocumentRendering.DocumentParagraph.Equals(PandaBear.DocumentRendering.DocumentBlock? other) -> bool
-static PandaBear.DocumentRendering.DocumentBlock.operator !=(PandaBear.DocumentRendering.DocumentBlock? left, PandaBear.DocumentRendering.DocumentBlock? right) -> bool
-static PandaBear.DocumentRendering.DocumentBlock.operator ==(PandaBear.DocumentRendering.DocumentBlock? left, PandaBear.DocumentRendering.DocumentBlock? right) -> bool
-static PandaBear.DocumentRendering.DocumentBrandingSnapshot.operator !=(PandaBear.DocumentRendering.DocumentBrandingSnapshot? left, PandaBear.DocumentRendering.DocumentBrandingSnapshot? right) -> bool
-static PandaBear.DocumentRendering.DocumentBrandingSnapshot.operator ==(PandaBear.DocumentRendering.DocumentBrandingSnapshot? left, PandaBear.DocumentRendering.DocumentBrandingSnapshot? right) -> bool
-static PandaBear.DocumentRendering.DocumentField.operator !=(PandaBear.DocumentRendering.DocumentField? left, PandaBear.DocumentRendering.DocumentField? right) -> bool
-static PandaBear.DocumentRendering.DocumentField.operator ==(PandaBear.DocumentRendering.DocumentField? left, PandaBear.DocumentRendering.DocumentField? right) -> bool
-static PandaBear.DocumentRendering.DocumentLink.operator !=(PandaBear.DocumentRendering.DocumentLink? left, PandaBear.DocumentRendering.DocumentLink? right) -> bool
-static PandaBear.DocumentRendering.DocumentLink.operator ==(PandaBear.DocumentRendering.DocumentLink? left, PandaBear.DocumentRendering.DocumentLink? right) -> bool
-static PandaBear.DocumentRendering.DocumentList.operator !=(PandaBear.DocumentRendering.DocumentList? left, PandaBear.DocumentRendering.DocumentList? right) -> bool
-static PandaBear.DocumentRendering.DocumentList.operator ==(PandaBear.DocumentRendering.DocumentList? left, PandaBear.DocumentRendering.DocumentList? right) -> bool
-static PandaBear.DocumentRendering.DocumentParagraph.operator !=(PandaBear.DocumentRendering.DocumentParagraph? left, PandaBear.DocumentRendering.DocumentParagraph? right) -> bool
-static PandaBear.DocumentRendering.DocumentParagraph.operator ==(PandaBear.DocumentRendering.DocumentParagraph? left, PandaBear.DocumentRendering.DocumentParagraph? right) -> bool
-static PandaBear.DocumentRendering.DocumentRenderRequest.operator !=(PandaBear.DocumentRendering.DocumentRenderRequest? left, PandaBear.DocumentRendering.DocumentRenderRequest? right) -> bool
-static PandaBear.DocumentRendering.DocumentRenderRequest.operator ==(PandaBear.DocumentRendering.DocumentRenderRequest? left, PandaBear.DocumentRendering.DocumentRenderRequest? right) -> bool
-static PandaBear.DocumentRendering.DocumentSection.operator !=(PandaBear.DocumentRendering.DocumentSection? left, PandaBear.DocumentRendering.DocumentSection? right) -> bool
-static PandaBear.DocumentRendering.DocumentSection.operator ==(PandaBear.DocumentRendering.DocumentSection? left, PandaBear.DocumentRendering.DocumentSection? right) -> bool
-static PandaBear.DocumentRendering.HtmlDocumentRenderer.Render(PandaBear.DocumentRendering.DocumentRenderRequest! request, int maxOutputBytes, System.Threading.CancellationToken ct) -> byte[]!
-virtual PandaBear.DocumentRendering.DocumentBlock.EqualityContract.get -> System.Type!
-virtual PandaBear.DocumentRendering.DocumentBlock.Equals(PandaBear.DocumentRendering.DocumentBlock? other) -> bool
-virtual PandaBear.DocumentRendering.DocumentBlock.PrintMembers(System.Text.StringBuilder! builder) -> bool
+SharedKernel.DocumentRendering.DocumentBlock
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.AccentColor.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.AccentColor.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BackgroundColor.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BackgroundColor.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BodyFontFamily.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BodyFontFamily.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BrandName.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BrandName.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Deconstruct(out string! Version, out string! BrandName, out System.Uri? LogoUri) -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.DocumentBrandingSnapshot(string! Version, string! BrandName, System.Uri? LogoUri) -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.DocumentBrandingSnapshot(string! Version, string! BrandName, System.Uri? LogoUri, string! PrimaryColor, string! AccentColor, string! BackgroundColor, string! TextColor, string! HeadingFontFamily, string! BodyFontFamily, string! FooterText) -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.FooterText.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.FooterText.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.HeadingFontFamily.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.HeadingFontFamily.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.LogoUri.get -> System.Uri?
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.LogoUri.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.PrimaryColor.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.PrimaryColor.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.TextColor.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.TextColor.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Version.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Version.init -> void
+SharedKernel.DocumentRendering.DocumentField
+SharedKernel.DocumentRendering.DocumentField.DocumentField(string! Label, string! Value, SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentField.Label.get -> string!
+SharedKernel.DocumentRendering.DocumentField.Label.init -> void
+SharedKernel.DocumentRendering.DocumentField.PrivacyClassification.get -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentField.PrivacyClassification.init -> void
+SharedKernel.DocumentRendering.DocumentField.Value.get -> string!
+SharedKernel.DocumentRendering.DocumentField.Value.init -> void
+SharedKernel.DocumentRendering.DocumentLink
+SharedKernel.DocumentRendering.DocumentLink.DocumentLink(string! Text, System.Uri! Target, SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentLink.PrivacyClassification.get -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentLink.PrivacyClassification.init -> void
+SharedKernel.DocumentRendering.DocumentLink.Target.get -> System.Uri!
+SharedKernel.DocumentRendering.DocumentLink.Target.init -> void
+SharedKernel.DocumentRendering.DocumentLink.Text.get -> string!
+SharedKernel.DocumentRendering.DocumentLink.Text.init -> void
+SharedKernel.DocumentRendering.DocumentList
+SharedKernel.DocumentRendering.DocumentList.DocumentList(System.Collections.Generic.IReadOnlyList<string!>! Items, SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentList.IsOrdered.get -> bool
+SharedKernel.DocumentRendering.DocumentList.IsOrdered.init -> void
+SharedKernel.DocumentRendering.DocumentList.Items.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.DocumentRendering.DocumentList.Items.init -> void
+SharedKernel.DocumentRendering.DocumentList.Label.get -> string?
+SharedKernel.DocumentRendering.DocumentList.Label.init -> void
+SharedKernel.DocumentRendering.DocumentList.PrivacyClassification.get -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentList.PrivacyClassification.init -> void
+SharedKernel.DocumentRendering.DocumentParagraph
+SharedKernel.DocumentRendering.DocumentParagraph.DocumentParagraph(string! Text, SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentParagraph.PrivacyClassification.get -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentParagraph.PrivacyClassification.init -> void
+SharedKernel.DocumentRendering.DocumentParagraph.Text.get -> string!
+SharedKernel.DocumentRendering.DocumentParagraph.Text.init -> void
+SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.None = 0 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.Operational = 2 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.PersonalData = 3 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.Public = 1 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.SensitivePersonalData = 4 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentRenderRequest
+SharedKernel.DocumentRendering.DocumentRenderRequest.Branding.get -> SharedKernel.DocumentRendering.DocumentBrandingSnapshot?
+SharedKernel.DocumentRendering.DocumentRenderRequest.Branding.init -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.DocumentRenderRequest(string! Language, string! Title, System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentSection!>! Sections, SharedKernel.DocumentRendering.DocumentBrandingSnapshot? Branding) -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.Language.get -> string!
+SharedKernel.DocumentRendering.DocumentRenderRequest.Language.init -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.Sections.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentSection!>!
+SharedKernel.DocumentRendering.DocumentRenderRequest.Sections.init -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.Title.get -> string!
+SharedKernel.DocumentRendering.DocumentRenderRequest.Title.init -> void
+SharedKernel.DocumentRendering.DocumentSection
+SharedKernel.DocumentRendering.DocumentSection.DocumentSection(string! Heading, System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentField!>! Fields) -> void
+SharedKernel.DocumentRendering.DocumentSection.Blocks.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentBlock!>!
+SharedKernel.DocumentRendering.DocumentSection.Blocks.init -> void
+SharedKernel.DocumentRendering.DocumentSection.Fields.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentField!>!
+SharedKernel.DocumentRendering.DocumentSection.Fields.init -> void
+SharedKernel.DocumentRendering.DocumentSection.Heading.get -> string!
+SharedKernel.DocumentRendering.DocumentSection.Heading.init -> void
+SharedKernel.DocumentRendering.DocumentSection.Lists.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentList!>!
+SharedKernel.DocumentRendering.DocumentSection.Lists.init -> void
+SharedKernel.DocumentRendering.DocumentSection.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentParagraph!>!
+SharedKernel.DocumentRendering.DocumentSection.Paragraphs.init -> void
+SharedKernel.DocumentRendering.HtmlDocumentRenderer
+SharedKernel.DocumentRendering.HtmlDocumentRenderer.HtmlDocumentRenderer() -> void
+SharedKernel.DocumentRendering.HtmlDocumentRenderer.Render(SharedKernel.DocumentRendering.DocumentRenderRequest! request) -> byte[]!
+SharedKernel.DocumentRendering.IDocumentRenderer
+SharedKernel.DocumentRendering.IDocumentRenderer.Render(SharedKernel.DocumentRendering.DocumentRenderRequest! request) -> byte[]!
+SharedKernel.DocumentRendering.DocumentBlock.DocumentBlock(SharedKernel.DocumentRendering.DocumentBlock! original) -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.<Clone>$() -> SharedKernel.DocumentRendering.DocumentBrandingSnapshot!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Deconstruct(out string! Version, out string! BrandName, out System.Uri? LogoUri, out string! PrimaryColor, out string! AccentColor, out string! BackgroundColor, out string! TextColor, out string! HeadingFontFamily, out string! BodyFontFamily, out string! FooterText) -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Equals(SharedKernel.DocumentRendering.DocumentBrandingSnapshot? other) -> bool
+SharedKernel.DocumentRendering.DocumentField.<Clone>$() -> SharedKernel.DocumentRendering.DocumentField!
+SharedKernel.DocumentRendering.DocumentField.Deconstruct(out string! Label, out string! Value, out SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentField.Equals(SharedKernel.DocumentRendering.DocumentField? other) -> bool
+SharedKernel.DocumentRendering.DocumentLink.Deconstruct(out string! Text, out System.Uri! Target, out SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentLink.Equals(SharedKernel.DocumentRendering.DocumentLink? other) -> bool
+SharedKernel.DocumentRendering.DocumentList.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Items, out SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentList.Equals(SharedKernel.DocumentRendering.DocumentList? other) -> bool
+SharedKernel.DocumentRendering.DocumentParagraph.Deconstruct(out string! Text, out SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentParagraph.Equals(SharedKernel.DocumentRendering.DocumentParagraph? other) -> bool
+SharedKernel.DocumentRendering.DocumentRenderRequest.<Clone>$() -> SharedKernel.DocumentRendering.DocumentRenderRequest!
+SharedKernel.DocumentRendering.DocumentRenderRequest.Deconstruct(out string! Language, out string! Title, out System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentSection!>! Sections, out SharedKernel.DocumentRendering.DocumentBrandingSnapshot? Branding) -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.Equals(SharedKernel.DocumentRendering.DocumentRenderRequest? other) -> bool
+SharedKernel.DocumentRendering.DocumentSection.<Clone>$() -> SharedKernel.DocumentRendering.DocumentSection!
+SharedKernel.DocumentRendering.DocumentSection.Deconstruct(out string! Heading, out System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentField!>! Fields) -> void
+SharedKernel.DocumentRendering.DocumentSection.Equals(SharedKernel.DocumentRendering.DocumentSection? other) -> bool
+abstract SharedKernel.DocumentRendering.DocumentBlock.<Clone>$() -> SharedKernel.DocumentRendering.DocumentBlock!
+override SharedKernel.DocumentRendering.DocumentBlock.Equals(object? obj) -> bool
+override SharedKernel.DocumentRendering.DocumentBlock.GetHashCode() -> int
+override SharedKernel.DocumentRendering.DocumentBlock.ToString() -> string!
+override SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Equals(object? obj) -> bool
+override SharedKernel.DocumentRendering.DocumentBrandingSnapshot.GetHashCode() -> int
+override SharedKernel.DocumentRendering.DocumentBrandingSnapshot.ToString() -> string!
+override SharedKernel.DocumentRendering.DocumentField.Equals(object? obj) -> bool
+override SharedKernel.DocumentRendering.DocumentField.GetHashCode() -> int
+override SharedKernel.DocumentRendering.DocumentField.ToString() -> string!
+override SharedKernel.DocumentRendering.DocumentLink.<Clone>$() -> SharedKernel.DocumentRendering.DocumentLink!
+override SharedKernel.DocumentRendering.DocumentLink.Equals(object? obj) -> bool
+override SharedKernel.DocumentRendering.DocumentLink.GetHashCode() -> int
+override SharedKernel.DocumentRendering.DocumentLink.ToString() -> string!
+override SharedKernel.DocumentRendering.DocumentList.<Clone>$() -> SharedKernel.DocumentRendering.DocumentList!
+override SharedKernel.DocumentRendering.DocumentList.Equals(object? obj) -> bool
+override SharedKernel.DocumentRendering.DocumentList.GetHashCode() -> int
+override SharedKernel.DocumentRendering.DocumentList.ToString() -> string!
+override SharedKernel.DocumentRendering.DocumentParagraph.<Clone>$() -> SharedKernel.DocumentRendering.DocumentParagraph!
+override SharedKernel.DocumentRendering.DocumentParagraph.Equals(object? obj) -> bool
+override SharedKernel.DocumentRendering.DocumentParagraph.GetHashCode() -> int
+override SharedKernel.DocumentRendering.DocumentParagraph.ToString() -> string!
+override SharedKernel.DocumentRendering.DocumentRenderRequest.Equals(object? obj) -> bool
+override SharedKernel.DocumentRendering.DocumentRenderRequest.GetHashCode() -> int
+override SharedKernel.DocumentRendering.DocumentRenderRequest.ToString() -> string!
+override SharedKernel.DocumentRendering.DocumentSection.Equals(object? obj) -> bool
+override SharedKernel.DocumentRendering.DocumentSection.GetHashCode() -> int
+override SharedKernel.DocumentRendering.DocumentSection.ToString() -> string!
+override sealed SharedKernel.DocumentRendering.DocumentLink.Equals(SharedKernel.DocumentRendering.DocumentBlock? other) -> bool
+override sealed SharedKernel.DocumentRendering.DocumentList.Equals(SharedKernel.DocumentRendering.DocumentBlock? other) -> bool
+override sealed SharedKernel.DocumentRendering.DocumentParagraph.Equals(SharedKernel.DocumentRendering.DocumentBlock? other) -> bool
+static SharedKernel.DocumentRendering.DocumentBlock.operator !=(SharedKernel.DocumentRendering.DocumentBlock? left, SharedKernel.DocumentRendering.DocumentBlock? right) -> bool
+static SharedKernel.DocumentRendering.DocumentBlock.operator ==(SharedKernel.DocumentRendering.DocumentBlock? left, SharedKernel.DocumentRendering.DocumentBlock? right) -> bool
+static SharedKernel.DocumentRendering.DocumentBrandingSnapshot.operator !=(SharedKernel.DocumentRendering.DocumentBrandingSnapshot? left, SharedKernel.DocumentRendering.DocumentBrandingSnapshot? right) -> bool
+static SharedKernel.DocumentRendering.DocumentBrandingSnapshot.operator ==(SharedKernel.DocumentRendering.DocumentBrandingSnapshot? left, SharedKernel.DocumentRendering.DocumentBrandingSnapshot? right) -> bool
+static SharedKernel.DocumentRendering.DocumentField.operator !=(SharedKernel.DocumentRendering.DocumentField? left, SharedKernel.DocumentRendering.DocumentField? right) -> bool
+static SharedKernel.DocumentRendering.DocumentField.operator ==(SharedKernel.DocumentRendering.DocumentField? left, SharedKernel.DocumentRendering.DocumentField? right) -> bool
+static SharedKernel.DocumentRendering.DocumentLink.operator !=(SharedKernel.DocumentRendering.DocumentLink? left, SharedKernel.DocumentRendering.DocumentLink? right) -> bool
+static SharedKernel.DocumentRendering.DocumentLink.operator ==(SharedKernel.DocumentRendering.DocumentLink? left, SharedKernel.DocumentRendering.DocumentLink? right) -> bool
+static SharedKernel.DocumentRendering.DocumentList.operator !=(SharedKernel.DocumentRendering.DocumentList? left, SharedKernel.DocumentRendering.DocumentList? right) -> bool
+static SharedKernel.DocumentRendering.DocumentList.operator ==(SharedKernel.DocumentRendering.DocumentList? left, SharedKernel.DocumentRendering.DocumentList? right) -> bool
+static SharedKernel.DocumentRendering.DocumentParagraph.operator !=(SharedKernel.DocumentRendering.DocumentParagraph? left, SharedKernel.DocumentRendering.DocumentParagraph? right) -> bool
+static SharedKernel.DocumentRendering.DocumentParagraph.operator ==(SharedKernel.DocumentRendering.DocumentParagraph? left, SharedKernel.DocumentRendering.DocumentParagraph? right) -> bool
+static SharedKernel.DocumentRendering.DocumentRenderRequest.operator !=(SharedKernel.DocumentRendering.DocumentRenderRequest? left, SharedKernel.DocumentRendering.DocumentRenderRequest? right) -> bool
+static SharedKernel.DocumentRendering.DocumentRenderRequest.operator ==(SharedKernel.DocumentRendering.DocumentRenderRequest? left, SharedKernel.DocumentRendering.DocumentRenderRequest? right) -> bool
+static SharedKernel.DocumentRendering.DocumentSection.operator !=(SharedKernel.DocumentRendering.DocumentSection? left, SharedKernel.DocumentRendering.DocumentSection? right) -> bool
+static SharedKernel.DocumentRendering.DocumentSection.operator ==(SharedKernel.DocumentRendering.DocumentSection? left, SharedKernel.DocumentRendering.DocumentSection? right) -> bool
+static SharedKernel.DocumentRendering.HtmlDocumentRenderer.Render(SharedKernel.DocumentRendering.DocumentRenderRequest! request, int maxOutputBytes, System.Threading.CancellationToken ct) -> byte[]!
+virtual SharedKernel.DocumentRendering.DocumentBlock.EqualityContract.get -> System.Type!
+virtual SharedKernel.DocumentRendering.DocumentBlock.Equals(SharedKernel.DocumentRendering.DocumentBlock? other) -> bool
+virtual SharedKernel.DocumentRendering.DocumentBlock.PrintMembers(System.Text.StringBuilder! builder) -> bool

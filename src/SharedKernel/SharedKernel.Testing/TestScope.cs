@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// The test seam a test exercises. The value of the <c>Scope</c> trait.

@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Validates GitHub repository names.</summary>
 public static class GitHubRepositoryName

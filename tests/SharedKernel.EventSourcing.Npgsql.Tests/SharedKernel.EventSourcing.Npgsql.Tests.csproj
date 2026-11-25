@@ -2,16 +2,16 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.EventSourcing.Npgsql.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.EventSourcing.Npgsql.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Testing" />
-        <Using Include="PandaBear.EventSourcing" />
-        <Using Include="PandaBear.EventSourcing.Npgsql" />
-        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing" />
+        <Using Include="SharedKernel.EventSourcing" />
+        <Using Include="SharedKernel.EventSourcing.Npgsql" />
+        <Using Include="SharedKernel.Testing.Assertions" />
         <Using Include="Npgsql" />
-        <Using Include="PandaBear.Npgsql.Testing" />
+        <Using Include="SharedKernel.Npgsql.Testing" />
         <Using Include="Xunit" />
     </ItemGroup>
 

@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Writes the tool settings file that a framework-dependent .NET tool package carries.</summary>
 internal static class DotnetToolSettings

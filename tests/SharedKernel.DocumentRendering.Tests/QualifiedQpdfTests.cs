@@ -1,7 +1,7 @@
-using PandaBear.DocumentRendering.Pdf;
-using PandaBear.Testing;
+using SharedKernel.DocumentRendering.Pdf;
+using SharedKernel.Testing;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Runs the optional qualification against caller-provisioned synthetic Chromium fixtures and qpdf.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]

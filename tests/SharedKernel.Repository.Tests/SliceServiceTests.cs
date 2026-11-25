@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Runtime.Versioning;
 using System.Text.Json;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// Guards <c>run</c> for a slice with a service: the order of the phases, who sees the service's value, and that the service is

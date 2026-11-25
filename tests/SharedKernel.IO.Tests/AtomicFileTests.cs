@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>Tests streaming file publication, contention and rollback.</summary>
 public sealed class AtomicFileTests : IDisposable

@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>The result of <see cref="PackageInventory.Plan"/>: what the declared packages need, per package manager.</summary>
 public sealed class PackagePlanReport

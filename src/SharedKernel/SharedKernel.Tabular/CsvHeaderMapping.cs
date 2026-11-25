@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>Matches source columns to caller-supplied canonical names and applies those names without reparsing rows.</summary>
 public static class CsvHeaderMapping

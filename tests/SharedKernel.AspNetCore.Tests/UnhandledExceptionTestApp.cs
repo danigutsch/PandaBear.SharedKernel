@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Starts a web application whose routes throw an exception that carries a sensitive message, or answer a problem of their own.</summary>
 internal static class UnhandledExceptionTestApp

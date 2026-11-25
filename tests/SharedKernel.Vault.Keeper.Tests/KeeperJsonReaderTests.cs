@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Security.Cryptography;
-using PandaBear.Testing;
-using PandaBear.Vault.Model;
-using static PandaBear.Vault.Keeper.Tests.KeeperTestData;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Model;
+using static SharedKernel.Vault.Keeper.Tests.KeeperTestData;
 
-namespace PandaBear.Vault.Keeper.Tests;
+namespace SharedKernel.Vault.Keeper.Tests;
 
 /// <summary>Tests the reader for Keeper JSON and zip exports.</summary>
 public sealed class KeeperJsonReaderTests : IDisposable

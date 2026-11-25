@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright.Xunit.v3;
-using PandaBear.Testing.AspNetCore;
+using SharedKernel.Testing.AspNetCore;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>
 /// Base class for browser tests that run the application's real entry point on Kestrel and drive it with Playwright's

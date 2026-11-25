@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Planned updates to the GitHub references stored in roadmap item files.</summary>
 internal sealed class GitHubRoadmapReferencePlan

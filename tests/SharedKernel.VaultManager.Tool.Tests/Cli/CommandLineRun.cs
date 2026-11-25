@@ -1,8 +1,8 @@
 using System.CommandLine;
 using System.CommandLine.Help;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Exit code and captured output of one command-line invocation.</summary>
 /// <param name="ExitCode">Exit code.</param>

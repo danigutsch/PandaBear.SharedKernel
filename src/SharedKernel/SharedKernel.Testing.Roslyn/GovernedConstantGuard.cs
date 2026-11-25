@@ -1,8 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using PandaBear.Style.Analyzers;
+using SharedKernel.Style.Analyzers;
 
-namespace PandaBear.Testing.Roslyn;
+namespace SharedKernel.Testing.Roslyn;
 
 /// <summary>
 /// Checks that each governed literal catalog entry is owned by exactly one const string and that no other constant duplicates or aliases its value.

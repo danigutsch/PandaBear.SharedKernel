@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Encrypts a new file: finds the creation rule for a new file, previews, or with <c>--force</c> reads the plaintext

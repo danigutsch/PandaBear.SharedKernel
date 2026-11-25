@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Groups offerings for a listing page.</summary>
 public static class OfferingListing

@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Tests the schema name that the event store splices into its SQL text.</summary>
 public sealed class PostgreSqlNamesTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Analysis;
+namespace SharedKernel.Vault.Analysis;
 
 /// <summary>A password weakness of one item. Holds names and counts only, never values.</summary>
 /// <param name="ItemName">Name of the affected item.</param>

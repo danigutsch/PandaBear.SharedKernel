@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The system font stack used when a self-hosted font is not set, still loading or missing a glyph.</summary>
 public enum GenericFontFamily

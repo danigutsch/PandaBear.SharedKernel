@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Identifies the source tree and the reports produced together by a coverage run.</summary>
 /// <param name="Tree">The Git index tree that was built and tested.</param>

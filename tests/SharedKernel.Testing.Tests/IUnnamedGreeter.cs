@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>A service that no test names in <see cref="CallProxy.Create"/>, so no proxy is generated for it.</summary>
 public interface IUnnamedGreeter

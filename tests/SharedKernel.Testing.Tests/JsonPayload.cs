@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Parses JSON text into a detached element for assertion tests.</summary>
 internal static class JsonPayload

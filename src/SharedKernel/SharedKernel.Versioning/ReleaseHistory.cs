@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Reads release versions and breaking-change markers from a repository's Git history.</summary>
 /// <param name="processRunner">Runs <c>git</c>, such as <see cref="SystemProcessRunner"/>.</param>

@@ -4,7 +4,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the SQLite resource with a persistent data folder (<c>WithDataBindMount</c>): path resolution, directory creation at start, connection string, dashboard snapshot, health check and consumer references.</summary>
 public sealed class SqliteResourceTests

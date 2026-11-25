@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>The outcome of applying server validation errors to an edit context.</summary>
 public sealed class ServerValidationResult

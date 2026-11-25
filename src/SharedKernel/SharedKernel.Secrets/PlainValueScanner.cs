@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Counts the data values of a SOPS file that are not encrypted and notices comments. sops writes every string, number, and boolean as a

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Starts hosts that redirect <c>/old</c> to a fixed answer and otherwise answer <c>/old</c> with 200.</summary>
 internal static class RedirectTestHost

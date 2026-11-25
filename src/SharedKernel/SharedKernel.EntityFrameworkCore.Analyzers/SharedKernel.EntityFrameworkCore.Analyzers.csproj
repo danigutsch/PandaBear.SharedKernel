@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.EntityFrameworkCore.Analyzers</PackageId>
         <Description>Analyzers for SharedKernel Entity Framework Core model configuration conventions.</Description>
-        <RootNamespace>PandaBear.EntityFrameworkCore.Analyzers</RootNamespace>
+        <RootNamespace>SharedKernel.EntityFrameworkCore.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>entity-framework-core;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

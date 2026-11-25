@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Reflection helper that builds malformed invalid results for the validation error tests.

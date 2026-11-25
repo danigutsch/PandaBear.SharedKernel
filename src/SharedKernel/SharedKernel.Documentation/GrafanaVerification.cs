@@ -1,6 +1,6 @@
 // Adapted from ViajantesTurismo. See NOTICE.ViajantesTurismo.txt for the MIT license and attribution.
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Verifies Grafana dashboard and datasource observations supplied by a host.</summary>
 public static class GrafanaVerification

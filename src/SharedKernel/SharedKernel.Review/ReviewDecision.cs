@@ -1,4 +1,4 @@
-namespace PandaBear.Review;
+namespace SharedKernel.Review;
 
 /// <summary>Identifies the recorded decision on a content revision.</summary>
 public enum ReviewDecision

@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Runs the repository-selected SDK's managed NuGet APIs in an isolated subprocess.</summary>
 internal static class NuGetVersionCatalog

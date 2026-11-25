@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi;
 using Xunit;
 
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>Verifies Location header metadata in the generated API document.</summary>
 public sealed class LocationResponseEndpointExtensionsTests

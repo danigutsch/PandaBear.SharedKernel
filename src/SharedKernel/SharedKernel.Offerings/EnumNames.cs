@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Names enum values for field paths.</summary>
 internal static class EnumNames

@@ -21,7 +21,7 @@ dotnet add package PandaBear.SharedKernel.Domain.SourceGenerator --version <vali
 Compiler assets are delivered as analyzers. Add the matching runtime contracts explicitly; the runtime package does not bundle this generator. Keep the generator as a development-only reference (`PrivateAssets="all"`) and use a compiler compatible with the documented Roslyn 5.9 baseline.
 
 ```csharp
-using PandaBear.Domain;
+using SharedKernel.Domain;
 
 [GenerateValueObject(UnderlyingType = typeof(Guid))]
 public readonly partial record struct ProductId;
@@ -29,6 +29,6 @@ public readonly partial record struct ProductId;
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Domain.SourceGenerator`. C# namespace: `PandaBear.Domain.SourceGenerator`. Assembly/project identity: `SharedKernel.Domain.SourceGenerator`.
+Package ID: `PandaBear.SharedKernel.Domain.SourceGenerator`. C# namespace: `SharedKernel.Domain.SourceGenerator`. Assembly/project identity: `SharedKernel.Domain.SourceGenerator`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

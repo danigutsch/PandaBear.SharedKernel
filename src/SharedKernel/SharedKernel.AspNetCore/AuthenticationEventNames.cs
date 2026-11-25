@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>Names the bounded authentication event and reason values that the security-event reporter and its producers agree on.</summary>
 internal static class AuthenticationEventNames

@@ -1,8 +1,8 @@
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the gated HTTP message handler.</summary>
 public sealed class GatedHttpMessageHandlerTests

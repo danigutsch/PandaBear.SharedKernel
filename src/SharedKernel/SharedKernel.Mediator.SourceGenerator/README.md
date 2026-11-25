@@ -34,7 +34,7 @@ project and emits generated source for the mediator toolchain.
 Build with `-p:SharedKernelMediatorEmitCallGraphJson=true -p:EmitCompilerGeneratedFiles=true` to inspect
 `SharedKernel.Mediator.Generated.CallGraph.g.cs`. A valid build property overrides the global analyzer
 option `sharedkernel_mediator_emit_call_graph_json`. The generated source wraps the JSON in the raw
-string literal of `PandaBear.Mediator.Generated.MediatorCallGraph.Json`. Documentation tools can
+string literal of `SharedKernel.Mediator.Generated.MediatorCallGraph.Json`. Documentation tools can
 read that literal from the generated source without loading the application assembly.
 
 The top-level `schemaVersion` is an integer. Version 1 contains three arrays.
@@ -95,6 +95,6 @@ can shift absolute timings, so compare trends more than raw milliseconds.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Mediator.SourceGenerator`. C# namespace: `PandaBear.Mediator.SourceGenerator`. Assembly/project identity: `SharedKernel.Mediator.SourceGenerator`.
+Package ID: `PandaBear.SharedKernel.Mediator.SourceGenerator`. C# namespace: `SharedKernel.Mediator.SourceGenerator`. Assembly/project identity: `SharedKernel.Mediator.SourceGenerator`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

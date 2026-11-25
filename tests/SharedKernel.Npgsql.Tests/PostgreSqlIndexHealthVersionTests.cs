@@ -1,7 +1,7 @@
-using PandaBear.IntegrationTesting;
-using PandaBear.Observability.Npgsql;
+using SharedKernel.IntegrationTesting;
+using SharedKernel.Observability.Npgsql;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Verifies the collector's supported range against live PostgreSQL servers.</summary>
 /// <param name="fixture">The shared server or a digest-pinned server supplied by the compatibility test run.</param>

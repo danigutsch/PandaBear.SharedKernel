@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>Tests reading validation errors from results and dropping result values.</summary>
 public sealed class ResultValidationExtensionsTests

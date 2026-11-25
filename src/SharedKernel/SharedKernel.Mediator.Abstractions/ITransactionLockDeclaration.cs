@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Transactions;
+namespace SharedKernel.Mediator.Transactions;
 
 /// <summary>A command's declaration of the named locks it needs before its handler runs in a transaction.</summary>
 /// <remarks>The consuming transaction behavior owns acquisition, ordering, and release.</remarks>

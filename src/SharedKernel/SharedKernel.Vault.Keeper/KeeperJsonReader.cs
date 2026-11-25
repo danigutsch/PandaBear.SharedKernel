@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Vault.Attachments;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Attachments;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>Reads Keeper JSON exports from the web vault or Commander, including Commander zips with attachments.</summary>
 public static class KeeperJsonReader

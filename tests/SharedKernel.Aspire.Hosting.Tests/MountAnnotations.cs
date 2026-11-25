@@ -1,6 +1,6 @@
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Finds the single container mount of a resource that matches a kind or target.</summary>
 internal static class MountAnnotations

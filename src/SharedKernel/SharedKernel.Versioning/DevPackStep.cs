@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>One project to consider when packing SharedKernel for local development.</summary>
 /// <param name="Name">The project name, for example <c>SharedKernel.Results</c>.</param>

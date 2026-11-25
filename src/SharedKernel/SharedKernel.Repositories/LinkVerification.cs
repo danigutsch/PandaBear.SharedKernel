@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The outcome of <see cref="LinkVerifier.Verify(string, IReadOnlyList{string}, CancellationToken)"/>.</summary>
 /// <param name="FileCount">How many documentation files were scanned.</param>

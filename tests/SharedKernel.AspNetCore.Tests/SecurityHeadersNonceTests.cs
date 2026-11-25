@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>
 /// Tests the per-request Content-Security-Policy nonce: a fresh 128-bit value for every response, the same within one request, written into the

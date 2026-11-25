@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.PageSections</PackageId>
         <Description>Typed page sections: tone and background, eyebrow, heading level, paragraphs, questions, a person, quotes, images, a video link and a button, with an application extension point and validation with field paths.</Description>
-        <RootNamespace>PandaBear.PageSections</RootNamespace>
+        <RootNamespace>SharedKernel.PageSections</RootNamespace>
         <PackageTags>pages;sections;content;localization;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

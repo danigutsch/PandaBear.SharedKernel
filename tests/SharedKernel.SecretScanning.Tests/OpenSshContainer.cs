@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Builds unencrypted OpenSSH containers with arbitrary key types for converter edge cases.</summary>
 internal static class OpenSshContainer

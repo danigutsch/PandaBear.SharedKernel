@@ -1,4 +1,4 @@
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// An <see cref="AspireSystemFixture"/> that starts an AppHost project: each profile runs the AppHost with the arguments

@@ -1,13 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Secrets;
-using PandaBear.VaultManager.Tool.Cli;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Secrets;
+using SharedKernel.VaultManager.Tool.Cli;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>
 /// State of one review: the vault read and scanned once, the current decisions, and the merge they produce. Every change

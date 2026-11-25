@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>A page-view target whose every send throws, with a message that must never reach a log.</summary>
 /// <param name="name">The name of the target.</param>

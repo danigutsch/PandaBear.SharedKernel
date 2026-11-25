@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>A column width of a <see cref="CardGrid" />: the smallest width of its columns, or the largest.</summary>
 public enum CardColumnWidth

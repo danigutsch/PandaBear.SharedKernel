@@ -5,7 +5,7 @@
         <IsPackable>true</IsPackable>
         <PackageId>PandaBear.SharedKernel.Documentation</PackageId>
         <Description>Reusable primitives for generated Markdown and source-backed documentation conformance checks.</Description>
-        <RootNamespace>PandaBear.Documentation</RootNamespace>
+        <RootNamespace>SharedKernel.Documentation</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

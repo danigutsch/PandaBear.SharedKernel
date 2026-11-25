@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Result of a synchronization run.</summary>
 /// <param name="Messages">Messages describing what was or would be changed.</param>

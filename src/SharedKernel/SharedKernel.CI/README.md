@@ -15,9 +15,9 @@ describes the configuration and every command; this package applies them to any 
 ## Usage
 
 ```csharp
-using PandaBear.CI;
-using PandaBear.CI.GitHub;
-using PandaBear.Processes;
+using SharedKernel.CI;
+using SharedKernel.CI.GitHub;
+using SharedKernel.Processes;
 
 var machine = new CiMachine(new SystemProcessRunner(), PathExecutableResolver.Default, TimeProvider.System);
 var plan = await new TestSelector(machine).Select(
@@ -52,6 +52,6 @@ var plan = await new TestSelector(machine).Select(
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.CI`. C# namespace: `PandaBear.CI`. Assembly/project identity: `SharedKernel.CI`.
+Package ID: `PandaBear.SharedKernel.CI`. C# namespace: `SharedKernel.CI`. Assembly/project identity: `SharedKernel.CI`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

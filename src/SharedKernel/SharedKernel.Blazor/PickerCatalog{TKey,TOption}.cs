@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// The options a picker shows as chosen, never the whole option set: the options of the first chosen page that an edit page loads once

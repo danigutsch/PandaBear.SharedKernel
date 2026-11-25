@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>The three finding counts of a warning report file, for comparison in tests.</summary>
 /// <param name="Blocking">The number of findings that fail the check.</param>

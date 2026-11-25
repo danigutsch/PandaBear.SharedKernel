@@ -4,13 +4,13 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml;
-using PandaBear.CI.Forgejo;
-using PandaBear.CI.GitHub;
-using PandaBear.Forgejo;
-using PandaBear.GitHub;
-using PandaBear.InputNormalization;
+using SharedKernel.CI.Forgejo;
+using SharedKernel.CI.GitHub;
+using SharedKernel.Forgejo;
+using SharedKernel.GitHub;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.CI.Tool;
+namespace SharedKernel.CI.Tool;
 
 /// <summary>Builds the <c>ci</c> command tree.</summary>
 internal static partial class RepositoryCommandLine

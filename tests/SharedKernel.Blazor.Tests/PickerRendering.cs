@@ -1,7 +1,7 @@
 using AngleSharp.Dom;
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Renders the image picker of the tests and identifies the element it focused.</summary>
 internal static class PickerRendering

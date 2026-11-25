@@ -1,7 +1,7 @@
-using PandaBear.Aspire.Analyzers;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Aspire.Analyzers;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Aspire.CodeFixes.Tests;
+namespace SharedKernel.Aspire.CodeFixes.Tests;
 
 /// <summary>
 /// Tests that AspireCodeFixProvider offers and applies the Aspire image pin fixes.

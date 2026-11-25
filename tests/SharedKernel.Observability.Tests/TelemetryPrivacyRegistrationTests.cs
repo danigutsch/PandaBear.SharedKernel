@@ -7,7 +7,7 @@ using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Trace;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Tests that <see cref="ObservabilityBuilderExtensions.AddTelemetryPrivacy{TBuilder}"/> wires both privacy processors ahead of host-added exporters.</summary>
 [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]

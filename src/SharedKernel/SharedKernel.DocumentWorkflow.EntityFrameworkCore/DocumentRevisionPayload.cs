@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using PandaBear.Review;
+using SharedKernel.Review;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Defines the version-one persisted content for a document revision.</summary>
 /// <param name="Origin">The captured source and template provenance.</param>

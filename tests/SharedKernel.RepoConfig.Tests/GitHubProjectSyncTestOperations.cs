@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers that configure a roadmap workspace for GitHub Project synchronization and queue its responses.</summary>
 internal static class GitHubProjectSyncTestOperations

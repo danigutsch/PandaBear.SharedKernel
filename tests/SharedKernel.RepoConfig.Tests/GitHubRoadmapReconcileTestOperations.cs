@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers for the GitHub roadmap reconcile tests.</summary>
 internal static class GitHubRoadmapReconcileTestOperations

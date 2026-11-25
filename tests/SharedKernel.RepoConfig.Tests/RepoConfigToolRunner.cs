@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Invokes the repo config command line in-process with captured output and a cancellation token.</summary>
 internal static class RepoConfigToolRunner

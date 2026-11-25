@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the culture-independent English-name ordering of country codes.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

@@ -1,4 +1,4 @@
-namespace PandaBear.Branding.Tests;
+namespace SharedKernel.Branding.Tests;
 
 /// <summary>
 /// Shared valid branding input for the branding settings tests.

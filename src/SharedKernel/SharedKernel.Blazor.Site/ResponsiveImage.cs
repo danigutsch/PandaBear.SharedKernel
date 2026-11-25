@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// An image for <see cref="Hero" />, <see cref="Card" /> and <see cref="ImageGrid" />: a fallback address with its intrinsic

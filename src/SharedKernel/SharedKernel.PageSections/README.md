@@ -87,6 +87,6 @@ value, malformed text) and runs no limits, image, context or publish rules, so n
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.PageSections`. C# namespace: `PandaBear.PageSections`. Assembly/project identity: `SharedKernel.PageSections`.
+Package ID: `PandaBear.SharedKernel.PageSections`. C# namespace: `SharedKernel.PageSections`. Assembly/project identity: `SharedKernel.PageSections`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Checks that Result.Map obeys the functor identity and composition laws and leaves failures untouched.

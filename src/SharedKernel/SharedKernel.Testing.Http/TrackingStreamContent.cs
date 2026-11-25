@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>
 /// HTTP content of unknown length that copies a source stream and counts how often it is serialized.

@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>A sender that answers with the id of its own scope and reports its disposal.</summary>
 /// <param name="probe">Where disposal is recorded.</param>

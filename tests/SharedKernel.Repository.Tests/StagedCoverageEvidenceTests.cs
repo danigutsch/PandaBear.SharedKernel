@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Verifies the source and bytes of reports collected for strict staged measurement.</summary>
 public sealed class StagedCoverageEvidenceTests

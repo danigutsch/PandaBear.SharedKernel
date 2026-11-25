@@ -1,4 +1,4 @@
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>HTTP message handler that records the method, URI, authorization scheme and cancellation token of the last request and delegates the response to a supplied function.</summary>
 /// <param name="send">The function that produces the response for each request.</param>

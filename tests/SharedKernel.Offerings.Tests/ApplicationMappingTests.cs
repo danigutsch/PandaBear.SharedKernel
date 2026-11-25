@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>
 /// Tests that both ViajantesTurismo applications map onto the model despite their conflicts: nights against days, per-aggregate against

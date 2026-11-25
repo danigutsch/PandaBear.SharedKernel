@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Tests reading and validating <c>.config/sharedkernel-sandbox.json</c>.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

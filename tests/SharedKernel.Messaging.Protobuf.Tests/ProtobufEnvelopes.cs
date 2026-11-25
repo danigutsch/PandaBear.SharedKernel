@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.Protobuf.Tests;
+namespace SharedKernel.Messaging.Protobuf.Tests;
 
 /// <summary>Creates envelopes the way the outbox records them.</summary>
 internal static class ProtobufEnvelopes

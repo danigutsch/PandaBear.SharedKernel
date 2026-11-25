@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>An ISO 9362 BIC with validated syntax; not proof of country assignment, registration or reachability.</summary>
 public sealed class Bic : ValueObject

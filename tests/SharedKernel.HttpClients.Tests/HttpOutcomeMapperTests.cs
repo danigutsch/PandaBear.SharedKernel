@@ -3,11 +3,11 @@ using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 using Polly.CircuitBreaker;
 using Polly.Timeout;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>
 /// Unit tests for HttpOutcomeMapper.Send mapping of HTTP responses, timeouts, cancellation, and transport failures to bounded HttpOutcome values.

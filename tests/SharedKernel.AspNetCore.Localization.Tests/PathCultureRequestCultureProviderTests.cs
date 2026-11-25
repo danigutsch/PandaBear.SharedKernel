@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.TestHost;
-using PandaBear.BuildingBlocks;
-using static PandaBear.AspNetCore.Localization.Tests.LocalizationTestCultures;
+using SharedKernel.BuildingBlocks;
+using static SharedKernel.AspNetCore.Localization.Tests.LocalizationTestCultures;
 
-namespace PandaBear.AspNetCore.Localization.Tests;
+namespace SharedKernel.AspNetCore.Localization.Tests;
 
 /// <summary>Tests <see cref="PathCultureRequestCultureProvider" />.</summary>
 public sealed class PathCultureRequestCultureProviderTests

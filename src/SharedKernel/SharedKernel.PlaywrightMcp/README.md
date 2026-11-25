@@ -13,8 +13,8 @@ lists the container limits and security checks, which this package applies to an
 ## Usage
 
 ```csharp
-using PandaBear.PlaywrightMcp;
-using PandaBear.Processes;
+using SharedKernel.PlaywrightMcp;
+using SharedKernel.Processes;
 
 var server = new PlaywrightMcpServer(new SystemProcessRunner(), PathExecutableResolver.Default);
 var settings = PlaywrightMcpSettings.FromEnvironment(Environment.GetEnvironmentVariable);
@@ -34,6 +34,6 @@ var exitCode = await server.Prepare(settings, Console.Error, cancellationToken);
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.PlaywrightMcp`. C# namespace: `PandaBear.PlaywrightMcp`. Assembly/project identity: `SharedKernel.PlaywrightMcp`.
+Package ID: `PandaBear.SharedKernel.PlaywrightMcp`. C# namespace: `SharedKernel.PlaywrightMcp`. Assembly/project identity: `SharedKernel.PlaywrightMcp`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

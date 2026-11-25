@@ -1,6 +1,6 @@
-using PandaBear.Testing.Messaging;
+using SharedKernel.Testing.Messaging;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the shared controlled envelope publisher.</summary>
 public sealed class ControlledEventEnvelopePublisherTests

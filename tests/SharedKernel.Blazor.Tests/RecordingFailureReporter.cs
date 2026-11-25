@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Records reported failures.</summary>
 internal sealed class RecordingFailureReporter : IUiFailureReporter

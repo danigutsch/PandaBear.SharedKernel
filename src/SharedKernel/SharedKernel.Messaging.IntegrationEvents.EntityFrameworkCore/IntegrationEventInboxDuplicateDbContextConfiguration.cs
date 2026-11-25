@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PandaBear.EntityFrameworkCore;
-using PandaBear.Idempotency.EntityFrameworkCore;
+using SharedKernel.EntityFrameworkCore;
+using SharedKernel.Idempotency.EntityFrameworkCore;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Maps optional observations alongside the inbox table with the same retention lifetime.</summary>
 /// <typeparam name="TContext">The context that owns the inbox.</typeparam>

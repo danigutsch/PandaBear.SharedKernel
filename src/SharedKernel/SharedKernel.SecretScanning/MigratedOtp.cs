@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>One account decoded from an <c>otpauth-migration://</c> payload.</summary>
 /// <param name="Name">Account name.</param>

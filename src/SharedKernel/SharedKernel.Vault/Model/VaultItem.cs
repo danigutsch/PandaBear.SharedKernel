@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Provider-neutral vault item, shaped like a Bitwarden export item.</summary>
 public sealed record VaultItem

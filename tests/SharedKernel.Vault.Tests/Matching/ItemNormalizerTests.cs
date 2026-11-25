@@ -1,6 +1,6 @@
-using PandaBear.Vault.Matching;
+using SharedKernel.Vault.Matching;
 
-namespace PandaBear.Vault.Tests.Matching;
+namespace SharedKernel.Vault.Tests.Matching;
 
 /// <summary>Tests <see cref="ItemNormalizer"/> comparison forms for hosts, usernames, titles, notes, and TOTP values.</summary>
 public sealed class ItemNormalizerTests

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using PandaBear.DocumentWorkflow.EntityFrameworkCore;
+using SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Owns the neutral document workflow schema used by tests.</summary>
 /// <param name="options">The test database options.</param>

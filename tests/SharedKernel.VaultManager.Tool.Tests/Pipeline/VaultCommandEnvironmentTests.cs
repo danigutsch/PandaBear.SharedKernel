@@ -1,5 +1,5 @@
 
-namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
+namespace SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 /// <summary>Tests the console-backed <see cref="VaultCommandEnvironment"/>.</summary>
 public sealed class VaultCommandEnvironmentTests

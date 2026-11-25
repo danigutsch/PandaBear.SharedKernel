@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections.Tests;
+namespace SharedKernel.PageSections.Tests;
 
 /// <summary>V2's settings block of a section.</summary>
 public enum PageBlock

@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>An atomic-write precondition that changes <c>input.json</c> on its first check and then fails because the file no longer matches the original.</summary>
 /// <param name="workspace">The workspace that holds <c>input.json</c>.</param>

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A labelled navigation with one link per language. Each link carries <c>hreflang</c> and <c>lang</c> so its label is read in

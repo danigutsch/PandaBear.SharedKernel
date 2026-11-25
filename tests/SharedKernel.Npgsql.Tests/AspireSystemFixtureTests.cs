@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests AspireSystemFixture: one application per profile, started on demand, each in its own workspace folder, removed on disposal.</summary>
 public sealed class AspireSystemFixtureTests

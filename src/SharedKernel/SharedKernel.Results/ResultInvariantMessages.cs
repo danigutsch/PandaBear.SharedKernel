@@ -1,4 +1,4 @@
-namespace PandaBear.Results;
+namespace SharedKernel.Results;
 
 /// <summary>Shared exception messages for result invariant violations.</summary>
 internal static class ResultInvariantMessages

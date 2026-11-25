@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>An exact object-storage listing prefix; an empty prefix selects every key.</summary>
 public readonly record struct ObjectStoragePrefix

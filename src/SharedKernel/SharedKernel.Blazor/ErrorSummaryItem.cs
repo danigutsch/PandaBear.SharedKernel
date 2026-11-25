@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>One entry of an <see cref="ErrorSummary" />.</summary>
 /// <param name="TargetId">The HTML id of the form control the entry links to, without a leading hash.</param>

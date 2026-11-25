@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Unvalidated price of an offering.</summary>
 /// <typeparam name="TPriceKind">The application's price kind enum.</typeparam>

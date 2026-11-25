@@ -1,8 +1,8 @@
 using System.Globalization;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// Semantic comparison of items, field by field. Comparison keys stay in memory and are never reported.

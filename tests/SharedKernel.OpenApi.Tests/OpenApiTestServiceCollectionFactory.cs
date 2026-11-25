@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>Creates service collections for OpenAPI tests.</summary>
 internal static class OpenApiTestServiceCollectionFactory

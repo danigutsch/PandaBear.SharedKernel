@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Defines the owner scope, deterministic ordering, and resolved-version proof for audit trials.</summary>
 internal static class NuGetAuditMinimum

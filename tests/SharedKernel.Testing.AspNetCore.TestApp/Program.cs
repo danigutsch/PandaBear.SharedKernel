@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.DataProtection;
-using PandaBear.Testing.AspNetCore.TestApp;
+using SharedKernel.Testing.AspNetCore.TestApp;
 
 if (args is ["--worker-fixture", .. var workerArguments])
 {

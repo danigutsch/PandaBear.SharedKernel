@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>A release-date and latest-version source with fixed answers per package name.</summary>
 internal sealed class FakeRegistrySource(Dictionary<string, string> latest, Dictionary<string, DateTimeOffset> dates, string? failingDateFor = null, string[]? notFound = null) : IReleaseDateSource, ILatestVersionSource

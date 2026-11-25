@@ -1,11 +1,11 @@
-using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.Testing;
+using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests the merge command: its output files, overwrite guards, summary, and failures.</summary>
 public sealed class MergeCommandTests : IDisposable

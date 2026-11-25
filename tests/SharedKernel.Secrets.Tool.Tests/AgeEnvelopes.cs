@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Builds an armored age file with one X25519 stanza that is unique to a recipient, like the <c>enc</c> values that sops writes.</summary>
 internal static class AgeEnvelopes

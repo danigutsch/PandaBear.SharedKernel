@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Aspire.Hosting.Testing;
-using PandaBear.Aspire.Hosting.Umami.Testing;
-using PandaBear.IntegrationTesting;
+using SharedKernel.Aspire.Hosting.Umami.Testing;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.TestServices.Host;
+namespace SharedKernel.TestServices.Host;
 
 /// <summary>
 /// Owns the services that the test assemblies of a CI slice borrow, one of each: the PostgreSQL server, and Umami with its

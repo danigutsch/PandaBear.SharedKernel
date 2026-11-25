@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST011 suggestion to inline a single-use delegate local into the ShouldThrow assertion, and its code fix.</summary>
 public sealed class AssertionDelegateInliningTests
@@ -22,7 +22,7 @@ public sealed class AssertionDelegateInliningTests
         // Arrange
         ArgumentNullException.ThrowIfNull(awaitPrefix);
         var source = $$"""
-            using PandaBear.Testing.Assertions;
+            using SharedKernel.Testing.Assertions;
             public sealed class SampleTests
             {
                 [Fact]
@@ -47,7 +47,7 @@ public sealed class AssertionDelegateInliningTests
         var diagnostic = diagnostics.Where(static d => d.Id == DiagnosticId).ShouldHaveSingleItem();
         var workspace = CodeFixTestWorkspace.Create(source);
         var documentDiagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, $"action.{assertionMethod}<InvalidOperationException>()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var offeredActions = await workspace.GetCodeActions(provider, documentDiagnostic);
         var action = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
@@ -95,7 +95,7 @@ public sealed class AssertionDelegateInliningTests
         // Arrange
         ArgumentNullException.ThrowIfNull(assertion);
         var source = $$"""
-            using PandaBear.Testing.Assertions;
+            using SharedKernel.Testing.Assertions;
             public sealed class SampleTests
             {
                 {{(isTest ? "[Fact]" : "")}}
@@ -116,7 +116,7 @@ public sealed class AssertionDelegateInliningTests
             ? "action?.ShouldThrow<Exception>()"
             : "action.ShouldThrow<Exception>()";
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var actions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
@@ -129,7 +129,7 @@ public sealed class AssertionDelegateInliningTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing.Assertions;
+            using SharedKernel.Testing.Assertions;
             public sealed class SampleTests
             {
                 [Fact]
@@ -143,7 +143,7 @@ public sealed class AssertionDelegateInliningTests
         AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>(userMessage: \"value\", action: action)");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var assertionDiagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -166,7 +166,7 @@ public sealed class AssertionDelegateInliningTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Testing.Assertions;
+            using SharedKernel.Testing.Assertions;
             public sealed class SampleTests
             {
                 [Fact]
@@ -199,7 +199,7 @@ public sealed class AssertionDelegateInliningTests
     {
         // Arrange
         var source = $$"""
-            using PandaBear.Testing.Assertions;
+            using SharedKernel.Testing.Assertions;
             public sealed class SampleTests
             {
                 private static int value => 1;
@@ -215,7 +215,7 @@ public sealed class AssertionDelegateInliningTests
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "action.ShouldThrow<Exception>()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -233,7 +233,7 @@ public sealed class AssertionDelegateInliningTests
     {
         // Arrange
         var source = $$"""
-            using PandaBear.Testing.Assertions;
+            using SharedKernel.Testing.Assertions;
             public sealed class SampleTests
             {
                 [Fact]
@@ -246,7 +246,7 @@ public sealed class AssertionDelegateInliningTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "action.ShouldThrow<Exception>()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var assertionDiagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -273,7 +273,7 @@ public sealed class AssertionDelegateInliningTests
         // Arrange
         ArgumentNullException.ThrowIfNull(assertion);
         var source = $$"""
-            using PandaBear.Testing.Assertions;
+            using SharedKernel.Testing.Assertions;
             public sealed class SampleTests
             {
                 [Fact]
@@ -286,7 +286,7 @@ public sealed class AssertionDelegateInliningTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, assertion.TrimEnd(';'));
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -305,7 +305,7 @@ public sealed class AssertionDelegateInliningTests
     {
         // Arrange
         var source = $$"""
-            using PandaBear.Testing.Assertions;
+            using SharedKernel.Testing.Assertions;
             public sealed class SampleTests
             {
                 [Fact]
@@ -318,7 +318,7 @@ public sealed class AssertionDelegateInliningTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "action.ShouldThrow<Exception>()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var compilerDiagnostics = AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken);

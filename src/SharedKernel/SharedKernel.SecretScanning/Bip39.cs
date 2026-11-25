@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// BIP39 mnemonic validation against the embedded English wordlist (bitcoin/bips, MIT), plus the Electrum seed version
@@ -10,7 +10,7 @@ namespace PandaBear.SecretScanning;
 /// </summary>
 internal static class Bip39
 {
-    private const string ResourceName = "PandaBear.SecretScanning.bip39-english.txt";
+    private const string ResourceName = "SharedKernel.SecretScanning.bip39-english.txt";
     private static readonly Lazy<Dictionary<string, int>> Words = new(LoadWords);
 
     /// <summary>Accepted mnemonic lengths in words.</summary>

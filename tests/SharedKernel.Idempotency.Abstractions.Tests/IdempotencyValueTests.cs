@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency.Tests;
+namespace SharedKernel.Idempotency.Tests;
 
 /// <summary>
 /// Tests IdempotencyKey, IdempotencyScope and IdempotencyOperation value semantics.

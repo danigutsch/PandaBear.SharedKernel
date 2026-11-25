@@ -1,16 +1,16 @@
 using System.Security.Cryptography;
 using System.Text.Json;
-using PandaBear.SecretScanning;
-using PandaBear.Testing;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Secrets;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.SecretScanning;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Secrets;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
+namespace SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 /// <summary>Tests the vault pipeline: loading, scanning, merging, secret placement, attachment listing, and writing the merged export.</summary>
 public sealed class VaultPipelineTests : IDisposable

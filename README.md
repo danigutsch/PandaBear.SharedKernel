@@ -52,7 +52,7 @@ dotnet add package PandaBear.SharedKernel.Results --version <preview-version> --
 Make expected outcomes explicit:
 
 ```csharp
-using PandaBear.Results;
+using SharedKernel.Results;
 
 public static class Example
 {
@@ -63,7 +63,7 @@ public static class Example
 }
 ```
 
-Package IDs start with `PandaBear.SharedKernel.`; C# namespaces start with `PandaBear.`. The [Results sample](samples/Results/BasicResults.Sample/README.md) shows composition, optional values, and asynchronous flows.
+Package IDs start with `PandaBear.SharedKernel.`; C# namespaces, like assemblies and projects, start with `SharedKernel.`. The [Results sample](samples/Results/BasicResults.Sample/README.md) shows composition, optional values, and asynchronous flows.
 
 ## Build from source
 

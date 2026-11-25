@@ -1,10 +1,10 @@
 using System.Buffers;
 using System.Text;
 using System.Text.Json;
-using PandaBear.BuildingBlocks;
-using PandaBear.ContentRights;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.ContentRights;
 
-namespace PandaBear.AspNetCore.Seo;
+namespace SharedKernel.AspNetCore.Seo;
 
 /// <summary>Writes Schema.org image metadata from a caller-approved photo URL and public attribution record.</summary>
 public static class PhotoLicenseJsonLd

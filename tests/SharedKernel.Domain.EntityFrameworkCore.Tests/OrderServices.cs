@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.EntityFrameworkCore;
+using SharedKernel.EntityFrameworkCore;
 
-namespace PandaBear.Domain.EntityFrameworkCore.Tests;
+namespace SharedKernel.Domain.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Builds service providers for the order domain-event dispatch tests.

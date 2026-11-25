@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>
 /// A borrowed server that accepts connections and never answers must cost the assembly one connection timeout, not one per

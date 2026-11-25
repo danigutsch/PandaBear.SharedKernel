@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST012 to SKTEST015 diagnostics for unsafe assertion forms.</summary>
 public sealed class AssertionDiagnosticsTests

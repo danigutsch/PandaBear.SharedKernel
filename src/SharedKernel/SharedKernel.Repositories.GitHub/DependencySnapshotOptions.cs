@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Settings for creating a dependency snapshot.</summary>
 /// <param name="RootPath">Repository root to scan.</param>

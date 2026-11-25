@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>Where an accepted finding is moved to.</summary>
 public enum PlacementTargetKind

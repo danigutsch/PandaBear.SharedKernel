@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Mediator.EntityFrameworkCore.Tests;
+namespace SharedKernel.Mediator.EntityFrameworkCore.Tests;
 
 /// <summary>Tests the EF Core command transaction pipeline behavior and its service registration.</summary>
 public sealed class EfCoreCommandTransactionBehaviorTests

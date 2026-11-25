@@ -1,6 +1,6 @@
-using static PandaBear.Offerings.Tests.OfferingFixtures;
+using static SharedKernel.Offerings.Tests.OfferingFixtures;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Tests grouping a listing of offerings by year, with the offerings on request last.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

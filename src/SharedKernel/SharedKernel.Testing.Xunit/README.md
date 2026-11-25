@@ -11,7 +11,7 @@ xUnit v3 trait attributes for the shared test taxonomy, and a logger provider th
 `--filter-trait "Scope=unit"`, reports and CI filters behave exactly as with `[Trait("Scope", "unit")]`.
 
 ```csharp
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
 [assembly: TestScope(TestScope.Unit)]
 
@@ -56,5 +56,5 @@ services.AddLogging(logging => logging.AddProvider(new TestOutputLoggerProvider(
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Xunit`. C# namespace: `PandaBear.Testing`. Assembly/project identity:
+Package ID: `PandaBear.SharedKernel.Testing.Xunit`. C# namespace: `SharedKernel.Testing`. Assembly/project identity:
 `SharedKernel.Testing.Xunit`. Source is public; registry publication remains deferred.

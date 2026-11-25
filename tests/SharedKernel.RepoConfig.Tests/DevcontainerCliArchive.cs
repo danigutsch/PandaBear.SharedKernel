@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.IO.Compression;
 using System.Text;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Builds gzip-compressed tar archives for Dev Container CLI bootstrap tests.</summary>
 internal static class DevcontainerCliArchive

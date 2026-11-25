@@ -1,8 +1,8 @@
 using System.Globalization;
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// Validation of plain text a person entered: each value is sanitized with <see cref="StringSanitizer"/>, malformed UTF-16 is refused,

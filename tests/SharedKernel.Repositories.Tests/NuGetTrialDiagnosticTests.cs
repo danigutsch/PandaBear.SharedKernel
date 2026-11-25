@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Tests the report boundary for SDK package audit diagnostics.</summary>
 public sealed class NuGetTrialDiagnosticTests

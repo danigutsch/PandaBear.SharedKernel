@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>Input item with its secret findings.</summary>
 /// <param name="Source">

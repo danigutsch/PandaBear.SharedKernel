@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Exercises dependency evidence commands against a real restored solution.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

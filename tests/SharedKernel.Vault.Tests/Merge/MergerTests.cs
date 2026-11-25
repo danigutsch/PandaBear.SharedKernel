@@ -1,8 +1,8 @@
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using static PandaBear.Vault.Tests.Merge.MergeFixture;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using static SharedKernel.Vault.Tests.Merge.MergeFixture;
 
-namespace PandaBear.Vault.Tests.Merge;
+namespace SharedKernel.Vault.Tests.Merge;
 
 /// <summary>Tests how <see cref="Merger"/> combines a Keeper and a Bitwarden duplicate, resolves conflicts, and preserves losing values.</summary>
 public sealed class MergerTests

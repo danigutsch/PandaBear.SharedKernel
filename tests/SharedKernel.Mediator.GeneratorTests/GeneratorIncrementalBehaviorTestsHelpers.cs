@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Helpers for incremental generator caching tests.</summary>
 internal static class GeneratorIncrementalBehaviorTestsHelpers

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Packages.Tool;
+namespace SharedKernel.Packages.Tool;
 
 /// <summary>
 /// Implements <c>plan</c>: reads the declaration, has <see cref="PackageInventory"/> compare it with the installed

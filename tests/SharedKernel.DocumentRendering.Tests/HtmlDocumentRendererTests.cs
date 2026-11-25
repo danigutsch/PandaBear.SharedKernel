@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>
 /// Tests the HTML output of HtmlDocumentRenderer, including escaping, branding and unsafe-value handling.

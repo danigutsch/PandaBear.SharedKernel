@@ -1,8 +1,8 @@
-using PandaBear.Vault.Attachments;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Attachments;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>
 /// Reads Bitwarden zip exports: <c>data.json</c> plus <c>attachments/&lt;sanitized item name&gt;[_N]/&lt;file&gt;</c>.

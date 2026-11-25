@@ -4,7 +4,7 @@ using Terminal.Gui.Input;
 using Terminal.Gui.Testing;
 using Terminal.Gui.Time;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Runs Terminal.Gui without a terminal for view tests: virtual time, the ANSI driver, and injected keys.</summary>
 internal static class HeadlessTerminal

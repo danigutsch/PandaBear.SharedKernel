@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Forgejo;
+namespace SharedKernel.CI.Forgejo;
 
 /// <summary>
 /// Writes run outputs to the file that Forgejo Actions names in <c>FORGEJO_OUTPUT</c> (also <c>GITHUB_OUTPUT</c>), one <c>name=value</c> line each, as

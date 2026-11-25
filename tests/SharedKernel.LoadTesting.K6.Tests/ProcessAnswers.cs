@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.LoadTesting.K6.Tests;
+namespace SharedKernel.LoadTesting.K6.Tests;
 
 /// <summary>Answers for <see cref="ScriptedProcessRunner.AnswersInOrder"/>.</summary>
 internal static class ProcessAnswers

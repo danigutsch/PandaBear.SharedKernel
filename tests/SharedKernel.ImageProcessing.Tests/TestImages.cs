@@ -1,6 +1,6 @@
 using ImageMagick;
 
-namespace PandaBear.ImageProcessing.Tests;
+namespace SharedKernel.ImageProcessing.Tests;
 
 /// <summary>
 /// Builds in-memory test images and inspects processed image bytes for the image processing tests.

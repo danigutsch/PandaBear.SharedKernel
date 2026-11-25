@@ -1,4 +1,4 @@
-namespace PandaBear.Galleries.Tests;
+namespace SharedKernel.Galleries.Tests;
 
 /// <summary>A photo library for the tests: which photos exist, and in which cultures each may be published.</summary>
 internal sealed class PhotoLibrary : IAlbumPhotoEligibility<Guid>

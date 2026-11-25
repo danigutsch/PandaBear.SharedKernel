@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Generates document revisions from host-provided source and template ports.</summary>
 /// <typeparam name="TSource">The application-owned source model.</typeparam>

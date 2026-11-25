@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>Checks ownership transfer for an upstream streaming HTTP response.</summary>
 public sealed class HttpResponseBodyTests

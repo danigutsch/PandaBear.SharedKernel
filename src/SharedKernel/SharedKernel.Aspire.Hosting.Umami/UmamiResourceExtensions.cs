@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Aspire.Hosting;
+using SharedKernel.Aspire.Hosting;
 
 namespace Aspire.Hosting;
 

@@ -1,7 +1,7 @@
-using PandaBear.Testing;
-using PandaBear.Vault.Model;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden.Tests;
+namespace SharedKernel.Vault.Bitwarden.Tests;
 
 /// <summary>Tests the reader for Bitwarden zip exports and its matching of attachment folders to items.</summary>
 public sealed class BitwardenZipReaderTests : IDisposable

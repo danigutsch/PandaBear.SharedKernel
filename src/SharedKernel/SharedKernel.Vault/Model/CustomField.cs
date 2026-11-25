@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Named custom value on a vault item.</summary>
 /// <param name="Name">Field label.</param>

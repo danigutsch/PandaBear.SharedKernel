@@ -15,7 +15,7 @@ longer name, which PostgreSQL would silently truncate, is refused with `Argument
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.EventSourcing.Npgsql`. C# namespace: `PandaBear.EventSourcing.Npgsql`. Assembly/project identity: `SharedKernel.EventSourcing.Npgsql`.
+Package ID: `PandaBear.SharedKernel.EventSourcing.Npgsql`. C# namespace: `SharedKernel.EventSourcing.Npgsql`. Assembly/project identity: `SharedKernel.EventSourcing.Npgsql`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

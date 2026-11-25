@@ -1,4 +1,4 @@
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>Finds the executable file that a command name starts.</summary>
 public interface IExecutableResolver

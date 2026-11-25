@@ -1,7 +1,7 @@
 #nullable enable
-PandaBear.EntityFrameworkCore.Analyzers.EntityFrameworkCoreDiagnosticIds
-const PandaBear.EntityFrameworkCore.Analyzers.EntityFrameworkCoreDiagnosticIds.UntaggedUniqueIndex = "SKEF001" -> string!
-PandaBear.EntityFrameworkCore.Analyzers.EntityFrameworkCoreAnalyzer
-PandaBear.EntityFrameworkCore.Analyzers.EntityFrameworkCoreAnalyzer.EntityFrameworkCoreAnalyzer() -> void
-override PandaBear.EntityFrameworkCore.Analyzers.EntityFrameworkCoreAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
-override PandaBear.EntityFrameworkCore.Analyzers.EntityFrameworkCoreAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+SharedKernel.EntityFrameworkCore.Analyzers.EntityFrameworkCoreDiagnosticIds
+const SharedKernel.EntityFrameworkCore.Analyzers.EntityFrameworkCoreDiagnosticIds.UntaggedUniqueIndex = "SKEF001" -> string!
+SharedKernel.EntityFrameworkCore.Analyzers.EntityFrameworkCoreAnalyzer
+SharedKernel.EntityFrameworkCore.Analyzers.EntityFrameworkCoreAnalyzer.EntityFrameworkCoreAnalyzer() -> void
+override SharedKernel.EntityFrameworkCore.Analyzers.EntityFrameworkCoreAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override SharedKernel.EntityFrameworkCore.Analyzers.EntityFrameworkCoreAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

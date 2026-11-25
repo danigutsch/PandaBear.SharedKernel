@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>
 /// Unit tests for WebAssetUriSanitizer.NormalizeRootRelativeOrHttps, which accepts only root-relative and HTTPS asset URIs.

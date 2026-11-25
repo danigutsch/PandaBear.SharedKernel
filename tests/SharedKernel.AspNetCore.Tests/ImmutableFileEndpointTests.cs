@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Builder;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>
 /// Tests the immutable file endpoint: only plain file names with an allow-listed extension that the application approves are served from the

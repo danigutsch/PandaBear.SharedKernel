@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting.Tests;
+namespace SharedKernel.LoadTesting.Tests;
 
 /// <summary>Tests the engine and image rules of a container run.</summary>
 public sealed class LoadTestContainerTests

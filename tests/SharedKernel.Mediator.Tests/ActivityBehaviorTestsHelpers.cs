@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>
 /// Shared helpers for the activity behavior tests: a capturing listener and a handler that swallows its own exception.

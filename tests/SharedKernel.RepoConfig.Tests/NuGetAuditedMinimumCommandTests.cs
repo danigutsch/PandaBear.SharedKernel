@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Exercises ordered upgrade planning under real locked restore and package source mapping.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

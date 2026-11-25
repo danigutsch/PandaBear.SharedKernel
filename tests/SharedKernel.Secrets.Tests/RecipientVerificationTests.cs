@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests that a file's recipients must equal the rule's recipient set exactly.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>Validates the base URL that the load generator targets and rewrites it for a generator in a container.</summary>
 internal static class LoadTestTarget

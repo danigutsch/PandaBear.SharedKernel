@@ -1,4 +1,4 @@
-namespace PandaBear.ContentRights.Tests;
+namespace SharedKernel.ContentRights.Tests;
 
 /// <summary>Exercises the official tool identification and declaration boundaries.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

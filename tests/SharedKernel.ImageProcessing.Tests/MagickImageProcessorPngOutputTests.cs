@@ -1,6 +1,6 @@
 using ImageMagick;
 
-namespace PandaBear.ImageProcessing.Tests;
+namespace SharedKernel.ImageProcessing.Tests;
 
 /// <summary>
 /// Tests MagickImageProcessor.Process PNG output, which must be lossless, keep 8-bit alpha, and carry no metadata or timestamp chunks.

@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Tests how an in-flight refresh handles a changed or removed persisted token entry.</summary>
 public sealed class UserTokenRefreshConcurrencyTests

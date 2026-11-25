@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards the report of a local check: what it says it does not check.</summary>
 public sealed class LocalCheckTests

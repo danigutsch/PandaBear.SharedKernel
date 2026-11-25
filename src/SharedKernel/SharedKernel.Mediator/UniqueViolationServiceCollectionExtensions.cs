@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Provides registration helpers for <see cref="UniqueViolationBehavior{TRequest, TResponse}"/> and its <see cref="UniqueRuleMap"/>.

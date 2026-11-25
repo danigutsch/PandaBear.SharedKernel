@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>How an offering is paid; each part is optional. It is also the entered value.</summary>
 /// <param name="DepositPercent">The deposit on booking, as a percentage of the price.</param>

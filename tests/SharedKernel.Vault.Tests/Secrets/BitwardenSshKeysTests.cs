@@ -1,6 +1,6 @@
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Tests that SSH keys become Bitwarden SSH key data only when they fit Bitwarden's field budget.</summary>
 public sealed class BitwardenSshKeysTests

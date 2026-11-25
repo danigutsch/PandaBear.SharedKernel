@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>--forgejo</c> option that points <c>prune-prereleases</c> and <c>stage-candidate</c> at a Forgejo instance.</summary>
 public sealed class ForgejoOptionTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests the layout of the header navigation, the card grid and the gutter container in Chromium on a phone (375px) and a desktop

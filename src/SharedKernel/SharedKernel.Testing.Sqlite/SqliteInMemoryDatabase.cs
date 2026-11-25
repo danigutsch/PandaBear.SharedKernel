@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
 
-namespace PandaBear.Testing.Sqlite;
+namespace SharedKernel.Testing.Sqlite;
 
 /// <summary>
 /// A private, named in-memory SQLite database for one test: <c>Data Source=file:{name}-{guid}?mode=memory&amp;cache=shared</c>. Every

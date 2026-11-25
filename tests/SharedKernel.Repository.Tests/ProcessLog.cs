@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Records child process requests and answers them without starting processes.</summary>
 internal sealed class ProcessLog(Func<string, string[], CancellationToken, Task<string>> respond)

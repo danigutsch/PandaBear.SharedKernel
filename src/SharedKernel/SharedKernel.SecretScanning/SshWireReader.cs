@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Reads SSH wire-format <c>uint32</c> and <c>string</c> values (RFC 4251).</summary>
 /// <param name="buffer">Encoded data.</param>

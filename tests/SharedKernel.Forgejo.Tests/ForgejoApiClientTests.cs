@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace PandaBear.Forgejo.Tests;
+namespace SharedKernel.Forgejo.Tests;
 
 /// <summary>Tests the base address and headers of the Forgejo API client.</summary>
 public sealed class ForgejoApiClientTests

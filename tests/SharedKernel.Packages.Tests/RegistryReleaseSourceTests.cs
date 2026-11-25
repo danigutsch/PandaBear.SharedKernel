@@ -1,9 +1,9 @@
 using System.Net;
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.Results;
-using static PandaBear.Packages.Tests.PackageFactory;
+using SharedKernel.Results;
+using static SharedKernel.Packages.Tests.PackageFactory;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the crates.io and npm release source against fake HTTP answers.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]
