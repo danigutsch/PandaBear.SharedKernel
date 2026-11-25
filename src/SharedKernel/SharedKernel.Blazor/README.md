@@ -174,6 +174,33 @@ with the same accepted value keep the text, even if the bound field moves. A dif
 the text. Dispose the state with its owning component to detach validation and clear its messages. The
 caller supplies number styles, scale, optionality, messages and the rendered control.
 
+### Number text input
+
+`NumberTextInput<TValue>` is that control for an `int` or a `decimal` (or a nullable one): a text `input` without
+`type="number"`, so the browser neither rounds nor clears what was typed and shows no spinner or range. It keeps the typed text,
+writes the number back only when the text is one, and when the form is validated files `Message` on the field while it is not.
+Blank text is `null` for a nullable type and refused otherwise; surrounding white space is ignored. A decimal has at most one
+decimal separator, which may be the culture's, a point or a comma (`42,5` and `42.5` are both 42.5); group separators and exponents
+are refused (`1.234,5`, `1e2`). `MaxDecimals` refuses more places, trailing zeros included, with `DecimalsMessage` (or `Message`), so
+`1.500` for an amount with two decimals is an error rather than 1.5. `Culture` (the current culture by default) writes the value
+with its decimal separator and negative sign and no grouping. The control asks for a number keyboard (`inputmode` `numeric` or
+`decimal`) unless `MayBeNegative` is set, because a phone's number pad has no minus sign; spell checking and autocomplete are off.
+
+Bind it with `@bind-Value` inside `FormField` and spread the field's attributes, or pass `Field` when validation names the field by a
+key (with `NamedFormField`):
+
+```razor
+<FormField Label="Total distance (km)" InputId="tour-distance" For="() => _form.DistanceKm">
+    <NumberTextInput id="tour-distance" @bind-Value="_form.DistanceKm" Culture="CultureInfo.InvariantCulture"
+                     Message="Total distance must be a number, like 42.5." @attributes="context" />
+</FormField>
+<NamedFormField Field="_context.Field(key)" Label="Amount" InputId="@FieldIds.For("tour", key)">
+    <NumberTextInput id="@FieldIds.For("tour", key)" Field="_context.Field(key)" @bind-Value="row.Amount" MaxDecimals="2"
+                     Message="Amount must be a number, like 1500.50." DecimalsMessage="Amount must have at most 2 decimal places."
+                     @attributes="context" />
+</NamedFormField>
+```
+
 ## Bounded lists
 
 An Interactive Server page must not render or hold an unbounded list: every row costs server memory for the whole circuit,
