@@ -46,6 +46,9 @@ public sealed class NewCommandTests
         workspace.FileExists(".gitignore").ShouldBeTrue();
         workspace.FileExists(".gitattributes").ShouldBeTrue();
         workspace.FileExists(".editorconfig").ShouldBeTrue();
+        workspace.FileExists("LICENSE").ShouldBeFalse();
+        workspace.FileExists("SECURITY.md").ShouldBeFalse();
+        workspace.FileExists("CODEOWNERS").ShouldBeFalse();
         workspace.FileExists(".githooks/pre-commit").ShouldBeTrue("The hooks feature writes the tracked hook.");
         Directory.Exists(Path.Combine(workspace.RootPath, ".git")).ShouldBeTrue("A repository is initialized.");
         await GitConfigShouldBe(workspace, "core.hooksPath", ".githooks");
@@ -54,6 +57,128 @@ public sealed class NewCommandTests
         await GitConfigShouldBe(workspace, "commit.gpgsign", string.Empty, "Signing is opt-in.");
         verification.ExitCode.ShouldBe(0, "The written configuration lets baseline verify pass.");
         verification.Error.ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public async Task New_renders_consumer_policy_sources_with_caller_supplied_values()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var sources = new TemporaryRepoConfigWorkspace();
+        sources.WriteFile("license.txt", "Copyright @@copyrightHolder@@\n");
+        sources.WriteFile("security.txt", "# Security for @@repositoryName@@\nContact @@owner@@\n");
+        sources.WriteFile("owners.txt", "* @@@owner@@\n");
+        var ownersSource = Path.GetRelativePath(Path.GetTempPath(), Path.Combine(sources.RootPath, "owners.txt"));
+
+        // Act
+        var (exitCode, output, error) = await Run(
+            workspace,
+            "--name", "fixture-repository",
+            "--feature", "readme",
+            "--license-source", Path.Combine(sources.RootPath, "license.txt"),
+            "--security-source", Path.Combine(sources.RootPath, "security.txt"),
+            "--codeowners-source", ownersSource,
+            "--owner", "fixture-owner",
+            "--copyright-holder", "Fixture Rights Holder",
+            "--force");
+        var verification = await BaselineVerify(workspace);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        error.ShouldBe(string.Empty);
+        workspace.ReadFile("LICENSE").ShouldBe("Copyright Fixture Rights Holder\n");
+        workspace.ReadFile("SECURITY.md").ShouldBe("# Security for fixture-repository\nContact fixture-owner\n");
+        workspace.ReadFile("CODEOWNERS").ShouldBe("* @fixture-owner\n");
+        workspace.FileExists(".gitignore").ShouldBeFalse("Exact feature selection stays in force.");
+        var configuration = workspace.ReadFile(".config/sharedkernel-repo.json");
+        configuration.ShouldNotContain("fixture-owner", StringComparison.Ordinal);
+        configuration.ShouldNotContain("Fixture Rights Holder", StringComparison.Ordinal);
+        configuration.ShouldNotContain("license.txt", StringComparison.Ordinal);
+        output.ShouldNotContain("Fixture Rights Holder", StringComparison.Ordinal);
+        verification.ExitCode.ShouldBe(0);
+    }
+
+    [Theory]
+    [InlineData("--license-source", "LICENSE")]
+    [InlineData("--security-source", "SECURITY.md")]
+    [InlineData("--codeowners-source", "CODEOWNERS")]
+    public async Task New_reports_a_missing_consumer_source_without_writing(string sourceOption, string destination)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        var missingSource = Path.Combine(workspace.RootPath, "missing-source.txt");
+
+        // Act
+        var (exitCode, output, error) = await Run(workspace, sourceOption, missingSource, "--force");
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain($"{destination}: source", StringComparison.Ordinal);
+        error.ShouldContain("missing-source.txt", StringComparison.Ordinal);
+        error.ShouldContain("does not exist", StringComparison.Ordinal);
+        output.ShouldBe(string.Empty);
+        workspace.FileExists("README.md").ShouldBeFalse();
+        workspace.FileExists(".config/sharedkernel-repo.json").ShouldBeFalse();
+        Directory.Exists(Path.Combine(workspace.RootPath, ".git")).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task New_previews_a_policy_source_and_creates_no_policy_file()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        workspace.WriteFile("license-template.txt", "Consumer-supplied text.\n");
+        var source = Path.Combine(workspace.RootPath, "license-template.txt");
+
+        // Act
+        var (exitCode, output, error) = await Run(workspace, "--license-source", source);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        error.ShouldBe(string.Empty);
+        output.ShouldContain("preview: would create LICENSE.", StringComparison.Ordinal);
+        output.ShouldNotContain("Consumer-supplied text.", StringComparison.Ordinal);
+        workspace.FileExists("LICENSE").ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData("@@owner@@", "--owner")]
+    [InlineData("@@copyrightHolder@@", "--copyright-holder")]
+    public async Task New_reports_a_missing_policy_variable_before_writing(string template, string option)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        workspace.WriteFile("license-template.txt", template);
+        var source = Path.Combine(workspace.RootPath, "license-template.txt");
+
+        // Act
+        var (exitCode, _, error) = await Run(workspace, "--license-source", source, "--force");
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain("LICENSE", StringComparison.Ordinal);
+        error.ShouldContain($"requires {option}", StringComparison.Ordinal);
+        workspace.FileExists("LICENSE").ShouldBeFalse();
+        workspace.FileExists("README.md").ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task New_preserves_an_existing_policy_file_when_its_source_is_supplied()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        workspace.WriteFile("SECURITY.md", "Existing security policy.\n");
+        workspace.WriteFile("replacement.txt", "Replacement policy.\n");
+        var source = Path.Combine(workspace.RootPath, "replacement.txt");
+
+        // Act
+        var (exitCode, _, error) = await Run(workspace, "--security-source", source, "--force");
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain("conflict: SECURITY.md", StringComparison.Ordinal);
+        workspace.ReadFile("SECURITY.md").ShouldBe("Existing security policy.\n");
+        workspace.FileExists("README.md").ShouldBeFalse();
     }
 
     [Fact]
@@ -111,9 +236,46 @@ public sealed class NewCommandTests
         await GitConfigShouldBe(workspace, "pull.ff", string.Empty, "git-config was not selected.");
     }
 
+    [Fact]
+    public async Task New_with_adds_features_to_the_language_defaults()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+
+        // Act
+        var (exitCode, _, error) = await Run(workspace, "--language", "dotnet", "--sdk-version", "10.0.100",
+            "--with", "signed-commits", "--with", "readme", "--force");
+        var verification = await BaselineVerify(workspace);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        error.ShouldBe(string.Empty);
+        workspace.FileExists("README.md").ShouldBeTrue();
+        workspace.FileExists(".gitignore").ShouldBeTrue();
+        workspace.FileExists("global.json").ShouldBeTrue();
+        await GitConfigShouldBe(workspace, "commit.gpgsign", "true");
+        verification.ExitCode.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task New_rejects_combining_with_and_exact_features()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+
+        // Act
+        var (exitCode, _, error) = await Run(workspace, "--feature", "readme", "--with", "signed-commits", "--force");
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain("--feature and --with", StringComparison.Ordinal);
+        workspace.FileExists("README.md").ShouldBeFalse();
+    }
+
     [Theory]
     [InlineData("--language", "cobol", "language")]
     [InlineData("--feature", "magic", "feature")]
+    [InlineData("--with", "magic", "feature")]
     public async Task New_rejects_an_unknown_language_or_feature_and_lists_the_valid_ones(string option, string value, string noun)
     {
         // Arrange
@@ -277,6 +439,7 @@ public sealed class NewCommandTests
     [InlineData(new[] { "--language", "dotnet", "--sdk-version", "ten" }, "invalid --sdk-version")]
     [InlineData(new[] { "--language", "dotnet", "--sdk-version", "5.0.100" }, "invalid --sdk-version")]
     [InlineData(new[] { "--feature", "global-json", "--sdk-version", "10.0.100" }, "needs --language dotnet")]
+    [InlineData(new[] { "--with", "global-json", "--sdk-version", "10.0.100" }, "needs --language dotnet")]
     public async Task New_rejects_a_missing_or_invalid_sdk_version_and_a_dotnet_feature_without_the_language(string[] options, string expected)
     {
         // Arrange

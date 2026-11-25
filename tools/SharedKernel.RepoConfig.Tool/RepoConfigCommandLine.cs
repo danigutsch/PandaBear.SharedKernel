@@ -74,6 +74,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyDevcontainerCommand(environment, root),
             CreateBaselineCommand(environment, root),
             CreateNewCommand(environment, root),
+            CreateSeedDriftCommand(root),
         };
 
         // Consumer caller tests run "[diagram] <command line>" to parse a command line without running it.
@@ -239,7 +240,32 @@ internal static class RepoConfigCommandLine
         };
         Option<string[]> feature = new("--feature")
         {
-            Description = "Feature to write; repeat the option to select several: " + string.Join(", ", RepositoryFeature.All.Select(static f => f.Id)) + ". Defaults to every feature except signed-commits; the dotnet features need --language dotnet."
+            Description = "Exact feature list; repeat for each feature: " + string.Join(", ", RepositoryFeature.All.Select(static f => f.Id)) + ". The defaults select standard language features. Signing and additional hooks are optional."
+        };
+        Option<string[]> with = new("--with")
+        {
+            Description = "Add a feature to the language defaults; repeat to add several. Cannot be combined with --feature.",
+            HelpName = "feature"
+        };
+        Option<string?> licenseSource = new("--license-source")
+        {
+            Description = "Path to the caller's LICENSE template."
+        };
+        Option<string?> securitySource = new("--security-source")
+        {
+            Description = "Path to the caller's SECURITY.md template."
+        };
+        Option<string?> codeOwnersSource = new("--codeowners-source")
+        {
+            Description = "Path to the caller's CODEOWNERS template."
+        };
+        Option<string?> owner = new("--owner")
+        {
+            Description = "Value for @@owner@@ in a supplied policy template."
+        };
+        Option<string?> copyrightHolder = new("--copyright-holder")
+        {
+            Description = "Value for @@copyrightHolder@@ in a supplied policy template."
         };
         Option<bool> force = new("--force")
         {
@@ -247,18 +273,74 @@ internal static class RepoConfigCommandLine
         };
         Command command = new("new", "Start a repository: write the chosen baseline files and their consumer configuration, and initialize Git. Previews unless --force is given.")
         {
-            name, branch, language, sdkVersion, feature, force, root
+            name, branch, language, sdkVersion, feature, with, force, root,
+            licenseSource, securitySource, codeOwnersSource, owner, copyrightHolder
         };
-        SetGuardedAction(command, (parseResult, output, error, ct) => RepositoryScaffold.Run(
+        command.Validators.Add(result =>
+        {
+            if (result.GetResult(feature) is not null && result.GetResult(with) is not null)
+            {
+                result.AddError("--feature and --with cannot be combined.");
+            }
+        });
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+        {
+            var languageId = parseResult.GetRequiredValue(language);
+            var featureIds = parseResult.GetValue(feature) ?? [];
+            if (parseResult.GetValue(with) is { Length: > 0 } additions &&
+                RepositoryLanguage.TryParse(languageId, out var repositoryLanguage))
+            {
+                featureIds = [.. RepositoryFeature.DefaultsFor(repositoryLanguage).Select(static item => item.Id), .. additions];
+            }
+
+            return RepositoryScaffold.Run(
+                root.GetDirectory(parseResult),
+                parseResult.GetValue(name),
+                parseResult.GetRequiredValue(branch),
+                languageId,
+                parseResult.GetValue(sdkVersion),
+                featureIds,
+                new RepositoryPolicySources(
+                    ResolvePolicySource(parseResult.GetValue(licenseSource), environment.WorkingDirectory),
+                    ResolvePolicySource(parseResult.GetValue(securitySource), environment.WorkingDirectory),
+                    ResolvePolicySource(parseResult.GetValue(codeOwnersSource), environment.WorkingDirectory),
+                    parseResult.GetValue(owner),
+                    parseResult.GetValue(copyrightHolder)),
+                parseResult.GetValue(force),
+                output,
+                error,
+                ct);
+        });
+        return command;
+    }
+
+    private static string? ResolvePolicySource(string? path, string workingDirectory) =>
+        string.IsNullOrWhiteSpace(path) ? path : Path.GetFullPath(path, Path.GetFullPath(workingDirectory));
+
+    private static Command CreateSeedDriftCommand(RootOption root)
+    {
+        Option<string?> name = new("--name")
+        {
+            Description = "Repository name for AGENTS.md. Defaults to the last segment of the repository path."
+        };
+        Option<string?> sdkVersion = new("--sdk-version")
+        {
+            Description = "Expected .NET SDK version for the global-json and build-props features."
+        };
+        Option<string[]> feature = new("--feature")
+        {
+            Description = "Write-once feature to compare: agents, global-json, nuget-config, or build-props. Repeat to compare several."
+        };
+        Command command = new("seed-drift", "Compare selected write-once files to the current catalog without changing them.")
+        {
+            name, sdkVersion, feature, root
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) => RepositorySeedDrift.Run(
             root.GetDirectory(parseResult),
             parseResult.GetValue(name),
-            parseResult.GetRequiredValue(branch),
-            parseResult.GetRequiredValue(language),
             parseResult.GetValue(sdkVersion),
             parseResult.GetValue(feature) ?? [],
-            parseResult.GetValue(force),
             output,
-            error,
             ct));
         return command;
     }
