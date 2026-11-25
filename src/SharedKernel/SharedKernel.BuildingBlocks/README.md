@@ -17,7 +17,7 @@ Source files are grouped by topic. The folders are organization only: every publ
 | `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet`, `TranslationListRules` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
-| `Media` | `IImageEligibility`, `ImageCredit`, `ImageLicense`, `ImageCreditFormats` |
+| `Media` | `IImageEligibility`, `ImageAltText`, `ImageCredit`, `ImageLicense`, `ImageCreditFormats` |
 | `Finance` | `Money`, `MoneyDisplayOptions`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
 | `Brazil` | `Cpf`, `Cnpj`, `PixKey`, `PixKeyType`, check-digit helpers |
 | `Portugal` | `Nif` |
@@ -69,6 +69,16 @@ change nothing. `FieldOf(culture, field)` builds the path of an error on one tra
 `IsEligible(imageId, culture)`, whether an image may be shown in content published in that culture (one application asks for alt text
 or a decorative mark there; another for a processed image with reviewed text). Albums (`IAlbumPhotoEligibility` in Galleries derives
 from it), offerings and page sections read the same interface, so an application implements it once.
+
+## Image alt text
+
+`ImageAltText` is the accessibility decision for an image as a domain stores it, one per image and language: a description of what the
+image shows, or an explicit decorative mark (an empty `Text`, `IsDecorative`). `ImageAltText.Create(text, decorative, field)` sanitizes
+the text like `SanitizedText` and returns one error on `field` (default `alt`) that never echoes the input: `A decorative image has no
+alt text.`, `Alt text is required unless the image is decorative.`, `Alt text is not valid text.` or `Alt text cannot exceed 500
+characters.` (`ImageAltText.MaxLength`, also the column size). `Restore(text)` rebuilds a stored value without rules, an empty text
+being decorative. A component library renders it through its own value, such as `ImageAlternative.From(alt)` in
+`SharedKernel.Blazor.Site`.
 
 ## Image credits
 

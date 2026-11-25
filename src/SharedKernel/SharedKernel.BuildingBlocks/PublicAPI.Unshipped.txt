@@ -352,3 +352,10 @@ SharedKernel.BuildingBlocks.Nif.Value.get -> string!
 static SharedKernel.BuildingBlocks.Nif.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Nif!>
 static SharedKernel.BuildingBlocks.Nif.CreateFromInput(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Nif!>
 static SharedKernel.BuildingBlocks.Nif.Restore(string! value) -> SharedKernel.BuildingBlocks.Nif!
+const SharedKernel.BuildingBlocks.ImageAltText.MaxLength = 500 -> int
+override SharedKernel.BuildingBlocks.ImageAltText.ToString() -> string!
+SharedKernel.BuildingBlocks.ImageAltText
+SharedKernel.BuildingBlocks.ImageAltText.IsDecorative.get -> bool
+SharedKernel.BuildingBlocks.ImageAltText.Text.get -> string!
+static SharedKernel.BuildingBlocks.ImageAltText.Create(string? text, bool decorative, string! field = "alt") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.ImageAltText!>
+static SharedKernel.BuildingBlocks.ImageAltText.Restore(string! text) -> SharedKernel.BuildingBlocks.ImageAltText!
