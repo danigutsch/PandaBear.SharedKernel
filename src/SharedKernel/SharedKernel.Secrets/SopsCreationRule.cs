@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using SharedKernel.BuildingBlocks;
+using SharedKernel.Domain;
 using SharedKernel.Results;
 
 namespace SharedKernel.Secrets;

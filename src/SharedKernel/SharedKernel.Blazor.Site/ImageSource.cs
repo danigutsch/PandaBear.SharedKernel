@@ -1,5 +1,5 @@
 using System.Buffers;
-using SharedKernel.BuildingBlocks;
+using SharedKernel.Domain;
 
 namespace SharedKernel.Blazor.Site;
 

@@ -240,7 +240,7 @@ public sealed class ModelIdentityGeneratorTests
     {
         // Arrange
         const string source = """
-            using CustomerIdentity = SharedKernel.BuildingBlocks.IIdentified<int>;
+            using CustomerIdentity = SharedKernel.Domain.IIdentified<int>;
 
             [assembly: GenerateModelSupportDefaults(Identity = true)]
 

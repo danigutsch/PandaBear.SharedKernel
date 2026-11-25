@@ -30,14 +30,12 @@ public sealed class GeneratorPackageConsumptionTests(MediatorPackageFeedFixture 
                 <Compile Remove="Generated/**/*.cs" />
               </ItemGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("PandaBear.SharedKernel.BuildingBlocks")}}
                 {{workspace.GetPackageReference("PandaBear.SharedKernel.Domain")}}
                 {{workspace.GetPackageReference("PandaBear.SharedKernel.Domain.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
               </ItemGroup>
             </Project>
             """,
             ("Consumer.cs", """
-            using SharedKernel.BuildingBlocks;
             using SharedKernel.Domain;
 
             namespace Consumer;

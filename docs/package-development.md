@@ -87,6 +87,17 @@ The `repository-quality` job of the validation workflow enforces the same rule o
 restores and builds the whole solution, `dotnet release verify-lock-coverage` reads the restored assets of every lock-free library and
 fails, naming `project: package@version`, for a pair that no committed lock resolves, or when a lock-free library has no restored assets.
 
+### Type placement
+
+Put a type in the package nearest to its callers and its subject. A package with no dependencies is not a home for a type just
+because the type has none either: a reader looking for an object-storage or SQL rule looks in the object-storage or Entity Framework
+Core package. `SharedKernel.InputNormalization` holds generic text and number normalization, such as sanitizing, folding, escaping and
+printable text. `SharedKernel.Domain` holds the base modeling contracts (`ValueObject`, `IIdentified<TId>`, `IEntity<TId>`), and
+`SharedKernel.BuildingBlocks` holds the reusable value objects built on them. Do not add a provider, such as Npgsql, or an ORM to a
+package that has none, only to give a type a home. When no existing package fits without such a dependency, leave the type where it
+is and record the options in an issue: a new package needs the owner's decision. Moving a public type changes its namespace, which
+follows the project, so it is a breaking (`!`) change that lists the old and new type in the pull request.
+
 ### Package requirements
 
 Every packable project sets `PackageId` (`PandaBear.` plus the project name), `PackageTags`, and `Description`, ships a `README.md` next to the

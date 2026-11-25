@@ -198,6 +198,7 @@
       "PandaBear.SharedKernel.BuildingBlocks": {
         "type": "Project",
         "dependencies": {
+          "PandaBear.SharedKernel.Domain": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
@@ -207,6 +208,9 @@
         "dependencies": {
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
         }
+      },
+      "PandaBear.SharedKernel.Domain": {
+        "type": "Project"
       },
       "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"

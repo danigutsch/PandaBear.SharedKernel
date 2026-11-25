@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using SharedKernel.BuildingBlocks;
+using SharedKernel.Domain;
 using SharedKernel.Encodings;
 using SharedKernel.Results;
 

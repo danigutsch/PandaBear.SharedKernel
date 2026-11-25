@@ -1,6 +1,6 @@
-using static SharedKernel.BuildingBlocks.Tests.ValueObjectTestsHelpers;
+using static SharedKernel.Domain.Tests.ValueObjectTestsHelpers;
 
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace SharedKernel.Domain.Tests;
 
 /// <summary>
 /// Tests ValueObject equality, hashing, operators and use as a collection key.

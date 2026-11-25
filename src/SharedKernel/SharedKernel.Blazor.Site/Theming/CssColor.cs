@@ -1,5 +1,5 @@
 using System.Globalization;
-using SharedKernel.BuildingBlocks;
+using SharedKernel.Domain;
 using SharedKernel.Results;
 
 namespace SharedKernel.Blazor.Site.Theming;

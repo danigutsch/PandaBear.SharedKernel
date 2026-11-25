@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace SharedKernel.Domain.Tests;
 
 /// <summary>
 /// Helpers for value object tests.

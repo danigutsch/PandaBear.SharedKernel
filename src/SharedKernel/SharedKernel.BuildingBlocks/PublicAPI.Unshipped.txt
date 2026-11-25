@@ -25,8 +25,6 @@ SharedKernel.BuildingBlocks.DateRange.StartDate.get -> System.DateTime
 SharedKernel.BuildingBlocks.EmailAddress
 SharedKernel.BuildingBlocks.EmailAddress.Value.get -> string!
 SharedKernel.BuildingBlocks.ExceptionCancellationExtensions
-SharedKernel.BuildingBlocks.IIdentified<TId>
-SharedKernel.BuildingBlocks.IIdentified<TId>.Id.get -> TId
 SharedKernel.BuildingBlocks.Money
 SharedKernel.BuildingBlocks.Money.Add(SharedKernel.BuildingBlocks.Money! other) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Money!>
 SharedKernel.BuildingBlocks.Money.Amount.get -> decimal
@@ -52,12 +50,6 @@ SharedKernel.BuildingBlocks.UniqueConstraintViolationException.Rule.get -> strin
 SharedKernel.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException() -> void
 SharedKernel.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException(string! rule) -> void
 SharedKernel.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException(string! rule, System.Exception? innerException) -> void
-SharedKernel.BuildingBlocks.ValueObject
-SharedKernel.BuildingBlocks.ValueObject.Equals(SharedKernel.BuildingBlocks.ValueObject? other) -> bool
-abstract SharedKernel.BuildingBlocks.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!
-SharedKernel.BuildingBlocks.ValueObject.ValueObject() -> void
-override SharedKernel.BuildingBlocks.ValueObject.Equals(object? obj) -> bool
-override SharedKernel.BuildingBlocks.ValueObject.GetHashCode() -> int
 static SharedKernel.BuildingBlocks.CountryCode.All.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.BuildingBlocks.CountryCode!>!
 static SharedKernel.BuildingBlocks.CountryCode.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.CountryCode!>
 static SharedKernel.BuildingBlocks.Currency.Brl.get -> SharedKernel.BuildingBlocks.Currency!
@@ -72,8 +64,6 @@ static SharedKernel.BuildingBlocks.OptionResultExtensions.ToNotFoundResult<TEnti
 static SharedKernel.BuildingBlocks.PersonName.Create(string? firstName, string? lastName) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.PersonName!>
 static SharedKernel.BuildingBlocks.PhoneNumber.Create(string? value, string! field = "phone", string! label = "Phone number") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.PhoneNumber!>
 static SharedKernel.BuildingBlocks.PostalAddress.Create(string? street, string? complement, string? neighborhood, string? postalCode, string? city, string? state, string? country, SharedKernel.BuildingBlocks.PostalAddressLabels? labels = null) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.PostalAddress!>
-static SharedKernel.BuildingBlocks.ValueObject.operator !=(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
-static SharedKernel.BuildingBlocks.ValueObject.operator ==(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
 SharedKernel.BuildingBlocks.Compensation
 static SharedKernel.BuildingBlocks.Compensation.CompleteOrCompensate(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! operation, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! compensate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.BuildingBlocks.Bic

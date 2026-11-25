@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using SharedKernel.BuildingBlocks;
 using SharedKernel.Domain.SourceGenerator;
 using SharedHarness = SharedKernel.Testing.Roslyn.GeneratorTestHarness;
 
@@ -10,12 +9,11 @@ namespace SharedKernel.Domain.GeneratorTests;
 internal static class GeneratorTestHarness
 {
     private const string DefaultUsings = """
-        using SharedKernel.BuildingBlocks;
         using SharedKernel.Domain;
 
         """;
 
-    /// <summary>Parses the source with the BuildingBlocks and Domain usings prepended at preview language version and compiles it with a reference to the BuildingBlocks assembly.</summary>
+    /// <summary>Parses the source with the Domain using prepended at preview language version and compiles it with a reference to the Domain assembly.</summary>
     public static CSharpCompilation CreateCompilation(string source)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));

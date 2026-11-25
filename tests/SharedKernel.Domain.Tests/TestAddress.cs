@@ -1,5 +1,5 @@
 
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace SharedKernel.Domain.Tests;
 
 /// <summary>
 /// A value object made of a street and an optional city, used in value object equality tests.

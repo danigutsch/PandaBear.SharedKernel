@@ -1,5 +1,5 @@
 
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace SharedKernel.Domain.Tests;
 
 /// <summary>
 /// A value object made of an amount and a currency code, used in value object equality tests.

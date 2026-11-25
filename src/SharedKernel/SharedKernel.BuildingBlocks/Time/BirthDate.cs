@@ -1,3 +1,4 @@
+using SharedKernel.Domain;
 using SharedKernel.Results;
 
 namespace SharedKernel.BuildingBlocks;
