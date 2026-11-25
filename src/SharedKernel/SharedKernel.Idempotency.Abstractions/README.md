@@ -28,6 +28,9 @@ The separate EntityFrameworkCore package supplies reusable persistence; applicat
   the purge covers the whole table, and an empty prefix is rejected. An overload that takes a `guard` function lets the
   host veto owners after the store selected the batch and before it deletes: the guard is called once per batch with the
   distinct non-null owners of the selected rows and returns the owners to keep; if it throws, nothing is deleted.
+  `PurgeExpiredThrough` includes entries whose last touch equals the cutoff, for selection and counts. It supports the
+  same scope, retention and optional guard rules. An older implementation reports `NotSupportedException` for this
+  operation. Both `PurgeExpired` overloads continue to use a strict cutoff.
 
 Inbox/outbox tables and projection checkpoints can use these primitives without depending on HTTP, messaging, or a
 specific database provider.

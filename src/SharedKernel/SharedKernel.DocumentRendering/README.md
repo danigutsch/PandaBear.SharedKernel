@@ -10,6 +10,11 @@ Structured document models and deterministic HTML rendering primitives.
 
 Create a `DocumentRenderRequest` with `DocumentSection`, `DocumentField`, a `DocumentBrandingSnapshot`, and the required privacy classification. Pass it to `HtmlDocumentRenderer.Render` through `IDocumentRenderer` to produce HTML bytes. This package supplies structured rendering; storage, HTTP delivery, access control, and document business rules remain consumer-owned.
 
+Use `HtmlDocumentRenderer.Render(request, maxOutputBytes, cancellationToken)` when the caller sets an output limit.
+The inclusive UTF-8 budget counts the complete escaped HTML, including markup and branding. A document within
+the budget produces the same bytes as the original overload. Rendering stops with `InvalidDataException` when
+the output exceeds the budget. An observed cancellation raises `OperationCanceledException`.
+
 A `DocumentSection` carries label/value `DocumentField`s and, optionally, ordered `DocumentParagraph`s (`Text` plus the required privacy
 classification) set through its `Paragraphs` property. Paragraphs render as `<p>` elements before the fields, in order, HTML-encoded; a
 section without paragraphs renders exactly as before, and a section with paragraphs and no fields omits the empty field list. The text is
@@ -26,10 +31,15 @@ fields omits the empty field list. A list without items, a blank or null item, o
 lists render exactly as before.
 
 Paragraphs and lists render separately, so they cannot put a paragraph after a list. When the order matters, as for a clause whose
-last paragraph follows its bullets, set `Blocks` instead: an ordered sequence of `DocumentParagraph`s and `DocumentList`s that render
-in the given order, with the same rules for each. Blocks render after the `Paragraphs` and `Lists` of the section and before its
+last paragraph follows its bullets, set `Blocks` to an ordered sequence of `DocumentParagraph`, `DocumentList`, and `DocumentLink`
+values. Blocks render after the `Paragraphs` and `Lists` of the section and before its
 fields, a section with blocks and no fields omits the empty field list, and a null block or sequence throws `ArgumentNullException`.
 Sections without blocks render exactly as before.
+
+A `DocumentLink` renders as a paragraph with a semantic HTML anchor. Give it meaningful `Text`, an absolute HTTPS `Target` of at
+most 2,048 characters, and the privacy classification of both values. The renderer encodes the displayed text and destination.
+It rejects blank text or an unsafe target, including credentials in the URI, with `ArgumentException`, null text or target
+with `ArgumentNullException`, and an unclassified link with `InvalidOperationException`.
 
 ## Install and example
 
@@ -59,6 +69,11 @@ public static class Example
                     Lists =
                     [
                         new DocumentList(["Hotel", "Breakfast"], DocumentPrivacyClassification.Public) { Label = "Included" },
+                    ],
+                    Blocks =
+                    [
+                        new DocumentLink("Read the booking terms",
+                            new Uri("https://example.test/terms"), DocumentPrivacyClassification.Public),
                     ],
                 },
             ],

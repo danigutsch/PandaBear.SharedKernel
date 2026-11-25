@@ -35,6 +35,7 @@
 
     <ItemGroup>
         <Compile Include="..\SharedKernel.Repository.Tests\ChildProcessId.cs" Link="Fixtures\ChildProcessId.cs" />
+        <None Update="Fixtures/run-fixture-script.sh" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 </Project>

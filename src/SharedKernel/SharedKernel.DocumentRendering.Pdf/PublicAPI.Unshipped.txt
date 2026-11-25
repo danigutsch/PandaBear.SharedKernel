@@ -1,0 +1,4 @@
+#nullable enable
+PandaBear.DocumentRendering.Pdf.QpdfDocumentNormalizer
+PandaBear.DocumentRendering.Pdf.QpdfDocumentNormalizer.Normalize(System.ReadOnlyMemory<byte> generatedPdf, System.DateTimeOffset documentDate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.ReadOnlyMemory<byte>>!
+PandaBear.DocumentRendering.Pdf.QpdfDocumentNormalizer.QpdfDocumentNormalizer(string! executablePath, int maxPdfBytes, System.TimeSpan timeout) -> void

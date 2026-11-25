@@ -1,5 +1,3 @@
-using System.Net;
-using System.Text;
 using PandaBear.InputNormalization;
 
 namespace PandaBear.DocumentRendering;
@@ -9,6 +7,8 @@ namespace PandaBear.DocumentRendering;
 /// </summary>
 public sealed class HtmlDocumentRenderer : IDocumentRenderer
 {
+    private const int MaxLinkTargetLength = 2048;
+
     /// <summary>
     /// The longest embedded raster logo URI the renderer accepts. It keeps a document bounded and stays under the
     /// roughly 65,000 characters that <see cref="Uri" /> accepts, so a data URI that the snapshot can hold fits here.
@@ -16,33 +16,57 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
     private const int MaxEmbeddedLogoLength = 60_000;
 
     /// <inheritdoc />
-    public byte[] Render(DocumentRenderRequest request)
+    /// <exception cref="ArgumentNullException">A document link has null text or a null target.</exception>
+    /// <exception cref="ArgumentException">A document link has blank text or an unsafe target.</exception>
+    /// <exception cref="InvalidOperationException">A document link lacks a privacy classification.</exception>
+    public byte[] Render(DocumentRenderRequest request) => RenderCore(request, null, CancellationToken.None);
+
+    /// <summary>Renders deterministic semantic HTML within an inclusive UTF-8 byte budget.</summary>
+    /// <param name="request">The structured content and branding to render.</param>
+    /// <param name="maxOutputBytes">The maximum length of the complete output in bytes.</param>
+    /// <param name="ct">Cancellation token for rendering.</param>
+    /// <returns>The complete HTML artifact, with the same bytes as the unbounded overload.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxOutputBytes"/> is negative.</exception>
+    /// <exception cref="ArgumentNullException">A required member of the request is null.</exception>
+    /// <exception cref="ArgumentException">A document link has blank text or an unsafe target.</exception>
+    /// <exception cref="InvalidOperationException">A document field or block lacks a privacy classification.</exception>
+    /// <exception cref="InvalidDataException">The HTML exceeds <paramref name="maxOutputBytes"/>.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was canceled.</exception>
+    public static byte[] Render(DocumentRenderRequest request, int maxOutputBytes, CancellationToken ct)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(maxOutputBytes);
+        return RenderCore(request, maxOutputBytes, ct);
+    }
+
+    private static byte[] RenderCore(DocumentRenderRequest request, int? maxOutputBytes, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(request.Sections);
+        ct.ThrowIfCancellationRequested();
 
-        var builder = new StringBuilder();
+        var builder = new HtmlDocumentWriter(maxOutputBytes, ct);
         builder.Append("<!DOCTYPE html><html lang=\"")
-            .Append(HtmlEncode(request.Language))
+            .AppendEncoded(request.Language)
             .Append("\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>")
-            .Append(HtmlEncode(request.Title))
+            .AppendEncoded(request.Title)
             .Append("</title><style>");
 
-        AppendBrandingStyles(builder, request.Branding);
+        AppendBrandingStyles(builder, request.Branding, ct);
         builder.Append("@media print{header{break-inside:avoid}section{break-inside:avoid}}body{font-family:var(--document-body-font,system-ui,sans-serif);background:var(--document-background-color,#fff);color:var(--document-text-color,#111);line-height:1.5;margin:2rem}h1,h2{font-family:var(--document-heading-font,var(--document-body-font,system-ui,sans-serif));color:var(--document-primary-color,currentColor)}header{border-bottom:.25rem solid var(--document-accent-color,currentColor);margin-bottom:1rem;padding-bottom:.5rem}footer{border-top:1px solid var(--document-accent-color,currentColor);margin-top:2rem;padding-top:.5rem}dl{display:grid;grid-template-columns:max-content 1fr;gap:.25rem 1rem}dt{font-weight:700}</style></head><body>");
 
         AppendBranding(builder, request.Branding);
-        builder.Append("<main><h1>").Append(HtmlEncode(request.Title)).Append("</h1>");
+        builder.Append("<main><h1>").AppendEncoded(request.Title).Append("</h1>");
 
         foreach (var section in request.Sections)
         {
+            ct.ThrowIfCancellationRequested();
             ArgumentNullException.ThrowIfNull(section);
             ArgumentNullException.ThrowIfNull(section.Fields);
             ArgumentNullException.ThrowIfNull(section.Paragraphs);
             ArgumentNullException.ThrowIfNull(section.Lists);
             ArgumentNullException.ThrowIfNull(section.Blocks);
 
-            builder.Append("<section><h2>").Append(HtmlEncode(section.Heading)).Append("</h2>");
+            builder.Append("<section><h2>").AppendEncoded(section.Heading).Append("</h2>");
             foreach (var paragraph in section.Paragraphs)
             {
                 AppendParagraph(builder, paragraph);
@@ -63,6 +87,9 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
                     case DocumentList list:
                         AppendList(builder, list);
                         break;
+                    case DocumentLink link:
+                        AppendLink(builder, link);
+                        break;
                     default:
                         ArgumentNullException.ThrowIfNull(block);
                         break;
@@ -80,8 +107,8 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
                         throw new InvalidOperationException("Document fields must be privacy classified before rendering.");
                     }
 
-                    builder.Append("<dt>").Append(HtmlEncode(field.Label)).Append("</dt><dd>")
-                        .Append(HtmlEncode(field.Value)).Append("</dd>");
+                    builder.Append("<dt>").AppendEncoded(field.Label).Append("</dt><dd>")
+                        .AppendEncoded(field.Value).Append("</dd>");
                 }
 
                 builder.Append("</dl>");
@@ -93,10 +120,10 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         builder.Append("</main>");
         AppendFooter(builder, request.Branding);
         builder.Append("</body></html>");
-        return Encoding.UTF8.GetBytes(builder.ToString());
+        return builder.ToUtf8();
     }
 
-    private static void AppendParagraph(StringBuilder builder, DocumentParagraph paragraph)
+    private static void AppendParagraph(HtmlDocumentWriter builder, DocumentParagraph paragraph)
     {
         ArgumentNullException.ThrowIfNull(paragraph);
         ArgumentException.ThrowIfNullOrWhiteSpace(paragraph.Text, nameof(paragraph.Text));
@@ -105,10 +132,10 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             throw new InvalidOperationException("Document paragraphs must be privacy classified before rendering.");
         }
 
-        builder.Append("<p>").Append(HtmlEncode(paragraph.Text)).Append("</p>");
+        builder.Append("<p>").AppendEncoded(paragraph.Text).Append("</p>");
     }
 
-    private static void AppendList(StringBuilder builder, DocumentList list)
+    private static void AppendList(HtmlDocumentWriter builder, DocumentList list)
     {
         ArgumentNullException.ThrowIfNull(list);
         ArgumentNullException.ThrowIfNull(list.Items);
@@ -123,20 +150,39 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         builder.Append('<').Append(tag);
         if (!string.IsNullOrWhiteSpace(list.Label))
         {
-            builder.Append(" aria-label=\"").Append(HtmlEncode(list.Label)).Append('"');
+            builder.Append(" aria-label=\"").AppendEncoded(list.Label).Append('"');
         }
 
         builder.Append('>');
         foreach (var item in list.Items)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(item, nameof(DocumentList.Items));
-            builder.Append("<li>").Append(HtmlEncode(item)).Append("</li>");
+            builder.Append("<li>").AppendEncoded(item).Append("</li>");
         }
 
         builder.Append("</").Append(tag).Append('>');
     }
 
-    private static void AppendBrandingStyles(StringBuilder builder, DocumentBrandingSnapshot? branding)
+    private static void AppendLink(HtmlDocumentWriter builder, DocumentLink link)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(link.Text, nameof(DocumentLink.Text));
+        ArgumentNullException.ThrowIfNull(link.Target, nameof(DocumentLink.Target));
+        if (link.PrivacyClassification == DocumentPrivacyClassification.None)
+        {
+            throw new InvalidOperationException("Document links must be privacy classified before rendering.");
+        }
+
+        var normalizedTarget = link.Target.IsAbsoluteUri && link.Target.Scheme == Uri.UriSchemeHttps
+            ? WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(link.Target.OriginalString, MaxLinkTargetLength)
+            : null;
+        var safeTarget = normalizedTarget
+            ?? throw new ArgumentException("Document link targets must be safe absolute HTTPS URIs.", nameof(link));
+
+        builder.Append("<p><a href=\"").AppendEncoded(safeTarget).Append("\">")
+            .AppendEncoded(link.Text).Append("</a></p>");
+    }
+
+    private static void AppendBrandingStyles(HtmlDocumentWriter builder, DocumentBrandingSnapshot? branding, CancellationToken ct)
     {
         if (branding is null)
         {
@@ -148,11 +194,11 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             .Append("--document-accent-color:").Append(SafeCssColor(branding.AccentColor, "#000000")).Append(';')
             .Append("--document-background-color:").Append(SafeCssColor(branding.BackgroundColor, "#ffffff")).Append(';')
             .Append("--document-text-color:").Append(SafeCssColor(branding.TextColor, "#000000")).Append(';')
-            .Append("--document-heading-font:").Append(SafeCssFont(branding.HeadingFontFamily)).Append(';')
-            .Append("--document-body-font:").Append(SafeCssFont(branding.BodyFontFamily)).Append(";}");
+            .Append("--document-heading-font:").Append(SafeCssFont(branding.HeadingFontFamily, ct)).Append(';')
+            .Append("--document-body-font:").Append(SafeCssFont(branding.BodyFontFamily, ct)).Append(";}");
     }
 
-    private static void AppendBranding(StringBuilder builder, DocumentBrandingSnapshot? branding)
+    private static void AppendBranding(HtmlDocumentWriter builder, DocumentBrandingSnapshot? branding)
     {
         if (branding is null)
         {
@@ -165,51 +211,61 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             ?? WebAssetUriSanitizer.NormalizeRasterDataImage(logoText, MaxEmbeddedLogoLength);
         if (safeLogoUri is not null)
         {
-            builder.Append("<img src=\"").Append(HtmlEncode(safeLogoUri)).Append("\" alt=\"")
-                .Append(HtmlEncode($"{branding.BrandName} logo")).Append("\" />");
+            builder.Append("<img src=\"").AppendEncoded(safeLogoUri).Append("\" alt=\"")
+                .AppendEncoded(branding.BrandName).Append(" logo\" />");
         }
 
-        builder.Append("<p>").Append(HtmlEncode(branding.BrandName)).Append("</p></header>");
+        builder.Append("<p>").AppendEncoded(branding.BrandName).Append("</p></header>");
     }
 
-    private static void AppendFooter(StringBuilder builder, DocumentBrandingSnapshot? branding)
+    private static void AppendFooter(HtmlDocumentWriter builder, DocumentBrandingSnapshot? branding)
     {
         if (branding is null || string.IsNullOrWhiteSpace(branding.FooterText))
         {
             return;
         }
 
-        builder.Append("<footer><p>").Append(HtmlEncode(branding.FooterText)).Append("</p></footer>");
+        builder.Append("<footer><p>").AppendEncoded(branding.FooterText).Append("</p></footer>");
     }
 
-    private static string HtmlEncode(string value) => WebUtility.HtmlEncode(value ?? string.Empty);
-
-    private static string SafeCssColor(string value, string fallback)
+    private static ReadOnlySpan<char> SafeCssColor(string value, string fallback)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return fallback;
-        }
-
-        var trimmed = value.Trim();
+        var trimmed = value.AsSpan().Trim();
         if (trimmed.Length is not (4 or 7 or 9) || trimmed[0] != '#')
         {
             return fallback;
         }
 
-        return trimmed.Skip(1).All(Uri.IsHexDigit) ? trimmed : fallback;
+        foreach (var character in trimmed[1..])
+        {
+            if (!Uri.IsHexDigit(character))
+            {
+                return fallback;
+            }
+        }
+
+        return trimmed;
     }
 
-    private static string SafeCssFont(string value)
+    private static ReadOnlySpan<char> SafeCssFont(string value, CancellationToken ct)
     {
         const string fallback = "system-ui, sans-serif";
-        if (string.IsNullOrWhiteSpace(value))
+        var trimmed = value.AsSpan().Trim();
+        if (trimmed.IsEmpty)
         {
             return fallback;
         }
 
-        var trimmed = value.Trim();
-        return trimmed.All(IsAllowedFontCharacter) ? trimmed : fallback;
+        foreach (var character in trimmed)
+        {
+            ct.ThrowIfCancellationRequested();
+            if (!IsAllowedFontCharacter(character))
+            {
+                return fallback;
+            }
+        }
+
+        return trimmed;
     }
 
     private static bool IsAllowedFontCharacter(char character) =>

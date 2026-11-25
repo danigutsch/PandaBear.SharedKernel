@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.DocumentWorkflow</PackageId>
+        <Description>Versioned structured documents with human review and immutable artifact references.</Description>
+        <RootNamespace>PandaBear.DocumentWorkflow</RootNamespace>
+        <PackageTags>documents;workflow;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
+        <ProjectReference Include="..\SharedKernel.Review\SharedKernel.Review.csproj" />
+        <ProjectReference Include="..\SharedKernel.DocumentRendering\SharedKernel.DocumentRendering.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>

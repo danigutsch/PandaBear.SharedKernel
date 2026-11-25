@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.DocumentRendering.Pdf.Chromium</PackageId>
+        <Description>Optional bounded, tagged PDF rendering with Playwright Chromium and qpdf.</Description>
+        <RootNamespace>PandaBear.DocumentRendering.Pdf.Chromium</RootNamespace>
+        <PackageTags>documents;pdf;tagged-pdf;chromium;playwright;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <!-- The Playwright driver uses runtime JSON serialization for browser protocol messages. -->
+        <IsAotCompatible>false</IsAotCompatible>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Playwright" />
+        <ProjectReference Include="..\SharedKernel.DocumentRendering\SharedKernel.DocumentRendering.csproj" />
+        <ProjectReference Include="..\SharedKernel.DocumentRendering.Pdf\SharedKernel.DocumentRendering.Pdf.csproj" />
+        <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+        <InternalsVisibleTo Include="SharedKernel.DocumentRendering.Tests" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>

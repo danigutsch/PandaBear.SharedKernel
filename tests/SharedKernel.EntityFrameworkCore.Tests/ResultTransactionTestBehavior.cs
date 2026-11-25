@@ -14,6 +14,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// <param name="dbContext">The context that owns the transaction boundary.</param>
 /// <param name="scopeFactory">Creates the fresh scope the outcome hooks run in.</param>
 /// <param name="logger">Logs hook failures.</param>
+#pragma warning disable SKMED020 // The direct transaction fixture fixes the response type to Result.
 internal sealed class ResultTransactionTestBehavior<TCommand>(DbContext dbContext, IServiceScopeFactory scopeFactory, ILogger logger)
     : ResultTransactionBehavior<TCommand, Result>(dbContext, scopeFactory, logger)
     where TCommand : ICommand<Result>;
+#pragma warning restore SKMED020

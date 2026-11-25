@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.DocumentRendering.Pdf</PackageId>
+        <Description>Bounded normalization for generated tagged PDF documents.</Description>
+        <RootNamespace>PandaBear.DocumentRendering.Pdf</RootNamespace>
+        <PackageTags>documents;pdf;tagged-pdf;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+        <InternalsVisibleTo Include="SharedKernel.DocumentRendering.Tests" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>
