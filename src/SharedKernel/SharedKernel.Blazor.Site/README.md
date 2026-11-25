@@ -546,6 +546,7 @@ text is on the primary colour.
   (`ArgumentOutOfRangeException`), so the browser reserves the space and the layout does not shift.
 - `ImageAlternative` is the accessibility decision for an image: `ImageAlternative.Describe("what it shows")` or
   `ImageAlternative.Decorative()` (rendered as `alt=""`). `ResponsiveImage.Create` requires one (`ArgumentNullException`).
+  `ImageAlternative.From(alt)` renders a stored, validated `SharedKernel.BuildingBlocks.ImageAltText` (decorative stays decorative).
 - `ContactCard` takes `SharedKernel.BuildingBlocks.EmailAddress` and `PhoneNumber`. It checks restored values again, so only digits reach a
   `tel:` or WhatsApp link and no query reaches a `mailto:` link.
 - `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`.
