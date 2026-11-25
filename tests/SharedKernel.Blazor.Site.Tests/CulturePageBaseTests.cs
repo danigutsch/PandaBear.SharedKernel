@@ -26,6 +26,7 @@ public sealed class CulturePageBaseTests
         // Assert
         status.ShouldBe(HttpStatusCode.OK);
         body.ShouldContain($"language={culture};content={culture};", StringComparison.Ordinal);
+        body.ShouldContain("method=GET</p>", StringComparison.Ordinal);
         host.Reader.Cultures.Select(static read => read.Value).ShouldBe([culture]);
     }
 
@@ -96,7 +97,7 @@ public sealed class CulturePageBaseTests
         var (_, body) = await host.Get(path);
 
         // Assert
-        body.ShouldContain($"path={expected}</p>", StringComparison.Ordinal);
+        body.ShouldContain($"path={expected};", StringComparison.Ordinal);
     }
 
     [Fact]

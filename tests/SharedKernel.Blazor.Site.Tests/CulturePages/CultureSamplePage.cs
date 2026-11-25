@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace SharedKernel.Blazor.Site.Tests.CulturePages;
 
-/// <summary>A page at <c>/{culture}/culture-sample</c> that always exists and writes its language and the content's language.</summary>
+/// <summary>A page at <c>/{culture}/culture-sample</c> that always exists and writes its language, the content's language, its path and the request method.</summary>
 [Route("/{Culture}/culture-sample")]
 public sealed class CultureSamplePage : SampleCulturePage
 {
@@ -16,7 +16,7 @@ public sealed class CultureSamplePage : SampleCulturePage
         ArgumentNullException.ThrowIfNull(builder);
         if (Found)
         {
-            builder.AddMarkupContent(0, $"<p>language={Language.Value};content={Content!.Culture.Value};path={CurrentPath}</p>");
+            builder.AddMarkupContent(0, $"<p>language={Language.Value};content={Content!.Culture.Value};path={CurrentPath};method={HttpContext?.Request.Method}</p>");
         }
     }
 }

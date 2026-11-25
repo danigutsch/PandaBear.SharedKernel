@@ -46,6 +46,13 @@ public abstract class CulturePageBase<TContent> : ComponentBase
     /// </summary>
     protected string CurrentPath => "/" + Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
 
+    /// <summary>Gets the current request, such as for its query; its aborted token cancels <see cref="ReadContent" />.</summary>
+    [CascadingParameter]
+    protected HttpContext? HttpContext
+    {
+        get; private set;
+    }
+
     /// <summary>Gets the cultures of the site; the culture segment must name one of them.</summary>
     protected abstract SupportedCultures Cultures
     {
@@ -55,13 +62,6 @@ public abstract class CulturePageBase<TContent> : ComponentBase
     /// <summary>Gets or sets the navigation manager, which reads the current address and answers not found.</summary>
     [Inject]
     private NavigationManager Navigation { get; set; } = null!;
-
-    /// <summary>Gets or sets the current request, whose aborted token cancels the read.</summary>
-    [CascadingParameter]
-    private HttpContext? HttpContext
-    {
-        get; set;
-    }
 
     /// <summary>Reads the culture segment and the content of its language, then calls not found when there is nothing to show.</summary>
     /// <returns>The task of the read.</returns>

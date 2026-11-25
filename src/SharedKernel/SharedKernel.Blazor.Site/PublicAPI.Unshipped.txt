@@ -1207,3 +1207,4 @@ abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.Cultures.get -> Shar
 abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.Load(TContent! content) -> bool
 abstract SharedKernel.Blazor.Site.CulturePageBase<TContent>.ReadContent(SharedKernel.BuildingBlocks.ContentCulture! culture, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TContent!>!
 override SharedKernel.Blazor.Site.CulturePageBase<TContent>.OnParametersSetAsync() -> System.Threading.Tasks.Task!
+SharedKernel.Blazor.Site.CulturePageBase<TContent>.HttpContext.get -> Microsoft.AspNetCore.Http.HttpContext?
