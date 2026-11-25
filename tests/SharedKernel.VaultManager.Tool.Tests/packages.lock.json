@@ -275,6 +275,13 @@
           "PandaBear.SharedKernel.Encodings": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.Terminal.Gui": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "Terminal.Gui": "[2.5.0, 2.5.0]"
+        }
+      },
       "PandaBear.SharedKernel.Testing": {
         "type": "Project",
         "dependencies": {
@@ -305,6 +312,14 @@
           "PandaBear.SharedKernel.Vault": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.Vault.Import": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Vault": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Vault.Bitwarden": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Vault.Keeper": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.Vault.Keeper": {
         "type": "Project",
         "dependencies": {
@@ -315,10 +330,17 @@
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Terminal.Gui": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Vault": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Vault.Bitwarden": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Vault.Keeper": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Vault.Import": "[0.1.0-alpha.0, )",
           "System.CommandLine": "[3.0.0, )",
+          "Terminal.Gui": "[2.5.0, 2.5.0]"
+        }
+      },
+      "sharedkernel.terminal.gui.testing": {
+        "type": "Project",
+        "dependencies": {
           "Terminal.Gui": "[2.5.0, 2.5.0]"
         }
       },

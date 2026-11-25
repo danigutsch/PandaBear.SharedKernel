@@ -1,6 +1,5 @@
 using SharedKernel.InputNormalization;
-using SharedKernel.Vault.Bitwarden;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 
 namespace SharedKernel.VaultManager.Tool.Cli;
 
@@ -23,18 +22,7 @@ internal static class InputChecks
             string input = inputs[index];
             try
             {
-                VaultFileFormat format = FormatDetector.Detect(input);
-                if (format is VaultFileFormat.Unknown or VaultFileFormat.BitwardenJsonAccountRestricted)
-                {
-                    // The reader rejects these formats with the explanation the user needs; no password is asked for them.
-                    _ = VaultFileReader.Read(input, static _ => string.Empty);
-                }
-                else if (format == VaultFileFormat.BitwardenJsonPasswordProtected)
-                {
-                    PasswordProtectedExport.CheckEnvelope(VaultFileReader.DecodeText(VaultFileReader.ReadCapped(input)));
-                }
-
-                formats[index] = format;
+                formats[index] = VaultFileReader.CheckInput(input);
             }
             catch (Exception exception) when (CommandAction.IsFileProblem(exception))
             {

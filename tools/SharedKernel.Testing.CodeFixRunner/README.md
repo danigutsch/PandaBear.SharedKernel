@@ -7,6 +7,8 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 Local code-fix runner for SharedKernel testing analyzer migrations.
 
 This package is a .NET tool. The command name is `dotnet codefix`.
+It configures the testing analyzer and its provider for the
+[MSBuild code-fix runner](../../src/SharedKernel/SharedKernel.CodeFixes.MSBuild/README.md).
 
 ## Synopsis
 
@@ -79,6 +81,9 @@ dotnet codefix SharedKernel.slnx --diagnostic SKTEST006
 - `--diagnostic` accepts the IDs the testing code-fix provider can fix; `--help` lists them.
 - Fixes are written to source files in place. Run the tool on a clean working tree so the changes
   can be reviewed and reverted.
+- When a fix creates a helper file, the tool asks the target SDK which declared configurations, platforms,
+  and target frameworks compile it. It adds a project item only where needed. The helper is ready in those
+  contexts before the tool replaces the source that references it.
 - Every project must load before any fix is applied. MSBuild errors and warnings while loading,
   missing projects, and project types Roslyn cannot open, such as `.esproj`, stop the run. Pass a
   `.csproj` to fix one project of such a solution.

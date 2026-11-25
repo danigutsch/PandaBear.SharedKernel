@@ -1,5 +1,5 @@
 using SharedKernel.Testing;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 namespace SharedKernel.VaultManager.Tool.Tests.Cli;

@@ -1,6 +1,6 @@
 using System.Globalization;
 using SharedKernel.Testing;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 using SharedKernel.Vault.Bitwarden;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Pipeline;

@@ -7,7 +7,7 @@ using SharedKernel.IO;
 using SharedKernel.Vault.Brief;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Pipeline;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 
 namespace SharedKernel.VaultManager.Tool.Cli;
 
@@ -187,36 +187,38 @@ internal static class MergeCommand
         // The first merge requests no output, so the new export password is asked only when the vault will be written. The
         // last merge writes the vault once nothing is pending. Every merge uses the same scanned vault, so each input is read
         // and each password asked once.
-        PipelineResult result = pipeline.Merge(scanned, request, ct);
+        PipelineResult result;
         if (agent is { } fromBrief)
         {
-            // The agent's decisions are checked again against the inputs as read, with every group listed: fields, holders,
-            // findings, and what an agent may accept or reject come from the inputs, also when the brief was edited, and
-            // decisions that do not fit stop the merge. Which groups the agent may decide comes from the brief file.
-            // Decisions the user made since the brief was written may take a group out of the brief; the user's decision
-            // wins there.
-            BriefDocument current = BriefBuilder.Build(fromBrief.Brief.Inputs, scanned, result, decisions, everyGroup: true);
-            if (!Report(arguments.AgentDecisions!, AgentDecisions.Check(fromBrief.Decisions, current), "no longer fits these inputs and decisions. Write a new brief with merge --brief and let the agent decide from it", error))
+            var preview = AgentMergePreview.Evaluate(pipeline, scanned, request, fromBrief.Brief, fromBrief.Decisions, ct);
+            if (preview.Result is not { } merged || preview.Decisions is not { } combined)
             {
+                string reason = preview.Failure switch
+                {
+                    AgentMergeFailure.CurrentInputs => "no longer fits these inputs and decisions. Write a new brief with merge --brief and let the agent decide from it",
+                    AgentMergeFailure.ChangedMerge => "changes what the brief describes",
+                    AgentMergeFailure.InputFiles => "does not apply to these input files",
+                    _ => "decides what an agent may not",
+                };
+                Report(arguments.AgentDecisions!, preview.Problems, reason, error);
                 return ExitCodes.InputOutputProblem;
             }
 
-            PipelineResult userOnly = result;
+            result = merged;
             request = request with
             {
-                Decisions = AgentDecisions.Combine(decisions, fromBrief.Decisions)
+                Decisions = combined
             };
-            result = pipeline.Merge(scanned, request, ct);
-            if (!Report(arguments.AgentDecisions!, AgentDecisions.Conflicts(userOnly, result, request.Decisions), "changes what the brief describes", error))
-            {
-                return ExitCodes.InputOutputProblem;
-            }
         }
-        else if (arguments.Brief is { } briefPath)
+        else
         {
-            // Written before the vault, so a brief that cannot be written stops the merge before anything else is written.
-            ct.ThrowIfCancellationRequested();
-            BriefFile.Write(briefPath, BriefBuilder.Build(BriefInputs(arguments), scanned, result, decisions), ct);
+            result = pipeline.Merge(scanned, request, ct);
+            if (arguments.Brief is { } briefPath)
+            {
+                // Written before the vault, so a brief that cannot be written stops the merge before anything else is written.
+                ct.ThrowIfCancellationRequested();
+                BriefFile.Write(briefPath, BriefBuilder.Build(BriefInputs(arguments), scanned, result, decisions), ct);
+            }
         }
 
         if (PendingDecisions.Find(result, request.Decisions).IsEmpty && !result.HasWriteErrors)

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.CodeFixes.MSBuild</PackageId>
+        <Description>Applies Roslyn code fixes to C# projects and solutions loaded through MSBuild.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>roslyn;code-fixes;msbuild;shared-kernel;dotnet</PackageTags>
+        <!-- MSBuildLocator and MSBuildWorkspace load SDK assemblies and workspace services at run time. -->
+        <IsAotCompatible>false</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Testing.CodeFixRunner.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Build.Locator" />
+        <PackageReference Include="Microsoft.NET.StringTools" ExcludeAssets="runtime" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+        <!-- The executable host copies Roslyn's BuildHost content files. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" ExcludeAssets="contentFiles" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

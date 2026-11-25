@@ -37,6 +37,7 @@
     {"path":"src/SharedKernel/SharedKernel.CI.GitHub/SharedKernel.CI.GitHub.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
     {"path":"src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.CodeFixes.MSBuild/SharedKernel.CodeFixes.MSBuild.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.CommandLine/SharedKernel.CommandLine.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.ContentRights/SharedKernel.ContentRights.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
@@ -123,6 +124,7 @@
     {"path":"src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Testing.AI/SharedKernel.Testing.AI.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Terminal.Gui/SharedKernel.Terminal.Gui.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Testing.AspNetCore/SharedKernel.Testing.AspNetCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
     {"path":"src/SharedKernel/SharedKernel.Testing.Assertions/SharedKernel.Testing.Assertions.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
@@ -146,6 +148,7 @@
     {"path":"src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration","System","Unit"]},
     {"path":"src/SharedKernel/SharedKernel.UploadSanitizing/SharedKernel.UploadSanitizing.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Vault.Bitwarden/SharedKernel.Vault.Bitwarden.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Vault.Import/SharedKernel.Vault.Import.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
@@ -1039,6 +1042,14 @@
       ]
     },
     {
+      "path": "tests/SharedKernel.Terminal.Gui.Tests/SharedKernel.Terminal.Gui.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The extracted test executable retains its archived name during the taxonomy migration.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Terminal.Gui/SharedKernel.Terminal.Gui.csproj","type":"Unit","dependency":"in-process","capabilities":["CompactListDetailLayout","ConfirmationDialog","DiffNavigation","SafeTerminalText"],"lane":"library"}
+      ]
+    },
+    {
       "path": "tests/SharedKernel.Testing.Analyzers.Tests/SharedKernel.Testing.Analyzers.Tests.csproj",
       "register": "tests/README.md",
       "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
@@ -1059,7 +1070,8 @@
       "register": "tests/README.md",
       "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
-        {"sut":"tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj","type":"Unit","dependency":"in-process","capabilities":["CodeFixRunEngine","CodeFixRunnerCaller"],"lane":"library"}
+        {"sut":"src/SharedKernel/SharedKernel.CodeFixes.MSBuild/SharedKernel.CodeFixes.MSBuild.csproj","type":"Unit","dependency":"in-process","capabilities":["CodeFixRunEngine"],"lane":"library"},
+        {"sut":"tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj","type":"Unit","dependency":"in-process","capabilities":["CodeFixRunnerCaller"],"lane":"library"}
       ]
     },
     {
@@ -1106,6 +1118,13 @@
       ]
     },
     {
+      "path": "tests/SharedKernel.Vault.Import.Tests.Unit/SharedKernel.Vault.Import.Tests.Unit.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Vault.Import/SharedKernel.Vault.Import.csproj","type":"Unit","dependency":"in-process","capabilities":["FormatDetector","VaultFileReader"],"lane":"library"}
+      ]
+    },
+    {
       "path": "tests/SharedKernel.Vault.Keeper.Tests/SharedKernel.Vault.Keeper.Tests.csproj",
       "register": "tests/README.md",
       "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
@@ -1118,7 +1137,7 @@
       "register": "tests/README.md",
       "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
-        {"sut":"src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj","type":"Unit","dependency":"in-process","capabilities":["PasswordHealthReport","AttachmentClassifier"],"lane":"library"}
+        {"sut":"src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj","type":"Unit","dependency":"in-process","capabilities":["PasswordHealthReport","AttachmentClassifier","ReviewSession","UnmatchedDecisions","AgentMergePreview"],"lane":"library"}
       ]
     },
     {
@@ -1143,6 +1162,7 @@
     "tests/SharedKernel.MalwareScanning.ClamAv.Testing/SharedKernel.MalwareScanning.ClamAv.Testing.csproj",
     "tests/SharedKernel.Messaging.Protobuf.TestContracts/SharedKernel.Messaging.Protobuf.TestContracts.csproj",
     "tests/SharedKernel.Npgsql.Testing/SharedKernel.Npgsql.Testing.csproj",
+    "tests/SharedKernel.Terminal.Gui.Testing/SharedKernel.Terminal.Gui.Testing.csproj",
     "tests/SharedKernel.TestServices.Host/SharedKernel.TestServices.Host.csproj",
     "tests/SharedKernel.Testing.AspNetCore.TestApp/SharedKernel.Testing.AspNetCore.TestApp.csproj",
     "tests/SharedKernel.Testing.Contracts/SharedKernel.Testing.Contracts.csproj",

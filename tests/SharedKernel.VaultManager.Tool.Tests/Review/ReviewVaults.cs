@@ -2,6 +2,7 @@ using SharedKernel.Vault.Matching;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Model;
 using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Review;
 using SharedKernel.VaultManager.Tool.Review;
 using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
@@ -66,8 +67,12 @@ internal static class ReviewVaults
         return VaultPipeline.Scan(new LoadedVault(inputs, sources, []));
     }
 
-    /// <summary>Builds a review session over <paramref name="scanned"/>, defaulting to no decisions and no files.</summary>
-    public static ReviewSession Session(ScannedVault scanned, MergeDecisions? decisions = null, ReviewFiles? files = null) =>
+    /// <summary>Builds reusable review state over <paramref name="scanned"/>.</summary>
+    public static ReviewSession Session(ScannedVault scanned, MergeDecisions? decisions = null) =>
+        new(new TestPrompts(ExportPassword).Environment().CreatePipeline(), scanned, decisions ?? MergeDecisions.None);
+
+    /// <summary>Builds a tool review workspace over <paramref name="scanned"/>.</summary>
+    public static ReviewWorkspace Workspace(ScannedVault scanned, MergeDecisions? decisions = null, ReviewFiles? files = null) =>
         new(new TestPrompts(ExportPassword).Environment(), scanned, decisions ?? MergeDecisions.None, files ?? ReviewFiles.None);
 
     /// <summary>The same login in Keeper and Bitwarden with different passwords and no modification times, so the password needs a decision.</summary>

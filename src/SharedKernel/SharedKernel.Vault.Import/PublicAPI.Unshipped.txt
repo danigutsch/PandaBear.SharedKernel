@@ -1,0 +1,18 @@
+#nullable enable
+SharedKernel.Vault.Import.FormatDetector
+static SharedKernel.Vault.Import.FormatDetector.Detect(string! path) -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.Unknown = 0 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.KeeperJson = 1 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.KeeperJsonZip = 2 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.KeeperCsv = 3 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.BitwardenJson = 4 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.BitwardenJsonPasswordProtected = 5 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.BitwardenJsonAccountRestricted = 6 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.BitwardenCsv = 7 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileFormat.BitwardenZip = 8 -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileReader
+const SharedKernel.Vault.Import.VaultFileReader.MaxInputBytes = 268435456 -> long
+static SharedKernel.Vault.Import.VaultFileReader.Instance.get -> SharedKernel.Vault.Import.VaultFileReader!
+static SharedKernel.Vault.Import.VaultFileReader.CheckInput(string! path) -> SharedKernel.Vault.Import.VaultFileFormat
+SharedKernel.Vault.Import.VaultFileReader.Read(string! path, System.Func<string!, string!>! passwordProvider) -> SharedKernel.Vault.Formats.VaultReadResult!

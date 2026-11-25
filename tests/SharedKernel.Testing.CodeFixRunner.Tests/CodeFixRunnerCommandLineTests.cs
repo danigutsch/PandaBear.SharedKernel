@@ -261,6 +261,89 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
     }
 
     [Fact]
+    public async Task Helper_file_fix_can_be_retried_in_a_default_compile_project()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        CodeFixRunnerTestProject.PinRepositorySdk(projectDirectory.Path);
+        var (projectPath, _) = await CodeFixRunnerTestProject.Write(
+            projectDirectory.Path,
+            CodeFixRunnerTestProject.HelperSourceFile,
+            ct);
+        var originalProject = await File.ReadAllTextAsync(projectPath, ct);
+
+        // Act
+        var applied = await CodeFixRunnerProcess.Run(projectDirectory.Path, [projectPath], ct);
+        var retried = await CodeFixRunnerProcess.Run(projectDirectory.Path, [projectPath], ct);
+
+        // Assert
+        applied.ExitCode.ShouldBe(0, applied.Error);
+        applied.Output.ShouldBe("Fixed 1 SKTEST004 diagnostic(s).\n");
+        retried.ExitCode.ShouldBe(0, retried.Error);
+        retried.Output.ShouldBe("Fixed 0 SKTEST004 diagnostic(s).\n");
+        retried.Error.ShouldBe(string.Empty);
+        var updatedProject = await File.ReadAllTextAsync(projectPath, ct);
+        updatedProject.ShouldBe(originalProject);
+    }
+
+    [Theory]
+    [InlineData("<PropertyGroup><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup><ItemGroup><Compile Include=\"SampleTests.cs\" /></ItemGroup>")]
+    [InlineData("<PropertyGroup><DefaultItemExcludes>$(DefaultItemExcludes);SampleTestsHelpers.cs</DefaultItemExcludes></PropertyGroup>")]
+    [InlineData("<ItemGroup Condition=\"'$(Configuration)' == 'Debug'\"><Compile Remove=\"SampleTestsHelpers.cs\" /></ItemGroup>")]
+    public async Task Helper_file_fix_preserves_compile_membership_across_configurations(string items)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        CodeFixRunnerTestProject.PinRepositorySdk(projectDirectory.Path);
+        var (projectPath, _) = await CodeFixRunnerTestProject.Write(projectDirectory.Path, CodeFixRunnerTestProject.HelperSourceFile, ct);
+        await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile.Replace("</Project>", items + "</Project>", StringComparison.Ordinal), ct);
+
+        // Act
+        var applied = await CodeFixRunnerProcess.Run(projectDirectory.Path, [projectPath], ct);
+        var retried = await CodeFixRunnerProcess.Run(projectDirectory.Path, [projectPath], ct);
+        var debugCount = await CodeFixRunnerProcess.CountHelperCompileItems(projectPath, "Debug", ct);
+        var releaseCount = await CodeFixRunnerProcess.CountHelperCompileItems(projectPath, "Release", ct);
+
+        // Assert
+        applied.ExitCode.ShouldBe(0, applied.Error);
+        applied.Output.ShouldBe("Fixed 1 SKTEST004 diagnostic(s).\n");
+        retried.ExitCode.ShouldBe(0, retried.Error);
+        retried.Output.ShouldBe("Fixed 0 SKTEST004 diagnostic(s).\n");
+        debugCount.ShouldBe(1);
+        releaseCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Failed_compile_membership_leaves_the_source_and_project_usable()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        CodeFixRunnerTestProject.PinRepositorySdk(projectDirectory.Path);
+        var (projectPath, sourcePath) = await CodeFixRunnerTestProject.Write(projectDirectory.Path, CodeFixRunnerTestProject.HelperSourceFile, ct);
+        var targets = Path.Combine(projectDirectory.Path, "Directory.Build.targets");
+        await File.WriteAllTextAsync(targets, """
+            <Project><ItemGroup><Compile Remove="SampleTestsHelpers.cs" /></ItemGroup></Project>
+            """, ct);
+
+        // Act
+        var failed = await CodeFixRunnerProcess.Run(projectDirectory.Path, [projectPath], ct);
+        var projectAfterFailure = await File.ReadAllTextAsync(projectPath, ct);
+        var sourceAfterFailure = await File.ReadAllTextAsync(sourcePath, ct);
+        var helperAfterFailure = File.Exists(Path.Combine(projectDirectory.Path, "SampleTestsHelpers.cs"));
+        File.Delete(targets);
+        var retried = await CodeFixRunnerProcess.Run(projectDirectory.Path, [projectPath], ct);
+
+        // Assert
+        failed.ExitCode.ShouldBe(1, failed.Error);
+        failed.Error.ShouldContain("The new source file is not compiled in every evaluated build context", StringComparison.Ordinal);
+        projectAfterFailure.ShouldBe(CodeFixRunnerTestProject.ProjectFile);
+        sourceAfterFailure.ShouldBe(CodeFixRunnerTestProject.HelperSourceFile);
+        helperAfterFailure.ShouldBeFalse();
+        retried.ExitCode.ShouldBe(0, retried.Error);
+        retried.Output.ShouldBe("Fixed 1 SKTEST004 diagnostic(s).\n");
+    }
+
+    [Fact]
     public async Task Diagnostics_without_available_fix_are_reported_on_standard_error()
     {
         // Arrange
@@ -406,8 +489,9 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         var result = await CodeFixRunnerInvocation.Invoke(
             projectDirectory.Path,
             [projectPath],
-            (options, error, ct) => CodeFixRunEngine.Run(
-                options,
+            (options, error, ct) => CodeFixRunEngine.Runner.Run(
+                options.TargetPath,
+                options.DiagnosticId,
                 error,
                 async (workspace, targetPath, _) =>
                 {

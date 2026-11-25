@@ -33,6 +33,7 @@
     "src/SharedKernel/SharedKernel.CI.GitHub/SharedKernel.CI.GitHub.csproj",
     "src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj",
     "src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj",
+    "src/SharedKernel/SharedKernel.CodeFixes.MSBuild/SharedKernel.CodeFixes.MSBuild.csproj",
     "src/SharedKernel/SharedKernel.CommandLine/SharedKernel.CommandLine.csproj",
     "src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj",
     "src/SharedKernel/SharedKernel.ContentRights/SharedKernel.ContentRights.csproj",
@@ -118,6 +119,7 @@
     "src/SharedKernel/SharedKernel.Style.Analyzers/SharedKernel.Style.Analyzers.csproj",
     "src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj",
     "src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj",
+    "src/SharedKernel/SharedKernel.Terminal.Gui/SharedKernel.Terminal.Gui.csproj",
     "src/SharedKernel/SharedKernel.Testing.AI/SharedKernel.Testing.AI.csproj",
     "src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj",
     "src/SharedKernel/SharedKernel.Testing.AspNetCore/SharedKernel.Testing.AspNetCore.csproj",
@@ -140,6 +142,7 @@
     "src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj",
     "src/SharedKernel/SharedKernel.UploadSanitizing/SharedKernel.UploadSanitizing.csproj",
     "src/SharedKernel/SharedKernel.Vault.Bitwarden/SharedKernel.Vault.Bitwarden.csproj",
+    "src/SharedKernel/SharedKernel.Vault.Import/SharedKernel.Vault.Import.csproj",
     "src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj",
     "src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj",
     "src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj"

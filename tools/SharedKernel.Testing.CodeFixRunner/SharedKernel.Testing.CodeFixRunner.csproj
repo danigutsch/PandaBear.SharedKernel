@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.CodeFixes.MSBuild\SharedKernel.CodeFixes.MSBuild.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" Aliases="testinganalyzers" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.CodeFixes\SharedKernel.Testing.CodeFixes.csproj" />
     </ItemGroup>
@@ -16,7 +17,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <!-- MSBuildLocator.RegisterDefaults() registers the SDK's MSBuild in process (CodeFixRunEngine.cs), so the tool must run on the newest installed runtime to load an 11.0 SDK's MSBuild. -->
+        <!-- The workspace runner registers the SDK's MSBuild in process, so the newest installed runtime must be used to load an 11.0 SDK's MSBuild. -->
         <RollForward>LatestMajor</RollForward>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>

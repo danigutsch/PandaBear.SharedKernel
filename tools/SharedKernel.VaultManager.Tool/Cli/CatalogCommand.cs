@@ -3,7 +3,7 @@ using SharedKernel.InputNormalization;
 using SharedKernel.Vault.Catalog;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Pipeline;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 
 namespace SharedKernel.VaultManager.Tool.Cli;
 

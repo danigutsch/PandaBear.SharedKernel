@@ -1,3 +1,6 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
+using SharedKernel.CodeFixes.MSBuild;
 
 namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
@@ -5,6 +8,41 @@ namespace SharedKernel.Testing.CodeFixRunner.Tests;
 public sealed class CodeFixRunEngineTests : IDisposable
 {
     private readonly TemporaryDirectory projectDirectory = new();
+
+    [Fact]
+    public async Task Cancellation_during_membership_evaluation_removes_the_staged_helper()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var (projectPath, sourcePath) = await CodeFixRunnerTestProject.Write(projectDirectory.Path, CodeFixRunnerTestProject.HelperSourceFile, ct);
+        using var workspace = new AdhocWorkspace();
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var project = workspace.AddProject("Sample.Tests", LanguageNames.CSharp);
+        var sourceId = DocumentId.CreateNewId(project.Id);
+        var before = project.Solution.WithProjectFilePath(project.Id, projectPath)
+            .AddDocument(sourceId, "SampleTests.cs", SourceText.From(CodeFixRunnerTestProject.HelperSourceFile), filePath: sourcePath);
+        var helperId = DocumentId.CreateNewId(project.Id);
+        var after = before.WithDocumentText(sourceId, SourceText.From("internal class Updated;"))
+            .AddDocument(helperId, "SampleTestsHelpers.cs", SourceText.From("internal class Helper;"));
+
+        // Act
+        Func<Task> apply = () => CodeFixFileChanges.Apply(before, after, async (_, path, _, token) =>
+        {
+            File.Exists(path).ShouldBeTrue();
+            await cancellation.CancelAsync();
+            token.ThrowIfCancellationRequested();
+            return null;
+        }, cancellation.Token);
+        var exception = await apply.ShouldThrow<OperationCanceledException>();
+        var projectAfterCancellation = await File.ReadAllTextAsync(projectPath, ct);
+        var sourceAfterCancellation = await File.ReadAllTextAsync(sourcePath, ct);
+
+        // Assert
+        exception.CancellationToken.ShouldBe(cancellation.Token);
+        File.Exists(Path.Combine(projectDirectory.Path, "SampleTestsHelpers.cs")).ShouldBeFalse();
+        projectAfterCancellation.ShouldBe(CodeFixRunnerTestProject.ProjectFile);
+        sourceAfterCancellation.ShouldBe(CodeFixRunnerTestProject.HelperSourceFile);
+    }
 
     [Fact]
     public async Task Run_applies_SKTEST006_code_fix_to_project_file()

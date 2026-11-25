@@ -1,4 +1,4 @@
-using SharedKernel.VaultManager.Tool.Review;
+using SharedKernel.Vault.Review;
 
 namespace SharedKernel.VaultManager.Tool.Tests.Review;
 

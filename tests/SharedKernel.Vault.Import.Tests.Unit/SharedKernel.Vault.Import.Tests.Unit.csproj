@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharedKernel.Vault.Import.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="SharedKernel.SecretScanning.Tests" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Vault.Tests" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.MTP">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Vault.Import\SharedKernel.Vault.Import.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\Fixture.cs" Link="Fixtures\Fixture.cs" />
+        <Compile Include="..\SharedKernel.VaultManager.Tool.Tests\Formats\FormatSamples.cs" Link="Fixtures\FormatSamples.cs" />
+        <Compile Include="..\SharedKernel.Vault.Tests\TestZip.cs" Link="Fixtures\TestZip.cs" />
+        <None Include="..\SharedKernel.Vault.Bitwarden.Tests\Fixtures\bitwarden-csv\individual.csv" Link="Fixtures\bitwarden-csv\individual.csv" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="..\SharedKernel.Vault.Bitwarden.Tests\Fixtures\bitwarden-csv\organization.csv" Link="Fixtures\bitwarden-csv\organization.csv" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="..\SharedKernel.Vault.Bitwarden.Tests\Fixtures\bitwarden\full.json" Link="Fixtures\bitwarden\full.json" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="..\SharedKernel.Vault.Bitwarden.Tests\Fixtures\bitwarden\protected-pbkdf2.json" Link="Fixtures\bitwarden\protected-pbkdf2.json" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="..\SharedKernel.Vault.Keeper.Tests\Fixtures\keeper\commander.json" Link="Fixtures\keeper\commander.json" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="..\SharedKernel.Vault.Keeper.Tests\Fixtures\keeper\web.csv" Link="Fixtures\keeper\web.csv" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="..\SharedKernel.Vault.Keeper.Tests\Fixtures\keeper\web.json" Link="Fixtures\keeper\web.json" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+</Project>

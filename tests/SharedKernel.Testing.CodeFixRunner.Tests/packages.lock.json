@@ -271,6 +271,19 @@
           "xunit.v3.runner.common": "[4.0.3]"
         }
       },
+      "PandaBear.SharedKernel.CodeFixes.MSBuild": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Build.Locator": "[1.11.2, )",
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[5.12.0, )",
+          "Microsoft.CodeAnalysis.Workspaces.MSBuild": "[5.12.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.IO": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Processes": {
         "type": "Project"
       },
@@ -302,6 +315,7 @@
           "Microsoft.Build.Locator": "[1.11.2, )",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "[5.12.0, )",
           "Microsoft.CodeAnalysis.Workspaces.MSBuild": "[5.12.0, )",
+          "PandaBear.SharedKernel.CodeFixes.MSBuild": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Testing.Analyzers": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Testing.CodeFixes": "[0.1.0-alpha.0, )",
           "System.CommandLine": "[3.0.0, )"

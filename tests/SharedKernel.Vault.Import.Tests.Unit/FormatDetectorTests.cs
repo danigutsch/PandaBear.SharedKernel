@@ -1,0 +1,69 @@
+using SharedKernel.Testing;
+using SharedKernel.VaultManager.Tool.Tests.Formats;
+
+namespace SharedKernel.Vault.Import.Tests;
+
+/// <summary>Tests that the format detector classifies vault files by content.</summary>
+public sealed class FormatDetectorTests : IDisposable
+{
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
+
+    [Fact]
+    public void Vault_export_detection_and_reading_are_available_without_the_command_line_tool()
+    {
+        // Act
+        var detectorAssembly = typeof(FormatDetector).Assembly;
+        var readerAssembly = typeof(VaultFileReader).Assembly;
+        var references = detectorAssembly.GetReferencedAssemblies().Select(reference => reference.Name).ToArray();
+
+        // Assert
+        detectorAssembly.GetName().Name.ShouldBe("SharedKernel.Vault.Import");
+        readerAssembly.ShouldBe(detectorAssembly);
+        references.ShouldNotContain("System.CommandLine");
+        references.ShouldNotContain("Terminal.Gui");
+    }
+
+    [Theory]
+    [InlineData("keeper-json", "KeeperJson")]
+    [InlineData("keeper-array", "KeeperJson")]
+    [InlineData("keeper-zip", "KeeperJsonZip")]
+    [InlineData("keeper-csv", "KeeperCsv")]
+    [InlineData("bitwarden-json", "BitwardenJson")]
+    [InlineData("bitwarden-protected", "BitwardenJsonPasswordProtected")]
+    [InlineData("bitwarden-restricted", "BitwardenJsonAccountRestricted")]
+    [InlineData("bitwarden-csv", "BitwardenCsv")]
+    [InlineData("bitwarden-org-csv", "BitwardenCsv")]
+    [InlineData("bitwarden-zip", "BitwardenZip")]
+    [InlineData("other-zip", "Unknown")]
+    [InlineData("other-json", "Unknown")]
+    [InlineData("other-text", "Unknown")]
+    public void Detect_identifies_format_by_content(string sample, string expected)
+    {
+        // Arrange
+        string path = FormatSamples.WriteSample(DirectoryPath, sample);
+
+        // Act
+        var format = FormatDetector.Detect(path);
+
+        // Assert
+        format.ShouldBe(Enum.Parse<VaultFileFormat>(expected));
+    }
+
+    [Fact]
+    public void Detect_ignores_file_extension()
+    {
+        // Arrange
+        string path = FormatSamples.Write(DirectoryPath, "export.csv", Fixture.Read("keeper/web.json"));
+
+        // Act
+        var format = FormatDetector.Detect(path);
+
+        // Assert
+        format.ShouldBe(VaultFileFormat.KeeperJson);
+    }
+}

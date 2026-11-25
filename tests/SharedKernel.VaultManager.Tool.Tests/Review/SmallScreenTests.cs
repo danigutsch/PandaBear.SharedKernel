@@ -2,6 +2,7 @@ using SharedKernel.Testing;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Pipeline;
 using SharedKernel.VaultManager.Tool.Review;
+using SharedKernel.Terminal.Gui.Testing;
 using Terminal.Gui.App;
 using static SharedKernel.VaultManager.Tool.Tests.Review.ReviewVaults;
 
@@ -25,12 +26,12 @@ public sealed class SmallScreenTests : IDisposable
     public void Writing_with_pending_decisions_on_a_zero_size_terminal_shows_the_problem_on_the_message_line()
     {
         // Arrange
-        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(Path.Combine(DirectoryPath, "merged.json"))));
-        session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.Name, KeeperKey);
-        string blocker = session.WriteBlocker.ShouldNotBeNull();
+        var workspace = Workspace(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(Path.Combine(DirectoryPath, "merged.json"))));
+        workspace.Session.ChooseMember(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.Name, KeeperKey);
+        string blocker = workspace.WriteBlocker.ShouldNotBeNull();
         using IApplication app = HeadlessTerminal.Start();
         app.Driver!.SetScreenSize(0, 0);
-        using var window = new ReviewWindow(session, new ReviewDialogs(app));
+        using var window = new ReviewWindow(workspace, new ReviewDialogs(app));
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -43,7 +44,7 @@ public sealed class SmallScreenTests : IDisposable
         // Assert
         running.ShouldBeTrue();
         message.ShouldBe(blocker);
-        session.IsDirty.ShouldBeTrue();
+        workspace.Session.IsDirty.ShouldBeTrue();
     }
 
     [Fact]
@@ -51,11 +52,11 @@ public sealed class SmallScreenTests : IDisposable
     {
         // Arrange
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output)));
-        session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
+        var workspace = Workspace(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output)));
+        workspace.Session.ChooseMember(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         using IApplication app = HeadlessTerminal.Start();
         app.Driver!.SetScreenSize(0, 0);
-        using var window = new ReviewWindow(session, new ReviewDialogs(app));
+        using var window = new ReviewWindow(workspace, new ReviewDialogs(app));
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // A password dialog that opens anyway runs its own loop; closing it lets the test fail instead of waiting forever.
@@ -70,7 +71,7 @@ public sealed class SmallScreenTests : IDisposable
         // Assert
         message.ShouldContain("too small", StringComparison.Ordinal);
         message.ShouldContain("Nothing was written.", StringComparison.Ordinal);
-        session.Written.ShouldBeFalse();
+        workspace.Session.Written.ShouldBeFalse();
         File.Exists(output).ShouldBeFalse();
     }
 
@@ -79,11 +80,11 @@ public sealed class SmallScreenTests : IDisposable
     {
         // Arrange
         string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
-        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(decisionsPath, null));
-        session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
+        var workspace = Workspace(ConflictingLogins(DirectoryPath), files: new ReviewFiles(decisionsPath, null));
+        workspace.Session.ChooseMember(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         using IApplication app = HeadlessTerminal.Start();
         app.Driver!.SetScreenSize(0, 0);
-        using var window = new ReviewWindow(session, new ReviewDialogs(app));
+        using var window = new ReviewWindow(workspace, new ReviewDialogs(app));
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -99,7 +100,7 @@ public sealed class SmallScreenTests : IDisposable
         message.ShouldContain("too small", StringComparison.Ordinal);
         message.ShouldContain("stays open", StringComparison.Ordinal);
         window.IsRunning.ShouldBeFalse();
-        session.IsDirty.ShouldBeFalse();
+        workspace.Session.IsDirty.ShouldBeFalse();
         File.Exists(decisionsPath).ShouldBeTrue();
     }
 
@@ -110,10 +111,10 @@ public sealed class SmallScreenTests : IDisposable
     public void The_key_list_on_a_terminal_below_the_minimum_size_names_the_minimum_on_the_message_line(int width, int height)
     {
         // Arrange
-        var session = Session(ConflictingLogins(DirectoryPath));
+        var workspace = Workspace(ConflictingLogins(DirectoryPath));
         using IApplication app = HeadlessTerminal.Start();
         app.Driver!.SetScreenSize(width, height);
-        using var window = new ReviewWindow(session, new ReviewDialogs(app));
+        using var window = new ReviewWindow(workspace, new ReviewDialogs(app));
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // A key list that opens anyway runs its own loop; closing it lets the test fail instead of waiting forever.

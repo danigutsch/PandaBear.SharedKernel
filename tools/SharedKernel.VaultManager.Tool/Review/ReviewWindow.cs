@@ -2,10 +2,11 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
-using SharedKernel.VaultManager.Tool.Cli;
+using SharedKernel.Terminal.Gui;
 using SharedKernel.Vault.Matching;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Review;
 using Terminal.Gui.App;
 using Terminal.Gui.Input;
 using Terminal.Gui.ViewBase;
@@ -26,6 +27,7 @@ internal sealed class ReviewWindow : Window
     private static readonly GroupFilter[] FilterOrder = Enum.GetValues<GroupFilter>();
 
     private readonly ReviewSession session;
+    private readonly ReviewWorkspace workspace;
     private readonly IReviewDialogs dialogs;
     private readonly FrameView groupsFrame;
     private readonly TextField search;
@@ -48,30 +50,32 @@ internal sealed class ReviewWindow : Window
     private bool stopping;
 
     /// <summary>Builds the window for a review.</summary>
-    /// <param name="session">Review state.</param>
+    /// <param name="workspace">Review state and files.</param>
     /// <param name="dialogs">Questions and messages the window shows.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="session"/> or <paramref name="dialogs"/> is <see langword="null"/>.</exception>
-    public ReviewWindow(ReviewSession session, IReviewDialogs dialogs)
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="workspace"/> or <paramref name="dialogs"/> is <see langword="null"/>.</exception>
+    public ReviewWindow(ReviewWorkspace workspace, IReviewDialogs dialogs)
     {
-        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(dialogs);
-        this.session = session;
+        this.workspace = workspace;
+        session = workspace.Session;
         this.dialogs = dialogs;
 
-        groupsFrame = new FrameView { X = 0, Y = 0, Width = Dim.Percent(35), Height = Dim.Fill(2) };
+        groupsFrame = new FrameView();
         var searchLabel = new Label { X = 0, Y = 0, Text = "Search:" };
         search = new TextField { X = Pos.Right(searchLabel) + 1, Y = 0, Width = Dim.Fill() };
-        groupsList = new ListView { X = 0, Y = 1, Width = Dim.Fill(), Height = Dim.Fill(), KeystrokeNavigator = null! };
+        groupsList = TerminalViews.CreateList(top: 1);
         groupsFrame.Add(searchLabel, search, groupsList);
 
-        header = new Label { X = Pos.Right(groupsFrame) + 1, Y = 0, Width = Dim.Fill(), Height = 1 };
-        fieldsTable = new TableView { Width = Dim.Fill(), Height = Dim.Fill(), CollectionNavigator = null!, FullRowSelect = false };
+        header = new Label();
+        fieldsTable = TerminalViews.CreateDiff();
         fieldsTab = new View { Title = "Fields", CanFocus = true, Width = Dim.Fill(), Height = Dim.Fill() };
         fieldsTab.Add(fieldsTable);
-        findingsTable = new TableView { Width = Dim.Fill(), Height = Dim.Fill(), CollectionNavigator = null!, FullRowSelect = true };
+        findingsTable = TerminalViews.CreateDetail();
         findingsTab = new View { Title = "Findings", CanFocus = true, Width = Dim.Fill(), Height = Dim.Fill() };
         findingsTab.Add(findingsTable);
-        tabs = new Tabs { X = Pos.Right(groupsFrame), Y = 1, Width = Dim.Fill(), Height = Dim.Fill(2) };
+        tabs = new Tabs();
+        ListDetailLayout.Position(groupsFrame, header, tabs);
         tabs.Add(fieldsTab, findingsTab);
 
         messageLine = new Label { X = 0, Y = Pos.AnchorEnd(2), Width = Dim.Fill(), Height = 1, Text = "F1 lists every key." };
@@ -173,7 +177,7 @@ internal sealed class ReviewWindow : Window
                 return true;
             }
 
-            QuitChoice choice = dialogs.AskQuit(session.Files.DecisionsPath is not null);
+            QuitChoice choice = dialogs.AskQuit(workspace.Files.DecisionsPath is not null);
             bool keepOpen = choice == QuitChoice.Cancel || (choice == QuitChoice.Save && !TryRun(SaveDecisions));
 
             // Stop closes the question, or a problem shown while saving, without an answer; the window stops anyway.
@@ -245,7 +249,7 @@ internal sealed class ReviewWindow : Window
             : group.Status == MatchStatus.Identical ? '='
             : ' ';
         string count = group.MemberKeys.Count > 1 ? string.Create(CultureInfo.InvariantCulture, $" ({group.MemberKeys.Count})") : string.Empty;
-        return marker + " " + ReviewText.OneLine(group.Name) + count;
+        return marker + " " + TerminalText.OneLine(group.Name) + count;
     }
 
     private static string NoMemberChoice(ReviewField field, ReviewGroup group) =>
@@ -253,7 +257,7 @@ internal sealed class ReviewWindow : Window
         : field.AcceptsEmpty ? field.Label + " keeps the entries of every item; press e to drop the whole list."
         : field.Label + " follows the newest item.";
 
-    private void Notify(string text) => messageLine.Text = ReviewText.OneLine(text);
+    private void Notify(string text) => messageLine.Text = TerminalText.OneLine(text);
 
     // Runs a session operation and shows what it did. Session and pipeline errors carry names, keys, field paths, and file
     // paths, never values; anything else is unexpected and ends the review.
@@ -266,7 +270,7 @@ internal sealed class ReviewWindow : Window
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or IOException or UnauthorizedAccessException or InvalidDataException)
         {
-            ShowError(ReviewText.OneLine(Describe(exception)));
+            ShowError(TerminalText.OneLine(Describe(exception)));
             RefreshGroups();
             return false;
         }
@@ -326,19 +330,19 @@ internal sealed class ReviewWindow : Window
 
     private string SaveDecisions()
     {
-        session.Save();
-        return "Saved the decisions to " + session.Files.DecisionsPath + ".";
+        workspace.Save();
+        return "Saved the decisions to " + workspace.Files.DecisionsPath + ".";
     }
 
     private void Write()
     {
-        if (session.WriteBlocker is { } blocker)
+        if (workspace.WriteBlocker is { } blocker)
         {
             ShowError(blocker);
             return;
         }
 
-        PipelineOutput output = session.Files.Output!;
+        PipelineOutput output = workspace.Files.Output!;
         string? password = null;
         if (!output.Plaintext)
         {
@@ -358,7 +362,7 @@ internal sealed class ReviewWindow : Window
 
         TryRun(() =>
         {
-            session.Write(password);
+            workspace.Write(password);
             return Written(output, session.WriteResult!);
         });
     }
@@ -699,7 +703,7 @@ internal sealed class ReviewWindow : Window
 
         fieldsTable.Table = new RowTableSource(
             ["Field", "Decision", .. members.Select(Header)],
-            [.. fields.Select(field => (IReadOnlyList<string>)[ReviewText.OneLine(field.Label), Decision(field), .. field.Values])]);
+            [.. fields.Select(field => (IReadOnlyList<string>)[TerminalText.OneLine(field.Label), Decision(field), .. field.Values])]);
         int fieldRow = sameGroup && fieldPath is not null ? Math.Max(0, IndexOf(fieldPath)) : 0;
         int column = Math.Clamp(sameGroup ? fieldCell.X : MemberColumn, 0, Math.Max(0, MemberColumn + members.Count - 1));
         if (fields.Count > 0)
@@ -712,11 +716,11 @@ internal sealed class ReviewWindow : Window
             [
                 .. findings.Select(finding => (IReadOnlyList<string>)
                 [
-                    ReviewText.OneLine(finding.ItemName),
-                    ReviewText.OneLine(finding.FindingId),
+                    TerminalText.OneLine(finding.ItemName),
+                    TerminalText.OneLine(finding.FindingId),
                     finding.Kind.ToString(),
-                    ReviewText.OneLine(finding.Target),
-                    ReviewText.OneLine(Status(finding)),
+                    TerminalText.OneLine(finding.Target),
+                    TerminalText.OneLine(Status(finding)),
                     finding.Value,
                 ]),
             ]);
@@ -763,18 +767,18 @@ internal sealed class ReviewWindow : Window
         string pending = group.IsPending
             ? string.Create(CultureInfo.InvariantCulture, $"{group.PendingFields} field(s) and {group.PendingFindings} finding(s) need a decision")
             : "nothing to decide";
-        return ReviewText.OneLine(group.Name) + " | " + members + " | " + pending + (group.IsSuggested ? " | suggested match" : string.Empty);
+        return TerminalText.OneLine(group.Name) + " | " + members + " | " + pending + (group.IsSuggested ? " | suggested match" : string.Empty);
     }
 
     private static string Header(ReviewMember member) =>
-        ReviewText.OneLine(member.SourceFile + ": " + member.Name) + (member.IsNewest ? " (newest)" : string.Empty);
+        TerminalText.OneLine(member.SourceFile + ": " + member.Name) + (member.IsNewest ? " (newest)" : string.Empty);
 
     private string Decision(ReviewField field)
     {
         if (field.Choice is { Kind: FieldChoiceKind.Member, OriginKey: { } originKey })
         {
             ReviewMember? chosen = members.FirstOrDefault(member => string.Equals(member.OriginKey, originKey, StringComparison.Ordinal));
-            return "use " + ReviewText.OneLine(chosen is null ? originKey : chosen.SourceFile + ": " + chosen.Name);
+            return "use " + TerminalText.OneLine(chosen is null ? originKey : chosen.SourceFile + ": " + chosen.Name);
         }
 
         if (field.Choice is { Kind: FieldChoiceKind.Empty })

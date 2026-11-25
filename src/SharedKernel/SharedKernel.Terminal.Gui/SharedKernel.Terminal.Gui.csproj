@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Terminal.Gui</PackageId>
+        <Description>Reusable Terminal.Gui list, detail, and diff views with safe text and confirmation prompts.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>terminal;terminal-gui;tui;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+        <PackageReference Include="Terminal.Gui" />
+        <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+    </ItemGroup>
+
+</Project>

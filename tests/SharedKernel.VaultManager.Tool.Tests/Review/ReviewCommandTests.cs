@@ -3,7 +3,8 @@ using System.Text.Json.Nodes;
 using SharedKernel.SecretScanning;
 using SharedKernel.Testing;
 using SharedKernel.Vault.Merge;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
+using SharedKernel.Vault.Review;
 using SharedKernel.VaultManager.Tool.Review;
 using SharedKernel.VaultManager.Tool.Tests.Cli;
 using SharedKernel.VaultManager.Tool.Tests.Pipeline;
@@ -188,7 +189,7 @@ public sealed class ReviewCommandTests : IDisposable
         terminal.PromptsBeforeRun.ShouldBe([1]);
         prompts.FilePasswordPrompts.ShouldBe(["Password for protected.json"]);
         prompts.NewPasswordPrompts.ShouldBeEmpty();
-        terminal.Sessions.ShouldHaveSingleItem().Result.Merged.Items.ShouldHaveSingleItem().Name.ShouldBe("Example");
+        terminal.Sessions.ShouldHaveSingleItem().Session.Result.Merged.Items.ShouldHaveSingleItem().Name.ShouldBe("Example");
     }
 
     [Fact]
@@ -216,10 +217,10 @@ public sealed class ReviewCommandTests : IDisposable
         var environment = new TestPrompts(ExportPassword).Environment();
         var first = new FakeTerminal
         {
-            User = session =>
+            User = workspace =>
             {
-                session.ChooseMember(session.Groups(GroupFilter.All, null)[0].Key, FieldPaths.LoginPassword, CliInputs.KeeperKey);
-                session.Save();
+                workspace.Session.ChooseMember(workspace.Session.Groups(GroupFilter.All, null)[0].Key, FieldPaths.LoginPassword, CliInputs.KeeperKey);
+                workspace.Save();
                 return 0;
             },
         };
@@ -233,8 +234,8 @@ public sealed class ReviewCommandTests : IDisposable
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("Saved the decisions to " + decisionsPath, StringComparison.Ordinal);
         var reopened = second.Sessions.ShouldHaveSingleItem();
-        reopened.Pending.IsEmpty.ShouldBeTrue();
-        reopened.Decisions.Groups.ShouldHaveSingleItem().Choices.ShouldBe([FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.KeeperKey)]);
+        reopened.Session.Pending.IsEmpty.ShouldBeTrue();
+        reopened.Session.Decisions.Groups.ShouldHaveSingleItem().Choices.ShouldBe([FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.KeeperKey)]);
     }
 
     [Fact]
@@ -245,10 +246,10 @@ public sealed class ReviewCommandTests : IDisposable
         string output = Path.Combine(DirectoryPath, "merged.json");
         var terminal = new FakeTerminal
         {
-            User = session =>
+            User = workspace =>
             {
-                session.ChooseMember(session.Groups(GroupFilter.All, null)[0].Key, FieldPaths.LoginPassword, CliInputs.BitwardenKey);
-                session.Write(null);
+                workspace.Session.ChooseMember(workspace.Session.Groups(GroupFilter.All, null)[0].Key, FieldPaths.LoginPassword, CliInputs.BitwardenKey);
+                workspace.Write(null);
                 return 0;
             },
         };
@@ -272,9 +273,9 @@ public sealed class ReviewCommandTests : IDisposable
         var environment = new TestPrompts(ExportPassword).Environment();
         var writes = new FakeTerminal
         {
-            User = session =>
+            User = workspace =>
             {
-                session.Write(null);
+                workspace.Write(null);
                 return 0;
             },
         };
@@ -305,9 +306,9 @@ public sealed class ReviewCommandTests : IDisposable
         string output = Path.Combine(DirectoryPath, "merged.json");
         var terminal = new FakeTerminal
         {
-            User = session =>
+            User = workspace =>
             {
-                session.Write(null);
+                workspace.Write(null);
                 return 0;
             },
         };
@@ -350,17 +351,17 @@ public sealed class ReviewCommandTests : IDisposable
         string? accepted = null;
         var terminal = new FakeTerminal
         {
-            User = session =>
+            User = workspace =>
             {
-                ReviewGroup group = session.GroupOf("keeper|keeper.json|rec-long").ShouldNotBeNull();
-                foreach (ReviewFinding finding in session.Findings(group.Key).Where(finding => finding.IsPending))
+                ReviewGroup group = workspace.Session.GroupOf("keeper|keeper.json|rec-long").ShouldNotBeNull();
+                foreach (ReviewFinding finding in workspace.Session.Findings(group.Key).Where(finding => finding.IsPending))
                 {
                     bool password = finding.Kind == SecretKind.Password;
                     accepted = password ? finding.FindingId : accepted;
-                    session.DecideFinding(finding.OriginKey, finding.FindingId, password ? FindingDecision.Accepted : FindingDecision.Rejected);
+                    workspace.Session.DecideFinding(finding.OriginKey, finding.FindingId, password ? FindingDecision.Accepted : FindingDecision.Rejected);
                 }
 
-                session.Write(null);
+                workspace.Write(null);
                 return 0;
             },
         };

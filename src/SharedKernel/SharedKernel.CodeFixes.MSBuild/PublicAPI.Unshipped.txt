@@ -1,0 +1,5 @@
+#nullable enable
+SharedKernel.CodeFixes.MSBuild.MSBuildCodeFixRunner
+SharedKernel.CodeFixes.MSBuild.MSBuildCodeFixRunner.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+SharedKernel.CodeFixes.MSBuild.MSBuildCodeFixRunner.MSBuildCodeFixRunner(Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer! analyzer, Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider! codeFixProvider) -> void
+SharedKernel.CodeFixes.MSBuild.MSBuildCodeFixRunner.Run(string! targetPath, string! diagnosticId, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int?>!
