@@ -15,3 +15,10 @@ static SharedKernel.EntityFrameworkCore.Sqlite.SearchFold.Register(Microsoft.Dat
 static SharedKernel.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions.AddSearchFold(this Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!
 static SharedKernel.EntityFrameworkCore.Sqlite.SearchFoldModelBuilderExtensions.HasSearchFoldFunction(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!
 static SharedKernel.EntityFrameworkCore.Sqlite.SearchFoldDbContextOptionsBuilderExtensions.AddSearchFold<TContext>(this Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<TContext!>! optionsBuilder) -> Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<TContext!>!
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteDbContextConfiguration<TContext>
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteDbContextConfiguration<TContext>.ConfigureOptions(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> void
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteDbContextConfiguration<TContext>.MigrationsHistoryTable.get -> string?
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteDbContextConfiguration<TContext>.MigrationsHistoryTable.init -> void
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteDbContextConfiguration<TContext>.SqliteDbContextConfiguration(string! connectionString) -> void
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteDbContextConfiguration<TContext>.UseSearchFold.get -> bool
+SharedKernel.EntityFrameworkCore.Sqlite.SqliteDbContextConfiguration<TContext>.UseSearchFold.init -> void

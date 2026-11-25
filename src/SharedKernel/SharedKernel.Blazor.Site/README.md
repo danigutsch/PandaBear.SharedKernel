@@ -546,6 +546,7 @@ text is on the primary colour.
   (`ArgumentOutOfRangeException`), so the browser reserves the space and the layout does not shift.
 - `ImageAlternative` is the accessibility decision for an image: `ImageAlternative.Describe("what it shows")` or
   `ImageAlternative.Decorative()` (rendered as `alt=""`). `ResponsiveImage.Create` requires one (`ArgumentNullException`).
+  `ImageAlternative.From(alt)` renders a stored, validated `SharedKernel.BuildingBlocks.ImageAltText` (decorative stays decorative).
 - `ContactCard` takes `SharedKernel.BuildingBlocks.EmailAddress` and `PhoneNumber`. It checks restored values again, so only digits reach a
   `tel:` or WhatsApp link and no query reaches a `mailto:` link.
 - `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`.
@@ -674,6 +675,18 @@ on hover, never to a filter, so the hover state keeps the checked contrast. Ligh
 values: text 14.7:1, muted 7.6:1, primary 6.7:1 and accent 5.0:1 on white. The stylesheet respects `prefers-reduced-motion`, shows a
 visible `:focus-visible` ring, is mobile first with a `48rem` layout breakpoint and a `60rem` header breakpoint, and loads no fonts, images or other URLs.
 
+The look that several components share is one rule each, so the copies cannot drift apart; a test checks each one:
+
+- Heading groups: one internal heading group renders the eyebrow, the heading and the subtitle of a `Card`, a `Hero`, a `Section` and
+  a `StepList` step, with the component's own class names. The `hgroup` of a card, a hero and a section has no margin, and every
+  eyebrow (`site-card__eyebrow`, `site-hero__eyebrow`, `site-section__eyebrow` and a step's `site-step-list__number`) is
+  `--site-font-size-sm`, bold and letter-spaced in `--site-color-primary`; a hero's eyebrow, a tagline, is muted and `--site-space-2`
+  from its title.
+- Plain lists: the lists without markers (the navigation and its groups, the language switcher, the contact card's channels,
+  `SeparatedList`, `StepList`, `CreditsList` and `Pager`) share one rule without margin, indent or markers.
+- Alignment: the centred alignment of a section, a band and a card is one set of private properties, after the card rule, and the
+  start set a card resets to is the same as a start section's or band's.
+
 ## Owner-editable theme
 
 `SharedKernel.Blazor.Site.Theming` turns colours, typography and self-hosted fonts that a site owner edits into a second stylesheet
@@ -707,6 +720,12 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   `LinkTarget` that is root-relative or https and names a `.woff2` file, without `" ' ( ) < >` or a fragment. The family name allows
   letters, digits, single inner spaces, hyphens and underscores (at most 64 characters); the key is a lower-case slug. A role's
   `fallback` (`SansSerif`, `Serif`, `Monospace`) is the system stack written after the uploaded family.
+- `ThemeFont.ForFamily(family, faces)` creates the font of a family name an owner entered, such as for an uploaded font file, so the
+  owner never types a key: the name is trimmed and `ThemeFont.KeyOf(family)` derives the key (lower case, each run of spaces, hyphens
+  and underscores as one hyphen, none at either end; `Noto Sans` and `noto_sans` both give `noto-sans`, so they are one font). Every
+  error is on `family` or `faces`: an invalid name gets the family message, and a valid name that gives no valid key (one that starts
+  with a digit, has a letter outside a to z, or is longer than 32 characters as a key) gets `ThemeFont.FamilyKeyMessage`. A font
+  library records the derived key with each file, so a theme can group the files of one family into one `ThemeFont`.
 - `SiteTheme.Create(colors, typography, fonts?, allowSmallText, brandHeight, colorLabel?, shape?)` enforces every rule;
   `SiteTheme.CreateDraft(...)` only requires unique font keys, existing font references and a positive brand height with at most four
   decimals, so a preview can show a theme that still breaks a rule. `brandHeight` defaults to `SiteTheme.DefaultBrandHeight` (2.5rem).
@@ -904,3 +923,57 @@ border) and `ThemeFont.Weights` (100 to 900 in steps of 100).
 Package ID: `PandaBear.SharedKernel.Blazor.Site`. C# namespace: `SharedKernel.Blazor.Site`. Assembly/project identity: `SharedKernel.Blazor.Site`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Culture pages
+
+A static site with one address prefix per language (`/pt/...`, `/en/...`) derives its pages from `CulturePageBase<TContent>`. The
+route names the culture segment `{Culture}`. The page supplies the site's `SupportedCultures`, reads the content of one language in
+`ReadContent(culture, cancellationToken)`, and picks what it shows in `Load(content)`. The base then:
+
+- matches the segment against `Cultures` ignoring case, sets `Language` and reads `Content` with the request's aborted token;
+- calls `NavigationManager.NotFound()` when the culture is not supported (nothing is read) or `Load` returns `false`, so the response
+  is 404 and the router's not-found page renders; the page renders its own markup only when `Found` is `true`;
+- offers `CurrentPath` (root-relative, without query, fragment or trailing slash) and `InSection(section)`. A fixed section with a
+  translated segment routes every spelling (`@page "/{Culture}/viagens"` and `@page "/{Culture}/tours"`) and returns
+  `InSection(culture => ...)` from `Load`, so `/pt/tours` and `/en/viagens` answer 404.
+
+```razor
+@page "/{Culture}/contact"
+@inherits SitePage
+
+@if (Found)
+{
+    <h1>@Content!.ContactTitle</h1>
+}
+
+@code {
+    protected override bool Load(SiteContent content) => content.HasContactPage;
+}
+```
+
+`SitePage` is the application's own base: `CulturePageBase<SiteContent>` with `Cultures` and `ReadContent` filled in once.
+
+## Contact links
+
+`ContactLinks` builds the links of contact values, so a header, footer, `FactGrid` card and `ContactCard` link a contact the same way.
+Each returns a `LinkTarget` with a fixed scheme, or `null` when the value cannot be written into that scheme safely (for example a
+value restored without validation): the caller then shows the text without a link. User data never chooses the scheme.
+
+- `ContactLinks.Phone(phone)`: `tel:` and the canonical digits with the optional leading `+` (`tel:+5511999990000`); a number that is
+  not 7 to 15 digits gets no link.
+- `ContactLinks.WhatsApp(phone)`: `https://wa.me/` and the digits without the `+` (`https://wa.me/5511999990000`), as WhatsApp asks.
+- `ContactLinks.Email(email)`: `mailto:` and the address. The local part is linked only when it holds ASCII letters, digits, `.`, `_`,
+  `+` and `-`, which need no escaping; `?`, `&`, `%`, `,`, `;`, `/`, `#`, quotes and non-ASCII letters could start a header or a second
+  recipient in a mail program that decodes before it splits, so such an address gets no link rather than a percent-encoded one (which
+  `LinkTarget` refuses for the same reason). An international domain is written in its ASCII (Punycode) form
+  (`contato@viajantés.com.br` links to `mailto:contato@xn--viajants-h1a.com.br`); a domain IDNA refuses gets no link.
+
+```razor
+<FactGrid Cards="@([new FactCard("E-mail", [new FactValue(_email.Value, ContactLinks.Email(_email))])])" />
+@if (ContactLinks.WhatsApp(_whatsApp) is { } chat)
+{
+    <a href="@chat">@_whatsApp.Value</a>
+}
+```
+
+`ContactCard` uses the same links; a value they refuse throws `ArgumentException` naming the parameter (`Phone`, `WhatsApp` or `Email`).

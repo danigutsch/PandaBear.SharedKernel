@@ -142,4 +142,81 @@ public sealed class ThemeFontTests
         // Assert
         font.Faces.Select(face => (face.Weight, face.Style)).ShouldBe([(400, ThemeFontStyle.Normal), (400, ThemeFontStyle.Italic), (700, ThemeFontStyle.Normal)]);
     }
+
+    [Theory]
+    [InlineData("Inter", "inter")]
+    [InlineData("Noto Sans", "noto-sans")]
+    [InlineData("noto_sans", "noto-sans")]
+    [InlineData("  Source  Sans -_ 3 ", "source-sans-3")]
+    [InlineData("-Inter_", "inter")]
+    [InlineData("Fira Código", "fira-código")]
+    [InlineData("", "")]
+    [InlineData(null, "")]
+    public void The_key_of_a_family_is_lower_case_with_each_run_of_spaces_hyphens_and_underscores_as_one_hyphen(string? family, string key)
+    {
+        // Arrange & Act
+        var derived = ThemeFont.KeyOf(family);
+
+        // Assert
+        derived.ShouldBe(key);
+    }
+
+    [Fact]
+    public void A_font_for_a_family_takes_the_trimmed_family_and_its_derived_key()
+    {
+        // Arrange
+        var italic = ThemeFontFace.Create(400, ThemeFontStyle.Italic, LinkTarget.FromString("/i.woff2")).ShouldBeSuccess();
+
+        // Act
+        var font = ThemeFont.ForFamily("  Noto Sans ", [ThemeFixtures.Face(700), italic]).ShouldBeSuccess();
+
+        // Assert
+        (font.Key, font.Family).ShouldBe(("noto-sans", "Noto Sans"));
+        font.Faces.Select(face => (face.Weight, face.Style)).ShouldBe([(400, ThemeFontStyle.Italic), (700, ThemeFontStyle.Normal)]);
+    }
+
+    [Theory]
+    [InlineData("9 Sans")]
+    [InlineData("A family name that is much longer than thirty-two")]
+    [InlineData("Fira Código")]
+    public void A_valid_family_that_gives_no_key_is_reported_on_the_family_with_the_key_rule_in_its_words(string family)
+    {
+        // Arrange & Act
+        var result = ThemeFont.ForFamily(family, [ThemeFixtures.Face(400)]);
+
+        // Assert
+        result.ShouldBeFailure(ResultStatus.Invalid, ResultErrorCodes.Invalid);
+        var errors = result.FieldErrors();
+        errors.Keys.ShouldBe(["family"]);
+        errors["family"].ShouldBe([ThemeFont.FamilyKeyMessage]);
+    }
+
+    [Theory]
+    [InlineData("Inter\"; } body { display: none } /*")]
+    [InlineData("Inter  Sans")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void An_invalid_family_is_reported_once_on_the_family_without_the_key_rule(string? family)
+    {
+        // Arrange & Act
+        var result = ThemeFont.ForFamily(family, [ThemeFixtures.Face(400)]);
+
+        // Assert
+        var errors = result.FieldErrors();
+        errors.Keys.ShouldBe(["family"]);
+        errors["family"].Length.ShouldBe(1);
+        errors["family"].ShouldNotContain(ThemeFont.FamilyKeyMessage);
+    }
+
+    [Fact]
+    public void A_font_for_a_family_keeps_the_face_rules()
+    {
+        // Arrange & Act
+        var none = ThemeFont.ForFamily("Inter", []);
+        var repeated = ThemeFont.ForFamily("Inter", [ThemeFixtures.Face(400), ThemeFixtures.Face(400)]);
+
+        // Assert
+        none.FieldErrors().Keys.ShouldBe(["faces"]);
+        repeated.FieldErrors().Keys.ShouldBe(["faces"]);
+    }
 }

@@ -93,6 +93,16 @@ public sealed class ValidationErrors
     }
 
     /// <summary>
+    /// Records one message on a field, as an invalid result whose detail is the message, so a validation rule that has no result of its
+    /// own does not build one. Messages on one field keep the order they were added in.
+    /// </summary>
+    /// <param name="field">The field path, such as <c>pt.title</c>.</param>
+    /// <param name="message">The message; it should not echo the input.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="field"/> or <paramref name="message"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="field"/> or <paramref name="message"/> is empty or blank.</exception>
+    public void Add(string field, string message) => errors.Add(Result.Invalid(detail: message, field: field, message: message));
+
+    /// <summary>
     /// Adds a non-generic result to the collection when it failed, and ignores a successful one.
     /// </summary>
     /// <param name="result">The result of one validation step.</param>

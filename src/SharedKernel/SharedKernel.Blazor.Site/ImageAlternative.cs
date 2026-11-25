@@ -30,6 +30,16 @@ public sealed class ImageAlternative : ValueObject
     /// <returns>The alternative, with an empty text.</returns>
     public static ImageAlternative Decorative() => new(string.Empty);
 
+    /// <summary>Renders a decision the domain validated and stored: decorative when <paramref name="alt"/> is, else its description.</summary>
+    /// <param name="alt">The stored decision.</param>
+    /// <returns>The alternative.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="alt" /> is <see langword="null" />.</exception>
+    public static ImageAlternative From(ImageAltText alt)
+    {
+        ArgumentNullException.ThrowIfNull(alt);
+        return alt.IsDecorative ? Decorative() : Describe(alt.Text);
+    }
+
     /// <inheritdoc />
     public override string ToString() => Text;
 

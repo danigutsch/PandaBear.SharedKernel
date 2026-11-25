@@ -38,3 +38,23 @@ static SharedKernel.IO.VerifiedArtifact.Read(string! directory, string! path, st
 static SharedKernel.IO.VerifiedArtifact.Verify(string! directory, string! path, string! sha256, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 static SharedKernel.IO.BoundedReader.ReadContent(System.Net.Http.HttpContent! content, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!
 static SharedKernel.IO.AtomicFile.Replace(string! path, System.ReadOnlySpan<byte> content) -> void
+SharedKernel.IO.ContentAddressedFileStore
+SharedKernel.IO.ContentAddressedFileStore.ContentAddressedFileStore(string! directory) -> void
+SharedKernel.IO.ContentAddressedFileStore.Delete(string! name) -> void
+SharedKernel.IO.ContentAddressedFileStore.PathOf(string! name) -> string!
+SharedKernel.IO.ContentAddressedFileStore.Store(System.ReadOnlyMemory<byte> content, string! extension, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.IO.StoredFile>
+static SharedKernel.IO.ContentAddressedFileStore.NameOf(System.ReadOnlySpan<byte> content, string! extension) -> string!
+SharedKernel.IO.StoredFile
+SharedKernel.IO.StoredFile.Created.get -> bool
+SharedKernel.IO.StoredFile.Created.init -> void
+SharedKernel.IO.StoredFile.Name.get -> string!
+SharedKernel.IO.StoredFile.Name.init -> void
+SharedKernel.IO.StoredFile.StoredFile() -> void
+SharedKernel.IO.StoredFile.StoredFile(string! Name, bool Created) -> void
+SharedKernel.IO.StoredFile.Deconstruct(out string! Name, out bool Created) -> void
+SharedKernel.IO.StoredFile.Equals(SharedKernel.IO.StoredFile other) -> bool
+~override SharedKernel.IO.StoredFile.Equals(object obj) -> bool
+override SharedKernel.IO.StoredFile.GetHashCode() -> int
+~override SharedKernel.IO.StoredFile.ToString() -> string
+static SharedKernel.IO.StoredFile.operator !=(SharedKernel.IO.StoredFile left, SharedKernel.IO.StoredFile right) -> bool
+static SharedKernel.IO.StoredFile.operator ==(SharedKernel.IO.StoredFile left, SharedKernel.IO.StoredFile right) -> bool
