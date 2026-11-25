@@ -135,4 +135,31 @@ public sealed class TranslationListRulesTests
         blankField.ShouldThrow<ArgumentException>().ParamName.ShouldBe("field");
         blankSubject.ShouldThrow<ArgumentException>().ParamName.ShouldBe("subject");
     }
+
+    [Fact]
+    public void FieldOf_prefixes_a_field_with_the_culture_of_its_translation()
+    {
+        // Arrange
+        var culture = ContentCulture.Restore("pt-BR");
+
+        // Act
+        var title = TranslationListRules.FieldOf(culture, "title");
+        var step = TranslationListRules.FieldOf(En, "steps[2].note");
+
+        // Assert
+        title.ShouldBe("pt-BR.title");
+        step.ShouldBe("en.steps[2].note");
+    }
+
+    [Fact]
+    public void FieldOf_refuses_a_missing_culture_or_a_blank_field()
+    {
+        // Act
+        Action missingCulture = () => _ = TranslationListRules.FieldOf(null!, "title");
+        Action blankField = () => _ = TranslationListRules.FieldOf(Pt, " ");
+
+        // Assert
+        missingCulture.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("culture");
+        blankField.ShouldThrow<ArgumentException>().ParamName.ShouldBe("field");
+    }
 }

@@ -78,8 +78,6 @@ public sealed partial class Section
         _ => "site-section",
     };
 
-    private bool HasEyebrow => !string.IsNullOrWhiteSpace(Eyebrow);
-
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
