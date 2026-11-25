@@ -755,7 +755,7 @@
       "migrationException": "The current executable has multiple explicit testing seams.",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Npgsql/SharedKernel.Npgsql.csproj","type":"Unit","dependency":"in-process","capabilities":["AppHostModel","AspireReadiness"],"lane":"services"},
-        {"sut":"src/SharedKernel/SharedKernel.Npgsql/SharedKernel.Npgsql.csproj","type":"Integration","dependency":"postgresql","capabilities":["AppHostModel","AspireReadiness"],"lane":"services"}
+        {"sut":"src/SharedKernel/SharedKernel.Npgsql/SharedKernel.Npgsql.csproj","type":"Integration","dependency":"postgresql","capabilities":["AppHostModel","AspireReadiness","PostgreSqlJobScheduler"],"lane":"services"}
       ]
     },
     {

@@ -93,6 +93,35 @@ CREATE INDEX schedule_runs_unfinished_recent
   cycles. Its telemetry shows local activity and completed cycles. Supply an intended fire time
   only when an execution provider knows it. The store reports observed runs across host restarts.
 
+## Durable job execution
+
+`PostgreSqlJobScheduler` coordinates execution across hosts. Run `CreateSchemaSql(schema)` through a
+reviewed migration, or call `InitializeSchema` with the schema owner's data source. The schema must already
+exist. Construction and the worker operations use the existing tables. Grant runtime workers the table
+permissions for the operations they use.
+
+- `Register` creates a job by its stable configured name. A repeated declaration preserves the due time,
+  recurrence delay, pause state and unfinished work. Register the same job names in every worker for a schema.
+- `Acquire` claims one due unpaused job. Available jobs are ordered by eligible time and name. A competing
+  worker skips a row being claimed. `Renew` extends only the current unexpired lease using PostgreSQL time.
+  An expired unfinished execution comes back with its original run ID and a new fence. A handler may run again
+  after cancellation, process loss or an uncertain acknowledgement. Keep handlers repeatable and pass the run ID
+  to downstream idempotency mechanisms that need it. The fence protects scheduler writes.
+- `Complete` accepts only the current unexpired fence. Scheduled completion advances a fixed-delay job by
+  the elapsed delay from database completion time. For caller-defined recurrence, pass the next due time or
+  null to leave the job unscheduled. Completing a manual or retry execution preserves the normal schedule.
+- Pausing holds new acquisitions, including queued requests and expired executions. A live owner can still
+  renew or finish. `Trigger` and `Retry` use the request UUID as the new run ID. Exact duplicate requests
+  return success while their execution rows are retained. Conflicting UUID reuse returns false. Retrying an
+  eligible failed run records that a retry was scheduled and queues one new execution.
+- Use the caller-owned `NpgsqlTransaction` overloads for pause, trigger or retry when the caller also writes
+  an audit event in the same database. The caller commits or rolls back. Use the same request UUID for a
+  retried operation. The application owns its permissions, approved jobs, eligibility and audit fields.
+- `ReadJob` reads the persisted due and paused state. `ReadHistory` and `ReadActive` use the scheduling
+  observation types and page bounds. History includes started executions. Pending requests stay queued until
+  acquired. The storage contract contains no job payloads, credentials, sensitive arguments or exception text.
+  Set retention policy with the application. Removing an execution also removes the record of its request UUID.
+
 ## Lock-key derivation
 
 ```csharp

@@ -75,6 +75,7 @@ internal static class TelemetryPrivacyAttributeClassifier
         "net.peer.ip",
         "net.peer.name",
         "net.peer.port",
+        "peer.service",
         "server.address",
         "server.port",
     };

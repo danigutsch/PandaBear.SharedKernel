@@ -53,6 +53,7 @@ public sealed class ActivityPrivacyExportTests
             activity.SetTag("http.request.method", "GET");
             activity.SetTag("http.response.status_code", 200);
             activity.SetTag("server.address", "example.test");
+            activity.SetTag("peer.service", "other-test-service");
             activity.SetTag("aws.service", "S3");
             activity.SetTag("aws.operation", "PutObject");
         }
@@ -70,6 +71,7 @@ public sealed class ActivityPrivacyExportTests
         result.GetTagItem("http.request.method").ShouldBe("GET");
         result.GetTagItem("http.response.status_code").ShouldBe(200);
         result.GetTagItem("server.address").ShouldBe("example.test");
+        result.GetTagItem("peer.service").ShouldBe("other-test-service");
         result.GetTagItem("aws.service").ShouldBe("S3");
         result.GetTagItem("aws.operation").ShouldBe("PutObject");
     }
@@ -131,6 +133,7 @@ public sealed class ActivityPrivacyExportTests
         [
             "db.name", "db.namespace", "db.user", "db.collection.name", "db.stored_procedure.name",
             "server.address", "server.port", "net.peer.name", "net.peer.port", "net.peer.ip",
+            "peer.service", "PEER.SERVICE",
         ];
 
         // Act

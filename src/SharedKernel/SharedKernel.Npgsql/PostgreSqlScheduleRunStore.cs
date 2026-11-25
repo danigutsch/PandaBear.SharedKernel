@@ -165,6 +165,7 @@ public sealed class PostgreSqlScheduleRunStore
                 END
             FROM {relation}
             WHERE job_name COLLATE pg_catalog."C" = @job_name
+                AND started_at IS NOT NULL
                 {activeFilter}
                 AND (@after_started_at IS NULL OR (started_at, run_id) < (@after_started_at, @after_run_id))
             ORDER BY started_at DESC, run_id DESC
