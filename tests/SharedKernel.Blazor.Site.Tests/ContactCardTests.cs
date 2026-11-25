@@ -119,7 +119,18 @@ public sealed class ContactCardTests : BunitContext
         var render = () => Render<ContactCard>(parameters => parameters.Add(component => component.Email, EmailAddress.Restore(stored)));
 
         // Assert
-        render.ShouldThrow<ArgumentException>();
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ContactCard.Email));
+    }
+
+    [Fact]
+    public void An_email_address_with_an_international_domain_shows_as_written_and_links_to_its_punycode_form()
+    {
+        // Arrange & Act
+        var cut = Render<ContactCard>(parameters => parameters.Add(component => component.Email, Email("contato@viajantés.com.br")));
+
+        // Assert
+        var link = cut.Find("a");
+        (link.TextContent, link.GetAttribute("href")).ShouldBe(("contato@viajantés.com.br", "mailto:contato@xn--viajants-h1a.com.br"));
     }
 
     [Theory]
@@ -133,8 +144,8 @@ public sealed class ContactCardTests : BunitContext
         var whatsApp = () => Render<ContactCard>(parameters => parameters.Add(component => component.WhatsApp, PhoneNumber.Restore(stored)));
 
         // Assert
-        phone.ShouldThrow<ArgumentException>();
-        whatsApp.ShouldThrow<ArgumentException>();
+        phone.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ContactCard.Phone));
+        whatsApp.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ContactCard.WhatsApp));
     }
 
     [Fact]
