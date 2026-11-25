@@ -60,7 +60,7 @@ translation of a supported culture in entered order, refuses an unsupported cult
 languages: {cultures}.`) and a repeated one (`Each language can have only one translation.`), and then requires the default culture
 (`A translation in the default language ({default}) is required.`), all on one field. `Merge` replaces stored translations in place,
 keeping the instance of a culture that stays so a persistence layer updates its row, and `Same` tells whether a replacement would
-change nothing.
+change nothing. `FieldOf(culture, field)` builds the path of an error on one translation's field, such as `pt-BR.title`.
 
 ## Image eligibility
 
