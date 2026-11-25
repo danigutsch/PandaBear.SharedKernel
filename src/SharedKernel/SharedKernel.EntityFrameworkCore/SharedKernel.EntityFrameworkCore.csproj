@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
+        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
     </ItemGroup>
 
     <ItemGroup>
