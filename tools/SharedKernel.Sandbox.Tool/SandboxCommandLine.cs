@@ -1,4 +1,5 @@
 using System.CommandLine;
+using SharedKernel.CommandLine;
 using SharedKernel.InputNormalization;
 
 namespace SharedKernel.Sandbox.Tool;
@@ -18,11 +19,7 @@ internal static class SandboxCommandLine
         ArgumentNullException.ThrowIfNull(workingDirectory);
         ArgumentNullException.ThrowIfNull(environment);
 
-        var rootOption = new Option<string>("--root")
-        {
-            Description = "Repository root directory that holds .config/sharedkernel-sandbox.json. Defaults to the current directory.",
-            HelpName = "path",
-        };
+        var rootOption = new RootOption(workingDirectory, "Repository root directory that holds .config/sharedkernel-sandbox.json. Defaults to the current directory.");
         var doctor = new Command("doctor", "Probe what this environment allows and explain what it means for .NET tools. Changes nothing that lasts.")
         {
             rootOption,
@@ -32,14 +29,8 @@ internal static class SandboxCommandLine
             var error = parseResult.InvocationConfiguration.Error;
             try
             {
-                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
-
                 // A misspelled root would silently skip the denied-read check, which is the security-relevant one.
-                if (!Directory.Exists(root))
-                {
-                    throw new InvalidOperationException("The root directory does not exist.");
-                }
-
+                var root = rootOption.GetExistingDirectory(parseResult);
                 var configuration = await SandboxConfigurationFile.Read(root, cancellationToken).ConfigureAwait(false);
                 return await new SandboxDoctor(environment).Run(configuration, parseResult.InvocationConfiguration.Output, cancellationToken).ConfigureAwait(false);
             }

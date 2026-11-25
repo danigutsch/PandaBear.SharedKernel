@@ -117,19 +117,18 @@ public sealed class ForgejoLabelSyncCommandTests
     [InlineData("owner")]
     [InlineData("owner/name/extra")]
     [InlineData("owner/..")]
-    public async Task A_repository_that_is_not_owner_slash_name_is_rejected_before_any_request(string repository)
+    public async Task A_repository_that_is_not_owner_slash_name_is_a_parse_error_before_any_request(string repository)
     {
         // Arrange
         using var workspace = CreateWorkspace(Configuration);
         using var handler = new TestHttpMessageHandler();
 
         // Act
-        var (exitCode, output, error) = await RunForgejo(workspace, handler, force: false, repository: repository);
+        var (exitCode, _, error) = await RunForgejo(workspace, handler, force: false, repository: repository);
 
         // Assert
         exitCode.ShouldBe(1);
-        output.ShouldBe(string.Empty);
-        error.ShouldBe("repo: --repository must name a Forgejo repository as owner/name.\n");
+        error.ShouldContain("--repository requires owner/name: ASCII letters, digits, '-', '.', and '_' in each part, and neither part '.' nor '..'.", StringComparison.Ordinal);
         handler.Requests.ShouldBeEmpty();
     }
 

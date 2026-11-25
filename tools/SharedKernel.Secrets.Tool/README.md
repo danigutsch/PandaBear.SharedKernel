@@ -30,7 +30,7 @@ A local tool runs as `dotnet tool run secrets -- verify`.
 ## Usage
 
 Changes are previewed unless `--force` is given. `--root <path>` is the repository root and defaults to the current directory;
-file arguments are relative to it.
+file arguments are relative to it. A relative root resolves from the current directory, an empty value is a command-line error, and a root that is not an existing directory fails with `--root is not an existing directory: <path>`.
 
 ```text
 dotnet secrets keygen --output ~/.config/age/work.txt
@@ -170,7 +170,7 @@ properties are errors):
 | --- | --- |
 | 0 | Success (for a check: labels consistent, and any requested proof or base comparison passed), or a preview that changed nothing. |
 | 1 | A check ran and found a file whose recipients are not exactly its rule's recipients, a weakened file, a failed proof, or (for `verify`) a file that no rule covers or a label that changed since `--base`; or a command-line parse error. |
-| 2 | The result cannot be known or the request was refused: invalid or missing configuration, no matching rule, a missing program, a failed program, `--output` without `--force` or outside the root, an existing output file, `verify` with nothing to verify, a file, link, or directory that cannot be read, understood, or judged, an unusable `--base`, `--prove-absent-identity` without `--prove-with-identity`, a weakened file or a new version that is not exactly the rule's, a file that changed while it was rewritten, or `edit` without a terminal, an editor, a memory-backed temporary root, or a file that matches its rule. |
+| 2 | The result cannot be known or the request was refused: invalid or missing configuration, a `--root` that is not an existing directory, no matching rule, a missing program, a failed program, `--output` without `--force` or outside the root, an existing output file, `verify` with nothing to verify, a file, link, or directory that cannot be read, understood, or judged, an unusable `--base`, `--prove-absent-identity` without `--prove-with-identity`, a weakened file or a new version that is not exactly the rule's, a file that changed while it was rewritten, or `edit` without a terminal, an editor, a memory-backed temporary root, or a file that matches its rule. |
 
 ## Limits
 

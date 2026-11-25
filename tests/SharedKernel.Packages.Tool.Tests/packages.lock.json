@@ -174,10 +174,24 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.CommandLine": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Forgejo": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "System.CommandLine": "[3.0.0, )"
+        }
+      },
       "PandaBear.SharedKernel.ConfigurationFiles": {
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Forgejo": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.InputNormalization": {
@@ -198,6 +212,7 @@
       "PandaBear.SharedKernel.Packages.Tool": {
         "type": "Project",
         "dependencies": {
+          "PandaBear.SharedKernel.CommandLine": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Packages": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",

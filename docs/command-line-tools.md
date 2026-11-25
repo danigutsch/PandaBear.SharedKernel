@@ -74,6 +74,11 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
   other tools, and consuming repositories. Consuming repositories adopt it with the tool package version that
   contains it.
 - Secrets are never arguments.
+- `--root`, `--repository`, and `--forgejo` are the `SharedKernel.CommandLine` options, so every tool validates them
+  the same way and prints the same messages. `--root` defaults to the current directory, resolves a relative path from
+  it, and refuses an empty value; a command that reads the root calls `GetExistingDirectory`, which fails with
+  `--root is not an existing directory: <path>`, and only a command that creates the root reads it with
+  `GetDirectory`.
 
 ## Behavior
 
@@ -192,9 +197,10 @@ Engines take their side effects as constructor-injected abstractions from `Share
 Helpers that two or more tools call live in the library that owns the concept: `RepositoryPath` and `BoundedReader` in
 `SharedKernel.IO`, `ControlCharacters` (with `EscapeLines` for multi-line messages) in `SharedKernel.InputNormalization`,
 `CandidateManifest` in `SharedKernel.Versioning`, process execution, executable resolution, `ProcessTree`, and
-`ProcessEnvironment` in `SharedKernel.Processes`, `JsonConfigurationFile` in `SharedKernel.ConfigurationFiles`, and
-`GitHubToken` and `GitHubApiClient` in `SharedKernel.GitHub`. Tools reference those projects; they do not link
-source files from other directories.
+`ProcessEnvironment` in `SharedKernel.Processes`, `JsonConfigurationFile` in `SharedKernel.ConfigurationFiles`,
+`GitHubToken` and `GitHubApiClient` in `SharedKernel.GitHub`, and the shared `--root`, `--repository`, and `--forgejo`
+options (`RootOption`, `RepositoryOption`, `ForgejoOption`) in `SharedKernel.CommandLine`. Tools reference those
+projects; they do not link source files from other directories.
 
 `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an engine; the other tools move theirs
 incrementally. Each wrapped tool and the libraries it wraps:

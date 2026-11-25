@@ -2,8 +2,8 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Globalization;
+using SharedKernel.CommandLine;
 using SharedKernel.DevContainers;
-using SharedKernel.Forgejo;
 using SharedKernel.Processes;
 using SharedKernel.Repositories;
 using SharedKernel.Repositories.GitHub;
@@ -48,7 +48,7 @@ internal static class RepoConfigCommandLine
     {
         ArgumentNullException.ThrowIfNull(environment);
 
-        var root = CreateRootOption(environment.WorkingDirectory);
+        var root = new RootOption(environment.WorkingDirectory);
         var command = new RootCommand("Maintains repository roadmap configuration, GitHub projection, and repository checks.")
         {
             CreateInitCommand(environment, root),
@@ -81,57 +81,31 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Option<string> CreateRootOption(string workingDirectory) =>
-        new("--root")
-        {
-            Description = "Repository root directory. Defaults to the current directory.",
-            HelpName = "path",
-            CustomParser = result =>
-            {
-                var path = result.Tokens.Count == 1 ? result.Tokens[0].Value : null;
-                if (string.IsNullOrWhiteSpace(path))
-                {
-                    result.AddError("--root requires a directory path.");
-                    return null;
-                }
-
-                // A response file can supply a null character, which Path.GetFullPath rejects with an exception that
-                // would escape parsing.
-                if (path.Contains('\0', StringComparison.Ordinal))
-                {
-                    result.AddError("--root path contains a null character.");
-                    return null;
-                }
-
-                return Path.GetFullPath(path, workingDirectory);
-            },
-        };
-
-    private static Command CreateInitCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateInitCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("init", "Create the missing roadmap structure files. Existing files are kept.") { root };
         SetGuardedAction(command, (parseResult, output, _, _) =>
-            Task.FromResult(RepoConfigToolApplication.Init(ResolveRoot(parseResult, root, environment), output)));
+            Task.FromResult(RepoConfigToolApplication.Init(root.GetDirectory(parseResult), output)));
         return command;
     }
 
-    private static Command CreateVerifyCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("verify", "Verify the roadmap structure, configuration, and items.") { root };
         SetGuardedAction(command, (parseResult, output, error, _) =>
-            Task.FromResult(RepoConfigToolApplication.Verify(ResolveRoot(parseResult, root, environment), output, error)));
+            Task.FromResult(RepoConfigToolApplication.Verify(root.GetExistingDirectory(parseResult), output, error)));
         return command;
     }
 
-    private static Command CreateDiffCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateDiffCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("diff", "Report drift between the roadmap files and the expected structure.") { root };
         SetGuardedAction(command, (parseResult, output, error, _) =>
-            Task.FromResult(RepoConfigToolApplication.Diff(ResolveRoot(parseResult, root, environment), output, error)));
+            Task.FromResult(RepoConfigToolApplication.Diff(root.GetExistingDirectory(parseResult), output, error)));
         return command;
     }
 
-    private static Command CreateSetCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateSetCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         string[] keys = [RoadmapConfigSetter.GitHubRepositoryKey];
         Argument<string> key = new("key")
@@ -146,14 +120,14 @@ internal static class RepoConfigCommandLine
         };
         Command command = new("set", "Set a roadmap configuration value.") { key, value, root };
         SetGuardedAction(command, (parseResult, output, _, _) => Task.FromResult(RepoConfigToolApplication.Set(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetRequiredValue(key),
             parseResult.GetRequiredValue(value),
             output)));
         return command;
     }
 
-    private static Command CreateGetCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateGetCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Argument<string> query = new("query")
         {
@@ -179,7 +153,7 @@ internal static class RepoConfigCommandLine
         Command command = new("get", "List open roadmap items or roadmap metadata.") { query, value, type, limit, root };
         command.Validators.Add(result => ValidateQueryValue(result, query, value));
         SetGuardedAction(command, (parseResult, output, _, _) => Task.FromResult(RepoConfigToolApplication.Get(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetRequiredValue(query),
             parseResult.GetValue(value),
             parseResult.GetValue(type),
@@ -188,7 +162,7 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateGitHubCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateGitHubCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<bool> force = new("--force")
         {
@@ -197,7 +171,7 @@ internal static class RepoConfigCommandLine
 
         Command sync = new("sync", "Project roadmap items to GitHub issues and Projects. Previews unless --force is given.") { force, root };
         SetGuardedAction(sync, (parseResult, output, _, ct) => RepoConfigToolApplication.SyncGitHub(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetValue(force),
             environment.HttpClient,
             output,
@@ -205,7 +179,7 @@ internal static class RepoConfigCommandLine
 
         Command reconcile = new("reconcile", "Update the reconciliation manifest from the open GitHub issues. Previews unless --force is given.") { force, root };
         SetGuardedAction(reconcile, (parseResult, output, _, ct) => RepoConfigToolApplication.ReconcileGitHub(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetValue(force),
             environment.HttpClient,
             output,
@@ -213,7 +187,7 @@ internal static class RepoConfigCommandLine
 
         Command import = new("import", "Import the reconciled GitHub issue snapshot into roadmap items. Previews unless --force is given.") { force, root };
         SetGuardedAction(import, (parseResult, output, _, ct) => RepoConfigToolApplication.ImportGitHub(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetValue(force),
             environment.HttpClient,
             output,
@@ -225,25 +199,25 @@ internal static class RepoConfigCommandLine
         };
     }
 
-    private static Command CreateBaselineCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateBaselineCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command verify = new("verify", "Report managed baseline files that are missing, outdated, edited, or unmanaged.") { root };
         SetGuardedAction(verify, (parseResult, output, error, ct) =>
-            RepositoryBaseline.Verify(ResolveRoot(parseResult, root, environment), output, error, ct));
+            RepositoryBaseline.Verify(root.GetExistingDirectory(parseResult), output, error, ct));
         Option<bool> force = new("--force")
         {
             Description = "Write the files instead of previewing them. Never replaces an unmanaged or edited file unless its entry sets overwriteExisting."
         };
         Command apply = new("apply", "Create and update the managed baseline files from the consumer configuration. Previews unless --force is given.") { force, root };
         SetGuardedAction(apply, (parseResult, output, error, ct) => RepositoryBaseline.Apply(
-            ResolveRoot(parseResult, root, environment), parseResult.GetValue(force), output, error, ct));
+            root.GetExistingDirectory(parseResult), parseResult.GetValue(force), output, error, ct));
         return new Command("baseline", "Verify or apply the repository baseline files: attributes, editor and ignore settings, README, templates, and wrappers.")
         {
             verify, apply
         };
     }
 
-    private static Command CreateNewCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateNewCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<string?> name = new("--name")
         {
@@ -276,7 +250,7 @@ internal static class RepoConfigCommandLine
             name, branch, language, sdkVersion, feature, force, root
         };
         SetGuardedAction(command, (parseResult, output, error, ct) => RepositoryScaffold.Run(
-            ResolveRoot(parseResult, root, environment),
+            root.GetDirectory(parseResult),
             parseResult.GetValue(name),
             parseResult.GetRequiredValue(branch),
             parseResult.GetRequiredValue(language),
@@ -289,25 +263,24 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateSyncLabelsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateSyncLabelsCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
-        Option<string> repository = new("--repository")
+        RepositoryOption repository = new("GitHub repository whose labels are synchronized, as owner/name; with --forgejo, a repository of that Forgejo instance.")
         {
             Required = true,
-            Description = "GitHub repository whose labels are synchronized, as owner/name; with --forgejo, a repository of that Forgejo instance."
         };
         Option<bool> force = new("--force")
         {
             Description = "Create and update the labels instead of previewing them. Never deletes a label."
         };
-        var forgejo = ForgejoOption("Forgejo instance, such as https://codeberg.org, that hosts --repository instead of GitHub. Its token comes from FORGEJO_TOKEN.");
+        var forgejo = new ForgejoOption("Forgejo instance, such as https://codeberg.org, that hosts --repository instead of GitHub. Its token comes from FORGEJO_TOKEN.");
         Command command = new("sync-labels", "Create missing and update changed GitHub labels from the consumer configuration. Previews unless --force is given.")
         {
             repository, force, forgejo, root
         };
         SetGuardedAction(command, (parseResult, output, _, ct) => parseResult.GetValue(forgejo) is { } server
             ? RepoConfigToolApplication.SyncForgejoLabels(
-                ResolveRoot(parseResult, root, environment),
+                root.GetExistingDirectory(parseResult),
                 parseResult.GetRequiredValue(repository),
                 server,
                 parseResult.GetValue(force),
@@ -315,7 +288,7 @@ internal static class RepoConfigCommandLine
                 output,
                 ct)
             : RepoConfigToolApplication.SyncLabels(
-                ResolveRoot(parseResult, root, environment),
+                root.GetExistingDirectory(parseResult),
                 parseResult.GetRequiredValue(repository),
                 parseResult.GetValue(force),
                 environment.HttpClient,
@@ -324,36 +297,11 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Option<Uri> ForgejoOption(string description) => new("--forgejo")
-    {
-        Description = description,
-        HelpName = "url",
-        CustomParser = static result =>
-        {
-            var value = result.Tokens is [.., var token] ? token.Value : string.Empty;
-            if (Uri.TryCreate(value, UriKind.Absolute, out var server))
-            {
-                try
-                {
-                    ForgejoApiClient.ApiBase(server);
-                    return server;
-                }
-                catch (ArgumentException)
-                {
-                }
-            }
-
-            result.AddError("--forgejo requires an absolute HTTPS address without user information, a query, or a fragment, such as https://codeberg.org.");
-            return null;
-        },
-    };
-
     private static Command CreateLinkSubissueCommand(RepoConfigToolEnvironment environment)
     {
-        Option<string> repository = new("--repository")
+        RepositoryOption repository = new("GitHub repository containing both issues, as owner/name.")
         {
             Required = true,
-            Description = "GitHub repository containing both issues, as owner/name."
         };
         Option<int> parent = new("--parent")
         {
@@ -379,7 +327,7 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateAutomationCommand(RepoConfigToolEnvironment environment, Option<string> root) =>
+    private static Command CreateAutomationCommand(RepoConfigToolEnvironment environment, RootOption root) =>
         new("automation", "Run the integrity-bound roadmap maintenance steps in GitHub Actions.")
         {
             CreateAutomationStep(environment, root, "plan-github", "Create the roadmap maintenance plan.", RepoConfigToolApplication.PlanAutomation),
@@ -392,7 +340,7 @@ internal static class RepoConfigCommandLine
 
     private static Command CreateAutomationStep(
         RepoConfigToolEnvironment environment,
-        Option<string> root,
+        RootOption root,
         string name,
         string description,
         Func<RoadmapAutomationService, TextWriter, CancellationToken, Task<int>> step)
@@ -406,7 +354,7 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreatePublishResultCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreatePublishResultCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<bool> force = new("--force")
         {
@@ -427,20 +375,20 @@ internal static class RepoConfigCommandLine
 
     private static RoadmapAutomationService CreateAutomationService(
         ParseResult parseResult,
-        Option<string> root,
+        RootOption root,
         RepoConfigToolEnvironment environment,
         GitHubConnection connection) =>
-        new(ResolveRoot(parseResult, root, environment), connection, environment.GitRepository);
+        new(root.GetExistingDirectory(parseResult), connection, environment.GitRepository);
 
-    private static Command CreateVerifyTextEncodingCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyTextEncodingCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("verify-text-encoding", "Verify that text files in the Git index are valid UTF-8 without NUL bytes.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
-            RepoConfigToolApplication.VerifyTextEncoding(ResolveRoot(parseResult, root, environment), output, error, ct));
+            RepoConfigToolApplication.VerifyTextEncoding(root.GetExistingDirectory(parseResult), output, error, ct));
         return command;
     }
 
-    private static Command CreateVerifyGherkinCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyGherkinCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Argument<string[]> paths = new("path")
         {
@@ -449,7 +397,7 @@ internal static class RepoConfigCommandLine
         };
         Command command = new("verify-gherkin", "Verify tracked Gherkin feature files against the gherkin rules in .config/sharedkernel-repo.json.") { paths, root };
         SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyGherkin(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetValue(paths) ?? [],
             output,
             error,
@@ -457,23 +405,23 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateVerifyJsonCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyJsonCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("verify-json", "Verify that the working-tree content of every JSON file in the Git index is UTF-8 JSON. Comments and trailing commas are allowed.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
-            RepoConfigToolApplication.VerifyJson(ResolveRoot(parseResult, root, environment), output, error, ct));
+            RepoConfigToolApplication.VerifyJson(root.GetExistingDirectory(parseResult), output, error, ct));
         return command;
     }
 
-    private static Command CreateVerifyLineEndingsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyLineEndingsCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("verify-line-endings", "Verify that files in the Git index and the working tree use the line endings that their eol attribute requires.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
-            RepoConfigToolApplication.VerifyLineEndings(ResolveRoot(parseResult, root, environment), output, error, ct));
+            RepoConfigToolApplication.VerifyLineEndings(root.GetExistingDirectory(parseResult), output, error, ct));
         return command;
     }
 
-    private static Command CreateVerifyActionPinsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyActionPinsCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<string> manifest = new("--manifest")
         {
@@ -482,7 +430,7 @@ internal static class RepoConfigCommandLine
         };
         Command command = new("verify-action-pins", "Verify that every external uses: reference pins the full commit SHA and version comment that the action pin manifest approves.") { manifest, root };
         SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyActionPins(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetValue(manifest),
             output,
             error,
@@ -490,32 +438,32 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateVerifyDependabotCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyDependabotCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("verify-dependabot", "Verify that every Dependabot ignore entry names update-types, so ignored dependencies still receive security updates.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
-            RepoConfigToolApplication.VerifyDependabot(ResolveRoot(parseResult, root, environment), output, error, ct));
+            RepoConfigToolApplication.VerifyDependabot(root.GetExistingDirectory(parseResult), output, error, ct));
         return command;
     }
 
-    private static Command CreateVerifyTestTaxonomyCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyTestTaxonomyCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<bool> report = new("--report") { Description = "Report taxonomy findings without failing the command." };
         Command command = new("verify-test-taxonomy", "Verify the declared SUTs, test types, names, and seam registers of tracked projects.") { report, root };
         SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyTestTaxonomy(
-            ResolveRoot(parseResult, root, environment), parseResult.GetValue(report), output, error, ct));
+            root.GetExistingDirectory(parseResult), parseResult.GetValue(report), output, error, ct));
         return command;
     }
 
-    private static Command CreateVerifyTargetFrameworksCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyTargetFrameworksCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("verify-target-frameworks", "Verify that the tracked project files build the target frameworks that the targetFrameworks policy in .config/sharedkernel-repo.json expects.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
-            RepoConfigToolApplication.VerifyTargetFrameworks(ResolveRoot(parseResult, root, environment), output, error, ct));
+            RepoConfigToolApplication.VerifyTargetFrameworks(root.GetExistingDirectory(parseResult), output, error, ct));
         return command;
     }
 
-    private static Command CreateVerifyLinksCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyLinksCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Argument<string[]> paths = new("path")
         {
@@ -524,7 +472,7 @@ internal static class RepoConfigCommandLine
         };
         Command command = new("verify-links", "Verify local links, Markdown anchors, and issue references in documentation files.") { paths, root };
         SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyLinks(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetValue(paths) ?? [],
             output,
             error,
@@ -617,7 +565,7 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateDependencyCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateDependencyCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<string> sha = new("--sha")
         {
@@ -650,7 +598,7 @@ internal static class RepoConfigCommandLine
         };
         SetGuardedAction(snapshot, (parseResult, output, error, cancellationToken) => RepoConfigToolApplication.WriteDependencySnapshot(
             new DependencySnapshotOptions(
-                ResolveRoot(parseResult, root, environment),
+                root.GetExistingDirectory(parseResult),
                 parseResult.GetRequiredValue(sha),
                 parseResult.GetRequiredValue(reference),
                 parseResult.GetRequiredValue(job),
@@ -670,7 +618,7 @@ internal static class RepoConfigCommandLine
         };
     }
 
-    private static Command CreatePinInspectionCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreatePinInspectionCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<string> package = new("--package")
         {
@@ -682,11 +630,11 @@ internal static class RepoConfigCommandLine
             root, package,
         };
         SetGuardedAction(command, (parseResult, output, error, cancellationToken) => NuGetPinInspection.Run(
-            ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(package), output, error, cancellationToken));
+            root.GetExistingDirectory(parseResult), parseResult.GetRequiredValue(package), output, error, cancellationToken));
         return command;
     }
 
-    private static Command CreateRestoreGraphComparisonCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateRestoreGraphComparisonCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         var candidate = CreatePathOption("--candidate", "Candidate Git checkout. Relative to the baseline root.");
         candidate.Required = true;
@@ -700,7 +648,7 @@ internal static class RepoConfigCommandLine
         };
         SetGuardedAction(command, (parseResult, output, error, cancellationToken) => NuGetRestoreGraphComparison.Run(
             new NuGetRestoreGraphComparisonOptions(
-                ResolveRoot(parseResult, root, environment),
+                root.GetExistingDirectory(parseResult),
                 parseResult.GetRequiredValue(candidate),
                 parseResult.GetRequiredValue(destination),
                 parseResult.GetValue(baselineVerification),
@@ -711,7 +659,7 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateNuGetUpgradeTrialCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateNuGetUpgradeTrialCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         var plan = CreatePathOption("--plan", "New patch path, with a JSON receipt at that path plus .json. Relative to the root.");
         plan.Required = true;
@@ -734,7 +682,7 @@ internal static class RepoConfigCommandLine
         };
         SetGuardedAction(command, (parseResult, output, error, ct) => NuGetUpgradeTrial.Run(
             new NuGetUpgradeTrialOptions(
-                ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(plan), parseResult.GetRequiredValue(props),
+                root.GetExistingDirectory(parseResult), parseResult.GetRequiredValue(plan), parseResult.GetRequiredValue(props),
                 parseResult.GetValue(remove), parseResult.GetValue(updates) ?? [], parseResult.GetValue(vulnerable),
                 parseResult.GetValue(sources) ?? [], parseResult.GetValue(build), parseResult.GetValue(test))
             {
@@ -745,15 +693,13 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateDependencySubmitCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateDependencySubmitCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         var snapshot = CreatePathOption("--snapshot", "Dependency snapshot JSON file. Relative to the root.");
         snapshot.Required = true;
-        Option<string> repository = new("--repository")
+        RepositoryOption repository = new("GitHub repository that receives the snapshot.")
         {
             Required = true,
-            Description = "GitHub repository that receives the snapshot.",
-            HelpName = "owner/name",
         };
         Option<bool> force = new("--force")
         {
@@ -765,7 +711,7 @@ internal static class RepoConfigCommandLine
         };
         SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.SubmitDependencySnapshot(
             new DependencySubmitOptions(
-                ResolveRoot(parseResult, root, environment),
+                root.GetExistingDirectory(parseResult),
                 parseResult.GetRequiredValue(snapshot),
                 parseResult.GetRequiredValue(repository),
                 parseResult.GetValue(force)),
@@ -775,7 +721,7 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
-    private static Command CreateVerifyLicenseExceptionsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyLicenseExceptionsCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         var githubOutput = CreatePathOption("--github-output", "GitHub Actions output file that receives packages, the approved package URLs. Relative to the root.");
         Command command = new("verify-license-exceptions", "Verify that the configured license exceptions match their approval and the locked package versions.")
@@ -783,7 +729,7 @@ internal static class RepoConfigCommandLine
             githubOutput, root
         };
         SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyLicenseExceptions(
-            ResolveRoot(parseResult, root, environment),
+            root.GetExistingDirectory(parseResult),
             parseResult.GetValue(githubOutput),
             output,
             error,
@@ -809,11 +755,11 @@ internal static class RepoConfigCommandLine
             },
         };
 
-    private static Command CreateSecurityCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateSecurityCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command baseline = new("baseline", "Verify repository security document contracts.") { root };
         SetGuardedAction(baseline, (parseResult, output, error, ct) => RepositorySecurity.Run(
-            ResolveRoot(parseResult, root, environment), null, output, error, ct));
+            root.GetExistingDirectory(parseResult), null, output, error, ct));
         Option<string> destination = new("--output")
         {
             Description = "Repository-relative or absolute report directory. Existing reports are preserved.",
@@ -833,11 +779,11 @@ internal static class RepoConfigCommandLine
         };
         Command scan = new("scan", "Verify the baseline and scan current source with the pinned Gitleaks executable.") { root, destination };
         SetGuardedAction(scan, (parseResult, output, error, ct) => RepositorySecurity.Run(
-            ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(destination), output, error, ct));
+            root.GetExistingDirectory(parseResult), parseResult.GetRequiredValue(destination), output, error, ct));
         return new Command("security", "Verify security document contracts and scan current source.") { baseline, scan };
     }
 
-    private static Command CreateVerifyDevcontainerCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    private static Command CreateVerifyDevcontainerCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<string[]> commands = new("--exec")
         {
@@ -880,7 +826,7 @@ internal static class RepoConfigCommandLine
         };
         SetGuardedAction(command, (parseResult, output, _, ct) =>
         {
-            var rootPath = ResolveRoot(parseResult, root, environment);
+            var rootPath = root.GetExistingDirectory(parseResult);
             var cliPath = parseResult.GetValue(cli);
             return DevcontainerVerification.Run(
                 new DevcontainerVerificationOptions(
@@ -903,9 +849,6 @@ internal static class RepoConfigCommandLine
             var error = parseResult.InvocationConfiguration.Error;
             return RepoConfigToolApplication.Guard(error, () => action(parseResult, output, error, ct), ct);
         });
-
-    private static string ResolveRoot(ParseResult parseResult, Option<string> root, RepoConfigToolEnvironment environment) =>
-        parseResult.GetValue(root) ?? Path.GetFullPath(environment.WorkingDirectory);
 
     private static int ParseLimit(ArgumentResult result)
     {

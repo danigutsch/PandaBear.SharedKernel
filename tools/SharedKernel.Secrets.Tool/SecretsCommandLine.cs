@@ -1,4 +1,5 @@
 using System.CommandLine;
+using SharedKernel.CommandLine;
 using SharedKernel.Secrets.Age;
 using SharedKernel.Secrets.Sops;
 
@@ -16,11 +17,7 @@ internal static class SecretsCommandLine
     {
         ArgumentNullException.ThrowIfNull(environment);
 
-        var rootOption = new Option<string>("--root")
-        {
-            Description = "Repository root directory. Defaults to the current directory.",
-            HelpName = "path",
-        };
+        var rootOption = new RootOption(environment.WorkingDirectory);
         var forceOption = new Option<bool>("--force")
         {
             Description = "Make the change. Without it the command only previews.",
@@ -54,7 +51,7 @@ internal static class SecretsCommandLine
             rootOption,
             forceOption,
         };
-        encrypt.SetAction((parseResult, cancellationToken) => Repository(environment, Root(parseResult, rootOption, environment)).Encrypt(
+        SetRootAction(encrypt, rootOption, environment, (parseResult, repository, cancellationToken) => repository.Encrypt(
             new EncryptSettings
             {
                 File = parseResult.GetValue(encryptFile)!,
@@ -84,12 +81,12 @@ internal static class SecretsCommandLine
             decryptOutput,
             forceOption,
         };
-        decrypt.SetAction(async (parseResult, cancellationToken) =>
+        SetRootAction(decrypt, rootOption, environment, async (parseResult, repository, cancellationToken) =>
         {
             var identity = await Identity(parseResult, identityOption, environment, cancellationToken).ConfigureAwait(false);
             return identity is null
                 ? SecretsExitCodes.Failure
-                : await Repository(environment, Root(parseResult, rootOption, environment)).Decrypt(
+                : await repository.Decrypt(
                     new DecryptSettings
                     {
                         Target = parseResult.GetValue(decryptTarget)!,
@@ -108,7 +105,7 @@ internal static class SecretsCommandLine
             listFile,
             rootOption,
         };
-        list.SetAction((parseResult, cancellationToken) => Repository(environment, Root(parseResult, rootOption, environment)).ListRecipients(
+        SetRootAction(list, rootOption, environment, (parseResult, repository, cancellationToken) => repository.ListRecipients(
             parseResult.GetValue(listFile)!,
             parseResult.InvocationConfiguration.Output,
             parseResult.InvocationConfiguration.Error,
@@ -134,7 +131,7 @@ internal static class SecretsCommandLine
             proveWith,
             proveAbsent,
         };
-        check.SetAction((parseResult, cancellationToken) => Repository(environment, Root(parseResult, rootOption, environment)).CheckRecipients(
+        SetRootAction(check, rootOption, environment, (parseResult, repository, cancellationToken) => repository.CheckRecipients(
             new CheckRecipientsSettings
             {
                 File = parseResult.GetValue(checkFile)!,
@@ -153,13 +150,13 @@ internal static class SecretsCommandLine
             identityOption,
             forceOption,
         };
-        update.SetAction(async (parseResult, cancellationToken) =>
+        SetRootAction(update, rootOption, environment, async (parseResult, repository, cancellationToken) =>
         {
             var force = parseResult.GetValue(forceOption);
             var identity = force ? await Identity(parseResult, identityOption, environment, cancellationToken).ConfigureAwait(false) : OptionalIdentity(parseResult, identityOption, environment);
             return force && identity is null
                 ? SecretsExitCodes.Failure
-                : await Repository(environment, Root(parseResult, rootOption, environment)).UpdateRecipients(
+                : await repository.UpdateRecipients(
                     new UpdateRecipientsSettings { File = parseResult.GetValue(updateFile)!, IdentityPath = identity, Force = force },
                     parseResult.InvocationConfiguration.Output,
                     parseResult.InvocationConfiguration.Error,
@@ -181,13 +178,13 @@ internal static class SecretsCommandLine
             identityOption,
             forceOption,
         };
-        rotate.SetAction(async (parseResult, cancellationToken) =>
+        SetRootAction(rotate, rootOption, environment, async (parseResult, repository, cancellationToken) =>
         {
             var force = parseResult.GetValue(forceOption);
             var identity = force ? await Identity(parseResult, identityOption, environment, cancellationToken).ConfigureAwait(false) : OptionalIdentity(parseResult, identityOption, environment);
             return force && identity is null
                 ? SecretsExitCodes.Failure
-                : await Repository(environment, Root(parseResult, rootOption, environment)).Rotate(
+                : await repository.Rotate(
                     new RotateSettings { File = parseResult.GetValue(rotateFile)!, IdentityPath = identity, Force = force },
                     parseResult.InvocationConfiguration.Output,
                     parseResult.InvocationConfiguration.Error,
@@ -201,7 +198,7 @@ internal static class SecretsCommandLine
             rootOption,
             identityOption,
         };
-        edit.SetAction(async (parseResult, cancellationToken) =>
+        SetRootAction(edit, rootOption, environment, async (parseResult, repository, cancellationToken) =>
         {
             var error = parseResult.InvocationConfiguration.Error;
             if (!environment.IsTerminal())
@@ -224,7 +221,7 @@ internal static class SecretsCommandLine
             }
 
             var runtime = environment.GetEnvironmentVariable("XDG_RUNTIME_DIR");
-            return await Repository(environment, Root(parseResult, rootOption, environment)).Edit(
+            return await repository.Edit(
                 new EditSettings
                 {
                     File = parseResult.GetValue(editFile)!,
@@ -261,7 +258,7 @@ internal static class SecretsCommandLine
             baseOption,
             allowChanged,
         };
-        verify.SetAction((parseResult, cancellationToken) => Repository(environment, Root(parseResult, rootOption, environment)).Verify(
+        SetRootAction(verify, rootOption, environment, (parseResult, repository, cancellationToken) => repository.Verify(
             new VerifySettings
             {
                 AllowUnverifiedFiles = parseResult.GetValue(allowUnverified),
@@ -286,8 +283,30 @@ internal static class SecretsCommandLine
         return root;
     }
 
-    private static string Root(ParseResult parseResult, Option<string> rootOption, SecretsEnvironment environment) =>
-        Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", environment.WorkingDirectory);
+    /// <summary>
+    /// Sets an action that runs with the repository at the existing <c>--root</c>, or prints that the root is not an
+    /// existing directory and returns <see cref="SecretsExitCodes.Failure"/>.
+    /// </summary>
+    private static void SetRootAction(
+        Command command,
+        RootOption rootOption,
+        SecretsEnvironment environment,
+        Func<ParseResult, SecretsRepository, CancellationToken, Task<int>> action) =>
+        command.SetAction(async (parseResult, cancellationToken) =>
+        {
+            string root;
+            try
+            {
+                root = rootOption.GetExistingDirectory(parseResult);
+            }
+            catch (DirectoryNotFoundException exception)
+            {
+                await parseResult.InvocationConfiguration.Error.WriteLineAsync(exception.Message.AsMemory(), cancellationToken).ConfigureAwait(false);
+                return SecretsExitCodes.Failure;
+            }
+
+            return await action(parseResult, Repository(environment, root), cancellationToken).ConfigureAwait(false);
+        });
 
     private static SecretsRepository Repository(SecretsEnvironment environment, string root) => new(
         root,

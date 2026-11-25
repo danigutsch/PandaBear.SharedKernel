@@ -126,15 +126,9 @@ public sealed class DependencySubmitCommandTests
     }
 
     [Theory]
-    [InlineData("owner")]
-    [InlineData("owner/repository/extra")]
-    [InlineData("owner/..")]
-    [InlineData("owner/.")]
     [InlineData("-owner/repository")]
-    [InlineData("owner/repo sitory")]
-    [InlineData("owner/repository\n")]
-    [InlineData("owner/repository?x=1")]
-    public async Task Submit_rejects_a_repository_that_is_not_owner_and_name_before_any_request(string repository)
+    [InlineData("owner--x/repository")]
+    public async Task Submit_rejects_a_repository_that_the_forge_does_not_allow_before_any_request(string repository)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -156,6 +150,39 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(1);
         error.ToString().ShouldBe("repo: --repository must name a GitHub repository as owner/name.\n");
+        handler.Requests.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("owner")]
+    [InlineData("owner/repository/extra")]
+    [InlineData("owner/..")]
+    [InlineData("owner/.")]
+    [InlineData("owner/repo sitory")]
+    [InlineData("owner/repository\n")]
+    [InlineData("owner/repository?x=1")]
+    public async Task Submit_rejects_a_repository_that_is_not_owner_and_name_as_a_parse_error(string repository)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        workspace.WriteFile(SnapshotPath, Snapshot);
+        using var handler = new TestHttpMessageHandler();
+        using var httpClient = new HttpClient(handler);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["dependency", "submit", "--snapshot", SnapshotPath, "--repository", repository, "--force", "--root", workspace.RootPath],
+            output,
+            error,
+            Path.GetTempPath(),
+            httpClient,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ToString().ShouldContain("--repository requires owner/name", StringComparison.Ordinal);
         handler.Requests.ShouldBeEmpty();
     }
 

@@ -705,7 +705,21 @@ public sealed class SettingsCommandTests
 
         // Assert
         exitCode.ShouldBe(2);
-        error.ShouldContain("root directory does not exist", StringComparison.Ordinal);
+        error.ShouldBe("--root is not an existing directory: " + Path.Combine(repository.Path, "missing") + "\n");
+    }
+
+    [Fact]
+    public async Task An_empty_root_is_a_parse_error_instead_of_the_current_directory()
+    {
+        // Arrange
+        using var repository = CreateRepository(Configuration("""{ "allowWrite": ["~/x"] }"""));
+
+        // Act
+        var (exitCode, _, error) = await SandboxToolHarness.RunWithArguments(repository.Path, new FakeSandboxEnvironment(), "settings", "apply", "--force", "--root", "");
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain("--root requires a directory path.", StringComparison.Ordinal);
     }
 
     [Fact]

@@ -18,6 +18,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.CI\SharedKernel.CI.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.CommandLine\SharedKernel.CommandLine.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DevContainers\SharedKernel.DevContainers.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Forgejo\SharedKernel.Forgejo.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />

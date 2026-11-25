@@ -29,4 +29,16 @@ internal static class SandboxToolHarness
             .InvokeAsync(new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null }, TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
     }
+
+    /// <summary>Runs exactly <paramref name="arguments"/> with <paramref name="workingDirectory"/> as the current directory.</summary>
+    public static async Task<(int ExitCode, string Output, string Error)> RunWithArguments(string workingDirectory, ISandboxEnvironment environment, params string[] arguments)
+    {
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
+        var exitCode = await SandboxCommandLine
+            .Create(workingDirectory, environment)
+            .Parse(arguments)
+            .InvokeAsync(new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null }, TestContext.Current.CancellationToken);
+        return (exitCode, output.ToString(), error.ToString());
+    }
 }

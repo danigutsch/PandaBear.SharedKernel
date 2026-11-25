@@ -43,7 +43,7 @@ dotnet loadtest --help
 
 `run` takes `--scenario <name>` and optionally `--container`, `--image <ref@sha256:digest>` (requires
 `--container`), `--allow-external-target`, `--allow-http-debug`, `--allow-remote-output`, `--root <path>` (default:
-the current directory), and k6 arguments after `--`.
+the current directory; a relative root resolves from it, an empty value is a command-line error, and a root that is not an existing directory fails with `--root is not an existing directory: <path>`), and k6 arguments after `--`.
 
 `run` reads the scenario, checks the k6 arguments, and resolves the target:
 

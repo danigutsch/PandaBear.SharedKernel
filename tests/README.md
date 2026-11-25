@@ -26,6 +26,9 @@ describes the schema and strict validation mode.
 `SharedKernel.ContentRights.Tests.Unit` verifies licence declarations, attribution validation and conversion of
 reviewed image credits in process. The SEO and Blazor Site suites exercise their metadata and UI projections.
 
+`SharedKernel.CommandLine.Tests.Unit` parses the shared `--root`, `--repository`, and `--forgejo` options in process. Each
+tool's own suite runs a command with `--root ""` to prove that the tool uses them.
+
 ## Shared test services
 
 `SharedKernel.Npgsql.Tests`, `SharedKernel.EventSourcing.Npgsql.Tests` and `SharedKernel.EntityFrameworkCore.Tests` need PostgreSQL;

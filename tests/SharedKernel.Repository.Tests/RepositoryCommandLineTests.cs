@@ -273,7 +273,6 @@ public sealed class RepositoryCommandLineTests
     [InlineData("danigutsch/")]
     [InlineData("/PandaBear.SharedKernel")]
     [InlineData("danigutsch/PandaBear/SharedKernel")]
-    [InlineData("dani_gutsch/PandaBear.SharedKernel")]
     [InlineData("danigutsch/..")]
     [InlineData("danigutsch/.")]
     [InlineData("danigutsch/Panda Bear")]
@@ -292,12 +291,27 @@ public sealed class RepositoryCommandLineTests
         result.Error.ShouldContain("--repository requires owner/name", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Stage_candidate_leaves_an_owner_that_the_forge_does_not_allow_to_the_forge_client()
+    {
+        // Arrange
+        using var scope = new RepositoryTestScope();
+        string[] arguments = ["stage-candidate", "--pin", "pin.json", "--library-root", "sk", "--output", "feed", "--repository", "dani_gutsch/PandaBear.SharedKernel"];
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, arguments, new ProcessLog().Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("The repository must be owner/name.", StringComparison.Ordinal);
+        Directory.Exists(Path.Combine(scope.Root, "feed")).ShouldBeFalse();
+    }
+
     [Theory]
     [InlineData("--pin")]
     [InlineData("--library-root")]
     [InlineData("--output")]
     [InlineData("--feed")]
-    [InlineData("--root")]
     public async Task Stage_candidate_path_options_reject_empty_values(string option)
     {
         // Arrange
@@ -312,5 +326,42 @@ public sealed class RepositoryCommandLineTests
         result.ExitCode.ShouldBe(1);
         result.Error.ShouldContain(option + " requires a path.", StringComparison.Ordinal);
         Directory.Exists(Path.Combine(scope.Root, "feed")).ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData("stage-candidate", "--pin", "pin.json", "--library-root", "sk", "--output", "feed", "--feed", "packages")]
+    [InlineData("select")]
+    [InlineData("coverage", "record-symbols")]
+    [InlineData("run-mutation-tests")]
+    public async Task An_empty_root_is_a_parse_error_instead_of_the_current_directory(params string[] command)
+    {
+        // Arrange
+        using var scope = new RepositoryTestScope();
+        var processes = new ProcessLog();
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, [.. command, "--root", ""], processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Error.ShouldContain("--root requires a directory path.", StringComparison.Ordinal);
+        processes.Calls.ShouldBeEmpty();
+        Directory.Exists(Path.Combine(scope.Root, "feed")).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task A_root_that_is_not_a_directory_fails_before_any_process_starts()
+    {
+        // Arrange
+        using var scope = new RepositoryTestScope();
+        var processes = new ProcessLog();
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["select", "--root", "missing"], processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldBe("--root is not an existing directory: " + Path.Combine(scope.Root, "missing") + "\n");
+        processes.Calls.ShouldBeEmpty();
     }
 }

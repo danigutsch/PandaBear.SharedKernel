@@ -32,6 +32,7 @@
     "src/SharedKernel/SharedKernel.CI.GitHub/SharedKernel.CI.GitHub.csproj",
     "src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj",
     "src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj",
+    "src/SharedKernel/SharedKernel.CommandLine/SharedKernel.CommandLine.csproj",
     "src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj",
     "src/SharedKernel/SharedKernel.ContentRights/SharedKernel.ContentRights.csproj",
     "src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj",

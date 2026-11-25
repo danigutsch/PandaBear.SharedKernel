@@ -70,7 +70,8 @@ availability on nuget.org.
 
 ## Usage
 
-`--help` lists the options of each command. `--root` sets the repository root (default: the current directory);
+`--help` lists the options of each command. `--root` sets the repository root (default: the current directory; a relative
+root resolves from the current directory, an empty value is a command-line error, and a root that is not an existing directory fails with `--root is not an existing directory: <path>`);
 the other relative paths of `select`, `run`, `install-playwright`, `coverage`, and `stage-candidate` resolve from it, and relative `--event` and
 `--file` paths resolve from the current directory. A command line that starts with `[diagram]` prints how it parses
 instead of running; an invalid command line exits 1.
@@ -483,6 +484,8 @@ pins, `--library-root` a SharedKernel checkout, and `--output` the local feed. E
 `--repository`, the GitHub `owner/name` whose `v<packageVersion>` release holds the packages, or `--feed`, a directory
 that holds them. `--root` names the consumer repository. With `--forgejo <url>`, such as `https://codeberg.org`, the
 `--repository` release is on that Forgejo instance instead of GitHub; `--forgejo` requires `--repository`.
+`--repository` takes two parts of ASCII letters, digits, `-`, `.`, and `_`, neither of which is `.` or `..`; anything else is a
+command-line error. The GitHub client then also applies GitHub's narrower rule, which allows no `.` or `_` in an owner.
 
 Before it sends a request or changes a file, the command checks the pin: strict JSON of at most 1 MiB, without
 comments, trailing commas, or a repeated property; `libraryRevision` of 40 lowercase hexadecimal characters;
@@ -692,7 +695,7 @@ on standard error.
 | --- | --- |
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
-| 2 | The configuration is invalid, or a run, local check (a failed lane, a lane that could not run with `--strict`, or nothing selected), generation, installation, coverage check, staging, prerelease pruning (a missing token for `--force`, or a failed GitHub API request), the commit message check, or a mutation run failed; the reason is on standard error. |
+| 2 | The configuration is invalid, or a run, local check (a failed lane, a lane that could not run with `--strict`, or nothing selected), generation, installation, coverage check, staging, prerelease pruning (a missing token for `--force`, or a failed GitHub API request), the commit message check, or a mutation run failed, or `--root` is not an existing directory; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within 90 seconds. |
 
 Ctrl+C or SIGTERM stops the running `git`, `dotnet`, `pwsh`, or `dotnet-stryker` process tree, then stops the services of
