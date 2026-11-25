@@ -1,8 +1,8 @@
 namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Tests literal SQL LIKE patterns before they are passed to a provider.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, "unit")]
-[Trait(Testing.TestTraitNames.CapabilityName, "SqlLikePattern")]
+[Trait(TestTraitNames.ScopeName, "unit")]
+[Trait(TestTraitNames.CapabilityName, "SqlLikePattern")]
 public sealed class SqlLikePatternTests
 {
     [Theory]
