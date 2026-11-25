@@ -1,25 +1,39 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PandaBear.Style.Analyzers;
 
-namespace PandaBear.Style.Analyzers.Tests;
+namespace PandaBear.Testing.Roslyn;
 
 /// <summary>
 /// Checks that each governed literal catalog entry is owned by exactly one const string and that no other constant duplicates or aliases its value.
 /// </summary>
-internal static class GovernedConstantGuard
+public static class GovernedConstantGuard
 {
     private static readonly string[] GeneratedSuffixes = [".g.cs", ".g.i.cs", ".generated.cs", ".designer.cs"];
+
     /// <summary>
     /// Scans non-generated syntax trees of the compilations and returns one message for each unresolvable constant, missing or ambiguous owner, and duplicated or redirected governed constant.
     /// </summary>
     /// <param name="compilations">The compilations to scan.</param>
     /// <param name="catalogText">The governed literal catalog text.</param>
+    /// <returns>Validation errors, or an empty list when every entry is valid.</returns>
+    /// <remarks>Owners absent from the supplied source assemblies are resolved in referenced assemblies. Duplicate and redirected constants are checked in source.</remarks>
+    /// <exception cref="ArgumentNullException"><paramref name="compilations"/> or <paramref name="catalogText"/> is null.</exception>
+    /// <exception cref="FormatException"><paramref name="catalogText"/> is not a valid governed-literal catalog.</exception>
     public static IReadOnlyList<string> Validate(IEnumerable<Compilation> compilations, string catalogText)
     {
+        ArgumentNullException.ThrowIfNull(compilations);
+        ArgumentNullException.ThrowIfNull(catalogText);
         var catalog = GovernedLiteralCatalog.Parse(catalogText);
+        var sourceCompilations = compilations.ToArray();
+        var sourceAssemblies = sourceCompilations.Select(static compilation => compilation.Assembly.Name).ToHashSet(StringComparer.Ordinal);
+        var referencedAssemblies = sourceCompilations
+            .SelectMany(static compilation => compilation.SourceModule.ReferencedAssemblySymbols)
+            .DistinctBy(static assembly => assembly.Identity)
+            .ToLookup(static assembly => assembly.Name, StringComparer.Ordinal);
         var fields = new List<IFieldSymbol>();
         var errors = new List<string>();
-        foreach (var compilation in compilations)
+        foreach (var compilation in sourceCompilations)
         {
             foreach (var tree in compilation.SyntaxTrees)
             {
@@ -80,7 +94,9 @@ internal static class GovernedConstantGuard
 
         foreach (var entry in catalog)
         {
-            var matches = fields.Where(field => GovernedLiteralCatalog.Matches(entry, field)).ToArray();
+            var matches = sourceAssemblies.Contains(entry.Assembly)
+                ? fields.Where(field => GovernedLiteralCatalog.Matches(entry, field)).ToArray()
+                : FindReferencedFields(entry, referencedAssemblies[entry.Assembly]).ToArray();
             if (matches.Length != 1 || !Equals(matches[0].ConstantValue, entry.Value))
             {
                 errors.Add($"Expected exactly one const string {entry.Assembly}:{entry.Symbol} = {entry.Value}.");
@@ -98,5 +114,36 @@ internal static class GovernedConstantGuard
         }
 
         return errors;
+    }
+
+    private static IEnumerable<IFieldSymbol> FindReferencedFields(GovernedLiteral entry, IEnumerable<IAssemblySymbol> assemblies)
+    {
+        var parts = entry.Symbol.Split('.');
+        var fieldName = parts[^1];
+        var typePartsCount = parts.Length - 1;
+        foreach (var assembly in assemblies)
+        {
+            for (var namespaceLength = typePartsCount - 1; namespaceLength >= 0; namespaceLength--)
+            {
+                // Catalog entries use a dot for nested types. Metadata names separate nested types with a plus.
+                var namespaceName = string.Join(".", parts, 0, namespaceLength);
+                var typeName = string.Join("+", parts, namespaceLength, typePartsCount - namespaceLength);
+                var metadataName = namespaceName.Length == 0 ? typeName : namespaceName + "." + typeName;
+                var type = assembly.GetTypeByMetadataName(metadataName);
+                if (type is null)
+                {
+                    continue;
+                }
+
+                foreach (var field in type.GetMembers(fieldName).OfType<IFieldSymbol>())
+                {
+                    if (field is { IsConst: true, Type.SpecialType: SpecialType.System_String }
+                        && GovernedLiteralCatalog.Matches(entry, field))
+                    {
+                        yield return field;
+                    }
+                }
+            }
+        }
     }
 }

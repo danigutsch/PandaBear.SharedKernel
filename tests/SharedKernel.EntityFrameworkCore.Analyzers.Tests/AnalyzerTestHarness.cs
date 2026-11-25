@@ -16,7 +16,7 @@ internal static class AnalyzerTestHarness
 
         """;
 
-    private const string SharedKernelUsing = "using PandaBear.EntityFrameworkCore;\n";
+    private const string EntityFrameworkCoreUsing = "using PandaBear.EntityFrameworkCore;\n";
 
     /// <summary>Compiles the source and returns the diagnostics reported by EntityFrameworkCoreAnalyzer, throwing when the source has compile errors.</summary>
     public static Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(string source) =>
@@ -41,7 +41,7 @@ internal static class AnalyzerTestHarness
     {
         var compilation = Testing.Roslyn.AnalyzerTestHarness.CreateCompilation(
             source,
-            withSharedKernel ? DefaultUsings + SharedKernelUsing : DefaultUsings,
+            withSharedKernel ? DefaultUsings + EntityFrameworkCoreUsing : DefaultUsings,
             assemblyName: "SharedKernel.EntityFrameworkCore.Analyzers.Tests.Dynamic");
         if (!withSharedKernel)
         {

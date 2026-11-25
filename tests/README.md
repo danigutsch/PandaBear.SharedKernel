@@ -6,6 +6,23 @@ Provider integration tests require a working local container runtime. Preserve m
 
 Coverage uses the existing `coverlet.MTP` extension; collection and its limits are documented in the root README. No hosted coverage percentage or service is implied. The two explicitly packaged test-support projects have their own package README files; ordinary test projects remain non-packable.
 
+## Test taxonomy
+
+The [test inventory](../.config/test-taxonomy.json) declares the owner and expected test types for tracked source and
+tool projects. Each test suite declares the projects and seams it exercises and the applicable CI slice.
+The [coverage policy](../docs/TEST_GUIDELINES.md) explains how to classify analyzer, generator, code-fix, package,
+and provider tests. Use `<SUT>.Tests.<Type>` for new suites and record the reason when a legacy or mixed suite
+needs a migration exception.
+
+Run the same advisory check as repository quality after the Release build.
+
+```sh
+dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- verify-test-taxonomy --report
+```
+
+Stage new files first so the Git index includes them. The [command reference](../tools/SharedKernel.RepoConfig.Tool/README.md#test-taxonomy)
+describes the schema and strict validation mode.
+
 ## Shared test services
 
 `SharedKernel.Npgsql.Tests`, `SharedKernel.EventSourcing.Npgsql.Tests` and `SharedKernel.EntityFrameworkCore.Tests` need PostgreSQL;

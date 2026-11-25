@@ -7,7 +7,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests the provider guard of the PostgreSQL transport claim SQL.
 /// </summary>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.ProviderGuardCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class PostgreSqlIntegrationEventTransportClaimSqlTests
 {
     [Fact]

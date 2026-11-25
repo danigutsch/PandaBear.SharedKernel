@@ -83,3 +83,6 @@ PandaBear.Testing.Playwright.ChromiumFixture.DisposeAsync() -> System.Threading.
 PandaBear.Testing.Playwright.ChromiumFixture.InitializeAsync() -> System.Threading.Tasks.ValueTask
 PandaBear.Testing.Playwright.ComponentHtml
 static PandaBear.Testing.Playwright.ComponentHtml.Render<TComponent>(System.Collections.Generic.IDictionary<string!, object?>? parameters = null) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Testing.Playwright.PlaywrightEqualAccessExtensions
+static PandaBear.Testing.Playwright.PlaywrightEqualAccessExtensions.ShouldHaveNoEqualAccessViolations(this Microsoft.Playwright.IPage! page, string! engineBundlePath, string! expectedSha256) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightEqualAccessExtensions.ShouldHaveNoEqualAccessViolations(this Microsoft.Playwright.IPage! page, string! engineBundlePath, string! expectedSha256, string! userMessage) -> System.Threading.Tasks.Task!

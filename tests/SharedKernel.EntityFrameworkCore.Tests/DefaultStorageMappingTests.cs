@@ -28,7 +28,7 @@ public sealed class DefaultStorageMappingTests
     }
 
     [Fact]
-    [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
+    [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
     public void The_default_outbox_configuration_maps_to_the_messaging_schema()
     {
         // Arrange
@@ -44,7 +44,7 @@ public sealed class DefaultStorageMappingTests
     }
 
     [Fact]
-    [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
+    [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
     public void The_default_transport_configuration_maps_to_the_messaging_schema_and_takes_part_in_migrations()
     {
         // Arrange

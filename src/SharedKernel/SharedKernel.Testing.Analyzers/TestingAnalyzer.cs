@@ -161,7 +161,7 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, InvalidAdditionalAllowedSegmentRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule, AssertionUserMessageOverloadRule, XunitTestScopeRule, PlaywrightUrlWaitRule, StringWriterNewLineRule];
+        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, InvalidAdditionalAllowedSegmentRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule, AssertionUserMessageOverloadRule, XunitTestScopeRule, PlaywrightUrlWaitRule, StringWriterNewLineRule, DirectDependencyInjectionRule, PlaywrightFixedDelayRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -203,6 +203,8 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
                 SyntaxKind.Attribute);
             RegisterPlaywrightUrlWaitAnalysis(compilationContext);
             RegisterStringWriterNewLineAnalysis(compilationContext);
+            RegisterDirectDependencyInjectionAnalysis(compilationContext);
+            RegisterPlaywrightFixedDelayAnalysis(compilationContext);
         });
     }
 
@@ -477,7 +479,7 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
     {
         if (context.Node is not TryStatementSyntax tryStatement
             || tryStatement.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
-            || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
+            || methodDeclaration.AttributeLists.Count == 0
             || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
             || !IsXunitTestMethod(methodSymbol))
         {
@@ -530,9 +532,9 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        var isPotentialXunitTestMethod = IsPotentialXunitTestMethodDeclaration(methodDeclaration);
+        var hasAttributes = methodDeclaration.AttributeLists.Count != 0;
         var isPotentialHelperMethod = IsPotentialXunitHelperMethodDeclaration(methodDeclaration);
-        if (!isPotentialXunitTestMethod && !isPotentialHelperMethod)
+        if (!hasAttributes && !isPotentialHelperMethod)
         {
             return;
         }
@@ -542,7 +544,7 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (!isPotentialXunitTestMethod || !IsXunitTestMethod(methodSymbol))
+        if (!hasAttributes || !IsXunitTestMethod(methodSymbol))
         {
             AnalyzeTestClassHelperMethod(context, methodDeclaration, methodSymbol);
             return;
@@ -755,7 +757,7 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
     {
         if (context.Node is not LocalFunctionStatementSyntax localFunction
             || localFunction.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
-            || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
+            || methodDeclaration.AttributeLists.Count == 0
             || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
             || !IsXunitTestMethod(methodSymbol))
         {
@@ -872,22 +874,4 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
             && string.Equals(attribute.ConstructorArguments[0].Value as string, requiredTrait.Name, StringComparison.Ordinal)
             && string.Equals(attribute.ConstructorArguments[1].Value as string, requiredTrait.Value, StringComparison.Ordinal));
     }
-
-    private static bool IsPotentialXunitTestMethodDeclaration(MethodDeclarationSyntax methodDeclaration)
-    {
-        if (methodDeclaration.AttributeLists.Count == 0)
-        {
-            return false;
-        }
-
-        return methodDeclaration.AttributeLists
-            .SelectMany(static attributeList => attributeList.Attributes)
-            .Select(static attribute => attribute.Name.ToString())
-            .Any(static name =>
-                name.EndsWith("Fact", StringComparison.Ordinal)
-                || name.EndsWith("FactAttribute", StringComparison.Ordinal)
-                || name.EndsWith("Theory", StringComparison.Ordinal)
-                || name.EndsWith("TheoryAttribute", StringComparison.Ordinal));
-    }
-
 }

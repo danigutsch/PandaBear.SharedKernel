@@ -4,7 +4,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests that context-qualified messaging registrations keep outboxes, idempotency stores, transports and relays separate per DbContext.
 /// </summary>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class ContextQualifiedMessagingRegistrationTests
 {
     [Fact]

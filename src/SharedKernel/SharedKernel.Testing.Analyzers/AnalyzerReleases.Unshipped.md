@@ -23,3 +23,5 @@ SKTEST018 | Testing | Info | xUnit test methods should declare exactly one valid
 SKTEST020 | Testing | Warning | Wait for a page address with ExpectPath, not WaitForURLAsync
 SKTEST021 | Testing | Warning | Configured test method name segments must be new letter-and-digit words
 SKTEST022 | Testing | Warning | Capture test output with InvariantStringWriter or an explicit NewLine, not the platform line ending
+SKTEST023 | Testing | Disabled | Move direct test-body dependency injection operations to a typed fixture in suites that opt in
+SKTEST024 | Testing | Disabled | Wait for observable browser conditions instead of fixed Playwright page and frame delays in suites that opt in

@@ -25,3 +25,5 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestScope = "SKTEST0
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightUrlWait = "SKTEST020" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.InvalidAdditionalAllowedSegment = "SKTEST021" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.StringWriterNewLine = "SKTEST022" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.DirectDependencyInjection = "SKTEST023" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightFixedDelay = "SKTEST024" -> string!

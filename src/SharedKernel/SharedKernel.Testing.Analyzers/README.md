@@ -35,6 +35,8 @@ test assertions. Do not apply it to regular production projects.
 | `SKTEST020` | Warning | Wait for a page address with `ExpectPath`, not Playwright's `WaitForURLAsync`. |
 | `SKTEST021` | Warning | Entries of `sharedkernel_testing_additional_allowed_segments` must be new letter-and-digit words. |
 | `SKTEST022` | Warning | Capture test output with `InvariantStringWriter` or an explicit `NewLine`, not a `StringWriter` with the platform line ending. |
+| `SKTEST023` | Disabled; opt-in warning | Move direct dependency injection operations out of xUnit test bodies and into typed fixtures. |
+| `SKTEST024` | Disabled (opt-in warning) | Wait for an observable browser condition or event instead of a fixed Playwright delay. |
 | `SKTEST017` | Disabled; opt-in warning | Give every public `Should*` assertion an overload that takes `userMessage`. |
 
 See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
@@ -362,3 +364,49 @@ with the invariant culture on every operating system. When a test needs a specif
 `new StringWriter(CultureInfo.InvariantCulture)` with `new InvariantStringWriter()` when the compilation references
 `PandaBear.SharedKernel.Testing`; a writer over a caller's `StringBuilder` or with another format provider is left for a
 person, because the replacement would drop the builder or change how values are formatted.
+
+## SKTEST023
+
+Enable this rule in suites that obtain their dependencies through typed fixtures. It checks explicitly written operations
+inside xUnit facts and theories, including expression bodies, assertion delegates, and local functions. It recognizes
+Microsoft dependency injection symbols for `ServiceCollection` construction, provider builds, synchronous and asynchronous
+scope creation, and single, multiple, and keyed service resolution. It also recognizes direct calls to dependency
+injection interface implementations, including `IServiceProvider.GetService` on a concrete provider. Aliases and
+target-typed construction resolve to the same symbols. Unrelated operations with the same names and fixture setup outside
+test bodies remain available.
+
+Enable the warning for the participating paths in the repository’s `.editorconfig`. Use a separate path entry for an
+approved suite that exercises the container itself, with a comment recording why the exception applies.
+
+```ini
+[tests/**/*.cs]
+dotnet_diagnostic.SKTEST023.severity = warning
+
+# These tests verify container behavior against the real service provider.
+[tests/ContainerContractTests/**/*.cs]
+dotnet_diagnostic.SKTEST023.severity = none
+```
+
+## SKTEST024
+
+Calls to Playwright’s `IPage.WaitForTimeoutAsync` and `IFrame.WaitForTimeoutAsync` sleep for a fixed duration. A test can
+still observe an incomplete transition after that duration. Wait for the readiness signal the test actually needs, such as
+a locator assertion, a condition, or an event. See the [Playwright page API] and the [Playwright frame API].
+
+Condition waits, their timeout settings, `Task.Delay` used for other test behavior, and unrelated methods with the same
+name are allowed. Choose the readiness signal for the scenario when replacing a fixed delay.
+
+Enable the warning for the participating browser test paths in the repository’s `.editorconfig`. Use an exact path and
+a reason for a reviewed exception.
+
+```ini
+[tests/BrowserTests/**/*.cs]
+dotnet_diagnostic.SKTEST024.severity = warning
+
+# This manually run reproduction observes browser behavior during a fixed interval.
+[tests/BrowserTests/Diagnostics/FixedIntervalReproduction.cs]
+dotnet_diagnostic.SKTEST024.severity = none
+```
+
+[Playwright page API]: https://playwright.dev/dotnet/docs/api/class-page#page-wait-for-timeout
+[Playwright frame API]: https://playwright.dev/dotnet/docs/api/class-frame#frame-wait-for-timeout

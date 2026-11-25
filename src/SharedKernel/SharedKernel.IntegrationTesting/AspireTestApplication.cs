@@ -15,7 +15,7 @@ namespace PandaBear.IntegrationTesting;
 
 /// <summary>
 /// Owns an Aspire distributed application lifetime for integration tests. It follows the log lines of every resource from the start, so a
-/// readiness wait that runs out of time reports each pending resource's state and its last log lines. Every project resource it starts gets
+/// readiness wait that fails reports the requested resources' states and their last log lines. Every project resource it starts gets
 /// <c>DOTNET_hostBuilder__reloadConfigOnChange=false</c>, so parallel test hosts do not exhaust the per-user file-watcher (inotify) limit.
 /// Started from an xUnit test or fixture, the application logs, with the log lines it forwards from every resource, to the test output
 /// (<see cref="TestOutputLoggerProvider"/>) instead of the console, which <c>dotnet test</c> streams for every test; started anywhere else,
@@ -107,6 +107,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <returns>The started test application.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="healthyResourceNames"/> or <paramref name="appHostArguments"/> is <see langword="null"/>.</exception>
     /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
+    /// <exception cref="DistributedApplicationException">A resource became unavailable. The message includes diagnostics and the inner exception retains the Aspire failure.</exception>
     /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
     public static async Task<AspireTestApplication> Start<TAppHost>(
         IEnumerable<string> healthyResourceNames,
@@ -138,6 +139,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="healthyResourceNames"/>, <paramref name="appHostArguments"/> or <paramref name="configuration"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when a key of <paramref name="configuration"/> is empty, white-space, or contains <c>=</c>.</exception>
     /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
+    /// <exception cref="DistributedApplicationException">A resource became unavailable. The message includes diagnostics and the inner exception retains the Aspire failure.</exception>
     /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
     public static async Task<AspireTestApplication> Start<TAppHost>(
         IEnumerable<string> healthyResourceNames,
@@ -171,6 +173,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <returns>The started test application.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> or <paramref name="healthyResourceNames"/> is <see langword="null"/>.</exception>
     /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
+    /// <exception cref="DistributedApplicationException">A resource became unavailable. The message includes diagnostics and the inner exception retains the Aspire failure.</exception>
     /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
     public static async Task<AspireTestApplication> Start(
         IDistributedApplicationTestingBuilder builder,
@@ -296,6 +299,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <returns>A task that completes when every resource is healthy.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="resourceNames"/> is <see langword="null"/>.</exception>
     /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
+    /// <exception cref="DistributedApplicationException">A resource became unavailable. The message includes diagnostics and the inner exception retains the Aspire failure.</exception>
     public async Task WaitForHealthy(IEnumerable<string> resourceNames, TimeSpan timeout, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(resourceNames);
@@ -315,6 +319,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <exception cref="ArgumentException"><paramref name="resourceName"/> is blank.</exception>
     /// <exception cref="InvalidOperationException">The application has no such resource, or the orchestrator refused the start.</exception>
     /// <exception cref="TimeoutException">The resource was not healthy in time; the message holds its state and last log lines.</exception>
+    /// <exception cref="DistributedApplicationException">The resource became unavailable. The message includes diagnostics and the inner exception retains the Aspire failure.</exception>
     public async Task StartResource(string resourceName, TimeSpan timeout, CancellationToken ct)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
@@ -408,6 +413,20 @@ public sealed class AspireTestApplication : IAsyncDisposable
                 resourceNames,
                 cancellation);
         }
+        catch (DistributedApplicationException failure)
+        {
+            var report = new StringBuilder(failure.Message);
+            var logger = app.Services.GetRequiredService<ResourceLoggerService>();
+            foreach (var name in resourceNames)
+            {
+                var available = FindResource(app, name) is { } resource
+                    ? await ResourceLogTail.ReadAvailable(logger, resource).ConfigureAwait(false)
+                    : [];
+                AppendResourceDiagnostics(report, notifications, name, available.Count > 0 ? available : logs.Lines(name));
+            }
+
+            throw new DistributedApplicationException(report.ToString(), failure);
+        }
     }
 
     /// <summary>Reports a wait that ran out of time, with each resource's state, health and last log lines.</summary>
@@ -427,17 +446,32 @@ public sealed class AspireTestApplication : IAsyncDisposable
         var report = new StringBuilder().Append(headline);
         foreach (var name in resourceNames)
         {
-            var state = notifications.TryGetCurrentState(name, out var current)
-                ? $"{current.Snapshot.State?.Text ?? "unknown"}, health {current.Snapshot.HealthStatus?.ToString() ?? "unknown"}"
-                : "no state";
-            _ = report.AppendLine().Append(CultureInfo.InvariantCulture, $"- {name}: {state}; last log lines:");
-            foreach (var line in logs.Lines(name))
-            {
-                _ = report.AppendLine().Append("    ").Append(line);
-            }
+            AppendResourceDiagnostics(report, notifications, name, logs.Lines(name));
         }
 
         return new TimeoutException(report.ToString(), cancellation);
+    }
+
+    private static void AppendResourceDiagnostics(
+        StringBuilder report,
+        ResourceNotificationService notifications,
+        string name,
+        IReadOnlyList<string> lines)
+    {
+        var state = notifications.TryGetCurrentState(name, out var current)
+            ? $"{current.Snapshot.State?.Text ?? "unknown"}, health {current.Snapshot.HealthStatus?.ToString() ?? "unknown"}"
+            : "no state";
+        _ = report.AppendLine().Append(CultureInfo.InvariantCulture, $"- {name}: {state}");
+        if (current?.Snapshot.ExitCode is { } exitCode)
+        {
+            _ = report.Append(CultureInfo.InvariantCulture, $", exit code {exitCode}");
+        }
+
+        _ = report.Append("; last log lines:");
+        foreach (var line in lines)
+        {
+            _ = report.AppendLine().Append("    ").Append(line);
+        }
     }
 
     /// <summary>Finds a resource of the application model by name, ignoring case as Aspire does.</summary>

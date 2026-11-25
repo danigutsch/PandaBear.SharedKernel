@@ -8,7 +8,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// PostgreSQL tests of EfCoreCommandTransactionScope committing, rolling back and joining transactions.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
+[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.CommandTransactionScopeCapability)]
 [SuppressMessage(
     "Usage",

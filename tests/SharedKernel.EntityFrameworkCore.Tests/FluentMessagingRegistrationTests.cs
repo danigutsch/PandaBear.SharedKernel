@@ -4,7 +4,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests the registration rules of the fluent integration-event builder for hosted consumers, competing consumers and competing producers.
 /// </summary>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class FluentMessagingRegistrationTests
 {
     [Fact]

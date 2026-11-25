@@ -37,6 +37,26 @@ technology treats it as a weak one, `aria-label` on a descendant is accepted for
 `<input type="image">` is skipped rather than checked for `alt`. Colour contrast, focus order, landmarks, duplicate ids and the
 accessible names of other roles are not checked; use an engine such as axe-core for those.
 
+## IBM Equal Access audit
+
+Use `ShouldHaveNoEqualAccessViolations` after the page reaches the state under test. Supply the
+reviewed browser `ace.js` file and its pinned SHA-256 digest from the consuming test suite.
+
+```csharp
+await NavigateTo("gallery");
+await page.ShouldHaveNoEqualAccessViolations(engineBundlePath, expectedSha256, "Gallery preview.");
+```
+
+The helper verifies the local file before running it in Playwright's evaluation scope. It leaves
+the page's Content Security Policy in force and needs no script tag, CDN, or package download at
+test time. Bundle acquisition, pin updates, and license notices belong to the consuming suite.
+
+The scan uses the engine's `WCAG_2_2` rule set. Only definite violations fail the assertion. The
+failure lists sorted, unique rule IDs. Page snippets, selectors, URLs, and engine errors stay out
+of the failure. An unreadable or mismatched bundle or an invalid or empty report fails the test.
+Manual review still covers criteria that an automated scan cannot assess.
+[IBM Equal Access browser engine](https://github.com/IBMa/equal-access/blob/main-4.x/accessibility-checker-engine/README.md)
+
 ## Browser tests of a Blazor application
 
 `KestrelPageTest<TEntryPoint>` is the base class for tests that run the application's real entry point on Kestrel and drive it with

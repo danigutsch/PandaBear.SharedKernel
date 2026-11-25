@@ -86,4 +86,22 @@ public sealed class TestTraitAttributeTests
         TestTraitNames.FocusName.ShouldBe("Focus");
         TestTraitNames.PriorityName.ShouldBe("Priority");
     }
+
+    [Fact]
+    public static void Legacy_filters_keep_their_keys_and_values()
+    {
+        // Act, Assert
+        TestTraitNames.CategoryName.ShouldBe("Category");
+        TestTraitValues.ContractCategory.ShouldBe("contract");
+        TestTraitValues.DriftGuardCategory.ShouldBe("drift-guard");
+        TestTraitValues.SnapshotCategory.ShouldBe("snapshot");
+        TestTraitNames.SurfaceName.ShouldBe("Surface");
+        TestTraitValues.OpenApiSurface.ShouldBe("openapi");
+        SharedKernelTestTraitNames.CapabilityName.ShouldBe("TestCapability");
+        TestTraitValues.IntegrationEventTransport.ShouldBe("integration-event-transport");
+        TestTraitNames.ScopeName.ShouldBe("Scope");
+        TestScope.Unit.ToTraitValue().ShouldBe("unit");
+        SharedKernelTestTraitNames.ScopeName.ShouldBe("TestScope");
+        SharedKernelTestTraitNames.UnitScope.ShouldBe("Unit");
+    }
 }

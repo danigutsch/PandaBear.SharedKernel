@@ -6,6 +6,31 @@ namespace PandaBear.Testing;
 public static class TestTraitValues
 {
     /// <summary>
+    /// Category value for tests that verify a contract.
+    /// </summary>
+    public const string ContractCategory = "contract";
+
+    /// <summary>
+    /// Category value for tests that check for drift from a reviewed artifact or contract.
+    /// </summary>
+    public const string DriftGuardCategory = "drift-guard";
+
+    /// <summary>
+    /// Category value for tests that compare results with an approved snapshot.
+    /// </summary>
+    public const string SnapshotCategory = "snapshot";
+
+    /// <summary>
+    /// Surface value for OpenAPI tests.
+    /// </summary>
+    public const string OpenApiSurface = "openapi";
+
+    /// <summary>
+    /// Category or capability value for tests of integration event transport.
+    /// </summary>
+    public const string IntegrationEventTransport = "integration-event-transport";
+
+    /// <summary>
     /// Category value for endpoint-focused tests.
     /// </summary>
     public const string EndpointCategory = "endpoint";

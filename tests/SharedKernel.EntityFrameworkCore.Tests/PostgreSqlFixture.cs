@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using Aspire.Hosting.Testing;
-using PandaBear.IntegrationTesting;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 

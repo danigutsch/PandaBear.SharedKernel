@@ -1,4 +1,20 @@
 #nullable enable
+PandaBear.Testing.ReadObservingStream
+PandaBear.Testing.ReadObservingStream.ReadObservingStream(System.Func<System.Memory<byte>, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<int>>! read, System.Action<int, int>! observeRead) -> void
+override PandaBear.Testing.ReadObservingStream.CanRead.get -> bool
+override PandaBear.Testing.ReadObservingStream.CanSeek.get -> bool
+override PandaBear.Testing.ReadObservingStream.CanWrite.get -> bool
+override PandaBear.Testing.ReadObservingStream.Flush() -> void
+override PandaBear.Testing.ReadObservingStream.Length.get -> long
+override PandaBear.Testing.ReadObservingStream.Position.get -> long
+override PandaBear.Testing.ReadObservingStream.Position.set -> void
+override PandaBear.Testing.ReadObservingStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.ReadObservingStream.Read(System.Span<byte> buffer) -> int
+override PandaBear.Testing.ReadObservingStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.Testing.ReadObservingStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Testing.ReadObservingStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.ReadObservingStream.SetLength(long value) -> void
+override PandaBear.Testing.ReadObservingStream.Write(byte[]! buffer, int offset, int count) -> void
 const PandaBear.Domain.Tests.TestTraits.AggregateRootCapability = "AggregateRoot" -> string!
 const PandaBear.Domain.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
 const PandaBear.Domain.Tests.TestTraits.DomainComponent = "SharedKernel.Domain" -> string!
@@ -35,9 +51,14 @@ const PandaBear.Testing.TestTraitNames.HostName = "Host" -> string!
 const PandaBear.Testing.TestTraitNames.ScopeName = "Scope" -> string!
 const PandaBear.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
 const PandaBear.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
+const PandaBear.Testing.TestTraitValues.ContractCategory = "contract" -> string!
 const PandaBear.Testing.TestTraitValues.DependencyInjectionCategory = "dependency-injection" -> string!
+const PandaBear.Testing.TestTraitValues.DriftGuardCategory = "drift-guard" -> string!
 const PandaBear.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
+const PandaBear.Testing.TestTraitValues.IntegrationEventTransport = "integration-event-transport" -> string!
+const PandaBear.Testing.TestTraitValues.OpenApiSurface = "openapi" -> string!
 const PandaBear.Testing.TestTraitValues.SecurityCategory = "security" -> string!
+const PandaBear.Testing.TestTraitValues.SnapshotCategory = "snapshot" -> string!
 const PandaBear.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
 override PandaBear.Testing.BlockingReadStream.CanRead.get -> bool
 override PandaBear.Testing.BlockingReadStream.CanSeek.get -> bool
