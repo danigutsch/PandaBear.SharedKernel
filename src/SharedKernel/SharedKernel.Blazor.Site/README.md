@@ -674,6 +674,18 @@ on hover, never to a filter, so the hover state keeps the checked contrast. Ligh
 values: text 14.7:1, muted 7.6:1, primary 6.7:1 and accent 5.0:1 on white. The stylesheet respects `prefers-reduced-motion`, shows a
 visible `:focus-visible` ring, is mobile first with a `48rem` layout breakpoint and a `60rem` header breakpoint, and loads no fonts, images or other URLs.
 
+The look that several components share is one rule each, so the copies cannot drift apart; a test checks each one:
+
+- Heading groups: one internal heading group renders the eyebrow, the heading and the subtitle of a `Card`, a `Hero`, a `Section` and
+  a `StepList` step, with the component's own class names. The `hgroup` of a card, a hero and a section has no margin, and every
+  eyebrow (`site-card__eyebrow`, `site-hero__eyebrow`, `site-section__eyebrow` and a step's `site-step-list__number`) is
+  `--site-font-size-sm`, bold and letter-spaced in `--site-color-primary`; a hero's eyebrow, a tagline, is muted and `--site-space-2`
+  from its title.
+- Plain lists: the lists without markers (the navigation and its groups, the language switcher, the contact card's channels,
+  `SeparatedList`, `StepList`, `CreditsList` and `Pager`) share one rule without margin, indent or markers.
+- Alignment: the centred alignment of a section, a band and a card is one set of private properties, after the card rule, and the
+  start set a card resets to is the same as a start section's or band's.
+
 ## Owner-editable theme
 
 `SharedKernel.Blazor.Site.Theming` turns colours, typography and self-hosted fonts that a site owner edits into a second stylesheet

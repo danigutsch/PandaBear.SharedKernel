@@ -34,6 +34,28 @@ internal static partial class SiteFiles
         return match.Success ? match.Groups[1].Value : throw new InvalidOperationException("No rule starts with " + selector + ".");
     }
 
+    /// <summary>
+    /// Reads every rule of the stylesheet, those inside an at-rule included, with its selectors split at the top-level commas and
+    /// stripped of comments.
+    /// </summary>
+    /// <param name="css">The stylesheet.</param>
+    /// <returns>The rules in source order.</returns>
+    public static IReadOnlyList<CssRule> Rules(string css) => [.. RulePattern().Matches(CommentPattern().Replace(css, string.Empty))
+        .Where(match => match.Groups["selectors"].Value.TrimStart() is not ['@', ..])
+        .Select(match => new CssRule(
+            [.. SelectorSeparator().Split(match.Groups["selectors"].Value).Select(selector => selector.Trim()).Where(selector => selector.Length > 0)],
+            match.Groups["body"].Value,
+            match.Index))];
+
+    [GeneratedRegex(@"/\*.*?\*/", RegexOptions.Singleline)]
+    private static partial Regex CommentPattern();
+
+    [GeneratedRegex(@"(?<selectors>[^{}]+)\{(?<body>[^{}]*)\}")]
+    private static partial Regex RulePattern();
+
+    [GeneratedRegex(@",(?![^(]*\))")]
+    private static partial Regex SelectorSeparator();
+
     [GeneratedRegex(@"--site-(color-[a-z-]+)\s*:\s*light-dark\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)\s*;")]
     private static partial Regex ColorPattern();
 }
