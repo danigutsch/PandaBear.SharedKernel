@@ -47,3 +47,6 @@ override SharedKernel.EntityFrameworkCore.UniqueViolation.GetHashCode() -> int
 override SharedKernel.EntityFrameworkCore.UniqueViolation.ToString() -> string!
 static SharedKernel.EntityFrameworkCore.UniqueViolation.operator !=(SharedKernel.EntityFrameworkCore.UniqueViolation? left, SharedKernel.EntityFrameworkCore.UniqueViolation? right) -> bool
 static SharedKernel.EntityFrameworkCore.UniqueViolation.operator ==(SharedKernel.EntityFrameworkCore.UniqueViolation? left, SharedKernel.EntityFrameworkCore.UniqueViolation? right) -> bool
+const SharedKernel.EntityFrameworkCore.DbContextResultExtensions.ConcurrencyConflictMessage = "The data was changed or removed by someone else. Reload it and try again." -> string!
+SharedKernel.EntityFrameworkCore.DbContextResultExtensions
+static SharedKernel.EntityFrameworkCore.DbContextResultExtensions.SaveChangesAsResult(this Microsoft.EntityFrameworkCore.DbContext! dbContext, SharedKernel.EntityFrameworkCore.IUniqueViolationParser! parser, System.Func<string!, SharedKernel.Results.Result>! uniqueRuleResult, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Results.Result>!

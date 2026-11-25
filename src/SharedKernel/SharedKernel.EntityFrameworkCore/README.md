@@ -91,6 +91,27 @@ concurrency token no longer matches) into `SharedKernel.BuildingBlocks.Concurren
 the inner exception and the message never contains data values. Catch it in the application handler and report a conflict instead of
 an unexpected failure. `SaveChangesTranslatingUniqueViolations` is unchanged and does not translate conflicts.
 
+### Results instead of exceptions
+
+Code that returns a `SharedKernel.Results.Result` and does not run through the mediator's `UniqueViolationBehavior` and
+`ConcurrencyConflictBehavior` can save with `dbContext.SaveChangesAsResult(parser, uniqueRuleResult, ct)` and need no try/catch:
+
+- success is `Result.Ok()`;
+- a violated tagged index returns `uniqueRuleResult(rule)`, typically the same field error as the pre-check;
+- a stale row returns a `Conflict` result with the code `ResultErrorCodes.ConcurrencyConflict` and
+  `DbContextResultExtensions.ConcurrencyConflictMessage`, the same result as the mediator's `ConcurrencyConflictResults.Stale()`.
+
+After a reported violation or conflict the change tracker is cleared, so the context can be used again; every other failure propagates
+unchanged.
+
+```csharp
+public Task<Result> Save(CancellationToken ct) => db.SaveChangesAsResult(parser, rule => rule switch
+{
+    "catalog.slug" => Result.Invalid("This slug is already used.", "slug", "This slug is already used."),
+    _ => Result.Conflict("A value that must be unique is already in use."),
+}, ct);
+```
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.EntityFrameworkCore`. C# namespace: `SharedKernel.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.EntityFrameworkCore`.
