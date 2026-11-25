@@ -1192,3 +1192,5 @@ static SharedKernel.Blazor.Site.PhotoCreditItem.operator !=(SharedKernel.Blazor.
 static SharedKernel.Blazor.Site.PhotoCreditItem.operator ==(SharedKernel.Blazor.Site.PhotoCreditItem? left, SharedKernel.Blazor.Site.PhotoCreditItem? right) -> bool
 static SharedKernel.Blazor.Site.PhotoCreditLabels.operator !=(SharedKernel.Blazor.Site.PhotoCreditLabels? left, SharedKernel.Blazor.Site.PhotoCreditLabels? right) -> bool
 static SharedKernel.Blazor.Site.PhotoCreditLabels.operator ==(SharedKernel.Blazor.Site.PhotoCreditLabels? left, SharedKernel.Blazor.Site.PhotoCreditLabels? right) -> bool
+SharedKernel.Blazor.Site.RazorComponentMethodExtensions
+static SharedKernel.Blazor.Site.RazorComponentMethodExtensions.AllowOnlyGetAndHead(this Microsoft.AspNetCore.Builder.RazorComponentsEndpointConventionBuilder! builder, params System.Type![]! anyMethodComponents) -> Microsoft.AspNetCore.Builder.RazorComponentsEndpointConventionBuilder!
