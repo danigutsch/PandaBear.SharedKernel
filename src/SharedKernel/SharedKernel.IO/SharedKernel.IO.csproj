@@ -2,7 +2,7 @@
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.IO</PackageId>
-        <Description>Bounded seekable stream spooling with explicit ownership and cleanup, bounded whole-file and whole-stream reads, and repository-relative paths.</Description>
+        <Description>Bounded seekable stream spooling with explicit ownership and cleanup, bounded whole-file and whole-stream reads, atomic and content-addressed file writes, and repository-relative paths.</Description>
         <PackageTags>io;streams;spooling;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
