@@ -134,6 +134,17 @@ static SharedKernel.Vault.Brief.AgentDecisions.Combine(SharedKernel.Vault.Merge.
 static SharedKernel.Vault.Brief.AgentDecisions.Conflicts(SharedKernel.Vault.Pipeline.PipelineResult! userOnly, SharedKernel.Vault.Pipeline.PipelineResult! applied, SharedKernel.Vault.Merge.MergeDecisions! decisions) -> System.Collections.Generic.IReadOnlyList<string!>!
 static SharedKernel.Vault.Brief.AgentDecisions.Effective(SharedKernel.Vault.Merge.MergeDecisions! user, SharedKernel.Vault.Merge.MergeDecisions! agent) -> SharedKernel.Vault.Merge.MergeDecisions!
 static SharedKernel.Vault.Brief.AgentDecisions.RejectedByAgent(SharedKernel.Vault.Merge.MergeDecisions! user, SharedKernel.Vault.Merge.MergeDecisions! agent, System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Pipeline.ItemFindingsResult!>! findings) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Merge.ItemFindingDecisions!>!
+SharedKernel.Vault.Brief.AgentMergeFailure
+SharedKernel.Vault.Brief.AgentMergeFailure.ChangedMerge = 3 -> SharedKernel.Vault.Brief.AgentMergeFailure
+SharedKernel.Vault.Brief.AgentMergeFailure.CurrentInputs = 2 -> SharedKernel.Vault.Brief.AgentMergeFailure
+SharedKernel.Vault.Brief.AgentMergeFailure.InputFiles = 0 -> SharedKernel.Vault.Brief.AgentMergeFailure
+SharedKernel.Vault.Brief.AgentMergeFailure.SavedBrief = 1 -> SharedKernel.Vault.Brief.AgentMergeFailure
+SharedKernel.Vault.Brief.AgentMergePreview
+SharedKernel.Vault.Brief.AgentMergePreview.Decisions.get -> SharedKernel.Vault.Merge.MergeDecisions?
+SharedKernel.Vault.Brief.AgentMergePreview.Failure.get -> SharedKernel.Vault.Brief.AgentMergeFailure?
+SharedKernel.Vault.Brief.AgentMergePreview.Problems.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Vault.Brief.AgentMergePreview.Result.get -> SharedKernel.Vault.Pipeline.PipelineResult?
+static SharedKernel.Vault.Brief.AgentMergePreview.Evaluate(SharedKernel.Vault.Pipeline.VaultPipeline! pipeline, SharedKernel.Vault.Pipeline.ScannedVault! scanned, SharedKernel.Vault.Pipeline.MergeRequest! request, SharedKernel.Vault.Brief.BriefDocument! brief, SharedKernel.Vault.Merge.MergeDecisions! agent, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> SharedKernel.Vault.Brief.AgentMergePreview!
 SharedKernel.Vault.Brief.BriefBuilder
 static SharedKernel.Vault.Brief.BriefBuilder.Build(System.Collections.Generic.IReadOnlyList<string!>! inputs, SharedKernel.Vault.Pipeline.ScannedVault! scanned, SharedKernel.Vault.Pipeline.PipelineResult! result, SharedKernel.Vault.Merge.MergeDecisions! decisions, bool everyGroup = false) -> SharedKernel.Vault.Brief.BriefDocument!
 SharedKernel.Vault.Brief.BriefDocument
@@ -314,6 +325,7 @@ const SharedKernel.Vault.Catalog.CatalogApplier.HiddenNotesField = "Notes" -> st
 SharedKernel.Vault.Catalog.CatalogApplyResult
 SharedKernel.Vault.Catalog.CatalogApplyResult.<Clone>$() -> SharedKernel.Vault.Catalog.CatalogApplyResult!
 SharedKernel.Vault.Catalog.CatalogApplyResult.CatalogApplyResult(SharedKernel.Vault.Model.VaultExport? Vault, int ChangedItems, System.Collections.Generic.IReadOnlyList<string!>! Problems) -> void
+SharedKernel.Vault.Catalog.CatalogApplyResult.CanWrite(bool allowRemovals) -> bool
 SharedKernel.Vault.Catalog.CatalogApplyResult.ChangedItems.get -> int
 SharedKernel.Vault.Catalog.CatalogApplyResult.ChangedItems.init -> void
 SharedKernel.Vault.Catalog.CatalogApplyResult.Changes.get -> System.Collections.Generic.IReadOnlyList<string!>!
@@ -410,6 +422,7 @@ static SharedKernel.Vault.Catalog.CatalogField.operator ==(SharedKernel.Vault.Ca
 SharedKernel.Vault.Catalog.CatalogFile
 const SharedKernel.Vault.Catalog.CatalogFile.CurrentVersion = 1 -> int
 static SharedKernel.Vault.Catalog.CatalogFile.Deserialize(string! json) -> SharedKernel.Vault.Catalog.CatalogDocument!
+static SharedKernel.Vault.Catalog.CatalogFile.CheckSource(SharedKernel.Vault.Catalog.CatalogSource! expected, string! path) -> SharedKernel.Vault.Catalog.CatalogSourceMatch
 static SharedKernel.Vault.Catalog.CatalogFile.Hash(string! path) -> string!
 static SharedKernel.Vault.Catalog.CatalogFile.Read(string! path) -> SharedKernel.Vault.Catalog.CatalogDocument!
 static SharedKernel.Vault.Catalog.CatalogFile.Serialize(SharedKernel.Vault.Catalog.CatalogDocument! catalog) -> string!
@@ -496,6 +509,10 @@ SharedKernel.Vault.Catalog.CatalogSource.Sha256.init -> void
 override SharedKernel.Vault.Catalog.CatalogSource.ToString() -> string!
 static SharedKernel.Vault.Catalog.CatalogSource.operator !=(SharedKernel.Vault.Catalog.CatalogSource? left, SharedKernel.Vault.Catalog.CatalogSource? right) -> bool
 static SharedKernel.Vault.Catalog.CatalogSource.operator ==(SharedKernel.Vault.Catalog.CatalogSource? left, SharedKernel.Vault.Catalog.CatalogSource? right) -> bool
+SharedKernel.Vault.Catalog.CatalogSourceMatch
+SharedKernel.Vault.Catalog.CatalogSourceMatch.DigestMismatch = 2 -> SharedKernel.Vault.Catalog.CatalogSourceMatch
+SharedKernel.Vault.Catalog.CatalogSourceMatch.FileNameMismatch = 1 -> SharedKernel.Vault.Catalog.CatalogSourceMatch
+SharedKernel.Vault.Catalog.CatalogSourceMatch.Match = 0 -> SharedKernel.Vault.Catalog.CatalogSourceMatch
 SharedKernel.Vault.Catalog.CatalogUri
 SharedKernel.Vault.Catalog.CatalogUri.<Clone>$() -> SharedKernel.Vault.Catalog.CatalogUri!
 SharedKernel.Vault.Catalog.CatalogUri.CatalogUri(string? Value = null, SharedKernel.Vault.Model.UriMatch? Match = null, string? Masked = null, int? Index = null) -> void
@@ -1497,6 +1514,8 @@ const SharedKernel.Vault.Pipeline.SshKeyNormalizer.OtherTextField = "Private key
 const SharedKernel.Vault.Pipeline.SshKeyNormalizer.PrivateKeyField = "Private key" -> string!
 const SharedKernel.Vault.Pipeline.SshKeyNormalizer.PublicKeyField = "Public key" -> string!
 const SharedKernel.Vault.Pipeline.SshKeyNormalizer.SourceSuffix = " (from source)" -> string!
+SharedKernel.Vault.Pipeline.UnmatchedDecisions
+static SharedKernel.Vault.Pipeline.UnmatchedDecisions.Find(SharedKernel.Vault.Merge.MergeDecisions! decisions, SharedKernel.Vault.Pipeline.PipelineResult! result) -> System.Collections.Generic.IReadOnlyList<string!>!
 SharedKernel.Vault.Pipeline.VaultPasswordPrompts
 SharedKernel.Vault.Pipeline.VaultPasswordPrompts.<Clone>$() -> SharedKernel.Vault.Pipeline.VaultPasswordPrompts!
 SharedKernel.Vault.Pipeline.VaultPasswordPrompts.Deconstruct(out System.Func<string!, string!>! ReadPassword, out System.Func<string!, string!>! ReadNewPassword) -> void
@@ -1605,3 +1624,187 @@ static SharedKernel.Vault.Secrets.SecretFinding.operator ==(SharedKernel.Vault.S
 SharedKernel.Vault.Secrets.SecretPlacer
 static SharedKernel.Vault.Secrets.SecretPlacer.TryRead(SharedKernel.Vault.Model.VaultItem! item, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attachmentTexts, SharedKernel.SecretScanning.SecretLocation! location, out string? value) -> bool
 override sealed SharedKernel.Vault.Pipeline.PipelineRequest.Equals(SharedKernel.Vault.Pipeline.MergeRequest? other) -> bool
+SharedKernel.Vault.Merge.PendingDecisions
+SharedKernel.Vault.Merge.PendingDecisions.<Clone>$() -> SharedKernel.Vault.Merge.PendingDecisions!
+SharedKernel.Vault.Merge.PendingDecisions.Deconstruct(out System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Merge.UnresolvedConflict!>! Fields, out System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Merge.ItemFindingDecisions!>! Findings) -> void
+SharedKernel.Vault.Merge.PendingDecisions.Equals(SharedKernel.Vault.Merge.PendingDecisions? other) -> bool
+SharedKernel.Vault.Merge.PendingDecisions.Fields.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Merge.UnresolvedConflict!>!
+SharedKernel.Vault.Merge.PendingDecisions.Fields.init -> void
+SharedKernel.Vault.Merge.PendingDecisions.FindingCount.get -> int
+SharedKernel.Vault.Merge.PendingDecisions.Findings.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Merge.ItemFindingDecisions!>!
+SharedKernel.Vault.Merge.PendingDecisions.Findings.init -> void
+SharedKernel.Vault.Merge.PendingDecisions.IsEmpty.get -> bool
+SharedKernel.Vault.Merge.PendingDecisions.PendingDecisions(System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Merge.UnresolvedConflict!>! Fields, System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Merge.ItemFindingDecisions!>! Findings) -> void
+SharedKernel.Vault.Review.GroupFilter
+SharedKernel.Vault.Review.GroupFilter.All = 0 -> SharedKernel.Vault.Review.GroupFilter
+SharedKernel.Vault.Review.GroupFilter.Conflict = 2 -> SharedKernel.Vault.Review.GroupFilter
+SharedKernel.Vault.Review.GroupFilter.HasFindings = 6 -> SharedKernel.Vault.Review.GroupFilter
+SharedKernel.Vault.Review.GroupFilter.Identical = 4 -> SharedKernel.Vault.Review.GroupFilter
+SharedKernel.Vault.Review.GroupFilter.Pending = 1 -> SharedKernel.Vault.Review.GroupFilter
+SharedKernel.Vault.Review.GroupFilter.Suggested = 3 -> SharedKernel.Vault.Review.GroupFilter
+SharedKernel.Vault.Review.GroupFilter.Unique = 5 -> SharedKernel.Vault.Review.GroupFilter
+SharedKernel.Vault.Review.ReviewField
+SharedKernel.Vault.Review.ReviewField.<Clone>$() -> SharedKernel.Vault.Review.ReviewField!
+SharedKernel.Vault.Review.ReviewField.AcceptsEmpty.get -> bool
+SharedKernel.Vault.Review.ReviewField.AcceptsEmpty.init -> void
+SharedKernel.Vault.Review.ReviewField.AcceptsMember.get -> bool
+SharedKernel.Vault.Review.ReviewField.AcceptsMember.init -> void
+SharedKernel.Vault.Review.ReviewField.Choice.get -> SharedKernel.Vault.Merge.FieldChoice?
+SharedKernel.Vault.Review.ReviewField.Choice.init -> void
+SharedKernel.Vault.Review.ReviewField.Deconstruct(out string! FieldPath, out string! Label, out System.Collections.Generic.IReadOnlyList<string!>! Values, out bool IsSecret, out bool IsRevealed, out bool Differs, out bool IsConflict, out SharedKernel.Vault.Merge.FieldChoice? Choice, out SharedKernel.Vault.Merge.ResolutionKind? Resolution, out bool AcceptsMember, out bool AcceptsEmpty) -> void
+SharedKernel.Vault.Review.ReviewField.Differs.get -> bool
+SharedKernel.Vault.Review.ReviewField.Differs.init -> void
+SharedKernel.Vault.Review.ReviewField.Equals(SharedKernel.Vault.Review.ReviewField? other) -> bool
+SharedKernel.Vault.Review.ReviewField.FieldPath.get -> string!
+SharedKernel.Vault.Review.ReviewField.FieldPath.init -> void
+SharedKernel.Vault.Review.ReviewField.IsConflict.get -> bool
+SharedKernel.Vault.Review.ReviewField.IsConflict.init -> void
+SharedKernel.Vault.Review.ReviewField.IsRevealed.get -> bool
+SharedKernel.Vault.Review.ReviewField.IsRevealed.init -> void
+SharedKernel.Vault.Review.ReviewField.IsSecret.get -> bool
+SharedKernel.Vault.Review.ReviewField.IsSecret.init -> void
+SharedKernel.Vault.Review.ReviewField.Label.get -> string!
+SharedKernel.Vault.Review.ReviewField.Label.init -> void
+SharedKernel.Vault.Review.ReviewField.Resolution.get -> SharedKernel.Vault.Merge.ResolutionKind?
+SharedKernel.Vault.Review.ReviewField.Resolution.init -> void
+SharedKernel.Vault.Review.ReviewField.ReviewField(string! FieldPath, string! Label, System.Collections.Generic.IReadOnlyList<string!>! Values, bool IsSecret, bool IsRevealed, bool Differs, bool IsConflict, SharedKernel.Vault.Merge.FieldChoice? Choice, SharedKernel.Vault.Merge.ResolutionKind? Resolution, bool AcceptsMember, bool AcceptsEmpty) -> void
+SharedKernel.Vault.Review.ReviewField.Values.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Vault.Review.ReviewField.Values.init -> void
+SharedKernel.Vault.Review.ReviewFinding
+SharedKernel.Vault.Review.ReviewFinding.<Clone>$() -> SharedKernel.Vault.Review.ReviewFinding!
+SharedKernel.Vault.Review.ReviewFinding.Confidence.get -> SharedKernel.SecretScanning.Confidence
+SharedKernel.Vault.Review.ReviewFinding.Confidence.init -> void
+SharedKernel.Vault.Review.ReviewFinding.Decision.get -> SharedKernel.Vault.Merge.FindingDecision?
+SharedKernel.Vault.Review.ReviewFinding.Decision.init -> void
+SharedKernel.Vault.Review.ReviewFinding.Deconstruct(out string! OriginKey, out string! ItemName, out string! FindingId, out SharedKernel.SecretScanning.SecretKind Kind, out SharedKernel.SecretScanning.Confidence Confidence, out string! Target, out string! Message, out bool IsPreAccepted, out bool NeedsReview, out SharedKernel.Vault.Merge.FindingDecision? Decision, out bool IsApplied, out string? Problem, out bool IsRevealed, out string! Value) -> void
+SharedKernel.Vault.Review.ReviewFinding.Equals(SharedKernel.Vault.Review.ReviewFinding? other) -> bool
+SharedKernel.Vault.Review.ReviewFinding.FindingId.get -> string!
+SharedKernel.Vault.Review.ReviewFinding.FindingId.init -> void
+SharedKernel.Vault.Review.ReviewFinding.IsApplied.get -> bool
+SharedKernel.Vault.Review.ReviewFinding.IsApplied.init -> void
+SharedKernel.Vault.Review.ReviewFinding.IsPending.get -> bool
+SharedKernel.Vault.Review.ReviewFinding.IsPreAccepted.get -> bool
+SharedKernel.Vault.Review.ReviewFinding.IsPreAccepted.init -> void
+SharedKernel.Vault.Review.ReviewFinding.IsRevealed.get -> bool
+SharedKernel.Vault.Review.ReviewFinding.IsRevealed.init -> void
+SharedKernel.Vault.Review.ReviewFinding.ItemName.get -> string!
+SharedKernel.Vault.Review.ReviewFinding.ItemName.init -> void
+SharedKernel.Vault.Review.ReviewFinding.Kind.get -> SharedKernel.SecretScanning.SecretKind
+SharedKernel.Vault.Review.ReviewFinding.Kind.init -> void
+SharedKernel.Vault.Review.ReviewFinding.Message.get -> string!
+SharedKernel.Vault.Review.ReviewFinding.Message.init -> void
+SharedKernel.Vault.Review.ReviewFinding.NeedsReview.get -> bool
+SharedKernel.Vault.Review.ReviewFinding.NeedsReview.init -> void
+SharedKernel.Vault.Review.ReviewFinding.OriginKey.get -> string!
+SharedKernel.Vault.Review.ReviewFinding.OriginKey.init -> void
+SharedKernel.Vault.Review.ReviewFinding.Problem.get -> string?
+SharedKernel.Vault.Review.ReviewFinding.Problem.init -> void
+SharedKernel.Vault.Review.ReviewFinding.ReviewFinding(string! OriginKey, string! ItemName, string! FindingId, SharedKernel.SecretScanning.SecretKind Kind, SharedKernel.SecretScanning.Confidence Confidence, string! Target, string! Message, bool IsPreAccepted, bool NeedsReview, SharedKernel.Vault.Merge.FindingDecision? Decision, bool IsApplied, string? Problem, bool IsRevealed, string! Value) -> void
+SharedKernel.Vault.Review.ReviewFinding.Target.get -> string!
+SharedKernel.Vault.Review.ReviewFinding.Target.init -> void
+SharedKernel.Vault.Review.ReviewFinding.Value.get -> string!
+SharedKernel.Vault.Review.ReviewFinding.Value.init -> void
+SharedKernel.Vault.Review.ReviewGroup
+SharedKernel.Vault.Review.ReviewGroup.<Clone>$() -> SharedKernel.Vault.Review.ReviewGroup!
+SharedKernel.Vault.Review.ReviewGroup.ConflictingFields.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Vault.Review.ReviewGroup.ConflictingFields.init -> void
+SharedKernel.Vault.Review.ReviewGroup.Deconstruct(out string! Key, out string! Name, out SharedKernel.Vault.Model.VaultItemType Type, out SharedKernel.Vault.Matching.MatchStatus Status, out System.Collections.Generic.IReadOnlyList<string!>! MemberKeys, out System.Collections.Generic.IReadOnlyList<string!>! MemberNames, out System.Collections.Generic.IReadOnlyList<string!>! ConflictingFields, out int PendingFields, out int Findings, out int PendingFindings, out bool IsSuggested) -> void
+SharedKernel.Vault.Review.ReviewGroup.Equals(SharedKernel.Vault.Review.ReviewGroup? other) -> bool
+SharedKernel.Vault.Review.ReviewGroup.Findings.get -> int
+SharedKernel.Vault.Review.ReviewGroup.Findings.init -> void
+SharedKernel.Vault.Review.ReviewGroup.IsPending.get -> bool
+SharedKernel.Vault.Review.ReviewGroup.IsSuggested.get -> bool
+SharedKernel.Vault.Review.ReviewGroup.IsSuggested.init -> void
+SharedKernel.Vault.Review.ReviewGroup.Key.get -> string!
+SharedKernel.Vault.Review.ReviewGroup.Key.init -> void
+SharedKernel.Vault.Review.ReviewGroup.MemberKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Vault.Review.ReviewGroup.MemberKeys.init -> void
+SharedKernel.Vault.Review.ReviewGroup.MemberNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Vault.Review.ReviewGroup.MemberNames.init -> void
+SharedKernel.Vault.Review.ReviewGroup.Name.get -> string!
+SharedKernel.Vault.Review.ReviewGroup.Name.init -> void
+SharedKernel.Vault.Review.ReviewGroup.PendingFields.get -> int
+SharedKernel.Vault.Review.ReviewGroup.PendingFields.init -> void
+SharedKernel.Vault.Review.ReviewGroup.PendingFindings.get -> int
+SharedKernel.Vault.Review.ReviewGroup.PendingFindings.init -> void
+SharedKernel.Vault.Review.ReviewGroup.ReviewGroup(string! Key, string! Name, SharedKernel.Vault.Model.VaultItemType Type, SharedKernel.Vault.Matching.MatchStatus Status, System.Collections.Generic.IReadOnlyList<string!>! MemberKeys, System.Collections.Generic.IReadOnlyList<string!>! MemberNames, System.Collections.Generic.IReadOnlyList<string!>! ConflictingFields, int PendingFields, int Findings, int PendingFindings, bool IsSuggested) -> void
+SharedKernel.Vault.Review.ReviewGroup.Status.get -> SharedKernel.Vault.Matching.MatchStatus
+SharedKernel.Vault.Review.ReviewGroup.Status.init -> void
+SharedKernel.Vault.Review.ReviewGroup.Type.get -> SharedKernel.Vault.Model.VaultItemType
+SharedKernel.Vault.Review.ReviewGroup.Type.init -> void
+SharedKernel.Vault.Review.ReviewMember
+SharedKernel.Vault.Review.ReviewMember.<Clone>$() -> SharedKernel.Vault.Review.ReviewMember!
+SharedKernel.Vault.Review.ReviewMember.Deconstruct(out string! OriginKey, out string! Name, out string! SourceFile, out System.DateTimeOffset? LastModified, out bool IsNewest) -> void
+SharedKernel.Vault.Review.ReviewMember.Equals(SharedKernel.Vault.Review.ReviewMember? other) -> bool
+SharedKernel.Vault.Review.ReviewMember.IsNewest.get -> bool
+SharedKernel.Vault.Review.ReviewMember.IsNewest.init -> void
+SharedKernel.Vault.Review.ReviewMember.LastModified.get -> System.DateTimeOffset?
+SharedKernel.Vault.Review.ReviewMember.LastModified.init -> void
+SharedKernel.Vault.Review.ReviewMember.Name.get -> string!
+SharedKernel.Vault.Review.ReviewMember.Name.init -> void
+SharedKernel.Vault.Review.ReviewMember.OriginKey.get -> string!
+SharedKernel.Vault.Review.ReviewMember.OriginKey.init -> void
+SharedKernel.Vault.Review.ReviewMember.ReviewMember(string! OriginKey, string! Name, string! SourceFile, System.DateTimeOffset? LastModified, bool IsNewest) -> void
+SharedKernel.Vault.Review.ReviewMember.SourceFile.get -> string!
+SharedKernel.Vault.Review.ReviewMember.SourceFile.init -> void
+SharedKernel.Vault.Review.ReviewSession
+SharedKernel.Vault.Review.ReviewSession.ChooseEmpty(string! groupKey, string! fieldPath) -> void
+SharedKernel.Vault.Review.ReviewSession.ChooseMember(string! groupKey, string! fieldPath, string! originKey) -> void
+SharedKernel.Vault.Review.ReviewSession.ChooseMemberForConflicts(string! groupKey, string! originKey) -> int
+SharedKernel.Vault.Review.ReviewSession.ClearChoice(string! groupKey, string! fieldPath) -> void
+SharedKernel.Vault.Review.ReviewSession.ClearFinding(string! originKey, string! findingId) -> void
+SharedKernel.Vault.Review.ReviewSession.DecideFinding(string! originKey, string! findingId, SharedKernel.Vault.Merge.FindingDecision decision) -> void
+SharedKernel.Vault.Review.ReviewSession.DecideNotes(string! originKey, SharedKernel.Vault.Merge.NotesDecision decision) -> void
+SharedKernel.Vault.Review.ReviewSession.Decisions.get -> SharedKernel.Vault.Merge.MergeDecisions!
+SharedKernel.Vault.Review.ReviewSession.Fields(string! groupKey) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Review.ReviewField!>!
+SharedKernel.Vault.Review.ReviewSession.Findings(string! groupKey) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Review.ReviewFinding!>!
+SharedKernel.Vault.Review.ReviewSession.GroupCount.get -> int
+SharedKernel.Vault.Review.ReviewSession.GroupOf(string! originKey) -> SharedKernel.Vault.Review.ReviewGroup?
+SharedKernel.Vault.Review.ReviewSession.Groups(SharedKernel.Vault.Review.GroupFilter filter, string? search) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Review.ReviewGroup!>!
+SharedKernel.Vault.Review.ReviewSession.IsDirty.get -> bool
+SharedKernel.Vault.Review.ReviewSession.Link(string! originKey, string! otherOriginKey) -> bool
+SharedKernel.Vault.Review.ReviewSession.Members(string! groupKey) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Vault.Review.ReviewMember!>!
+SharedKernel.Vault.Review.ReviewSession.Pending.get -> SharedKernel.Vault.Merge.PendingDecisions!
+SharedKernel.Vault.Review.ReviewSession.Result.get -> SharedKernel.Vault.Pipeline.PipelineResult!
+SharedKernel.Vault.Review.ReviewSession.ReviewSession(SharedKernel.Vault.Pipeline.VaultPipeline! pipeline, SharedKernel.Vault.Pipeline.ScannedVault! scanned, SharedKernel.Vault.Merge.MergeDecisions! decisions) -> void
+SharedKernel.Vault.Review.ReviewSession.Save(System.Action<SharedKernel.Vault.Merge.MergeDecisions!>! persist) -> void
+SharedKernel.Vault.Review.ReviewSession.Saved.get -> bool
+SharedKernel.Vault.Review.ReviewSession.ShareNotesWithoutFindings() -> int
+SharedKernel.Vault.Review.ReviewSession.Split(string! originKey) -> void
+SharedKernel.Vault.Review.ReviewSession.ToggleReveal(string! groupKey, string! fieldPath) -> bool
+SharedKernel.Vault.Review.ReviewSession.ToggleRevealFinding(string! originKey, string! findingId) -> bool
+SharedKernel.Vault.Review.ReviewSession.Write(SharedKernel.Vault.Pipeline.PipelineOutput! output, SharedKernel.Vault.Pipeline.VaultPipeline! exportPipeline) -> void
+SharedKernel.Vault.Review.ReviewSession.WriteResult.get -> SharedKernel.Vault.Pipeline.PipelineResult?
+SharedKernel.Vault.Review.ReviewSession.Written.get -> bool
+SharedKernel.Vault.Review.ReviewText
+const SharedKernel.Vault.Review.ReviewText.LineBreak = " ↵ " -> string!
+const SharedKernel.Vault.Review.ReviewText.Mask = "********" -> string!
+override SharedKernel.Vault.Merge.PendingDecisions.Equals(object? obj) -> bool
+override SharedKernel.Vault.Merge.PendingDecisions.GetHashCode() -> int
+override SharedKernel.Vault.Merge.PendingDecisions.ToString() -> string!
+override SharedKernel.Vault.Review.ReviewField.Equals(object? obj) -> bool
+override SharedKernel.Vault.Review.ReviewField.GetHashCode() -> int
+override SharedKernel.Vault.Review.ReviewField.ToString() -> string!
+override SharedKernel.Vault.Review.ReviewFinding.Equals(object? obj) -> bool
+override SharedKernel.Vault.Review.ReviewFinding.GetHashCode() -> int
+override SharedKernel.Vault.Review.ReviewFinding.ToString() -> string!
+override SharedKernel.Vault.Review.ReviewGroup.Equals(object? obj) -> bool
+override SharedKernel.Vault.Review.ReviewGroup.GetHashCode() -> int
+override SharedKernel.Vault.Review.ReviewGroup.ToString() -> string!
+override SharedKernel.Vault.Review.ReviewMember.Equals(object? obj) -> bool
+override SharedKernel.Vault.Review.ReviewMember.GetHashCode() -> int
+override SharedKernel.Vault.Review.ReviewMember.ToString() -> string!
+static SharedKernel.Vault.Merge.PendingDecisions.Find(SharedKernel.Vault.Pipeline.PipelineResult! result, SharedKernel.Vault.Merge.MergeDecisions! decisions) -> SharedKernel.Vault.Merge.PendingDecisions!
+static SharedKernel.Vault.Merge.PendingDecisions.None.get -> SharedKernel.Vault.Merge.PendingDecisions!
+static SharedKernel.Vault.Merge.PendingDecisions.operator !=(SharedKernel.Vault.Merge.PendingDecisions? left, SharedKernel.Vault.Merge.PendingDecisions? right) -> bool
+static SharedKernel.Vault.Merge.PendingDecisions.operator ==(SharedKernel.Vault.Merge.PendingDecisions? left, SharedKernel.Vault.Merge.PendingDecisions? right) -> bool
+static SharedKernel.Vault.Review.ReviewField.operator !=(SharedKernel.Vault.Review.ReviewField? left, SharedKernel.Vault.Review.ReviewField? right) -> bool
+static SharedKernel.Vault.Review.ReviewField.operator ==(SharedKernel.Vault.Review.ReviewField? left, SharedKernel.Vault.Review.ReviewField? right) -> bool
+static SharedKernel.Vault.Review.ReviewFinding.operator !=(SharedKernel.Vault.Review.ReviewFinding? left, SharedKernel.Vault.Review.ReviewFinding? right) -> bool
+static SharedKernel.Vault.Review.ReviewFinding.operator ==(SharedKernel.Vault.Review.ReviewFinding? left, SharedKernel.Vault.Review.ReviewFinding? right) -> bool
+static SharedKernel.Vault.Review.ReviewGroup.operator !=(SharedKernel.Vault.Review.ReviewGroup? left, SharedKernel.Vault.Review.ReviewGroup? right) -> bool
+static SharedKernel.Vault.Review.ReviewGroup.operator ==(SharedKernel.Vault.Review.ReviewGroup? left, SharedKernel.Vault.Review.ReviewGroup? right) -> bool
+static SharedKernel.Vault.Review.ReviewMember.operator !=(SharedKernel.Vault.Review.ReviewMember? left, SharedKernel.Vault.Review.ReviewMember? right) -> bool
+static SharedKernel.Vault.Review.ReviewMember.operator ==(SharedKernel.Vault.Review.ReviewMember? left, SharedKernel.Vault.Review.ReviewMember? right) -> bool
+static SharedKernel.Vault.Review.ReviewText.OneLine(string? text) -> string!
+static SharedKernel.Vault.Review.ReviewText.Value(string? value, bool masked) -> string!

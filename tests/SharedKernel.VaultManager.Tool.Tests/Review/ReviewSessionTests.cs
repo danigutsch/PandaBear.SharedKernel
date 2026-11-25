@@ -4,7 +4,8 @@ using SharedKernel.Testing;
 using SharedKernel.Vault.Matching;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Model;
-using SharedKernel.VaultManager.Tool.Review;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Review;
 using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 using static SharedKernel.VaultManager.Tool.Tests.Review.ReviewVaults;
 
@@ -20,6 +21,16 @@ public sealed class ReviewSessionTests : IDisposable
 
     /// <inheritdoc />
     public void Dispose() => temporaryDirectory.Dispose();
+
+    [Fact]
+    public void Review_decisions_are_available_from_the_vault_engine()
+    {
+        // Act
+        var assembly = typeof(ReviewSession).Assembly;
+
+        // Assert
+        assembly.ShouldBe(typeof(VaultPipeline).Assembly);
+    }
 
     [Fact]
     public void Notes_decisions_are_set_replaced_and_removed_per_item()

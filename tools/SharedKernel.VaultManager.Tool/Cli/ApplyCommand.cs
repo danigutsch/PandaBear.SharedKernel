@@ -6,7 +6,7 @@ using SharedKernel.Vault.Formats;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Model;
 using SharedKernel.Vault.Pipeline;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 
 namespace SharedKernel.VaultManager.Tool.Cli;
 
@@ -109,16 +109,14 @@ internal static class ApplyCommand
         }
 
         CatalogDocument catalog = CatalogFile.Read(arguments.Catalog);
-        string inputName = Path.GetFileName(arguments.Input);
-        if (!string.Equals(catalog.Source.File, inputName, StringComparison.Ordinal))
+        CatalogSourceMatch sourceMatch = CatalogFile.CheckSource(catalog.Source, arguments.Input);
+        if (sourceMatch is not CatalogSourceMatch.Match)
         {
-            error.WriteLine(PrintableText.OneLine($"The catalog was made from {catalog.Source.File}, not from {inputName}. Apply it to that file, or run catalog on {inputName}."));
-            return ExitCodes.InputOutputProblem;
-        }
-
-        if (!string.Equals(catalog.Source.Sha256, CatalogFile.Hash(arguments.Input), StringComparison.OrdinalIgnoreCase))
-        {
-            error.WriteLine(PrintableText.OneLine($"{inputName} changed after the catalog was made. Run catalog on it again and redo the edits in the new catalog."));
+            string inputName = Path.GetFileName(arguments.Input);
+            string message = sourceMatch is CatalogSourceMatch.FileNameMismatch
+                ? $"The catalog was made from {catalog.Source.File}, not from {inputName}. Apply it to that file, or run catalog on {inputName}."
+                : $"{inputName} changed after the catalog was made. Run catalog on it again and redo the edits in the new catalog.";
+            error.WriteLine(PrintableText.OneLine(message));
             return ExitCodes.InputOutputProblem;
         }
 
@@ -147,7 +145,7 @@ internal static class ApplyCommand
             return Preview(applied, edited, arguments.AllowRemovals, output, error);
         }
 
-        if (applied.Removals.Count > 0 && !arguments.AllowRemovals)
+        if (!applied.CanWrite(arguments.AllowRemovals))
         {
             foreach (string removal in applied.Removals)
             {

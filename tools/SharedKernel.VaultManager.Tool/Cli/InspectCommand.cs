@@ -2,7 +2,7 @@ using System.CommandLine;
 using SharedKernel.InputNormalization;
 using SharedKernel.Vault.Formats;
 using SharedKernel.Vault.Model;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 
 namespace SharedKernel.VaultManager.Tool.Cli;
 
@@ -50,7 +50,7 @@ internal static class InspectCommand
             VaultReadResult read;
             try
             {
-                read = VaultFileReader.Read(inputs[index], fileName => prompts.Environment.ReadPassword("Password for " + fileName));
+                read = VaultFileReader.Instance.Read(inputs[index], fileName => prompts.Environment.ReadPassword("Password for " + fileName));
             }
             catch (Exception exception) when (CommandAction.IsFileProblem(exception))
             {

@@ -1,6 +1,6 @@
 using SharedKernel.Vault.Bitwarden;
 using SharedKernel.Vault.Pipeline;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 
 namespace SharedKernel.VaultManager.Tool;
 
@@ -40,5 +40,5 @@ internal sealed record VaultCommandEnvironment(
     /// </summary>
     /// <returns>The pipeline.</returns>
     public VaultPipeline CreatePipeline() =>
-        new(DetectingExportReader.Instance, BitwardenExportWriter.Instance, new VaultPasswordPrompts(ReadPassword, ReadNewPassword), Time);
+        new(VaultFileReader.Instance, BitwardenExportWriter.Instance, new VaultPasswordPrompts(ReadPassword, ReadNewPassword), Time);
 }

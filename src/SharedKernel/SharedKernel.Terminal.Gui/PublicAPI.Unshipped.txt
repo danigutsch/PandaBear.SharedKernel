@@ -1,0 +1,17 @@
+#nullable enable
+SharedKernel.Terminal.Gui.ListDetailLayout
+SharedKernel.Terminal.Gui.RowTableSource
+SharedKernel.Terminal.Gui.RowTableSource.RowTableSource(System.Collections.Generic.IReadOnlyList<string!>! columnNames, System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyList<string!>!>! rows) -> void
+SharedKernel.Terminal.Gui.TerminalDialogs
+SharedKernel.Terminal.Gui.TerminalText
+SharedKernel.Terminal.Gui.TerminalViews
+const SharedKernel.Terminal.Gui.TerminalText.LineBreak = " ↵ " -> string!
+const SharedKernel.Terminal.Gui.TerminalText.Mask = "********" -> string!
+static SharedKernel.Terminal.Gui.ListDetailLayout.Position(Terminal.Gui.Views.FrameView! list, Terminal.Gui.Views.Label! heading, Terminal.Gui.ViewBase.View! detail) -> void
+static SharedKernel.Terminal.Gui.TerminalDialogs.Confirm(Terminal.Gui.App.IApplication! app, string! title, string! message, bool defaultToConfirm = false) -> bool
+static SharedKernel.Terminal.Gui.TerminalDialogs.Unavailable(Terminal.Gui.App.IApplication! app, int minimumWidth, int minimumHeight) -> string?
+static SharedKernel.Terminal.Gui.TerminalText.OneLine(string? text) -> string!
+static SharedKernel.Terminal.Gui.TerminalText.Value(string? value, bool masked) -> string!
+static SharedKernel.Terminal.Gui.TerminalViews.CreateDetail() -> Terminal.Gui.Views.TableView!
+static SharedKernel.Terminal.Gui.TerminalViews.CreateDiff() -> Terminal.Gui.Views.TableView!
+static SharedKernel.Terminal.Gui.TerminalViews.CreateList(int top = 0) -> Terminal.Gui.Views.ListView!

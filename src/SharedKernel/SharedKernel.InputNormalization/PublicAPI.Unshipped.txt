@@ -2,6 +2,11 @@
 SharedKernel.InputNormalization.ControlCharacters
 static SharedKernel.InputNormalization.ControlCharacters.Escape(string! value) -> string!
 static SharedKernel.InputNormalization.ControlCharacters.EscapeLines(string! value) -> string![]!
+SharedKernel.InputNormalization.DisplayText
+const SharedKernel.InputNormalization.DisplayText.LineBreak = " ↵ " -> string!
+const SharedKernel.InputNormalization.DisplayText.Mask = "********" -> string!
+static SharedKernel.InputNormalization.DisplayText.OneLine(string? text) -> string!
+static SharedKernel.InputNormalization.DisplayText.Value(string? value, bool masked) -> string!
 SharedKernel.InputNormalization.NumericSanitizer
 static SharedKernel.InputNormalization.NumericSanitizer.SanitizePrice(decimal value) -> decimal
 SharedKernel.InputNormalization.ObjectStorageKeyValidator

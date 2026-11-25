@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using System.Globalization;
+using SharedKernel.Terminal.Gui;
 using Terminal.Gui.App;
 using Terminal.Gui.ViewBase;
 using Terminal.Gui.Views;
@@ -21,10 +21,7 @@ internal sealed class ReviewDialogs(IApplication app) : IReviewDialogs
     /// Terminal.Gui throws while it lays out a dialog on a terminal that is too narrow, for example one that reports a size
     /// of 0x0, and leaves the dialog behind. The size is therefore checked before a dialog opens.
     /// </remarks>
-    public string? Unavailable =>
-        app.Screen.Width < MinimumWidth || app.Screen.Height < MinimumHeight
-            ? string.Create(CultureInfo.InvariantCulture, $"The terminal is too small for dialogs; make it at least {MinimumWidth} columns by {MinimumHeight} rows.")
-            : null;
+    public string? Unavailable => TerminalDialogs.Unavailable(app, MinimumWidth, MinimumHeight);
 
     /// <inheritdoc/>
     public QuitChoice AskQuit(bool canSave)
@@ -50,7 +47,8 @@ internal sealed class ReviewDialogs(IApplication app) : IReviewDialogs
     }
 
     /// <inheritdoc/>
-    public bool Confirm(string title, string message) => MessageBox.Query(app, title, message, "Cancel", "Yes") == 1;
+    public bool Confirm(string title, string message) =>
+        TerminalDialogs.Confirm(app, title, message, defaultToConfirm: true);
 
     /// <inheritdoc/>
     public string? AskExportPassword()

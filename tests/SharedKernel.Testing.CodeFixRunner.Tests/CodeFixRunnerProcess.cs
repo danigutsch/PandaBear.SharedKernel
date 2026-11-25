@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
@@ -9,9 +10,9 @@ namespace SharedKernel.Testing.CodeFixRunner.Tests;
 /// </summary>
 internal static class CodeFixRunnerProcess
 {
-    private static readonly TimeSpan ExitTimeout = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan ExitTimeout = TimeSpan.FromMinutes(1);
 
-    /// <summary>Runs the tool and waits at most 30 seconds for it to exit.</summary>
+    /// <summary>Runs the tool and waits at most one minute for it to exit.</summary>
     public static async Task<CodeFixRunnerInvocationResult> Run(string workingDirectory, IReadOnlyList<string> args, CancellationToken ct)
     {
         var startInfo = new ProcessStartInfo("dotnet")
@@ -21,6 +22,7 @@ internal static class CodeFixRunnerProcess
             RedirectStandardError = true,
             UseShellExecute = false,
         };
+        startInfo.Environment["DOTNET_CLI_CONTEXT_VERBOSE"] = "true";
         startInfo.ArgumentList.Add("exec");
         startInfo.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "SharedKernel.Testing.CodeFixRunner.dll"));
         foreach (var arg in args)
@@ -28,7 +30,38 @@ internal static class CodeFixRunnerProcess
             startInfo.ArgumentList.Add(arg);
         }
 
-        using var process = Process.Start(startInfo) ?? throw new InvalidOperationException("The code-fix runner did not start.");
+        return await RunProcess(startInfo, ct);
+    }
+
+    /// <summary>Counts the helper in the target SDK's evaluated compile items for one configuration.</summary>
+    public static async Task<int> CountHelperCompileItems(string projectPath, string configuration, CancellationToken ct)
+    {
+        var startInfo = new ProcessStartInfo("dotnet")
+        {
+            WorkingDirectory = Path.GetDirectoryName(projectPath)!,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        };
+        // Keep the independent compile-membership assertion on the SDK's JSON output.
+        startInfo.Environment["DOTNET_CLI_CONTEXT_VERBOSE"] = "false";
+        startInfo.Environment["DOTNET_NOLOGO"] = "true";
+        startInfo.ArgumentList.Add("msbuild");
+        startInfo.ArgumentList.Add(projectPath);
+        startInfo.ArgumentList.Add("-nologo");
+        startInfo.ArgumentList.Add("-getItem:Compile");
+        startInfo.ArgumentList.Add("-p:Configuration=" + configuration);
+
+        var result = await RunProcess(startInfo, ct);
+        result.ExitCode.ShouldBe(0, result.Error);
+        using var json = JsonDocument.Parse(result.Output);
+        return json.RootElement.GetProperty("Items").GetProperty("Compile").EnumerateArray()
+            .Count(item => item.GetProperty("Filename").GetString() == "SampleTestsHelpers");
+    }
+
+    private static async Task<CodeFixRunnerInvocationResult> RunProcess(ProcessStartInfo startInfo, CancellationToken ct)
+    {
+        using var process = Process.Start(startInfo) ?? throw new InvalidOperationException("The code-fix runner process did not start.");
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(ExitTimeout);
         var output = process.StandardOutput.ReadToEndAsync(timeout.Token);

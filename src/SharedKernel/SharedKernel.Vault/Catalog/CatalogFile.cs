@@ -126,6 +126,28 @@ public static class CatalogFile
         return catalog;
     }
 
+    /// <summary>Checks the file name and digest against the source recorded in a catalog.</summary>
+    /// <param name="expected">The recorded source.</param>
+    /// <param name="path">The file to check.</param>
+    /// <returns>The kind of match. A file with a different name is left unread.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="expected"/> or <paramref name="path"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
+    /// <exception cref="IOException">The file has the expected name and cannot be read.</exception>
+    public static CatalogSourceMatch CheckSource(CatalogSource expected, string path)
+    {
+        ArgumentNullException.ThrowIfNull(expected);
+        ArgumentException.ThrowIfNullOrEmpty(path);
+
+        if (!string.Equals(expected.File, Path.GetFileName(path), StringComparison.Ordinal))
+        {
+            return CatalogSourceMatch.FileNameMismatch;
+        }
+
+        return string.Equals(expected.Sha256, Hash(path), StringComparison.OrdinalIgnoreCase)
+            ? CatalogSourceMatch.Match
+            : CatalogSourceMatch.DigestMismatch;
+    }
+
     /// <summary>Computes the SHA-256 of a file, as <see cref="CatalogSource.Sha256"/> records it.</summary>
     /// <param name="path">File.</param>
     /// <returns>Lowercase hexadecimal digest.</returns>

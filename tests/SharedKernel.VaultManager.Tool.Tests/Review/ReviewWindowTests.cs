@@ -5,8 +5,10 @@ using SharedKernel.Vault.Matching;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Model;
 using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Review;
 using SharedKernel.VaultManager.Tool.Review;
 using SharedKernel.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.Terminal.Gui.Testing;
 using Terminal.Gui.App;
 using Terminal.Gui.Input;
 using static SharedKernel.VaultManager.Tool.Tests.Review.ReviewVaults;
@@ -29,11 +31,11 @@ public sealed class ReviewWindowTests : IDisposable
     public void Enter_takes_the_value_of_the_selected_member_column()
     {
         // Arrange
-        var session = Session(ConflictingLogins(DirectoryPath));
-        string groupKey = GroupOf(session, KeeperKey).Key;
-        int passwordRow = ReviewRows.Field(session, groupKey, FieldPaths.LoginPassword);
+        var workspace = Workspace(ConflictingLogins(DirectoryPath));
+        string groupKey = GroupOf(workspace.Session, KeeperKey).Key;
+        int passwordRow = ReviewRows.Field(workspace.Session, groupKey, FieldPaths.LoginPassword);
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, new FakeDialogs());
+        using var window = new ReviewWindow(workspace, new FakeDialogs());
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -43,8 +45,8 @@ public sealed class ReviewWindowTests : IDisposable
         app.End(token);
 
         // Assert
-        session.Decisions.Find(groupKey, FieldPaths.LoginPassword).ShouldBe(FieldChoice.Member(FieldPaths.LoginPassword, BitwardenKey));
-        session.Pending.IsEmpty.ShouldBeTrue();
+        workspace.Session.Decisions.Find(groupKey, FieldPaths.LoginPassword).ShouldBe(FieldChoice.Member(FieldPaths.LoginPassword, BitwardenKey));
+        workspace.Session.Pending.IsEmpty.ShouldBeTrue();
     }
 
     [Fact]
@@ -59,9 +61,9 @@ public sealed class ReviewWindowTests : IDisposable
         {
             Notes = "fixture bitwarden notes"
         };
-        var session = Session(Scan(DirectoryPath, keeper, bitwarden));
+        var workspace = Workspace(Scan(DirectoryPath, keeper, bitwarden));
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, new FakeDialogs());
+        using var window = new ReviewWindow(workspace, new FakeDialogs());
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -69,7 +71,7 @@ public sealed class ReviewWindowTests : IDisposable
         app.End(token);
 
         // Assert
-        session.Decisions.Groups.ShouldHaveSingleItem().Choices.ShouldBe(
+        workspace.Session.Decisions.Groups.ShouldHaveSingleItem().Choices.ShouldBe(
         [
             FieldChoice.Member(FieldPaths.Name, OriginKey(bitwarden)),
             FieldChoice.Member(FieldPaths.Notes, OriginKey(bitwarden)),
@@ -81,57 +83,57 @@ public sealed class ReviewWindowTests : IDisposable
     public void Pressing_e_drops_the_selected_field_and_delete_removes_the_decision()
     {
         // Arrange
-        var session = Session(ConflictingLogins(DirectoryPath));
-        string groupKey = GroupOf(session, KeeperKey).Key;
+        var workspace = Workspace(ConflictingLogins(DirectoryPath));
+        string groupKey = GroupOf(workspace.Session, KeeperKey).Key;
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, new FakeDialogs());
+        using var window = new ReviewWindow(workspace, new FakeDialogs());
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
         HeadlessTerminal.Press(app, ReviewKeys.Fields.Key);
-        HeadlessTerminal.Press(app, Key.CursorDown, ReviewRows.Field(session, groupKey, FieldPaths.LoginPassword));
+        HeadlessTerminal.Press(app, Key.CursorDown, ReviewRows.Field(workspace.Session, groupKey, FieldPaths.LoginPassword));
         HeadlessTerminal.Press(app, ReviewKeys.ChooseEmpty.Key);
-        FieldChoice? dropped = session.Decisions.Find(groupKey, FieldPaths.LoginPassword);
+        FieldChoice? dropped = workspace.Session.Decisions.Find(groupKey, FieldPaths.LoginPassword);
         HeadlessTerminal.Press(app, ReviewKeys.ClearChoice.Key);
         app.End(token);
 
         // Assert
         dropped.ShouldBe(FieldChoice.Empty(FieldPaths.LoginPassword));
-        session.Decisions.Find(groupKey, FieldPaths.LoginPassword).ShouldBeNull();
-        session.Pending.Fields.ShouldHaveSingleItem().FieldPath.ShouldBe(FieldPaths.LoginPassword);
+        workspace.Session.Decisions.Find(groupKey, FieldPaths.LoginPassword).ShouldBeNull();
+        workspace.Session.Pending.Fields.ShouldHaveSingleItem().FieldPath.ShouldBe(FieldPaths.LoginPassword);
     }
 
     [Fact]
     public void Pressing_v_reveals_and_masks_the_selected_field()
     {
         // Arrange
-        var session = Session(ConflictingLogins(DirectoryPath));
-        string groupKey = GroupOf(session, KeeperKey).Key;
+        var workspace = Workspace(ConflictingLogins(DirectoryPath));
+        string groupKey = GroupOf(workspace.Session, KeeperKey).Key;
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, new FakeDialogs());
+        using var window = new ReviewWindow(workspace, new FakeDialogs());
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
         HeadlessTerminal.Press(app, ReviewKeys.Fields.Key);
-        HeadlessTerminal.Press(app, Key.CursorDown, ReviewRows.Field(session, groupKey, FieldPaths.LoginPassword));
+        HeadlessTerminal.Press(app, Key.CursorDown, ReviewRows.Field(workspace.Session, groupKey, FieldPaths.LoginPassword));
         HeadlessTerminal.Press(app, ReviewKeys.Reveal.Key);
-        var revealed = FieldOf(session, groupKey, FieldPaths.LoginPassword);
+        var revealed = FieldOf(workspace.Session, groupKey, FieldPaths.LoginPassword);
         HeadlessTerminal.Press(app, ReviewKeys.Reveal.Key);
         app.End(token);
 
         // Assert
         revealed.Values.ShouldBe([KeeperPassword, BitwardenPassword]);
-        FieldOf(session, groupKey, FieldPaths.LoginPassword).Values.ShouldBe([ReviewText.Mask, ReviewText.Mask]);
-        session.IsDirty.ShouldBeFalse();
+        FieldOf(workspace.Session, groupKey, FieldPaths.LoginPassword).Values.ShouldBe([ReviewText.Mask, ReviewText.Mask]);
+        workspace.Session.IsDirty.ShouldBeFalse();
     }
 
     [Fact]
     public void Pressing_s_splits_the_selected_member_out_of_its_group()
     {
         // Arrange
-        var session = Session(ConflictingLogins(DirectoryPath));
+        var workspace = Workspace(ConflictingLogins(DirectoryPath));
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, new FakeDialogs());
+        using var window = new ReviewWindow(workspace, new FakeDialogs());
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -139,8 +141,8 @@ public sealed class ReviewWindowTests : IDisposable
         app.End(token);
 
         // Assert
-        session.Decisions.Overrides.Splits.ShouldBe([new OriginKeyPair(BitwardenKey, KeeperKey)]);
-        session.Groups(GroupFilter.All, null).Count.ShouldBe(2);
+        workspace.Session.Decisions.Overrides.Splits.ShouldBe([new OriginKeyPair(BitwardenKey, KeeperKey)]);
+        workspace.Session.Groups(GroupFilter.All, null).Count.ShouldBe(2);
         window.SelectedGroup.ShouldNotBeNull().MemberKeys.ShouldBe([KeeperKey]);
     }
 
@@ -150,10 +152,10 @@ public sealed class ReviewWindowTests : IDisposable
         // Arrange
         VaultItem wifi = KeeperNote("rec-3", "Wifi", "fixture wifi note");
         VaultItem router = KeeperNote("rec-4", "Router", "fixture router note");
-        var session = Session(Scan(DirectoryPath, wifi, router));
+        var workspace = Workspace(Scan(DirectoryPath, wifi, router));
         var dialogs = new FakeDialogs { ConfirmAnswer = true };
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, dialogs);
+        using var window = new ReviewWindow(workspace, dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
         string selected = window.SelectedGroup.ShouldNotBeNull().MemberKeys.ShouldHaveSingleItem();
         string other = selected == OriginKey(wifi) ? OriginKey(router) : OriginKey(wifi);
@@ -164,8 +166,8 @@ public sealed class ReviewWindowTests : IDisposable
 
         // Assert
         dialogs.Confirmations.ShouldBe(["Share notes"]);
-        session.Decisions.FindNotes(selected).ShouldBe(NotesDecision.Hidden);
-        session.Decisions.FindNotes(other).ShouldBe(NotesDecision.Share);
+        workspace.Session.Decisions.FindNotes(selected).ShouldBe(NotesDecision.Hidden);
+        workspace.Session.Decisions.FindNotes(other).ShouldBe(NotesDecision.Share);
     }
 
     [Fact]
@@ -173,28 +175,28 @@ public sealed class ReviewWindowTests : IDisposable
     {
         // Arrange
         VaultItem github = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(700), NotesPassword);
-        var session = Session(Scan(DirectoryPath, github));
-        string groupKey = GroupOf(session, OriginKey(github)).Key;
-        var proposed = session.Findings(groupKey).ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password);
+        var workspace = Workspace(Scan(DirectoryPath, github));
+        string groupKey = GroupOf(workspace.Session, OriginKey(github)).Key;
+        var proposed = workspace.Session.Findings(groupKey).ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password);
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, new FakeDialogs());
+        using var window = new ReviewWindow(workspace, new FakeDialogs());
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
         HeadlessTerminal.Press(app, ReviewKeys.Findings.Key);
-        HeadlessTerminal.Press(app, Key.CursorDown, ReviewRows.Finding(session, groupKey, proposed.FindingId));
+        HeadlessTerminal.Press(app, Key.CursorDown, ReviewRows.Finding(workspace.Session, groupKey, proposed.FindingId));
         HeadlessTerminal.Press(app, ReviewKeys.Accept.Key);
-        FindingDecision? accepted = session.Decisions.FindFinding(OriginKey(github), proposed.FindingId);
+        FindingDecision? accepted = workspace.Session.Decisions.FindFinding(OriginKey(github), proposed.FindingId);
         HeadlessTerminal.Press(app, ReviewKeys.Reject.Key);
-        FindingDecision? rejected = session.Decisions.FindFinding(OriginKey(github), proposed.FindingId);
+        FindingDecision? rejected = workspace.Session.Decisions.FindFinding(OriginKey(github), proposed.FindingId);
         HeadlessTerminal.Press(app, ReviewKeys.ClearFinding.Key, ReviewKeys.RevealFinding.Key);
         app.End(token);
 
         // Assert
         accepted.ShouldBe(FindingDecision.Accepted);
         rejected.ShouldBe(FindingDecision.Rejected);
-        session.Decisions.FindFinding(OriginKey(github), proposed.FindingId).ShouldBeNull();
-        var shown = session.Findings(groupKey).ShouldHaveSingleItem(finding => finding.FindingId == proposed.FindingId);
+        workspace.Session.Decisions.FindFinding(OriginKey(github), proposed.FindingId).ShouldBeNull();
+        var shown = workspace.Session.Findings(groupKey).ShouldHaveSingleItem(finding => finding.FindingId == proposed.FindingId);
         shown.IsRevealed.ShouldBeTrue();
         shown.Value.ShouldContain(NotesPassword, StringComparison.Ordinal);
     }
@@ -205,9 +207,9 @@ public sealed class ReviewWindowTests : IDisposable
         // Arrange
         VaultItem keeper = KeeperLogin("rec-1", "GitHub", "alice", KeeperPassword, "https://github.com", PipelineInputs.KeeperModified);
         VaultItem bitwarden = BitwardenLogin("bw-1", "GitHub work", "alice.work", KeeperPassword, "https://github.com", PipelineInputs.BitwardenRevision);
-        var session = Session(Scan(DirectoryPath, keeper, bitwarden));
+        var workspace = Workspace(Scan(DirectoryPath, keeper, bitwarden));
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, new FakeDialogs());
+        using var window = new ReviewWindow(workspace, new FakeDialogs());
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -219,7 +221,7 @@ public sealed class ReviewWindowTests : IDisposable
         // Assert
         marked.ShouldBe(OriginKey(keeper));
         window.MarkedOriginKey.ShouldBeNull();
-        session.Decisions.Overrides.Links.ShouldBe([new OriginKeyPair(OriginKey(keeper), OriginKey(bitwarden))]);
+        workspace.Session.Decisions.Overrides.Links.ShouldBe([new OriginKeyPair(OriginKey(keeper), OriginKey(bitwarden))]);
         window.SelectedGroup.ShouldNotBeNull().MemberKeys.ShouldBe([OriginKey(keeper), OriginKey(bitwarden)]);
     }
 
@@ -227,13 +229,13 @@ public sealed class ReviewWindowTests : IDisposable
     public void F7_changes_the_filter_and_the_search_field_narrows_the_groups()
     {
         // Arrange
-        var session = Session(Scan(
+        var workspace = Workspace(Scan(
             DirectoryPath,
             KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com"),
             BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com"),
             KeeperNote("rec-2", "Wifi", "fixture wifi note")));
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, new FakeDialogs());
+        using var window = new ReviewWindow(workspace, new FakeDialogs());
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -261,11 +263,11 @@ public sealed class ReviewWindowTests : IDisposable
     {
         // Arrange
         string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
-        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(decisionsPath, null));
-        session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
+        var workspace = Workspace(ConflictingLogins(DirectoryPath), files: new ReviewFiles(decisionsPath, null));
+        workspace.Session.ChooseMember(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         var dialogs = new FakeDialogs();
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, dialogs);
+        using var window = new ReviewWindow(workspace, dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -273,8 +275,8 @@ public sealed class ReviewWindowTests : IDisposable
         app.End(token);
 
         // Assert
-        session.IsDirty.ShouldBeFalse();
-        DecisionsFile.Read(decisionsPath).Find(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword).ShouldBe(FieldChoice.Member(FieldPaths.LoginPassword, KeeperKey));
+        workspace.Session.IsDirty.ShouldBeFalse();
+        DecisionsFile.Read(decisionsPath).Find(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.LoginPassword).ShouldBe(FieldChoice.Member(FieldPaths.LoginPassword, KeeperKey));
         dialogs.Errors.ShouldBeEmpty();
         dialogs.QuitQuestions.ShouldBeEmpty();
     }
@@ -284,11 +286,11 @@ public sealed class ReviewWindowTests : IDisposable
     {
         // Arrange
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output)));
-        session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, BitwardenKey);
+        var workspace = Workspace(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output)));
+        workspace.Session.ChooseMember(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.LoginPassword, BitwardenKey);
         var dialogs = new FakeDialogs { Password = ExportPassword };
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, dialogs);
+        using var window = new ReviewWindow(workspace, dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -311,10 +313,10 @@ public sealed class ReviewWindowTests : IDisposable
         {
             Attachments = [new AttachmentRef("codes.txt", 10, null)],
         };
-        var session = Session(Scan(DirectoryPath, keeper), files: new ReviewFiles(null, new PipelineOutput(output, Plaintext: true)));
+        var workspace = Workspace(Scan(DirectoryPath, keeper), files: new ReviewFiles(null, new PipelineOutput(output, Plaintext: true)));
         var dialogs = new FakeDialogs();
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, dialogs);
+        using var window = new ReviewWindow(workspace, dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -323,7 +325,7 @@ public sealed class ReviewWindowTests : IDisposable
 
         // Assert
         dialogs.Errors.ShouldBeEmpty();
-        session.Written.ShouldBeTrue();
+        workspace.Session.Written.ShouldBeTrue();
         window.Message.ShouldContain("1 attachment(s) to upload after the import", StringComparison.Ordinal);
     }
 
@@ -332,10 +334,10 @@ public sealed class ReviewWindowTests : IDisposable
     {
         // Arrange
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output)));
+        var workspace = Workspace(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output)));
         var dialogs = new FakeDialogs { Password = ExportPassword };
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, dialogs);
+        using var window = new ReviewWindow(workspace, dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -354,11 +356,11 @@ public sealed class ReviewWindowTests : IDisposable
         // Arrange
         string output = Path.Combine(DirectoryPath, "merged.json");
         File.WriteAllText(output, "fixture existing output");
-        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output, Plaintext: true)));
-        session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, BitwardenKey);
+        var workspace = Workspace(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output, Plaintext: true)));
+        workspace.Session.ChooseMember(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.LoginPassword, BitwardenKey);
         var dialogs = new FakeDialogs();
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, dialogs);
+        using var window = new ReviewWindow(workspace, dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -379,7 +381,7 @@ public sealed class ReviewWindowTests : IDisposable
         // Arrange
         var dialogs = new FakeDialogs();
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(Session(ConflictingLogins(DirectoryPath)), dialogs);
+        using var window = new ReviewWindow(Workspace(ConflictingLogins(DirectoryPath)), dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -394,11 +396,11 @@ public sealed class ReviewWindowTests : IDisposable
     public void Quitting_with_unsaved_decisions_asks_first_and_cancel_keeps_the_review_open()
     {
         // Arrange
-        var session = Session(ConflictingLogins(DirectoryPath));
-        session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
+        var workspace = Workspace(ConflictingLogins(DirectoryPath));
+        workspace.Session.ChooseMember(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         var dialogs = new FakeDialogs().AnswerQuit(QuitChoice.Cancel, QuitChoice.Discard);
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, dialogs);
+        using var window = new ReviewWindow(workspace, dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -412,7 +414,7 @@ public sealed class ReviewWindowTests : IDisposable
         keptOpen.ShouldBeTrue();
         dialogs.QuitQuestions.ShouldBe([false, false]);
         window.IsRunning.ShouldBeFalse();
-        session.IsDirty.ShouldBeTrue();
+        workspace.Session.IsDirty.ShouldBeTrue();
     }
 
     [Fact]
@@ -420,11 +422,11 @@ public sealed class ReviewWindowTests : IDisposable
     {
         // Arrange
         string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
-        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(decisionsPath, null));
-        session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
+        var workspace = Workspace(ConflictingLogins(DirectoryPath), files: new ReviewFiles(decisionsPath, null));
+        workspace.Session.ChooseMember(GroupOf(workspace.Session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         var dialogs = new FakeDialogs().AnswerQuit(QuitChoice.Save);
         using IApplication app = HeadlessTerminal.Start();
-        using var window = new ReviewWindow(session, dialogs);
+        using var window = new ReviewWindow(workspace, dialogs);
         SessionToken token = app.Begin(window).ShouldNotBeNull();
 
         // Act
@@ -434,7 +436,7 @@ public sealed class ReviewWindowTests : IDisposable
         // Assert
         dialogs.QuitQuestions.ShouldBe([true]);
         window.IsRunning.ShouldBeFalse();
-        session.IsDirty.ShouldBeFalse();
+        workspace.Session.IsDirty.ShouldBeFalse();
         File.Exists(decisionsPath).ShouldBeTrue();
     }
 
@@ -442,9 +444,9 @@ public sealed class ReviewWindowTests : IDisposable
     public void Quitting_without_changes_and_stopping_on_cancellation_ask_nothing()
     {
         // Arrange
-        var unchanged = Session(ConflictingLogins(DirectoryPath));
-        var changed = Session(ConflictingLogins(DirectoryPath));
-        changed.ChooseMember(GroupOf(changed, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
+        var unchanged = Workspace(ConflictingLogins(DirectoryPath));
+        var changed = Workspace(ConflictingLogins(DirectoryPath));
+        changed.Session.ChooseMember(GroupOf(changed.Session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         var dialogs = new FakeDialogs();
         using IApplication app = HeadlessTerminal.Start();
         using var unchangedWindow = new ReviewWindow(unchanged, dialogs);

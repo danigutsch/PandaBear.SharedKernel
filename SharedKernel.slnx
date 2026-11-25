@@ -30,6 +30,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.CodeFixes.MSBuild/SharedKernel.CodeFixes.MSBuild.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DocumentRendering.Pdf/SharedKernel.DocumentRendering.Pdf.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DocumentRendering.Pdf.Chromium/SharedKernel.DocumentRendering.Pdf.Chromium.csproj" />
@@ -84,6 +85,7 @@
   <Project Path="src/SharedKernel/SharedKernel.ServiceDefaults/SharedKernel.ServiceDefaults.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Style.Analyzers/SharedKernel.Style.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Terminal.Gui/SharedKernel.Terminal.Gui.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.AI/SharedKernel.Testing.AI.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj" />
@@ -205,6 +207,8 @@
   <Project Path="tests/SharedKernel.Testing.AspNetCore.Tests/SharedKernel.Testing.AspNetCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj" />
   <Project Path="tests/SharedKernel.UploadSanitizing.Tests/SharedKernel.UploadSanitizing.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Terminal.Gui.Testing/SharedKernel.Terminal.Gui.Testing.csproj" />
+  <Project Path="tests/SharedKernel.Terminal.Gui.Tests/SharedKernel.Terminal.Gui.Tests.csproj" />
   <Project Path="tests/SharedKernel.VaultManager.Tool.Tests/SharedKernel.VaultManager.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj" />
   <Project Path="tools/SharedKernel.K6.Tool/SharedKernel.K6.Tool.csproj" />
@@ -228,6 +232,8 @@
   <Project Path="tests/SharedKernel.Vault.Bitwarden.Tests/SharedKernel.Vault.Bitwarden.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj" />
   <Project Path="tests/SharedKernel.Vault.Keeper.Tests/SharedKernel.Vault.Keeper.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Vault.Import/SharedKernel.Vault.Import.csproj" />
+  <Project Path="tests/SharedKernel.Vault.Import.Tests.Unit/SharedKernel.Vault.Import.Tests.Unit.csproj" />
   <Project Path="tools/SharedKernel.Secrets.Tool/SharedKernel.Secrets.Tool.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Secrets.Age/SharedKernel.Secrets.Age.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Secrets.Sops/SharedKernel.Secrets.Sops.csproj" />

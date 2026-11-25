@@ -55,10 +55,10 @@ public sealed class PrintableOutputTests : IDisposable
         // Arrange
         var terminal = new FakeTerminal
         {
-            User = session =>
+            User = workspace =>
             {
-                session.ChooseMember(session.GroupOf(KeeperKey).ShouldNotBeNull().Key, FieldPaths.LoginPassword, KeeperKey);
-                session.Write(null);
+                workspace.Session.ChooseMember(workspace.Session.GroupOf(KeeperKey).ShouldNotBeNull().Key, FieldPaths.LoginPassword, KeeperKey);
+                workspace.Write(null);
                 return 0;
             },
         };
@@ -103,10 +103,10 @@ public sealed class PrintableOutputTests : IDisposable
         string output = Path.Combine(DirectoryPath, "merged\u009b\u2028\u202E.json");
         var terminal = new FakeTerminal
         {
-            User = session =>
+            User = workspace =>
             {
-                session.Save();
-                session.Write(null);
+                workspace.Save();
+                workspace.Write(null);
                 return 0;
             },
         };

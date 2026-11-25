@@ -173,6 +173,13 @@
           "PandaBear.SharedKernel.Encodings": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.Terminal.Gui": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "Terminal.Gui": "[2.5.0, 2.5.0]"
+        }
+      },
       "PandaBear.SharedKernel.Vault": {
         "type": "Project",
         "dependencies": {
@@ -188,6 +195,14 @@
         "dependencies": {
           "Konscious.Security.Cryptography.Argon2": "[1.3.1, )",
           "PandaBear.SharedKernel.Vault": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Vault.Import": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Vault": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Vault.Bitwarden": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Vault.Keeper": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Vault.Keeper": {

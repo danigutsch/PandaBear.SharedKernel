@@ -12,6 +12,14 @@ describes the merge rules, limits, and security notes that this library applies 
 
 ## Usage
 
+Hosts that import both Keeper and Bitwarden files can use the [vault export import provider selector](../SharedKernel.Vault.Import/README.md).
+Hosts that already know the input format can use the provider directly.
+
+`ReviewSession` works with one already scanned vault. Use it to apply field, finding, and match
+decisions, then read the current merge and its pending decisions. Its field and finding views
+mask values until the caller explicitly reveals them. `Save` supplies a decisions checkpoint
+to the caller's persistence callback. A new session can resume from that checkpoint.
+
 ```csharp
 using SharedKernel.Vault.Pipeline;
 
@@ -28,6 +36,8 @@ PipelineResult result = pipeline.Merge(VaultPipeline.Scan(pipeline.Load(inputPat
 - Reports, warnings, and exception messages name files, items, and fields, never vault values. Output files are
   written through a temporary file, readable only by the current user on Unix, and moved into place.
 - `DecisionsFile`, `BriefFile`, and `CatalogFile` read and write the JSON files that hold the user's decisions.
+- `CatalogFile.CheckSource` verifies the file name and digest recorded by a catalog before applying edits.
+  `CatalogApplyResult.CanWrite` checks whether the caller authorized any removals identified by the edit.
 
 ## Package identity and availability
 

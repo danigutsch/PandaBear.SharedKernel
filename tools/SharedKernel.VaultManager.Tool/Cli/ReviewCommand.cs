@@ -5,7 +5,7 @@ using SharedKernel.Vault.Formats;
 using SharedKernel.Vault.Merge;
 using SharedKernel.Vault.Model;
 using SharedKernel.Vault.Pipeline;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 using SharedKernel.VaultManager.Tool.Review;
 
 namespace SharedKernel.VaultManager.Tool.Cli;
@@ -93,22 +93,22 @@ internal static class ReviewCommand
 
         // The checks, the password prompts, and reading the inputs block on the terminal and the file system. They run on
         // the thread pool, so Ctrl+C ends the command at once, as it does for the other commands.
-        (int exitCode, ReviewSession? session) = await Task.Run(
+        (int exitCode, ReviewWorkspace? workspace) = await Task.Run(
             () => CommandAction.Guard(error, prompts, () => Prepare(arguments, prompts, error, ct), static code => (code, null), ct),
             ct).WaitAsync(ct).ConfigureAwait(false);
-        if (session is null)
+        if (workspace is null)
         {
             return exitCode;
         }
 
         // The UI restores the terminal before it returns, also when the token is canceled, so the command waits for it
         // instead of ending with the terminal still in the UI's mode.
-        exitCode = await Task.Run(() => CommandAction.Guard(error, prompts, () => terminal.Run(session, ct), static code => code, ct), CancellationToken.None).ConfigureAwait(false);
-        Summarize(invocation.Output, error, session);
+        exitCode = await Task.Run(() => CommandAction.Guard(error, prompts, () => terminal.Run(workspace, ct), static code => code, ct), CancellationToken.None).ConfigureAwait(false);
+        Summarize(invocation.Output, error, workspace);
         return exitCode;
     }
 
-    private static (int ExitCode, ReviewSession? Session) Prepare(Arguments arguments, PasswordPrompts prompts, TextWriter error, CancellationToken ct)
+    private static (int ExitCode, ReviewWorkspace? Workspace) Prepare(Arguments arguments, PasswordPrompts prompts, TextWriter error, CancellationToken ct)
     {
         if (!CanWriteFiles(arguments, error))
         {
@@ -124,7 +124,8 @@ internal static class ReviewCommand
         MergeDecisions decisions = arguments.Decisions is { } decisionsPath ? DecisionsFile.Read(decisionsPath) : MergeDecisions.None;
         ScannedVault scanned = VaultPipeline.Scan(prompts.Environment.CreatePipeline().Load(arguments.Inputs, ct), ct);
         PipelineOutput? output = arguments.Output is { } outputPath ? new PipelineOutput(outputPath, arguments.Plaintext, arguments.Force) : null;
-        var session = new ReviewSession(prompts.Environment, scanned, decisions, new ReviewFiles(arguments.Decisions, output));
+        var workspace = new ReviewWorkspace(prompts.Environment, scanned, decisions, new ReviewFiles(arguments.Decisions, output));
+        var session = workspace.Session;
 
         // Shown before the UI takes over the screen, so they are on the terminal again after the review ends.
         foreach (string warning in session.Result.ReadWarnings)
@@ -137,7 +138,7 @@ internal static class ReviewCommand
             error.WriteLine("Warning: " + PrintableText.OneLine(warning));
         }
 
-        return (ExitCodes.Success, session);
+        return (ExitCodes.Success, workspace);
     }
 
     private static bool CanWriteFiles(Arguments arguments, TextWriter error)
@@ -161,8 +162,9 @@ internal static class ReviewCommand
     // The review writes no report, so the summary also names what the report of merge lists: the attachments to upload
     // after the import, the writer's warnings, and the accepted findings that placement could not move. They come from
     // the merge that wrote the vault, because that file is the one to import, or from the latest merge.
-    private static void Summarize(TextWriter output, TextWriter error, ReviewSession session)
+    private static void Summarize(TextWriter output, TextWriter error, ReviewWorkspace workspace)
     {
+        var session = workspace.Session;
         PipelineResult result = session.WriteResult ?? session.Result;
         foreach (string warning in result.WriteWarnings)
         {
@@ -174,12 +176,12 @@ internal static class ReviewCommand
             error.WriteLine("Warning: \"" + PrintableText.OneLine(problem.ItemName) + "\": " + PrintableText.OneLine(problem.Problem));
         }
 
-        if (session.Saved && session.Files.DecisionsPath is { } saved)
+        if (session.Saved && workspace.Files.DecisionsPath is { } saved)
         {
             output.WriteLine("Saved the decisions to " + PrintableText.OneLine(saved) + ".");
         }
 
-        if (session.Written && session.Files.Output is { } written)
+        if (session.Written && workspace.Files.Output is { } written)
         {
             string writtenPath = PrintableText.OneLine(written.Path);
             output.WriteLine(written.Plaintext

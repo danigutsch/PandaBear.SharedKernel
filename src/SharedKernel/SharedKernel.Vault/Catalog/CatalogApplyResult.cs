@@ -20,4 +20,9 @@ public sealed record CatalogApplyResult(VaultExport? Vault, int ChangedItems, IR
     /// addresses, the old values of shown text fields, shared notes, and declared folders.
     /// </summary>
     public IReadOnlyList<string> Removals { get; init; } = [];
+
+    /// <summary>Checks whether the result can be written with the caller's authorization for removals.</summary>
+    /// <param name="allowRemovals">Whether the caller authorizes removing the displayed content.</param>
+    /// <returns>True when an edited vault exists and any removals are authorized.</returns>
+    public bool CanWrite(bool allowRemovals) => Vault is not null && (Removals.Count == 0 || allowRemovals);
 }

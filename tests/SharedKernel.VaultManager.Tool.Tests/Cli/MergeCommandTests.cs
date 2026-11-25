@@ -1,5 +1,5 @@
 using SharedKernel.Testing;
-using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Import;
 using SharedKernel.Vault.Bitwarden;
 using SharedKernel.Vault.Pipeline;
 using SharedKernel.VaultManager.Tool.Tests.Pipeline;

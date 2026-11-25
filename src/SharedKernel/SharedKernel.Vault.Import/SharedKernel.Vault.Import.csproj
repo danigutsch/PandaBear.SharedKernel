@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!-- The vault engine and its providers are outside the candidate package set. -->
+        <IsPackable>false</IsPackable>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Vault.Import</PackageId>
+        <Description>Offline import of Keeper and Bitwarden vault exports with content-based provider selection.</Description>
+        <PackageTags>password-manager;vault;import;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Vault\SharedKernel.Vault.csproj" />
+        <ProjectReference Include="..\SharedKernel.Vault.Bitwarden\SharedKernel.Vault.Bitwarden.csproj" />
+        <ProjectReference Include="..\SharedKernel.Vault.Keeper\SharedKernel.Vault.Keeper.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

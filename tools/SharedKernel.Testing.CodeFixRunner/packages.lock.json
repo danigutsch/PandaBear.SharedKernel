@@ -144,6 +144,22 @@
           "System.Composition.Runtime": "10.0.10"
         }
       },
+      "PandaBear.SharedKernel.CodeFixes.MSBuild": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Build.Locator": "[1.11.2, )",
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[5.12.0, )",
+          "Microsoft.CodeAnalysis.Workspaces.MSBuild": "[5.12.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.IO": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Processes": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Testing.Analyzers": {
         "type": "Project"
       },
