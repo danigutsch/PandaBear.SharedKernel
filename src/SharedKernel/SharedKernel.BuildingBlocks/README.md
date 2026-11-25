@@ -17,9 +17,10 @@ Source files are grouped by topic. The folders are organization only: every publ
 | `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet`, `TranslationListRules` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
-| `Media` | `IImageEligibility`, `ImageCredit`, `ImageLicense`, `ImageCreditFormats` |
+| `Media` | `IImageEligibility`, `ImageAltText`, `ImageCredit`, `ImageLicense`, `ImageCreditFormats` |
 | `Finance` | `Money`, `MoneyDisplayOptions`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
 | `Brazil` | `Cpf`, `Cnpj`, `PixKey`, `PixKeyType`, check-digit helpers |
+| `Portugal` | `Nif` |
 | `Time` | `BirthDate`, `DateRange`, `DateOnlyRange`, `DateRangePatterns`, `BusinessTimeProvider`, `TimeProvider` helpers |
 | `Failures` | concurrency and unique-constraint exceptions, cancellation helpers, `Compensation` |
 | `Http` | `HypermediaLink` |
@@ -60,7 +61,7 @@ translation of a supported culture in entered order, refuses an unsupported cult
 languages: {cultures}.`) and a repeated one (`Each language can have only one translation.`), and then requires the default culture
 (`A translation in the default language ({default}) is required.`), all on one field. `Merge` replaces stored translations in place,
 keeping the instance of a culture that stays so a persistence layer updates its row, and `Same` tells whether a replacement would
-change nothing.
+change nothing. `FieldOf(culture, field)` builds the path of an error on one translation's field, such as `pt-BR.title`.
 
 ## Image eligibility
 
@@ -68,6 +69,16 @@ change nothing.
 `IsEligible(imageId, culture)`, whether an image may be shown in content published in that culture (one application asks for alt text
 or a decorative mark there; another for a processed image with reviewed text). Albums (`IAlbumPhotoEligibility` in Galleries derives
 from it), offerings and page sections read the same interface, so an application implements it once.
+
+## Image alt text
+
+`ImageAltText` is the accessibility decision for an image as a domain stores it, one per image and language: a description of what the
+image shows, or an explicit decorative mark (an empty `Text`, `IsDecorative`). `ImageAltText.Create(text, decorative, field)` sanitizes
+the text like `SanitizedText` and returns one error on `field` (default `alt`) that never echoes the input: `A decorative image has no
+alt text.`, `Alt text is required unless the image is decorative.`, `Alt text is not valid text.` or `Alt text cannot exceed 500
+characters.` (`ImageAltText.MaxLength`, also the column size). `Restore(text)` rebuilds a stored value without rules, an empty text
+being decorative. A component library renders it through its own value, such as `ImageAlternative.From(alt)` in
+`SharedKernel.Blazor.Site`.
 
 ## Image credits
 
@@ -304,6 +315,14 @@ longer-than-now name) still loads instead of throwing on every query. `CountryCo
 `Iban.Restore` and `Bic.Restore` trim and keep a value whose check digits or layout fail; `PostalAddress.Restore` sanitizes each part like `Create`, turns blank optional parts into
 `null`, requires street, postal code and city, takes an already restored `CountryCode`, and does not enforce the part length limits. Never
 use `Restore` for user input.
+
+`Nif` is the Portuguese tax identification number: nine ASCII digits whose last is the modulo-11 check digit of the first eight
+(weights 9 to 2; a remainder of 0 or 1 gives 0), and whose first digit is not 0, as Decreto-Lei n.º 14/2013 assigns 1 to 4 to
+individuals, 7 to entities the Autoridade Tributária numbers and the NIPC of the national registry of legal persons to the entities it
+registers. `Nif.Create` takes the canonical digits; `Nif.CreateFromInput` ignores white space, dots and dashes like
+`Cpf.CreateFromInput` (`NIF is required.` or `NIF is not valid.` on `nif`), and refuses a `PT` VAT prefix. `Nif.Formatted` prints
+`123 456 789`, `ToString()` stays redacted (an individual's NIF is personal data) and `Nif.Restore` rebuilds a stored value like
+`Cpf.Restore`. A valid NIF is well formed, not proof that it was assigned.
 
 `Cpf.Formatted` returns the sensitive display mask `000.000.000-00` (for example on a printed contract); it is personal data like `Value`,
 while `ToString()` stays redacted. A restored value that is not eleven digits is returned unchanged.
