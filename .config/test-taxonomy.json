@@ -29,6 +29,7 @@
     {"path":"src/SharedKernel/SharedKernel.Blazor.Analyzers/SharedKernel.Blazor.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Blazor.CodeFixes/SharedKernel.Blazor.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["System","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Blazor.Site.Editing/SharedKernel.Blazor.Site.Editing.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Blazor/SharedKernel.Blazor.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["System","Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
@@ -320,6 +321,13 @@
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj","type":"Unit","dependency":"in-process","capabilities":["SiteLayoutBrowser","ThemePreviewStrictPolicy"],"lane":"browser"},
         {"sut":"src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj","type":"System","dependency":"playwright","capabilities":["SiteLayoutBrowser","ThemePreviewStrictPolicy"],"lane":"browser"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Blazor.Site.Editing.Tests.Unit/SharedKernel.Blazor.Site.Editing.Tests.Unit.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Blazor.Site.Editing/SharedKernel.Blazor.Site.Editing.csproj","type":"Unit","dependency":"in-process","capabilities":["ThemeEditor","ThemeEditorFieldPaths","ThemeEditorServerErrors"],"lane":"library"}
       ]
     },
     {

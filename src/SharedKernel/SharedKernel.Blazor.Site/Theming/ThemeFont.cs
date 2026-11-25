@@ -22,6 +22,9 @@ public sealed class ThemeFont : ValueObject
     /// <summary>The message of an invalid weight.</summary>
     internal const string WeightMessage = "The weight must be a multiple of 100 from 100 to 900.";
 
+    /// <summary>Gets the weights a face or a typography role may have: 100 to 900 in steps of 100.</summary>
+    public static IReadOnlyList<int> Weights { get; } = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+
     private ThemeFont(string key, string family, IReadOnlyList<ThemeFontFace> faces)
     {
         Key = key;

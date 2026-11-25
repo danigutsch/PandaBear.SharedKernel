@@ -1,0 +1,114 @@
+#nullable enable
+SharedKernel.Blazor.Site.Editing.ThemeEditor
+SharedKernel.Blazor.Site.Editing.ThemeEditor.CurrentEditContext.get -> Microsoft.AspNetCore.Components.Forms.EditContext?
+SharedKernel.Blazor.Site.Editing.ThemeEditor.CurrentEditContext.set -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditor.Dispose() -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditor.Fonts.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Editing.ThemeFontOption!>?
+SharedKernel.Blazor.Site.Editing.ThemeEditor.Fonts.set -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditor.IdPrefix.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditor.IdPrefix.set -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditor.Model.get -> SharedKernel.Blazor.Site.Theming.ThemeEditorModel!
+SharedKernel.Blazor.Site.Editing.ThemeEditor.Model.set -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditor.OnChange.get -> Microsoft.AspNetCore.Components.EventCallback
+SharedKernel.Blazor.Site.Editing.ThemeEditor.OnChange.set -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditor.Texts.get -> SharedKernel.Blazor.Site.Editing.ThemeEditorTexts!
+SharedKernel.Blazor.Site.Editing.ThemeEditor.Texts.set -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditor.ThemeEditor() -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.AllowSmallText.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.AllowSmallText.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.BrandHeight.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.BrandHeight.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.BrandHeightHelp.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.BrandHeightHelp.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorHint.get -> System.Func<SharedKernel.Blazor.Site.Theming.ThemeColorRole, string?>!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorHint.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorLegend(SharedKernel.Blazor.Site.Theming.ThemeColorRole role) -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorName.get -> System.Func<SharedKernel.Blazor.Site.Theming.ThemeColorRole, string!>!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorName.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorsHelp.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorsHelp.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorsLegend.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ColorsLegend.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ControlShape.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ControlShape.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ControlShapeName.get -> System.Func<SharedKernel.Blazor.Site.Theming.ControlShape, string!>!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ControlShapeName.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Dark.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Dark.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Default.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Default.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.DividerColor.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.DividerColor.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.DividerThickness.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.DividerThickness.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.DividerWidth.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.DividerWidth.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Fallback.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Fallback.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.FallbackName.get -> System.Func<SharedKernel.Blazor.Site.Theming.GenericFontFamily, string!>!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.FallbackName.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Font.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Font.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.HeaderLegend.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.HeaderLegend.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.HeadingColor.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.HeadingColor.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Italic.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Italic.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.LetterSpacing.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.LetterSpacing.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Light.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Light.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.LineHeight.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.LineHeight.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Normal.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Normal.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.NotANumber.get -> System.Func<string!, string!, string!>!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.NotANumber.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ShapeHelp.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ShapeHelp.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ShapeLegend.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ShapeLegend.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Size.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Size.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.SizeMax.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.SizeMax.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Style.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Style.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.SystemFont.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.SystemFont.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.ThemeEditorTexts() -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Transform.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Transform.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.TransformName.get -> System.Func<SharedKernel.Blazor.Site.Theming.ThemeTextTransform, string!>!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.TransformName.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.TypographyHelp.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.TypographyHelp.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.TypographyLegend.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.TypographyLegend.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.TypographyName.get -> System.Func<SharedKernel.Blazor.Site.Theming.TypographyRole, string!>!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.TypographyName.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Weight.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeEditorTexts.Weight.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeFontOption
+SharedKernel.Blazor.Site.Editing.ThemeFontOption.<Clone>$() -> SharedKernel.Blazor.Site.Editing.ThemeFontOption!
+SharedKernel.Blazor.Site.Editing.ThemeFontOption.Deconstruct(out string! Key, out string! Family) -> void
+SharedKernel.Blazor.Site.Editing.ThemeFontOption.Equals(SharedKernel.Blazor.Site.Editing.ThemeFontOption? other) -> bool
+SharedKernel.Blazor.Site.Editing.ThemeFontOption.Family.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeFontOption.Family.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeFontOption.Key.get -> string!
+SharedKernel.Blazor.Site.Editing.ThemeFontOption.Key.init -> void
+SharedKernel.Blazor.Site.Editing.ThemeFontOption.ThemeFontOption(string! Key, string! Family) -> void
+const SharedKernel.Blazor.Site.Editing.ThemeEditor.AllowSmallTextField = "allowSmallText" -> string!
+const SharedKernel.Blazor.Site.Editing.ThemeEditor.BrandHeightField = "header.brandHeight" -> string!
+const SharedKernel.Blazor.Site.Editing.ThemeEditor.ControlShapeField = "shape.control" -> string!
+const SharedKernel.Blazor.Site.Editing.ThemeEditor.DividerColorField = "shape.dividerColor" -> string!
+const SharedKernel.Blazor.Site.Editing.ThemeEditor.DividerThicknessField = "shape.dividerThickness" -> string!
+const SharedKernel.Blazor.Site.Editing.ThemeEditor.DividerWidthField = "shape.dividerWidth" -> string!
+override SharedKernel.Blazor.Site.Editing.ThemeFontOption.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Editing.ThemeFontOption.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Editing.ThemeFontOption.ToString() -> string!
+static SharedKernel.Blazor.Site.Editing.ThemeEditor.Fields.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Blazor.Site.Editing.ThemeFontOption.operator !=(SharedKernel.Blazor.Site.Editing.ThemeFontOption? left, SharedKernel.Blazor.Site.Editing.ThemeFontOption? right) -> bool
+static SharedKernel.Blazor.Site.Editing.ThemeFontOption.operator ==(SharedKernel.Blazor.Site.Editing.ThemeFontOption? left, SharedKernel.Blazor.Site.Editing.ThemeFontOption? right) -> bool

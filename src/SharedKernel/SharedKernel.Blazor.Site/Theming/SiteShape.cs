@@ -15,9 +15,6 @@ public sealed class SiteShape : ValueObject
     /// <summary>The divider thickness in rem of <see cref="Default" />.</summary>
     public const decimal DefaultDividerThickness = 0.25m;
 
-    private static readonly ThemeColorRole[] DividerColors =
-        [ThemeColorRole.Primary, ThemeColorRole.Accent, ThemeColorRole.Text, ThemeColorRole.Muted, ThemeColorRole.Border];
-
     private SiteShape(ControlShape control, decimal dividerWidth, decimal dividerThickness, ThemeColorRole dividerColor)
     {
         Control = control;
@@ -25,6 +22,10 @@ public sealed class SiteShape : ValueObject
         DividerThickness = dividerThickness;
         DividerColor = dividerColor;
     }
+
+    /// <summary>Gets the colours the divider may have: the primary, accent, text, muted and border colour.</summary>
+    public static IReadOnlyList<ThemeColorRole> DividerColors { get; } =
+        [ThemeColorRole.Primary, ThemeColorRole.Accent, ThemeColorRole.Text, ThemeColorRole.Muted, ThemeColorRole.Border];
 
     /// <summary>Gets the shape of <c>site.css</c> without a theme: rounded, with a 4rem accent divider 0.25rem thick.</summary>
     public static SiteShape Default { get; } = new(ControlShape.Rounded, DefaultDividerWidth, DefaultDividerThickness, ThemeColorRole.Accent);

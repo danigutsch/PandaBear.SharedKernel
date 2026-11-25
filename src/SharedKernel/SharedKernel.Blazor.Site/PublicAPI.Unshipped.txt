@@ -1338,3 +1338,7 @@ static SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.operator !=(SharedKer
 static SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.operator ==(SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? left, SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? right) -> bool
 static SharedKernel.Blazor.Site.Theming.TypographyDocument.operator !=(SharedKernel.Blazor.Site.Theming.TypographyDocument? left, SharedKernel.Blazor.Site.Theming.TypographyDocument? right) -> bool
 static SharedKernel.Blazor.Site.Theming.TypographyDocument.operator ==(SharedKernel.Blazor.Site.Theming.TypographyDocument? left, SharedKernel.Blazor.Site.Theming.TypographyDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.SiteShape.DividerColors.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeColorRole>!
+static SharedKernel.Blazor.Site.Theming.ThemeFont.Weights.get -> System.Collections.Generic.IReadOnlyList<int>!
+static SharedKernel.Blazor.Site.Theming.TypographyStyle.Colors.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeColorRole>!
+static SharedKernel.Blazor.Site.Theming.TypographyStyle.TakesColor(SharedKernel.Blazor.Site.Theming.TypographyRole role) -> bool
