@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.CodeFixes.Tests;
+namespace SharedKernel.Blazor.CodeFixes.Tests;
 
 /// <summary>Helpers for comparing source text without its formatting.</summary>
 internal static class SourceTextExtensions

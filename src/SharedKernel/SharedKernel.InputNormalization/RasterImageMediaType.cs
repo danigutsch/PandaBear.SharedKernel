@@ -1,6 +1,6 @@
 // Adapted from ViajantesTurismo. See NOTICE.ViajantesTurismo.txt for the MIT license and attribution.
 
-namespace PandaBear.InputNormalization;
+namespace SharedKernel.InputNormalization;
 
 /// <summary>A canonical media type and extension for a raster image rendition.</summary>
 public sealed class RasterImageMediaType

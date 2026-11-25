@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Tests the unbounded runner with real child processes.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Finds the root of the repository that a test assembly was built from, by walking up to a marker file.</summary>
 public static class RepositoryRoot

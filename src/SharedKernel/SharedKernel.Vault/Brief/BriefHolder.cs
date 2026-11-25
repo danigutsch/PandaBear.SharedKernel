@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>
 /// A member that holds a value for a field. The value is shown only for names, folders, user names without a secret

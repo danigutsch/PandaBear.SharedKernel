@@ -1,10 +1,10 @@
 using System.Text;
 using System.Text.Json.Nodes;
-using PandaBear.Vault.Bitwarden.Crypto;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Bitwarden.Crypto;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden.Tests;
+namespace SharedKernel.Vault.Bitwarden.Tests;
 
 /// <summary>Tests the writer for Bitwarden JSON exports, including its size limits and warnings.</summary>
 public sealed class BitwardenJsonWriterTests

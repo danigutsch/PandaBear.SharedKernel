@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Isolates observations of the package-wide ticket store meter.</summary>
 [SerialTestJustification("MeterListener observes the process-wide BFF meter, so observations must exclude other ticket store tests.")]

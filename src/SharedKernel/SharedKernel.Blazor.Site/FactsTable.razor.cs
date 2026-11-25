@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>A table of label and value rows with a caption and <c>th scope="row"</c> row headers.</summary>
 public sealed partial class FactsTable

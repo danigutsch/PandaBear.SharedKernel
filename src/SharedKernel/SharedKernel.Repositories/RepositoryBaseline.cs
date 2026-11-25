@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Implements <c>baseline verify</c> and <c>baseline apply</c>.</summary>
 public static class RepositoryBaseline

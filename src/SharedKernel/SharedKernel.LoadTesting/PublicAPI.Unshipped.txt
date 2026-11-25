@@ -1,61 +1,61 @@
 #nullable enable
-PandaBear.LoadTesting.ILoadGenerator
-PandaBear.LoadTesting.ILoadGenerator.Command.get -> string!
-PandaBear.LoadTesting.ILoadGenerator.ControlledVariables.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.LoadTesting.ILoadGenerator.Run(PandaBear.LoadTesting.LoadGeneratorRun! run, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
-PandaBear.LoadTesting.ILoadGenerator.ValidateArguments(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Collections.Generic.IReadOnlyCollection<string!>! controlledVariables, PandaBear.LoadTesting.LoadTestSettings! settings) -> void
-PandaBear.LoadTesting.LoadGeneratorRun
-PandaBear.LoadTesting.LoadGeneratorRun.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.LoadTesting.LoadGeneratorRun.Arguments.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.Container.get -> PandaBear.LoadTesting.LoadTestContainer?
-PandaBear.LoadTesting.LoadGeneratorRun.Container.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
-PandaBear.LoadTesting.LoadGeneratorRun.Environment.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.Error.get -> System.IO.TextWriter!
-PandaBear.LoadTesting.LoadGeneratorRun.Error.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.Executable.get -> string!
-PandaBear.LoadTesting.LoadGeneratorRun.Executable.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.LoadGeneratorRun() -> void
-PandaBear.LoadTesting.LoadGeneratorRun.Root.get -> string!
-PandaBear.LoadTesting.LoadGeneratorRun.Root.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.RunDirectory.get -> string!
-PandaBear.LoadTesting.LoadGeneratorRun.RunDirectory.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.Script.get -> string!
-PandaBear.LoadTesting.LoadGeneratorRun.Script.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.ScriptDirectory.get -> string!
-PandaBear.LoadTesting.LoadGeneratorRun.ScriptDirectory.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.ScriptPath.get -> string!
-PandaBear.LoadTesting.LoadGeneratorRun.ScriptPath.init -> void
-PandaBear.LoadTesting.LoadGeneratorRun.Variables.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.LoadTesting.LoadGeneratorRun.Variables.init -> void
-PandaBear.LoadTesting.LoadTestContainer
-PandaBear.LoadTesting.LoadTestContainer.Engine.get -> string!
-PandaBear.LoadTesting.LoadTestContainer.Image.get -> string!
-PandaBear.LoadTesting.LoadTestContainer.LoadTestContainer(string! engine, string! image) -> void
-PandaBear.LoadTesting.LoadTestRunner
-PandaBear.LoadTesting.LoadTestRunner.LoadTestRunner(PandaBear.LoadTesting.ILoadGenerator! generator, PandaBear.Processes.IExecutableResolver! executableResolver, System.Net.Http.HttpMessageHandler! healthCheckHandler) -> void
-PandaBear.LoadTesting.LoadTestRunner.Run(PandaBear.LoadTesting.LoadTestSettings! settings, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
-PandaBear.LoadTesting.LoadTestSettings
-PandaBear.LoadTesting.LoadTestSettings.AllowExternalTarget.get -> bool
-PandaBear.LoadTesting.LoadTestSettings.AllowExternalTarget.init -> void
-PandaBear.LoadTesting.LoadTestSettings.AllowHttpDebug.get -> bool
-PandaBear.LoadTesting.LoadTestSettings.AllowHttpDebug.init -> void
-PandaBear.LoadTesting.LoadTestSettings.AllowRemoteOutput.get -> bool
-PandaBear.LoadTesting.LoadTestSettings.AllowRemoteOutput.init -> void
-PandaBear.LoadTesting.LoadTestSettings.ConfigurationPath.get -> string!
-PandaBear.LoadTesting.LoadTestSettings.ConfigurationPath.init -> void
-PandaBear.LoadTesting.LoadTestSettings.Container.get -> bool
-PandaBear.LoadTesting.LoadTestSettings.Container.init -> void
-PandaBear.LoadTesting.LoadTestSettings.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
-PandaBear.LoadTesting.LoadTestSettings.Environment.init -> void
-PandaBear.LoadTesting.LoadTestSettings.GeneratorArguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.LoadTesting.LoadTestSettings.GeneratorArguments.init -> void
-PandaBear.LoadTesting.LoadTestSettings.Image.get -> string?
-PandaBear.LoadTesting.LoadTestSettings.Image.init -> void
-PandaBear.LoadTesting.LoadTestSettings.LoadTestSettings() -> void
-PandaBear.LoadTesting.LoadTestSettings.Root.get -> string!
-PandaBear.LoadTesting.LoadTestSettings.Root.init -> void
-PandaBear.LoadTesting.LoadTestSettings.Scenario.get -> string!
-PandaBear.LoadTesting.LoadTestSettings.Scenario.init -> void
-const PandaBear.LoadTesting.LoadTestContainer.HostAlias = "host.docker.internal" -> string!
-static PandaBear.LoadTesting.LoadTestContainer.IsDigestPinned(string! image) -> bool
+SharedKernel.LoadTesting.ILoadGenerator
+SharedKernel.LoadTesting.ILoadGenerator.Command.get -> string!
+SharedKernel.LoadTesting.ILoadGenerator.ControlledVariables.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.LoadTesting.ILoadGenerator.Run(SharedKernel.LoadTesting.LoadGeneratorRun! run, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+SharedKernel.LoadTesting.ILoadGenerator.ValidateArguments(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Collections.Generic.IReadOnlyCollection<string!>! controlledVariables, SharedKernel.LoadTesting.LoadTestSettings! settings) -> void
+SharedKernel.LoadTesting.LoadGeneratorRun
+SharedKernel.LoadTesting.LoadGeneratorRun.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.LoadTesting.LoadGeneratorRun.Arguments.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.Container.get -> SharedKernel.LoadTesting.LoadTestContainer?
+SharedKernel.LoadTesting.LoadGeneratorRun.Container.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+SharedKernel.LoadTesting.LoadGeneratorRun.Environment.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.Error.get -> System.IO.TextWriter!
+SharedKernel.LoadTesting.LoadGeneratorRun.Error.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.Executable.get -> string!
+SharedKernel.LoadTesting.LoadGeneratorRun.Executable.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.LoadGeneratorRun() -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.Root.get -> string!
+SharedKernel.LoadTesting.LoadGeneratorRun.Root.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.RunDirectory.get -> string!
+SharedKernel.LoadTesting.LoadGeneratorRun.RunDirectory.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.Script.get -> string!
+SharedKernel.LoadTesting.LoadGeneratorRun.Script.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.ScriptDirectory.get -> string!
+SharedKernel.LoadTesting.LoadGeneratorRun.ScriptDirectory.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.ScriptPath.get -> string!
+SharedKernel.LoadTesting.LoadGeneratorRun.ScriptPath.init -> void
+SharedKernel.LoadTesting.LoadGeneratorRun.Variables.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.LoadTesting.LoadGeneratorRun.Variables.init -> void
+SharedKernel.LoadTesting.LoadTestContainer
+SharedKernel.LoadTesting.LoadTestContainer.Engine.get -> string!
+SharedKernel.LoadTesting.LoadTestContainer.Image.get -> string!
+SharedKernel.LoadTesting.LoadTestContainer.LoadTestContainer(string! engine, string! image) -> void
+SharedKernel.LoadTesting.LoadTestRunner
+SharedKernel.LoadTesting.LoadTestRunner.LoadTestRunner(SharedKernel.LoadTesting.ILoadGenerator! generator, SharedKernel.Processes.IExecutableResolver! executableResolver, System.Net.Http.HttpMessageHandler! healthCheckHandler) -> void
+SharedKernel.LoadTesting.LoadTestRunner.Run(SharedKernel.LoadTesting.LoadTestSettings! settings, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+SharedKernel.LoadTesting.LoadTestSettings
+SharedKernel.LoadTesting.LoadTestSettings.AllowExternalTarget.get -> bool
+SharedKernel.LoadTesting.LoadTestSettings.AllowExternalTarget.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.AllowHttpDebug.get -> bool
+SharedKernel.LoadTesting.LoadTestSettings.AllowHttpDebug.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.AllowRemoteOutput.get -> bool
+SharedKernel.LoadTesting.LoadTestSettings.AllowRemoteOutput.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.ConfigurationPath.get -> string!
+SharedKernel.LoadTesting.LoadTestSettings.ConfigurationPath.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.Container.get -> bool
+SharedKernel.LoadTesting.LoadTestSettings.Container.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+SharedKernel.LoadTesting.LoadTestSettings.Environment.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.GeneratorArguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.LoadTesting.LoadTestSettings.GeneratorArguments.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.Image.get -> string?
+SharedKernel.LoadTesting.LoadTestSettings.Image.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.LoadTestSettings() -> void
+SharedKernel.LoadTesting.LoadTestSettings.Root.get -> string!
+SharedKernel.LoadTesting.LoadTestSettings.Root.init -> void
+SharedKernel.LoadTesting.LoadTestSettings.Scenario.get -> string!
+SharedKernel.LoadTesting.LoadTestSettings.Scenario.init -> void
+const SharedKernel.LoadTesting.LoadTestContainer.HostAlias = "host.docker.internal" -> string!
+static SharedKernel.LoadTesting.LoadTestContainer.IsDigestPinned(string! image) -> bool

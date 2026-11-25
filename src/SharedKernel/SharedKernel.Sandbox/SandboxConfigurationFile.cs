@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.ConfigurationFiles;
+using SharedKernel.ConfigurationFiles;
 
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>Reads and validates the optional <c>.config/sharedkernel-sandbox.json</c>. Errors name the file and the JSON path.</summary>
 public static class SandboxConfigurationFile

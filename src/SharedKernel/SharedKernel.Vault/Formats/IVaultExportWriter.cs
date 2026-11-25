@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Formats;
+namespace SharedKernel.Vault.Formats;
 
 /// <summary>Writes provider-neutral items as an export file that the target vault imports.</summary>
 public interface IVaultExportWriter

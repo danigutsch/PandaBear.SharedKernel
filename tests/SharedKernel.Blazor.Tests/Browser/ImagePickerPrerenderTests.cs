@@ -1,6 +1,6 @@
-using PandaBear.Testing.AspNetCore;
+using SharedKernel.Testing.AspNetCore;
 
-namespace PandaBear.Blazor.Tests.Browser;
+namespace SharedKernel.Blazor.Tests.Browser;
 
 /// <summary>
 /// Tests what a prerendered edit page with image pickers sends: the first chosen page only, in the markup and in the persisted state,

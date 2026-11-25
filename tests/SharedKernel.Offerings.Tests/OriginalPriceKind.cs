@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>The original ViajantesTurismo app's four required prices (Admin TourPricing).</summary>
 public enum OriginalPriceKind

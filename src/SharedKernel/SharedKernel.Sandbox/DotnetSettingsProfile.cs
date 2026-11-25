@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>
 /// The built-in <c>dotnet</c> profile: what a .NET build needs from a sandbox. Everything that widens access beyond a plain

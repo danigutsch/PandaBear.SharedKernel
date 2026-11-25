@@ -1,12 +1,12 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.InputNormalization;
-using PandaBear.Vault.Analysis;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
+using SharedKernel.InputNormalization;
+using SharedKernel.Vault.Analysis;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>
 /// Renders a pipeline result as one Markdown report. It holds names, keys, paths, and counts, never values. Every name,

@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>
 /// A CSV document: a header record and data records with one field per header. It reads RFC 4180, leniently, so simple unquoted files

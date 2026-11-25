@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Builds failed results for a status.</summary>
 internal static class FailedResults

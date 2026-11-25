@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Builds <see cref="EditSession{TKey, TForm, TRecord}"/> instances and callbacks for tests.</summary>
 internal static class EditSessionFixtures

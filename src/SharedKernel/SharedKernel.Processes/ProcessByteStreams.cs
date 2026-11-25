@@ -1,4 +1,4 @@
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>
 /// Writes the standard input of a started process and reads its standard output and standard error as bytes, each up to

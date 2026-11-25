@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Represents a query that consumes a stream of input items and yields a stream of response items.

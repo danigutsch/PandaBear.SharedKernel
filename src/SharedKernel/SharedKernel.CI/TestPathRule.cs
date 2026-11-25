@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>A rule of <c>selection.testPaths</c> that ties paths no project owns to the test projects that read them.</summary>
 /// <param name="Paths">Path patterns whose change selects <paramref name="Tests"/>.</param>

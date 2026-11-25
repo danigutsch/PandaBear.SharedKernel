@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>What one load-test run reads, selects, and allows.</summary>
 public sealed class LoadTestSettings

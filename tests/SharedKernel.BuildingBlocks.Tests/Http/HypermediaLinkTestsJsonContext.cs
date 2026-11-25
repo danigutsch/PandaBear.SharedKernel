@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Source-generated JSON metadata for the hypermedia link wire-shape tests.</summary>
 [JsonSerializable(typeof(HypermediaLink))]

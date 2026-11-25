@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>
 /// A parent that binds a multiple-mode picker's list as <c>@bind-Values</c> does: it keeps the list the picker raised and renders the

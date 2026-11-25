@@ -1,439 +1,439 @@
 #nullable enable
-PandaBear.CI.CandidateDownloadLimits
-PandaBear.CI.CandidateDownloadLimits.<Clone>$() -> PandaBear.CI.CandidateDownloadLimits!
-PandaBear.CI.CandidateDownloadLimits.CandidateDownloadLimits(long MaxPackageBytes, long MaxTotalBytes, System.TimeSpan RequestTimeout, int MaxAttempts, System.TimeSpan MaxRetryDelay) -> void
-PandaBear.CI.CandidateDownloadLimits.Deconstruct(out long MaxPackageBytes, out long MaxTotalBytes, out System.TimeSpan RequestTimeout, out int MaxAttempts, out System.TimeSpan MaxRetryDelay) -> void
-PandaBear.CI.CandidateDownloadLimits.Equals(PandaBear.CI.CandidateDownloadLimits? other) -> bool
-PandaBear.CI.CandidateDownloadLimits.MaxAttempts.get -> int
-PandaBear.CI.CandidateDownloadLimits.MaxAttempts.init -> void
-PandaBear.CI.CandidateDownloadLimits.MaxPackageBytes.get -> long
-PandaBear.CI.CandidateDownloadLimits.MaxPackageBytes.init -> void
-PandaBear.CI.CandidateDownloadLimits.MaxRetryDelay.get -> System.TimeSpan
-PandaBear.CI.CandidateDownloadLimits.MaxRetryDelay.init -> void
-PandaBear.CI.CandidateDownloadLimits.MaxTotalBytes.get -> long
-PandaBear.CI.CandidateDownloadLimits.MaxTotalBytes.init -> void
-PandaBear.CI.CandidateDownloadLimits.RequestTimeout.get -> System.TimeSpan
-PandaBear.CI.CandidateDownloadLimits.RequestTimeout.init -> void
-PandaBear.CI.CandidateStager
-PandaBear.CI.CandidateStager.CandidateStager(PandaBear.CI.CiMachine! machine, System.Func<System.Net.Http.HttpMessageHandler!>! createHttpHandler, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent) -> void
-PandaBear.CI.CandidateStager.DownloadTimeProvider.get -> System.TimeProvider?
-PandaBear.CI.CandidateStager.DownloadTimeProvider.init -> void
-PandaBear.CI.CandidateStager.Limits.get -> PandaBear.CI.CandidateDownloadLimits!
-PandaBear.CI.CandidateStager.Limits.init -> void
-PandaBear.CI.CandidateStager.Stage(PandaBear.CI.CandidateStagingRequest! request, PandaBear.CI.IReleaseAssets? release, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.CandidateStagingRequest
-PandaBear.CI.CandidateStagingRequest.<Clone>$() -> PandaBear.CI.CandidateStagingRequest!
-PandaBear.CI.CandidateStagingRequest.CandidateStagingRequest(string! Root, string! Pin, string! LibraryRoot, string! Output, string? Feed) -> void
-PandaBear.CI.CandidateStagingRequest.Deconstruct(out string! Root, out string! Pin, out string! LibraryRoot, out string! Output, out string? Feed) -> void
-PandaBear.CI.CandidateStagingRequest.Equals(PandaBear.CI.CandidateStagingRequest? other) -> bool
-PandaBear.CI.CandidateStagingRequest.Feed.get -> string?
-PandaBear.CI.CandidateStagingRequest.Feed.init -> void
-PandaBear.CI.CandidateStagingRequest.LibraryRoot.get -> string!
-PandaBear.CI.CandidateStagingRequest.LibraryRoot.init -> void
-PandaBear.CI.CandidateStagingRequest.Output.get -> string!
-PandaBear.CI.CandidateStagingRequest.Output.init -> void
-PandaBear.CI.CandidateStagingRequest.Pin.get -> string!
-PandaBear.CI.CandidateStagingRequest.Pin.init -> void
-PandaBear.CI.CandidateStagingRequest.Root.get -> string!
-PandaBear.CI.CandidateStagingRequest.Root.init -> void
-PandaBear.CI.CiConfiguration
-PandaBear.CI.CiConfiguration.<Clone>$() -> PandaBear.CI.CiConfiguration!
-PandaBear.CI.CiConfiguration.CiConfiguration(int Version, string! Solution, PandaBear.CI.SelectionConfiguration! Selection, System.Collections.Generic.IReadOnlyList<PandaBear.CI.SliceConfiguration!>! Slices, string? DefaultSlice = null, System.Collections.Generic.IReadOnlyList<PandaBear.CI.OpenApiTargetConfiguration!>? OpenApi = null, PandaBear.CI.CoverageConfiguration? Coverage = null, PandaBear.CI.MutationConfiguration? Mutation = null) -> void
-PandaBear.CI.CiConfiguration.Coverage.get -> PandaBear.CI.CoverageConfiguration?
-PandaBear.CI.CiConfiguration.Coverage.init -> void
-PandaBear.CI.CiConfiguration.Deconstruct(out int Version, out string! Solution, out PandaBear.CI.SelectionConfiguration! Selection, out System.Collections.Generic.IReadOnlyList<PandaBear.CI.SliceConfiguration!>! Slices, out string? DefaultSlice, out System.Collections.Generic.IReadOnlyList<PandaBear.CI.OpenApiTargetConfiguration!>? OpenApi, out PandaBear.CI.CoverageConfiguration? Coverage, out PandaBear.CI.MutationConfiguration? Mutation) -> void
-PandaBear.CI.CiConfiguration.DefaultSlice.get -> string?
-PandaBear.CI.CiConfiguration.DefaultSlice.init -> void
-PandaBear.CI.CiConfiguration.Equals(PandaBear.CI.CiConfiguration? other) -> bool
-PandaBear.CI.CiConfiguration.Mutation.get -> PandaBear.CI.MutationConfiguration?
-PandaBear.CI.CiConfiguration.Mutation.init -> void
-PandaBear.CI.CiConfiguration.OpenApi.get -> System.Collections.Generic.IReadOnlyList<PandaBear.CI.OpenApiTargetConfiguration!>?
-PandaBear.CI.CiConfiguration.OpenApi.init -> void
-PandaBear.CI.CiConfiguration.Selection.get -> PandaBear.CI.SelectionConfiguration!
-PandaBear.CI.CiConfiguration.Selection.init -> void
-PandaBear.CI.CiConfiguration.Slices.get -> System.Collections.Generic.IReadOnlyList<PandaBear.CI.SliceConfiguration!>!
-PandaBear.CI.CiConfiguration.Slices.init -> void
-PandaBear.CI.CiConfiguration.Solution.get -> string!
-PandaBear.CI.CiConfiguration.Solution.init -> void
-PandaBear.CI.CiConfiguration.Version.get -> int
-PandaBear.CI.CiConfiguration.Version.init -> void
-PandaBear.CI.CiConfigurationFile
-PandaBear.CI.CiMachine
-PandaBear.CI.CiMachine.CiMachine(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver, System.TimeProvider! timeProvider) -> void
-PandaBear.CI.CiMachine.ExecutableResolver.get -> PandaBear.Processes.IExecutableResolver!
-PandaBear.CI.CiMachine.ProcessRunner.get -> PandaBear.Processes.IProcessRunner!
-PandaBear.CI.CiMachine.StartService.get -> System.Func<System.Diagnostics.ProcessStartInfo!, System.Diagnostics.Process!>!
-PandaBear.CI.CiMachine.StartService.init -> void
-PandaBear.CI.CiMachine.TimeProvider.get -> System.TimeProvider!
-PandaBear.CI.CommitMessageVerifier
-PandaBear.CI.CoverageConfiguration
-PandaBear.CI.CoverageConfiguration.<Clone>$() -> PandaBear.CI.CoverageConfiguration!
-PandaBear.CI.CoverageConfiguration.CoverageConfiguration(int ThresholdPercent, System.Collections.Generic.IReadOnlyList<string!>! Include, System.Collections.Generic.IReadOnlyList<string!>! Exclude, System.Collections.Generic.IReadOnlyList<string!>! SymbolDirectories) -> void
-PandaBear.CI.CoverageConfiguration.Deconstruct(out int ThresholdPercent, out System.Collections.Generic.IReadOnlyList<string!>! Include, out System.Collections.Generic.IReadOnlyList<string!>! Exclude, out System.Collections.Generic.IReadOnlyList<string!>! SymbolDirectories) -> void
-PandaBear.CI.CoverageConfiguration.Equals(PandaBear.CI.CoverageConfiguration? other) -> bool
-PandaBear.CI.CoverageConfiguration.Exclude.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.CoverageConfiguration.Exclude.init -> void
-PandaBear.CI.CoverageConfiguration.Include.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.CoverageConfiguration.Include.init -> void
-PandaBear.CI.CoverageConfiguration.SymbolDirectories.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.CoverageConfiguration.SymbolDirectories.init -> void
-PandaBear.CI.CoverageConfiguration.ThresholdPercent.get -> int
-PandaBear.CI.CoverageConfiguration.ThresholdPercent.init -> void
-PandaBear.CI.CoverageVerifier
-PandaBear.CI.CoverageVerifier.CoverageVerifier(PandaBear.CI.CiMachine! machine) -> void
-PandaBear.CI.CoverageVerifier.MeasureStaged(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.CoverageVerifier.MeasureStaged(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, string? baseRevision, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.CoverageVerifier.MeasureStagedWithEvidence(string! root, System.Collections.Generic.IReadOnlyList<string!>! evidence, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.CoverageVerifier.MeasureStagedWithEvidence(string! root, System.Collections.Generic.IReadOnlyList<string!>! evidence, string? baseRevision, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.CoverageVerifier.RecordSymbols(string! root, string! evidencePath, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.CoverageVerifier.Verify(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, string! baseRevision, string! symbolEvidencePath, string! gateEvidencePath, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.IReleaseAssets
-PandaBear.CI.IReleaseAssets.Locate(string! tag, string! asset, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Uri!>!
-PandaBear.CI.IReleaseStore
-PandaBear.CI.IReleaseStore.Delete(PandaBear.CI.RepositoryRelease! release, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.IReleaseStore.List(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.CI.RepositoryRelease!>!>!
-PandaBear.CI.IRunOutputs
-PandaBear.CI.IRunOutputs.Write(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>! outputs, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.IStepSummary
-PandaBear.CI.IStepSummary.Append(string! markdown, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.LocalCheckOptions
-PandaBear.CI.LocalCheckOptions.<Clone>$() -> PandaBear.CI.LocalCheckOptions!
-PandaBear.CI.LocalCheckOptions.Base.get -> string?
-PandaBear.CI.LocalCheckOptions.Base.init -> void
-PandaBear.CI.LocalCheckOptions.Configuration.get -> string!
-PandaBear.CI.LocalCheckOptions.Configuration.init -> void
-PandaBear.CI.LocalCheckOptions.Deconstruct(out string? Base, out string! Configuration, out bool Strict, out System.Collections.Generic.IReadOnlyList<string!>! TestArguments, out System.TimeSpan Timeout) -> void
-PandaBear.CI.LocalCheckOptions.Equals(PandaBear.CI.LocalCheckOptions? other) -> bool
-PandaBear.CI.LocalCheckOptions.LocalCheckOptions(string? Base, string! Configuration, bool Strict, System.Collections.Generic.IReadOnlyList<string!>! TestArguments, System.TimeSpan Timeout) -> void
-PandaBear.CI.LocalCheckOptions.Strict.get -> bool
-PandaBear.CI.LocalCheckOptions.Strict.init -> void
-PandaBear.CI.LocalCheckOptions.TestArguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.LocalCheckOptions.TestArguments.init -> void
-PandaBear.CI.LocalCheckOptions.Timeout.get -> System.TimeSpan
-PandaBear.CI.LocalCheckOptions.Timeout.init -> void
-PandaBear.CI.LocalCheckRunner
-PandaBear.CI.LocalCheckRunner.LocalCheckRunner(PandaBear.CI.CiMachine! machine) -> void
-PandaBear.CI.LocalCheckRunner.Run(string! root, string! selectionDirectory, PandaBear.CI.LocalCheckOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.MutationConfiguration
-PandaBear.CI.MutationConfiguration.<Clone>$() -> PandaBear.CI.MutationConfiguration!
-PandaBear.CI.MutationConfiguration.ConfigFiles.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.MutationConfiguration.ConfigFiles.init -> void
-PandaBear.CI.MutationConfiguration.Deconstruct(out string! StrykerVersion, out System.Collections.Generic.IReadOnlyList<string!>! ConfigFiles) -> void
-PandaBear.CI.MutationConfiguration.Equals(PandaBear.CI.MutationConfiguration? other) -> bool
-PandaBear.CI.MutationConfiguration.MutationConfiguration(string! StrykerVersion, System.Collections.Generic.IReadOnlyList<string!>! ConfigFiles) -> void
-PandaBear.CI.MutationConfiguration.StrykerVersion.get -> string!
-PandaBear.CI.MutationConfiguration.StrykerVersion.init -> void
-PandaBear.CI.MutationTestRunner
-PandaBear.CI.MutationTestRunner.MutationTestRunner(PandaBear.CI.CiMachine! machine) -> void
-PandaBear.CI.MutationTestRunner.Run(string! root, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.OpenApiGenerator
-PandaBear.CI.OpenApiGenerator.Generate(string! root, System.Collections.Generic.IReadOnlyCollection<string!>! targets, bool refresh, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.OpenApiGenerator.OpenApiGenerator(PandaBear.CI.CiMachine! machine) -> void
-PandaBear.CI.OpenApiTargetConfiguration
-PandaBear.CI.OpenApiTargetConfiguration.<Clone>$() -> PandaBear.CI.OpenApiTargetConfiguration!
-PandaBear.CI.OpenApiTargetConfiguration.Deconstruct(out string! Name, out string! Project, out string! GenerateProperty, out string! RefreshProperty, out System.Collections.Generic.IReadOnlyList<string!>? PreserveEnvironment) -> void
-PandaBear.CI.OpenApiTargetConfiguration.Equals(PandaBear.CI.OpenApiTargetConfiguration? other) -> bool
-PandaBear.CI.OpenApiTargetConfiguration.GenerateProperty.get -> string!
-PandaBear.CI.OpenApiTargetConfiguration.GenerateProperty.init -> void
-PandaBear.CI.OpenApiTargetConfiguration.Name.get -> string!
-PandaBear.CI.OpenApiTargetConfiguration.Name.init -> void
-PandaBear.CI.OpenApiTargetConfiguration.OpenApiTargetConfiguration(string! Name, string! Project, string! GenerateProperty, string! RefreshProperty, System.Collections.Generic.IReadOnlyList<string!>? PreserveEnvironment = null) -> void
-PandaBear.CI.OpenApiTargetConfiguration.PreserveEnvironment.get -> System.Collections.Generic.IReadOnlyList<string!>?
-PandaBear.CI.OpenApiTargetConfiguration.PreserveEnvironment.init -> void
-PandaBear.CI.OpenApiTargetConfiguration.Project.get -> string!
-PandaBear.CI.OpenApiTargetConfiguration.Project.init -> void
-PandaBear.CI.OpenApiTargetConfiguration.RefreshProperty.get -> string!
-PandaBear.CI.OpenApiTargetConfiguration.RefreshProperty.init -> void
-PandaBear.CI.PlaywrightConfiguration
-PandaBear.CI.PlaywrightConfiguration.<Clone>$() -> PandaBear.CI.PlaywrightConfiguration!
-PandaBear.CI.PlaywrightConfiguration.Browsers.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.PlaywrightConfiguration.Browsers.init -> void
-PandaBear.CI.PlaywrightConfiguration.Deconstruct(out string! Project, out System.Collections.Generic.IReadOnlyList<string!>! Browsers, out bool OnlyShell) -> void
-PandaBear.CI.PlaywrightConfiguration.Equals(PandaBear.CI.PlaywrightConfiguration? other) -> bool
-PandaBear.CI.PlaywrightConfiguration.OnlyShell.get -> bool
-PandaBear.CI.PlaywrightConfiguration.OnlyShell.init -> void
-PandaBear.CI.PlaywrightConfiguration.PlaywrightConfiguration(string! Project, System.Collections.Generic.IReadOnlyList<string!>! Browsers, bool OnlyShell = false) -> void
-PandaBear.CI.PlaywrightConfiguration.Project.get -> string!
-PandaBear.CI.PlaywrightConfiguration.Project.init -> void
-PandaBear.CI.PlaywrightInstaller
-PandaBear.CI.PlaywrightInstaller.Install(string! root, string! project, System.Collections.Generic.IEnumerable<string!>! browsers, bool withDependencies, bool onlyShell, string? configuration, System.IO.TextWriter! progress, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-PandaBear.CI.PlaywrightInstaller.PlaywrightInstaller(PandaBear.CI.CiMachine! machine) -> void
-PandaBear.CI.PrereleasePruner
-PandaBear.CI.PrereleasePruningRequest
-PandaBear.CI.PrereleasePruningRequest.<Clone>$() -> PandaBear.CI.PrereleasePruningRequest!
-PandaBear.CI.PrereleasePruningRequest.Deconstruct(out string! Repository, out int Keep, out System.Collections.Generic.IReadOnlyList<string!>! Protected, out bool Force) -> void
-PandaBear.CI.PrereleasePruningRequest.Equals(PandaBear.CI.PrereleasePruningRequest? other) -> bool
-PandaBear.CI.PrereleasePruningRequest.Force.get -> bool
-PandaBear.CI.PrereleasePruningRequest.Force.init -> void
-PandaBear.CI.PrereleasePruningRequest.Keep.get -> int
-PandaBear.CI.PrereleasePruningRequest.Keep.init -> void
-PandaBear.CI.PrereleasePruningRequest.PrereleasePruningRequest(string! Repository, int Keep, System.Collections.Generic.IReadOnlyList<string!>! Protected, bool Force) -> void
-PandaBear.CI.PrereleasePruningRequest.Protected.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.PrereleasePruningRequest.Protected.init -> void
-PandaBear.CI.PrereleasePruningRequest.Repository.get -> string!
-PandaBear.CI.PrereleasePruningRequest.Repository.init -> void
-PandaBear.CI.ProjectSelector
-PandaBear.CI.RepositoryRelease
-PandaBear.CI.RepositoryRelease.<Clone>$() -> PandaBear.CI.RepositoryRelease!
-PandaBear.CI.RepositoryRelease.CreatedAt.get -> System.DateTimeOffset
-PandaBear.CI.RepositoryRelease.CreatedAt.init -> void
-PandaBear.CI.RepositoryRelease.Deconstruct(out long Id, out string! TagName, out bool Draft, out bool Prerelease, out System.DateTimeOffset CreatedAt) -> void
-PandaBear.CI.RepositoryRelease.Draft.get -> bool
-PandaBear.CI.RepositoryRelease.Draft.init -> void
-PandaBear.CI.RepositoryRelease.Equals(PandaBear.CI.RepositoryRelease? other) -> bool
-PandaBear.CI.RepositoryRelease.Id.get -> long
-PandaBear.CI.RepositoryRelease.Id.init -> void
-PandaBear.CI.RepositoryRelease.Prerelease.get -> bool
-PandaBear.CI.RepositoryRelease.Prerelease.init -> void
-PandaBear.CI.RepositoryRelease.RepositoryRelease(long Id, string! TagName, bool Draft, bool Prerelease, System.DateTimeOffset CreatedAt) -> void
-PandaBear.CI.RepositoryRelease.TagName.get -> string!
-PandaBear.CI.RepositoryRelease.TagName.init -> void
-PandaBear.CI.SelectedTest
-PandaBear.CI.SelectedTest.<Clone>$() -> PandaBear.CI.SelectedTest!
-PandaBear.CI.SelectedTest.Deconstruct(out string! Project, out System.Collections.Generic.IReadOnlyList<string!>! SelectedBy) -> void
-PandaBear.CI.SelectedTest.Equals(PandaBear.CI.SelectedTest? other) -> bool
-PandaBear.CI.SelectedTest.Project.get -> string!
-PandaBear.CI.SelectedTest.Project.init -> void
-PandaBear.CI.SelectedTest.SelectedBy.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SelectedTest.SelectedBy.init -> void
-PandaBear.CI.SelectedTest.SelectedTest(string! Project, System.Collections.Generic.IReadOnlyList<string!>! SelectedBy) -> void
-PandaBear.CI.SelectionConfiguration
-PandaBear.CI.SelectionConfiguration.<Clone>$() -> PandaBear.CI.SelectionConfiguration!
-PandaBear.CI.SelectionConfiguration.AlwaysSelected.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SelectionConfiguration.AlwaysSelected.init -> void
-PandaBear.CI.SelectionConfiguration.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! FullValidation, out System.Collections.Generic.IReadOnlyList<string!>! Documentation, out System.Collections.Generic.IReadOnlyList<string!>! AlwaysSelected, out bool RequireCoveringTests, out System.Collections.Generic.IReadOnlyList<PandaBear.CI.TestPathRule!>? TestPaths) -> void
-PandaBear.CI.SelectionConfiguration.Documentation.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SelectionConfiguration.Documentation.init -> void
-PandaBear.CI.SelectionConfiguration.Equals(PandaBear.CI.SelectionConfiguration? other) -> bool
-PandaBear.CI.SelectionConfiguration.FullValidation.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SelectionConfiguration.FullValidation.init -> void
-PandaBear.CI.SelectionConfiguration.RequireCoveringTests.get -> bool
-PandaBear.CI.SelectionConfiguration.RequireCoveringTests.init -> void
-PandaBear.CI.SelectionConfiguration.SelectionConfiguration(System.Collections.Generic.IReadOnlyList<string!>! FullValidation, System.Collections.Generic.IReadOnlyList<string!>! Documentation, System.Collections.Generic.IReadOnlyList<string!>! AlwaysSelected, bool RequireCoveringTests, System.Collections.Generic.IReadOnlyList<PandaBear.CI.TestPathRule!>? TestPaths = null) -> void
-PandaBear.CI.SelectionConfiguration.TestPaths.get -> System.Collections.Generic.IReadOnlyList<PandaBear.CI.TestPathRule!>?
-PandaBear.CI.SelectionConfiguration.TestPaths.init -> void
-PandaBear.CI.SelectionPlan
-PandaBear.CI.SelectionPlan.<Clone>$() -> PandaBear.CI.SelectionPlan!
-PandaBear.CI.SelectionPlan.BuildProjects.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SelectionPlan.BuildProjects.init -> void
-PandaBear.CI.SelectionPlan.BuildRequired.get -> bool
-PandaBear.CI.SelectionPlan.BuildRequired.init -> void
-PandaBear.CI.SelectionPlan.ComparisonBase.get -> string?
-PandaBear.CI.SelectionPlan.ComparisonBase.init -> void
-PandaBear.CI.SelectionPlan.Deconstruct(out string! Revision, out string? ComparisonBase, out bool FullValidation, out bool BuildRequired, out bool DocumentationOnly, out System.Collections.Generic.IReadOnlyList<string!>! Reasons, out System.Collections.Generic.IReadOnlyList<string!>! BuildProjects, out System.Collections.Generic.IReadOnlyList<PandaBear.CI.SliceSelection!>! Slices) -> void
-PandaBear.CI.SelectionPlan.DocumentationOnly.get -> bool
-PandaBear.CI.SelectionPlan.DocumentationOnly.init -> void
-PandaBear.CI.SelectionPlan.Equals(PandaBear.CI.SelectionPlan? other) -> bool
-PandaBear.CI.SelectionPlan.FullValidation.get -> bool
-PandaBear.CI.SelectionPlan.FullValidation.init -> void
-PandaBear.CI.SelectionPlan.Reasons.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SelectionPlan.Reasons.init -> void
-PandaBear.CI.SelectionPlan.Revision.get -> string!
-PandaBear.CI.SelectionPlan.Revision.init -> void
-PandaBear.CI.SelectionPlan.SelectionPlan(string! Revision, string? ComparisonBase, bool FullValidation, bool BuildRequired, bool DocumentationOnly, System.Collections.Generic.IReadOnlyList<string!>! Reasons, System.Collections.Generic.IReadOnlyList<string!>! BuildProjects, System.Collections.Generic.IReadOnlyList<PandaBear.CI.SliceSelection!>! Slices) -> void
-PandaBear.CI.SelectionPlan.Slices.get -> System.Collections.Generic.IReadOnlyList<PandaBear.CI.SliceSelection!>!
-PandaBear.CI.SelectionPlan.Slices.init -> void
-PandaBear.CI.SelectionPlanFile
-PandaBear.CI.ServiceConfiguration
-PandaBear.CI.ServiceConfiguration.<Clone>$() -> PandaBear.CI.ServiceConfiguration!
-PandaBear.CI.ServiceConfiguration.Deconstruct(out string! Project, out string! ReadyFileVariable, out System.Collections.Generic.IReadOnlyList<string!>! ValueVariables, out int ReadyTimeoutSeconds, out int StopTimeoutSeconds) -> void
-PandaBear.CI.ServiceConfiguration.Equals(PandaBear.CI.ServiceConfiguration? other) -> bool
-PandaBear.CI.ServiceConfiguration.Project.get -> string!
-PandaBear.CI.ServiceConfiguration.Project.init -> void
-PandaBear.CI.ServiceConfiguration.ReadyFileVariable.get -> string!
-PandaBear.CI.ServiceConfiguration.ReadyFileVariable.init -> void
-PandaBear.CI.ServiceConfiguration.ReadyTimeoutSeconds.get -> int
-PandaBear.CI.ServiceConfiguration.ReadyTimeoutSeconds.init -> void
-PandaBear.CI.ServiceConfiguration.ServiceConfiguration(string! Project, string! ReadyFileVariable, System.Collections.Generic.IReadOnlyList<string!>! ValueVariables, int ReadyTimeoutSeconds = 300, int StopTimeoutSeconds = 60) -> void
-PandaBear.CI.ServiceConfiguration.StopTimeoutSeconds.get -> int
-PandaBear.CI.ServiceConfiguration.StopTimeoutSeconds.init -> void
-PandaBear.CI.ServiceConfiguration.ValueVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.ServiceConfiguration.ValueVariables.init -> void
-PandaBear.CI.SliceConfiguration
-PandaBear.CI.SliceConfiguration.<Clone>$() -> PandaBear.CI.SliceConfiguration!
-PandaBear.CI.SliceConfiguration.Deconstruct(out string! Name, out System.Collections.Generic.IReadOnlyList<string!>! Projects, out System.Collections.Generic.IReadOnlyList<string!>? OpenApi, out PandaBear.CI.PlaywrightConfiguration? Playwright, out PandaBear.CI.ServiceConfiguration? Service) -> void
-PandaBear.CI.SliceConfiguration.Equals(PandaBear.CI.SliceConfiguration? other) -> bool
-PandaBear.CI.SliceConfiguration.Name.get -> string!
-PandaBear.CI.SliceConfiguration.Name.init -> void
-PandaBear.CI.SliceConfiguration.OpenApi.get -> System.Collections.Generic.IReadOnlyList<string!>?
-PandaBear.CI.SliceConfiguration.OpenApi.init -> void
-PandaBear.CI.SliceConfiguration.Playwright.get -> PandaBear.CI.PlaywrightConfiguration?
-PandaBear.CI.SliceConfiguration.Playwright.init -> void
-PandaBear.CI.SliceConfiguration.Projects.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SliceConfiguration.Projects.init -> void
-PandaBear.CI.SliceConfiguration.Service.get -> PandaBear.CI.ServiceConfiguration?
-PandaBear.CI.SliceConfiguration.Service.init -> void
-PandaBear.CI.SliceConfiguration.SliceConfiguration(string! Name, System.Collections.Generic.IReadOnlyList<string!>! Projects, System.Collections.Generic.IReadOnlyList<string!>? OpenApi = null, PandaBear.CI.PlaywrightConfiguration? Playwright = null, PandaBear.CI.ServiceConfiguration? Service = null) -> void
-PandaBear.CI.SliceRunOptions
-PandaBear.CI.SliceRunOptions.<Clone>$() -> PandaBear.CI.SliceRunOptions!
-PandaBear.CI.SliceRunOptions.Configuration.get -> string!
-PandaBear.CI.SliceRunOptions.Configuration.init -> void
-PandaBear.CI.SliceRunOptions.Coverage.get -> bool
-PandaBear.CI.SliceRunOptions.Coverage.init -> void
-PandaBear.CI.SliceRunOptions.CoverageEvidence.get -> bool
-PandaBear.CI.SliceRunOptions.CoverageEvidence.init -> void
-PandaBear.CI.SliceRunOptions.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Slices, out string! Configuration, out bool Coverage, out bool InstallPlaywright, out bool PlaywrightDependencies, out System.Collections.Generic.IReadOnlyList<string!>! ExcludeTraits) -> void
-PandaBear.CI.SliceRunOptions.Equals(PandaBear.CI.SliceRunOptions? other) -> bool
-PandaBear.CI.SliceRunOptions.ExcludeTraits.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SliceRunOptions.ExcludeTraits.init -> void
-PandaBear.CI.SliceRunOptions.InstallPlaywright.get -> bool
-PandaBear.CI.SliceRunOptions.InstallPlaywright.init -> void
-PandaBear.CI.SliceRunOptions.PlaywrightDependencies.get -> bool
-PandaBear.CI.SliceRunOptions.PlaywrightDependencies.init -> void
-PandaBear.CI.SliceRunOptions.SliceRunOptions(System.Collections.Generic.IReadOnlyList<string!>! Slices, string! Configuration, bool Coverage, bool InstallPlaywright, bool PlaywrightDependencies, System.Collections.Generic.IReadOnlyList<string!>! ExcludeTraits) -> void
-PandaBear.CI.SliceRunOptions.Slices.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SliceRunOptions.Slices.init -> void
-PandaBear.CI.SliceRunner
-PandaBear.CI.SliceRunner.Run(string! root, string! selectionDirectory, PandaBear.CI.SliceRunOptions! options, PandaBear.CI.IStepSummary? summary, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.SliceRunner.SliceRunner(PandaBear.CI.CiMachine! machine) -> void
-PandaBear.CI.SliceSelection
-PandaBear.CI.SliceSelection.<Clone>$() -> PandaBear.CI.SliceSelection!
-PandaBear.CI.SliceSelection.Deconstruct(out string! Name, out bool Required, out System.Collections.Generic.IReadOnlyList<PandaBear.CI.SelectedTest!>! Tests) -> void
-PandaBear.CI.SliceSelection.Equals(PandaBear.CI.SliceSelection? other) -> bool
-PandaBear.CI.SliceSelection.Name.get -> string!
-PandaBear.CI.SliceSelection.Name.init -> void
-PandaBear.CI.SliceSelection.Required.get -> bool
-PandaBear.CI.SliceSelection.Required.init -> void
-PandaBear.CI.SliceSelection.SliceSelection(string! Name, bool Required, System.Collections.Generic.IReadOnlyList<PandaBear.CI.SelectedTest!>! Tests) -> void
-PandaBear.CI.SliceSelection.Tests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.CI.SelectedTest!>!
-PandaBear.CI.SliceSelection.Tests.init -> void
-PandaBear.CI.SolutionGraph
-PandaBear.CI.SolutionGraph.Closure(string! project) -> System.Collections.Generic.IReadOnlySet<string!>!
-PandaBear.CI.SolutionGraph.Projects.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.SolutionGraph.Solution.get -> string!
-PandaBear.CI.SolutionGraph.Tests.get -> System.Collections.Generic.IReadOnlySet<string!>!
-PandaBear.CI.TestPathRule
-PandaBear.CI.TestPathRule.<Clone>$() -> PandaBear.CI.TestPathRule!
-PandaBear.CI.TestPathRule.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Paths, out System.Collections.Generic.IReadOnlyList<string!>! Tests) -> void
-PandaBear.CI.TestPathRule.Equals(PandaBear.CI.TestPathRule? other) -> bool
-PandaBear.CI.TestPathRule.Paths.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.TestPathRule.Paths.init -> void
-PandaBear.CI.TestPathRule.TestPathRule(System.Collections.Generic.IReadOnlyList<string!>! Paths, System.Collections.Generic.IReadOnlyList<string!>! Tests) -> void
-PandaBear.CI.TestPathRule.Tests.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.CI.TestPathRule.Tests.init -> void
-PandaBear.CI.TestSelector
-PandaBear.CI.TestSelector.Select(string! root, string! selectionDirectory, string? baseRevision, PandaBear.CI.IRunOutputs? outputs, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.CI.SelectionPlan!>!
-PandaBear.CI.TestSelector.TestSelector(PandaBear.CI.CiMachine! machine) -> void
-PandaBear.CI.WarningReports
-const PandaBear.CI.CiConfigurationFile.RelativePath = ".config/sharedkernel-ci.json" -> string!
-const PandaBear.CI.CoverageVerifier.DefaultGateEvidencePath = "TestResults/coverage-gate.json" -> string!
-const PandaBear.CI.CoverageVerifier.DefaultSymbolEvidencePath = "TestResults/symbol-evidence.json" -> string!
-const PandaBear.CI.CoverageVerifier.ReportFilePattern = "*.cobertura*.xml" -> string!
-const PandaBear.CI.ProjectSelector.AlwaysSelected = "alwaysSelected" -> string!
-const PandaBear.CI.SelectionPlanFile.FileName = "selection.json" -> string!
-const PandaBear.CI.ServiceConfiguration.DefaultReadyTimeoutSeconds = 300 -> int
-const PandaBear.CI.ServiceConfiguration.DefaultStopTimeoutSeconds = 60 -> int
-const PandaBear.CI.ServiceConfiguration.MaxTimeoutSeconds = 3600 -> int
-override PandaBear.CI.CandidateDownloadLimits.Equals(object? obj) -> bool
-override PandaBear.CI.CandidateDownloadLimits.GetHashCode() -> int
-override PandaBear.CI.CandidateDownloadLimits.ToString() -> string!
-override PandaBear.CI.CandidateStagingRequest.Equals(object? obj) -> bool
-override PandaBear.CI.CandidateStagingRequest.GetHashCode() -> int
-override PandaBear.CI.CandidateStagingRequest.ToString() -> string!
-override PandaBear.CI.CiConfiguration.Equals(object? obj) -> bool
-override PandaBear.CI.CiConfiguration.GetHashCode() -> int
-override PandaBear.CI.CiConfiguration.ToString() -> string!
-override PandaBear.CI.CoverageConfiguration.Equals(object? obj) -> bool
-override PandaBear.CI.CoverageConfiguration.GetHashCode() -> int
-override PandaBear.CI.CoverageConfiguration.ToString() -> string!
-override PandaBear.CI.LocalCheckOptions.Equals(object? obj) -> bool
-override PandaBear.CI.LocalCheckOptions.GetHashCode() -> int
-override PandaBear.CI.LocalCheckOptions.ToString() -> string!
-override PandaBear.CI.MutationConfiguration.Equals(object? obj) -> bool
-override PandaBear.CI.MutationConfiguration.GetHashCode() -> int
-override PandaBear.CI.MutationConfiguration.ToString() -> string!
-override PandaBear.CI.OpenApiTargetConfiguration.Equals(object? obj) -> bool
-override PandaBear.CI.OpenApiTargetConfiguration.GetHashCode() -> int
-override PandaBear.CI.OpenApiTargetConfiguration.ToString() -> string!
-override PandaBear.CI.PlaywrightConfiguration.Equals(object? obj) -> bool
-override PandaBear.CI.PlaywrightConfiguration.GetHashCode() -> int
-override PandaBear.CI.PlaywrightConfiguration.ToString() -> string!
-override PandaBear.CI.PrereleasePruningRequest.Equals(object? obj) -> bool
-override PandaBear.CI.PrereleasePruningRequest.GetHashCode() -> int
-override PandaBear.CI.PrereleasePruningRequest.ToString() -> string!
-override PandaBear.CI.RepositoryRelease.Equals(object? obj) -> bool
-override PandaBear.CI.RepositoryRelease.GetHashCode() -> int
-override PandaBear.CI.RepositoryRelease.ToString() -> string!
-override PandaBear.CI.SelectedTest.Equals(object? obj) -> bool
-override PandaBear.CI.SelectedTest.GetHashCode() -> int
-override PandaBear.CI.SelectedTest.ToString() -> string!
-override PandaBear.CI.SelectionConfiguration.Equals(object? obj) -> bool
-override PandaBear.CI.SelectionConfiguration.GetHashCode() -> int
-override PandaBear.CI.SelectionConfiguration.ToString() -> string!
-override PandaBear.CI.SelectionPlan.Equals(object? obj) -> bool
-override PandaBear.CI.SelectionPlan.GetHashCode() -> int
-override PandaBear.CI.SelectionPlan.ToString() -> string!
-override PandaBear.CI.ServiceConfiguration.Equals(object? obj) -> bool
-override PandaBear.CI.ServiceConfiguration.GetHashCode() -> int
-override PandaBear.CI.ServiceConfiguration.ToString() -> string!
-override PandaBear.CI.SliceConfiguration.Equals(object? obj) -> bool
-override PandaBear.CI.SliceConfiguration.GetHashCode() -> int
-override PandaBear.CI.SliceConfiguration.ToString() -> string!
-override PandaBear.CI.SliceRunOptions.Equals(object? obj) -> bool
-override PandaBear.CI.SliceRunOptions.GetHashCode() -> int
-override PandaBear.CI.SliceRunOptions.ToString() -> string!
-override PandaBear.CI.SliceSelection.Equals(object? obj) -> bool
-override PandaBear.CI.SliceSelection.GetHashCode() -> int
-override PandaBear.CI.SliceSelection.ToString() -> string!
-override PandaBear.CI.TestPathRule.Equals(object? obj) -> bool
-override PandaBear.CI.TestPathRule.GetHashCode() -> int
-override PandaBear.CI.TestPathRule.ToString() -> string!
-static PandaBear.CI.CandidateDownloadLimits.Default.get -> PandaBear.CI.CandidateDownloadLimits!
-static PandaBear.CI.CandidateDownloadLimits.operator !=(PandaBear.CI.CandidateDownloadLimits? left, PandaBear.CI.CandidateDownloadLimits? right) -> bool
-static PandaBear.CI.CandidateDownloadLimits.operator ==(PandaBear.CI.CandidateDownloadLimits? left, PandaBear.CI.CandidateDownloadLimits? right) -> bool
-static PandaBear.CI.CandidateStagingRequest.operator !=(PandaBear.CI.CandidateStagingRequest? left, PandaBear.CI.CandidateStagingRequest? right) -> bool
-static PandaBear.CI.CandidateStagingRequest.operator ==(PandaBear.CI.CandidateStagingRequest? left, PandaBear.CI.CandidateStagingRequest? right) -> bool
-static PandaBear.CI.CiConfiguration.operator !=(PandaBear.CI.CiConfiguration? left, PandaBear.CI.CiConfiguration? right) -> bool
-static PandaBear.CI.CiConfiguration.operator ==(PandaBear.CI.CiConfiguration? left, PandaBear.CI.CiConfiguration? right) -> bool
-static PandaBear.CI.CiConfigurationFile.IsBrowser(string! browser) -> bool
-static PandaBear.CI.CiConfigurationFile.IsName(string! name) -> bool
-static PandaBear.CI.CiConfigurationFile.IsSliceName(string! name) -> bool
-static PandaBear.CI.CiConfigurationFile.Read(string! root, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.CI.CiConfiguration!>!
-static PandaBear.CI.CommitMessageVerifier.VerifyEvent(string! eventPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static PandaBear.CI.CommitMessageVerifier.VerifyFile(string! messagePath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static PandaBear.CI.CoverageConfiguration.operator !=(PandaBear.CI.CoverageConfiguration? left, PandaBear.CI.CoverageConfiguration? right) -> bool
-static PandaBear.CI.CoverageConfiguration.operator ==(PandaBear.CI.CoverageConfiguration? left, PandaBear.CI.CoverageConfiguration? right) -> bool
-static PandaBear.CI.LocalCheckOptions.operator !=(PandaBear.CI.LocalCheckOptions? left, PandaBear.CI.LocalCheckOptions? right) -> bool
-static PandaBear.CI.LocalCheckOptions.operator ==(PandaBear.CI.LocalCheckOptions? left, PandaBear.CI.LocalCheckOptions? right) -> bool
-static PandaBear.CI.MutationConfiguration.operator !=(PandaBear.CI.MutationConfiguration? left, PandaBear.CI.MutationConfiguration? right) -> bool
-static PandaBear.CI.MutationConfiguration.operator ==(PandaBear.CI.MutationConfiguration? left, PandaBear.CI.MutationConfiguration? right) -> bool
-static PandaBear.CI.OpenApiTargetConfiguration.operator !=(PandaBear.CI.OpenApiTargetConfiguration? left, PandaBear.CI.OpenApiTargetConfiguration? right) -> bool
-static PandaBear.CI.OpenApiTargetConfiguration.operator ==(PandaBear.CI.OpenApiTargetConfiguration? left, PandaBear.CI.OpenApiTargetConfiguration? right) -> bool
-static PandaBear.CI.PlaywrightConfiguration.operator !=(PandaBear.CI.PlaywrightConfiguration? left, PandaBear.CI.PlaywrightConfiguration? right) -> bool
-static PandaBear.CI.PlaywrightConfiguration.operator ==(PandaBear.CI.PlaywrightConfiguration? left, PandaBear.CI.PlaywrightConfiguration? right) -> bool
-static PandaBear.CI.PrereleasePruner.Prune(PandaBear.CI.PrereleasePruningRequest! request, PandaBear.CI.IReleaseStore! releases, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static PandaBear.CI.PrereleasePruningRequest.operator !=(PandaBear.CI.PrereleasePruningRequest? left, PandaBear.CI.PrereleasePruningRequest? right) -> bool
-static PandaBear.CI.PrereleasePruningRequest.operator ==(PandaBear.CI.PrereleasePruningRequest? left, PandaBear.CI.PrereleasePruningRequest? right) -> bool
-static PandaBear.CI.ProjectSelector.Match(System.Collections.Generic.IEnumerable<string!>! patterns, string! path) -> string?
-static PandaBear.CI.ProjectSelector.Select(PandaBear.CI.CiConfiguration! configuration, PandaBear.CI.SolutionGraph! graph, System.Collections.Generic.IReadOnlyList<string!>? changes, string? fullReason, string? nonInertBuildFile) -> PandaBear.CI.SelectionPlan!
-static PandaBear.CI.ProjectSelector.Validate(PandaBear.CI.CiConfiguration! configuration, PandaBear.CI.SolutionGraph! graph) -> void
-static PandaBear.CI.RepositoryRelease.operator !=(PandaBear.CI.RepositoryRelease? left, PandaBear.CI.RepositoryRelease? right) -> bool
-static PandaBear.CI.RepositoryRelease.operator ==(PandaBear.CI.RepositoryRelease? left, PandaBear.CI.RepositoryRelease? right) -> bool
-static PandaBear.CI.SelectedTest.operator !=(PandaBear.CI.SelectedTest? left, PandaBear.CI.SelectedTest? right) -> bool
-static PandaBear.CI.SelectedTest.operator ==(PandaBear.CI.SelectedTest? left, PandaBear.CI.SelectedTest? right) -> bool
-static PandaBear.CI.SelectionConfiguration.operator !=(PandaBear.CI.SelectionConfiguration? left, PandaBear.CI.SelectionConfiguration? right) -> bool
-static PandaBear.CI.SelectionConfiguration.operator ==(PandaBear.CI.SelectionConfiguration? left, PandaBear.CI.SelectionConfiguration? right) -> bool
-static PandaBear.CI.SelectionPlan.operator !=(PandaBear.CI.SelectionPlan? left, PandaBear.CI.SelectionPlan? right) -> bool
-static PandaBear.CI.SelectionPlan.operator ==(PandaBear.CI.SelectionPlan? left, PandaBear.CI.SelectionPlan? right) -> bool
-static PandaBear.CI.SelectionPlanFile.Read(string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.CI.SelectionPlan!>!
-static PandaBear.CI.SelectionPlanFile.Write(PandaBear.CI.SelectionPlan! plan, string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static PandaBear.CI.ServiceConfiguration.operator !=(PandaBear.CI.ServiceConfiguration? left, PandaBear.CI.ServiceConfiguration? right) -> bool
-static PandaBear.CI.ServiceConfiguration.operator ==(PandaBear.CI.ServiceConfiguration? left, PandaBear.CI.ServiceConfiguration? right) -> bool
-static PandaBear.CI.SliceConfiguration.operator !=(PandaBear.CI.SliceConfiguration? left, PandaBear.CI.SliceConfiguration? right) -> bool
-static PandaBear.CI.SliceConfiguration.operator ==(PandaBear.CI.SliceConfiguration? left, PandaBear.CI.SliceConfiguration? right) -> bool
-static PandaBear.CI.SliceRunOptions.operator !=(PandaBear.CI.SliceRunOptions? left, PandaBear.CI.SliceRunOptions? right) -> bool
-static PandaBear.CI.SliceRunOptions.operator ==(PandaBear.CI.SliceRunOptions? left, PandaBear.CI.SliceRunOptions? right) -> bool
-static PandaBear.CI.SliceSelection.operator !=(PandaBear.CI.SliceSelection? left, PandaBear.CI.SliceSelection? right) -> bool
-static PandaBear.CI.SliceSelection.operator ==(PandaBear.CI.SliceSelection? left, PandaBear.CI.SliceSelection? right) -> bool
-static PandaBear.CI.SolutionGraph.Load(string! root, string! solution) -> PandaBear.CI.SolutionGraph!
-static PandaBear.CI.TestPathRule.operator !=(PandaBear.CI.TestPathRule? left, PandaBear.CI.TestPathRule? right) -> bool
-static PandaBear.CI.TestPathRule.operator ==(PandaBear.CI.TestPathRule? left, PandaBear.CI.TestPathRule? right) -> bool
-static PandaBear.CI.WarningReports.Summarize(System.Collections.Generic.IReadOnlyList<string!>! reportPaths, PandaBear.CI.IStepSummary? summary, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static PandaBear.CI.WarningReports.VerifyRestore(string! logPath, PandaBear.CI.IStepSummary? summary, string? reportPath, string? exceptionsPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static PandaBear.CI.WarningReports.Write(string! tool, string! outcome, int advisory, string! reportPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.KeyValueOutputFile
-PandaBear.CI.KeyValueOutputFile.KeyValueOutputFile(string! path) -> void
-PandaBear.CI.KeyValueOutputFile.Write(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>! outputs, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.MarkdownSummaryFile
-PandaBear.CI.MarkdownSummaryFile.Append(string! markdown, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.CI.MarkdownSummaryFile.MarkdownSummaryFile(string! path) -> void
+SharedKernel.CI.CandidateDownloadLimits
+SharedKernel.CI.CandidateDownloadLimits.<Clone>$() -> SharedKernel.CI.CandidateDownloadLimits!
+SharedKernel.CI.CandidateDownloadLimits.CandidateDownloadLimits(long MaxPackageBytes, long MaxTotalBytes, System.TimeSpan RequestTimeout, int MaxAttempts, System.TimeSpan MaxRetryDelay) -> void
+SharedKernel.CI.CandidateDownloadLimits.Deconstruct(out long MaxPackageBytes, out long MaxTotalBytes, out System.TimeSpan RequestTimeout, out int MaxAttempts, out System.TimeSpan MaxRetryDelay) -> void
+SharedKernel.CI.CandidateDownloadLimits.Equals(SharedKernel.CI.CandidateDownloadLimits? other) -> bool
+SharedKernel.CI.CandidateDownloadLimits.MaxAttempts.get -> int
+SharedKernel.CI.CandidateDownloadLimits.MaxAttempts.init -> void
+SharedKernel.CI.CandidateDownloadLimits.MaxPackageBytes.get -> long
+SharedKernel.CI.CandidateDownloadLimits.MaxPackageBytes.init -> void
+SharedKernel.CI.CandidateDownloadLimits.MaxRetryDelay.get -> System.TimeSpan
+SharedKernel.CI.CandidateDownloadLimits.MaxRetryDelay.init -> void
+SharedKernel.CI.CandidateDownloadLimits.MaxTotalBytes.get -> long
+SharedKernel.CI.CandidateDownloadLimits.MaxTotalBytes.init -> void
+SharedKernel.CI.CandidateDownloadLimits.RequestTimeout.get -> System.TimeSpan
+SharedKernel.CI.CandidateDownloadLimits.RequestTimeout.init -> void
+SharedKernel.CI.CandidateStager
+SharedKernel.CI.CandidateStager.CandidateStager(SharedKernel.CI.CiMachine! machine, System.Func<System.Net.Http.HttpMessageHandler!>! createHttpHandler, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent) -> void
+SharedKernel.CI.CandidateStager.DownloadTimeProvider.get -> System.TimeProvider?
+SharedKernel.CI.CandidateStager.DownloadTimeProvider.init -> void
+SharedKernel.CI.CandidateStager.Limits.get -> SharedKernel.CI.CandidateDownloadLimits!
+SharedKernel.CI.CandidateStager.Limits.init -> void
+SharedKernel.CI.CandidateStager.Stage(SharedKernel.CI.CandidateStagingRequest! request, SharedKernel.CI.IReleaseAssets? release, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.CandidateStagingRequest
+SharedKernel.CI.CandidateStagingRequest.<Clone>$() -> SharedKernel.CI.CandidateStagingRequest!
+SharedKernel.CI.CandidateStagingRequest.CandidateStagingRequest(string! Root, string! Pin, string! LibraryRoot, string! Output, string? Feed) -> void
+SharedKernel.CI.CandidateStagingRequest.Deconstruct(out string! Root, out string! Pin, out string! LibraryRoot, out string! Output, out string? Feed) -> void
+SharedKernel.CI.CandidateStagingRequest.Equals(SharedKernel.CI.CandidateStagingRequest? other) -> bool
+SharedKernel.CI.CandidateStagingRequest.Feed.get -> string?
+SharedKernel.CI.CandidateStagingRequest.Feed.init -> void
+SharedKernel.CI.CandidateStagingRequest.LibraryRoot.get -> string!
+SharedKernel.CI.CandidateStagingRequest.LibraryRoot.init -> void
+SharedKernel.CI.CandidateStagingRequest.Output.get -> string!
+SharedKernel.CI.CandidateStagingRequest.Output.init -> void
+SharedKernel.CI.CandidateStagingRequest.Pin.get -> string!
+SharedKernel.CI.CandidateStagingRequest.Pin.init -> void
+SharedKernel.CI.CandidateStagingRequest.Root.get -> string!
+SharedKernel.CI.CandidateStagingRequest.Root.init -> void
+SharedKernel.CI.CiConfiguration
+SharedKernel.CI.CiConfiguration.<Clone>$() -> SharedKernel.CI.CiConfiguration!
+SharedKernel.CI.CiConfiguration.CiConfiguration(int Version, string! Solution, SharedKernel.CI.SelectionConfiguration! Selection, System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SliceConfiguration!>! Slices, string? DefaultSlice = null, System.Collections.Generic.IReadOnlyList<SharedKernel.CI.OpenApiTargetConfiguration!>? OpenApi = null, SharedKernel.CI.CoverageConfiguration? Coverage = null, SharedKernel.CI.MutationConfiguration? Mutation = null) -> void
+SharedKernel.CI.CiConfiguration.Coverage.get -> SharedKernel.CI.CoverageConfiguration?
+SharedKernel.CI.CiConfiguration.Coverage.init -> void
+SharedKernel.CI.CiConfiguration.Deconstruct(out int Version, out string! Solution, out SharedKernel.CI.SelectionConfiguration! Selection, out System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SliceConfiguration!>! Slices, out string? DefaultSlice, out System.Collections.Generic.IReadOnlyList<SharedKernel.CI.OpenApiTargetConfiguration!>? OpenApi, out SharedKernel.CI.CoverageConfiguration? Coverage, out SharedKernel.CI.MutationConfiguration? Mutation) -> void
+SharedKernel.CI.CiConfiguration.DefaultSlice.get -> string?
+SharedKernel.CI.CiConfiguration.DefaultSlice.init -> void
+SharedKernel.CI.CiConfiguration.Equals(SharedKernel.CI.CiConfiguration? other) -> bool
+SharedKernel.CI.CiConfiguration.Mutation.get -> SharedKernel.CI.MutationConfiguration?
+SharedKernel.CI.CiConfiguration.Mutation.init -> void
+SharedKernel.CI.CiConfiguration.OpenApi.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.CI.OpenApiTargetConfiguration!>?
+SharedKernel.CI.CiConfiguration.OpenApi.init -> void
+SharedKernel.CI.CiConfiguration.Selection.get -> SharedKernel.CI.SelectionConfiguration!
+SharedKernel.CI.CiConfiguration.Selection.init -> void
+SharedKernel.CI.CiConfiguration.Slices.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SliceConfiguration!>!
+SharedKernel.CI.CiConfiguration.Slices.init -> void
+SharedKernel.CI.CiConfiguration.Solution.get -> string!
+SharedKernel.CI.CiConfiguration.Solution.init -> void
+SharedKernel.CI.CiConfiguration.Version.get -> int
+SharedKernel.CI.CiConfiguration.Version.init -> void
+SharedKernel.CI.CiConfigurationFile
+SharedKernel.CI.CiMachine
+SharedKernel.CI.CiMachine.CiMachine(SharedKernel.Processes.IProcessRunner! processRunner, SharedKernel.Processes.IExecutableResolver! executableResolver, System.TimeProvider! timeProvider) -> void
+SharedKernel.CI.CiMachine.ExecutableResolver.get -> SharedKernel.Processes.IExecutableResolver!
+SharedKernel.CI.CiMachine.ProcessRunner.get -> SharedKernel.Processes.IProcessRunner!
+SharedKernel.CI.CiMachine.StartService.get -> System.Func<System.Diagnostics.ProcessStartInfo!, System.Diagnostics.Process!>!
+SharedKernel.CI.CiMachine.StartService.init -> void
+SharedKernel.CI.CiMachine.TimeProvider.get -> System.TimeProvider!
+SharedKernel.CI.CommitMessageVerifier
+SharedKernel.CI.CoverageConfiguration
+SharedKernel.CI.CoverageConfiguration.<Clone>$() -> SharedKernel.CI.CoverageConfiguration!
+SharedKernel.CI.CoverageConfiguration.CoverageConfiguration(int ThresholdPercent, System.Collections.Generic.IReadOnlyList<string!>! Include, System.Collections.Generic.IReadOnlyList<string!>! Exclude, System.Collections.Generic.IReadOnlyList<string!>! SymbolDirectories) -> void
+SharedKernel.CI.CoverageConfiguration.Deconstruct(out int ThresholdPercent, out System.Collections.Generic.IReadOnlyList<string!>! Include, out System.Collections.Generic.IReadOnlyList<string!>! Exclude, out System.Collections.Generic.IReadOnlyList<string!>! SymbolDirectories) -> void
+SharedKernel.CI.CoverageConfiguration.Equals(SharedKernel.CI.CoverageConfiguration? other) -> bool
+SharedKernel.CI.CoverageConfiguration.Exclude.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.CoverageConfiguration.Exclude.init -> void
+SharedKernel.CI.CoverageConfiguration.Include.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.CoverageConfiguration.Include.init -> void
+SharedKernel.CI.CoverageConfiguration.SymbolDirectories.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.CoverageConfiguration.SymbolDirectories.init -> void
+SharedKernel.CI.CoverageConfiguration.ThresholdPercent.get -> int
+SharedKernel.CI.CoverageConfiguration.ThresholdPercent.init -> void
+SharedKernel.CI.CoverageVerifier
+SharedKernel.CI.CoverageVerifier.CoverageVerifier(SharedKernel.CI.CiMachine! machine) -> void
+SharedKernel.CI.CoverageVerifier.MeasureStaged(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.CoverageVerifier.MeasureStaged(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, string? baseRevision, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.CoverageVerifier.MeasureStagedWithEvidence(string! root, System.Collections.Generic.IReadOnlyList<string!>! evidence, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.CoverageVerifier.MeasureStagedWithEvidence(string! root, System.Collections.Generic.IReadOnlyList<string!>! evidence, string? baseRevision, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.CoverageVerifier.RecordSymbols(string! root, string! evidencePath, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.CoverageVerifier.Verify(string! root, System.Collections.Generic.IReadOnlyList<string!>! reports, string! baseRevision, string! symbolEvidencePath, string! gateEvidencePath, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.IReleaseAssets
+SharedKernel.CI.IReleaseAssets.Locate(string! tag, string! asset, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Uri!>!
+SharedKernel.CI.IReleaseStore
+SharedKernel.CI.IReleaseStore.Delete(SharedKernel.CI.RepositoryRelease! release, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.IReleaseStore.List(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.CI.RepositoryRelease!>!>!
+SharedKernel.CI.IRunOutputs
+SharedKernel.CI.IRunOutputs.Write(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>! outputs, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.IStepSummary
+SharedKernel.CI.IStepSummary.Append(string! markdown, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.LocalCheckOptions
+SharedKernel.CI.LocalCheckOptions.<Clone>$() -> SharedKernel.CI.LocalCheckOptions!
+SharedKernel.CI.LocalCheckOptions.Base.get -> string?
+SharedKernel.CI.LocalCheckOptions.Base.init -> void
+SharedKernel.CI.LocalCheckOptions.Configuration.get -> string!
+SharedKernel.CI.LocalCheckOptions.Configuration.init -> void
+SharedKernel.CI.LocalCheckOptions.Deconstruct(out string? Base, out string! Configuration, out bool Strict, out System.Collections.Generic.IReadOnlyList<string!>! TestArguments, out System.TimeSpan Timeout) -> void
+SharedKernel.CI.LocalCheckOptions.Equals(SharedKernel.CI.LocalCheckOptions? other) -> bool
+SharedKernel.CI.LocalCheckOptions.LocalCheckOptions(string? Base, string! Configuration, bool Strict, System.Collections.Generic.IReadOnlyList<string!>! TestArguments, System.TimeSpan Timeout) -> void
+SharedKernel.CI.LocalCheckOptions.Strict.get -> bool
+SharedKernel.CI.LocalCheckOptions.Strict.init -> void
+SharedKernel.CI.LocalCheckOptions.TestArguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.LocalCheckOptions.TestArguments.init -> void
+SharedKernel.CI.LocalCheckOptions.Timeout.get -> System.TimeSpan
+SharedKernel.CI.LocalCheckOptions.Timeout.init -> void
+SharedKernel.CI.LocalCheckRunner
+SharedKernel.CI.LocalCheckRunner.LocalCheckRunner(SharedKernel.CI.CiMachine! machine) -> void
+SharedKernel.CI.LocalCheckRunner.Run(string! root, string! selectionDirectory, SharedKernel.CI.LocalCheckOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.MutationConfiguration
+SharedKernel.CI.MutationConfiguration.<Clone>$() -> SharedKernel.CI.MutationConfiguration!
+SharedKernel.CI.MutationConfiguration.ConfigFiles.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.MutationConfiguration.ConfigFiles.init -> void
+SharedKernel.CI.MutationConfiguration.Deconstruct(out string! StrykerVersion, out System.Collections.Generic.IReadOnlyList<string!>! ConfigFiles) -> void
+SharedKernel.CI.MutationConfiguration.Equals(SharedKernel.CI.MutationConfiguration? other) -> bool
+SharedKernel.CI.MutationConfiguration.MutationConfiguration(string! StrykerVersion, System.Collections.Generic.IReadOnlyList<string!>! ConfigFiles) -> void
+SharedKernel.CI.MutationConfiguration.StrykerVersion.get -> string!
+SharedKernel.CI.MutationConfiguration.StrykerVersion.init -> void
+SharedKernel.CI.MutationTestRunner
+SharedKernel.CI.MutationTestRunner.MutationTestRunner(SharedKernel.CI.CiMachine! machine) -> void
+SharedKernel.CI.MutationTestRunner.Run(string! root, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.OpenApiGenerator
+SharedKernel.CI.OpenApiGenerator.Generate(string! root, System.Collections.Generic.IReadOnlyCollection<string!>! targets, bool refresh, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.OpenApiGenerator.OpenApiGenerator(SharedKernel.CI.CiMachine! machine) -> void
+SharedKernel.CI.OpenApiTargetConfiguration
+SharedKernel.CI.OpenApiTargetConfiguration.<Clone>$() -> SharedKernel.CI.OpenApiTargetConfiguration!
+SharedKernel.CI.OpenApiTargetConfiguration.Deconstruct(out string! Name, out string! Project, out string! GenerateProperty, out string! RefreshProperty, out System.Collections.Generic.IReadOnlyList<string!>? PreserveEnvironment) -> void
+SharedKernel.CI.OpenApiTargetConfiguration.Equals(SharedKernel.CI.OpenApiTargetConfiguration? other) -> bool
+SharedKernel.CI.OpenApiTargetConfiguration.GenerateProperty.get -> string!
+SharedKernel.CI.OpenApiTargetConfiguration.GenerateProperty.init -> void
+SharedKernel.CI.OpenApiTargetConfiguration.Name.get -> string!
+SharedKernel.CI.OpenApiTargetConfiguration.Name.init -> void
+SharedKernel.CI.OpenApiTargetConfiguration.OpenApiTargetConfiguration(string! Name, string! Project, string! GenerateProperty, string! RefreshProperty, System.Collections.Generic.IReadOnlyList<string!>? PreserveEnvironment = null) -> void
+SharedKernel.CI.OpenApiTargetConfiguration.PreserveEnvironment.get -> System.Collections.Generic.IReadOnlyList<string!>?
+SharedKernel.CI.OpenApiTargetConfiguration.PreserveEnvironment.init -> void
+SharedKernel.CI.OpenApiTargetConfiguration.Project.get -> string!
+SharedKernel.CI.OpenApiTargetConfiguration.Project.init -> void
+SharedKernel.CI.OpenApiTargetConfiguration.RefreshProperty.get -> string!
+SharedKernel.CI.OpenApiTargetConfiguration.RefreshProperty.init -> void
+SharedKernel.CI.PlaywrightConfiguration
+SharedKernel.CI.PlaywrightConfiguration.<Clone>$() -> SharedKernel.CI.PlaywrightConfiguration!
+SharedKernel.CI.PlaywrightConfiguration.Browsers.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.PlaywrightConfiguration.Browsers.init -> void
+SharedKernel.CI.PlaywrightConfiguration.Deconstruct(out string! Project, out System.Collections.Generic.IReadOnlyList<string!>! Browsers, out bool OnlyShell) -> void
+SharedKernel.CI.PlaywrightConfiguration.Equals(SharedKernel.CI.PlaywrightConfiguration? other) -> bool
+SharedKernel.CI.PlaywrightConfiguration.OnlyShell.get -> bool
+SharedKernel.CI.PlaywrightConfiguration.OnlyShell.init -> void
+SharedKernel.CI.PlaywrightConfiguration.PlaywrightConfiguration(string! Project, System.Collections.Generic.IReadOnlyList<string!>! Browsers, bool OnlyShell = false) -> void
+SharedKernel.CI.PlaywrightConfiguration.Project.get -> string!
+SharedKernel.CI.PlaywrightConfiguration.Project.init -> void
+SharedKernel.CI.PlaywrightInstaller
+SharedKernel.CI.PlaywrightInstaller.Install(string! root, string! project, System.Collections.Generic.IEnumerable<string!>! browsers, bool withDependencies, bool onlyShell, string? configuration, System.IO.TextWriter! progress, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+SharedKernel.CI.PlaywrightInstaller.PlaywrightInstaller(SharedKernel.CI.CiMachine! machine) -> void
+SharedKernel.CI.PrereleasePruner
+SharedKernel.CI.PrereleasePruningRequest
+SharedKernel.CI.PrereleasePruningRequest.<Clone>$() -> SharedKernel.CI.PrereleasePruningRequest!
+SharedKernel.CI.PrereleasePruningRequest.Deconstruct(out string! Repository, out int Keep, out System.Collections.Generic.IReadOnlyList<string!>! Protected, out bool Force) -> void
+SharedKernel.CI.PrereleasePruningRequest.Equals(SharedKernel.CI.PrereleasePruningRequest? other) -> bool
+SharedKernel.CI.PrereleasePruningRequest.Force.get -> bool
+SharedKernel.CI.PrereleasePruningRequest.Force.init -> void
+SharedKernel.CI.PrereleasePruningRequest.Keep.get -> int
+SharedKernel.CI.PrereleasePruningRequest.Keep.init -> void
+SharedKernel.CI.PrereleasePruningRequest.PrereleasePruningRequest(string! Repository, int Keep, System.Collections.Generic.IReadOnlyList<string!>! Protected, bool Force) -> void
+SharedKernel.CI.PrereleasePruningRequest.Protected.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.PrereleasePruningRequest.Protected.init -> void
+SharedKernel.CI.PrereleasePruningRequest.Repository.get -> string!
+SharedKernel.CI.PrereleasePruningRequest.Repository.init -> void
+SharedKernel.CI.ProjectSelector
+SharedKernel.CI.RepositoryRelease
+SharedKernel.CI.RepositoryRelease.<Clone>$() -> SharedKernel.CI.RepositoryRelease!
+SharedKernel.CI.RepositoryRelease.CreatedAt.get -> System.DateTimeOffset
+SharedKernel.CI.RepositoryRelease.CreatedAt.init -> void
+SharedKernel.CI.RepositoryRelease.Deconstruct(out long Id, out string! TagName, out bool Draft, out bool Prerelease, out System.DateTimeOffset CreatedAt) -> void
+SharedKernel.CI.RepositoryRelease.Draft.get -> bool
+SharedKernel.CI.RepositoryRelease.Draft.init -> void
+SharedKernel.CI.RepositoryRelease.Equals(SharedKernel.CI.RepositoryRelease? other) -> bool
+SharedKernel.CI.RepositoryRelease.Id.get -> long
+SharedKernel.CI.RepositoryRelease.Id.init -> void
+SharedKernel.CI.RepositoryRelease.Prerelease.get -> bool
+SharedKernel.CI.RepositoryRelease.Prerelease.init -> void
+SharedKernel.CI.RepositoryRelease.RepositoryRelease(long Id, string! TagName, bool Draft, bool Prerelease, System.DateTimeOffset CreatedAt) -> void
+SharedKernel.CI.RepositoryRelease.TagName.get -> string!
+SharedKernel.CI.RepositoryRelease.TagName.init -> void
+SharedKernel.CI.SelectedTest
+SharedKernel.CI.SelectedTest.<Clone>$() -> SharedKernel.CI.SelectedTest!
+SharedKernel.CI.SelectedTest.Deconstruct(out string! Project, out System.Collections.Generic.IReadOnlyList<string!>! SelectedBy) -> void
+SharedKernel.CI.SelectedTest.Equals(SharedKernel.CI.SelectedTest? other) -> bool
+SharedKernel.CI.SelectedTest.Project.get -> string!
+SharedKernel.CI.SelectedTest.Project.init -> void
+SharedKernel.CI.SelectedTest.SelectedBy.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SelectedTest.SelectedBy.init -> void
+SharedKernel.CI.SelectedTest.SelectedTest(string! Project, System.Collections.Generic.IReadOnlyList<string!>! SelectedBy) -> void
+SharedKernel.CI.SelectionConfiguration
+SharedKernel.CI.SelectionConfiguration.<Clone>$() -> SharedKernel.CI.SelectionConfiguration!
+SharedKernel.CI.SelectionConfiguration.AlwaysSelected.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SelectionConfiguration.AlwaysSelected.init -> void
+SharedKernel.CI.SelectionConfiguration.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! FullValidation, out System.Collections.Generic.IReadOnlyList<string!>! Documentation, out System.Collections.Generic.IReadOnlyList<string!>! AlwaysSelected, out bool RequireCoveringTests, out System.Collections.Generic.IReadOnlyList<SharedKernel.CI.TestPathRule!>? TestPaths) -> void
+SharedKernel.CI.SelectionConfiguration.Documentation.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SelectionConfiguration.Documentation.init -> void
+SharedKernel.CI.SelectionConfiguration.Equals(SharedKernel.CI.SelectionConfiguration? other) -> bool
+SharedKernel.CI.SelectionConfiguration.FullValidation.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SelectionConfiguration.FullValidation.init -> void
+SharedKernel.CI.SelectionConfiguration.RequireCoveringTests.get -> bool
+SharedKernel.CI.SelectionConfiguration.RequireCoveringTests.init -> void
+SharedKernel.CI.SelectionConfiguration.SelectionConfiguration(System.Collections.Generic.IReadOnlyList<string!>! FullValidation, System.Collections.Generic.IReadOnlyList<string!>! Documentation, System.Collections.Generic.IReadOnlyList<string!>! AlwaysSelected, bool RequireCoveringTests, System.Collections.Generic.IReadOnlyList<SharedKernel.CI.TestPathRule!>? TestPaths = null) -> void
+SharedKernel.CI.SelectionConfiguration.TestPaths.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.CI.TestPathRule!>?
+SharedKernel.CI.SelectionConfiguration.TestPaths.init -> void
+SharedKernel.CI.SelectionPlan
+SharedKernel.CI.SelectionPlan.<Clone>$() -> SharedKernel.CI.SelectionPlan!
+SharedKernel.CI.SelectionPlan.BuildProjects.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SelectionPlan.BuildProjects.init -> void
+SharedKernel.CI.SelectionPlan.BuildRequired.get -> bool
+SharedKernel.CI.SelectionPlan.BuildRequired.init -> void
+SharedKernel.CI.SelectionPlan.ComparisonBase.get -> string?
+SharedKernel.CI.SelectionPlan.ComparisonBase.init -> void
+SharedKernel.CI.SelectionPlan.Deconstruct(out string! Revision, out string? ComparisonBase, out bool FullValidation, out bool BuildRequired, out bool DocumentationOnly, out System.Collections.Generic.IReadOnlyList<string!>! Reasons, out System.Collections.Generic.IReadOnlyList<string!>! BuildProjects, out System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SliceSelection!>! Slices) -> void
+SharedKernel.CI.SelectionPlan.DocumentationOnly.get -> bool
+SharedKernel.CI.SelectionPlan.DocumentationOnly.init -> void
+SharedKernel.CI.SelectionPlan.Equals(SharedKernel.CI.SelectionPlan? other) -> bool
+SharedKernel.CI.SelectionPlan.FullValidation.get -> bool
+SharedKernel.CI.SelectionPlan.FullValidation.init -> void
+SharedKernel.CI.SelectionPlan.Reasons.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SelectionPlan.Reasons.init -> void
+SharedKernel.CI.SelectionPlan.Revision.get -> string!
+SharedKernel.CI.SelectionPlan.Revision.init -> void
+SharedKernel.CI.SelectionPlan.SelectionPlan(string! Revision, string? ComparisonBase, bool FullValidation, bool BuildRequired, bool DocumentationOnly, System.Collections.Generic.IReadOnlyList<string!>! Reasons, System.Collections.Generic.IReadOnlyList<string!>! BuildProjects, System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SliceSelection!>! Slices) -> void
+SharedKernel.CI.SelectionPlan.Slices.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SliceSelection!>!
+SharedKernel.CI.SelectionPlan.Slices.init -> void
+SharedKernel.CI.SelectionPlanFile
+SharedKernel.CI.ServiceConfiguration
+SharedKernel.CI.ServiceConfiguration.<Clone>$() -> SharedKernel.CI.ServiceConfiguration!
+SharedKernel.CI.ServiceConfiguration.Deconstruct(out string! Project, out string! ReadyFileVariable, out System.Collections.Generic.IReadOnlyList<string!>! ValueVariables, out int ReadyTimeoutSeconds, out int StopTimeoutSeconds) -> void
+SharedKernel.CI.ServiceConfiguration.Equals(SharedKernel.CI.ServiceConfiguration? other) -> bool
+SharedKernel.CI.ServiceConfiguration.Project.get -> string!
+SharedKernel.CI.ServiceConfiguration.Project.init -> void
+SharedKernel.CI.ServiceConfiguration.ReadyFileVariable.get -> string!
+SharedKernel.CI.ServiceConfiguration.ReadyFileVariable.init -> void
+SharedKernel.CI.ServiceConfiguration.ReadyTimeoutSeconds.get -> int
+SharedKernel.CI.ServiceConfiguration.ReadyTimeoutSeconds.init -> void
+SharedKernel.CI.ServiceConfiguration.ServiceConfiguration(string! Project, string! ReadyFileVariable, System.Collections.Generic.IReadOnlyList<string!>! ValueVariables, int ReadyTimeoutSeconds = 300, int StopTimeoutSeconds = 60) -> void
+SharedKernel.CI.ServiceConfiguration.StopTimeoutSeconds.get -> int
+SharedKernel.CI.ServiceConfiguration.StopTimeoutSeconds.init -> void
+SharedKernel.CI.ServiceConfiguration.ValueVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.ServiceConfiguration.ValueVariables.init -> void
+SharedKernel.CI.SliceConfiguration
+SharedKernel.CI.SliceConfiguration.<Clone>$() -> SharedKernel.CI.SliceConfiguration!
+SharedKernel.CI.SliceConfiguration.Deconstruct(out string! Name, out System.Collections.Generic.IReadOnlyList<string!>! Projects, out System.Collections.Generic.IReadOnlyList<string!>? OpenApi, out SharedKernel.CI.PlaywrightConfiguration? Playwright, out SharedKernel.CI.ServiceConfiguration? Service) -> void
+SharedKernel.CI.SliceConfiguration.Equals(SharedKernel.CI.SliceConfiguration? other) -> bool
+SharedKernel.CI.SliceConfiguration.Name.get -> string!
+SharedKernel.CI.SliceConfiguration.Name.init -> void
+SharedKernel.CI.SliceConfiguration.OpenApi.get -> System.Collections.Generic.IReadOnlyList<string!>?
+SharedKernel.CI.SliceConfiguration.OpenApi.init -> void
+SharedKernel.CI.SliceConfiguration.Playwright.get -> SharedKernel.CI.PlaywrightConfiguration?
+SharedKernel.CI.SliceConfiguration.Playwright.init -> void
+SharedKernel.CI.SliceConfiguration.Projects.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SliceConfiguration.Projects.init -> void
+SharedKernel.CI.SliceConfiguration.Service.get -> SharedKernel.CI.ServiceConfiguration?
+SharedKernel.CI.SliceConfiguration.Service.init -> void
+SharedKernel.CI.SliceConfiguration.SliceConfiguration(string! Name, System.Collections.Generic.IReadOnlyList<string!>! Projects, System.Collections.Generic.IReadOnlyList<string!>? OpenApi = null, SharedKernel.CI.PlaywrightConfiguration? Playwright = null, SharedKernel.CI.ServiceConfiguration? Service = null) -> void
+SharedKernel.CI.SliceRunOptions
+SharedKernel.CI.SliceRunOptions.<Clone>$() -> SharedKernel.CI.SliceRunOptions!
+SharedKernel.CI.SliceRunOptions.Configuration.get -> string!
+SharedKernel.CI.SliceRunOptions.Configuration.init -> void
+SharedKernel.CI.SliceRunOptions.Coverage.get -> bool
+SharedKernel.CI.SliceRunOptions.Coverage.init -> void
+SharedKernel.CI.SliceRunOptions.CoverageEvidence.get -> bool
+SharedKernel.CI.SliceRunOptions.CoverageEvidence.init -> void
+SharedKernel.CI.SliceRunOptions.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Slices, out string! Configuration, out bool Coverage, out bool InstallPlaywright, out bool PlaywrightDependencies, out System.Collections.Generic.IReadOnlyList<string!>! ExcludeTraits) -> void
+SharedKernel.CI.SliceRunOptions.Equals(SharedKernel.CI.SliceRunOptions? other) -> bool
+SharedKernel.CI.SliceRunOptions.ExcludeTraits.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SliceRunOptions.ExcludeTraits.init -> void
+SharedKernel.CI.SliceRunOptions.InstallPlaywright.get -> bool
+SharedKernel.CI.SliceRunOptions.InstallPlaywright.init -> void
+SharedKernel.CI.SliceRunOptions.PlaywrightDependencies.get -> bool
+SharedKernel.CI.SliceRunOptions.PlaywrightDependencies.init -> void
+SharedKernel.CI.SliceRunOptions.SliceRunOptions(System.Collections.Generic.IReadOnlyList<string!>! Slices, string! Configuration, bool Coverage, bool InstallPlaywright, bool PlaywrightDependencies, System.Collections.Generic.IReadOnlyList<string!>! ExcludeTraits) -> void
+SharedKernel.CI.SliceRunOptions.Slices.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SliceRunOptions.Slices.init -> void
+SharedKernel.CI.SliceRunner
+SharedKernel.CI.SliceRunner.Run(string! root, string! selectionDirectory, SharedKernel.CI.SliceRunOptions! options, SharedKernel.CI.IStepSummary? summary, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.SliceRunner.SliceRunner(SharedKernel.CI.CiMachine! machine) -> void
+SharedKernel.CI.SliceSelection
+SharedKernel.CI.SliceSelection.<Clone>$() -> SharedKernel.CI.SliceSelection!
+SharedKernel.CI.SliceSelection.Deconstruct(out string! Name, out bool Required, out System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SelectedTest!>! Tests) -> void
+SharedKernel.CI.SliceSelection.Equals(SharedKernel.CI.SliceSelection? other) -> bool
+SharedKernel.CI.SliceSelection.Name.get -> string!
+SharedKernel.CI.SliceSelection.Name.init -> void
+SharedKernel.CI.SliceSelection.Required.get -> bool
+SharedKernel.CI.SliceSelection.Required.init -> void
+SharedKernel.CI.SliceSelection.SliceSelection(string! Name, bool Required, System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SelectedTest!>! Tests) -> void
+SharedKernel.CI.SliceSelection.Tests.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.CI.SelectedTest!>!
+SharedKernel.CI.SliceSelection.Tests.init -> void
+SharedKernel.CI.SolutionGraph
+SharedKernel.CI.SolutionGraph.Closure(string! project) -> System.Collections.Generic.IReadOnlySet<string!>!
+SharedKernel.CI.SolutionGraph.Projects.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.SolutionGraph.Solution.get -> string!
+SharedKernel.CI.SolutionGraph.Tests.get -> System.Collections.Generic.IReadOnlySet<string!>!
+SharedKernel.CI.TestPathRule
+SharedKernel.CI.TestPathRule.<Clone>$() -> SharedKernel.CI.TestPathRule!
+SharedKernel.CI.TestPathRule.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Paths, out System.Collections.Generic.IReadOnlyList<string!>! Tests) -> void
+SharedKernel.CI.TestPathRule.Equals(SharedKernel.CI.TestPathRule? other) -> bool
+SharedKernel.CI.TestPathRule.Paths.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.TestPathRule.Paths.init -> void
+SharedKernel.CI.TestPathRule.TestPathRule(System.Collections.Generic.IReadOnlyList<string!>! Paths, System.Collections.Generic.IReadOnlyList<string!>! Tests) -> void
+SharedKernel.CI.TestPathRule.Tests.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.CI.TestPathRule.Tests.init -> void
+SharedKernel.CI.TestSelector
+SharedKernel.CI.TestSelector.Select(string! root, string! selectionDirectory, string? baseRevision, SharedKernel.CI.IRunOutputs? outputs, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.CI.SelectionPlan!>!
+SharedKernel.CI.TestSelector.TestSelector(SharedKernel.CI.CiMachine! machine) -> void
+SharedKernel.CI.WarningReports
+const SharedKernel.CI.CiConfigurationFile.RelativePath = ".config/sharedkernel-ci.json" -> string!
+const SharedKernel.CI.CoverageVerifier.DefaultGateEvidencePath = "TestResults/coverage-gate.json" -> string!
+const SharedKernel.CI.CoverageVerifier.DefaultSymbolEvidencePath = "TestResults/symbol-evidence.json" -> string!
+const SharedKernel.CI.CoverageVerifier.ReportFilePattern = "*.cobertura*.xml" -> string!
+const SharedKernel.CI.ProjectSelector.AlwaysSelected = "alwaysSelected" -> string!
+const SharedKernel.CI.SelectionPlanFile.FileName = "selection.json" -> string!
+const SharedKernel.CI.ServiceConfiguration.DefaultReadyTimeoutSeconds = 300 -> int
+const SharedKernel.CI.ServiceConfiguration.DefaultStopTimeoutSeconds = 60 -> int
+const SharedKernel.CI.ServiceConfiguration.MaxTimeoutSeconds = 3600 -> int
+override SharedKernel.CI.CandidateDownloadLimits.Equals(object? obj) -> bool
+override SharedKernel.CI.CandidateDownloadLimits.GetHashCode() -> int
+override SharedKernel.CI.CandidateDownloadLimits.ToString() -> string!
+override SharedKernel.CI.CandidateStagingRequest.Equals(object? obj) -> bool
+override SharedKernel.CI.CandidateStagingRequest.GetHashCode() -> int
+override SharedKernel.CI.CandidateStagingRequest.ToString() -> string!
+override SharedKernel.CI.CiConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.CiConfiguration.GetHashCode() -> int
+override SharedKernel.CI.CiConfiguration.ToString() -> string!
+override SharedKernel.CI.CoverageConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.CoverageConfiguration.GetHashCode() -> int
+override SharedKernel.CI.CoverageConfiguration.ToString() -> string!
+override SharedKernel.CI.LocalCheckOptions.Equals(object? obj) -> bool
+override SharedKernel.CI.LocalCheckOptions.GetHashCode() -> int
+override SharedKernel.CI.LocalCheckOptions.ToString() -> string!
+override SharedKernel.CI.MutationConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.MutationConfiguration.GetHashCode() -> int
+override SharedKernel.CI.MutationConfiguration.ToString() -> string!
+override SharedKernel.CI.OpenApiTargetConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.OpenApiTargetConfiguration.GetHashCode() -> int
+override SharedKernel.CI.OpenApiTargetConfiguration.ToString() -> string!
+override SharedKernel.CI.PlaywrightConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.PlaywrightConfiguration.GetHashCode() -> int
+override SharedKernel.CI.PlaywrightConfiguration.ToString() -> string!
+override SharedKernel.CI.PrereleasePruningRequest.Equals(object? obj) -> bool
+override SharedKernel.CI.PrereleasePruningRequest.GetHashCode() -> int
+override SharedKernel.CI.PrereleasePruningRequest.ToString() -> string!
+override SharedKernel.CI.RepositoryRelease.Equals(object? obj) -> bool
+override SharedKernel.CI.RepositoryRelease.GetHashCode() -> int
+override SharedKernel.CI.RepositoryRelease.ToString() -> string!
+override SharedKernel.CI.SelectedTest.Equals(object? obj) -> bool
+override SharedKernel.CI.SelectedTest.GetHashCode() -> int
+override SharedKernel.CI.SelectedTest.ToString() -> string!
+override SharedKernel.CI.SelectionConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.SelectionConfiguration.GetHashCode() -> int
+override SharedKernel.CI.SelectionConfiguration.ToString() -> string!
+override SharedKernel.CI.SelectionPlan.Equals(object? obj) -> bool
+override SharedKernel.CI.SelectionPlan.GetHashCode() -> int
+override SharedKernel.CI.SelectionPlan.ToString() -> string!
+override SharedKernel.CI.ServiceConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.ServiceConfiguration.GetHashCode() -> int
+override SharedKernel.CI.ServiceConfiguration.ToString() -> string!
+override SharedKernel.CI.SliceConfiguration.Equals(object? obj) -> bool
+override SharedKernel.CI.SliceConfiguration.GetHashCode() -> int
+override SharedKernel.CI.SliceConfiguration.ToString() -> string!
+override SharedKernel.CI.SliceRunOptions.Equals(object? obj) -> bool
+override SharedKernel.CI.SliceRunOptions.GetHashCode() -> int
+override SharedKernel.CI.SliceRunOptions.ToString() -> string!
+override SharedKernel.CI.SliceSelection.Equals(object? obj) -> bool
+override SharedKernel.CI.SliceSelection.GetHashCode() -> int
+override SharedKernel.CI.SliceSelection.ToString() -> string!
+override SharedKernel.CI.TestPathRule.Equals(object? obj) -> bool
+override SharedKernel.CI.TestPathRule.GetHashCode() -> int
+override SharedKernel.CI.TestPathRule.ToString() -> string!
+static SharedKernel.CI.CandidateDownloadLimits.Default.get -> SharedKernel.CI.CandidateDownloadLimits!
+static SharedKernel.CI.CandidateDownloadLimits.operator !=(SharedKernel.CI.CandidateDownloadLimits? left, SharedKernel.CI.CandidateDownloadLimits? right) -> bool
+static SharedKernel.CI.CandidateDownloadLimits.operator ==(SharedKernel.CI.CandidateDownloadLimits? left, SharedKernel.CI.CandidateDownloadLimits? right) -> bool
+static SharedKernel.CI.CandidateStagingRequest.operator !=(SharedKernel.CI.CandidateStagingRequest? left, SharedKernel.CI.CandidateStagingRequest? right) -> bool
+static SharedKernel.CI.CandidateStagingRequest.operator ==(SharedKernel.CI.CandidateStagingRequest? left, SharedKernel.CI.CandidateStagingRequest? right) -> bool
+static SharedKernel.CI.CiConfiguration.operator !=(SharedKernel.CI.CiConfiguration? left, SharedKernel.CI.CiConfiguration? right) -> bool
+static SharedKernel.CI.CiConfiguration.operator ==(SharedKernel.CI.CiConfiguration? left, SharedKernel.CI.CiConfiguration? right) -> bool
+static SharedKernel.CI.CiConfigurationFile.IsBrowser(string! browser) -> bool
+static SharedKernel.CI.CiConfigurationFile.IsName(string! name) -> bool
+static SharedKernel.CI.CiConfigurationFile.IsSliceName(string! name) -> bool
+static SharedKernel.CI.CiConfigurationFile.Read(string! root, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.CI.CiConfiguration!>!
+static SharedKernel.CI.CommitMessageVerifier.VerifyEvent(string! eventPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static SharedKernel.CI.CommitMessageVerifier.VerifyFile(string! messagePath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static SharedKernel.CI.CoverageConfiguration.operator !=(SharedKernel.CI.CoverageConfiguration? left, SharedKernel.CI.CoverageConfiguration? right) -> bool
+static SharedKernel.CI.CoverageConfiguration.operator ==(SharedKernel.CI.CoverageConfiguration? left, SharedKernel.CI.CoverageConfiguration? right) -> bool
+static SharedKernel.CI.LocalCheckOptions.operator !=(SharedKernel.CI.LocalCheckOptions? left, SharedKernel.CI.LocalCheckOptions? right) -> bool
+static SharedKernel.CI.LocalCheckOptions.operator ==(SharedKernel.CI.LocalCheckOptions? left, SharedKernel.CI.LocalCheckOptions? right) -> bool
+static SharedKernel.CI.MutationConfiguration.operator !=(SharedKernel.CI.MutationConfiguration? left, SharedKernel.CI.MutationConfiguration? right) -> bool
+static SharedKernel.CI.MutationConfiguration.operator ==(SharedKernel.CI.MutationConfiguration? left, SharedKernel.CI.MutationConfiguration? right) -> bool
+static SharedKernel.CI.OpenApiTargetConfiguration.operator !=(SharedKernel.CI.OpenApiTargetConfiguration? left, SharedKernel.CI.OpenApiTargetConfiguration? right) -> bool
+static SharedKernel.CI.OpenApiTargetConfiguration.operator ==(SharedKernel.CI.OpenApiTargetConfiguration? left, SharedKernel.CI.OpenApiTargetConfiguration? right) -> bool
+static SharedKernel.CI.PlaywrightConfiguration.operator !=(SharedKernel.CI.PlaywrightConfiguration? left, SharedKernel.CI.PlaywrightConfiguration? right) -> bool
+static SharedKernel.CI.PlaywrightConfiguration.operator ==(SharedKernel.CI.PlaywrightConfiguration? left, SharedKernel.CI.PlaywrightConfiguration? right) -> bool
+static SharedKernel.CI.PrereleasePruner.Prune(SharedKernel.CI.PrereleasePruningRequest! request, SharedKernel.CI.IReleaseStore! releases, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static SharedKernel.CI.PrereleasePruningRequest.operator !=(SharedKernel.CI.PrereleasePruningRequest? left, SharedKernel.CI.PrereleasePruningRequest? right) -> bool
+static SharedKernel.CI.PrereleasePruningRequest.operator ==(SharedKernel.CI.PrereleasePruningRequest? left, SharedKernel.CI.PrereleasePruningRequest? right) -> bool
+static SharedKernel.CI.ProjectSelector.Match(System.Collections.Generic.IEnumerable<string!>! patterns, string! path) -> string?
+static SharedKernel.CI.ProjectSelector.Select(SharedKernel.CI.CiConfiguration! configuration, SharedKernel.CI.SolutionGraph! graph, System.Collections.Generic.IReadOnlyList<string!>? changes, string? fullReason, string? nonInertBuildFile) -> SharedKernel.CI.SelectionPlan!
+static SharedKernel.CI.ProjectSelector.Validate(SharedKernel.CI.CiConfiguration! configuration, SharedKernel.CI.SolutionGraph! graph) -> void
+static SharedKernel.CI.RepositoryRelease.operator !=(SharedKernel.CI.RepositoryRelease? left, SharedKernel.CI.RepositoryRelease? right) -> bool
+static SharedKernel.CI.RepositoryRelease.operator ==(SharedKernel.CI.RepositoryRelease? left, SharedKernel.CI.RepositoryRelease? right) -> bool
+static SharedKernel.CI.SelectedTest.operator !=(SharedKernel.CI.SelectedTest? left, SharedKernel.CI.SelectedTest? right) -> bool
+static SharedKernel.CI.SelectedTest.operator ==(SharedKernel.CI.SelectedTest? left, SharedKernel.CI.SelectedTest? right) -> bool
+static SharedKernel.CI.SelectionConfiguration.operator !=(SharedKernel.CI.SelectionConfiguration? left, SharedKernel.CI.SelectionConfiguration? right) -> bool
+static SharedKernel.CI.SelectionConfiguration.operator ==(SharedKernel.CI.SelectionConfiguration? left, SharedKernel.CI.SelectionConfiguration? right) -> bool
+static SharedKernel.CI.SelectionPlan.operator !=(SharedKernel.CI.SelectionPlan? left, SharedKernel.CI.SelectionPlan? right) -> bool
+static SharedKernel.CI.SelectionPlan.operator ==(SharedKernel.CI.SelectionPlan? left, SharedKernel.CI.SelectionPlan? right) -> bool
+static SharedKernel.CI.SelectionPlanFile.Read(string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.CI.SelectionPlan!>!
+static SharedKernel.CI.SelectionPlanFile.Write(SharedKernel.CI.SelectionPlan! plan, string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static SharedKernel.CI.ServiceConfiguration.operator !=(SharedKernel.CI.ServiceConfiguration? left, SharedKernel.CI.ServiceConfiguration? right) -> bool
+static SharedKernel.CI.ServiceConfiguration.operator ==(SharedKernel.CI.ServiceConfiguration? left, SharedKernel.CI.ServiceConfiguration? right) -> bool
+static SharedKernel.CI.SliceConfiguration.operator !=(SharedKernel.CI.SliceConfiguration? left, SharedKernel.CI.SliceConfiguration? right) -> bool
+static SharedKernel.CI.SliceConfiguration.operator ==(SharedKernel.CI.SliceConfiguration? left, SharedKernel.CI.SliceConfiguration? right) -> bool
+static SharedKernel.CI.SliceRunOptions.operator !=(SharedKernel.CI.SliceRunOptions? left, SharedKernel.CI.SliceRunOptions? right) -> bool
+static SharedKernel.CI.SliceRunOptions.operator ==(SharedKernel.CI.SliceRunOptions? left, SharedKernel.CI.SliceRunOptions? right) -> bool
+static SharedKernel.CI.SliceSelection.operator !=(SharedKernel.CI.SliceSelection? left, SharedKernel.CI.SliceSelection? right) -> bool
+static SharedKernel.CI.SliceSelection.operator ==(SharedKernel.CI.SliceSelection? left, SharedKernel.CI.SliceSelection? right) -> bool
+static SharedKernel.CI.SolutionGraph.Load(string! root, string! solution) -> SharedKernel.CI.SolutionGraph!
+static SharedKernel.CI.TestPathRule.operator !=(SharedKernel.CI.TestPathRule? left, SharedKernel.CI.TestPathRule? right) -> bool
+static SharedKernel.CI.TestPathRule.operator ==(SharedKernel.CI.TestPathRule? left, SharedKernel.CI.TestPathRule? right) -> bool
+static SharedKernel.CI.WarningReports.Summarize(System.Collections.Generic.IReadOnlyList<string!>! reportPaths, SharedKernel.CI.IStepSummary? summary, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static SharedKernel.CI.WarningReports.VerifyRestore(string! logPath, SharedKernel.CI.IStepSummary? summary, string? reportPath, string? exceptionsPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static SharedKernel.CI.WarningReports.Write(string! tool, string! outcome, int advisory, string! reportPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.KeyValueOutputFile
+SharedKernel.CI.KeyValueOutputFile.KeyValueOutputFile(string! path) -> void
+SharedKernel.CI.KeyValueOutputFile.Write(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>! outputs, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.MarkdownSummaryFile
+SharedKernel.CI.MarkdownSummaryFile.Append(string! markdown, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.CI.MarkdownSummaryFile.MarkdownSummaryFile(string! path) -> void

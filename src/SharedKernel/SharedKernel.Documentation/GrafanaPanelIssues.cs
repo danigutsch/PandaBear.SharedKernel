@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Reasons a dashboard panel failed verification.</summary>
 [Flags]

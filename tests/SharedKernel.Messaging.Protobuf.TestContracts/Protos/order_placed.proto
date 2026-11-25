@@ -4,7 +4,7 @@ package sharedkernel.tests;
 
 import "google/protobuf/timestamp.proto";
 
-option csharp_namespace = "PandaBear.Messaging.Protobuf.TestContracts";
+option csharp_namespace = "SharedKernel.Messaging.Protobuf.TestContracts";
 
 message OrderPlaced {
   string id = 1;

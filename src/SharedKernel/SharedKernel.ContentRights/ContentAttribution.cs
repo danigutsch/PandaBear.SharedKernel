@@ -1,10 +1,10 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>Validated credit and rights declarations recorded for a piece of content.</summary>
 public sealed class ContentAttribution

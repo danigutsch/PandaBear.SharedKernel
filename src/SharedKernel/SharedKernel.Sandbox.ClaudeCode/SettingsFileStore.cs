@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Sandbox.ClaudeCode;
+namespace SharedKernel.Sandbox.ClaudeCode;
 
 /// <summary>Reads and atomically replaces the settings file under the root. Never follows a symbolic link and never leaves the root.</summary>
 internal static class SettingsFileStore

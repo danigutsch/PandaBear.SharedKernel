@@ -673,7 +673,7 @@ that System.CommandLine repeats cannot send escape sequences either.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.VaultManager.Tool`. C# namespace: `PandaBear.VaultManager.Tool`.
+Package ID: `PandaBear.SharedKernel.VaultManager.Tool`. C# namespace: `SharedKernel.VaultManager.Tool`.
 Assembly and project identity: `SharedKernel.VaultManager.Tool`. Command: `dotnet vault`.
 
 The tool is a command-line wrapper over the vault engine: `SharedKernel.Vault` (matching, merging, secret scanning,

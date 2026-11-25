@@ -1,50 +1,50 @@
 #nullable enable
-PandaBear.Tabular.CsvDocument
-PandaBear.Tabular.CsvDocument.Headers.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Tabular.CsvDocument.Rows.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Tabular.CsvRow!>!
-PandaBear.Tabular.CsvParseOptions
-PandaBear.Tabular.CsvParseOptions.SkipBlankLines.get -> bool
-PandaBear.Tabular.CsvParseOptions.SkipBlankLines.init -> void
-PandaBear.Tabular.CsvRow
-PandaBear.Tabular.CsvRow.Count.get -> int
-PandaBear.Tabular.CsvRow.GetEnumerator() -> System.Collections.Generic.IEnumerator<string!>!
-PandaBear.Tabular.CsvRow.LineNumber.get -> int
-PandaBear.Tabular.CsvRow.this[int index].get -> string!
-PandaBear.Tabular.CsvRow.this[System.Collections.Generic.IReadOnlyList<string!>! headers, string! headerName].get -> string!
-PandaBear.Tabular.CsvRow.TryGetByHeader(System.Collections.Generic.IReadOnlyList<string!>! headers, string! headerName, out string? value) -> bool
-PandaBear.Tabular.CsvWriteOptions
-PandaBear.Tabular.CsvWriteOptions.GuardFormulas.get -> bool
-PandaBear.Tabular.CsvWriteOptions.GuardFormulas.init -> void
-PandaBear.Tabular.CsvWriteOptions.NewLine.get -> string!
-PandaBear.Tabular.CsvWriteOptions.NewLine.init -> void
-PandaBear.Tabular.CsvWriter
-PandaBear.Tabular.DuplicateRowScanner
-static PandaBear.Tabular.CsvDocument.Create(System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IReadOnlyList<PandaBear.Tabular.CsvRow!>! rows) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
-static PandaBear.Tabular.CsvDocument.Parse(string! content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null, PandaBear.Tabular.CsvParseOptions? options = null) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
-static PandaBear.Tabular.CsvDocument.ParseUtf8(System.ReadOnlySpan<byte> content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null, PandaBear.Tabular.CsvParseOptions? options = null) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
-static PandaBear.Tabular.CsvParseOptions.Default.get -> PandaBear.Tabular.CsvParseOptions!
-static PandaBear.Tabular.CsvRow.Create(System.Collections.Generic.IEnumerable<string!>! values) -> PandaBear.Tabular.CsvRow!
-static PandaBear.Tabular.CsvWriteOptions.Default.get -> PandaBear.Tabular.CsvWriteOptions!
-static PandaBear.Tabular.CsvWriter.FormatField(string! value, PandaBear.Tabular.CsvWriteOptions? options = null) -> string!
-static PandaBear.Tabular.CsvWriter.Write(System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<string!>!>! rows, PandaBear.Tabular.CsvWriteOptions? options = null) -> string!
-static PandaBear.Tabular.CsvWriter.Write(System.IO.TextWriter! writer, System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<string!>!>! rows, PandaBear.Tabular.CsvWriteOptions? options = null) -> void
-static PandaBear.Tabular.DuplicateRowScanner.FindDuplicateLineNumbers(PandaBear.Tabular.CsvDocument! document, System.Func<PandaBear.Tabular.CsvRow!, string?>! keySelector, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> System.Collections.Generic.IReadOnlyList<int>!
-PandaBear.Tabular.CsvParseOptions.<Clone>$() -> PandaBear.Tabular.CsvParseOptions!
-PandaBear.Tabular.CsvParseOptions.CsvParseOptions() -> void
-PandaBear.Tabular.CsvParseOptions.Equals(PandaBear.Tabular.CsvParseOptions? other) -> bool
-PandaBear.Tabular.CsvWriteOptions.<Clone>$() -> PandaBear.Tabular.CsvWriteOptions!
-PandaBear.Tabular.CsvWriteOptions.CsvWriteOptions() -> void
-PandaBear.Tabular.CsvWriteOptions.Equals(PandaBear.Tabular.CsvWriteOptions? other) -> bool
-override PandaBear.Tabular.CsvParseOptions.Equals(object? obj) -> bool
-override PandaBear.Tabular.CsvParseOptions.GetHashCode() -> int
-override PandaBear.Tabular.CsvParseOptions.ToString() -> string!
-override PandaBear.Tabular.CsvWriteOptions.Equals(object? obj) -> bool
-override PandaBear.Tabular.CsvWriteOptions.GetHashCode() -> int
-override PandaBear.Tabular.CsvWriteOptions.ToString() -> string!
-static PandaBear.Tabular.CsvParseOptions.operator !=(PandaBear.Tabular.CsvParseOptions? left, PandaBear.Tabular.CsvParseOptions? right) -> bool
-static PandaBear.Tabular.CsvParseOptions.operator ==(PandaBear.Tabular.CsvParseOptions? left, PandaBear.Tabular.CsvParseOptions? right) -> bool
-static PandaBear.Tabular.CsvWriteOptions.operator !=(PandaBear.Tabular.CsvWriteOptions? left, PandaBear.Tabular.CsvWriteOptions? right) -> bool
-static PandaBear.Tabular.CsvWriteOptions.operator ==(PandaBear.Tabular.CsvWriteOptions? left, PandaBear.Tabular.CsvWriteOptions? right) -> bool
-PandaBear.Tabular.CsvHeaderMapping
-static PandaBear.Tabular.CsvHeaderMapping.Match(System.Collections.Generic.IReadOnlyList<string!>! sourceHeaders, System.Collections.Generic.IReadOnlyList<string!>! targetHeaders, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? overrides = null, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> System.Collections.Generic.IReadOnlyList<(string! TargetHeader, string? SourceHeader)>!
-static PandaBear.Tabular.CsvHeaderMapping.Remap(PandaBear.Tabular.CsvDocument! document, System.Collections.Generic.IReadOnlyList<(string! TargetHeader, string? SourceHeader)>! matches, System.Func<string!, string!>? renameUnselectedTarget = null, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> PandaBear.Tabular.CsvDocument!
+SharedKernel.Tabular.CsvDocument
+SharedKernel.Tabular.CsvDocument.Headers.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Tabular.CsvDocument.Rows.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Tabular.CsvRow!>!
+SharedKernel.Tabular.CsvParseOptions
+SharedKernel.Tabular.CsvParseOptions.SkipBlankLines.get -> bool
+SharedKernel.Tabular.CsvParseOptions.SkipBlankLines.init -> void
+SharedKernel.Tabular.CsvRow
+SharedKernel.Tabular.CsvRow.Count.get -> int
+SharedKernel.Tabular.CsvRow.GetEnumerator() -> System.Collections.Generic.IEnumerator<string!>!
+SharedKernel.Tabular.CsvRow.LineNumber.get -> int
+SharedKernel.Tabular.CsvRow.this[int index].get -> string!
+SharedKernel.Tabular.CsvRow.this[System.Collections.Generic.IReadOnlyList<string!>! headers, string! headerName].get -> string!
+SharedKernel.Tabular.CsvRow.TryGetByHeader(System.Collections.Generic.IReadOnlyList<string!>! headers, string! headerName, out string? value) -> bool
+SharedKernel.Tabular.CsvWriteOptions
+SharedKernel.Tabular.CsvWriteOptions.GuardFormulas.get -> bool
+SharedKernel.Tabular.CsvWriteOptions.GuardFormulas.init -> void
+SharedKernel.Tabular.CsvWriteOptions.NewLine.get -> string!
+SharedKernel.Tabular.CsvWriteOptions.NewLine.init -> void
+SharedKernel.Tabular.CsvWriter
+SharedKernel.Tabular.DuplicateRowScanner
+static SharedKernel.Tabular.CsvDocument.Create(System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IReadOnlyList<SharedKernel.Tabular.CsvRow!>! rows) -> SharedKernel.Results.Result<SharedKernel.Tabular.CsvDocument!>
+static SharedKernel.Tabular.CsvDocument.Parse(string! content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null, SharedKernel.Tabular.CsvParseOptions? options = null) -> SharedKernel.Results.Result<SharedKernel.Tabular.CsvDocument!>
+static SharedKernel.Tabular.CsvDocument.ParseUtf8(System.ReadOnlySpan<byte> content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null, SharedKernel.Tabular.CsvParseOptions? options = null) -> SharedKernel.Results.Result<SharedKernel.Tabular.CsvDocument!>
+static SharedKernel.Tabular.CsvParseOptions.Default.get -> SharedKernel.Tabular.CsvParseOptions!
+static SharedKernel.Tabular.CsvRow.Create(System.Collections.Generic.IEnumerable<string!>! values) -> SharedKernel.Tabular.CsvRow!
+static SharedKernel.Tabular.CsvWriteOptions.Default.get -> SharedKernel.Tabular.CsvWriteOptions!
+static SharedKernel.Tabular.CsvWriter.FormatField(string! value, SharedKernel.Tabular.CsvWriteOptions? options = null) -> string!
+static SharedKernel.Tabular.CsvWriter.Write(System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<string!>!>! rows, SharedKernel.Tabular.CsvWriteOptions? options = null) -> string!
+static SharedKernel.Tabular.CsvWriter.Write(System.IO.TextWriter! writer, System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<string!>!>! rows, SharedKernel.Tabular.CsvWriteOptions? options = null) -> void
+static SharedKernel.Tabular.DuplicateRowScanner.FindDuplicateLineNumbers(SharedKernel.Tabular.CsvDocument! document, System.Func<SharedKernel.Tabular.CsvRow!, string?>! keySelector, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> System.Collections.Generic.IReadOnlyList<int>!
+SharedKernel.Tabular.CsvParseOptions.<Clone>$() -> SharedKernel.Tabular.CsvParseOptions!
+SharedKernel.Tabular.CsvParseOptions.CsvParseOptions() -> void
+SharedKernel.Tabular.CsvParseOptions.Equals(SharedKernel.Tabular.CsvParseOptions? other) -> bool
+SharedKernel.Tabular.CsvWriteOptions.<Clone>$() -> SharedKernel.Tabular.CsvWriteOptions!
+SharedKernel.Tabular.CsvWriteOptions.CsvWriteOptions() -> void
+SharedKernel.Tabular.CsvWriteOptions.Equals(SharedKernel.Tabular.CsvWriteOptions? other) -> bool
+override SharedKernel.Tabular.CsvParseOptions.Equals(object? obj) -> bool
+override SharedKernel.Tabular.CsvParseOptions.GetHashCode() -> int
+override SharedKernel.Tabular.CsvParseOptions.ToString() -> string!
+override SharedKernel.Tabular.CsvWriteOptions.Equals(object? obj) -> bool
+override SharedKernel.Tabular.CsvWriteOptions.GetHashCode() -> int
+override SharedKernel.Tabular.CsvWriteOptions.ToString() -> string!
+static SharedKernel.Tabular.CsvParseOptions.operator !=(SharedKernel.Tabular.CsvParseOptions? left, SharedKernel.Tabular.CsvParseOptions? right) -> bool
+static SharedKernel.Tabular.CsvParseOptions.operator ==(SharedKernel.Tabular.CsvParseOptions? left, SharedKernel.Tabular.CsvParseOptions? right) -> bool
+static SharedKernel.Tabular.CsvWriteOptions.operator !=(SharedKernel.Tabular.CsvWriteOptions? left, SharedKernel.Tabular.CsvWriteOptions? right) -> bool
+static SharedKernel.Tabular.CsvWriteOptions.operator ==(SharedKernel.Tabular.CsvWriteOptions? left, SharedKernel.Tabular.CsvWriteOptions? right) -> bool
+SharedKernel.Tabular.CsvHeaderMapping
+static SharedKernel.Tabular.CsvHeaderMapping.Match(System.Collections.Generic.IReadOnlyList<string!>! sourceHeaders, System.Collections.Generic.IReadOnlyList<string!>! targetHeaders, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? overrides = null, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> System.Collections.Generic.IReadOnlyList<(string! TargetHeader, string? SourceHeader)>!
+static SharedKernel.Tabular.CsvHeaderMapping.Remap(SharedKernel.Tabular.CsvDocument! document, System.Collections.Generic.IReadOnlyList<(string! TargetHeader, string? SourceHeader)>! matches, System.Func<string!, string!>? renameUnselectedTarget = null, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> SharedKernel.Tabular.CsvDocument!

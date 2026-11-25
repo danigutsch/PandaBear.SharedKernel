@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>What <see cref="SecretsRepository.Rotate"/> rotates.</summary>
 public sealed record RotateSettings

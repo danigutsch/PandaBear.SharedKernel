@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A date of birth that is present, not in the future, and within an allowed age range on a given day.</summary>
 public sealed class BirthDate : ValueObject

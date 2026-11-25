@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Which candidate <see cref="CandidateValidator.Consume"/> consumes and where it records the result.</summary>
 /// <param name="RepoRoot">The SharedKernel repository root, whose samples consume the packages.</param>

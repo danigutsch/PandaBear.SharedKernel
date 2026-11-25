@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the configuration that GitHub roadmap import and reconciliation require.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

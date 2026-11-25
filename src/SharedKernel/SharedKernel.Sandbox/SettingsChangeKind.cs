@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>The kind of a <see cref="SettingsChange"/>.</summary>
 public enum SettingsChangeKind

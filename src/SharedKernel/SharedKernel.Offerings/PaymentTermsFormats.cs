@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The application's sentences for payment terms (see <see cref="OfferingText.PaymentTerms"/>).</summary>
 /// <param name="Deposit">The format of the deposit percentage, <c>{0}</c>, such as <c>Sinal de {0}%</c>.</param>

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.AspNetCore.RateLimiting;
+namespace SharedKernel.AspNetCore.RateLimiting;
 
 /// <summary>Shapes the response of a request the rate limiter rejected.</summary>
 public static class RateLimitRejectionExtensions

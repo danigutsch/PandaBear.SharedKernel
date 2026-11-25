@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Empty stream whose asynchronous disposal fails, to prove a wrapper still records its own disposal.</summary>
 internal sealed class FailingDisposeStream : MemoryStream

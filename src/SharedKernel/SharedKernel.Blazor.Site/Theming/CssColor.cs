@@ -1,8 +1,8 @@
 using System.Globalization;
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// An opaque sRGB colour written as <c>#rrggbb</c>, with the WCAG 2.2 relative luminance and contrast ratio. Only hex is accepted,

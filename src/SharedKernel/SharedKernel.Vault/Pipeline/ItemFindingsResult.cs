@@ -1,6 +1,6 @@
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>Secret findings of one input item and the ones that were accepted.</summary>
 /// <param name="OriginKey">Origin key of the item; finding decisions name the item by it.</param>

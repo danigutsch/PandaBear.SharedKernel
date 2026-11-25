@@ -21,6 +21,6 @@ its own, for example `AddGrafana`, `AddLoki`, and `AddOpenTelemetryCollectorGate
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Aspire.Hosting.Grafana`. C# namespace: `PandaBear.Aspire.Hosting.Grafana`. Assembly/project identity: `SharedKernel.Aspire.Hosting.Grafana`.
+Package ID: `PandaBear.SharedKernel.Aspire.Hosting.Grafana`. C# namespace: `SharedKernel.Aspire.Hosting.Grafana`. Assembly/project identity: `SharedKernel.Aspire.Hosting.Grafana`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

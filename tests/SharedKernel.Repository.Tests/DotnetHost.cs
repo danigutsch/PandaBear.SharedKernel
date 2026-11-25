@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>The dotnet host that runs the tests, found as the tool finds the host that runs it.</summary>
 internal static class DotnetHost

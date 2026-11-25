@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Verifies the repository roadmap configuration, item files, and item graph.</summary>
 public static class RoadmapVerifier

@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers that prepare roadmap workspaces for GitHub intake tests.</summary>
 internal static class GitHubRoadmapIntakeTestOperations

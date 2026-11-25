@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Attachments;
+namespace SharedKernel.Vault.Attachments;
 
 /// <summary>Content kind of an attachment, detected by magic bytes first and file extension second.</summary>
 public enum AttachmentKind

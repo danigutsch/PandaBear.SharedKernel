@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using PandaBear.Idempotency;
-using PandaBear.Idempotency.EntityFrameworkCore;
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Idempotency;
+using SharedKernel.Idempotency.EntityFrameworkCore;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Hosts independent inbox operations in a fixture-owned PostgreSQL database.</summary>
 internal sealed class PostgreSqlInboxDuplicateScenario(

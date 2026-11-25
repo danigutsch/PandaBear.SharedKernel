@@ -38,7 +38,7 @@ dotnet add package PandaBear.SharedKernel.HttpClients --version <validated-candi
 ```csharp
 using System.Net;
 using System.Text.Json.Serialization;
-using PandaBear.HttpClients;
+using SharedKernel.HttpClients;
 
 public static class Example
 {
@@ -55,7 +55,7 @@ public partial class ClientJson : JsonSerializerContext;
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.HttpClients`. C# namespace: `PandaBear.HttpClients`. Assembly/project identity: `SharedKernel.HttpClients`.
+Package ID: `PandaBear.SharedKernel.HttpClients`. C# namespace: `SharedKernel.HttpClients`. Assembly/project identity: `SharedKernel.HttpClients`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

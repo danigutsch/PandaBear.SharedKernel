@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests currency codes and money values.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

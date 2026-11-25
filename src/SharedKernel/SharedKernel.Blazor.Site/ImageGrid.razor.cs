@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A grid, a mosaic or thumbnails of images, each a <c>figure</c> with an optional caption. Images load lazily except the first <see cref="EagerCount" />,

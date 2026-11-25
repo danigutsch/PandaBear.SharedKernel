@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Tests that the event-sourcing telemetry uses the names, units and duration advice of the SharedKernel telemetry standard.</summary>
 public sealed class PostgreSqlEventSourcingTelemetryNameTests

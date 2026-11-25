@@ -1,4 +1,4 @@
-namespace PandaBear.Observability.Npgsql;
+namespace SharedKernel.Observability.Npgsql;
 
 /// <summary>Configures reusable, read-only PostgreSQL index-health monitoring.</summary>
 public sealed class PostgreSqlIndexHealthMonitoringOptions

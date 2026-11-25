@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>
 /// Builds Mermaid diagram Markdown blocks.

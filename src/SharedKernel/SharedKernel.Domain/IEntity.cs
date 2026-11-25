@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Domain;
+namespace SharedKernel.Domain;
 
 /// <summary>
 /// Marks a domain entity identified by a stable identifier.

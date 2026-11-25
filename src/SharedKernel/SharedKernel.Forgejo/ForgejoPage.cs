@@ -1,4 +1,4 @@
-namespace PandaBear.Forgejo;
+namespace SharedKernel.Forgejo;
 
 /// <summary>One page of a Forgejo list and the paging headers that came with it.</summary>
 /// <typeparam name="T">The type of the items.</typeparam>

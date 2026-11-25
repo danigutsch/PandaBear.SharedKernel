@@ -1,7 +1,7 @@
 using Google.Protobuf;
-using PandaBear.Messaging.IntegrationEvents;
+using SharedKernel.Messaging.IntegrationEvents;
 
-namespace PandaBear.Messaging.Protobuf;
+namespace SharedKernel.Messaging.Protobuf;
 
 /// <summary>
 /// Serializes integration events that are Protobuf messages as binary payloads, and delegates every other event to an optional fallback serializer.

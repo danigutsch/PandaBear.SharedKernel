@@ -1,11 +1,11 @@
 using System.Security.Cryptography;
 using CommunityVenue;
 using CommunityVenue.Components;
-using PandaBear.AspNetCore;
-using PandaBear.AspNetCore.Seo;
-using PandaBear.Blazor.Site.Theming;
-using PandaBear.HttpCaching.AspNetCore;
-using PandaBear.IO;
+using SharedKernel.AspNetCore;
+using SharedKernel.AspNetCore.Seo;
+using SharedKernel.Blazor.Site.Theming;
+using SharedKernel.HttpCaching.AspNetCore;
+using SharedKernel.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();

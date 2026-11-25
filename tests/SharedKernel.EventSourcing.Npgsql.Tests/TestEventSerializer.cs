@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>An event serializer that supports only TestEvent, using System.Text.Json and a single event type name.</summary>
 internal sealed class TestEventSerializer : IEventSerializer

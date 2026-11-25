@@ -1,5 +1,5 @@
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// Tests Compensation.CompleteOrCompensate behavior on failure, success and cancellation.

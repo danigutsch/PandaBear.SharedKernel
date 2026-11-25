@@ -1,10 +1,10 @@
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Brief;
+namespace SharedKernel.VaultManager.Tool.Tests.Brief;
 
 /// <summary>Reads, scans, and merges inputs as the merge command does, and builds the brief of the result.</summary>
 internal static class BriefRun

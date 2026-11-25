@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Tests structured links in rendered document sections.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]

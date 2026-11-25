@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Tests;
+namespace SharedKernel.VaultManager.Tool.Tests;
 
 /// <summary>Builds scripted console key readers for tests that type into password and prompt input.</summary>
 internal static class ConsoleKeys

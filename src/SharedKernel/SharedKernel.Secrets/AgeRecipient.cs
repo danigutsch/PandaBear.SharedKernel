@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
-using PandaBear.BuildingBlocks;
-using PandaBear.Encodings;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Encodings;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// A public age recipient. Accepted forms: Bech32 recipients whose human-readable part is on the allow-list

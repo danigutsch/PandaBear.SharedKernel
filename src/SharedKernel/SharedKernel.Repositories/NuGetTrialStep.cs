@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Records stable diagnostics for a trial step without saving raw SDK output.</summary>
 /// <param name="Name">Name of the verification step.</param>

@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Style.Analyzers.Tests;
+namespace SharedKernel.Style.Analyzers.Tests;
 
 /// <summary>
 /// Analyzer config options backed by an in-memory dictionary for analyzer tests.

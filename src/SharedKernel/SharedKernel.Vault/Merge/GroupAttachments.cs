@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// Chooses the files of a group of matched items. Each attachment of a member is a file of its own, even when two share a

@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Tests parsing of Conventional Commit messages.

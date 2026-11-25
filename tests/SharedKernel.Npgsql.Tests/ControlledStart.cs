@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Starts nothing by itself: a test completes the start and observes how it was invoked.</summary>
 /// <param name="cancellationCallbackFailure">

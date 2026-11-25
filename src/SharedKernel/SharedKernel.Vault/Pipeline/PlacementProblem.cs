@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>A problem placement reported for an accepted finding, described without values.</summary>
 /// <param name="ItemName">Name of the input item.</param>

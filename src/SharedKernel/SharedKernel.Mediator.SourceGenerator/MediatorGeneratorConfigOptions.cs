@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Mediator.SourceGenerator;
+namespace SharedKernel.Mediator.SourceGenerator;
 
 /// <summary>
 /// Reads mediator source-generator options from compiler-visible properties and analyzer configuration.

@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.Seo.Tests;
+namespace SharedKernel.AspNetCore.Seo.Tests;
 
 /// <summary>Tests AddCanonicalOrigin: the site's canonical origin comes from configuration, and a host with a bad one does not start.</summary>
 public sealed class CanonicalOriginTests

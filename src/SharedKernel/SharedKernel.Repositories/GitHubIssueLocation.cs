@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Repository and number that locate a GitHub issue.</summary>
 /// <param name="Repository">Repository in <c>owner/name</c> form.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Forgejo.Tests;
+namespace SharedKernel.CI.Forgejo.Tests;
 
 /// <summary>Guards the Forgejo Actions output and step summary files.</summary>
 public sealed class ForgejoActionsFilesTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Walks a repository and returns every file, every symbolic link, and every directory it cannot list. It skips only <c>.git</c> and never follows a

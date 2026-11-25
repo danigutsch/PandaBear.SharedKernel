@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Sample configuration files, Markdown documents and C#, project and workflow sources used as inputs by the documentation tests.</summary>
 internal static class DocumentationTestContent

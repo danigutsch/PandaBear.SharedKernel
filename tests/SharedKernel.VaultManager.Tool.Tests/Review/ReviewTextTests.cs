@@ -1,6 +1,6 @@
-using PandaBear.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Review;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Tests that <see cref="ReviewText"/> makes text safe to show on one terminal line.</summary>
 public sealed class ReviewTextTests

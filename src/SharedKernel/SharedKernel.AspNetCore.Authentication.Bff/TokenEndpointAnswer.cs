@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// The fields of a successful token-endpoint answer (RFC 6749 section 5.1, RFC 8693 section 2.2.1).

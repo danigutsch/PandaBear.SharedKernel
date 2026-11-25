@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Unvalidated group condition: all three values together, or none.</summary>
 /// <param name="MinimumParticipants">The group size the prices assume.</param>

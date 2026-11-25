@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Tests reading the central package versions that a packed consumer of one target framework uses.

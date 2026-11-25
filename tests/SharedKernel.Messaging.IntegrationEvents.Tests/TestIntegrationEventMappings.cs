@@ -1,6 +1,6 @@
-using PandaBear.Messaging.Protobuf.TestContracts;
+using SharedKernel.Messaging.Protobuf.TestContracts;
 
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>Holds the attribute-registered mapping from the test domain event to its integration event.</summary>
 internal static class TestIntegrationEventMappings

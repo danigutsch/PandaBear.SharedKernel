@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the supported cultures value object.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

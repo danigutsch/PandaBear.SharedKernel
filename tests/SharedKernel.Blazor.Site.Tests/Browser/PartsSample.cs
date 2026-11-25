@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// A page for the tests of the smaller page parts, in the gutter container: a split with its media on the start side, a grid of fact

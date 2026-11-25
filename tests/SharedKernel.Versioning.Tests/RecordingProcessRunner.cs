@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Records the processes that a command would start instead of starting them, and resolves every bare command name to a

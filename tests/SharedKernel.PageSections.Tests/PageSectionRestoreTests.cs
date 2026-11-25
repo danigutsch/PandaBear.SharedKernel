@@ -1,6 +1,6 @@
-using static PandaBear.PageSections.Tests.PageSectionFixtures;
+using static SharedKernel.PageSections.Tests.PageSectionFixtures;
 
-namespace PandaBear.PageSections.Tests;
+namespace SharedKernel.PageSections.Tests;
 
 /// <summary>Tests storing a section as a definition and restoring it.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

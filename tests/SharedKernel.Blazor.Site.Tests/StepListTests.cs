@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the numbered list of steps, such as the days of an itinerary.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

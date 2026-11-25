@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("SharedKernel.Messaging.IntegrationEvents.CloudEvents")]
 [assembly: InternalsVisibleTo("SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore")]
 
-namespace PandaBear.Messaging.IntegrationEvents;
+namespace SharedKernel.Messaging.IntegrationEvents;
 
 /// <summary>Envelope constants shared with the CloudEvents and EF Core integration event packages.</summary>
 internal static class IntegrationEventEnvelopeConstants

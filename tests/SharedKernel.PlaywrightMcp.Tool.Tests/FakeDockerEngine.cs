@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.PlaywrightMcp.Tool.Tests;
+namespace SharedKernel.PlaywrightMcp.Tool.Tests;
 
 /// <summary>A fake <c>docker</c> script that logs every call, answers context queries, and sleeps while running or removing a container.</summary>
 internal sealed class FakeDockerEngine : IDisposable

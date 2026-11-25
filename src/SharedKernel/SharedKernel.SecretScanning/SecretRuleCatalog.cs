@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// Catalog of prefix and structure rules. Rules are rewritten in .NET syntax from gitleaks (MIT, Zachary Rice) and

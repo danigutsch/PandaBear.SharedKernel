@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using PandaBear.Processes;
-using PandaBear.Versioning.Tool;
+using SharedKernel.Processes;
+using SharedKernel.Versioning.Tool;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Verifies evidence generated when comparing two packaged candidates.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

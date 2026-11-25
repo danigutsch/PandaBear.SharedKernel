@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>Items that describe the same account or record.</summary>
 /// <param name="Key">

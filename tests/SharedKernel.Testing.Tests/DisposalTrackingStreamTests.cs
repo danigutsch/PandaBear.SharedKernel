@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the stream wrapper that records synchronous and asynchronous disposal.</summary>
 public sealed class DisposalTrackingStreamTests

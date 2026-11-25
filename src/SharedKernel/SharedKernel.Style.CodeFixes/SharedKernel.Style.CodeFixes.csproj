@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Style.CodeFixes</PackageId>
         <Description>Code fixes for repository style conventions.</Description>
-        <RootNamespace>PandaBear.Style.CodeFixes</RootNamespace>
+        <RootNamespace>SharedKernel.Style.CodeFixes</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>style;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

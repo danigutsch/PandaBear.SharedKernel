@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>
 /// Builds secret-shaped fixtures at test runtime, so the public repository never holds literal checksum-valid tokens.

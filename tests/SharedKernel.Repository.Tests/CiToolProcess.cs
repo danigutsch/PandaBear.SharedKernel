@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// Runs the built CI tool with <c>dotnet exec</c> in its own process, which has its own working directory and

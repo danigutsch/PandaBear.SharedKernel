@@ -1,6 +1,6 @@
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests that <c>verify</c> judges every file that could be encrypted, whatever its name or directory.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Builds the steps and renders the step lists that the step list tests share.</summary>
 internal static class StepRendering

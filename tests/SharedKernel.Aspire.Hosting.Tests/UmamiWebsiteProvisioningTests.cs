@@ -3,7 +3,7 @@ using System.Text.Json;
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>
 /// Tests how a website is set up in a running Umami: signing in, creating the website with its id only when it does not exist, and

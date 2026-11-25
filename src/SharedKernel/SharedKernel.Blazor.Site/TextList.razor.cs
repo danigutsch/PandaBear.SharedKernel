@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A plain list of lines of text, such as what a tour includes: a <c>ul</c>, or an <c>ol</c> when <see cref="Ordered" />, with the

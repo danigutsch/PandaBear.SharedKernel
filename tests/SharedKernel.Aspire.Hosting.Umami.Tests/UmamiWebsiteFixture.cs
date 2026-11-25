@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 using Aspire.Hosting.Testing;
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Aspire.Hosting.Umami.Tests;
+namespace SharedKernel.Aspire.Hosting.Umami.Tests;
 
 /// <summary>Creates the Aspire builder in this test project's assembly.</summary>
 public sealed class UmamiWebsiteFixture : Testing.UmamiTestWebsiteFixture

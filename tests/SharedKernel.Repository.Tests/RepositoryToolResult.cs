@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>The outcome of one in-process invocation of the CI tool.</summary>
 /// <param name="ExitCode">The exit code that the invocation returned.</param>

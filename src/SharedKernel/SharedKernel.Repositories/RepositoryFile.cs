@@ -1,7 +1,7 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
-/// Handles the bytes of repository files that <c>PandaBear.IO.BoundedReader.ReadFile</c> read.
+/// Handles the bytes of repository files that <c>SharedKernel.IO.BoundedReader.ReadFile</c> read.
 /// </summary>
 internal static class RepositoryFile
 {

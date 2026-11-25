@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.ObjectStorage;
+namespace SharedKernel.Testing.ObjectStorage;
 
 /// <summary>A failure registered on <see cref="InMemoryObjectStore" />.</summary>
 /// <param name="Operation">The operation that fails.</param>

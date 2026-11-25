@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using PandaBear.EntityFrameworkCore.Npgsql;
+using SharedKernel.EntityFrameworkCore.Npgsql;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests the PostgreSQL unique-violation parser without a database: it reads SQLSTATE 23505 with its constraint and table, wherever the

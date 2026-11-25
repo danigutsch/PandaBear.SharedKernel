@@ -1,9 +1,9 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
 
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>
 /// Limits and combines the decisions file that an agent writes from a brief. An agent may only take one member's value for

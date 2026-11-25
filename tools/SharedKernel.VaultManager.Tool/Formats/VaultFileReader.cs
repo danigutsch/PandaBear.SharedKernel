@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Keeper;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Keeper;
 
-namespace PandaBear.VaultManager.Tool.Formats;
+namespace SharedKernel.VaultManager.Tool.Formats;
 
 /// <summary>Reads any supported vault export file after detecting its format from content.</summary>
 internal static class VaultFileReader

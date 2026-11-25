@@ -1,4 +1,4 @@
-namespace PandaBear.Forgejo.Tests;
+namespace SharedKernel.Forgejo.Tests;
 
 /// <summary>Answers each page request with the next scripted page and records the page numbers asked for.</summary>
 /// <param name="pages">The pages, in the order they are answered.</param>

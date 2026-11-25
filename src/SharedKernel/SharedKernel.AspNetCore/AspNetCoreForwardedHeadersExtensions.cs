@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>
 /// Provides reusable forwarded-header configuration helpers for ASP.NET Core applications.

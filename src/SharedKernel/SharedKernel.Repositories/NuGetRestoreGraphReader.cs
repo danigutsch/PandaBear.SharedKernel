@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Matches restored assets to the SDK's current evaluation of a solution.</summary>
 internal static class NuGetRestoreGraphReader

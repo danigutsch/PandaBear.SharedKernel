@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Inspects the evaluated ownership and requesting paths of one restored NuGet package.</summary>
 public static class NuGetPinInspection

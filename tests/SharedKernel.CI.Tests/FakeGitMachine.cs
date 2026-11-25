@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Creates a CI machine that finds a fake <c>git</c> and runs it through either git entry point of the machine.</summary>
 internal static class FakeGitMachine

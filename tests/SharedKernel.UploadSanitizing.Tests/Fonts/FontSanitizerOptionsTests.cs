@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.UploadSanitizing.Tests.Fonts;
+namespace SharedKernel.UploadSanitizing.Tests.Fonts;
 
 /// <summary>Tests the font sanitizer options: their defaults and the values a caller cannot set.</summary>
 [TestScope(TestScope.Unit)]

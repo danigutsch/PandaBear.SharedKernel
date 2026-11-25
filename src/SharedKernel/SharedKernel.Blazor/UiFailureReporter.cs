@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// Logs handled UI failures with only the exception type name, the operation name, and the trace id, then counts them.

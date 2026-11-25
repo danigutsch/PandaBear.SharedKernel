@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// Signals that a save found the row changed or gone since it was read, so the write would have overwritten or targeted data

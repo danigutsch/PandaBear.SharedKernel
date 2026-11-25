@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.CodeFixes.Tests;
+namespace SharedKernel.Mediator.CodeFixes.Tests;
 
 /// <summary>
 /// Well-known code action titles produced by the mediator code-fix provider.

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>An in-memory <see cref="IBrowserFile" /> that enforces the maximum allowed size like the real implementation.</summary>
 public sealed class FakeBrowserFile : IBrowserFile

@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace PandaBear.Testing.Roslyn;
+namespace SharedKernel.Testing.Roslyn;
 
 /// <summary>
 /// An in-memory Roslyn workspace with a C# project and a main document <c>Test0.cs</c>, for running analyzers and code fix

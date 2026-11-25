@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Checks that a file given as an identity is a readable regular file made of age secret keys, before sops is asked to try it. Without this a missing,

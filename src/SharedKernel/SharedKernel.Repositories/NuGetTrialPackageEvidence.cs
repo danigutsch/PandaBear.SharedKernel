@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Shows how a package affected by the trial is selected before any edits.</summary>
 /// <param name="Package">Package identifier.</param>

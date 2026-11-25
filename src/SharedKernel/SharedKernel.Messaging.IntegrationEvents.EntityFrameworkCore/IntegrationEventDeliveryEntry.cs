@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Delivery metadata for an unfinished outbox or transport row.</summary>
 public sealed class IntegrationEventDeliveryEntry

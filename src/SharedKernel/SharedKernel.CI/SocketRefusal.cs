@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Recognizes the output of a child process that a sandbox stopped from creating a Unix domain socket.</summary>
 internal static partial class SocketRefusal

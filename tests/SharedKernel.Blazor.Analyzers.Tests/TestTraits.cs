@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Analyzers.Tests;
+namespace SharedKernel.Blazor.Analyzers.Tests;
 
 /// <summary>Trait names and values shared by the Blazor analyzer tests.</summary>
 internal static class TestTraits

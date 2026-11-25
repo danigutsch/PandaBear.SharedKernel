@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Galleries.Tests;
+namespace SharedKernel.Galleries.Tests;
 
 /// <summary>Cultures, rules and definitions shared by the album tests.</summary>
 internal static class AlbumFixtures

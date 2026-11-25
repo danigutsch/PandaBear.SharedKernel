@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Builds start information for the process fake tests.</summary>
 internal static class ProcessStarts

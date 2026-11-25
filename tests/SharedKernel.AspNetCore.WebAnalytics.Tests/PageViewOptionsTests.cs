@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>
 /// Tests that the page-view settings and the Umami connection string are checked when the host starts, so a wrong setting stops the

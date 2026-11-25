@@ -1,7 +1,7 @@
 using System.Net;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.AI.Tests;
+namespace SharedKernel.AI.Tests;
 
 /// <summary>Tests that the LiteLLM image text generator enforces its maximum image size while reading the input stream and never disposes the caller's stream.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]

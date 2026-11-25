@@ -1,6 +1,6 @@
-using PandaBear.Testing.Snapshots;
+using SharedKernel.Testing.Snapshots;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Temporary directory pre-laid with a canonical snapshot folder and a nested <c>.generated</c> folder, deleted on disposal.</summary>
 internal sealed class TemporarySnapshotDirectory : IDisposable

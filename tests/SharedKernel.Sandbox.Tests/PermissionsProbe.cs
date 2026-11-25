@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Tells tests whether file permissions can be used to force a refusal.</summary>
 internal static class PermissionsProbe

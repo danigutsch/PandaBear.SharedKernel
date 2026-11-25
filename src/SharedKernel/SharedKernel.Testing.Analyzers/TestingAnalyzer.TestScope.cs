@@ -3,12 +3,12 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 public sealed partial class TestingAnalyzer
 {
     private const string ScopeTraitName = "Scope";
-    private const string TestScopeAttributeName = "global::PandaBear.Testing.TestScopeAttribute";
+    private const string TestScopeAttributeName = "global::SharedKernel.Testing.TestScopeAttribute";
     private const string TraitAttributeName = "global::Xunit.TraitAttribute";
 
     private static readonly DiagnosticDescriptor XunitTestScopeRule = new(
@@ -59,7 +59,7 @@ public sealed partial class TestingAnalyzer
         string reason,
         string message)
     {
-        var typed = context.SemanticModel.Compilation.GetTypeByMetadataName("PandaBear.Testing.TestScopeAttribute") is not null;
+        var typed = context.SemanticModel.Compilation.GetTypeByMetadataName("SharedKernel.Testing.TestScopeAttribute") is not null;
         var properties = ImmutableDictionary<string, string?>.Empty
             .Add("Reason", reason)
             .Add("AllowedScopes", string.Join(";", options.AllowedScopes))
@@ -136,14 +136,14 @@ public sealed partial class TestingAnalyzer
             || !string.Equals(name, ScopeTraitName, StringComparison.Ordinal)
             || argumentList.Arguments[1].Expression is not LiteralExpressionSyntax { Token.Value: string value }
             || !TestScopeValues.All.Contains(value, StringComparer.Ordinal)
-            || context.Compilation.GetTypeByMetadataName("PandaBear.Testing.TestScopeAttribute") is null)
+            || context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.TestScopeAttribute") is null)
         {
             return false;
         }
 
         var member = TestScopeValues.ToMemberName(value);
         var properties = ImmutableDictionary<string, string?>.Empty
-            .Add("Replacement", $"global::PandaBear.Testing.TestScope(global::PandaBear.Testing.TestScope.{member})")
+            .Add("Replacement", $"global::SharedKernel.Testing.TestScope(global::SharedKernel.Testing.TestScope.{member})")
             .Add("Kind", "TestScope");
         context.ReportDiagnostic(
             Diagnostic.Create(

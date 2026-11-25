@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>
 /// Pins the heading anchors of <see cref="MarkdownLinkRules.Anchors"/> to the ones GitHub generates. The first cases are

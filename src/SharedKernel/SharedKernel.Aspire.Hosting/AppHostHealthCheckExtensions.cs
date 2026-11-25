@@ -1,6 +1,6 @@
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.Hosting;
-using PandaBear.AspNetCore;
+using SharedKernel.AspNetCore;
 
 namespace Aspire.Hosting;
 

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>A context whose model applies the integration event transport configuration, used to exercise provider guards.</summary>
 /// <param name="options">The options that select the database provider under test.</param>

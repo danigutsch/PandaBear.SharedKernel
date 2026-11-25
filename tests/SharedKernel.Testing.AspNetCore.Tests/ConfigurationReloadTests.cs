@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Testing.AspNetCore.Tests;
+namespace SharedKernel.Testing.AspNetCore.Tests;
 
 /// <summary>
 /// Tests that the test hosts do not watch configuration files: one file watcher per file and host exhausts the per-user inotify limit when

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// One page of a photo album: a <see cref="Section" /> named by the album's heading, an <see cref="ImageGrid" /> of the page's photos,

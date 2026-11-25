@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.AspNetCore.Seo;
+namespace SharedKernel.AspNetCore.Seo;
 
 /// <summary>
 /// Represents one alternate-language URL of a sitemap entry, written as an <c>xhtml:link rel="alternate" hreflang</c> element.

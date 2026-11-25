@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The accessibility decision for an image: a description for people who cannot see it, or an explicit statement that it is decorative.

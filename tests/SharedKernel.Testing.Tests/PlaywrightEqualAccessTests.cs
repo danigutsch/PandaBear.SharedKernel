@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Exercises an Equal Access browser bundle in Chromium.</summary>
 /// <param name="chromium">The isolated browser fixture.</param>

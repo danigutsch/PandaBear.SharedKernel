@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Results;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Common contract of <see cref="Result"/> and <see cref="Result{T}"/>, so generic code such as an open-generic

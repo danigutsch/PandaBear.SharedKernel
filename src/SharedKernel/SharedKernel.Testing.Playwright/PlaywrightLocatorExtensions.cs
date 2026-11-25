@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>Locator helpers for Blazor forms.</summary>
 public static class PlaywrightLocatorExtensions

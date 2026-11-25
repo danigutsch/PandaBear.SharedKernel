@@ -2,13 +2,13 @@ extern alias testingcodefixes;
 
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests that SKTEST009 treats TestScope as the canonical form of a literal Scope trait.</summary>
 public sealed class TestScopeTraitLiteralTests
 {
     private const string DiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
-    private const string TypedReplacement = "global::PandaBear.Testing.TestScope(global::PandaBear.Testing.TestScope.UiIntegration)";
+    private const string TypedReplacement = "global::SharedKernel.Testing.TestScope(global::SharedKernel.Testing.TestScope.UiIntegration)";
 
     [Fact]
     public async Task Literal_scope_trait_reports_the_typed_attribute_as_replacement()
@@ -77,7 +77,7 @@ public sealed class TestScopeTraitLiteralTests
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var properties = ImmutableDictionary<string, string?>.Empty
             .Add("Replacement", TypedReplacement)
             .Add("Kind", "TestScope");
@@ -89,7 +89,7 @@ public sealed class TestScopeTraitLiteralTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("[global::PandaBear.Testing.TestScope(global::PandaBear.Testing.TestScope.UiIntegration)]", StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::SharedKernel.Testing.TestScope(global::SharedKernel.Testing.TestScope.UiIntegration)]", StringComparison.Ordinal);
         updatedText.ShouldNotContain("Trait", StringComparison.Ordinal);
     }
 }

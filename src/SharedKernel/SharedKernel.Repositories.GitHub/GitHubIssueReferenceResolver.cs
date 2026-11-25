@@ -3,7 +3,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Resolves where a referenced GitHub issue currently lives, following transfers.</summary>
 /// <param name="httpClient">Authenticated GitHub client.</param>

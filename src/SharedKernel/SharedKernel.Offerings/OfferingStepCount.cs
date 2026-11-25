@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>How many steps an offering's programme may have.</summary>
 public enum OfferingStepCount

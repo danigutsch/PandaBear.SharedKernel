@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Fake "ask dotnet" steps for global packages folder resolution.</summary>
 internal static class GlobalPackagesFakes

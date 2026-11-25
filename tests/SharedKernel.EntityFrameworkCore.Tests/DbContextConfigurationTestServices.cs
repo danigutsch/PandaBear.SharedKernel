@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Service collection helpers for the DbContext configuration tests.

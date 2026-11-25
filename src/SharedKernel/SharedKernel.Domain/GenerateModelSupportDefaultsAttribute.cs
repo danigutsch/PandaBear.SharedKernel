@@ -1,4 +1,4 @@
-namespace PandaBear.Domain;
+namespace SharedKernel.Domain;
 
 /// <summary>
 /// Configures assembly-level defaults for generated model support.

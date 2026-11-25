@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>C# source snippets for dispatch behavior tests, each defining requests, handlers and a static Demo.TraceLog that records execution order.</summary>
 internal static class GeneratorDispatchBehaviorTestSources
@@ -7,7 +7,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string StreamDispatchWithoutYieldTracing()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -81,7 +81,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string StreamDispatchWithYieldTracing()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -158,7 +158,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string StreamDispatchWithCancellationDuringEnumeration()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -236,7 +236,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string StreamDispatchWithEnumerationException()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -309,7 +309,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string StreamDispatchWithEarlyDisposal()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
 
@@ -401,7 +401,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string SendWithException()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -422,7 +422,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string SendSuccess()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -443,7 +443,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string SendWithHandledException()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -473,7 +473,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string SendWithCancellation()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -497,7 +497,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string SendWithUnexpectedCancellation()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -518,7 +518,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string PublishWithCancellation()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -542,7 +542,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string PublishWithUnexpectedCancellation()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -563,7 +563,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string PublishSuccess()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -584,7 +584,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string PublishWithException()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -605,7 +605,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string SequentialPublishSuccess()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -634,7 +634,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string SequentialPublishWithCancellation()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -666,7 +666,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string SequentialPublishWithException()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading.Tasks;
 
             [assembly: MediatorModule]
@@ -695,7 +695,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string StreamDispatchWithCancellationNoPipelines()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
             using System.Threading.Tasks;
@@ -727,7 +727,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string StreamDispatchWithExceptionNoPipelines()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
             using System.Threading.Tasks;
@@ -756,7 +756,7 @@ internal static class GeneratorDispatchBehaviorTestSources
     public static string StreamDispatchNoPipelines()
     {
         return """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
             using System.Threading.Tasks;

@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>A clock whose timestamp advances by two seconds at every read, so each timed span lasts exactly two seconds.</summary>
 internal sealed class SteppingTimeProvider : TimeProvider

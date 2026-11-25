@@ -1,345 +1,345 @@
 #nullable enable
-const PandaBear.BuildingBlocks.CountryCode.AssignedCount = 249 -> int
-const PandaBear.BuildingBlocks.EmailAddress.MaxLength = 254 -> int
-const PandaBear.BuildingBlocks.PersonName.MaxPartLength = 128 -> int
-const PandaBear.BuildingBlocks.PhoneNumber.MaxDigits = 15 -> int
-const PandaBear.BuildingBlocks.PhoneNumber.MinDigits = 7 -> int
-const PandaBear.BuildingBlocks.PostalAddress.MaxPartLength = 128 -> int
-const PandaBear.BuildingBlocks.PostalAddress.MaxPostalCodeLength = 32 -> int
-override PandaBear.BuildingBlocks.CountryCode.ToString() -> string!
-override PandaBear.BuildingBlocks.Currency.ToString() -> string!
-override PandaBear.BuildingBlocks.EmailAddress.ToString() -> string!
-override PandaBear.BuildingBlocks.Money.ToString() -> string!
-override PandaBear.BuildingBlocks.PersonName.ToString() -> string!
-override PandaBear.BuildingBlocks.PhoneNumber.ToString() -> string!
-override PandaBear.BuildingBlocks.PostalAddress.ToString() -> string!
-PandaBear.BuildingBlocks.CountryCode
-PandaBear.BuildingBlocks.CountryCode.Value.get -> string!
-PandaBear.BuildingBlocks.Currency
-PandaBear.BuildingBlocks.Currency.Code.get -> string!
-PandaBear.BuildingBlocks.Currency.MinorUnits.get -> int
-PandaBear.BuildingBlocks.DateRange
-PandaBear.BuildingBlocks.DateRange.DurationDays.get -> double
-PandaBear.BuildingBlocks.DateRange.EndDate.get -> System.DateTime
-PandaBear.BuildingBlocks.DateRange.StartDate.get -> System.DateTime
-PandaBear.BuildingBlocks.EmailAddress
-PandaBear.BuildingBlocks.EmailAddress.Value.get -> string!
-PandaBear.BuildingBlocks.ExceptionCancellationExtensions
-PandaBear.BuildingBlocks.IIdentified<TId>
-PandaBear.BuildingBlocks.IIdentified<TId>.Id.get -> TId
-PandaBear.BuildingBlocks.Money
-PandaBear.BuildingBlocks.Money.Add(PandaBear.BuildingBlocks.Money! other) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
-PandaBear.BuildingBlocks.Money.Amount.get -> decimal
-PandaBear.BuildingBlocks.Money.Currency.get -> PandaBear.BuildingBlocks.Currency!
-PandaBear.BuildingBlocks.Money.IsPositive.get -> bool
-PandaBear.BuildingBlocks.OptionResultExtensions
-PandaBear.BuildingBlocks.PersonName
-PandaBear.BuildingBlocks.PersonName.FirstName.get -> string!
-PandaBear.BuildingBlocks.PersonName.FullName.get -> string!
-PandaBear.BuildingBlocks.PersonName.LastName.get -> string!
-PandaBear.BuildingBlocks.PhoneNumber
-PandaBear.BuildingBlocks.PhoneNumber.Value.get -> string!
-PandaBear.BuildingBlocks.PostalAddress
-PandaBear.BuildingBlocks.PostalAddress.City.get -> string!
-PandaBear.BuildingBlocks.PostalAddress.Complement.get -> string?
-PandaBear.BuildingBlocks.PostalAddress.Country.get -> PandaBear.BuildingBlocks.CountryCode!
-PandaBear.BuildingBlocks.PostalAddress.Neighborhood.get -> string?
-PandaBear.BuildingBlocks.PostalAddress.PostalCode.get -> string!
-PandaBear.BuildingBlocks.PostalAddress.State.get -> string?
-PandaBear.BuildingBlocks.PostalAddress.Street.get -> string!
-PandaBear.BuildingBlocks.UniqueConstraintViolationException
-PandaBear.BuildingBlocks.UniqueConstraintViolationException.Rule.get -> string!
-PandaBear.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException() -> void
-PandaBear.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException(string! rule) -> void
-PandaBear.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException(string! rule, System.Exception? innerException) -> void
-PandaBear.BuildingBlocks.ValueObject
-PandaBear.BuildingBlocks.ValueObject.Equals(PandaBear.BuildingBlocks.ValueObject? other) -> bool
-abstract PandaBear.BuildingBlocks.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!
-PandaBear.BuildingBlocks.ValueObject.ValueObject() -> void
-override PandaBear.BuildingBlocks.ValueObject.Equals(object? obj) -> bool
-override PandaBear.BuildingBlocks.ValueObject.GetHashCode() -> int
-static PandaBear.BuildingBlocks.CountryCode.All.get -> System.Collections.Generic.IReadOnlyList<PandaBear.BuildingBlocks.CountryCode!>!
-static PandaBear.BuildingBlocks.CountryCode.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.CountryCode!>
-static PandaBear.BuildingBlocks.Currency.Brl.get -> PandaBear.BuildingBlocks.Currency!
-static PandaBear.BuildingBlocks.Currency.Create(string? code) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Currency!>
-static PandaBear.BuildingBlocks.Currency.Eur.get -> PandaBear.BuildingBlocks.Currency!
-static PandaBear.BuildingBlocks.Currency.Usd.get -> PandaBear.BuildingBlocks.Currency!
-static PandaBear.BuildingBlocks.DateRange.Create(System.DateTime startDate, System.DateTime endDate) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.DateRange!>
-static PandaBear.BuildingBlocks.EmailAddress.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.EmailAddress!>
-static PandaBear.BuildingBlocks.ExceptionCancellationExtensions.ShouldHandleAsFailure(this System.Exception! exception, System.Threading.CancellationToken ct) -> bool
-static PandaBear.BuildingBlocks.Money.Create(decimal amount, PandaBear.BuildingBlocks.Currency? currency) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
-static PandaBear.BuildingBlocks.OptionResultExtensions.ToNotFoundResult<TEntity, TId>(this PandaBear.Results.Option<TEntity> source, TId id, string? container = null) -> PandaBear.Results.Result<TEntity>
-static PandaBear.BuildingBlocks.PersonName.Create(string? firstName, string? lastName) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PersonName!>
-static PandaBear.BuildingBlocks.PhoneNumber.Create(string? value, string! field = "phone", string! label = "Phone number") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PhoneNumber!>
-static PandaBear.BuildingBlocks.PostalAddress.Create(string? street, string? complement, string? neighborhood, string? postalCode, string? city, string? state, string? country, PandaBear.BuildingBlocks.PostalAddressLabels? labels = null) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PostalAddress!>
-static PandaBear.BuildingBlocks.ValueObject.operator !=(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
-static PandaBear.BuildingBlocks.ValueObject.operator ==(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
-PandaBear.BuildingBlocks.Compensation
-static PandaBear.BuildingBlocks.Compensation.CompleteOrCompensate(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! operation, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! compensate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.BuildingBlocks.Bic
-PandaBear.BuildingBlocks.Bic.Value.get -> string!
-override PandaBear.BuildingBlocks.Bic.ToString() -> string!
-static PandaBear.BuildingBlocks.Bic.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Bic!>
-PandaBear.BuildingBlocks.Cnpj
-PandaBear.BuildingBlocks.Cnpj.Value.get -> string!
-override PandaBear.BuildingBlocks.Cnpj.ToString() -> string!
-static PandaBear.BuildingBlocks.Cnpj.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cnpj!>
-PandaBear.BuildingBlocks.Cpf
-PandaBear.BuildingBlocks.Cpf.Formatted.get -> string!
-PandaBear.BuildingBlocks.Cpf.Value.get -> string!
-static PandaBear.BuildingBlocks.Cpf.Restore(string! value) -> PandaBear.BuildingBlocks.Cpf!
-static PandaBear.BuildingBlocks.PostalAddress.Restore(string! street, string? complement, string? neighborhood, string! postalCode, string! city, string? state, PandaBear.BuildingBlocks.CountryCode! country) -> PandaBear.BuildingBlocks.PostalAddress!
-override PandaBear.BuildingBlocks.Cpf.ToString() -> string!
-static PandaBear.BuildingBlocks.Cpf.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cpf!>
-PandaBear.BuildingBlocks.Iban
-PandaBear.BuildingBlocks.Iban.Value.get -> string!
-override PandaBear.BuildingBlocks.Iban.ToString() -> string!
-static PandaBear.BuildingBlocks.Iban.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Iban!>
-PandaBear.BuildingBlocks.PixKey
-PandaBear.BuildingBlocks.PixKey.Value.get -> string!
-override PandaBear.BuildingBlocks.PixKey.ToString() -> string!
-static PandaBear.BuildingBlocks.PixKey.Create(PandaBear.BuildingBlocks.PixKeyType type, string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PixKey!>
-PandaBear.BuildingBlocks.PixKey.Type.get -> PandaBear.BuildingBlocks.PixKeyType
-PandaBear.BuildingBlocks.PixKeyType
-PandaBear.BuildingBlocks.PixKeyType.None = 0 -> PandaBear.BuildingBlocks.PixKeyType
-PandaBear.BuildingBlocks.PixKeyType.Cpf = 1 -> PandaBear.BuildingBlocks.PixKeyType
-PandaBear.BuildingBlocks.PixKeyType.Cnpj = 2 -> PandaBear.BuildingBlocks.PixKeyType
-PandaBear.BuildingBlocks.PixKeyType.Phone = 3 -> PandaBear.BuildingBlocks.PixKeyType
-PandaBear.BuildingBlocks.PixKeyType.Email = 4 -> PandaBear.BuildingBlocks.PixKeyType
-PandaBear.BuildingBlocks.PixKeyType.Evp = 5 -> PandaBear.BuildingBlocks.PixKeyType
-PandaBear.BuildingBlocks.HypermediaLink
-PandaBear.BuildingBlocks.HypermediaLink.HypermediaLink(string! rel, string! href, string! method) -> void
-PandaBear.BuildingBlocks.HypermediaLink.Href.get -> string!
-PandaBear.BuildingBlocks.HypermediaLink.Method.get -> string!
-PandaBear.BuildingBlocks.HypermediaLink.Rel.get -> string!
-static PandaBear.BuildingBlocks.HypermediaLink.Create(string? rel, string? href, string? method) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.HypermediaLink!>
-static PandaBear.BuildingBlocks.HypermediaLink.CreateGet(string! rel, string! href) -> PandaBear.BuildingBlocks.HypermediaLink!
-PandaBear.BuildingBlocks.CountryCode.EnglishName.get -> string!
-PandaBear.BuildingBlocks.BirthDate
-PandaBear.BuildingBlocks.BirthDate.AgeOn(System.DateOnly day) -> int
-PandaBear.BuildingBlocks.BirthDate.Value.get -> System.DateOnly
-override PandaBear.BuildingBlocks.BirthDate.ToString() -> string!
-static PandaBear.BuildingBlocks.BirthDate.Create(System.DateOnly value, System.DateOnly today, int minAgeYears, int maxAgeYears, string! field = "birthDate", string! label = "Birth date") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.BirthDate!>
-PandaBear.BuildingBlocks.DateOnlyRange
-PandaBear.BuildingBlocks.DateOnlyRange.Days.get -> int
-PandaBear.BuildingBlocks.DateOnlyRange.EndDate.get -> System.DateOnly
-PandaBear.BuildingBlocks.DateOnlyRange.StartDate.get -> System.DateOnly
-static PandaBear.BuildingBlocks.DateOnlyRange.Create(System.DateOnly startDate, System.DateOnly endDate) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.DateOnlyRange!>
-PandaBear.BuildingBlocks.ReferenceCode
-PandaBear.BuildingBlocks.ReferenceCode.Value.get -> string!
-override PandaBear.BuildingBlocks.ReferenceCode.ToString() -> string!
-static PandaBear.BuildingBlocks.ReferenceCode.Create(string? value, int maxLength, string! field = "code", string! label = "Code") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ReferenceCode!>
-static PandaBear.BuildingBlocks.Money.CreateExact(decimal amount, PandaBear.BuildingBlocks.Currency? currency, string! field = "amount", string! label = "Amount") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
-static PandaBear.BuildingBlocks.Money.CreateFromInput(decimal amount, PandaBear.BuildingBlocks.Currency? currency, string! field = "amount", string! label = "Amount") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
-PandaBear.BuildingBlocks.BusinessTimeProvider
-PandaBear.BuildingBlocks.BusinessTimeProvider.BusinessTimeProvider(System.TimeZoneInfo! businessTimeZone, System.TimeProvider? inner = null) -> void
-PandaBear.BuildingBlocks.ConcurrencyConflictException
-PandaBear.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException() -> void
-PandaBear.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(string! message) -> void
-PandaBear.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(string! message, System.Exception? innerException) -> void
-PandaBear.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(System.Exception? innerException) -> void
-PandaBear.BuildingBlocks.TimeProviderExtensions
-override PandaBear.BuildingBlocks.BusinessTimeProvider.CreateTimer(System.Threading.TimerCallback! callback, object? state, System.TimeSpan dueTime, System.TimeSpan period) -> System.Threading.ITimer!
-override PandaBear.BuildingBlocks.BusinessTimeProvider.GetTimestamp() -> long
-override PandaBear.BuildingBlocks.BusinessTimeProvider.GetUtcNow() -> System.DateTimeOffset
-override PandaBear.BuildingBlocks.BusinessTimeProvider.LocalTimeZone.get -> System.TimeZoneInfo!
-override PandaBear.BuildingBlocks.BusinessTimeProvider.TimestampFrequency.get -> long
-static PandaBear.BuildingBlocks.TimeProviderExtensions.Today(this System.TimeProvider! provider) -> System.DateOnly
-static PandaBear.BuildingBlocks.CountryCode.AllByEnglishName.get -> System.Collections.Generic.IReadOnlyList<PandaBear.BuildingBlocks.CountryCode!>!
-static PandaBear.BuildingBlocks.CountryCode.Restore(string! value) -> PandaBear.BuildingBlocks.CountryCode!
-static PandaBear.BuildingBlocks.Currency.Restore(string! code) -> PandaBear.BuildingBlocks.Currency!
-static PandaBear.BuildingBlocks.EmailAddress.Restore(string! value) -> PandaBear.BuildingBlocks.EmailAddress!
-static PandaBear.BuildingBlocks.Money.Restore(decimal amount, PandaBear.BuildingBlocks.Currency! currency) -> PandaBear.BuildingBlocks.Money!
-static PandaBear.BuildingBlocks.PersonName.Restore(string! firstName, string! lastName) -> PandaBear.BuildingBlocks.PersonName!
-static PandaBear.BuildingBlocks.PhoneNumber.Restore(string! value) -> PandaBear.BuildingBlocks.PhoneNumber!
-const PandaBear.BuildingBlocks.ContentCulture.MaxLength = 35 -> int
-const PandaBear.BuildingBlocks.Slug.DefaultMaxLength = 128 -> int
-PandaBear.BuildingBlocks.ContentCulture
-PandaBear.BuildingBlocks.ContentCulture.Language.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.BuildingBlocks.ContentCulture.Parent.get -> PandaBear.BuildingBlocks.ContentCulture?
-PandaBear.BuildingBlocks.ContentCulture.Value.get -> string!
-PandaBear.BuildingBlocks.Slug
-PandaBear.BuildingBlocks.Slug.Value.get -> string!
-PandaBear.BuildingBlocks.SupportedCultures
-PandaBear.BuildingBlocks.SupportedCultures.Contains(PandaBear.BuildingBlocks.ContentCulture! culture) -> bool
-PandaBear.BuildingBlocks.SupportedCultures.Cultures.get -> System.Collections.Generic.IReadOnlyList<PandaBear.BuildingBlocks.ContentCulture!>!
-PandaBear.BuildingBlocks.SupportedCultures.Default.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.BuildingBlocks.SupportedCultures.Resolve(PandaBear.BuildingBlocks.ContentCulture? requested) -> PandaBear.BuildingBlocks.ContentCulture?
-PandaBear.BuildingBlocks.SupportedCultures.Resolve(string? requested) -> PandaBear.BuildingBlocks.ContentCulture?
-PandaBear.BuildingBlocks.SupportedCultures.TryGet(string? value, out PandaBear.BuildingBlocks.ContentCulture? culture) -> bool
-PandaBear.BuildingBlocks.TranslationSet
-PandaBear.BuildingBlocks.TranslationSet<T>
-PandaBear.BuildingBlocks.TranslationSet<T>.TryResolve(PandaBear.BuildingBlocks.ContentCulture? requested, PandaBear.BuildingBlocks.ContentCulture! defaultCulture, out T! translation) -> bool
-override PandaBear.BuildingBlocks.ContentCulture.ToString() -> string!
-override PandaBear.BuildingBlocks.Slug.ToString() -> string!
-override PandaBear.BuildingBlocks.SupportedCultures.ToString() -> string!
-static PandaBear.BuildingBlocks.ContentCulture.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ContentCulture!>
-static PandaBear.BuildingBlocks.ContentCulture.Restore(string! value) -> PandaBear.BuildingBlocks.ContentCulture!
-static PandaBear.BuildingBlocks.Slug.Create(string? value, int maxLength = 128, string! field = "slug", string! label = "Slug") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Slug!>
-static PandaBear.BuildingBlocks.Slug.IsCanonical(string? value, int maxLength = 128) -> bool
-static PandaBear.BuildingBlocks.Slug.Restore(string! value) -> PandaBear.BuildingBlocks.Slug!
-static PandaBear.BuildingBlocks.SupportedCultures.Create(PandaBear.BuildingBlocks.ContentCulture! defaultCulture, System.Collections.Generic.IEnumerable<PandaBear.BuildingBlocks.ContentCulture!>! cultures) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.SupportedCultures!>
-static PandaBear.BuildingBlocks.TranslationSet.Create<T>(System.Collections.Generic.IEnumerable<T!>! translations, System.Func<T!, PandaBear.BuildingBlocks.ContentCulture!>! cultureSelector) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.TranslationSet<T!>!>
-PandaBear.BuildingBlocks.CultureLanguageTag
-PandaBear.BuildingBlocks.CultureLanguageTag.<Clone>$() -> PandaBear.BuildingBlocks.CultureLanguageTag!
-PandaBear.BuildingBlocks.CultureLanguageTag.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.BuildingBlocks.CultureLanguageTag.CultureLanguageTag(PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.ContentCulture! languageTag) -> void
-PandaBear.BuildingBlocks.CultureLanguageTag.Equals(PandaBear.BuildingBlocks.CultureLanguageTag? other) -> bool
-PandaBear.BuildingBlocks.CultureLanguageTag.LanguageTag.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.BuildingBlocks.CultureLanguageTags
-PandaBear.BuildingBlocks.CultureLanguageTags.Cultures.get -> PandaBear.BuildingBlocks.SupportedCultures!
-PandaBear.BuildingBlocks.CultureLanguageTags.DefaultLanguageTag.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.BuildingBlocks.CultureLanguageTags.LanguageTagOf(PandaBear.BuildingBlocks.ContentCulture! culture) -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.BuildingBlocks.CultureLanguageTags.LanguageTags.get -> System.Collections.Generic.IReadOnlyList<PandaBear.BuildingBlocks.ContentCulture!>!
-PandaBear.BuildingBlocks.CultureLanguageTags.TryGetCulture(PandaBear.BuildingBlocks.ContentCulture? languageTag, out PandaBear.BuildingBlocks.ContentCulture? culture) -> bool
-PandaBear.BuildingBlocks.CultureLanguageTags.TryGetCulture(string? languageTag, out PandaBear.BuildingBlocks.ContentCulture? culture) -> bool
-override PandaBear.BuildingBlocks.CultureLanguageTag.Equals(object? obj) -> bool
-override PandaBear.BuildingBlocks.CultureLanguageTag.GetHashCode() -> int
-override PandaBear.BuildingBlocks.CultureLanguageTag.ToString() -> string!
-static PandaBear.BuildingBlocks.CultureLanguageTag.operator !=(PandaBear.BuildingBlocks.CultureLanguageTag? left, PandaBear.BuildingBlocks.CultureLanguageTag? right) -> bool
-static PandaBear.BuildingBlocks.CultureLanguageTag.operator ==(PandaBear.BuildingBlocks.CultureLanguageTag? left, PandaBear.BuildingBlocks.CultureLanguageTag? right) -> bool
-static PandaBear.BuildingBlocks.CultureLanguageTags.Create(PandaBear.BuildingBlocks.SupportedCultures! cultures, System.Collections.Generic.IEnumerable<PandaBear.BuildingBlocks.CultureLanguageTag!>! languageTags) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.CultureLanguageTags!>
-const PandaBear.BuildingBlocks.WebUrl.MaxLength = 2048 -> int
-PandaBear.BuildingBlocks.WebUrl
-PandaBear.BuildingBlocks.WebUrl.Value.get -> string!
-override PandaBear.BuildingBlocks.WebUrl.ToString() -> string!
-static PandaBear.BuildingBlocks.WebUrl.Create(string? value, string! field = "url", string! label = "Link") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.WebUrl!>
-static PandaBear.BuildingBlocks.WebUrl.CreateHttps(string? value, string! field = "url", string! label = "Link") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.WebUrl!>
-static PandaBear.BuildingBlocks.WebUrl.Restore(string! value) -> PandaBear.BuildingBlocks.WebUrl!
-PandaBear.BuildingBlocks.Currency.Symbol.get -> string!
-PandaBear.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider) -> string!
-PandaBear.BuildingBlocks.Money.ToString(string? format, System.IFormatProvider? formatProvider) -> string!
-static PandaBear.BuildingBlocks.BirthDate.Restore(System.DateOnly value) -> PandaBear.BuildingBlocks.BirthDate!
-PandaBear.BuildingBlocks.PostalAddressLabels
-PandaBear.BuildingBlocks.PostalAddressLabels.City.get -> string!
-PandaBear.BuildingBlocks.PostalAddressLabels.City.init -> void
-PandaBear.BuildingBlocks.PostalAddressLabels.Complement.get -> string!
-PandaBear.BuildingBlocks.PostalAddressLabels.Complement.init -> void
-PandaBear.BuildingBlocks.PostalAddressLabels.Country.get -> string!
-PandaBear.BuildingBlocks.PostalAddressLabels.Country.init -> void
-PandaBear.BuildingBlocks.PostalAddressLabels.Neighborhood.get -> string!
-PandaBear.BuildingBlocks.PostalAddressLabels.Neighborhood.init -> void
-PandaBear.BuildingBlocks.PostalAddressLabels.PostalAddressLabels() -> void
-PandaBear.BuildingBlocks.PostalAddressLabels.PostalCode.get -> string!
-PandaBear.BuildingBlocks.PostalAddressLabels.PostalCode.init -> void
-PandaBear.BuildingBlocks.PostalAddressLabels.State.get -> string!
-PandaBear.BuildingBlocks.PostalAddressLabels.State.init -> void
-PandaBear.BuildingBlocks.PostalAddressLabels.Street.get -> string!
-PandaBear.BuildingBlocks.PostalAddressLabels.Street.init -> void
-static PandaBear.BuildingBlocks.PostalAddressLabels.Default.get -> PandaBear.BuildingBlocks.PostalAddressLabels!
-PandaBear.BuildingBlocks.Iban.Formatted.get -> string!
-static PandaBear.BuildingBlocks.Iban.Restore(string! value) -> PandaBear.BuildingBlocks.Iban!
-static PandaBear.BuildingBlocks.Bic.Restore(string! value) -> PandaBear.BuildingBlocks.Bic!
-static PandaBear.BuildingBlocks.Cpf.CreateFromInput(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cpf!>
-static PandaBear.BuildingBlocks.Slug.CreateLenient(string? value, int maxLength = 128, string! field = "slug", string! label = "Slug") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Slug!>
-PandaBear.BuildingBlocks.HypermediaLink.<Clone>$() -> PandaBear.BuildingBlocks.HypermediaLink!
-PandaBear.BuildingBlocks.HypermediaLink.Equals(PandaBear.BuildingBlocks.HypermediaLink? other) -> bool
-override PandaBear.BuildingBlocks.HypermediaLink.Equals(object? obj) -> bool
-override PandaBear.BuildingBlocks.HypermediaLink.GetHashCode() -> int
-override PandaBear.BuildingBlocks.HypermediaLink.ToString() -> string!
-static PandaBear.BuildingBlocks.HypermediaLink.operator !=(PandaBear.BuildingBlocks.HypermediaLink? left, PandaBear.BuildingBlocks.HypermediaLink? right) -> bool
-static PandaBear.BuildingBlocks.HypermediaLink.operator ==(PandaBear.BuildingBlocks.HypermediaLink? left, PandaBear.BuildingBlocks.HypermediaLink? right) -> bool
-PandaBear.BuildingBlocks.PageWindow
-PandaBear.BuildingBlocks.PageWindow.Equals(PandaBear.BuildingBlocks.PageWindow other) -> bool
-PandaBear.BuildingBlocks.PageWindow.HasMultiplePages.get -> bool
-PandaBear.BuildingBlocks.PageWindow.IsOutOfRange.get -> bool
-PandaBear.BuildingBlocks.PageWindow.NextPage.get -> int?
-PandaBear.BuildingBlocks.PageWindow.Page.get -> int
-PandaBear.BuildingBlocks.PageWindow.PageCount.get -> int
-PandaBear.BuildingBlocks.PageWindow.PageSize.get -> int
-PandaBear.BuildingBlocks.PageWindow.PageWindow() -> void
-PandaBear.BuildingBlocks.PageWindow.PreviousPage.get -> int?
-PandaBear.BuildingBlocks.PageWindow.Skip.get -> int
-PandaBear.BuildingBlocks.PageWindow.Take.get -> int
-PandaBear.BuildingBlocks.PageWindow.Total.get -> int
-override PandaBear.BuildingBlocks.PageWindow.GetHashCode() -> int
-static PandaBear.BuildingBlocks.PageWindow.Create(int? requestedPage, int pageSize, int total) -> PandaBear.BuildingBlocks.PageWindow
-static PandaBear.BuildingBlocks.PageWindow.Create(string? requestedPage, int pageSize, int total) -> PandaBear.BuildingBlocks.PageWindow
-static PandaBear.BuildingBlocks.PageWindow.operator !=(PandaBear.BuildingBlocks.PageWindow left, PandaBear.BuildingBlocks.PageWindow right) -> bool
-static PandaBear.BuildingBlocks.PageWindow.operator ==(PandaBear.BuildingBlocks.PageWindow left, PandaBear.BuildingBlocks.PageWindow right) -> bool
-~override PandaBear.BuildingBlocks.PageWindow.Equals(object obj) -> bool
-~override PandaBear.BuildingBlocks.PageWindow.ToString() -> string
-PandaBear.BuildingBlocks.SearchKey
-static PandaBear.BuildingBlocks.SearchKey.Of(string? text) -> string!
-PandaBear.BuildingBlocks.SqlLikePattern
-const PandaBear.BuildingBlocks.SqlLikePattern.EscapeCharacter = "\\" -> string!
-static PandaBear.BuildingBlocks.SqlLikePattern.ContainsLiteral(string! text) -> string!
-PandaBear.BuildingBlocks.PublicationStatus
-PandaBear.BuildingBlocks.PublicationStatus.Draft = 0 -> PandaBear.BuildingBlocks.PublicationStatus
-PandaBear.BuildingBlocks.PublicationStatus.Published = 1 -> PandaBear.BuildingBlocks.PublicationStatus
-PandaBear.BuildingBlocks.DateOnlyRange.ToDisplayString(PandaBear.BuildingBlocks.DateRangePatterns! patterns, System.IFormatProvider! provider) -> string!
-PandaBear.BuildingBlocks.DateRangePatterns
-PandaBear.BuildingBlocks.DateRangePatterns.DateRangePatterns(string! singleDay, string! sameMonth, string! sameYear, string! other) -> void
-PandaBear.BuildingBlocks.DateRangePatterns.Other.get -> string!
-PandaBear.BuildingBlocks.DateRangePatterns.SameMonth.get -> string!
-PandaBear.BuildingBlocks.DateRangePatterns.SameYear.get -> string!
-PandaBear.BuildingBlocks.DateRangePatterns.SingleDay.get -> string!
-PandaBear.BuildingBlocks.IImageEligibility<TImageId>
-PandaBear.BuildingBlocks.IImageEligibility<TImageId>.Exists(TImageId imageId) -> bool
-PandaBear.BuildingBlocks.IImageEligibility<TImageId>.IsEligible(TImageId imageId, PandaBear.BuildingBlocks.ContentCulture! culture) -> bool
-PandaBear.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider, PandaBear.BuildingBlocks.MoneyDisplayOptions! options) -> string!
-PandaBear.BuildingBlocks.MoneyDisplayOptions
-PandaBear.BuildingBlocks.MoneyDisplayOptions.<Clone>$() -> PandaBear.BuildingBlocks.MoneyDisplayOptions!
-PandaBear.BuildingBlocks.MoneyDisplayOptions.Equals(PandaBear.BuildingBlocks.MoneyDisplayOptions? other) -> bool
-PandaBear.BuildingBlocks.MoneyDisplayOptions.MoneyDisplayOptions() -> void
-PandaBear.BuildingBlocks.MoneyDisplayOptions.OmitZeroMinorUnits.get -> bool
-PandaBear.BuildingBlocks.MoneyDisplayOptions.OmitZeroMinorUnits.init -> void
-PandaBear.BuildingBlocks.MoneyDisplayOptions.SymbolPlacement.get -> PandaBear.BuildingBlocks.MoneySymbolPlacement
-PandaBear.BuildingBlocks.MoneyDisplayOptions.SymbolPlacement.init -> void
-PandaBear.BuildingBlocks.MoneySymbolPlacement
-PandaBear.BuildingBlocks.MoneySymbolPlacement.After = 2 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
-PandaBear.BuildingBlocks.MoneySymbolPlacement.Before = 1 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
-PandaBear.BuildingBlocks.MoneySymbolPlacement.Culture = 0 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
-override PandaBear.BuildingBlocks.MoneyDisplayOptions.Equals(object? obj) -> bool
-override PandaBear.BuildingBlocks.MoneyDisplayOptions.GetHashCode() -> int
-override PandaBear.BuildingBlocks.MoneyDisplayOptions.ToString() -> string!
-static PandaBear.BuildingBlocks.MoneyDisplayOptions.operator !=(PandaBear.BuildingBlocks.MoneyDisplayOptions? left, PandaBear.BuildingBlocks.MoneyDisplayOptions? right) -> bool
-static PandaBear.BuildingBlocks.MoneyDisplayOptions.operator ==(PandaBear.BuildingBlocks.MoneyDisplayOptions? left, PandaBear.BuildingBlocks.MoneyDisplayOptions? right) -> bool
-PandaBear.BuildingBlocks.ImageCredit
-PandaBear.BuildingBlocks.ImageCredit.Author.get -> string!
-PandaBear.BuildingBlocks.ImageCredit.License.get -> PandaBear.BuildingBlocks.ImageLicense!
-PandaBear.BuildingBlocks.ImageCredit.Modified.get -> bool
-PandaBear.BuildingBlocks.ImageCredit.SourceUrl.get -> PandaBear.BuildingBlocks.WebUrl?
-PandaBear.BuildingBlocks.ImageCredit.Title.get -> string?
-PandaBear.BuildingBlocks.ImageCredit.ToFullText(PandaBear.BuildingBlocks.ImageCreditFormats! formats, System.IFormatProvider! provider) -> string!
-PandaBear.BuildingBlocks.ImageCredit.ToShortText(string! format, System.IFormatProvider! provider) -> string!
-PandaBear.BuildingBlocks.ImageCreditFormats
-PandaBear.BuildingBlocks.ImageCreditFormats.<Clone>$() -> PandaBear.BuildingBlocks.ImageCreditFormats!
-PandaBear.BuildingBlocks.ImageCreditFormats.Deconstruct(out string! WithTitle, out string! WithoutTitle, out string! Modified) -> void
-PandaBear.BuildingBlocks.ImageCreditFormats.Equals(PandaBear.BuildingBlocks.ImageCreditFormats? other) -> bool
-PandaBear.BuildingBlocks.ImageCreditFormats.ImageCreditFormats(string! WithTitle, string! WithoutTitle, string! Modified) -> void
-PandaBear.BuildingBlocks.ImageCreditFormats.Modified.get -> string!
-PandaBear.BuildingBlocks.ImageCreditFormats.WithTitle.get -> string!
-PandaBear.BuildingBlocks.ImageCreditFormats.WithoutTitle.get -> string!
-PandaBear.BuildingBlocks.ImageLicense
-PandaBear.BuildingBlocks.ImageLicense.Code.get -> string!
-PandaBear.BuildingBlocks.ImageLicense.Url.get -> PandaBear.BuildingBlocks.WebUrl?
-const PandaBear.BuildingBlocks.ImageCredit.MaxAuthorLength = 200 -> int
-const PandaBear.BuildingBlocks.ImageCredit.MaxTitleLength = 200 -> int
-const PandaBear.BuildingBlocks.ImageLicense.MaxCodeLength = 60 -> int
-override PandaBear.BuildingBlocks.ImageCredit.ToString() -> string!
-override PandaBear.BuildingBlocks.ImageCreditFormats.Equals(object? obj) -> bool
-override PandaBear.BuildingBlocks.ImageCreditFormats.GetHashCode() -> int
-override PandaBear.BuildingBlocks.ImageCreditFormats.ToString() -> string!
-override PandaBear.BuildingBlocks.ImageLicense.ToString() -> string!
-static PandaBear.BuildingBlocks.ImageCreditFormats.operator !=(PandaBear.BuildingBlocks.ImageCreditFormats? left, PandaBear.BuildingBlocks.ImageCreditFormats? right) -> bool
-static PandaBear.BuildingBlocks.ImageCreditFormats.operator ==(PandaBear.BuildingBlocks.ImageCreditFormats? left, PandaBear.BuildingBlocks.ImageCreditFormats? right) -> bool
-static PandaBear.BuildingBlocks.ImageLicense.KnownUrl(string? code) -> PandaBear.BuildingBlocks.WebUrl?
-static PandaBear.BuildingBlocks.ImageCredit.Create(string? author, string? title, string? source, string? licenseCode, string? licenseLink, bool modified, string! fieldPrefix = "") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageCredit!>
-static PandaBear.BuildingBlocks.ImageCredit.Restore(string! author, string? title, string? source, PandaBear.BuildingBlocks.ImageLicense! license, bool modified) -> PandaBear.BuildingBlocks.ImageCredit!
-static PandaBear.BuildingBlocks.ImageLicense.Create(string? code, string? link, string! field = "license") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageLicense!>
-static PandaBear.BuildingBlocks.ImageLicense.Restore(string! code, string? link) -> PandaBear.BuildingBlocks.ImageLicense!
-PandaBear.BuildingBlocks.SanitizedText
-static PandaBear.BuildingBlocks.SanitizedText.Lines(PandaBear.Results.ValidationErrors! errors, System.Collections.Generic.IReadOnlyList<string?>? values, string! field, string! label, int maxItems, int maxLength) -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.BuildingBlocks.SanitizedText.Optional(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength) -> string?
-static PandaBear.BuildingBlocks.SanitizedText.Paragraphs(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxParagraphs, int maxLength) -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.BuildingBlocks.SanitizedText.Required(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength) -> string?
-PandaBear.BuildingBlocks.TranslationListRules
-PandaBear.BuildingBlocks.TranslationListRules.Cultures.get -> PandaBear.BuildingBlocks.SupportedCultures!
-PandaBear.BuildingBlocks.TranslationListRules.Field.get -> string!
-PandaBear.BuildingBlocks.TranslationListRules.TranslationListRules(PandaBear.BuildingBlocks.SupportedCultures! cultures, string! field, string! subject) -> void
-PandaBear.BuildingBlocks.TranslationListRules.Validate<TDefinition, T>(PandaBear.Results.ValidationErrors! errors, System.Collections.Generic.IEnumerable<TDefinition?>? definitions, System.Func<TDefinition!, string?>! cultureOf, System.Func<PandaBear.BuildingBlocks.ContentCulture!, TDefinition!, T?>! build, string! parameterName) -> System.Collections.Generic.IReadOnlyList<T!>!
-static PandaBear.BuildingBlocks.TranslationListRules.Merge<T>(System.Collections.Generic.ICollection<T>! current, System.Collections.Generic.IReadOnlyList<T>! replacement, System.Func<T, PandaBear.BuildingBlocks.ContentCulture!>! culture, System.Action<T, T>! apply) -> void
-static PandaBear.BuildingBlocks.TranslationListRules.Same<T>(System.Collections.Generic.IReadOnlyList<T>! current, System.Collections.Generic.IReadOnlyList<T>! replacement, System.Func<T, PandaBear.BuildingBlocks.ContentCulture!>! culture, System.Func<T, T, bool>! same) -> bool
-static PandaBear.BuildingBlocks.SanitizedText.Optional(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength, out bool entered) -> string?
-static PandaBear.BuildingBlocks.SanitizedText.Paragraphs(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxParagraphs, int maxLength, out bool entered) -> System.Collections.Generic.IReadOnlyList<string!>!
+const SharedKernel.BuildingBlocks.CountryCode.AssignedCount = 249 -> int
+const SharedKernel.BuildingBlocks.EmailAddress.MaxLength = 254 -> int
+const SharedKernel.BuildingBlocks.PersonName.MaxPartLength = 128 -> int
+const SharedKernel.BuildingBlocks.PhoneNumber.MaxDigits = 15 -> int
+const SharedKernel.BuildingBlocks.PhoneNumber.MinDigits = 7 -> int
+const SharedKernel.BuildingBlocks.PostalAddress.MaxPartLength = 128 -> int
+const SharedKernel.BuildingBlocks.PostalAddress.MaxPostalCodeLength = 32 -> int
+override SharedKernel.BuildingBlocks.CountryCode.ToString() -> string!
+override SharedKernel.BuildingBlocks.Currency.ToString() -> string!
+override SharedKernel.BuildingBlocks.EmailAddress.ToString() -> string!
+override SharedKernel.BuildingBlocks.Money.ToString() -> string!
+override SharedKernel.BuildingBlocks.PersonName.ToString() -> string!
+override SharedKernel.BuildingBlocks.PhoneNumber.ToString() -> string!
+override SharedKernel.BuildingBlocks.PostalAddress.ToString() -> string!
+SharedKernel.BuildingBlocks.CountryCode
+SharedKernel.BuildingBlocks.CountryCode.Value.get -> string!
+SharedKernel.BuildingBlocks.Currency
+SharedKernel.BuildingBlocks.Currency.Code.get -> string!
+SharedKernel.BuildingBlocks.Currency.MinorUnits.get -> int
+SharedKernel.BuildingBlocks.DateRange
+SharedKernel.BuildingBlocks.DateRange.DurationDays.get -> double
+SharedKernel.BuildingBlocks.DateRange.EndDate.get -> System.DateTime
+SharedKernel.BuildingBlocks.DateRange.StartDate.get -> System.DateTime
+SharedKernel.BuildingBlocks.EmailAddress
+SharedKernel.BuildingBlocks.EmailAddress.Value.get -> string!
+SharedKernel.BuildingBlocks.ExceptionCancellationExtensions
+SharedKernel.BuildingBlocks.IIdentified<TId>
+SharedKernel.BuildingBlocks.IIdentified<TId>.Id.get -> TId
+SharedKernel.BuildingBlocks.Money
+SharedKernel.BuildingBlocks.Money.Add(SharedKernel.BuildingBlocks.Money! other) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Money!>
+SharedKernel.BuildingBlocks.Money.Amount.get -> decimal
+SharedKernel.BuildingBlocks.Money.Currency.get -> SharedKernel.BuildingBlocks.Currency!
+SharedKernel.BuildingBlocks.Money.IsPositive.get -> bool
+SharedKernel.BuildingBlocks.OptionResultExtensions
+SharedKernel.BuildingBlocks.PersonName
+SharedKernel.BuildingBlocks.PersonName.FirstName.get -> string!
+SharedKernel.BuildingBlocks.PersonName.FullName.get -> string!
+SharedKernel.BuildingBlocks.PersonName.LastName.get -> string!
+SharedKernel.BuildingBlocks.PhoneNumber
+SharedKernel.BuildingBlocks.PhoneNumber.Value.get -> string!
+SharedKernel.BuildingBlocks.PostalAddress
+SharedKernel.BuildingBlocks.PostalAddress.City.get -> string!
+SharedKernel.BuildingBlocks.PostalAddress.Complement.get -> string?
+SharedKernel.BuildingBlocks.PostalAddress.Country.get -> SharedKernel.BuildingBlocks.CountryCode!
+SharedKernel.BuildingBlocks.PostalAddress.Neighborhood.get -> string?
+SharedKernel.BuildingBlocks.PostalAddress.PostalCode.get -> string!
+SharedKernel.BuildingBlocks.PostalAddress.State.get -> string?
+SharedKernel.BuildingBlocks.PostalAddress.Street.get -> string!
+SharedKernel.BuildingBlocks.UniqueConstraintViolationException
+SharedKernel.BuildingBlocks.UniqueConstraintViolationException.Rule.get -> string!
+SharedKernel.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException() -> void
+SharedKernel.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException(string! rule) -> void
+SharedKernel.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException(string! rule, System.Exception? innerException) -> void
+SharedKernel.BuildingBlocks.ValueObject
+SharedKernel.BuildingBlocks.ValueObject.Equals(SharedKernel.BuildingBlocks.ValueObject? other) -> bool
+abstract SharedKernel.BuildingBlocks.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!
+SharedKernel.BuildingBlocks.ValueObject.ValueObject() -> void
+override SharedKernel.BuildingBlocks.ValueObject.Equals(object? obj) -> bool
+override SharedKernel.BuildingBlocks.ValueObject.GetHashCode() -> int
+static SharedKernel.BuildingBlocks.CountryCode.All.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.BuildingBlocks.CountryCode!>!
+static SharedKernel.BuildingBlocks.CountryCode.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.CountryCode!>
+static SharedKernel.BuildingBlocks.Currency.Brl.get -> SharedKernel.BuildingBlocks.Currency!
+static SharedKernel.BuildingBlocks.Currency.Create(string? code) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Currency!>
+static SharedKernel.BuildingBlocks.Currency.Eur.get -> SharedKernel.BuildingBlocks.Currency!
+static SharedKernel.BuildingBlocks.Currency.Usd.get -> SharedKernel.BuildingBlocks.Currency!
+static SharedKernel.BuildingBlocks.DateRange.Create(System.DateTime startDate, System.DateTime endDate) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.DateRange!>
+static SharedKernel.BuildingBlocks.EmailAddress.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.EmailAddress!>
+static SharedKernel.BuildingBlocks.ExceptionCancellationExtensions.ShouldHandleAsFailure(this System.Exception! exception, System.Threading.CancellationToken ct) -> bool
+static SharedKernel.BuildingBlocks.Money.Create(decimal amount, SharedKernel.BuildingBlocks.Currency? currency) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Money!>
+static SharedKernel.BuildingBlocks.OptionResultExtensions.ToNotFoundResult<TEntity, TId>(this SharedKernel.Results.Option<TEntity> source, TId id, string? container = null) -> SharedKernel.Results.Result<TEntity>
+static SharedKernel.BuildingBlocks.PersonName.Create(string? firstName, string? lastName) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.PersonName!>
+static SharedKernel.BuildingBlocks.PhoneNumber.Create(string? value, string! field = "phone", string! label = "Phone number") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.PhoneNumber!>
+static SharedKernel.BuildingBlocks.PostalAddress.Create(string? street, string? complement, string? neighborhood, string? postalCode, string? city, string? state, string? country, SharedKernel.BuildingBlocks.PostalAddressLabels? labels = null) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.PostalAddress!>
+static SharedKernel.BuildingBlocks.ValueObject.operator !=(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
+static SharedKernel.BuildingBlocks.ValueObject.operator ==(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
+SharedKernel.BuildingBlocks.Compensation
+static SharedKernel.BuildingBlocks.Compensation.CompleteOrCompensate(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! operation, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! compensate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.BuildingBlocks.Bic
+SharedKernel.BuildingBlocks.Bic.Value.get -> string!
+override SharedKernel.BuildingBlocks.Bic.ToString() -> string!
+static SharedKernel.BuildingBlocks.Bic.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Bic!>
+SharedKernel.BuildingBlocks.Cnpj
+SharedKernel.BuildingBlocks.Cnpj.Value.get -> string!
+override SharedKernel.BuildingBlocks.Cnpj.ToString() -> string!
+static SharedKernel.BuildingBlocks.Cnpj.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Cnpj!>
+SharedKernel.BuildingBlocks.Cpf
+SharedKernel.BuildingBlocks.Cpf.Formatted.get -> string!
+SharedKernel.BuildingBlocks.Cpf.Value.get -> string!
+static SharedKernel.BuildingBlocks.Cpf.Restore(string! value) -> SharedKernel.BuildingBlocks.Cpf!
+static SharedKernel.BuildingBlocks.PostalAddress.Restore(string! street, string? complement, string? neighborhood, string! postalCode, string! city, string? state, SharedKernel.BuildingBlocks.CountryCode! country) -> SharedKernel.BuildingBlocks.PostalAddress!
+override SharedKernel.BuildingBlocks.Cpf.ToString() -> string!
+static SharedKernel.BuildingBlocks.Cpf.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Cpf!>
+SharedKernel.BuildingBlocks.Iban
+SharedKernel.BuildingBlocks.Iban.Value.get -> string!
+override SharedKernel.BuildingBlocks.Iban.ToString() -> string!
+static SharedKernel.BuildingBlocks.Iban.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Iban!>
+SharedKernel.BuildingBlocks.PixKey
+SharedKernel.BuildingBlocks.PixKey.Value.get -> string!
+override SharedKernel.BuildingBlocks.PixKey.ToString() -> string!
+static SharedKernel.BuildingBlocks.PixKey.Create(SharedKernel.BuildingBlocks.PixKeyType type, string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.PixKey!>
+SharedKernel.BuildingBlocks.PixKey.Type.get -> SharedKernel.BuildingBlocks.PixKeyType
+SharedKernel.BuildingBlocks.PixKeyType
+SharedKernel.BuildingBlocks.PixKeyType.None = 0 -> SharedKernel.BuildingBlocks.PixKeyType
+SharedKernel.BuildingBlocks.PixKeyType.Cpf = 1 -> SharedKernel.BuildingBlocks.PixKeyType
+SharedKernel.BuildingBlocks.PixKeyType.Cnpj = 2 -> SharedKernel.BuildingBlocks.PixKeyType
+SharedKernel.BuildingBlocks.PixKeyType.Phone = 3 -> SharedKernel.BuildingBlocks.PixKeyType
+SharedKernel.BuildingBlocks.PixKeyType.Email = 4 -> SharedKernel.BuildingBlocks.PixKeyType
+SharedKernel.BuildingBlocks.PixKeyType.Evp = 5 -> SharedKernel.BuildingBlocks.PixKeyType
+SharedKernel.BuildingBlocks.HypermediaLink
+SharedKernel.BuildingBlocks.HypermediaLink.HypermediaLink(string! rel, string! href, string! method) -> void
+SharedKernel.BuildingBlocks.HypermediaLink.Href.get -> string!
+SharedKernel.BuildingBlocks.HypermediaLink.Method.get -> string!
+SharedKernel.BuildingBlocks.HypermediaLink.Rel.get -> string!
+static SharedKernel.BuildingBlocks.HypermediaLink.Create(string? rel, string? href, string? method) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.HypermediaLink!>
+static SharedKernel.BuildingBlocks.HypermediaLink.CreateGet(string! rel, string! href) -> SharedKernel.BuildingBlocks.HypermediaLink!
+SharedKernel.BuildingBlocks.CountryCode.EnglishName.get -> string!
+SharedKernel.BuildingBlocks.BirthDate
+SharedKernel.BuildingBlocks.BirthDate.AgeOn(System.DateOnly day) -> int
+SharedKernel.BuildingBlocks.BirthDate.Value.get -> System.DateOnly
+override SharedKernel.BuildingBlocks.BirthDate.ToString() -> string!
+static SharedKernel.BuildingBlocks.BirthDate.Create(System.DateOnly value, System.DateOnly today, int minAgeYears, int maxAgeYears, string! field = "birthDate", string! label = "Birth date") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.BirthDate!>
+SharedKernel.BuildingBlocks.DateOnlyRange
+SharedKernel.BuildingBlocks.DateOnlyRange.Days.get -> int
+SharedKernel.BuildingBlocks.DateOnlyRange.EndDate.get -> System.DateOnly
+SharedKernel.BuildingBlocks.DateOnlyRange.StartDate.get -> System.DateOnly
+static SharedKernel.BuildingBlocks.DateOnlyRange.Create(System.DateOnly startDate, System.DateOnly endDate) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.DateOnlyRange!>
+SharedKernel.BuildingBlocks.ReferenceCode
+SharedKernel.BuildingBlocks.ReferenceCode.Value.get -> string!
+override SharedKernel.BuildingBlocks.ReferenceCode.ToString() -> string!
+static SharedKernel.BuildingBlocks.ReferenceCode.Create(string? value, int maxLength, string! field = "code", string! label = "Code") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.ReferenceCode!>
+static SharedKernel.BuildingBlocks.Money.CreateExact(decimal amount, SharedKernel.BuildingBlocks.Currency? currency, string! field = "amount", string! label = "Amount") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Money!>
+static SharedKernel.BuildingBlocks.Money.CreateFromInput(decimal amount, SharedKernel.BuildingBlocks.Currency? currency, string! field = "amount", string! label = "Amount") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Money!>
+SharedKernel.BuildingBlocks.BusinessTimeProvider
+SharedKernel.BuildingBlocks.BusinessTimeProvider.BusinessTimeProvider(System.TimeZoneInfo! businessTimeZone, System.TimeProvider? inner = null) -> void
+SharedKernel.BuildingBlocks.ConcurrencyConflictException
+SharedKernel.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException() -> void
+SharedKernel.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(string! message) -> void
+SharedKernel.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(string! message, System.Exception? innerException) -> void
+SharedKernel.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(System.Exception? innerException) -> void
+SharedKernel.BuildingBlocks.TimeProviderExtensions
+override SharedKernel.BuildingBlocks.BusinessTimeProvider.CreateTimer(System.Threading.TimerCallback! callback, object? state, System.TimeSpan dueTime, System.TimeSpan period) -> System.Threading.ITimer!
+override SharedKernel.BuildingBlocks.BusinessTimeProvider.GetTimestamp() -> long
+override SharedKernel.BuildingBlocks.BusinessTimeProvider.GetUtcNow() -> System.DateTimeOffset
+override SharedKernel.BuildingBlocks.BusinessTimeProvider.LocalTimeZone.get -> System.TimeZoneInfo!
+override SharedKernel.BuildingBlocks.BusinessTimeProvider.TimestampFrequency.get -> long
+static SharedKernel.BuildingBlocks.TimeProviderExtensions.Today(this System.TimeProvider! provider) -> System.DateOnly
+static SharedKernel.BuildingBlocks.CountryCode.AllByEnglishName.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.BuildingBlocks.CountryCode!>!
+static SharedKernel.BuildingBlocks.CountryCode.Restore(string! value) -> SharedKernel.BuildingBlocks.CountryCode!
+static SharedKernel.BuildingBlocks.Currency.Restore(string! code) -> SharedKernel.BuildingBlocks.Currency!
+static SharedKernel.BuildingBlocks.EmailAddress.Restore(string! value) -> SharedKernel.BuildingBlocks.EmailAddress!
+static SharedKernel.BuildingBlocks.Money.Restore(decimal amount, SharedKernel.BuildingBlocks.Currency! currency) -> SharedKernel.BuildingBlocks.Money!
+static SharedKernel.BuildingBlocks.PersonName.Restore(string! firstName, string! lastName) -> SharedKernel.BuildingBlocks.PersonName!
+static SharedKernel.BuildingBlocks.PhoneNumber.Restore(string! value) -> SharedKernel.BuildingBlocks.PhoneNumber!
+const SharedKernel.BuildingBlocks.ContentCulture.MaxLength = 35 -> int
+const SharedKernel.BuildingBlocks.Slug.DefaultMaxLength = 128 -> int
+SharedKernel.BuildingBlocks.ContentCulture
+SharedKernel.BuildingBlocks.ContentCulture.Language.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.BuildingBlocks.ContentCulture.Parent.get -> SharedKernel.BuildingBlocks.ContentCulture?
+SharedKernel.BuildingBlocks.ContentCulture.Value.get -> string!
+SharedKernel.BuildingBlocks.Slug
+SharedKernel.BuildingBlocks.Slug.Value.get -> string!
+SharedKernel.BuildingBlocks.SupportedCultures
+SharedKernel.BuildingBlocks.SupportedCultures.Contains(SharedKernel.BuildingBlocks.ContentCulture! culture) -> bool
+SharedKernel.BuildingBlocks.SupportedCultures.Cultures.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.BuildingBlocks.ContentCulture!>!
+SharedKernel.BuildingBlocks.SupportedCultures.Default.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.BuildingBlocks.SupportedCultures.Resolve(SharedKernel.BuildingBlocks.ContentCulture? requested) -> SharedKernel.BuildingBlocks.ContentCulture?
+SharedKernel.BuildingBlocks.SupportedCultures.Resolve(string? requested) -> SharedKernel.BuildingBlocks.ContentCulture?
+SharedKernel.BuildingBlocks.SupportedCultures.TryGet(string? value, out SharedKernel.BuildingBlocks.ContentCulture? culture) -> bool
+SharedKernel.BuildingBlocks.TranslationSet
+SharedKernel.BuildingBlocks.TranslationSet<T>
+SharedKernel.BuildingBlocks.TranslationSet<T>.TryResolve(SharedKernel.BuildingBlocks.ContentCulture? requested, SharedKernel.BuildingBlocks.ContentCulture! defaultCulture, out T! translation) -> bool
+override SharedKernel.BuildingBlocks.ContentCulture.ToString() -> string!
+override SharedKernel.BuildingBlocks.Slug.ToString() -> string!
+override SharedKernel.BuildingBlocks.SupportedCultures.ToString() -> string!
+static SharedKernel.BuildingBlocks.ContentCulture.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.ContentCulture!>
+static SharedKernel.BuildingBlocks.ContentCulture.Restore(string! value) -> SharedKernel.BuildingBlocks.ContentCulture!
+static SharedKernel.BuildingBlocks.Slug.Create(string? value, int maxLength = 128, string! field = "slug", string! label = "Slug") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Slug!>
+static SharedKernel.BuildingBlocks.Slug.IsCanonical(string? value, int maxLength = 128) -> bool
+static SharedKernel.BuildingBlocks.Slug.Restore(string! value) -> SharedKernel.BuildingBlocks.Slug!
+static SharedKernel.BuildingBlocks.SupportedCultures.Create(SharedKernel.BuildingBlocks.ContentCulture! defaultCulture, System.Collections.Generic.IEnumerable<SharedKernel.BuildingBlocks.ContentCulture!>! cultures) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.SupportedCultures!>
+static SharedKernel.BuildingBlocks.TranslationSet.Create<T>(System.Collections.Generic.IEnumerable<T!>! translations, System.Func<T!, SharedKernel.BuildingBlocks.ContentCulture!>! cultureSelector) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.TranslationSet<T!>!>
+SharedKernel.BuildingBlocks.CultureLanguageTag
+SharedKernel.BuildingBlocks.CultureLanguageTag.<Clone>$() -> SharedKernel.BuildingBlocks.CultureLanguageTag!
+SharedKernel.BuildingBlocks.CultureLanguageTag.Culture.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.BuildingBlocks.CultureLanguageTag.CultureLanguageTag(SharedKernel.BuildingBlocks.ContentCulture! culture, SharedKernel.BuildingBlocks.ContentCulture! languageTag) -> void
+SharedKernel.BuildingBlocks.CultureLanguageTag.Equals(SharedKernel.BuildingBlocks.CultureLanguageTag? other) -> bool
+SharedKernel.BuildingBlocks.CultureLanguageTag.LanguageTag.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.BuildingBlocks.CultureLanguageTags
+SharedKernel.BuildingBlocks.CultureLanguageTags.Cultures.get -> SharedKernel.BuildingBlocks.SupportedCultures!
+SharedKernel.BuildingBlocks.CultureLanguageTags.DefaultLanguageTag.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.BuildingBlocks.CultureLanguageTags.LanguageTagOf(SharedKernel.BuildingBlocks.ContentCulture! culture) -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.BuildingBlocks.CultureLanguageTags.LanguageTags.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.BuildingBlocks.ContentCulture!>!
+SharedKernel.BuildingBlocks.CultureLanguageTags.TryGetCulture(SharedKernel.BuildingBlocks.ContentCulture? languageTag, out SharedKernel.BuildingBlocks.ContentCulture? culture) -> bool
+SharedKernel.BuildingBlocks.CultureLanguageTags.TryGetCulture(string? languageTag, out SharedKernel.BuildingBlocks.ContentCulture? culture) -> bool
+override SharedKernel.BuildingBlocks.CultureLanguageTag.Equals(object? obj) -> bool
+override SharedKernel.BuildingBlocks.CultureLanguageTag.GetHashCode() -> int
+override SharedKernel.BuildingBlocks.CultureLanguageTag.ToString() -> string!
+static SharedKernel.BuildingBlocks.CultureLanguageTag.operator !=(SharedKernel.BuildingBlocks.CultureLanguageTag? left, SharedKernel.BuildingBlocks.CultureLanguageTag? right) -> bool
+static SharedKernel.BuildingBlocks.CultureLanguageTag.operator ==(SharedKernel.BuildingBlocks.CultureLanguageTag? left, SharedKernel.BuildingBlocks.CultureLanguageTag? right) -> bool
+static SharedKernel.BuildingBlocks.CultureLanguageTags.Create(SharedKernel.BuildingBlocks.SupportedCultures! cultures, System.Collections.Generic.IEnumerable<SharedKernel.BuildingBlocks.CultureLanguageTag!>! languageTags) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.CultureLanguageTags!>
+const SharedKernel.BuildingBlocks.WebUrl.MaxLength = 2048 -> int
+SharedKernel.BuildingBlocks.WebUrl
+SharedKernel.BuildingBlocks.WebUrl.Value.get -> string!
+override SharedKernel.BuildingBlocks.WebUrl.ToString() -> string!
+static SharedKernel.BuildingBlocks.WebUrl.Create(string? value, string! field = "url", string! label = "Link") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.WebUrl!>
+static SharedKernel.BuildingBlocks.WebUrl.CreateHttps(string? value, string! field = "url", string! label = "Link") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.WebUrl!>
+static SharedKernel.BuildingBlocks.WebUrl.Restore(string! value) -> SharedKernel.BuildingBlocks.WebUrl!
+SharedKernel.BuildingBlocks.Currency.Symbol.get -> string!
+SharedKernel.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider) -> string!
+SharedKernel.BuildingBlocks.Money.ToString(string? format, System.IFormatProvider? formatProvider) -> string!
+static SharedKernel.BuildingBlocks.BirthDate.Restore(System.DateOnly value) -> SharedKernel.BuildingBlocks.BirthDate!
+SharedKernel.BuildingBlocks.PostalAddressLabels
+SharedKernel.BuildingBlocks.PostalAddressLabels.City.get -> string!
+SharedKernel.BuildingBlocks.PostalAddressLabels.City.init -> void
+SharedKernel.BuildingBlocks.PostalAddressLabels.Complement.get -> string!
+SharedKernel.BuildingBlocks.PostalAddressLabels.Complement.init -> void
+SharedKernel.BuildingBlocks.PostalAddressLabels.Country.get -> string!
+SharedKernel.BuildingBlocks.PostalAddressLabels.Country.init -> void
+SharedKernel.BuildingBlocks.PostalAddressLabels.Neighborhood.get -> string!
+SharedKernel.BuildingBlocks.PostalAddressLabels.Neighborhood.init -> void
+SharedKernel.BuildingBlocks.PostalAddressLabels.PostalAddressLabels() -> void
+SharedKernel.BuildingBlocks.PostalAddressLabels.PostalCode.get -> string!
+SharedKernel.BuildingBlocks.PostalAddressLabels.PostalCode.init -> void
+SharedKernel.BuildingBlocks.PostalAddressLabels.State.get -> string!
+SharedKernel.BuildingBlocks.PostalAddressLabels.State.init -> void
+SharedKernel.BuildingBlocks.PostalAddressLabels.Street.get -> string!
+SharedKernel.BuildingBlocks.PostalAddressLabels.Street.init -> void
+static SharedKernel.BuildingBlocks.PostalAddressLabels.Default.get -> SharedKernel.BuildingBlocks.PostalAddressLabels!
+SharedKernel.BuildingBlocks.Iban.Formatted.get -> string!
+static SharedKernel.BuildingBlocks.Iban.Restore(string! value) -> SharedKernel.BuildingBlocks.Iban!
+static SharedKernel.BuildingBlocks.Bic.Restore(string! value) -> SharedKernel.BuildingBlocks.Bic!
+static SharedKernel.BuildingBlocks.Cpf.CreateFromInput(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Cpf!>
+static SharedKernel.BuildingBlocks.Slug.CreateLenient(string? value, int maxLength = 128, string! field = "slug", string! label = "Slug") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Slug!>
+SharedKernel.BuildingBlocks.HypermediaLink.<Clone>$() -> SharedKernel.BuildingBlocks.HypermediaLink!
+SharedKernel.BuildingBlocks.HypermediaLink.Equals(SharedKernel.BuildingBlocks.HypermediaLink? other) -> bool
+override SharedKernel.BuildingBlocks.HypermediaLink.Equals(object? obj) -> bool
+override SharedKernel.BuildingBlocks.HypermediaLink.GetHashCode() -> int
+override SharedKernel.BuildingBlocks.HypermediaLink.ToString() -> string!
+static SharedKernel.BuildingBlocks.HypermediaLink.operator !=(SharedKernel.BuildingBlocks.HypermediaLink? left, SharedKernel.BuildingBlocks.HypermediaLink? right) -> bool
+static SharedKernel.BuildingBlocks.HypermediaLink.operator ==(SharedKernel.BuildingBlocks.HypermediaLink? left, SharedKernel.BuildingBlocks.HypermediaLink? right) -> bool
+SharedKernel.BuildingBlocks.PageWindow
+SharedKernel.BuildingBlocks.PageWindow.Equals(SharedKernel.BuildingBlocks.PageWindow other) -> bool
+SharedKernel.BuildingBlocks.PageWindow.HasMultiplePages.get -> bool
+SharedKernel.BuildingBlocks.PageWindow.IsOutOfRange.get -> bool
+SharedKernel.BuildingBlocks.PageWindow.NextPage.get -> int?
+SharedKernel.BuildingBlocks.PageWindow.Page.get -> int
+SharedKernel.BuildingBlocks.PageWindow.PageCount.get -> int
+SharedKernel.BuildingBlocks.PageWindow.PageSize.get -> int
+SharedKernel.BuildingBlocks.PageWindow.PageWindow() -> void
+SharedKernel.BuildingBlocks.PageWindow.PreviousPage.get -> int?
+SharedKernel.BuildingBlocks.PageWindow.Skip.get -> int
+SharedKernel.BuildingBlocks.PageWindow.Take.get -> int
+SharedKernel.BuildingBlocks.PageWindow.Total.get -> int
+override SharedKernel.BuildingBlocks.PageWindow.GetHashCode() -> int
+static SharedKernel.BuildingBlocks.PageWindow.Create(int? requestedPage, int pageSize, int total) -> SharedKernel.BuildingBlocks.PageWindow
+static SharedKernel.BuildingBlocks.PageWindow.Create(string? requestedPage, int pageSize, int total) -> SharedKernel.BuildingBlocks.PageWindow
+static SharedKernel.BuildingBlocks.PageWindow.operator !=(SharedKernel.BuildingBlocks.PageWindow left, SharedKernel.BuildingBlocks.PageWindow right) -> bool
+static SharedKernel.BuildingBlocks.PageWindow.operator ==(SharedKernel.BuildingBlocks.PageWindow left, SharedKernel.BuildingBlocks.PageWindow right) -> bool
+~override SharedKernel.BuildingBlocks.PageWindow.Equals(object obj) -> bool
+~override SharedKernel.BuildingBlocks.PageWindow.ToString() -> string
+SharedKernel.BuildingBlocks.SearchKey
+static SharedKernel.BuildingBlocks.SearchKey.Of(string? text) -> string!
+SharedKernel.BuildingBlocks.SqlLikePattern
+const SharedKernel.BuildingBlocks.SqlLikePattern.EscapeCharacter = "\\" -> string!
+static SharedKernel.BuildingBlocks.SqlLikePattern.ContainsLiteral(string! text) -> string!
+SharedKernel.BuildingBlocks.PublicationStatus
+SharedKernel.BuildingBlocks.PublicationStatus.Draft = 0 -> SharedKernel.BuildingBlocks.PublicationStatus
+SharedKernel.BuildingBlocks.PublicationStatus.Published = 1 -> SharedKernel.BuildingBlocks.PublicationStatus
+SharedKernel.BuildingBlocks.DateOnlyRange.ToDisplayString(SharedKernel.BuildingBlocks.DateRangePatterns! patterns, System.IFormatProvider! provider) -> string!
+SharedKernel.BuildingBlocks.DateRangePatterns
+SharedKernel.BuildingBlocks.DateRangePatterns.DateRangePatterns(string! singleDay, string! sameMonth, string! sameYear, string! other) -> void
+SharedKernel.BuildingBlocks.DateRangePatterns.Other.get -> string!
+SharedKernel.BuildingBlocks.DateRangePatterns.SameMonth.get -> string!
+SharedKernel.BuildingBlocks.DateRangePatterns.SameYear.get -> string!
+SharedKernel.BuildingBlocks.DateRangePatterns.SingleDay.get -> string!
+SharedKernel.BuildingBlocks.IImageEligibility<TImageId>
+SharedKernel.BuildingBlocks.IImageEligibility<TImageId>.Exists(TImageId imageId) -> bool
+SharedKernel.BuildingBlocks.IImageEligibility<TImageId>.IsEligible(TImageId imageId, SharedKernel.BuildingBlocks.ContentCulture! culture) -> bool
+SharedKernel.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider, SharedKernel.BuildingBlocks.MoneyDisplayOptions! options) -> string!
+SharedKernel.BuildingBlocks.MoneyDisplayOptions
+SharedKernel.BuildingBlocks.MoneyDisplayOptions.<Clone>$() -> SharedKernel.BuildingBlocks.MoneyDisplayOptions!
+SharedKernel.BuildingBlocks.MoneyDisplayOptions.Equals(SharedKernel.BuildingBlocks.MoneyDisplayOptions? other) -> bool
+SharedKernel.BuildingBlocks.MoneyDisplayOptions.MoneyDisplayOptions() -> void
+SharedKernel.BuildingBlocks.MoneyDisplayOptions.OmitZeroMinorUnits.get -> bool
+SharedKernel.BuildingBlocks.MoneyDisplayOptions.OmitZeroMinorUnits.init -> void
+SharedKernel.BuildingBlocks.MoneyDisplayOptions.SymbolPlacement.get -> SharedKernel.BuildingBlocks.MoneySymbolPlacement
+SharedKernel.BuildingBlocks.MoneyDisplayOptions.SymbolPlacement.init -> void
+SharedKernel.BuildingBlocks.MoneySymbolPlacement
+SharedKernel.BuildingBlocks.MoneySymbolPlacement.After = 2 -> SharedKernel.BuildingBlocks.MoneySymbolPlacement
+SharedKernel.BuildingBlocks.MoneySymbolPlacement.Before = 1 -> SharedKernel.BuildingBlocks.MoneySymbolPlacement
+SharedKernel.BuildingBlocks.MoneySymbolPlacement.Culture = 0 -> SharedKernel.BuildingBlocks.MoneySymbolPlacement
+override SharedKernel.BuildingBlocks.MoneyDisplayOptions.Equals(object? obj) -> bool
+override SharedKernel.BuildingBlocks.MoneyDisplayOptions.GetHashCode() -> int
+override SharedKernel.BuildingBlocks.MoneyDisplayOptions.ToString() -> string!
+static SharedKernel.BuildingBlocks.MoneyDisplayOptions.operator !=(SharedKernel.BuildingBlocks.MoneyDisplayOptions? left, SharedKernel.BuildingBlocks.MoneyDisplayOptions? right) -> bool
+static SharedKernel.BuildingBlocks.MoneyDisplayOptions.operator ==(SharedKernel.BuildingBlocks.MoneyDisplayOptions? left, SharedKernel.BuildingBlocks.MoneyDisplayOptions? right) -> bool
+SharedKernel.BuildingBlocks.ImageCredit
+SharedKernel.BuildingBlocks.ImageCredit.Author.get -> string!
+SharedKernel.BuildingBlocks.ImageCredit.License.get -> SharedKernel.BuildingBlocks.ImageLicense!
+SharedKernel.BuildingBlocks.ImageCredit.Modified.get -> bool
+SharedKernel.BuildingBlocks.ImageCredit.SourceUrl.get -> SharedKernel.BuildingBlocks.WebUrl?
+SharedKernel.BuildingBlocks.ImageCredit.Title.get -> string?
+SharedKernel.BuildingBlocks.ImageCredit.ToFullText(SharedKernel.BuildingBlocks.ImageCreditFormats! formats, System.IFormatProvider! provider) -> string!
+SharedKernel.BuildingBlocks.ImageCredit.ToShortText(string! format, System.IFormatProvider! provider) -> string!
+SharedKernel.BuildingBlocks.ImageCreditFormats
+SharedKernel.BuildingBlocks.ImageCreditFormats.<Clone>$() -> SharedKernel.BuildingBlocks.ImageCreditFormats!
+SharedKernel.BuildingBlocks.ImageCreditFormats.Deconstruct(out string! WithTitle, out string! WithoutTitle, out string! Modified) -> void
+SharedKernel.BuildingBlocks.ImageCreditFormats.Equals(SharedKernel.BuildingBlocks.ImageCreditFormats? other) -> bool
+SharedKernel.BuildingBlocks.ImageCreditFormats.ImageCreditFormats(string! WithTitle, string! WithoutTitle, string! Modified) -> void
+SharedKernel.BuildingBlocks.ImageCreditFormats.Modified.get -> string!
+SharedKernel.BuildingBlocks.ImageCreditFormats.WithTitle.get -> string!
+SharedKernel.BuildingBlocks.ImageCreditFormats.WithoutTitle.get -> string!
+SharedKernel.BuildingBlocks.ImageLicense
+SharedKernel.BuildingBlocks.ImageLicense.Code.get -> string!
+SharedKernel.BuildingBlocks.ImageLicense.Url.get -> SharedKernel.BuildingBlocks.WebUrl?
+const SharedKernel.BuildingBlocks.ImageCredit.MaxAuthorLength = 200 -> int
+const SharedKernel.BuildingBlocks.ImageCredit.MaxTitleLength = 200 -> int
+const SharedKernel.BuildingBlocks.ImageLicense.MaxCodeLength = 60 -> int
+override SharedKernel.BuildingBlocks.ImageCredit.ToString() -> string!
+override SharedKernel.BuildingBlocks.ImageCreditFormats.Equals(object? obj) -> bool
+override SharedKernel.BuildingBlocks.ImageCreditFormats.GetHashCode() -> int
+override SharedKernel.BuildingBlocks.ImageCreditFormats.ToString() -> string!
+override SharedKernel.BuildingBlocks.ImageLicense.ToString() -> string!
+static SharedKernel.BuildingBlocks.ImageCreditFormats.operator !=(SharedKernel.BuildingBlocks.ImageCreditFormats? left, SharedKernel.BuildingBlocks.ImageCreditFormats? right) -> bool
+static SharedKernel.BuildingBlocks.ImageCreditFormats.operator ==(SharedKernel.BuildingBlocks.ImageCreditFormats? left, SharedKernel.BuildingBlocks.ImageCreditFormats? right) -> bool
+static SharedKernel.BuildingBlocks.ImageLicense.KnownUrl(string? code) -> SharedKernel.BuildingBlocks.WebUrl?
+static SharedKernel.BuildingBlocks.ImageCredit.Create(string? author, string? title, string? source, string? licenseCode, string? licenseLink, bool modified, string! fieldPrefix = "") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.ImageCredit!>
+static SharedKernel.BuildingBlocks.ImageCredit.Restore(string! author, string? title, string? source, SharedKernel.BuildingBlocks.ImageLicense! license, bool modified) -> SharedKernel.BuildingBlocks.ImageCredit!
+static SharedKernel.BuildingBlocks.ImageLicense.Create(string? code, string? link, string! field = "license") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.ImageLicense!>
+static SharedKernel.BuildingBlocks.ImageLicense.Restore(string! code, string? link) -> SharedKernel.BuildingBlocks.ImageLicense!
+SharedKernel.BuildingBlocks.SanitizedText
+static SharedKernel.BuildingBlocks.SanitizedText.Lines(SharedKernel.Results.ValidationErrors! errors, System.Collections.Generic.IReadOnlyList<string?>? values, string! field, string! label, int maxItems, int maxLength) -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.BuildingBlocks.SanitizedText.Optional(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength) -> string?
+static SharedKernel.BuildingBlocks.SanitizedText.Paragraphs(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxParagraphs, int maxLength) -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.BuildingBlocks.SanitizedText.Required(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength) -> string?
+SharedKernel.BuildingBlocks.TranslationListRules
+SharedKernel.BuildingBlocks.TranslationListRules.Cultures.get -> SharedKernel.BuildingBlocks.SupportedCultures!
+SharedKernel.BuildingBlocks.TranslationListRules.Field.get -> string!
+SharedKernel.BuildingBlocks.TranslationListRules.TranslationListRules(SharedKernel.BuildingBlocks.SupportedCultures! cultures, string! field, string! subject) -> void
+SharedKernel.BuildingBlocks.TranslationListRules.Validate<TDefinition, T>(SharedKernel.Results.ValidationErrors! errors, System.Collections.Generic.IEnumerable<TDefinition?>? definitions, System.Func<TDefinition!, string?>! cultureOf, System.Func<SharedKernel.BuildingBlocks.ContentCulture!, TDefinition!, T?>! build, string! parameterName) -> System.Collections.Generic.IReadOnlyList<T!>!
+static SharedKernel.BuildingBlocks.TranslationListRules.Merge<T>(System.Collections.Generic.ICollection<T>! current, System.Collections.Generic.IReadOnlyList<T>! replacement, System.Func<T, SharedKernel.BuildingBlocks.ContentCulture!>! culture, System.Action<T, T>! apply) -> void
+static SharedKernel.BuildingBlocks.TranslationListRules.Same<T>(System.Collections.Generic.IReadOnlyList<T>! current, System.Collections.Generic.IReadOnlyList<T>! replacement, System.Func<T, SharedKernel.BuildingBlocks.ContentCulture!>! culture, System.Func<T, T, bool>! same) -> bool
+static SharedKernel.BuildingBlocks.SanitizedText.Optional(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength, out bool entered) -> string?
+static SharedKernel.BuildingBlocks.SanitizedText.Paragraphs(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxParagraphs, int maxLength, out bool entered) -> System.Collections.Generic.IReadOnlyList<string!>!

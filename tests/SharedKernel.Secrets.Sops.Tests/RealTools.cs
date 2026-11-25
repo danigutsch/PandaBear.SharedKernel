@@ -1,6 +1,6 @@
-using PandaBear.Secrets.Age;
+using SharedKernel.Secrets.Age;
 
-namespace PandaBear.Secrets.Sops.Tests;
+namespace SharedKernel.Secrets.Sops.Tests;
 
 /// <summary>Finds the real age, age-keygen, and sops programs in the absolute directories of PATH, so integration tests can skip when they are absent.</summary>
 internal static class RealTools

@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Blazor.CodeFixes</PackageId>
         <Description>Code fixes for Blazor component state and service-scope conventions.</Description>
-        <RootNamespace>PandaBear.Blazor.CodeFixes</RootNamespace>
+        <RootNamespace>SharedKernel.Blazor.CodeFixes</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>blazor;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

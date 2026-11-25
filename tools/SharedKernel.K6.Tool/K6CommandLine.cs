@@ -1,9 +1,9 @@
 using System.CommandLine;
 using System.ComponentModel;
-using PandaBear.InputNormalization;
-using PandaBear.LoadTesting;
+using SharedKernel.InputNormalization;
+using SharedKernel.LoadTesting;
 
-namespace PandaBear.K6.Tool;
+namespace SharedKernel.K6.Tool;
 
 /// <summary>Builds the <c>loadtest</c> command tree.</summary>
 internal static class K6CommandLine

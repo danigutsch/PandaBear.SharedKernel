@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Fixed object ids and scripted GitHub REST responses for roadmap publication tests.</summary>
 internal static class RoadmapGitHubPublicationTestOperations

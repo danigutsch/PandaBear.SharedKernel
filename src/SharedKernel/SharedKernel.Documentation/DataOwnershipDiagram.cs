@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>The caller-owned trust boundaries, nodes, and access relationships of a data ownership diagram.</summary>
 /// <param name="boundaries">The declared trust boundaries.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the validated date of birth.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

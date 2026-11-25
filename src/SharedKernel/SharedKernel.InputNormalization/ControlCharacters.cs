@@ -2,7 +2,7 @@ using System.Buffers;
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.InputNormalization;
+namespace SharedKernel.InputNormalization;
 
 /// <summary>
 /// Escapes text from files, processes, and the network before a tool writes it to a terminal or a CI log.

@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Edits and verifies the <c>roadmap/config.json</c> file of a temporary workspace.</summary>
 internal static class RoadmapConfigTestOperations

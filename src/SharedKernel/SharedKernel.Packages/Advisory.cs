@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// A security advisory for one package. It lists the exact versions that are affected, because version order is specific

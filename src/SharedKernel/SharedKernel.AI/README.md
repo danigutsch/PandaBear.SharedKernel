@@ -26,7 +26,7 @@ dotnet add package PandaBear.SharedKernel.AI --version <validated-candidate-vers
 ```
 
 ```csharp
-using PandaBear.AI;
+using SharedKernel.AI;
 
 public static class Example
 {
@@ -48,6 +48,6 @@ the caller's token propagates `OperationCanceledException` so the host can handl
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AI`. C# namespace: `PandaBear.AI`. Assembly/project identity: `SharedKernel.AI`.
+Package ID: `PandaBear.SharedKernel.AI`. C# namespace: `SharedKernel.AI`. Assembly/project identity: `SharedKernel.AI`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

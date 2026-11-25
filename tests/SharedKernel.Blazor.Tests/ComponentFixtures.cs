@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Builds component inputs for the Blazor helper tests.</summary>
 internal static class ComponentFixtures

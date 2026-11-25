@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Domain.Analyzers;
+namespace SharedKernel.Domain.Analyzers;
 
 /// <summary>
 /// Resolves the collection types that decide whether an exposed property type is mutable.

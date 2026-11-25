@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Mediator.EntityFrameworkCore.Tests;
+namespace SharedKernel.Mediator.EntityFrameworkCore.Tests;
 
 /// <summary>Tests the result transaction behavior on a non-relational provider; PostgreSQL behavior is covered in the EntityFrameworkCore tests.</summary>
 public sealed class ResultTransactionBehaviorTests

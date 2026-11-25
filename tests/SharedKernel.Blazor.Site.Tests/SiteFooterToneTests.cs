@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the tone and the text alignment of the site footer.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

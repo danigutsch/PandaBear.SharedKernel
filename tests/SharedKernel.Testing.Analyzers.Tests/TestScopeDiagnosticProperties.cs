@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Builds the diagnostic properties SKTEST018 attaches for its code fix.</summary>
 internal static class TestScopeDiagnosticProperties

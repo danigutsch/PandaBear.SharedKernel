@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.Results.AspNet.Tests;
+namespace SharedKernel.Results.AspNet.Tests;
 
 /// <summary>Tests the responses that carry a record version or a created location.</summary>
 public sealed class VersionedResultHttpExtensionsTests

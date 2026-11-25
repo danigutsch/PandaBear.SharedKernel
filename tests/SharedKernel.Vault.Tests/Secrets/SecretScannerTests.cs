@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Tests the secret scanner: what it finds in item text, how confident it is, and where it proposes to place each finding.</summary>
 public sealed class SecretScannerTests

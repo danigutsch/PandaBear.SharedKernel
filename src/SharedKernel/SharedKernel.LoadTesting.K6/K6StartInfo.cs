@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.LoadTesting.K6;
+namespace SharedKernel.LoadTesting.K6;
 
 /// <summary>Builds the start information of local k6, of k6 in a container, and of the removal of that container.</summary>
 internal static class K6StartInfo

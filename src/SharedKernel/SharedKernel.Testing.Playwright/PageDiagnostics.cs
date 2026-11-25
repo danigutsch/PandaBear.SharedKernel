@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Text;
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>
 /// Records what a page's browser saw (console messages, page errors, failed requests, error responses, WebSocket lifecycle) so a wait that

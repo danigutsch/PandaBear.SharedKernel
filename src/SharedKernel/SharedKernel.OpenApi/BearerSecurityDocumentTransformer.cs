@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 
-namespace PandaBear.OpenApi;
+namespace SharedKernel.OpenApi;
 
 /// <summary>
 /// Documents JWT bearer authentication only for operations protected by authorization metadata or a fallback policy.

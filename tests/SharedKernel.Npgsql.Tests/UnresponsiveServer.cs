@@ -2,7 +2,7 @@ using System.Buffers.Binary;
 using System.Net;
 using System.Net.Sockets;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>
 /// Accepts every connection on a loopback port and never answers, like a PostgreSQL server whose process is paused or whose

@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the Umami website resource: its place under Umami, its name-based website id, the connection string a site references, and its checks.</summary>
 public sealed class UmamiWebsiteResourceTests

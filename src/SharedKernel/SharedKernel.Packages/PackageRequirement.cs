@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>A package that should be installed, optionally at one exact version.</summary>
 public sealed class PackageRequirement : ValueObject

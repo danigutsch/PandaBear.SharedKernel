@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the publication status shared by published content such as albums, pages and tours.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

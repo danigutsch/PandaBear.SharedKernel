@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Testing.AspNetCore.Tests;
+namespace SharedKernel.Testing.AspNetCore.Tests;
 
 /// <summary>Tests that an application's real entry point is reachable over a real socket.</summary>
 [Trait(TestTraitNames.ScopeName, "Integration")]

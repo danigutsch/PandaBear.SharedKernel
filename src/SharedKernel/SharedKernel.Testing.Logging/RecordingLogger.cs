@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Testing.Logging;
+namespace SharedKernel.Testing.Logging;
 
 /// <summary>A fake logger that keeps every record and begun scope in memory so tests can assert on what was logged.</summary>
 public class RecordingLogger : ILogger

@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Queries that report details of a PostgreSQL session.</summary>
 internal static class PostgreSqlSessionQueries

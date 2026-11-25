@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Configuration file model for the documentation conformance checker.</summary>
 internal sealed class DocumentationConformanceConfig

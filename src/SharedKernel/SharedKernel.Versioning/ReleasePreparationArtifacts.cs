@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Writes release-preparation notes, changelog, and package manifest artifacts.

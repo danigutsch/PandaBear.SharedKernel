@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>An OpenAPI target: the project whose build generates or refreshes OpenAPI documents when a property is set.</summary>
 /// <param name="Name">Lowercase letters and digits in hyphen-separated words; <c>openapi --target</c> and <c>slices[].openApi</c> name it.</param>

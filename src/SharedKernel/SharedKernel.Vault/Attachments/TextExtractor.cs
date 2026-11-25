@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Attachments;
+namespace SharedKernel.Vault.Attachments;
 
 /// <summary>Decodes attachment text within size limits, so later scanning works on bounded input.</summary>
 public static class TextExtractor

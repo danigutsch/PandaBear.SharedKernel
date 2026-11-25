@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>
 /// Reports whether the Playwright Chromium browser can be launched, for xUnit <c>SkipUnless</c> conditions, and launches it for

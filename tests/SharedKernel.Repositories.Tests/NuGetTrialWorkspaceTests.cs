@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Verifies that a NuGet trial hands back only the requested central props and existing locks.</summary>
 public sealed class NuGetTrialWorkspaceTests

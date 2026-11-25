@@ -4,7 +4,7 @@ using Terminal.Gui.Input;
 using Terminal.Gui.ViewBase;
 using Terminal.Gui.Views;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>
 /// Asks for the password of a new export twice, in masked fields. <see cref="Runnable{TResult}.Result"/> is the password

@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Defines API compatibility report inputs.

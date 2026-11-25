@@ -1,7 +1,7 @@
-using PandaBear.Messaging;
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Messaging;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests that outbox rows record the payload, encoding, and content type the serializer reports.

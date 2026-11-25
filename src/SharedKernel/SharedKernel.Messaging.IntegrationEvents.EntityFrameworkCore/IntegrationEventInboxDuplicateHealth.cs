@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Completed duplicate observations for one consumer across retained inbox entries.</summary>
 /// <param name="EntriesWithDuplicates">The number of inbox entries with a recorded duplicate.</param>

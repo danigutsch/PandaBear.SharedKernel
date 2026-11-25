@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Builds services for the current-user accessor tests.</summary>
 internal static class CurrentUserTestServices

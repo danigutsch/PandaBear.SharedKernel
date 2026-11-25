@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.Idempotency.EntityFrameworkCore;
+namespace SharedKernel.Idempotency.EntityFrameworkCore;
 
 /// <summary>Builds the named-options keys under which per-context idempotency options are registered.</summary>
 internal static class IdempotencyOptionsNames

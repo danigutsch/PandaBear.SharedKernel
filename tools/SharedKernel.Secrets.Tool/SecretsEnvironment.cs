@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Secrets.Tool;
+namespace SharedKernel.Secrets.Tool;
 
 /// <summary>What the commands need from the outside world, injected so tests can fake it.</summary>
 /// <param name="WorkingDirectory">The directory that a relative path and the default root resolve from.</param>

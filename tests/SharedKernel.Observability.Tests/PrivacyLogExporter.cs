@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Exporter that converts each exported log record into a CapturedPrivacyLogRecord, counting its scopes, and queues it for inspection.</summary>
 /// <param name="records">Queue receiving a snapshot of each exported log record.</param>

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A row of actions, such as the buttons that close a page: a plain <c>div</c>, never a landmark, that keeps its children in reading

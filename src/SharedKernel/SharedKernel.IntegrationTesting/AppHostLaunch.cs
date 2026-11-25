@@ -1,4 +1,4 @@
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>How an <see cref="AspireAppHostFixture{TAppHost}"/> starts one profile of an AppHost.</summary>
 /// <param name="arguments">The AppHost configuration arguments, such as <c>--Section:Key=value</c>.</param>

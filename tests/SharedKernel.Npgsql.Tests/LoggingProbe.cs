@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>A hosted service that records the logger providers of the application it runs in and logs <see cref="Entry"/> when it starts.</summary>
 internal sealed partial class LoggingProbe : IHostedService

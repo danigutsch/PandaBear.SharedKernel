@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>One entry that the repository walk found.</summary>
 /// <param name="RelativePath">The path relative to the root, with <c>/</c> separators.</param>

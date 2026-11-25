@@ -1,656 +1,656 @@
 #nullable enable
-PandaBear.Offerings.CountRange
-PandaBear.Offerings.CountRange.<Clone>$() -> PandaBear.Offerings.CountRange!
-PandaBear.Offerings.CountRange.CountRange(int min, int max) -> void
-PandaBear.Offerings.CountRange.Equals(PandaBear.Offerings.CountRange? other) -> bool
-PandaBear.Offerings.CountRange.Max.get -> int
-PandaBear.Offerings.CountRange.Min.get -> int
-PandaBear.Offerings.GroupCondition
-PandaBear.Offerings.GroupCondition.<Clone>$() -> PandaBear.Offerings.GroupCondition!
-PandaBear.Offerings.GroupCondition.Deconstruct(out int MinimumParticipants, out PandaBear.BuildingBlocks.Money! SurchargePerMissing, out int DueDays) -> void
-PandaBear.Offerings.GroupCondition.DueDays.get -> int
-PandaBear.Offerings.GroupCondition.DueDays.init -> void
-PandaBear.Offerings.GroupCondition.Equals(PandaBear.Offerings.GroupCondition? other) -> bool
-PandaBear.Offerings.GroupCondition.GroupCondition(int MinimumParticipants, PandaBear.BuildingBlocks.Money! SurchargePerMissing, int DueDays) -> void
-PandaBear.Offerings.GroupCondition.MinimumParticipants.get -> int
-PandaBear.Offerings.GroupCondition.MinimumParticipants.init -> void
-PandaBear.Offerings.GroupCondition.SurchargePerMissing.get -> PandaBear.BuildingBlocks.Money!
-PandaBear.Offerings.GroupCondition.SurchargePerMissing.init -> void
-PandaBear.Offerings.GroupConditionDefinition
-PandaBear.Offerings.GroupConditionDefinition.<Clone>$() -> PandaBear.Offerings.GroupConditionDefinition!
-PandaBear.Offerings.GroupConditionDefinition.Deconstruct(out int? MinimumParticipants, out decimal? SurchargePerMissing, out int? DueDays) -> void
-PandaBear.Offerings.GroupConditionDefinition.DueDays.get -> int?
-PandaBear.Offerings.GroupConditionDefinition.DueDays.init -> void
-PandaBear.Offerings.GroupConditionDefinition.Equals(PandaBear.Offerings.GroupConditionDefinition? other) -> bool
-PandaBear.Offerings.GroupConditionDefinition.GroupConditionDefinition(int? MinimumParticipants, decimal? SurchargePerMissing, int? DueDays) -> void
-PandaBear.Offerings.GroupConditionDefinition.MinimumParticipants.get -> int?
-PandaBear.Offerings.GroupConditionDefinition.MinimumParticipants.init -> void
-PandaBear.Offerings.GroupConditionDefinition.SurchargePerMissing.get -> decimal?
-PandaBear.Offerings.GroupConditionDefinition.SurchargePerMissing.init -> void
-PandaBear.Offerings.Metric<TMetric>
-PandaBear.Offerings.Metric<TMetric>.<Clone>$() -> PandaBear.Offerings.Metric<TMetric>!
-PandaBear.Offerings.Metric<TMetric>.Approximate.get -> bool
-PandaBear.Offerings.Metric<TMetric>.Approximate.init -> void
-PandaBear.Offerings.Metric<TMetric>.Deconstruct(out TMetric Kind, out decimal Value, out decimal? Upper, out bool Approximate) -> void
-PandaBear.Offerings.Metric<TMetric>.Equals(PandaBear.Offerings.Metric<TMetric>? other) -> bool
-PandaBear.Offerings.Metric<TMetric>.Kind.get -> TMetric
-PandaBear.Offerings.Metric<TMetric>.Kind.init -> void
-PandaBear.Offerings.Metric<TMetric>.Metric(TMetric Kind, decimal Value, decimal? Upper = null, bool Approximate = false) -> void
-PandaBear.Offerings.Metric<TMetric>.Upper.get -> decimal?
-PandaBear.Offerings.Metric<TMetric>.Upper.init -> void
-PandaBear.Offerings.Metric<TMetric>.Value.get -> decimal
-PandaBear.Offerings.Metric<TMetric>.Value.init -> void
-PandaBear.Offerings.MetricFormat
-PandaBear.Offerings.MetricFormat.<Clone>$() -> PandaBear.Offerings.MetricFormat!
-PandaBear.Offerings.MetricFormat.ApproximatePattern.get -> string!
-PandaBear.Offerings.MetricFormat.Decimals.get -> int
-PandaBear.Offerings.MetricFormat.Deconstruct(out string! Pattern, out string! ApproximatePattern, out int Decimals) -> void
-PandaBear.Offerings.MetricFormat.Equals(PandaBear.Offerings.MetricFormat? other) -> bool
-PandaBear.Offerings.MetricFormat.MetricFormat(string! Pattern, string! ApproximatePattern, int Decimals = 0) -> void
-PandaBear.Offerings.MetricFormat.Pattern.get -> string!
-PandaBear.Offerings.MetricRule<TMetric>
-PandaBear.Offerings.MetricRule<TMetric>.<Clone>$() -> PandaBear.Offerings.MetricRule<TMetric>!
-PandaBear.Offerings.MetricRule<TMetric>.AllowsApproximate.get -> bool
-PandaBear.Offerings.MetricRule<TMetric>.AllowsApproximate.init -> void
-PandaBear.Offerings.MetricRule<TMetric>.AllowsRange.get -> bool
-PandaBear.Offerings.MetricRule<TMetric>.AllowsRange.init -> void
-PandaBear.Offerings.MetricRule<TMetric>.Decimals.get -> int
-PandaBear.Offerings.MetricRule<TMetric>.Decimals.init -> void
-PandaBear.Offerings.MetricRule<TMetric>.Deconstruct(out TMetric Kind, out PandaBear.Offerings.MetricScope Scope, out decimal Min, out decimal Max, out int Decimals, out bool AllowsRange, out bool AllowsApproximate) -> void
-PandaBear.Offerings.MetricRule<TMetric>.Equals(PandaBear.Offerings.MetricRule<TMetric>? other) -> bool
-PandaBear.Offerings.MetricRule<TMetric>.Kind.get -> TMetric
-PandaBear.Offerings.MetricRule<TMetric>.Kind.init -> void
-PandaBear.Offerings.MetricRule<TMetric>.Max.get -> decimal
-PandaBear.Offerings.MetricRule<TMetric>.Max.init -> void
-PandaBear.Offerings.MetricRule<TMetric>.MetricRule(TMetric Kind, PandaBear.Offerings.MetricScope Scope, decimal Min, decimal Max, int Decimals = 0, bool AllowsRange = false, bool AllowsApproximate = false) -> void
-PandaBear.Offerings.MetricRule<TMetric>.Min.get -> decimal
-PandaBear.Offerings.MetricRule<TMetric>.Min.init -> void
-PandaBear.Offerings.MetricRule<TMetric>.Scope.get -> PandaBear.Offerings.MetricScope
-PandaBear.Offerings.MetricRule<TMetric>.Scope.init -> void
-PandaBear.Offerings.MetricScope
-PandaBear.Offerings.MetricScope.None = 0 -> PandaBear.Offerings.MetricScope
-PandaBear.Offerings.MetricScope.Offering = 1 -> PandaBear.Offerings.MetricScope
-PandaBear.Offerings.MetricScope.Step = 2 -> PandaBear.Offerings.MetricScope
-PandaBear.Offerings.Offering
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.CoverId.get -> TImageId?
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.Currency.get -> PandaBear.BuildingBlocks.Currency?
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.FromPrice.get -> PandaBear.BuildingBlocks.Money?
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.GalleryIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.GroupCondition.get -> PandaBear.Offerings.GroupCondition?
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.IsPublishedIn(PandaBear.BuildingBlocks.ContentCulture! culture) -> bool
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.Metric<TMetric>!>!
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.Participants.get -> PandaBear.Offerings.ParticipantRange?
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.PaymentTerms.get -> PandaBear.Offerings.PaymentTerms?
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.Prices.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.PriceLine<TPriceKind>!>!
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.PublishedIn(PandaBear.BuildingBlocks.ContentCulture? requested, PandaBear.BuildingBlocks.SupportedCultures! cultures) -> PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>?
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.Revise(PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>! definition, PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>! rules, PandaBear.BuildingBlocks.IImageEligibility<TImageId>! images) -> PandaBear.Results.Result<bool>
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.Schedule.get -> PandaBear.Offerings.OfferingSchedule!
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.SignUpLink.get -> PandaBear.BuildingBlocks.WebUrl?
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.SortOrder.get -> int
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.Steps.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.ProgramStep<TImageId, TMetric>!>!
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.ToDefinition() -> PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>!
-PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>.Translations.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.OfferingTranslation!>!
-PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingAvailability.DatesToBeConfirmed = 3 -> PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingAvailability.OnRequest = 4 -> PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingAvailability.Scheduled = 1 -> PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingAvailability.SoldOut = 2 -> PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingCallToAction
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.<Clone>$() -> PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>!
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.CoverId.get -> TImageId?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.CoverId.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Currency.get -> string?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Currency.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Equals(PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? other) -> bool
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GalleryIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GalleryIds.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GroupCondition.get -> PandaBear.Offerings.GroupConditionDefinition?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GroupCondition.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.Metric<TMetric>!>?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Metrics.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.OfferingDefinition() -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Participants.get -> PandaBear.Offerings.ParticipantRange?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Participants.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.PaymentTerms.get -> PandaBear.Offerings.PaymentTerms?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.PaymentTerms.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Prices.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.PriceLineDefinition<TPriceKind>!>?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Prices.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Schedule.get -> PandaBear.Offerings.OfferingScheduleDefinition!
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Schedule.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.SignUpLink.get -> string?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.SignUpLink.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.SortOrder.get -> int
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.SortOrder.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Steps.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>!>?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Steps.init -> void
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Translations.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.OfferingTranslationDefinition!>?
-PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Translations.init -> void
-PandaBear.Offerings.OfferingFields
-PandaBear.Offerings.OfferingGroup<TItem>
-PandaBear.Offerings.OfferingGroup<TItem>.<Clone>$() -> PandaBear.Offerings.OfferingGroup<TItem>!
-PandaBear.Offerings.OfferingGroup<TItem>.Deconstruct(out PandaBear.Offerings.OfferingGroupKind Kind, out int? Year, out System.Collections.Generic.IReadOnlyList<TItem>! Items) -> void
-PandaBear.Offerings.OfferingGroup<TItem>.Equals(PandaBear.Offerings.OfferingGroup<TItem>? other) -> bool
-PandaBear.Offerings.OfferingGroup<TItem>.Items.get -> System.Collections.Generic.IReadOnlyList<TItem>!
-PandaBear.Offerings.OfferingGroup<TItem>.Items.init -> void
-PandaBear.Offerings.OfferingGroup<TItem>.Kind.get -> PandaBear.Offerings.OfferingGroupKind
-PandaBear.Offerings.OfferingGroup<TItem>.Kind.init -> void
-PandaBear.Offerings.OfferingGroup<TItem>.OfferingGroup(PandaBear.Offerings.OfferingGroupKind Kind, int? Year, System.Collections.Generic.IReadOnlyList<TItem>! Items) -> void
-PandaBear.Offerings.OfferingGroup<TItem>.Year.get -> int?
-PandaBear.Offerings.OfferingGroup<TItem>.Year.init -> void
-PandaBear.Offerings.OfferingGroupKind
-PandaBear.Offerings.OfferingGroupKind.OnRequest = 1 -> PandaBear.Offerings.OfferingGroupKind
-PandaBear.Offerings.OfferingGroupKind.Year = 0 -> PandaBear.Offerings.OfferingGroupKind
-PandaBear.Offerings.OfferingListing
-PandaBear.Offerings.OfferingPublishing
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.Cultures.get -> PandaBear.BuildingBlocks.SupportedCultures!
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.ForbiddenStepTitlePrefixes.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.ForbiddenStepTitlePrefixes.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.HighlightsCount.get -> PandaBear.Offerings.CountRange?
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.HighlightsCount.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxDateNoteLength.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxDateNoteLength.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxDurationDays.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxDurationDays.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxGalleryImages.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxGalleryImages.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxLineLength.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxLineLength.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxListItems.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxListItems.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParagraphLength.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParagraphLength.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParagraphs.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParagraphs.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParticipants.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParticipants.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxPrice.get -> decimal
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxPrice.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxPrices.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxPrices.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSlugLength.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSlugLength.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSteps.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSteps.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSummaryLength.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSummaryLength.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxTitleLength.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxTitleLength.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxYear.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MaxYear.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.MetricRule<TMetric>!>!
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MinYear.get -> int
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.MinYear.init -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.OfferingRules(PandaBear.BuildingBlocks.SupportedCultures! cultures, System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.PriceKindRule<TPriceKind>!>! priceKinds, System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.MetricRule<TMetric>!>! metrics) -> void
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.PriceKinds.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.PriceKindRule<TPriceKind>!>!
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.StepCount.get -> PandaBear.Offerings.OfferingStepCount
-PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>.StepCount.init -> void
-PandaBear.Offerings.OfferingSchedule
-PandaBear.Offerings.OfferingSchedule.<Clone>$() -> PandaBear.Offerings.OfferingSchedule!
-PandaBear.Offerings.OfferingSchedule.Availability.get -> PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingSchedule.Availability.init -> void
-PandaBear.Offerings.OfferingSchedule.Dates.get -> PandaBear.BuildingBlocks.DateOnlyRange?
-PandaBear.Offerings.OfferingSchedule.Dates.init -> void
-PandaBear.Offerings.OfferingSchedule.Deconstruct(out PandaBear.Offerings.OfferingAvailability Availability, out PandaBear.BuildingBlocks.DateOnlyRange? Dates, out int? Year, out int DurationDays) -> void
-PandaBear.Offerings.OfferingSchedule.DurationDays.get -> int
-PandaBear.Offerings.OfferingSchedule.DurationDays.init -> void
-PandaBear.Offerings.OfferingSchedule.Equals(PandaBear.Offerings.OfferingSchedule? other) -> bool
-PandaBear.Offerings.OfferingSchedule.Nights.get -> int
-PandaBear.Offerings.OfferingSchedule.OfferingSchedule(PandaBear.Offerings.OfferingAvailability Availability, PandaBear.BuildingBlocks.DateOnlyRange? Dates, int? Year, int DurationDays) -> void
-PandaBear.Offerings.OfferingSchedule.Year.get -> int?
-PandaBear.Offerings.OfferingSchedule.Year.init -> void
-PandaBear.Offerings.OfferingScheduleDefinition
-PandaBear.Offerings.OfferingScheduleDefinition.<Clone>$() -> PandaBear.Offerings.OfferingScheduleDefinition!
-PandaBear.Offerings.OfferingScheduleDefinition.Availability.get -> PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingScheduleDefinition.Availability.init -> void
-PandaBear.Offerings.OfferingScheduleDefinition.Deconstruct(out PandaBear.Offerings.OfferingAvailability Availability, out System.DateOnly? StartDate, out System.DateOnly? EndDate, out int? Year, out int? DurationDays) -> void
-PandaBear.Offerings.OfferingScheduleDefinition.DurationDays.get -> int?
-PandaBear.Offerings.OfferingScheduleDefinition.DurationDays.init -> void
-PandaBear.Offerings.OfferingScheduleDefinition.EndDate.get -> System.DateOnly?
-PandaBear.Offerings.OfferingScheduleDefinition.EndDate.init -> void
-PandaBear.Offerings.OfferingScheduleDefinition.Equals(PandaBear.Offerings.OfferingScheduleDefinition? other) -> bool
-PandaBear.Offerings.OfferingScheduleDefinition.OfferingScheduleDefinition(PandaBear.Offerings.OfferingAvailability Availability, System.DateOnly? StartDate = null, System.DateOnly? EndDate = null, int? Year = null, int? DurationDays = null) -> void
-PandaBear.Offerings.OfferingScheduleDefinition.StartDate.get -> System.DateOnly?
-PandaBear.Offerings.OfferingScheduleDefinition.StartDate.init -> void
-PandaBear.Offerings.OfferingScheduleDefinition.Year.get -> int?
-PandaBear.Offerings.OfferingScheduleDefinition.Year.init -> void
-PandaBear.Offerings.OfferingStepCount
-PandaBear.Offerings.OfferingStepCount.Free = 0 -> PandaBear.Offerings.OfferingStepCount
-PandaBear.Offerings.OfferingStepCount.MatchesDuration = 1 -> PandaBear.Offerings.OfferingStepCount
-PandaBear.Offerings.OfferingStructuredData
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.Availability.get -> PandaBear.Offerings.OfferingAvailability?
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.Availability.init -> void
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.CanonicalUrl.get -> System.Uri?
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.CanonicalUrl.init -> void
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.ImageUrls.get -> System.Collections.Generic.IReadOnlyList<System.Uri!>!
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.ImageUrls.init -> void
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.OfferingStructuredDataOptions() -> void
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.PriceLabel.init -> void
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.Provider.get -> PandaBear.Offerings.StructuredDataOrganization?
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.Provider.init -> void
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.Type.get -> PandaBear.Offerings.OfferingStructuredDataType
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.Type.init -> void
-PandaBear.Offerings.OfferingStructuredDataType
-PandaBear.Offerings.OfferingStructuredDataType.Product = 1 -> PandaBear.Offerings.OfferingStructuredDataType
-PandaBear.Offerings.OfferingStructuredDataType.TouristTrip = 0 -> PandaBear.Offerings.OfferingStructuredDataType
-PandaBear.Offerings.OfferingText
-PandaBear.Offerings.OfferingTranslation
-PandaBear.Offerings.OfferingTranslation.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.Offerings.OfferingTranslation.DateNote.get -> string?
-PandaBear.Offerings.OfferingTranslation.Description.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingTranslation.Eyebrow.get -> string?
-PandaBear.Offerings.OfferingTranslation.Highlights.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingTranslation.Included.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingTranslation.NotIncluded.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingTranslation.PracticalInfo.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingTranslation.SeoDescription.get -> string?
-PandaBear.Offerings.OfferingTranslation.SeoTitle.get -> string?
-PandaBear.Offerings.OfferingTranslation.Slug.get -> PandaBear.BuildingBlocks.Slug!
-PandaBear.Offerings.OfferingTranslation.Status.get -> PandaBear.BuildingBlocks.PublicationStatus
-PandaBear.Offerings.OfferingTranslation.StepTexts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.ProgramStepText!>!
-PandaBear.Offerings.OfferingTranslation.Subtitle.get -> string?
-PandaBear.Offerings.OfferingTranslation.Summary.get -> string?
-PandaBear.Offerings.OfferingTranslation.Title.get -> string!
-PandaBear.Offerings.OfferingTranslationDefinition
-PandaBear.Offerings.OfferingTranslationDefinition.<Clone>$() -> PandaBear.Offerings.OfferingTranslationDefinition!
-PandaBear.Offerings.OfferingTranslationDefinition.Culture.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.Culture.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.DateNote.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.DateNote.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Description.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.Description.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Equals(PandaBear.Offerings.OfferingTranslationDefinition? other) -> bool
-PandaBear.Offerings.OfferingTranslationDefinition.Eyebrow.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.Eyebrow.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Highlights.get -> System.Collections.Generic.IReadOnlyList<string?>?
-PandaBear.Offerings.OfferingTranslationDefinition.Highlights.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Included.get -> System.Collections.Generic.IReadOnlyList<string?>?
-PandaBear.Offerings.OfferingTranslationDefinition.Included.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.NotIncluded.get -> System.Collections.Generic.IReadOnlyList<string?>?
-PandaBear.Offerings.OfferingTranslationDefinition.NotIncluded.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.OfferingTranslationDefinition() -> void
-PandaBear.Offerings.OfferingTranslationDefinition.PracticalInfo.get -> System.Collections.Generic.IReadOnlyList<string?>?
-PandaBear.Offerings.OfferingTranslationDefinition.PracticalInfo.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.PriceLabels.get -> System.Collections.Generic.IReadOnlyList<string?>?
-PandaBear.Offerings.OfferingTranslationDefinition.PriceLabels.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.SeoDescription.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.SeoDescription.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.SeoTitle.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.SeoTitle.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Slug.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.Slug.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Status.get -> PandaBear.BuildingBlocks.PublicationStatus
-PandaBear.Offerings.OfferingTranslationDefinition.Status.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.StepTexts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.ProgramStepTextDefinition!>?
-PandaBear.Offerings.OfferingTranslationDefinition.StepTexts.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Subtitle.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.Subtitle.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Summary.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.Summary.init -> void
-PandaBear.Offerings.OfferingTranslationDefinition.Title.get -> string?
-PandaBear.Offerings.OfferingTranslationDefinition.Title.init -> void
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Availability.get -> PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.CallToAction.get -> PandaBear.Offerings.OfferingCallToAction
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.CoverId.get -> TImageId?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Currency.get -> PandaBear.BuildingBlocks.Currency?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.DateNote.get -> string?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Dates.get -> PandaBear.BuildingBlocks.DateOnlyRange?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Description.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.DurationDays.get -> int
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Eyebrow.get -> string?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.FromPrice.get -> PandaBear.BuildingBlocks.Money?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.GalleryIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.GroupCondition.get -> PandaBear.Offerings.GroupCondition?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Highlights.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Included.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.Metric<TMetric>!>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Nights.get -> int
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.NotIncluded.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Participants.get -> PandaBear.Offerings.ParticipantRange?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.PaymentTerms.get -> PandaBear.Offerings.PaymentTerms?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.PracticalInfo.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Prices.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.PriceView<TPriceKind>!>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Schedule.get -> PandaBear.Offerings.OfferingSchedule!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.SeoDescription.get -> string?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.SeoTitle.get -> string!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.SignUpLink.get -> PandaBear.BuildingBlocks.WebUrl?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Slug.get -> PandaBear.BuildingBlocks.Slug!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.SortOrder.get -> int
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Steps.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.ProgramStepView<TImageId, TMetric>!>!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Subtitle.get -> string?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Summary.get -> string?
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Title.get -> string!
-PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Year.get -> int?
-PandaBear.Offerings.ParticipantFormats
-PandaBear.Offerings.ParticipantFormats.<Clone>$() -> PandaBear.Offerings.ParticipantFormats!
-PandaBear.Offerings.ParticipantFormats.Deconstruct(out string! Range, out PandaBear.Offerings.PluralFormat! Minimum, out PandaBear.Offerings.PluralFormat! Maximum, out PandaBear.Offerings.PluralFormat! Exact) -> void
-PandaBear.Offerings.ParticipantFormats.Equals(PandaBear.Offerings.ParticipantFormats? other) -> bool
-PandaBear.Offerings.ParticipantFormats.Exact.get -> PandaBear.Offerings.PluralFormat!
-PandaBear.Offerings.ParticipantFormats.Maximum.get -> PandaBear.Offerings.PluralFormat!
-PandaBear.Offerings.ParticipantFormats.Minimum.get -> PandaBear.Offerings.PluralFormat!
-PandaBear.Offerings.ParticipantFormats.ParticipantFormats(string! Range, PandaBear.Offerings.PluralFormat! Minimum, PandaBear.Offerings.PluralFormat! Maximum, PandaBear.Offerings.PluralFormat! Exact) -> void
-PandaBear.Offerings.ParticipantFormats.Range.get -> string!
-PandaBear.Offerings.ParticipantRange
-PandaBear.Offerings.ParticipantRange.<Clone>$() -> PandaBear.Offerings.ParticipantRange!
-PandaBear.Offerings.ParticipantRange.Deconstruct(out int? Min, out int? Max) -> void
-PandaBear.Offerings.ParticipantRange.Equals(PandaBear.Offerings.ParticipantRange? other) -> bool
-PandaBear.Offerings.ParticipantRange.Max.get -> int?
-PandaBear.Offerings.ParticipantRange.Max.init -> void
-PandaBear.Offerings.ParticipantRange.Min.get -> int?
-PandaBear.Offerings.ParticipantRange.Min.init -> void
-PandaBear.Offerings.ParticipantRange.ParticipantRange(int? Min, int? Max) -> void
-PandaBear.Offerings.PaymentTerms
-PandaBear.Offerings.PaymentTerms.<Clone>$() -> PandaBear.Offerings.PaymentTerms!
-PandaBear.Offerings.PaymentTerms.BalanceDueDays.get -> int?
-PandaBear.Offerings.PaymentTerms.BalanceDueDays.init -> void
-PandaBear.Offerings.PaymentTerms.Deconstruct(out int? DepositPercent, out int? Instalments, out int? BalanceDueDays) -> void
-PandaBear.Offerings.PaymentTerms.DepositPercent.get -> int?
-PandaBear.Offerings.PaymentTerms.DepositPercent.init -> void
-PandaBear.Offerings.PaymentTerms.Equals(PandaBear.Offerings.PaymentTerms? other) -> bool
-PandaBear.Offerings.PaymentTerms.Instalments.get -> int?
-PandaBear.Offerings.PaymentTerms.Instalments.init -> void
-PandaBear.Offerings.PaymentTerms.PaymentTerms(int? DepositPercent, int? Instalments, int? BalanceDueDays) -> void
-PandaBear.Offerings.PaymentTermsFormats
-PandaBear.Offerings.PaymentTermsFormats.<Clone>$() -> PandaBear.Offerings.PaymentTermsFormats!
-PandaBear.Offerings.PaymentTermsFormats.BalanceDue.get -> PandaBear.Offerings.PluralFormat!
-PandaBear.Offerings.PaymentTermsFormats.Deconstruct(out string! Deposit, out PandaBear.Offerings.PluralFormat! Instalments, out PandaBear.Offerings.PluralFormat! BalanceDue) -> void
-PandaBear.Offerings.PaymentTermsFormats.Deposit.get -> string!
-PandaBear.Offerings.PaymentTermsFormats.Equals(PandaBear.Offerings.PaymentTermsFormats? other) -> bool
-PandaBear.Offerings.PaymentTermsFormats.Instalments.get -> PandaBear.Offerings.PluralFormat!
-PandaBear.Offerings.PaymentTermsFormats.PaymentTermsFormats(string! Deposit, PandaBear.Offerings.PluralFormat! Instalments, PandaBear.Offerings.PluralFormat! BalanceDue) -> void
-PandaBear.Offerings.PluralFormat
-PandaBear.Offerings.PluralFormat.<Clone>$() -> PandaBear.Offerings.PluralFormat!
-PandaBear.Offerings.PluralFormat.Deconstruct(out string! One, out string! Other) -> void
-PandaBear.Offerings.PluralFormat.Equals(PandaBear.Offerings.PluralFormat? other) -> bool
-PandaBear.Offerings.PluralFormat.Format(int count, System.IFormatProvider! provider) -> string!
-PandaBear.Offerings.PluralFormat.One.get -> string!
-PandaBear.Offerings.PluralFormat.Other.get -> string!
-PandaBear.Offerings.PluralFormat.PluralFormat(string! One, string! Other) -> void
-PandaBear.Offerings.PriceKindRule<TPriceKind>
-PandaBear.Offerings.PriceKindRule<TPriceKind>.<Clone>$() -> PandaBear.Offerings.PriceKindRule<TPriceKind>!
-PandaBear.Offerings.PriceKindRule<TPriceKind>.Deconstruct(out TPriceKind Kind, out bool Repeatable, out bool NeedsLabel, out bool IsBase) -> void
-PandaBear.Offerings.PriceKindRule<TPriceKind>.Equals(PandaBear.Offerings.PriceKindRule<TPriceKind>? other) -> bool
-PandaBear.Offerings.PriceKindRule<TPriceKind>.IsBase.get -> bool
-PandaBear.Offerings.PriceKindRule<TPriceKind>.IsBase.init -> void
-PandaBear.Offerings.PriceKindRule<TPriceKind>.Kind.get -> TPriceKind
-PandaBear.Offerings.PriceKindRule<TPriceKind>.Kind.init -> void
-PandaBear.Offerings.PriceKindRule<TPriceKind>.NeedsLabel.get -> bool
-PandaBear.Offerings.PriceKindRule<TPriceKind>.NeedsLabel.init -> void
-PandaBear.Offerings.PriceKindRule<TPriceKind>.PriceKindRule(TPriceKind Kind, bool Repeatable = false, bool NeedsLabel = false, bool IsBase = false) -> void
-PandaBear.Offerings.PriceKindRule<TPriceKind>.Repeatable.get -> bool
-PandaBear.Offerings.PriceKindRule<TPriceKind>.Repeatable.init -> void
-PandaBear.Offerings.PriceLine<TPriceKind>
-PandaBear.Offerings.PriceLine<TPriceKind>.<Clone>$() -> PandaBear.Offerings.PriceLine<TPriceKind>!
-PandaBear.Offerings.PriceLine<TPriceKind>.Amount.get -> PandaBear.BuildingBlocks.Money!
-PandaBear.Offerings.PriceLine<TPriceKind>.Amount.init -> void
-PandaBear.Offerings.PriceLine<TPriceKind>.Deconstruct(out TPriceKind Kind, out PandaBear.BuildingBlocks.Money! Amount) -> void
-PandaBear.Offerings.PriceLine<TPriceKind>.Equals(PandaBear.Offerings.PriceLine<TPriceKind>? other) -> bool
-PandaBear.Offerings.PriceLine<TPriceKind>.Kind.get -> TPriceKind
-PandaBear.Offerings.PriceLine<TPriceKind>.Kind.init -> void
-PandaBear.Offerings.PriceLine<TPriceKind>.PriceLine(TPriceKind Kind, PandaBear.BuildingBlocks.Money! Amount) -> void
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>.<Clone>$() -> PandaBear.Offerings.PriceLineDefinition<TPriceKind>!
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>.Amount.get -> decimal
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>.Amount.init -> void
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>.Deconstruct(out TPriceKind Kind, out decimal Amount) -> void
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>.Equals(PandaBear.Offerings.PriceLineDefinition<TPriceKind>? other) -> bool
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>.Kind.get -> TPriceKind
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>.Kind.init -> void
-PandaBear.Offerings.PriceLineDefinition<TPriceKind>.PriceLineDefinition(TPriceKind Kind, decimal Amount) -> void
-PandaBear.Offerings.PriceView<TPriceKind>
-PandaBear.Offerings.PriceView<TPriceKind>.<Clone>$() -> PandaBear.Offerings.PriceView<TPriceKind>!
-PandaBear.Offerings.PriceView<TPriceKind>.Amount.get -> PandaBear.BuildingBlocks.Money!
-PandaBear.Offerings.PriceView<TPriceKind>.Amount.init -> void
-PandaBear.Offerings.PriceView<TPriceKind>.Deconstruct(out TPriceKind Kind, out PandaBear.BuildingBlocks.Money! Amount, out string? Label, out bool IsBase) -> void
-PandaBear.Offerings.PriceView<TPriceKind>.Equals(PandaBear.Offerings.PriceView<TPriceKind>? other) -> bool
-PandaBear.Offerings.PriceView<TPriceKind>.IsBase.get -> bool
-PandaBear.Offerings.PriceView<TPriceKind>.IsBase.init -> void
-PandaBear.Offerings.PriceView<TPriceKind>.Kind.get -> TPriceKind
-PandaBear.Offerings.PriceView<TPriceKind>.Kind.init -> void
-PandaBear.Offerings.PriceView<TPriceKind>.Label.get -> string?
-PandaBear.Offerings.PriceView<TPriceKind>.Label.init -> void
-PandaBear.Offerings.PriceView<TPriceKind>.PriceView(TPriceKind Kind, PandaBear.BuildingBlocks.Money! Amount, string? Label, bool IsBase) -> void
-PandaBear.Offerings.ProgramStep<TImageId, TMetric>
-PandaBear.Offerings.ProgramStep<TImageId, TMetric>.ImageId.get -> TImageId?
-PandaBear.Offerings.ProgramStep<TImageId, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.Metric<TMetric>!>!
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.<Clone>$() -> PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>!
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.Deconstruct(out TImageId? ImageId, out System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.Metric<TMetric>!>? Metrics) -> void
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.Equals(PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>? other) -> bool
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.ImageId.get -> TImageId?
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.ImageId.init -> void
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.Metric<TMetric>!>?
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.Metrics.init -> void
-PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.ProgramStepDefinition(TImageId? ImageId, System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.Metric<TMetric>!>? Metrics = null) -> void
-PandaBear.Offerings.ProgramStepText
-PandaBear.Offerings.ProgramStepText.Note.get -> string?
-PandaBear.Offerings.ProgramStepText.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.ProgramStepText.Title.get -> string!
-PandaBear.Offerings.ProgramStepTextDefinition
-PandaBear.Offerings.ProgramStepTextDefinition.<Clone>$() -> PandaBear.Offerings.ProgramStepTextDefinition!
-PandaBear.Offerings.ProgramStepTextDefinition.Deconstruct(out string? Title, out string? Text, out string? Note) -> void
-PandaBear.Offerings.ProgramStepTextDefinition.Equals(PandaBear.Offerings.ProgramStepTextDefinition? other) -> bool
-PandaBear.Offerings.ProgramStepTextDefinition.Note.get -> string?
-PandaBear.Offerings.ProgramStepTextDefinition.Note.init -> void
-PandaBear.Offerings.ProgramStepTextDefinition.ProgramStepTextDefinition(string? Title, string? Text = null, string? Note = null) -> void
-PandaBear.Offerings.ProgramStepTextDefinition.Text.get -> string?
-PandaBear.Offerings.ProgramStepTextDefinition.Text.init -> void
-PandaBear.Offerings.ProgramStepTextDefinition.Title.get -> string?
-PandaBear.Offerings.ProgramStepTextDefinition.Title.init -> void
-PandaBear.Offerings.ProgramStepView<TImageId, TMetric>
-PandaBear.Offerings.ProgramStepView<TImageId, TMetric>.ImageId.get -> TImageId?
-PandaBear.Offerings.ProgramStepView<TImageId, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.Metric<TMetric>!>!
-PandaBear.Offerings.ProgramStepView<TImageId, TMetric>.Note.get -> string?
-PandaBear.Offerings.ProgramStepView<TImageId, TMetric>.Number.get -> int
-PandaBear.Offerings.ProgramStepView<TImageId, TMetric>.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.ProgramStepView<TImageId, TMetric>.Title.get -> string!
-PandaBear.Offerings.StructuredDataOrganization
-PandaBear.Offerings.StructuredDataOrganization.<Clone>$() -> PandaBear.Offerings.StructuredDataOrganization!
-PandaBear.Offerings.StructuredDataOrganization.Equals(PandaBear.Offerings.StructuredDataOrganization? other) -> bool
-PandaBear.Offerings.StructuredDataOrganization.Name.get -> string!
-PandaBear.Offerings.StructuredDataOrganization.StructuredDataOrganization(string! name, System.Uri? url) -> void
-PandaBear.Offerings.StructuredDataOrganization.Url.get -> System.Uri?
-const PandaBear.Offerings.OfferingFields.Availability = "availability" -> string!
-const PandaBear.Offerings.OfferingFields.CoverId = "coverId" -> string!
-const PandaBear.Offerings.OfferingFields.Currency = "currency" -> string!
-const PandaBear.Offerings.OfferingFields.DateNote = "dateNote" -> string!
-const PandaBear.Offerings.OfferingFields.Description = "description" -> string!
-const PandaBear.Offerings.OfferingFields.DurationDays = "durationDays" -> string!
-const PandaBear.Offerings.OfferingFields.EndDate = "endDate" -> string!
-const PandaBear.Offerings.OfferingFields.Eyebrow = "eyebrow" -> string!
-const PandaBear.Offerings.OfferingFields.GalleryIds = "galleryIds" -> string!
-const PandaBear.Offerings.OfferingFields.GroupConditionDueDays = "groupCondition.dueDays" -> string!
-const PandaBear.Offerings.OfferingFields.GroupConditionMinimumParticipants = "groupCondition.minimumParticipants" -> string!
-const PandaBear.Offerings.OfferingFields.GroupConditionSurchargePerMissing = "groupCondition.surchargePerMissing" -> string!
-const PandaBear.Offerings.OfferingFields.Highlights = "highlights" -> string!
-const PandaBear.Offerings.OfferingFields.Images = "images" -> string!
-const PandaBear.Offerings.OfferingFields.Included = "included" -> string!
-const PandaBear.Offerings.OfferingFields.Metrics = "metrics" -> string!
-const PandaBear.Offerings.OfferingFields.NotIncluded = "notIncluded" -> string!
-const PandaBear.Offerings.OfferingFields.ParticipantsMax = "participants.max" -> string!
-const PandaBear.Offerings.OfferingFields.ParticipantsMin = "participants.min" -> string!
-const PandaBear.Offerings.OfferingFields.PaymentTermsBalanceDueDays = "paymentTerms.balanceDueDays" -> string!
-const PandaBear.Offerings.OfferingFields.PaymentTermsDepositPercent = "paymentTerms.depositPercent" -> string!
-const PandaBear.Offerings.OfferingFields.PaymentTermsInstalments = "paymentTerms.instalments" -> string!
-const PandaBear.Offerings.OfferingFields.PracticalInfo = "practicalInfo" -> string!
-const PandaBear.Offerings.OfferingFields.PriceLabels = "priceLabels" -> string!
-const PandaBear.Offerings.OfferingFields.Prices = "prices" -> string!
-const PandaBear.Offerings.OfferingFields.SeoDescription = "seoDescription" -> string!
-const PandaBear.Offerings.OfferingFields.SeoTitle = "seoTitle" -> string!
-const PandaBear.Offerings.OfferingFields.SignUpLink = "signUpLink" -> string!
-const PandaBear.Offerings.OfferingFields.Slug = "slug" -> string!
-const PandaBear.Offerings.OfferingFields.SortOrder = "sortOrder" -> string!
-const PandaBear.Offerings.OfferingFields.StartDate = "startDate" -> string!
-const PandaBear.Offerings.OfferingFields.Status = "status" -> string!
-const PandaBear.Offerings.OfferingFields.Steps = "steps" -> string!
-const PandaBear.Offerings.OfferingFields.Subtitle = "subtitle" -> string!
-const PandaBear.Offerings.OfferingFields.Summary = "summary" -> string!
-const PandaBear.Offerings.OfferingFields.Title = "title" -> string!
-const PandaBear.Offerings.OfferingFields.Translations = "translations" -> string!
-const PandaBear.Offerings.OfferingFields.Year = "year" -> string!
-override PandaBear.Offerings.CountRange.Equals(object? obj) -> bool
-override PandaBear.Offerings.CountRange.GetHashCode() -> int
-override PandaBear.Offerings.CountRange.ToString() -> string!
-override PandaBear.Offerings.GroupCondition.Equals(object? obj) -> bool
-override PandaBear.Offerings.GroupCondition.GetHashCode() -> int
-override PandaBear.Offerings.GroupCondition.ToString() -> string!
-override PandaBear.Offerings.GroupConditionDefinition.Equals(object? obj) -> bool
-override PandaBear.Offerings.GroupConditionDefinition.GetHashCode() -> int
-override PandaBear.Offerings.GroupConditionDefinition.ToString() -> string!
-override PandaBear.Offerings.Metric<TMetric>.Equals(object? obj) -> bool
-override PandaBear.Offerings.Metric<TMetric>.GetHashCode() -> int
-override PandaBear.Offerings.Metric<TMetric>.ToString() -> string!
-override PandaBear.Offerings.MetricFormat.Equals(object? obj) -> bool
-override PandaBear.Offerings.MetricFormat.GetHashCode() -> int
-override PandaBear.Offerings.MetricFormat.ToString() -> string!
-override PandaBear.Offerings.MetricRule<TMetric>.Equals(object? obj) -> bool
-override PandaBear.Offerings.MetricRule<TMetric>.GetHashCode() -> int
-override PandaBear.Offerings.MetricRule<TMetric>.ToString() -> string!
-override PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Equals(object? obj) -> bool
-override PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GetHashCode() -> int
-override PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.ToString() -> string!
-override PandaBear.Offerings.OfferingGroup<TItem>.Equals(object? obj) -> bool
-override PandaBear.Offerings.OfferingGroup<TItem>.GetHashCode() -> int
-override PandaBear.Offerings.OfferingGroup<TItem>.ToString() -> string!
-override PandaBear.Offerings.OfferingSchedule.Equals(object? obj) -> bool
-override PandaBear.Offerings.OfferingSchedule.GetHashCode() -> int
-override PandaBear.Offerings.OfferingSchedule.ToString() -> string!
-override PandaBear.Offerings.OfferingScheduleDefinition.Equals(object? obj) -> bool
-override PandaBear.Offerings.OfferingScheduleDefinition.GetHashCode() -> int
-override PandaBear.Offerings.OfferingScheduleDefinition.ToString() -> string!
-override PandaBear.Offerings.OfferingTranslationDefinition.Equals(object? obj) -> bool
-override PandaBear.Offerings.OfferingTranslationDefinition.GetHashCode() -> int
-override PandaBear.Offerings.OfferingTranslationDefinition.ToString() -> string!
-override PandaBear.Offerings.ParticipantFormats.Equals(object? obj) -> bool
-override PandaBear.Offerings.ParticipantFormats.GetHashCode() -> int
-override PandaBear.Offerings.ParticipantFormats.ToString() -> string!
-override PandaBear.Offerings.ParticipantRange.Equals(object? obj) -> bool
-override PandaBear.Offerings.ParticipantRange.GetHashCode() -> int
-override PandaBear.Offerings.ParticipantRange.ToString() -> string!
-override PandaBear.Offerings.PaymentTerms.Equals(object? obj) -> bool
-override PandaBear.Offerings.PaymentTerms.GetHashCode() -> int
-override PandaBear.Offerings.PaymentTerms.ToString() -> string!
-override PandaBear.Offerings.PaymentTermsFormats.Equals(object? obj) -> bool
-override PandaBear.Offerings.PaymentTermsFormats.GetHashCode() -> int
-override PandaBear.Offerings.PaymentTermsFormats.ToString() -> string!
-override PandaBear.Offerings.PluralFormat.Equals(object? obj) -> bool
-override PandaBear.Offerings.PluralFormat.GetHashCode() -> int
-override PandaBear.Offerings.PluralFormat.ToString() -> string!
-override PandaBear.Offerings.PriceKindRule<TPriceKind>.Equals(object? obj) -> bool
-override PandaBear.Offerings.PriceKindRule<TPriceKind>.GetHashCode() -> int
-override PandaBear.Offerings.PriceKindRule<TPriceKind>.ToString() -> string!
-override PandaBear.Offerings.PriceLine<TPriceKind>.Equals(object? obj) -> bool
-override PandaBear.Offerings.PriceLine<TPriceKind>.GetHashCode() -> int
-override PandaBear.Offerings.PriceLine<TPriceKind>.ToString() -> string!
-override PandaBear.Offerings.PriceLineDefinition<TPriceKind>.Equals(object? obj) -> bool
-override PandaBear.Offerings.PriceLineDefinition<TPriceKind>.GetHashCode() -> int
-override PandaBear.Offerings.PriceLineDefinition<TPriceKind>.ToString() -> string!
-override PandaBear.Offerings.PriceView<TPriceKind>.Equals(object? obj) -> bool
-override PandaBear.Offerings.PriceView<TPriceKind>.GetHashCode() -> int
-override PandaBear.Offerings.PriceView<TPriceKind>.ToString() -> string!
-override PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.Equals(object? obj) -> bool
-override PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.GetHashCode() -> int
-override PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.ToString() -> string!
-override PandaBear.Offerings.ProgramStepTextDefinition.Equals(object? obj) -> bool
-override PandaBear.Offerings.ProgramStepTextDefinition.GetHashCode() -> int
-override PandaBear.Offerings.ProgramStepTextDefinition.ToString() -> string!
-override PandaBear.Offerings.StructuredDataOrganization.Equals(object? obj) -> bool
-override PandaBear.Offerings.StructuredDataOrganization.GetHashCode() -> int
-override PandaBear.Offerings.StructuredDataOrganization.ToString() -> string!
-static PandaBear.Offerings.CountRange.operator !=(PandaBear.Offerings.CountRange? left, PandaBear.Offerings.CountRange? right) -> bool
-static PandaBear.Offerings.CountRange.operator ==(PandaBear.Offerings.CountRange? left, PandaBear.Offerings.CountRange? right) -> bool
-static PandaBear.Offerings.GroupCondition.operator !=(PandaBear.Offerings.GroupCondition? left, PandaBear.Offerings.GroupCondition? right) -> bool
-static PandaBear.Offerings.GroupCondition.operator ==(PandaBear.Offerings.GroupCondition? left, PandaBear.Offerings.GroupCondition? right) -> bool
-static PandaBear.Offerings.GroupConditionDefinition.operator !=(PandaBear.Offerings.GroupConditionDefinition? left, PandaBear.Offerings.GroupConditionDefinition? right) -> bool
-static PandaBear.Offerings.GroupConditionDefinition.operator ==(PandaBear.Offerings.GroupConditionDefinition? left, PandaBear.Offerings.GroupConditionDefinition? right) -> bool
-static PandaBear.Offerings.Metric<TMetric>.operator !=(PandaBear.Offerings.Metric<TMetric>? left, PandaBear.Offerings.Metric<TMetric>? right) -> bool
-static PandaBear.Offerings.Metric<TMetric>.operator ==(PandaBear.Offerings.Metric<TMetric>? left, PandaBear.Offerings.Metric<TMetric>? right) -> bool
-static PandaBear.Offerings.MetricFormat.operator !=(PandaBear.Offerings.MetricFormat? left, PandaBear.Offerings.MetricFormat? right) -> bool
-static PandaBear.Offerings.MetricFormat.operator ==(PandaBear.Offerings.MetricFormat? left, PandaBear.Offerings.MetricFormat? right) -> bool
-static PandaBear.Offerings.MetricRule<TMetric>.operator !=(PandaBear.Offerings.MetricRule<TMetric>? left, PandaBear.Offerings.MetricRule<TMetric>? right) -> bool
-static PandaBear.Offerings.MetricRule<TMetric>.operator ==(PandaBear.Offerings.MetricRule<TMetric>? left, PandaBear.Offerings.MetricRule<TMetric>? right) -> bool
-static PandaBear.Offerings.Offering.Create<TImageId, TPriceKind, TMetric>(PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>! definition, PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>! rules, PandaBear.BuildingBlocks.IImageEligibility<TImageId>! images) -> PandaBear.Results.Result<PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>!>
-static PandaBear.Offerings.Offering.Restore<TImageId, TPriceKind, TMetric>(PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>! definition, PandaBear.Offerings.OfferingRules<TPriceKind, TMetric>! rules) -> PandaBear.Offerings.Offering<TImageId, TPriceKind, TMetric>!
-static PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.operator !=(PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? left, PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? right) -> bool
-static PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.operator ==(PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? left, PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? right) -> bool
-static PandaBear.Offerings.OfferingFields.Metric<TMetric>(TMetric kind) -> string!
-static PandaBear.Offerings.OfferingFields.MetricUpper<TMetric>(TMetric kind) -> string!
-static PandaBear.Offerings.OfferingFields.Of(PandaBear.BuildingBlocks.ContentCulture! culture, string! field) -> string!
-static PandaBear.Offerings.OfferingFields.PriceAmount(int index) -> string!
-static PandaBear.Offerings.OfferingFields.PriceKind(int index) -> string!
-static PandaBear.Offerings.OfferingFields.StepImage(int index) -> string!
-static PandaBear.Offerings.OfferingFields.StepMetric<TMetric>(int index, TMetric kind) -> string!
-static PandaBear.Offerings.OfferingFields.StepMetricUpper<TMetric>(int index, TMetric kind) -> string!
-static PandaBear.Offerings.OfferingFields.StepMetrics(int index) -> string!
-static PandaBear.Offerings.OfferingFields.StepNote(int index) -> string!
-static PandaBear.Offerings.OfferingFields.StepText(int index) -> string!
-static PandaBear.Offerings.OfferingFields.StepTitle(int index) -> string!
-static PandaBear.Offerings.OfferingGroup<TItem>.operator !=(PandaBear.Offerings.OfferingGroup<TItem>? left, PandaBear.Offerings.OfferingGroup<TItem>? right) -> bool
-static PandaBear.Offerings.OfferingGroup<TItem>.operator ==(PandaBear.Offerings.OfferingGroup<TItem>? left, PandaBear.Offerings.OfferingGroup<TItem>? right) -> bool
-static PandaBear.Offerings.OfferingListing.Group<TImageId, TPriceKind, TMetric>(System.Collections.Generic.IEnumerable<PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>!>! views) -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.OfferingGroup<PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>!>!>!
-static PandaBear.Offerings.OfferingListing.Group<TItem>(System.Collections.Generic.IEnumerable<TItem>! items, System.Func<TItem, int>! sortOrder, System.Func<TItem, PandaBear.Offerings.OfferingSchedule!>! schedule) -> System.Collections.Generic.IReadOnlyList<PandaBear.Offerings.OfferingGroup<TItem>!>!
-static PandaBear.Offerings.OfferingPublishing.FindIneligible<TImageId>(System.Collections.Generic.IEnumerable<TImageId>! imageIds, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.IImageEligibility<TImageId>! images) -> System.Collections.Generic.IReadOnlyList<TImageId>!
-static PandaBear.Offerings.OfferingSchedule.operator !=(PandaBear.Offerings.OfferingSchedule? left, PandaBear.Offerings.OfferingSchedule? right) -> bool
-static PandaBear.Offerings.OfferingSchedule.operator ==(PandaBear.Offerings.OfferingSchedule? left, PandaBear.Offerings.OfferingSchedule? right) -> bool
-static PandaBear.Offerings.OfferingScheduleDefinition.operator !=(PandaBear.Offerings.OfferingScheduleDefinition? left, PandaBear.Offerings.OfferingScheduleDefinition? right) -> bool
-static PandaBear.Offerings.OfferingScheduleDefinition.operator ==(PandaBear.Offerings.OfferingScheduleDefinition? left, PandaBear.Offerings.OfferingScheduleDefinition? right) -> bool
-static PandaBear.Offerings.OfferingStructuredData.Build<TImageId, TPriceKind, TMetric>(PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>! view, PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>! options) -> System.Text.Json.Nodes.JsonObject!
-static PandaBear.Offerings.OfferingText.DateLine(PandaBear.Offerings.OfferingSchedule! schedule, string? dateNote, PandaBear.BuildingBlocks.DateRangePatterns! patterns, string! toBeConfirmedFormat, System.IFormatProvider! provider) -> string?
-static PandaBear.Offerings.OfferingText.DateLine<TImageId, TPriceKind, TMetric>(PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>! view, PandaBear.BuildingBlocks.DateRangePatterns! patterns, string! toBeConfirmedFormat, System.IFormatProvider! provider) -> string?
-static PandaBear.Offerings.OfferingText.Duration(PandaBear.Offerings.OfferingSchedule! schedule, PandaBear.Offerings.PluralFormat! days, PandaBear.Offerings.PluralFormat! nights, System.IFormatProvider! provider) -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Offerings.OfferingText.Metric<TMetric>(PandaBear.Offerings.Metric<TMetric>! metric, PandaBear.Offerings.MetricFormat! format, System.IFormatProvider! provider) -> string!
-static PandaBear.Offerings.OfferingText.Participants(PandaBear.Offerings.ParticipantRange? range, PandaBear.Offerings.ParticipantFormats! formats, System.IFormatProvider! provider) -> string?
-static PandaBear.Offerings.OfferingText.PaymentTerms(PandaBear.Offerings.PaymentTerms! terms, PandaBear.Offerings.PaymentTermsFormats! formats, System.IFormatProvider! provider) -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Offerings.OfferingTranslationDefinition.operator !=(PandaBear.Offerings.OfferingTranslationDefinition? left, PandaBear.Offerings.OfferingTranslationDefinition? right) -> bool
-static PandaBear.Offerings.OfferingTranslationDefinition.operator ==(PandaBear.Offerings.OfferingTranslationDefinition? left, PandaBear.Offerings.OfferingTranslationDefinition? right) -> bool
-static PandaBear.Offerings.ParticipantFormats.operator !=(PandaBear.Offerings.ParticipantFormats? left, PandaBear.Offerings.ParticipantFormats? right) -> bool
-static PandaBear.Offerings.ParticipantFormats.operator ==(PandaBear.Offerings.ParticipantFormats? left, PandaBear.Offerings.ParticipantFormats? right) -> bool
-static PandaBear.Offerings.ParticipantRange.operator !=(PandaBear.Offerings.ParticipantRange? left, PandaBear.Offerings.ParticipantRange? right) -> bool
-static PandaBear.Offerings.ParticipantRange.operator ==(PandaBear.Offerings.ParticipantRange? left, PandaBear.Offerings.ParticipantRange? right) -> bool
-static PandaBear.Offerings.PaymentTerms.operator !=(PandaBear.Offerings.PaymentTerms? left, PandaBear.Offerings.PaymentTerms? right) -> bool
-static PandaBear.Offerings.PaymentTerms.operator ==(PandaBear.Offerings.PaymentTerms? left, PandaBear.Offerings.PaymentTerms? right) -> bool
-static PandaBear.Offerings.PaymentTermsFormats.operator !=(PandaBear.Offerings.PaymentTermsFormats? left, PandaBear.Offerings.PaymentTermsFormats? right) -> bool
-static PandaBear.Offerings.PaymentTermsFormats.operator ==(PandaBear.Offerings.PaymentTermsFormats? left, PandaBear.Offerings.PaymentTermsFormats? right) -> bool
-static PandaBear.Offerings.PluralFormat.operator !=(PandaBear.Offerings.PluralFormat? left, PandaBear.Offerings.PluralFormat? right) -> bool
-static PandaBear.Offerings.PluralFormat.operator ==(PandaBear.Offerings.PluralFormat? left, PandaBear.Offerings.PluralFormat? right) -> bool
-static PandaBear.Offerings.PriceKindRule<TPriceKind>.operator !=(PandaBear.Offerings.PriceKindRule<TPriceKind>? left, PandaBear.Offerings.PriceKindRule<TPriceKind>? right) -> bool
-static PandaBear.Offerings.PriceKindRule<TPriceKind>.operator ==(PandaBear.Offerings.PriceKindRule<TPriceKind>? left, PandaBear.Offerings.PriceKindRule<TPriceKind>? right) -> bool
-static PandaBear.Offerings.PriceLine<TPriceKind>.operator !=(PandaBear.Offerings.PriceLine<TPriceKind>? left, PandaBear.Offerings.PriceLine<TPriceKind>? right) -> bool
-static PandaBear.Offerings.PriceLine<TPriceKind>.operator ==(PandaBear.Offerings.PriceLine<TPriceKind>? left, PandaBear.Offerings.PriceLine<TPriceKind>? right) -> bool
-static PandaBear.Offerings.PriceLineDefinition<TPriceKind>.operator !=(PandaBear.Offerings.PriceLineDefinition<TPriceKind>? left, PandaBear.Offerings.PriceLineDefinition<TPriceKind>? right) -> bool
-static PandaBear.Offerings.PriceLineDefinition<TPriceKind>.operator ==(PandaBear.Offerings.PriceLineDefinition<TPriceKind>? left, PandaBear.Offerings.PriceLineDefinition<TPriceKind>? right) -> bool
-static PandaBear.Offerings.PriceView<TPriceKind>.operator !=(PandaBear.Offerings.PriceView<TPriceKind>? left, PandaBear.Offerings.PriceView<TPriceKind>? right) -> bool
-static PandaBear.Offerings.PriceView<TPriceKind>.operator ==(PandaBear.Offerings.PriceView<TPriceKind>? left, PandaBear.Offerings.PriceView<TPriceKind>? right) -> bool
-static PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.operator !=(PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>? left, PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>? right) -> bool
-static PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>.operator ==(PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>? left, PandaBear.Offerings.ProgramStepDefinition<TImageId, TMetric>? right) -> bool
-static PandaBear.Offerings.ProgramStepTextDefinition.operator !=(PandaBear.Offerings.ProgramStepTextDefinition? left, PandaBear.Offerings.ProgramStepTextDefinition? right) -> bool
-static PandaBear.Offerings.ProgramStepTextDefinition.operator ==(PandaBear.Offerings.ProgramStepTextDefinition? left, PandaBear.Offerings.ProgramStepTextDefinition? right) -> bool
-static PandaBear.Offerings.StructuredDataOrganization.operator !=(PandaBear.Offerings.StructuredDataOrganization? left, PandaBear.Offerings.StructuredDataOrganization? right) -> bool
-static PandaBear.Offerings.StructuredDataOrganization.operator ==(PandaBear.Offerings.StructuredDataOrganization? left, PandaBear.Offerings.StructuredDataOrganization? right) -> bool
-PandaBear.Offerings.GroupConditionFormats
-PandaBear.Offerings.GroupConditionFormats.<Clone>$() -> PandaBear.Offerings.GroupConditionFormats!
-PandaBear.Offerings.GroupConditionFormats.Deconstruct(out string! Sentence, out PandaBear.Offerings.PluralFormat! Minimum, out PandaBear.Offerings.PluralFormat! DueDays) -> void
-PandaBear.Offerings.GroupConditionFormats.DueDays.get -> PandaBear.Offerings.PluralFormat!
-PandaBear.Offerings.GroupConditionFormats.Equals(PandaBear.Offerings.GroupConditionFormats? other) -> bool
-PandaBear.Offerings.GroupConditionFormats.GroupConditionFormats(string! Sentence, PandaBear.Offerings.PluralFormat! Minimum, PandaBear.Offerings.PluralFormat! DueDays) -> void
-PandaBear.Offerings.GroupConditionFormats.Minimum.get -> PandaBear.Offerings.PluralFormat!
-PandaBear.Offerings.GroupConditionFormats.Sentence.get -> string!
-PandaBear.Offerings.OfferingCallToAction.Contact = 2 -> PandaBear.Offerings.OfferingCallToAction
-PandaBear.Offerings.OfferingCallToAction.SignUp = 1 -> PandaBear.Offerings.OfferingCallToAction
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.PriceLabel.get -> System.Func<TPriceKind, PandaBear.BuildingBlocks.ContentCulture!, string?>?
-PandaBear.Offerings.OfferingTranslation.PriceLabels.get -> System.Collections.Generic.IReadOnlyList<string?>!
-override PandaBear.Offerings.GroupConditionFormats.Equals(object? obj) -> bool
-override PandaBear.Offerings.GroupConditionFormats.GetHashCode() -> int
-override PandaBear.Offerings.GroupConditionFormats.ToString() -> string!
-static PandaBear.Offerings.GroupConditionFormats.operator !=(PandaBear.Offerings.GroupConditionFormats? left, PandaBear.Offerings.GroupConditionFormats? right) -> bool
-static PandaBear.Offerings.GroupConditionFormats.operator ==(PandaBear.Offerings.GroupConditionFormats? left, PandaBear.Offerings.GroupConditionFormats? right) -> bool
-static PandaBear.Offerings.OfferingText.GroupCondition(PandaBear.Offerings.GroupCondition! condition, PandaBear.Offerings.GroupConditionFormats! formats, PandaBear.BuildingBlocks.MoneyDisplayOptions! money, System.IFormatProvider! provider) -> string!
-PandaBear.Offerings.OfferingAvailability.Unspecified = 0 -> PandaBear.Offerings.OfferingAvailability
-PandaBear.Offerings.OfferingCallToAction.Unspecified = 0 -> PandaBear.Offerings.OfferingCallToAction
+SharedKernel.Offerings.CountRange
+SharedKernel.Offerings.CountRange.<Clone>$() -> SharedKernel.Offerings.CountRange!
+SharedKernel.Offerings.CountRange.CountRange(int min, int max) -> void
+SharedKernel.Offerings.CountRange.Equals(SharedKernel.Offerings.CountRange? other) -> bool
+SharedKernel.Offerings.CountRange.Max.get -> int
+SharedKernel.Offerings.CountRange.Min.get -> int
+SharedKernel.Offerings.GroupCondition
+SharedKernel.Offerings.GroupCondition.<Clone>$() -> SharedKernel.Offerings.GroupCondition!
+SharedKernel.Offerings.GroupCondition.Deconstruct(out int MinimumParticipants, out SharedKernel.BuildingBlocks.Money! SurchargePerMissing, out int DueDays) -> void
+SharedKernel.Offerings.GroupCondition.DueDays.get -> int
+SharedKernel.Offerings.GroupCondition.DueDays.init -> void
+SharedKernel.Offerings.GroupCondition.Equals(SharedKernel.Offerings.GroupCondition? other) -> bool
+SharedKernel.Offerings.GroupCondition.GroupCondition(int MinimumParticipants, SharedKernel.BuildingBlocks.Money! SurchargePerMissing, int DueDays) -> void
+SharedKernel.Offerings.GroupCondition.MinimumParticipants.get -> int
+SharedKernel.Offerings.GroupCondition.MinimumParticipants.init -> void
+SharedKernel.Offerings.GroupCondition.SurchargePerMissing.get -> SharedKernel.BuildingBlocks.Money!
+SharedKernel.Offerings.GroupCondition.SurchargePerMissing.init -> void
+SharedKernel.Offerings.GroupConditionDefinition
+SharedKernel.Offerings.GroupConditionDefinition.<Clone>$() -> SharedKernel.Offerings.GroupConditionDefinition!
+SharedKernel.Offerings.GroupConditionDefinition.Deconstruct(out int? MinimumParticipants, out decimal? SurchargePerMissing, out int? DueDays) -> void
+SharedKernel.Offerings.GroupConditionDefinition.DueDays.get -> int?
+SharedKernel.Offerings.GroupConditionDefinition.DueDays.init -> void
+SharedKernel.Offerings.GroupConditionDefinition.Equals(SharedKernel.Offerings.GroupConditionDefinition? other) -> bool
+SharedKernel.Offerings.GroupConditionDefinition.GroupConditionDefinition(int? MinimumParticipants, decimal? SurchargePerMissing, int? DueDays) -> void
+SharedKernel.Offerings.GroupConditionDefinition.MinimumParticipants.get -> int?
+SharedKernel.Offerings.GroupConditionDefinition.MinimumParticipants.init -> void
+SharedKernel.Offerings.GroupConditionDefinition.SurchargePerMissing.get -> decimal?
+SharedKernel.Offerings.GroupConditionDefinition.SurchargePerMissing.init -> void
+SharedKernel.Offerings.Metric<TMetric>
+SharedKernel.Offerings.Metric<TMetric>.<Clone>$() -> SharedKernel.Offerings.Metric<TMetric>!
+SharedKernel.Offerings.Metric<TMetric>.Approximate.get -> bool
+SharedKernel.Offerings.Metric<TMetric>.Approximate.init -> void
+SharedKernel.Offerings.Metric<TMetric>.Deconstruct(out TMetric Kind, out decimal Value, out decimal? Upper, out bool Approximate) -> void
+SharedKernel.Offerings.Metric<TMetric>.Equals(SharedKernel.Offerings.Metric<TMetric>? other) -> bool
+SharedKernel.Offerings.Metric<TMetric>.Kind.get -> TMetric
+SharedKernel.Offerings.Metric<TMetric>.Kind.init -> void
+SharedKernel.Offerings.Metric<TMetric>.Metric(TMetric Kind, decimal Value, decimal? Upper = null, bool Approximate = false) -> void
+SharedKernel.Offerings.Metric<TMetric>.Upper.get -> decimal?
+SharedKernel.Offerings.Metric<TMetric>.Upper.init -> void
+SharedKernel.Offerings.Metric<TMetric>.Value.get -> decimal
+SharedKernel.Offerings.Metric<TMetric>.Value.init -> void
+SharedKernel.Offerings.MetricFormat
+SharedKernel.Offerings.MetricFormat.<Clone>$() -> SharedKernel.Offerings.MetricFormat!
+SharedKernel.Offerings.MetricFormat.ApproximatePattern.get -> string!
+SharedKernel.Offerings.MetricFormat.Decimals.get -> int
+SharedKernel.Offerings.MetricFormat.Deconstruct(out string! Pattern, out string! ApproximatePattern, out int Decimals) -> void
+SharedKernel.Offerings.MetricFormat.Equals(SharedKernel.Offerings.MetricFormat? other) -> bool
+SharedKernel.Offerings.MetricFormat.MetricFormat(string! Pattern, string! ApproximatePattern, int Decimals = 0) -> void
+SharedKernel.Offerings.MetricFormat.Pattern.get -> string!
+SharedKernel.Offerings.MetricRule<TMetric>
+SharedKernel.Offerings.MetricRule<TMetric>.<Clone>$() -> SharedKernel.Offerings.MetricRule<TMetric>!
+SharedKernel.Offerings.MetricRule<TMetric>.AllowsApproximate.get -> bool
+SharedKernel.Offerings.MetricRule<TMetric>.AllowsApproximate.init -> void
+SharedKernel.Offerings.MetricRule<TMetric>.AllowsRange.get -> bool
+SharedKernel.Offerings.MetricRule<TMetric>.AllowsRange.init -> void
+SharedKernel.Offerings.MetricRule<TMetric>.Decimals.get -> int
+SharedKernel.Offerings.MetricRule<TMetric>.Decimals.init -> void
+SharedKernel.Offerings.MetricRule<TMetric>.Deconstruct(out TMetric Kind, out SharedKernel.Offerings.MetricScope Scope, out decimal Min, out decimal Max, out int Decimals, out bool AllowsRange, out bool AllowsApproximate) -> void
+SharedKernel.Offerings.MetricRule<TMetric>.Equals(SharedKernel.Offerings.MetricRule<TMetric>? other) -> bool
+SharedKernel.Offerings.MetricRule<TMetric>.Kind.get -> TMetric
+SharedKernel.Offerings.MetricRule<TMetric>.Kind.init -> void
+SharedKernel.Offerings.MetricRule<TMetric>.Max.get -> decimal
+SharedKernel.Offerings.MetricRule<TMetric>.Max.init -> void
+SharedKernel.Offerings.MetricRule<TMetric>.MetricRule(TMetric Kind, SharedKernel.Offerings.MetricScope Scope, decimal Min, decimal Max, int Decimals = 0, bool AllowsRange = false, bool AllowsApproximate = false) -> void
+SharedKernel.Offerings.MetricRule<TMetric>.Min.get -> decimal
+SharedKernel.Offerings.MetricRule<TMetric>.Min.init -> void
+SharedKernel.Offerings.MetricRule<TMetric>.Scope.get -> SharedKernel.Offerings.MetricScope
+SharedKernel.Offerings.MetricRule<TMetric>.Scope.init -> void
+SharedKernel.Offerings.MetricScope
+SharedKernel.Offerings.MetricScope.None = 0 -> SharedKernel.Offerings.MetricScope
+SharedKernel.Offerings.MetricScope.Offering = 1 -> SharedKernel.Offerings.MetricScope
+SharedKernel.Offerings.MetricScope.Step = 2 -> SharedKernel.Offerings.MetricScope
+SharedKernel.Offerings.Offering
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.CoverId.get -> TImageId?
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.Currency.get -> SharedKernel.BuildingBlocks.Currency?
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.FromPrice.get -> SharedKernel.BuildingBlocks.Money?
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.GalleryIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.GroupCondition.get -> SharedKernel.Offerings.GroupCondition?
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.IsPublishedIn(SharedKernel.BuildingBlocks.ContentCulture! culture) -> bool
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.Metric<TMetric>!>!
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.Participants.get -> SharedKernel.Offerings.ParticipantRange?
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.PaymentTerms.get -> SharedKernel.Offerings.PaymentTerms?
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.Prices.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.PriceLine<TPriceKind>!>!
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.PublishedIn(SharedKernel.BuildingBlocks.ContentCulture? requested, SharedKernel.BuildingBlocks.SupportedCultures! cultures) -> SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>?
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.Revise(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>! definition, SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>! rules, SharedKernel.BuildingBlocks.IImageEligibility<TImageId>! images) -> SharedKernel.Results.Result<bool>
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.Schedule.get -> SharedKernel.Offerings.OfferingSchedule!
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.SignUpLink.get -> SharedKernel.BuildingBlocks.WebUrl?
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.SortOrder.get -> int
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.Steps.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.ProgramStep<TImageId, TMetric>!>!
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.ToDefinition() -> SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>!
+SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>.Translations.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.OfferingTranslation!>!
+SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingAvailability.DatesToBeConfirmed = 3 -> SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingAvailability.OnRequest = 4 -> SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingAvailability.Scheduled = 1 -> SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingAvailability.SoldOut = 2 -> SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingCallToAction
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.<Clone>$() -> SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>!
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.CoverId.get -> TImageId?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.CoverId.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Currency.get -> string?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Currency.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Equals(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? other) -> bool
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GalleryIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GalleryIds.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GroupCondition.get -> SharedKernel.Offerings.GroupConditionDefinition?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GroupCondition.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.Metric<TMetric>!>?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Metrics.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.OfferingDefinition() -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Participants.get -> SharedKernel.Offerings.ParticipantRange?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Participants.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.PaymentTerms.get -> SharedKernel.Offerings.PaymentTerms?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.PaymentTerms.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Prices.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.PriceLineDefinition<TPriceKind>!>?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Prices.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Schedule.get -> SharedKernel.Offerings.OfferingScheduleDefinition!
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Schedule.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.SignUpLink.get -> string?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.SignUpLink.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.SortOrder.get -> int
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.SortOrder.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Steps.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>!>?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Steps.init -> void
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Translations.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.OfferingTranslationDefinition!>?
+SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Translations.init -> void
+SharedKernel.Offerings.OfferingFields
+SharedKernel.Offerings.OfferingGroup<TItem>
+SharedKernel.Offerings.OfferingGroup<TItem>.<Clone>$() -> SharedKernel.Offerings.OfferingGroup<TItem>!
+SharedKernel.Offerings.OfferingGroup<TItem>.Deconstruct(out SharedKernel.Offerings.OfferingGroupKind Kind, out int? Year, out System.Collections.Generic.IReadOnlyList<TItem>! Items) -> void
+SharedKernel.Offerings.OfferingGroup<TItem>.Equals(SharedKernel.Offerings.OfferingGroup<TItem>? other) -> bool
+SharedKernel.Offerings.OfferingGroup<TItem>.Items.get -> System.Collections.Generic.IReadOnlyList<TItem>!
+SharedKernel.Offerings.OfferingGroup<TItem>.Items.init -> void
+SharedKernel.Offerings.OfferingGroup<TItem>.Kind.get -> SharedKernel.Offerings.OfferingGroupKind
+SharedKernel.Offerings.OfferingGroup<TItem>.Kind.init -> void
+SharedKernel.Offerings.OfferingGroup<TItem>.OfferingGroup(SharedKernel.Offerings.OfferingGroupKind Kind, int? Year, System.Collections.Generic.IReadOnlyList<TItem>! Items) -> void
+SharedKernel.Offerings.OfferingGroup<TItem>.Year.get -> int?
+SharedKernel.Offerings.OfferingGroup<TItem>.Year.init -> void
+SharedKernel.Offerings.OfferingGroupKind
+SharedKernel.Offerings.OfferingGroupKind.OnRequest = 1 -> SharedKernel.Offerings.OfferingGroupKind
+SharedKernel.Offerings.OfferingGroupKind.Year = 0 -> SharedKernel.Offerings.OfferingGroupKind
+SharedKernel.Offerings.OfferingListing
+SharedKernel.Offerings.OfferingPublishing
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.Cultures.get -> SharedKernel.BuildingBlocks.SupportedCultures!
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.ForbiddenStepTitlePrefixes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.ForbiddenStepTitlePrefixes.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.HighlightsCount.get -> SharedKernel.Offerings.CountRange?
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.HighlightsCount.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxDateNoteLength.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxDateNoteLength.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxDurationDays.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxDurationDays.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxGalleryImages.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxGalleryImages.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxLineLength.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxLineLength.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxListItems.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxListItems.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParagraphLength.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParagraphLength.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParagraphs.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParagraphs.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParticipants.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxParticipants.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxPrice.get -> decimal
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxPrice.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxPrices.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxPrices.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSlugLength.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSlugLength.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSteps.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSteps.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSummaryLength.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxSummaryLength.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxTitleLength.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxTitleLength.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxYear.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MaxYear.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.MetricRule<TMetric>!>!
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MinYear.get -> int
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.MinYear.init -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.OfferingRules(SharedKernel.BuildingBlocks.SupportedCultures! cultures, System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.PriceKindRule<TPriceKind>!>! priceKinds, System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.MetricRule<TMetric>!>! metrics) -> void
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.PriceKinds.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.PriceKindRule<TPriceKind>!>!
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.StepCount.get -> SharedKernel.Offerings.OfferingStepCount
+SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>.StepCount.init -> void
+SharedKernel.Offerings.OfferingSchedule
+SharedKernel.Offerings.OfferingSchedule.<Clone>$() -> SharedKernel.Offerings.OfferingSchedule!
+SharedKernel.Offerings.OfferingSchedule.Availability.get -> SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingSchedule.Availability.init -> void
+SharedKernel.Offerings.OfferingSchedule.Dates.get -> SharedKernel.BuildingBlocks.DateOnlyRange?
+SharedKernel.Offerings.OfferingSchedule.Dates.init -> void
+SharedKernel.Offerings.OfferingSchedule.Deconstruct(out SharedKernel.Offerings.OfferingAvailability Availability, out SharedKernel.BuildingBlocks.DateOnlyRange? Dates, out int? Year, out int DurationDays) -> void
+SharedKernel.Offerings.OfferingSchedule.DurationDays.get -> int
+SharedKernel.Offerings.OfferingSchedule.DurationDays.init -> void
+SharedKernel.Offerings.OfferingSchedule.Equals(SharedKernel.Offerings.OfferingSchedule? other) -> bool
+SharedKernel.Offerings.OfferingSchedule.Nights.get -> int
+SharedKernel.Offerings.OfferingSchedule.OfferingSchedule(SharedKernel.Offerings.OfferingAvailability Availability, SharedKernel.BuildingBlocks.DateOnlyRange? Dates, int? Year, int DurationDays) -> void
+SharedKernel.Offerings.OfferingSchedule.Year.get -> int?
+SharedKernel.Offerings.OfferingSchedule.Year.init -> void
+SharedKernel.Offerings.OfferingScheduleDefinition
+SharedKernel.Offerings.OfferingScheduleDefinition.<Clone>$() -> SharedKernel.Offerings.OfferingScheduleDefinition!
+SharedKernel.Offerings.OfferingScheduleDefinition.Availability.get -> SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingScheduleDefinition.Availability.init -> void
+SharedKernel.Offerings.OfferingScheduleDefinition.Deconstruct(out SharedKernel.Offerings.OfferingAvailability Availability, out System.DateOnly? StartDate, out System.DateOnly? EndDate, out int? Year, out int? DurationDays) -> void
+SharedKernel.Offerings.OfferingScheduleDefinition.DurationDays.get -> int?
+SharedKernel.Offerings.OfferingScheduleDefinition.DurationDays.init -> void
+SharedKernel.Offerings.OfferingScheduleDefinition.EndDate.get -> System.DateOnly?
+SharedKernel.Offerings.OfferingScheduleDefinition.EndDate.init -> void
+SharedKernel.Offerings.OfferingScheduleDefinition.Equals(SharedKernel.Offerings.OfferingScheduleDefinition? other) -> bool
+SharedKernel.Offerings.OfferingScheduleDefinition.OfferingScheduleDefinition(SharedKernel.Offerings.OfferingAvailability Availability, System.DateOnly? StartDate = null, System.DateOnly? EndDate = null, int? Year = null, int? DurationDays = null) -> void
+SharedKernel.Offerings.OfferingScheduleDefinition.StartDate.get -> System.DateOnly?
+SharedKernel.Offerings.OfferingScheduleDefinition.StartDate.init -> void
+SharedKernel.Offerings.OfferingScheduleDefinition.Year.get -> int?
+SharedKernel.Offerings.OfferingScheduleDefinition.Year.init -> void
+SharedKernel.Offerings.OfferingStepCount
+SharedKernel.Offerings.OfferingStepCount.Free = 0 -> SharedKernel.Offerings.OfferingStepCount
+SharedKernel.Offerings.OfferingStepCount.MatchesDuration = 1 -> SharedKernel.Offerings.OfferingStepCount
+SharedKernel.Offerings.OfferingStructuredData
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.Availability.get -> SharedKernel.Offerings.OfferingAvailability?
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.Availability.init -> void
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.CanonicalUrl.get -> System.Uri?
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.CanonicalUrl.init -> void
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.ImageUrls.get -> System.Collections.Generic.IReadOnlyList<System.Uri!>!
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.ImageUrls.init -> void
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.OfferingStructuredDataOptions() -> void
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.PriceLabel.init -> void
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.Provider.get -> SharedKernel.Offerings.StructuredDataOrganization?
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.Provider.init -> void
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.Type.get -> SharedKernel.Offerings.OfferingStructuredDataType
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.Type.init -> void
+SharedKernel.Offerings.OfferingStructuredDataType
+SharedKernel.Offerings.OfferingStructuredDataType.Product = 1 -> SharedKernel.Offerings.OfferingStructuredDataType
+SharedKernel.Offerings.OfferingStructuredDataType.TouristTrip = 0 -> SharedKernel.Offerings.OfferingStructuredDataType
+SharedKernel.Offerings.OfferingText
+SharedKernel.Offerings.OfferingTranslation
+SharedKernel.Offerings.OfferingTranslation.Culture.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.Offerings.OfferingTranslation.DateNote.get -> string?
+SharedKernel.Offerings.OfferingTranslation.Description.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingTranslation.Eyebrow.get -> string?
+SharedKernel.Offerings.OfferingTranslation.Highlights.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingTranslation.Included.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingTranslation.NotIncluded.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingTranslation.PracticalInfo.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingTranslation.SeoDescription.get -> string?
+SharedKernel.Offerings.OfferingTranslation.SeoTitle.get -> string?
+SharedKernel.Offerings.OfferingTranslation.Slug.get -> SharedKernel.BuildingBlocks.Slug!
+SharedKernel.Offerings.OfferingTranslation.Status.get -> SharedKernel.BuildingBlocks.PublicationStatus
+SharedKernel.Offerings.OfferingTranslation.StepTexts.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.ProgramStepText!>!
+SharedKernel.Offerings.OfferingTranslation.Subtitle.get -> string?
+SharedKernel.Offerings.OfferingTranslation.Summary.get -> string?
+SharedKernel.Offerings.OfferingTranslation.Title.get -> string!
+SharedKernel.Offerings.OfferingTranslationDefinition
+SharedKernel.Offerings.OfferingTranslationDefinition.<Clone>$() -> SharedKernel.Offerings.OfferingTranslationDefinition!
+SharedKernel.Offerings.OfferingTranslationDefinition.Culture.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.Culture.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.DateNote.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.DateNote.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Description.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.Description.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Equals(SharedKernel.Offerings.OfferingTranslationDefinition? other) -> bool
+SharedKernel.Offerings.OfferingTranslationDefinition.Eyebrow.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.Eyebrow.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Highlights.get -> System.Collections.Generic.IReadOnlyList<string?>?
+SharedKernel.Offerings.OfferingTranslationDefinition.Highlights.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Included.get -> System.Collections.Generic.IReadOnlyList<string?>?
+SharedKernel.Offerings.OfferingTranslationDefinition.Included.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.NotIncluded.get -> System.Collections.Generic.IReadOnlyList<string?>?
+SharedKernel.Offerings.OfferingTranslationDefinition.NotIncluded.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.OfferingTranslationDefinition() -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.PracticalInfo.get -> System.Collections.Generic.IReadOnlyList<string?>?
+SharedKernel.Offerings.OfferingTranslationDefinition.PracticalInfo.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.PriceLabels.get -> System.Collections.Generic.IReadOnlyList<string?>?
+SharedKernel.Offerings.OfferingTranslationDefinition.PriceLabels.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.SeoDescription.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.SeoDescription.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.SeoTitle.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.SeoTitle.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Slug.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.Slug.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Status.get -> SharedKernel.BuildingBlocks.PublicationStatus
+SharedKernel.Offerings.OfferingTranslationDefinition.Status.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.StepTexts.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.ProgramStepTextDefinition!>?
+SharedKernel.Offerings.OfferingTranslationDefinition.StepTexts.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Subtitle.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.Subtitle.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Summary.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.Summary.init -> void
+SharedKernel.Offerings.OfferingTranslationDefinition.Title.get -> string?
+SharedKernel.Offerings.OfferingTranslationDefinition.Title.init -> void
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Availability.get -> SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.CallToAction.get -> SharedKernel.Offerings.OfferingCallToAction
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.CoverId.get -> TImageId?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Culture.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Currency.get -> SharedKernel.BuildingBlocks.Currency?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.DateNote.get -> string?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Dates.get -> SharedKernel.BuildingBlocks.DateOnlyRange?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Description.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.DurationDays.get -> int
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Eyebrow.get -> string?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.FromPrice.get -> SharedKernel.BuildingBlocks.Money?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.GalleryIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.GroupCondition.get -> SharedKernel.Offerings.GroupCondition?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Highlights.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Included.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.Metric<TMetric>!>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Nights.get -> int
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.NotIncluded.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Participants.get -> SharedKernel.Offerings.ParticipantRange?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.PaymentTerms.get -> SharedKernel.Offerings.PaymentTerms?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.PracticalInfo.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Prices.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.PriceView<TPriceKind>!>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Schedule.get -> SharedKernel.Offerings.OfferingSchedule!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.SeoDescription.get -> string?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.SeoTitle.get -> string!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.SignUpLink.get -> SharedKernel.BuildingBlocks.WebUrl?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Slug.get -> SharedKernel.BuildingBlocks.Slug!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.SortOrder.get -> int
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Steps.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.ProgramStepView<TImageId, TMetric>!>!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Subtitle.get -> string?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Summary.get -> string?
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Title.get -> string!
+SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>.Year.get -> int?
+SharedKernel.Offerings.ParticipantFormats
+SharedKernel.Offerings.ParticipantFormats.<Clone>$() -> SharedKernel.Offerings.ParticipantFormats!
+SharedKernel.Offerings.ParticipantFormats.Deconstruct(out string! Range, out SharedKernel.Offerings.PluralFormat! Minimum, out SharedKernel.Offerings.PluralFormat! Maximum, out SharedKernel.Offerings.PluralFormat! Exact) -> void
+SharedKernel.Offerings.ParticipantFormats.Equals(SharedKernel.Offerings.ParticipantFormats? other) -> bool
+SharedKernel.Offerings.ParticipantFormats.Exact.get -> SharedKernel.Offerings.PluralFormat!
+SharedKernel.Offerings.ParticipantFormats.Maximum.get -> SharedKernel.Offerings.PluralFormat!
+SharedKernel.Offerings.ParticipantFormats.Minimum.get -> SharedKernel.Offerings.PluralFormat!
+SharedKernel.Offerings.ParticipantFormats.ParticipantFormats(string! Range, SharedKernel.Offerings.PluralFormat! Minimum, SharedKernel.Offerings.PluralFormat! Maximum, SharedKernel.Offerings.PluralFormat! Exact) -> void
+SharedKernel.Offerings.ParticipantFormats.Range.get -> string!
+SharedKernel.Offerings.ParticipantRange
+SharedKernel.Offerings.ParticipantRange.<Clone>$() -> SharedKernel.Offerings.ParticipantRange!
+SharedKernel.Offerings.ParticipantRange.Deconstruct(out int? Min, out int? Max) -> void
+SharedKernel.Offerings.ParticipantRange.Equals(SharedKernel.Offerings.ParticipantRange? other) -> bool
+SharedKernel.Offerings.ParticipantRange.Max.get -> int?
+SharedKernel.Offerings.ParticipantRange.Max.init -> void
+SharedKernel.Offerings.ParticipantRange.Min.get -> int?
+SharedKernel.Offerings.ParticipantRange.Min.init -> void
+SharedKernel.Offerings.ParticipantRange.ParticipantRange(int? Min, int? Max) -> void
+SharedKernel.Offerings.PaymentTerms
+SharedKernel.Offerings.PaymentTerms.<Clone>$() -> SharedKernel.Offerings.PaymentTerms!
+SharedKernel.Offerings.PaymentTerms.BalanceDueDays.get -> int?
+SharedKernel.Offerings.PaymentTerms.BalanceDueDays.init -> void
+SharedKernel.Offerings.PaymentTerms.Deconstruct(out int? DepositPercent, out int? Instalments, out int? BalanceDueDays) -> void
+SharedKernel.Offerings.PaymentTerms.DepositPercent.get -> int?
+SharedKernel.Offerings.PaymentTerms.DepositPercent.init -> void
+SharedKernel.Offerings.PaymentTerms.Equals(SharedKernel.Offerings.PaymentTerms? other) -> bool
+SharedKernel.Offerings.PaymentTerms.Instalments.get -> int?
+SharedKernel.Offerings.PaymentTerms.Instalments.init -> void
+SharedKernel.Offerings.PaymentTerms.PaymentTerms(int? DepositPercent, int? Instalments, int? BalanceDueDays) -> void
+SharedKernel.Offerings.PaymentTermsFormats
+SharedKernel.Offerings.PaymentTermsFormats.<Clone>$() -> SharedKernel.Offerings.PaymentTermsFormats!
+SharedKernel.Offerings.PaymentTermsFormats.BalanceDue.get -> SharedKernel.Offerings.PluralFormat!
+SharedKernel.Offerings.PaymentTermsFormats.Deconstruct(out string! Deposit, out SharedKernel.Offerings.PluralFormat! Instalments, out SharedKernel.Offerings.PluralFormat! BalanceDue) -> void
+SharedKernel.Offerings.PaymentTermsFormats.Deposit.get -> string!
+SharedKernel.Offerings.PaymentTermsFormats.Equals(SharedKernel.Offerings.PaymentTermsFormats? other) -> bool
+SharedKernel.Offerings.PaymentTermsFormats.Instalments.get -> SharedKernel.Offerings.PluralFormat!
+SharedKernel.Offerings.PaymentTermsFormats.PaymentTermsFormats(string! Deposit, SharedKernel.Offerings.PluralFormat! Instalments, SharedKernel.Offerings.PluralFormat! BalanceDue) -> void
+SharedKernel.Offerings.PluralFormat
+SharedKernel.Offerings.PluralFormat.<Clone>$() -> SharedKernel.Offerings.PluralFormat!
+SharedKernel.Offerings.PluralFormat.Deconstruct(out string! One, out string! Other) -> void
+SharedKernel.Offerings.PluralFormat.Equals(SharedKernel.Offerings.PluralFormat? other) -> bool
+SharedKernel.Offerings.PluralFormat.Format(int count, System.IFormatProvider! provider) -> string!
+SharedKernel.Offerings.PluralFormat.One.get -> string!
+SharedKernel.Offerings.PluralFormat.Other.get -> string!
+SharedKernel.Offerings.PluralFormat.PluralFormat(string! One, string! Other) -> void
+SharedKernel.Offerings.PriceKindRule<TPriceKind>
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.<Clone>$() -> SharedKernel.Offerings.PriceKindRule<TPriceKind>!
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.Deconstruct(out TPriceKind Kind, out bool Repeatable, out bool NeedsLabel, out bool IsBase) -> void
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.Equals(SharedKernel.Offerings.PriceKindRule<TPriceKind>? other) -> bool
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.IsBase.get -> bool
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.IsBase.init -> void
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.Kind.get -> TPriceKind
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.Kind.init -> void
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.NeedsLabel.get -> bool
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.NeedsLabel.init -> void
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.PriceKindRule(TPriceKind Kind, bool Repeatable = false, bool NeedsLabel = false, bool IsBase = false) -> void
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.Repeatable.get -> bool
+SharedKernel.Offerings.PriceKindRule<TPriceKind>.Repeatable.init -> void
+SharedKernel.Offerings.PriceLine<TPriceKind>
+SharedKernel.Offerings.PriceLine<TPriceKind>.<Clone>$() -> SharedKernel.Offerings.PriceLine<TPriceKind>!
+SharedKernel.Offerings.PriceLine<TPriceKind>.Amount.get -> SharedKernel.BuildingBlocks.Money!
+SharedKernel.Offerings.PriceLine<TPriceKind>.Amount.init -> void
+SharedKernel.Offerings.PriceLine<TPriceKind>.Deconstruct(out TPriceKind Kind, out SharedKernel.BuildingBlocks.Money! Amount) -> void
+SharedKernel.Offerings.PriceLine<TPriceKind>.Equals(SharedKernel.Offerings.PriceLine<TPriceKind>? other) -> bool
+SharedKernel.Offerings.PriceLine<TPriceKind>.Kind.get -> TPriceKind
+SharedKernel.Offerings.PriceLine<TPriceKind>.Kind.init -> void
+SharedKernel.Offerings.PriceLine<TPriceKind>.PriceLine(TPriceKind Kind, SharedKernel.BuildingBlocks.Money! Amount) -> void
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.<Clone>$() -> SharedKernel.Offerings.PriceLineDefinition<TPriceKind>!
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.Amount.get -> decimal
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.Amount.init -> void
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.Deconstruct(out TPriceKind Kind, out decimal Amount) -> void
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.Equals(SharedKernel.Offerings.PriceLineDefinition<TPriceKind>? other) -> bool
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.Kind.get -> TPriceKind
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.Kind.init -> void
+SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.PriceLineDefinition(TPriceKind Kind, decimal Amount) -> void
+SharedKernel.Offerings.PriceView<TPriceKind>
+SharedKernel.Offerings.PriceView<TPriceKind>.<Clone>$() -> SharedKernel.Offerings.PriceView<TPriceKind>!
+SharedKernel.Offerings.PriceView<TPriceKind>.Amount.get -> SharedKernel.BuildingBlocks.Money!
+SharedKernel.Offerings.PriceView<TPriceKind>.Amount.init -> void
+SharedKernel.Offerings.PriceView<TPriceKind>.Deconstruct(out TPriceKind Kind, out SharedKernel.BuildingBlocks.Money! Amount, out string? Label, out bool IsBase) -> void
+SharedKernel.Offerings.PriceView<TPriceKind>.Equals(SharedKernel.Offerings.PriceView<TPriceKind>? other) -> bool
+SharedKernel.Offerings.PriceView<TPriceKind>.IsBase.get -> bool
+SharedKernel.Offerings.PriceView<TPriceKind>.IsBase.init -> void
+SharedKernel.Offerings.PriceView<TPriceKind>.Kind.get -> TPriceKind
+SharedKernel.Offerings.PriceView<TPriceKind>.Kind.init -> void
+SharedKernel.Offerings.PriceView<TPriceKind>.Label.get -> string?
+SharedKernel.Offerings.PriceView<TPriceKind>.Label.init -> void
+SharedKernel.Offerings.PriceView<TPriceKind>.PriceView(TPriceKind Kind, SharedKernel.BuildingBlocks.Money! Amount, string? Label, bool IsBase) -> void
+SharedKernel.Offerings.ProgramStep<TImageId, TMetric>
+SharedKernel.Offerings.ProgramStep<TImageId, TMetric>.ImageId.get -> TImageId?
+SharedKernel.Offerings.ProgramStep<TImageId, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.Metric<TMetric>!>!
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.<Clone>$() -> SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>!
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.Deconstruct(out TImageId? ImageId, out System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.Metric<TMetric>!>? Metrics) -> void
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.Equals(SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>? other) -> bool
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.ImageId.get -> TImageId?
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.ImageId.init -> void
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.Metric<TMetric>!>?
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.Metrics.init -> void
+SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.ProgramStepDefinition(TImageId? ImageId, System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.Metric<TMetric>!>? Metrics = null) -> void
+SharedKernel.Offerings.ProgramStepText
+SharedKernel.Offerings.ProgramStepText.Note.get -> string?
+SharedKernel.Offerings.ProgramStepText.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.ProgramStepText.Title.get -> string!
+SharedKernel.Offerings.ProgramStepTextDefinition
+SharedKernel.Offerings.ProgramStepTextDefinition.<Clone>$() -> SharedKernel.Offerings.ProgramStepTextDefinition!
+SharedKernel.Offerings.ProgramStepTextDefinition.Deconstruct(out string? Title, out string? Text, out string? Note) -> void
+SharedKernel.Offerings.ProgramStepTextDefinition.Equals(SharedKernel.Offerings.ProgramStepTextDefinition? other) -> bool
+SharedKernel.Offerings.ProgramStepTextDefinition.Note.get -> string?
+SharedKernel.Offerings.ProgramStepTextDefinition.Note.init -> void
+SharedKernel.Offerings.ProgramStepTextDefinition.ProgramStepTextDefinition(string? Title, string? Text = null, string? Note = null) -> void
+SharedKernel.Offerings.ProgramStepTextDefinition.Text.get -> string?
+SharedKernel.Offerings.ProgramStepTextDefinition.Text.init -> void
+SharedKernel.Offerings.ProgramStepTextDefinition.Title.get -> string?
+SharedKernel.Offerings.ProgramStepTextDefinition.Title.init -> void
+SharedKernel.Offerings.ProgramStepView<TImageId, TMetric>
+SharedKernel.Offerings.ProgramStepView<TImageId, TMetric>.ImageId.get -> TImageId?
+SharedKernel.Offerings.ProgramStepView<TImageId, TMetric>.Metrics.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.Metric<TMetric>!>!
+SharedKernel.Offerings.ProgramStepView<TImageId, TMetric>.Note.get -> string?
+SharedKernel.Offerings.ProgramStepView<TImageId, TMetric>.Number.get -> int
+SharedKernel.Offerings.ProgramStepView<TImageId, TMetric>.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Offerings.ProgramStepView<TImageId, TMetric>.Title.get -> string!
+SharedKernel.Offerings.StructuredDataOrganization
+SharedKernel.Offerings.StructuredDataOrganization.<Clone>$() -> SharedKernel.Offerings.StructuredDataOrganization!
+SharedKernel.Offerings.StructuredDataOrganization.Equals(SharedKernel.Offerings.StructuredDataOrganization? other) -> bool
+SharedKernel.Offerings.StructuredDataOrganization.Name.get -> string!
+SharedKernel.Offerings.StructuredDataOrganization.StructuredDataOrganization(string! name, System.Uri? url) -> void
+SharedKernel.Offerings.StructuredDataOrganization.Url.get -> System.Uri?
+const SharedKernel.Offerings.OfferingFields.Availability = "availability" -> string!
+const SharedKernel.Offerings.OfferingFields.CoverId = "coverId" -> string!
+const SharedKernel.Offerings.OfferingFields.Currency = "currency" -> string!
+const SharedKernel.Offerings.OfferingFields.DateNote = "dateNote" -> string!
+const SharedKernel.Offerings.OfferingFields.Description = "description" -> string!
+const SharedKernel.Offerings.OfferingFields.DurationDays = "durationDays" -> string!
+const SharedKernel.Offerings.OfferingFields.EndDate = "endDate" -> string!
+const SharedKernel.Offerings.OfferingFields.Eyebrow = "eyebrow" -> string!
+const SharedKernel.Offerings.OfferingFields.GalleryIds = "galleryIds" -> string!
+const SharedKernel.Offerings.OfferingFields.GroupConditionDueDays = "groupCondition.dueDays" -> string!
+const SharedKernel.Offerings.OfferingFields.GroupConditionMinimumParticipants = "groupCondition.minimumParticipants" -> string!
+const SharedKernel.Offerings.OfferingFields.GroupConditionSurchargePerMissing = "groupCondition.surchargePerMissing" -> string!
+const SharedKernel.Offerings.OfferingFields.Highlights = "highlights" -> string!
+const SharedKernel.Offerings.OfferingFields.Images = "images" -> string!
+const SharedKernel.Offerings.OfferingFields.Included = "included" -> string!
+const SharedKernel.Offerings.OfferingFields.Metrics = "metrics" -> string!
+const SharedKernel.Offerings.OfferingFields.NotIncluded = "notIncluded" -> string!
+const SharedKernel.Offerings.OfferingFields.ParticipantsMax = "participants.max" -> string!
+const SharedKernel.Offerings.OfferingFields.ParticipantsMin = "participants.min" -> string!
+const SharedKernel.Offerings.OfferingFields.PaymentTermsBalanceDueDays = "paymentTerms.balanceDueDays" -> string!
+const SharedKernel.Offerings.OfferingFields.PaymentTermsDepositPercent = "paymentTerms.depositPercent" -> string!
+const SharedKernel.Offerings.OfferingFields.PaymentTermsInstalments = "paymentTerms.instalments" -> string!
+const SharedKernel.Offerings.OfferingFields.PracticalInfo = "practicalInfo" -> string!
+const SharedKernel.Offerings.OfferingFields.PriceLabels = "priceLabels" -> string!
+const SharedKernel.Offerings.OfferingFields.Prices = "prices" -> string!
+const SharedKernel.Offerings.OfferingFields.SeoDescription = "seoDescription" -> string!
+const SharedKernel.Offerings.OfferingFields.SeoTitle = "seoTitle" -> string!
+const SharedKernel.Offerings.OfferingFields.SignUpLink = "signUpLink" -> string!
+const SharedKernel.Offerings.OfferingFields.Slug = "slug" -> string!
+const SharedKernel.Offerings.OfferingFields.SortOrder = "sortOrder" -> string!
+const SharedKernel.Offerings.OfferingFields.StartDate = "startDate" -> string!
+const SharedKernel.Offerings.OfferingFields.Status = "status" -> string!
+const SharedKernel.Offerings.OfferingFields.Steps = "steps" -> string!
+const SharedKernel.Offerings.OfferingFields.Subtitle = "subtitle" -> string!
+const SharedKernel.Offerings.OfferingFields.Summary = "summary" -> string!
+const SharedKernel.Offerings.OfferingFields.Title = "title" -> string!
+const SharedKernel.Offerings.OfferingFields.Translations = "translations" -> string!
+const SharedKernel.Offerings.OfferingFields.Year = "year" -> string!
+override SharedKernel.Offerings.CountRange.Equals(object? obj) -> bool
+override SharedKernel.Offerings.CountRange.GetHashCode() -> int
+override SharedKernel.Offerings.CountRange.ToString() -> string!
+override SharedKernel.Offerings.GroupCondition.Equals(object? obj) -> bool
+override SharedKernel.Offerings.GroupCondition.GetHashCode() -> int
+override SharedKernel.Offerings.GroupCondition.ToString() -> string!
+override SharedKernel.Offerings.GroupConditionDefinition.Equals(object? obj) -> bool
+override SharedKernel.Offerings.GroupConditionDefinition.GetHashCode() -> int
+override SharedKernel.Offerings.GroupConditionDefinition.ToString() -> string!
+override SharedKernel.Offerings.Metric<TMetric>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.Metric<TMetric>.GetHashCode() -> int
+override SharedKernel.Offerings.Metric<TMetric>.ToString() -> string!
+override SharedKernel.Offerings.MetricFormat.Equals(object? obj) -> bool
+override SharedKernel.Offerings.MetricFormat.GetHashCode() -> int
+override SharedKernel.Offerings.MetricFormat.ToString() -> string!
+override SharedKernel.Offerings.MetricRule<TMetric>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.MetricRule<TMetric>.GetHashCode() -> int
+override SharedKernel.Offerings.MetricRule<TMetric>.ToString() -> string!
+override SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.GetHashCode() -> int
+override SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.ToString() -> string!
+override SharedKernel.Offerings.OfferingGroup<TItem>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.OfferingGroup<TItem>.GetHashCode() -> int
+override SharedKernel.Offerings.OfferingGroup<TItem>.ToString() -> string!
+override SharedKernel.Offerings.OfferingSchedule.Equals(object? obj) -> bool
+override SharedKernel.Offerings.OfferingSchedule.GetHashCode() -> int
+override SharedKernel.Offerings.OfferingSchedule.ToString() -> string!
+override SharedKernel.Offerings.OfferingScheduleDefinition.Equals(object? obj) -> bool
+override SharedKernel.Offerings.OfferingScheduleDefinition.GetHashCode() -> int
+override SharedKernel.Offerings.OfferingScheduleDefinition.ToString() -> string!
+override SharedKernel.Offerings.OfferingTranslationDefinition.Equals(object? obj) -> bool
+override SharedKernel.Offerings.OfferingTranslationDefinition.GetHashCode() -> int
+override SharedKernel.Offerings.OfferingTranslationDefinition.ToString() -> string!
+override SharedKernel.Offerings.ParticipantFormats.Equals(object? obj) -> bool
+override SharedKernel.Offerings.ParticipantFormats.GetHashCode() -> int
+override SharedKernel.Offerings.ParticipantFormats.ToString() -> string!
+override SharedKernel.Offerings.ParticipantRange.Equals(object? obj) -> bool
+override SharedKernel.Offerings.ParticipantRange.GetHashCode() -> int
+override SharedKernel.Offerings.ParticipantRange.ToString() -> string!
+override SharedKernel.Offerings.PaymentTerms.Equals(object? obj) -> bool
+override SharedKernel.Offerings.PaymentTerms.GetHashCode() -> int
+override SharedKernel.Offerings.PaymentTerms.ToString() -> string!
+override SharedKernel.Offerings.PaymentTermsFormats.Equals(object? obj) -> bool
+override SharedKernel.Offerings.PaymentTermsFormats.GetHashCode() -> int
+override SharedKernel.Offerings.PaymentTermsFormats.ToString() -> string!
+override SharedKernel.Offerings.PluralFormat.Equals(object? obj) -> bool
+override SharedKernel.Offerings.PluralFormat.GetHashCode() -> int
+override SharedKernel.Offerings.PluralFormat.ToString() -> string!
+override SharedKernel.Offerings.PriceKindRule<TPriceKind>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.PriceKindRule<TPriceKind>.GetHashCode() -> int
+override SharedKernel.Offerings.PriceKindRule<TPriceKind>.ToString() -> string!
+override SharedKernel.Offerings.PriceLine<TPriceKind>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.PriceLine<TPriceKind>.GetHashCode() -> int
+override SharedKernel.Offerings.PriceLine<TPriceKind>.ToString() -> string!
+override SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.GetHashCode() -> int
+override SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.ToString() -> string!
+override SharedKernel.Offerings.PriceView<TPriceKind>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.PriceView<TPriceKind>.GetHashCode() -> int
+override SharedKernel.Offerings.PriceView<TPriceKind>.ToString() -> string!
+override SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.Equals(object? obj) -> bool
+override SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.GetHashCode() -> int
+override SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.ToString() -> string!
+override SharedKernel.Offerings.ProgramStepTextDefinition.Equals(object? obj) -> bool
+override SharedKernel.Offerings.ProgramStepTextDefinition.GetHashCode() -> int
+override SharedKernel.Offerings.ProgramStepTextDefinition.ToString() -> string!
+override SharedKernel.Offerings.StructuredDataOrganization.Equals(object? obj) -> bool
+override SharedKernel.Offerings.StructuredDataOrganization.GetHashCode() -> int
+override SharedKernel.Offerings.StructuredDataOrganization.ToString() -> string!
+static SharedKernel.Offerings.CountRange.operator !=(SharedKernel.Offerings.CountRange? left, SharedKernel.Offerings.CountRange? right) -> bool
+static SharedKernel.Offerings.CountRange.operator ==(SharedKernel.Offerings.CountRange? left, SharedKernel.Offerings.CountRange? right) -> bool
+static SharedKernel.Offerings.GroupCondition.operator !=(SharedKernel.Offerings.GroupCondition? left, SharedKernel.Offerings.GroupCondition? right) -> bool
+static SharedKernel.Offerings.GroupCondition.operator ==(SharedKernel.Offerings.GroupCondition? left, SharedKernel.Offerings.GroupCondition? right) -> bool
+static SharedKernel.Offerings.GroupConditionDefinition.operator !=(SharedKernel.Offerings.GroupConditionDefinition? left, SharedKernel.Offerings.GroupConditionDefinition? right) -> bool
+static SharedKernel.Offerings.GroupConditionDefinition.operator ==(SharedKernel.Offerings.GroupConditionDefinition? left, SharedKernel.Offerings.GroupConditionDefinition? right) -> bool
+static SharedKernel.Offerings.Metric<TMetric>.operator !=(SharedKernel.Offerings.Metric<TMetric>? left, SharedKernel.Offerings.Metric<TMetric>? right) -> bool
+static SharedKernel.Offerings.Metric<TMetric>.operator ==(SharedKernel.Offerings.Metric<TMetric>? left, SharedKernel.Offerings.Metric<TMetric>? right) -> bool
+static SharedKernel.Offerings.MetricFormat.operator !=(SharedKernel.Offerings.MetricFormat? left, SharedKernel.Offerings.MetricFormat? right) -> bool
+static SharedKernel.Offerings.MetricFormat.operator ==(SharedKernel.Offerings.MetricFormat? left, SharedKernel.Offerings.MetricFormat? right) -> bool
+static SharedKernel.Offerings.MetricRule<TMetric>.operator !=(SharedKernel.Offerings.MetricRule<TMetric>? left, SharedKernel.Offerings.MetricRule<TMetric>? right) -> bool
+static SharedKernel.Offerings.MetricRule<TMetric>.operator ==(SharedKernel.Offerings.MetricRule<TMetric>? left, SharedKernel.Offerings.MetricRule<TMetric>? right) -> bool
+static SharedKernel.Offerings.Offering.Create<TImageId, TPriceKind, TMetric>(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>! definition, SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>! rules, SharedKernel.BuildingBlocks.IImageEligibility<TImageId>! images) -> SharedKernel.Results.Result<SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>!>
+static SharedKernel.Offerings.Offering.Restore<TImageId, TPriceKind, TMetric>(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>! definition, SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>! rules) -> SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>!
+static SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.operator !=(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? left, SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? right) -> bool
+static SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.operator ==(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? left, SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? right) -> bool
+static SharedKernel.Offerings.OfferingFields.Metric<TMetric>(TMetric kind) -> string!
+static SharedKernel.Offerings.OfferingFields.MetricUpper<TMetric>(TMetric kind) -> string!
+static SharedKernel.Offerings.OfferingFields.Of(SharedKernel.BuildingBlocks.ContentCulture! culture, string! field) -> string!
+static SharedKernel.Offerings.OfferingFields.PriceAmount(int index) -> string!
+static SharedKernel.Offerings.OfferingFields.PriceKind(int index) -> string!
+static SharedKernel.Offerings.OfferingFields.StepImage(int index) -> string!
+static SharedKernel.Offerings.OfferingFields.StepMetric<TMetric>(int index, TMetric kind) -> string!
+static SharedKernel.Offerings.OfferingFields.StepMetricUpper<TMetric>(int index, TMetric kind) -> string!
+static SharedKernel.Offerings.OfferingFields.StepMetrics(int index) -> string!
+static SharedKernel.Offerings.OfferingFields.StepNote(int index) -> string!
+static SharedKernel.Offerings.OfferingFields.StepText(int index) -> string!
+static SharedKernel.Offerings.OfferingFields.StepTitle(int index) -> string!
+static SharedKernel.Offerings.OfferingGroup<TItem>.operator !=(SharedKernel.Offerings.OfferingGroup<TItem>? left, SharedKernel.Offerings.OfferingGroup<TItem>? right) -> bool
+static SharedKernel.Offerings.OfferingGroup<TItem>.operator ==(SharedKernel.Offerings.OfferingGroup<TItem>? left, SharedKernel.Offerings.OfferingGroup<TItem>? right) -> bool
+static SharedKernel.Offerings.OfferingListing.Group<TImageId, TPriceKind, TMetric>(System.Collections.Generic.IEnumerable<SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>!>! views) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.OfferingGroup<SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>!>!>!
+static SharedKernel.Offerings.OfferingListing.Group<TItem>(System.Collections.Generic.IEnumerable<TItem>! items, System.Func<TItem, int>! sortOrder, System.Func<TItem, SharedKernel.Offerings.OfferingSchedule!>! schedule) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Offerings.OfferingGroup<TItem>!>!
+static SharedKernel.Offerings.OfferingPublishing.FindIneligible<TImageId>(System.Collections.Generic.IEnumerable<TImageId>! imageIds, SharedKernel.BuildingBlocks.ContentCulture! culture, SharedKernel.BuildingBlocks.IImageEligibility<TImageId>! images) -> System.Collections.Generic.IReadOnlyList<TImageId>!
+static SharedKernel.Offerings.OfferingSchedule.operator !=(SharedKernel.Offerings.OfferingSchedule? left, SharedKernel.Offerings.OfferingSchedule? right) -> bool
+static SharedKernel.Offerings.OfferingSchedule.operator ==(SharedKernel.Offerings.OfferingSchedule? left, SharedKernel.Offerings.OfferingSchedule? right) -> bool
+static SharedKernel.Offerings.OfferingScheduleDefinition.operator !=(SharedKernel.Offerings.OfferingScheduleDefinition? left, SharedKernel.Offerings.OfferingScheduleDefinition? right) -> bool
+static SharedKernel.Offerings.OfferingScheduleDefinition.operator ==(SharedKernel.Offerings.OfferingScheduleDefinition? left, SharedKernel.Offerings.OfferingScheduleDefinition? right) -> bool
+static SharedKernel.Offerings.OfferingStructuredData.Build<TImageId, TPriceKind, TMetric>(SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>! view, SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>! options) -> System.Text.Json.Nodes.JsonObject!
+static SharedKernel.Offerings.OfferingText.DateLine(SharedKernel.Offerings.OfferingSchedule! schedule, string? dateNote, SharedKernel.BuildingBlocks.DateRangePatterns! patterns, string! toBeConfirmedFormat, System.IFormatProvider! provider) -> string?
+static SharedKernel.Offerings.OfferingText.DateLine<TImageId, TPriceKind, TMetric>(SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>! view, SharedKernel.BuildingBlocks.DateRangePatterns! patterns, string! toBeConfirmedFormat, System.IFormatProvider! provider) -> string?
+static SharedKernel.Offerings.OfferingText.Duration(SharedKernel.Offerings.OfferingSchedule! schedule, SharedKernel.Offerings.PluralFormat! days, SharedKernel.Offerings.PluralFormat! nights, System.IFormatProvider! provider) -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Offerings.OfferingText.Metric<TMetric>(SharedKernel.Offerings.Metric<TMetric>! metric, SharedKernel.Offerings.MetricFormat! format, System.IFormatProvider! provider) -> string!
+static SharedKernel.Offerings.OfferingText.Participants(SharedKernel.Offerings.ParticipantRange? range, SharedKernel.Offerings.ParticipantFormats! formats, System.IFormatProvider! provider) -> string?
+static SharedKernel.Offerings.OfferingText.PaymentTerms(SharedKernel.Offerings.PaymentTerms! terms, SharedKernel.Offerings.PaymentTermsFormats! formats, System.IFormatProvider! provider) -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Offerings.OfferingTranslationDefinition.operator !=(SharedKernel.Offerings.OfferingTranslationDefinition? left, SharedKernel.Offerings.OfferingTranslationDefinition? right) -> bool
+static SharedKernel.Offerings.OfferingTranslationDefinition.operator ==(SharedKernel.Offerings.OfferingTranslationDefinition? left, SharedKernel.Offerings.OfferingTranslationDefinition? right) -> bool
+static SharedKernel.Offerings.ParticipantFormats.operator !=(SharedKernel.Offerings.ParticipantFormats? left, SharedKernel.Offerings.ParticipantFormats? right) -> bool
+static SharedKernel.Offerings.ParticipantFormats.operator ==(SharedKernel.Offerings.ParticipantFormats? left, SharedKernel.Offerings.ParticipantFormats? right) -> bool
+static SharedKernel.Offerings.ParticipantRange.operator !=(SharedKernel.Offerings.ParticipantRange? left, SharedKernel.Offerings.ParticipantRange? right) -> bool
+static SharedKernel.Offerings.ParticipantRange.operator ==(SharedKernel.Offerings.ParticipantRange? left, SharedKernel.Offerings.ParticipantRange? right) -> bool
+static SharedKernel.Offerings.PaymentTerms.operator !=(SharedKernel.Offerings.PaymentTerms? left, SharedKernel.Offerings.PaymentTerms? right) -> bool
+static SharedKernel.Offerings.PaymentTerms.operator ==(SharedKernel.Offerings.PaymentTerms? left, SharedKernel.Offerings.PaymentTerms? right) -> bool
+static SharedKernel.Offerings.PaymentTermsFormats.operator !=(SharedKernel.Offerings.PaymentTermsFormats? left, SharedKernel.Offerings.PaymentTermsFormats? right) -> bool
+static SharedKernel.Offerings.PaymentTermsFormats.operator ==(SharedKernel.Offerings.PaymentTermsFormats? left, SharedKernel.Offerings.PaymentTermsFormats? right) -> bool
+static SharedKernel.Offerings.PluralFormat.operator !=(SharedKernel.Offerings.PluralFormat? left, SharedKernel.Offerings.PluralFormat? right) -> bool
+static SharedKernel.Offerings.PluralFormat.operator ==(SharedKernel.Offerings.PluralFormat? left, SharedKernel.Offerings.PluralFormat? right) -> bool
+static SharedKernel.Offerings.PriceKindRule<TPriceKind>.operator !=(SharedKernel.Offerings.PriceKindRule<TPriceKind>? left, SharedKernel.Offerings.PriceKindRule<TPriceKind>? right) -> bool
+static SharedKernel.Offerings.PriceKindRule<TPriceKind>.operator ==(SharedKernel.Offerings.PriceKindRule<TPriceKind>? left, SharedKernel.Offerings.PriceKindRule<TPriceKind>? right) -> bool
+static SharedKernel.Offerings.PriceLine<TPriceKind>.operator !=(SharedKernel.Offerings.PriceLine<TPriceKind>? left, SharedKernel.Offerings.PriceLine<TPriceKind>? right) -> bool
+static SharedKernel.Offerings.PriceLine<TPriceKind>.operator ==(SharedKernel.Offerings.PriceLine<TPriceKind>? left, SharedKernel.Offerings.PriceLine<TPriceKind>? right) -> bool
+static SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.operator !=(SharedKernel.Offerings.PriceLineDefinition<TPriceKind>? left, SharedKernel.Offerings.PriceLineDefinition<TPriceKind>? right) -> bool
+static SharedKernel.Offerings.PriceLineDefinition<TPriceKind>.operator ==(SharedKernel.Offerings.PriceLineDefinition<TPriceKind>? left, SharedKernel.Offerings.PriceLineDefinition<TPriceKind>? right) -> bool
+static SharedKernel.Offerings.PriceView<TPriceKind>.operator !=(SharedKernel.Offerings.PriceView<TPriceKind>? left, SharedKernel.Offerings.PriceView<TPriceKind>? right) -> bool
+static SharedKernel.Offerings.PriceView<TPriceKind>.operator ==(SharedKernel.Offerings.PriceView<TPriceKind>? left, SharedKernel.Offerings.PriceView<TPriceKind>? right) -> bool
+static SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.operator !=(SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>? left, SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>? right) -> bool
+static SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>.operator ==(SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>? left, SharedKernel.Offerings.ProgramStepDefinition<TImageId, TMetric>? right) -> bool
+static SharedKernel.Offerings.ProgramStepTextDefinition.operator !=(SharedKernel.Offerings.ProgramStepTextDefinition? left, SharedKernel.Offerings.ProgramStepTextDefinition? right) -> bool
+static SharedKernel.Offerings.ProgramStepTextDefinition.operator ==(SharedKernel.Offerings.ProgramStepTextDefinition? left, SharedKernel.Offerings.ProgramStepTextDefinition? right) -> bool
+static SharedKernel.Offerings.StructuredDataOrganization.operator !=(SharedKernel.Offerings.StructuredDataOrganization? left, SharedKernel.Offerings.StructuredDataOrganization? right) -> bool
+static SharedKernel.Offerings.StructuredDataOrganization.operator ==(SharedKernel.Offerings.StructuredDataOrganization? left, SharedKernel.Offerings.StructuredDataOrganization? right) -> bool
+SharedKernel.Offerings.GroupConditionFormats
+SharedKernel.Offerings.GroupConditionFormats.<Clone>$() -> SharedKernel.Offerings.GroupConditionFormats!
+SharedKernel.Offerings.GroupConditionFormats.Deconstruct(out string! Sentence, out SharedKernel.Offerings.PluralFormat! Minimum, out SharedKernel.Offerings.PluralFormat! DueDays) -> void
+SharedKernel.Offerings.GroupConditionFormats.DueDays.get -> SharedKernel.Offerings.PluralFormat!
+SharedKernel.Offerings.GroupConditionFormats.Equals(SharedKernel.Offerings.GroupConditionFormats? other) -> bool
+SharedKernel.Offerings.GroupConditionFormats.GroupConditionFormats(string! Sentence, SharedKernel.Offerings.PluralFormat! Minimum, SharedKernel.Offerings.PluralFormat! DueDays) -> void
+SharedKernel.Offerings.GroupConditionFormats.Minimum.get -> SharedKernel.Offerings.PluralFormat!
+SharedKernel.Offerings.GroupConditionFormats.Sentence.get -> string!
+SharedKernel.Offerings.OfferingCallToAction.Contact = 2 -> SharedKernel.Offerings.OfferingCallToAction
+SharedKernel.Offerings.OfferingCallToAction.SignUp = 1 -> SharedKernel.Offerings.OfferingCallToAction
+SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>.PriceLabel.get -> System.Func<TPriceKind, SharedKernel.BuildingBlocks.ContentCulture!, string?>?
+SharedKernel.Offerings.OfferingTranslation.PriceLabels.get -> System.Collections.Generic.IReadOnlyList<string?>!
+override SharedKernel.Offerings.GroupConditionFormats.Equals(object? obj) -> bool
+override SharedKernel.Offerings.GroupConditionFormats.GetHashCode() -> int
+override SharedKernel.Offerings.GroupConditionFormats.ToString() -> string!
+static SharedKernel.Offerings.GroupConditionFormats.operator !=(SharedKernel.Offerings.GroupConditionFormats? left, SharedKernel.Offerings.GroupConditionFormats? right) -> bool
+static SharedKernel.Offerings.GroupConditionFormats.operator ==(SharedKernel.Offerings.GroupConditionFormats? left, SharedKernel.Offerings.GroupConditionFormats? right) -> bool
+static SharedKernel.Offerings.OfferingText.GroupCondition(SharedKernel.Offerings.GroupCondition! condition, SharedKernel.Offerings.GroupConditionFormats! formats, SharedKernel.BuildingBlocks.MoneyDisplayOptions! money, System.IFormatProvider! provider) -> string!
+SharedKernel.Offerings.OfferingAvailability.Unspecified = 0 -> SharedKernel.Offerings.OfferingAvailability
+SharedKernel.Offerings.OfferingCallToAction.Unspecified = 0 -> SharedKernel.Offerings.OfferingCallToAction

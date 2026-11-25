@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The key holders that a SOPS file's metadata names.</summary>
 public sealed class SopsFileRecipients

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace PandaBear.PlaywrightMcp.Tool.Tests;
+namespace SharedKernel.PlaywrightMcp.Tool.Tests;
 
 /// <summary>Tests parsing, help, version, and cancellation handling of the Playwright MCP command line.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

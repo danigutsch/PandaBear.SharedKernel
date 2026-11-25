@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>What to do with unsaved decisions when the user quits.</summary>
 internal enum QuitChoice

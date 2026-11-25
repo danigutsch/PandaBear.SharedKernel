@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Results.SourceGenerator;
+namespace SharedKernel.Results.SourceGenerator;
 
 internal sealed class ErrorCatalogModel(ImmutableArray<ErrorCatalogEntryModel> entries) : IEquatable<ErrorCatalogModel>
 {

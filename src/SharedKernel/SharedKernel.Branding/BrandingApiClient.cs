@@ -1,4 +1,4 @@
-namespace PandaBear.Branding;
+namespace SharedKernel.Branding;
 
 /// <summary>
 /// HTTP client for branding API contracts.

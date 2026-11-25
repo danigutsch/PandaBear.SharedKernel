@@ -1,9 +1,9 @@
 #nullable enable
-PandaBear.Testing.AI.TestImageTextGenerator
-PandaBear.Testing.AI.TestImageTextGenerator.BeforeResult.get -> System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>?
-PandaBear.Testing.AI.TestImageTextGenerator.BeforeResult.init -> void
-PandaBear.Testing.AI.TestImageTextGenerator.Exception.get -> System.Exception?
-PandaBear.Testing.AI.TestImageTextGenerator.Exception.init -> void
-PandaBear.Testing.AI.TestImageTextGenerator.GenerateImageText(PandaBear.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.AI.ImageTextGenerationResult!>
-PandaBear.Testing.AI.TestImageTextGenerator.LastRequest.get -> PandaBear.AI.ImageTextGenerationRequest?
-PandaBear.Testing.AI.TestImageTextGenerator.TestImageTextGenerator(PandaBear.AI.ImageTextGenerationResult! result) -> void
+SharedKernel.Testing.AI.TestImageTextGenerator
+SharedKernel.Testing.AI.TestImageTextGenerator.BeforeResult.get -> System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>?
+SharedKernel.Testing.AI.TestImageTextGenerator.BeforeResult.init -> void
+SharedKernel.Testing.AI.TestImageTextGenerator.Exception.get -> System.Exception?
+SharedKernel.Testing.AI.TestImageTextGenerator.Exception.init -> void
+SharedKernel.Testing.AI.TestImageTextGenerator.GenerateImageText(SharedKernel.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.AI.ImageTextGenerationResult!>
+SharedKernel.Testing.AI.TestImageTextGenerator.LastRequest.get -> SharedKernel.AI.ImageTextGenerationRequest?
+SharedKernel.Testing.AI.TestImageTextGenerator.TestImageTextGenerator(SharedKernel.AI.ImageTextGenerationResult! result) -> void

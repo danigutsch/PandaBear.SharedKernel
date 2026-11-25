@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Tests outbox reads through an independently configured context.</summary>
 /// <param name="options">The read context options.</param>

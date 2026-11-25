@@ -1,4 +1,4 @@
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>Orders albums for display.</summary>
 public static class AlbumOrdering

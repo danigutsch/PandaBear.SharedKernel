@@ -15,7 +15,7 @@ describes the checks and their output.
 ## Usage
 
 ```csharp
-using PandaBear.DevContainers;
+using SharedKernel.DevContainers;
 
 var exitCode = await PodmanDnsPreflight.Run(PodmanDnsHost.Current(), quiet: false, Console.Out, Console.Error, cancellationToken);
 ```
@@ -28,6 +28,6 @@ var exitCode = await PodmanDnsPreflight.Run(PodmanDnsHost.Current(), quiet: fals
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.DevContainers`. C# namespace: `PandaBear.DevContainers`. Assembly/project identity: `SharedKernel.DevContainers`.
+Package ID: `PandaBear.SharedKernel.DevContainers`. C# namespace: `SharedKernel.DevContainers`. Assembly/project identity: `SharedKernel.DevContainers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

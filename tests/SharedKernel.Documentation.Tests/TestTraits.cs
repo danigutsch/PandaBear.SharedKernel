@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Trait values that tag the documentation tests by component, capability and category.</summary>
 internal static class TestTraits

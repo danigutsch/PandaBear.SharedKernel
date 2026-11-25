@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Mediator.Benchmarks</RootNamespace>
+        <RootNamespace>SharedKernel.Mediator.Benchmarks</RootNamespace>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 

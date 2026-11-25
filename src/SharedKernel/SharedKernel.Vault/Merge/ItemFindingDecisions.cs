@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>User decisions on the secret findings of one input item.</summary>
 /// <param name="OriginKey">Origin key of the item as read, from <see cref="Matching.OriginKeys"/>.</param>

@@ -1,6 +1,6 @@
 #nullable enable
-PandaBear.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider
-PandaBear.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider.RuntimeEndpointBindingCodeFixProvider() -> void
-override PandaBear.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override PandaBear.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
-override PandaBear.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+SharedKernel.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider
+SharedKernel.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider.RuntimeEndpointBindingCodeFixProvider() -> void
+override SharedKernel.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override SharedKernel.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
+override SharedKernel.AspNetCore.CodeFixes.RuntimeEndpointBindingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!

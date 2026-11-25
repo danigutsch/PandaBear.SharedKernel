@@ -1,7 +1,7 @@
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using System.Net;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the method-and-path routing HTTP message handler.</summary>
 public sealed class RoutingHttpMessageHandlerTests

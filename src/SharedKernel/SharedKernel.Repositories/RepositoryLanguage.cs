@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// A language that selects the content of the features of <c>new</c>. Only the catalog values exist, so a parsed

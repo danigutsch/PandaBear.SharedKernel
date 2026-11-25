@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>A secret that <see cref="SecretScanner"/> found: what it is, how sure the scanner is, and where it is, never the value.</summary>
 public sealed record DetectedSecret

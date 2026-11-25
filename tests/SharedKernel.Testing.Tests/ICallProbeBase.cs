@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>The inherited part of <see cref="ICallProbe"/>.</summary>
 public interface ICallProbeBase

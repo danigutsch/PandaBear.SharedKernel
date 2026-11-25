@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>
 /// Validates the opaque text fields of a hold. Only letters, digits and <c>. _ : -</c> are accepted so free text,

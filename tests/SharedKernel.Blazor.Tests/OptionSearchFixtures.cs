@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Searches and states for the option search tests.</summary>
 internal static class OptionSearchFixtures

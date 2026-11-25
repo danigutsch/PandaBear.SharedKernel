@@ -1,6 +1,6 @@
-using static PandaBear.Offerings.Tests.OfferingFixtures;
+using static SharedKernel.Offerings.Tests.OfferingFixtures;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Tests the availability table: which dates, year and date note each availability takes, and the duration.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

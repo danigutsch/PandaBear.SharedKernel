@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>A fake scanner process that records its start info, optionally writes a report file, and returns a fixed exit code.</summary>
 /// <param name="exitCode">The exit code the fake process returns.</param>

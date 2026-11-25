@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Mediator.CodeFixes</PackageId>
         <Description>Code fixes for SharedKernel.Mediator.</Description>
-        <RootNamespace>PandaBear.Mediator.CodeFixes</RootNamespace>
+        <RootNamespace>SharedKernel.Mediator.CodeFixes</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>mediator;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

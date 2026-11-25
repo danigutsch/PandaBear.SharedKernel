@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>What <see cref="Packager.ConsumePackages"/> consumes and how.</summary>
 /// <param name="RepoRoot">The SharedKernel repository root, whose <c>global.json</c>, central package versions, and samples the check uses.</param>

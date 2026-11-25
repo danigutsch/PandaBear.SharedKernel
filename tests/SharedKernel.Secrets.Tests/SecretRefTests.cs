@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests references to a value inside an encrypted file.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

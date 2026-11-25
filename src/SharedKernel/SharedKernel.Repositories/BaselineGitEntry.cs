@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>A Git setting with how the repository's value compares with the desired one.</summary>
 /// <param name="Key">The setting key.</param>

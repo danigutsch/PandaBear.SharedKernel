@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// A file that <c>baseline apply</c> manages.

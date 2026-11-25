@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Answers the Git commands of <c>select</c> and reads the plan files it writes.</summary>
 internal static class SelectionTestFiles

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Describes a <c>/bin/sh -c</c> run of a script.</summary>
 internal static class ShellStartInfo

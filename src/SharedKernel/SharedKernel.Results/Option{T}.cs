@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Results;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Represents an optional non-null value that may or may not be present.

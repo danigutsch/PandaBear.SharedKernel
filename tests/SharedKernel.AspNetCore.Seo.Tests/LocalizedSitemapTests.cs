@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Seo.Tests;
+namespace SharedKernel.AspNetCore.Seo.Tests;
 
 /// <summary>Exercises localized groups independently of route discovery.</summary>
 public sealed class LocalizedSitemapTests

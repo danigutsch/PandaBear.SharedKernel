@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>Reads the lock file policy: the projects of the repository, which of them are lock-exempt, and their lock files.</summary>
 internal static class LockFilePolicyFiles

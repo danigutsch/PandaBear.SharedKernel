@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests creation rules, their regular expressions, and first-match-wins selection.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

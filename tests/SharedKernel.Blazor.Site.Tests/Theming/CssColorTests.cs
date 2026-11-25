@@ -1,6 +1,6 @@
-using PandaBear.Blazor.Site.Theming;
+using SharedKernel.Blazor.Site.Theming;
 
-namespace PandaBear.Blazor.Site.Tests.Theming;
+namespace SharedKernel.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the hex colour value object and the WCAG contrast math.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

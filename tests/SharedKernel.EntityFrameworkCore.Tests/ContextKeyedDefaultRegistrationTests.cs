@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests that the unkeyed outbox and idempotency store need an explicit default when several messaging contexts share one host.

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>Registers server-side, cookieless page views and returns the builder that adds their targets.</summary>
 public static class PageViewHostApplicationBuilderExtensions

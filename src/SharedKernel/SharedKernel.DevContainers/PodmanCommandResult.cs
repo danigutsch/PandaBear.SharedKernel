@@ -1,4 +1,4 @@
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>Outcome of a finished Podman command.</summary>
 /// <param name="ExitCode">Process exit code.</param>

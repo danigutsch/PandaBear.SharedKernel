@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections.Blazor.Tests;
+namespace SharedKernel.PageSections.Blazor.Tests;
 
 /// <summary>An application extension: a settings block to show and a display condition, as ViajantesTurismo V2's.</summary>
 /// <param name="Block">The block, 0 for none.</param>

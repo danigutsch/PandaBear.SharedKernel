@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Results.Analyzers</PackageId>
         <Description>Analyzers for SharedKernel Result-pattern misuse.</Description>
-        <RootNamespace>PandaBear.Results.Analyzers</RootNamespace>
+        <RootNamespace>SharedKernel.Results.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>results;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

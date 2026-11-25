@@ -13,7 +13,7 @@ describes the merge rules, limits, and security notes that this library applies 
 ## Usage
 
 ```csharp
-using PandaBear.Vault.Pipeline;
+using SharedKernel.Vault.Pipeline;
 
 var pipeline = new VaultPipeline(reader, writer, new VaultPasswordPrompts(readPassword, readNewPassword), TimeProvider.System);
 PipelineResult result = pipeline.Merge(VaultPipeline.Scan(pipeline.Load(inputPaths, ct), ct), new MergeRequest(), ct);
@@ -31,7 +31,7 @@ PipelineResult result = pipeline.Merge(VaultPipeline.Scan(pipeline.Load(inputPat
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Vault`. C# namespace: `PandaBear.Vault`. Assembly/project identity: `SharedKernel.Vault`.
+Package ID: `PandaBear.SharedKernel.Vault`. C# namespace: `SharedKernel.Vault`. Assembly/project identity: `SharedKernel.Vault`.
 
 The project is not packable yet: shipping the vault manager and its engine is a separate decision. Source is public;
 registry publication remains deferred.

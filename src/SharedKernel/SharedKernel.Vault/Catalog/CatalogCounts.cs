@@ -1,6 +1,6 @@
-using PandaBear.Vault.Merge;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>What a catalog shows and withholds, for the summary of the <c>catalog</c> command.</summary>
 public sealed class CatalogCounts

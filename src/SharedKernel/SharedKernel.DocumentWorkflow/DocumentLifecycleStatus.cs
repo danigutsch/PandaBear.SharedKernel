@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Identifies the lifecycle phase of one document revision.</summary>
 public enum DocumentLifecycleStatus

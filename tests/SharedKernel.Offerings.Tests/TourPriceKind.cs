@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>ViajantesTurismo V2's price kinds, in display order.</summary>
 public enum TourPriceKind

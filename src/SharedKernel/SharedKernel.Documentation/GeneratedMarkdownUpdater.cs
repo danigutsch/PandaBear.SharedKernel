@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>
 /// Updates named generated blocks inside Markdown documents.

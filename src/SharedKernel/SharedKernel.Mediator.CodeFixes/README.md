@@ -72,6 +72,6 @@ test-only fixes, or optional-technology fixes here.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Mediator.CodeFixes`. C# namespace: `PandaBear.Mediator.CodeFixes`. Assembly/project identity: `SharedKernel.Mediator.CodeFixes`.
+Package ID: `PandaBear.SharedKernel.Mediator.CodeFixes`. C# namespace: `SharedKernel.Mediator.CodeFixes`. Assembly/project identity: `SharedKernel.Mediator.CodeFixes`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

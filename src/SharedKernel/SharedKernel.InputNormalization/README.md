@@ -40,7 +40,7 @@ dotnet add package PandaBear.SharedKernel.InputNormalization --version <validate
 ```
 
 ```csharp
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
 public static class Example
 {
@@ -54,7 +54,7 @@ public static class Example
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.InputNormalization`. C# namespace: `PandaBear.InputNormalization`. Assembly/project identity: `SharedKernel.InputNormalization`.
+Package ID: `PandaBear.SharedKernel.InputNormalization`. C# namespace: `SharedKernel.InputNormalization`. Assembly/project identity: `SharedKernel.InputNormalization`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

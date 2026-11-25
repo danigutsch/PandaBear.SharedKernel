@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Reads job blocks from a GitHub Actions workflow file.</summary>
 internal static class WorkflowJobs

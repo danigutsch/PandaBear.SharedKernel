@@ -1,6 +1,6 @@
-using PandaBear.Aspire.Hosting.Umami.Testing;
+using SharedKernel.Aspire.Hosting.Umami.Testing;
 
-namespace PandaBear.Aspire.Hosting.Umami.Tests;
+namespace SharedKernel.Aspire.Hosting.Umami.Tests;
 
 /// <summary>Tests what the owner of the shared Umami hands over when the website is set up and when Umami does not start.</summary>
 public sealed class UmamiTestWebsiteHandOverTests : IDisposable

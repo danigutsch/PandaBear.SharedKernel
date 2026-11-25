@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>
 /// A dependency injection scope that exposes the event envelope publisher for one simulated delivery.

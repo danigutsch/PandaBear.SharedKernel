@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Runs a package tool the way the readers do: from the start information they build, through the bounded runner.</summary>
 internal static class PackageToolProcess

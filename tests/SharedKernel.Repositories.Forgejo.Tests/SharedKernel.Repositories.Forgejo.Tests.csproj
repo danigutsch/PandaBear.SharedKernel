@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Repositories.Forgejo.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.Repositories.Forgejo.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Testing" />
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing.Http" />
+        <Using Include="SharedKernel.Testing" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Http" />
         <Using Include="Xunit" />
     </ItemGroup>
 

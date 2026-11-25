@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests that ShouldThrow returns the very exception thrown by a delegate and requires its exact type.</summary>
 public sealed class ExceptionDelegateContractTests

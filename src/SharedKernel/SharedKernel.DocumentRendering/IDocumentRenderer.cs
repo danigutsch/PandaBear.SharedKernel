@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentRendering;
+namespace SharedKernel.DocumentRendering;
 
 /// <summary>
 /// Renders canonical structured document data to an immutable payload.

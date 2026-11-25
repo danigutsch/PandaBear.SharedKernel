@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Binds the version-one review encoding to one lineage, revision, and provenance.</summary>
 /// <param name="LineageId">The document lineage.</param>

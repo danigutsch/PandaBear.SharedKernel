@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Scripted OSV failure scenarios for the failure-not-empty theory.</summary>
 internal static class OsvFailures

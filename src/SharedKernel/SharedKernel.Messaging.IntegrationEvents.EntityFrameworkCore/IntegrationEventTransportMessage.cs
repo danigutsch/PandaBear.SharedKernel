@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Represents a durable integration-event transport message for one consumer.

@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the Umami resource builder: the pinned image, its PostgreSQL database, the generated app secret, the environment, the health check, data storage and the endpoint a site references.</summary>
 public sealed class UmamiResourceTests

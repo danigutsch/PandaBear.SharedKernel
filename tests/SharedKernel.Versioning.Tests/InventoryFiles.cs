@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Writes lock files, project assets files, and project files for package inventory tests.</summary>
 internal static class InventoryFiles

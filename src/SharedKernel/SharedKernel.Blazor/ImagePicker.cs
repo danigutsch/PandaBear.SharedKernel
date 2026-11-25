@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>The bounds of an <see cref="ImagePicker{TKey, TOption}"/> and the helper that prepares its prerendered state.</summary>
 public static class ImagePicker

@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents;
+namespace SharedKernel.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Stores integration events durably for later publication.

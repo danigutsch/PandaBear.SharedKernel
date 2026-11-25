@@ -1,14 +1,14 @@
 using System.CommandLine;
-using PandaBear.InputNormalization;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Catalog;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Formats;
+using SharedKernel.InputNormalization;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Catalog;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Formats;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// <c>apply</c>: applies an edited catalog to the vault file it was made from and writes the result as a Bitwarden

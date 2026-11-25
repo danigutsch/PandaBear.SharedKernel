@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.ClaudeCode.Tests;
+namespace SharedKernel.Sandbox.ClaudeCode.Tests;
 
 /// <summary>Tests reading the settings file within its size cap.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

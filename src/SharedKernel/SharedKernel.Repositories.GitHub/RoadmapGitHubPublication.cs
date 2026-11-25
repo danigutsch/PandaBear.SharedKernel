@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Result of publishing roadmap changes to GitHub.</summary>
 /// <param name="PullRequestUrl">URL of the pull request that carries the changes.</param>

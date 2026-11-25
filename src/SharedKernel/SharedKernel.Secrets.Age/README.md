@@ -12,9 +12,9 @@ cryptography and makes no network request; install and pin the programs yourself
 ## Usage
 
 ```csharp
-using PandaBear.Processes;
-using PandaBear.Secrets;
-using PandaBear.Secrets.Age;
+using SharedKernel.Processes;
+using SharedKernel.Secrets;
+using SharedKernel.Secrets.Age;
 
 var age = ProcessAgeTool.Find(new SystemToolRunner(), PathExecutableResolver.Default);
 var identity = AgeIdentityRef.Create("/home/me/.config/age/work.txt").Value;

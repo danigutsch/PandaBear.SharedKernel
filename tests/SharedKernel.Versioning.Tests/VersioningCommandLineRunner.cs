@@ -1,8 +1,8 @@
 using System.CommandLine;
 using System.CommandLine.Help;
-using PandaBear.Versioning.Tool;
+using SharedKernel.Versioning.Tool;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Builds and invokes the versioning command line in process for tests.

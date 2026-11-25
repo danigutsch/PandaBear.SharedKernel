@@ -1,6 +1,6 @@
-using PandaBear.DispositionHold;
+using SharedKernel.DispositionHold;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Builds holds with valid defaults for tests.

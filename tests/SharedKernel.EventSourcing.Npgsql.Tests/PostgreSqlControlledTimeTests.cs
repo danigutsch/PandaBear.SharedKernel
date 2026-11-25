@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Tests that the event store and checkpoint store take their timestamps from the configured time provider.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture that supplies the per-test database.</param>

@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Engine tests split from the command-line tests in RepoConfigToolApplicationTests.</summary>
 public sealed class GitHubProjectSyncTests

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore;
+namespace SharedKernel.EntityFrameworkCore;
 
 /// <summary>Recognizes unique-index violations of one database provider. Implementations hold all provider-specific knowledge.</summary>
 public interface IUniqueViolationParser

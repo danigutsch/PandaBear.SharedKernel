@@ -8,7 +8,7 @@ Reusable Playwright assertions, diagnostics and test bases for SharedKernel brow
 
 ## Usage
 
-Import `PandaBear.Testing.Playwright` and await `page.ShouldHaveTitle(expectedTitle)` in Playwright tests. Browser creation, readiness, navigation, and test authentication remain owned by the test fixture.
+Import `SharedKernel.Testing.Playwright` and await `page.ShouldHaveTitle(expectedTitle)` in Playwright tests. Browser creation, readiness, navigation, and test authentication remain owned by the test fixture.
 
 To state why the test expects the title, await `page.ShouldHaveTitle(expectedTitle, userMessage)`. Playwright puts the message before the failure and keeps its own exception type.
 
@@ -157,6 +157,6 @@ renders a component with its parameters as static server-side rendering does, wi
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Playwright`. C# namespace: `PandaBear.Testing.Playwright`. Assembly/project identity: `SharedKernel.Testing.Playwright`.
+Package ID: `PandaBear.SharedKernel.Testing.Playwright`. C# namespace: `SharedKernel.Testing.Playwright`. Assembly/project identity: `SharedKernel.Testing.Playwright`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

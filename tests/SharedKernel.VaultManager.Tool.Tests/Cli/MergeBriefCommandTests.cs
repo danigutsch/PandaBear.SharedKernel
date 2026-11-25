@@ -1,9 +1,9 @@
-using PandaBear.Testing;
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Merge;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Merge;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests the brief that the merge command writes.</summary>
 public sealed class MergeBriefCommandTests : IDisposable

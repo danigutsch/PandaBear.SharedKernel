@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.CI.GitHub;
+namespace SharedKernel.CI.GitHub;
 
 /// <summary>
 /// Source-generated JSON metadata for a page of the GitHub releases API. The properties that the store reads are

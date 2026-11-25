@@ -2,9 +2,9 @@ using System.Globalization;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.CI.Forgejo;
+namespace SharedKernel.CI.Forgejo;
 
 /// <summary>Sends the GET requests of the Forgejo provider with a timeout and reads their bounded JSON bodies.</summary>
 internal static class ForgejoResponses

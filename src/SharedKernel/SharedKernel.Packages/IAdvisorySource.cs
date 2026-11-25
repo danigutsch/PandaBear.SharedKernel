@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// A source of security advisories. A lookup that fails or only partly succeeds is a failed <see cref="Result{T}"/>,

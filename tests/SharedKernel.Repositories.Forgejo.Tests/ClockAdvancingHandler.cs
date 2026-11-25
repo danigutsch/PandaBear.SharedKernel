@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Repositories.Forgejo.Tests;
+namespace SharedKernel.Repositories.Forgejo.Tests;
 
 /// <summary>Advances a fake clock past the request timeout before it answers, so the request times out.</summary>
 /// <param name="timeProvider">The fake clock to advance.</param>

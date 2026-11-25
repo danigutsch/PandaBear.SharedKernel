@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Calculates release versions and automation output from Git-derived inputs.

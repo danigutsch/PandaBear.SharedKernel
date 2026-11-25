@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The editor fields of one font file.</summary>
 public sealed class ThemeFontFaceFields

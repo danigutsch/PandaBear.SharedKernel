@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the shared process, Git, loopback port and tracking helpers.</summary>
 public sealed class ProcessGitAndPortHelperTests

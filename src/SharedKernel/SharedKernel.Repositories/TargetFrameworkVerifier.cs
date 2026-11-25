@@ -3,9 +3,9 @@ using System.IO.Enumeration;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Audits the target frameworks of the tracked project files against a consumer-owned policy, without building. The

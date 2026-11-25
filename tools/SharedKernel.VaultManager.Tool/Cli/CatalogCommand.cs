@@ -1,11 +1,11 @@
 using System.CommandLine;
-using PandaBear.InputNormalization;
-using PandaBear.Vault.Catalog;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Formats;
+using SharedKernel.InputNormalization;
+using SharedKernel.Vault.Catalog;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Formats;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// <c>catalog</c>: writes the catalog of one vault file, which people and agents edit without seeing secret values, and

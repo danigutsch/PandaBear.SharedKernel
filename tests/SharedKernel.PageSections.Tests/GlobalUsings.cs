@@ -1,2 +1,2 @@
-global using SiteSection = PandaBear.PageSections.PageSection<System.Guid, PandaBear.PageSections.Tests.NavRoute, PandaBear.PageSections.Tests.SiteExtra>;
-global using SiteSectionDefinition = PandaBear.PageSections.PageSectionDefinition<System.Guid, PandaBear.PageSections.Tests.NavLink, PandaBear.PageSections.Tests.SiteExtra>;
+global using SiteSection = SharedKernel.PageSections.PageSection<System.Guid, SharedKernel.PageSections.Tests.NavRoute, SharedKernel.PageSections.Tests.SiteExtra>;
+global using SiteSectionDefinition = SharedKernel.PageSections.PageSectionDefinition<System.Guid, SharedKernel.PageSections.Tests.NavLink, SharedKernel.PageSections.Tests.SiteExtra>;

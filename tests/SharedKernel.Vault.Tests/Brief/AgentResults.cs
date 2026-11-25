@@ -1,10 +1,10 @@
-using PandaBear.Vault.Analysis;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
+using SharedKernel.Vault.Analysis;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
 
-namespace PandaBear.Vault.Tests.Brief;
+namespace SharedKernel.Vault.Tests.Brief;
 
 /// <summary>Builds merge results with given groups, to check what agent decisions change.</summary>
 internal static class AgentResults

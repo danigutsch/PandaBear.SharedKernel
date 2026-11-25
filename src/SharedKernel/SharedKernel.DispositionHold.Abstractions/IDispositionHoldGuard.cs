@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>
 /// Decides whether holds restrain disposition of the given scopes. A purge, anonymization or erasure workflow must

@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Creates real Git work trees for tests that run Git itself.</summary>
 internal static class GitCheckout

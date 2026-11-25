@@ -2,11 +2,11 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using PandaBear.Npgsql;
-using PandaBear.DispositionHold;
-using PandaBear.DispositionHold.EntityFrameworkCore;
+using SharedKernel.Npgsql;
+using SharedKernel.DispositionHold;
+using SharedKernel.DispositionHold.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// PostgreSQL host of the disposition hold store and guard in an isolated database with the schema created.

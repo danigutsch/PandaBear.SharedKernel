@@ -4,9 +4,9 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Aspire.Hosting.Umami.Testing;
+namespace SharedKernel.Aspire.Hosting.Umami.Testing;
 
 /// <summary>
 /// Knows how the Umami test website that test assemblies share is composed, borrowed from the process that owns it, and started. The

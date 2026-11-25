@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Runtime.Versioning;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Records the private Podman scopes and scripts the local engine without touching the host container store.</summary>
 internal sealed class IsolatedPodmanTestContext : IDisposable

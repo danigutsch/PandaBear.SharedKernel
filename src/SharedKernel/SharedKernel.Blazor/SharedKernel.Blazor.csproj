@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Blazor</PackageId>
         <Description>Accessible Blazor helpers for HTTP outcome messages, server validation, error summaries, handled-failure reporting, upload status, and bounded option search.</Description>
-        <RootNamespace>PandaBear.Blazor</RootNamespace>
+        <RootNamespace>SharedKernel.Blazor</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>blazor;accessibility;http-clients;validation;search;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

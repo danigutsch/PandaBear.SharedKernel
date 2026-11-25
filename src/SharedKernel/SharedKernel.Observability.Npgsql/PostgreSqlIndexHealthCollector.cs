@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace PandaBear.Observability.Npgsql;
+namespace SharedKernel.Observability.Npgsql;
 
 /// <summary>Collects read-only PostgreSQL index-health evidence without applying database changes.</summary>
 public sealed class PostgreSqlIndexHealthCollector

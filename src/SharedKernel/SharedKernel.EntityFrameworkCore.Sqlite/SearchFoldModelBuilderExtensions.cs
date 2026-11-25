@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite;
+namespace SharedKernel.EntityFrameworkCore.Sqlite;
 
 /// <summary>Maps the search fold function into a model.</summary>
 public static class SearchFoldModelBuilderExtensions

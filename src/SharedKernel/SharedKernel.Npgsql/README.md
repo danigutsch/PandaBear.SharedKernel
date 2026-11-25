@@ -96,7 +96,7 @@ CREATE INDEX schedule_runs_unfinished_recent
 ## Lock-key derivation
 
 ```csharp
-using PandaBear.Npgsql;
+using SharedKernel.Npgsql;
 
 var lockKey = PostgreSqlLockKey.FromIdentity("inventory:123");
 ```
@@ -112,7 +112,7 @@ in the consumer; this helper does not change existing callers or their lock keys
 ## Ordered transaction locks
 
 ```csharp
-using PandaBear.Npgsql;
+using SharedKernel.Npgsql;
 
 var locks = new PostgreSqlOrderedTransactionLocks(connection, transaction);
 await locks.Acquire([new(0, $"admin:tour-capacity:{tourId}")], ct);
@@ -154,6 +154,6 @@ stored bytes. Only the outcome and identifier are returned to the caller.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Npgsql`. C# namespace: `PandaBear.Npgsql`. Assembly/project identity: `SharedKernel.Npgsql`.
+Package ID: `PandaBear.SharedKernel.Npgsql`. C# namespace: `SharedKernel.Npgsql`. Assembly/project identity: `SharedKernel.Npgsql`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

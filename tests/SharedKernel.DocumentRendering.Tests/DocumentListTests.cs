@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>
 /// Tests the ordered and unordered lists of a document section.

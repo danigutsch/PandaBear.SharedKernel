@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>Parses the same content as text and as UTF-8, so every reading rule is checked on both entry points.</summary>
 internal static class CsvParsing

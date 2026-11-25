@@ -1,4 +1,4 @@
-namespace PandaBear.PlaywrightMcp.Tests;
+namespace SharedKernel.PlaywrightMcp.Tests;
 
 /// <summary>Tests the server through its process runner and executable resolver, without starting a container engine.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

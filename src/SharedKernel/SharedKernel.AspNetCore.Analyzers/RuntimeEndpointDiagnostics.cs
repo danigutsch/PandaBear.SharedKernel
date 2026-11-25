@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Analyzers;
+namespace SharedKernel.AspNetCore.Analyzers;
 
 /// <summary>Diagnostic metadata shared by the analyzer and the code fix.</summary>
 internal static class RuntimeEndpointDiagnostics

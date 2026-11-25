@@ -46,14 +46,14 @@ reaches the caller, and the request stays recorded. Bodies are recorded as strin
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Http`. C# namespace: `PandaBear.Testing.Http`. Assembly/project identity: `SharedKernel.Testing.Http`.
+Package ID: `PandaBear.SharedKernel.Testing.Http`. C# namespace: `SharedKernel.Testing.Http`. Assembly/project identity: `SharedKernel.Testing.Http`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 
 ## Problem responses
 
 ```csharp
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 
 var problem = await response.ShouldBeValidationProblem(
     expectedDetail: "invalid id",
@@ -108,7 +108,7 @@ Route values and other relations stay in the consuming test. Both have `userMess
 ## Asserting success responses
 
 ```csharp
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 
 var tour = await response.ShouldBeCreated<TourDto>(cancellationToken);   // 201, Location, application/json
 response.ShouldHaveLocation("/api/tours/");                              // path prefix of the Location header

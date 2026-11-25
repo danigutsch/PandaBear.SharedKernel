@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>A diagnostic to report, kept comparable for incremental caching.</summary>
 /// <param name="Id">The diagnostic ID.</param>

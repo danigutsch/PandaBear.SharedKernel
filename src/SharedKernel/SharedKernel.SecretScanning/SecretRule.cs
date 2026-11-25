@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>One catalog detection rule.</summary>
 internal sealed record SecretRule

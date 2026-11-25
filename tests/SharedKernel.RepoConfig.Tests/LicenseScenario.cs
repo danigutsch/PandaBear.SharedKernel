@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Describes the pinned candidate and the locked packages of a license exception test repository.</summary>
 /// <param name="CandidateVersion">The package version written to the candidate pin.</param>

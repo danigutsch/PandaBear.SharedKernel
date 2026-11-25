@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>A temporary repository with a solution, projects, and a CI configuration for the selection and tool tests.</summary>
 internal sealed class RepositoryTestScope : IDisposable

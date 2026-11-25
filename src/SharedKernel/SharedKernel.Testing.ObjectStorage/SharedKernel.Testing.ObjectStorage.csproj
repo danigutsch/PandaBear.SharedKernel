@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.ObjectStorage</PackageId>
         <Description>In-memory object store with call recording and failure injection for SharedKernel test suites.</Description>
-        <RootNamespace>PandaBear.Testing.ObjectStorage</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.ObjectStorage</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;object-storage;storage;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

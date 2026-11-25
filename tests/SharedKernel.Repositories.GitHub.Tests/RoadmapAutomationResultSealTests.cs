@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Tests creating, writing, loading, and tamper detection of roadmap automation result seals.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

@@ -1,9 +1,9 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Merge;
+namespace SharedKernel.Vault.Tests.Merge;
 
 /// <summary>Builds secret findings and finding decisions without scanning an item.</summary>
 internal static class FindingSamples

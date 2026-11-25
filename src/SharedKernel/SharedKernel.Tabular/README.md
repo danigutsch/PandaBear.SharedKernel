@@ -18,7 +18,7 @@ dotnet add package PandaBear.SharedKernel.Tabular --version <validated-candidate
 ## Example
 
 ```csharp
-using PandaBear.Tabular;
+using SharedKernel.Tabular;
 
 var result = CsvDocument.Parse("Code,Label\nalpha,\"One, first\"\nALPHA,Two", ["Code"]);
 if (result.IsSuccess)
@@ -103,4 +103,4 @@ Duplicate scanning compares keys ordinally by default or uses the supplied compa
 the selector skips them. The first occurrence is retained and the line numbers of later duplicates are returned in order: the parsed
 `CsvRow.LineNumber`, or for a row made with `CsvRow.Create` its position after a one-line header (the first data row is line 2).
 
-Package ID: `PandaBear.SharedKernel.Tabular`. C# namespace: `PandaBear.Tabular`. Assembly/project identity: `SharedKernel.Tabular`. Only the existing Results package is referenced; no CSV dependency is added.
+Package ID: `PandaBear.SharedKernel.Tabular`. C# namespace: `SharedKernel.Tabular`. Assembly/project identity: `SharedKernel.Tabular`. Only the existing Results package is referenced; no CSV dependency is added.

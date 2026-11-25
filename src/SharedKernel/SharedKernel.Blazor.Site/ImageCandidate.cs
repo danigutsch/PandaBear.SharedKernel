@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// One entry of a <c>srcset</c>: an image address with a width descriptor (<c>640w</c>) or a pixel-density descriptor

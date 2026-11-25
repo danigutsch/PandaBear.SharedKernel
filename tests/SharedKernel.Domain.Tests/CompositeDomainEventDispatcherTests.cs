@@ -1,4 +1,4 @@
-namespace PandaBear.Domain.Tests;
+namespace SharedKernel.Domain.Tests;
 
 /// <summary>Tests that CompositeDomainEventDispatcher calls its handlers in order, forwards cancellation, stops on failure and rejects null arguments.</summary>
 public sealed class CompositeDomainEventDispatcherTests

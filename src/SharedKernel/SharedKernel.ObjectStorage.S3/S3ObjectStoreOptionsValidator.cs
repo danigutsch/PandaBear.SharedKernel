@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.ObjectStorage.S3;
+namespace SharedKernel.ObjectStorage.S3;
 
 /// <summary>
 /// Validates <see cref="S3ObjectStoreOptions" />.

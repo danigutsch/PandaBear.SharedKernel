@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.Protobuf;
+namespace SharedKernel.Messaging.Protobuf;
 
 /// <summary>
 /// Defines the media types that identify Protobuf in an integration-event envelope.

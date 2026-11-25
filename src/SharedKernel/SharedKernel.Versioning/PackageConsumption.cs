@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Verifies that the packed SharedKernel packages work for consumers.</summary>
 internal static class PackageConsumption

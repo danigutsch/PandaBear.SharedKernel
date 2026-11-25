@@ -1,10 +1,10 @@
 using System.CommandLine;
 using System.CommandLine.Help;
-using PandaBear.VaultManager.Tool.Cli;
-using PandaBear.VaultManager.Tool.Tests.Cli;
-using PandaBear.Testing;
+using SharedKernel.VaultManager.Tool.Cli;
+using SharedKernel.VaultManager.Tool.Tests.Cli;
+using SharedKernel.Testing;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Invokes the review command with a fake terminal, capturing every output like the real command tree tests do.</summary>
 internal static class ReviewRun

@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Tests how the dev pack turns its options into pack invocations.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

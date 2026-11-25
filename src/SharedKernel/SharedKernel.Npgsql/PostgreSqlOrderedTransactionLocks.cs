@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>
 /// Takes transaction-scoped PostgreSQL advisory locks in one global order, so transactions that need several locks cannot deadlock on them.

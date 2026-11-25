@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace PandaBear.Blazor.Analyzers;
+namespace SharedKernel.Blazor.Analyzers;
 
 /// <summary>
 /// Reports Blazor component state and service-scope mistakes: a busy flag that an exception can leave set, and services injected
@@ -76,7 +76,7 @@ public sealed class BlazorAnalyzer : DiagnosticAnalyzer
             }
 
             var inject = compilationContext.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.InjectAttribute");
-            var sender = compilationContext.Compilation.GetTypeByMetadataName("PandaBear.Mediator.ISender");
+            var sender = compilationContext.Compilation.GetTypeByMetadataName("SharedKernel.Mediator.ISender");
             var dbContext = compilationContext.Compilation.GetTypeByMetadataName("Microsoft.EntityFrameworkCore.DbContext");
 
             compilationContext.RegisterSyntaxNodeAction(

@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Formats;
+namespace SharedKernel.Vault.Formats;
 
 /// <summary>
 /// Attachment folder of a Bitwarden zip export whose files belong to no item read from it. The export names each folder

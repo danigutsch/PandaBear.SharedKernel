@@ -1,6 +1,6 @@
-using PandaBear.Testing.Logging;
+using SharedKernel.Testing.Logging;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>Asserts that a log entry holds none of the visitor data the test pages carry.</summary>
 internal static class VisitorDataAssertions

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 // These records only mirror the wire format; their members are named by the JSON properties they carry.
 #pragma warning disable SKSTYLE017
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>The parts of the OSV API messages that the adapter reads or writes. Unknown properties are ignored.</summary>
 internal static class OsvWire

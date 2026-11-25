@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>Validates the <c>settings</c> section. Errors name the file and the JSON path.</summary>
 internal static partial class SettingsConfigurationValidator

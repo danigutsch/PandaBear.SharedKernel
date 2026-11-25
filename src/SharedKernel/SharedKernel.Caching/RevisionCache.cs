@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace PandaBear.Caching;
+namespace SharedKernel.Caching;
 
 /// <summary>
 /// Caches values in memory under the current value of a shared, growing revision number, such as a database row that grows by one in the same

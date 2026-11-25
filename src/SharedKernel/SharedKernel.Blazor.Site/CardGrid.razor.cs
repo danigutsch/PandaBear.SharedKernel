@@ -1,7 +1,7 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// An auto-fill grid for <see cref="Card" /> components: columns at least <see cref="MinColumnWidth" /> wide (or the whole width when that

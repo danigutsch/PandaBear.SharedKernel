@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>The Umami connection strings the test sites are configured with.</summary>
 internal static class UmamiConnections

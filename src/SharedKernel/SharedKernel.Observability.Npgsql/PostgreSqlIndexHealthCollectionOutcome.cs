@@ -1,4 +1,4 @@
-namespace PandaBear.Observability.Npgsql;
+namespace SharedKernel.Observability.Npgsql;
 
 /// <summary>Describes the bounded outcome of a PostgreSQL index-health collection attempt.</summary>
 public enum PostgreSqlIndexHealthCollectionOutcome

@@ -1,6 +1,6 @@
-using PandaBear.DocumentRendering;
+using SharedKernel.DocumentRendering;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Renders a deterministic neutral release document.</summary>
 internal sealed class ReleaseDocumentRenderer : IDocumentRenderer

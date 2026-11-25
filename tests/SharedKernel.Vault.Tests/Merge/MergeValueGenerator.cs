@@ -1,7 +1,7 @@
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Merge;
+namespace SharedKernel.Vault.Tests.Merge;
 
 /// <summary>Generates Keeper and Bitwarden item pairs from small value pools, so equal, absent, and conflicting values all occur.</summary>
 internal static class MergeValueGenerator

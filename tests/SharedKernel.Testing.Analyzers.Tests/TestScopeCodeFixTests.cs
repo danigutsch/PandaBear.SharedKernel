@@ -1,6 +1,6 @@
 extern alias testingcodefixes;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the code actions offered for SKTEST018.</summary>
 public sealed class TestScopeCodeFixTests
@@ -25,7 +25,7 @@ public sealed class TestScopeCodeFixTests
     {
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(Source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create("missing", AllScopes, typed: true));
 
         // Act
@@ -50,7 +50,7 @@ public sealed class TestScopeCodeFixTests
     {
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(Source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create("missing", AllScopes, typed: true));
         var actions = await workspace.GetCodeActions(provider, diagnostic);
 
@@ -59,7 +59,7 @@ public sealed class TestScopeCodeFixTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        const string attribute = "[global::PandaBear.Testing.TestScope(global::PandaBear.Testing.TestScope.UiIntegration)]";
+        const string attribute = "[global::SharedKernel.Testing.TestScope(global::SharedKernel.Testing.TestScope.UiIntegration)]";
         updatedText.IndexOf(attribute, StringComparison.Ordinal).ShouldBeGreaterThan(-1);
         updatedText.IndexOf(attribute, StringComparison.Ordinal).ShouldBeLessThan(updatedText.IndexOf("class TourTests", StringComparison.Ordinal));
     }
@@ -69,7 +69,7 @@ public sealed class TestScopeCodeFixTests
     {
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(Source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create("missing", "unit;integration", typed: false));
         var actions = await workspace.GetCodeActions(provider, diagnostic);
 
@@ -89,7 +89,7 @@ public sealed class TestScopeCodeFixTests
     {
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(Source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create(reason, AllScopes, typed: true));
 
         // Act
@@ -118,7 +118,7 @@ public sealed class TestScopeCodeFixTests
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create("missing", "unit", typed: true));
         var actions = await workspace.GetCodeActions(provider, diagnostic);
 
@@ -127,7 +127,7 @@ public sealed class TestScopeCodeFixTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        const string attribute = "[global::PandaBear.Testing.TestScope(global::PandaBear.Testing.TestScope.Unit)]";
+        const string attribute = "[global::SharedKernel.Testing.TestScope(global::SharedKernel.Testing.TestScope.Unit)]";
         updatedText.IndexOf(attribute, StringComparison.Ordinal).ShouldBeGreaterThan(updatedText.IndexOf("class Outer", StringComparison.Ordinal));
         updatedText.IndexOf(attribute, StringComparison.Ordinal).ShouldBeLessThan(updatedText.IndexOf("class Inner", StringComparison.Ordinal));
     }

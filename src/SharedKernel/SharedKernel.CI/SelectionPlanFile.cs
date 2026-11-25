@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Reads and writes the validation plan, <c>selection.json</c>, that test selection writes and a slice run reads.</summary>
 public static class SelectionPlanFile

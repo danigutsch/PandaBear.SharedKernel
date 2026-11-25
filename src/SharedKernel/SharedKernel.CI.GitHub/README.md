@@ -10,9 +10,9 @@ and the REST headers.
 
 ```csharp
 using System.Net.Http.Headers;
-using PandaBear.CI;
-using PandaBear.CI.GitHub;
-using PandaBear.GitHub;
+using SharedKernel.CI;
+using SharedKernel.CI.GitHub;
+using SharedKernel.GitHub;
 
 using var releases = new GitHubReleaseStore(
     new SocketsHttpHandler { AllowAutoRedirect = false },
@@ -39,6 +39,6 @@ await PrereleasePruner.Prune(new PrereleasePruningRequest("owner/name", 20, [], 
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.CI.GitHub`. C# namespace: `PandaBear.CI.GitHub`. Assembly/project identity: `SharedKernel.CI.GitHub`.
+Package ID: `PandaBear.SharedKernel.CI.GitHub`. C# namespace: `SharedKernel.CI.GitHub`. Assembly/project identity: `SharedKernel.CI.GitHub`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

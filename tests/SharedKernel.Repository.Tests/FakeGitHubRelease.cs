@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>A release that <see cref="FakeGitHubReleasesApi"/> serves.</summary>
 /// <param name="Id">The release ID.</param>

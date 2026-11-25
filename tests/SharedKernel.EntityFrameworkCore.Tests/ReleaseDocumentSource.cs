@@ -1,8 +1,8 @@
-using PandaBear.DocumentRendering;
-using PandaBear.DocumentWorkflow;
-using PandaBear.Results;
+using SharedKernel.DocumentRendering;
+using SharedKernel.DocumentWorkflow;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>A neutral release-note source and template.</summary>
 internal sealed class ReleaseDocumentSource : IDocumentSource<string>, IDocumentTemplate<string>

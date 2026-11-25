@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using OpenTelemetry;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Exporter that copies every exported activity into a queue so tests can inspect the post-processing state.</summary>
 /// <param name="activities">Queue receiving each exported activity.</param>

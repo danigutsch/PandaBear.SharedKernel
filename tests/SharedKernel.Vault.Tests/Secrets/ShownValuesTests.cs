@@ -1,8 +1,8 @@
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
-using PandaBear.Vault.Tests.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
+using SharedKernel.Vault.Tests.Merge;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Tests which field and address values the review shows and which it masks or withholds.</summary>
 public sealed class ShownValuesTests

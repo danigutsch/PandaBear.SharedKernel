@@ -1,6 +1,6 @@
-using PandaBear.Vault.Merge;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Answers the pending entries of a decisions file the way a user editing it would.</summary>
 internal static class PendingAnswers

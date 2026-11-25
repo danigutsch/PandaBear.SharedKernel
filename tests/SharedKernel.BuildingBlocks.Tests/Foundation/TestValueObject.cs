@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// A value object made of a city and a number of nights, used in value object equality tests.

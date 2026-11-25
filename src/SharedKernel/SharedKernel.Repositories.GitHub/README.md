@@ -12,9 +12,9 @@ the GitHub REST headers of `PandaBear.SharedKernel.GitHub`.
 ## Usage
 
 ```csharp
-using PandaBear.GitHub;
-using PandaBear.Repositories;
-using PandaBear.Repositories.GitHub;
+using SharedKernel.GitHub;
+using SharedKernel.Repositories;
+using SharedKernel.Repositories.GitHub;
 
 using var connection = new GitHubConnection(
     new HttpClientHandler { AllowAutoRedirect = false },
@@ -44,6 +44,6 @@ await RepositoryLabelSync.Run(rootPath, store, force: false, Console.Out, cancel
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Repositories.GitHub`. C# namespace: `PandaBear.Repositories.GitHub`. Assembly/project identity: `SharedKernel.Repositories.GitHub`.
+Package ID: `PandaBear.SharedKernel.Repositories.GitHub`. C# namespace: `SharedKernel.Repositories.GitHub`. Assembly/project identity: `SharedKernel.Repositories.GitHub`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

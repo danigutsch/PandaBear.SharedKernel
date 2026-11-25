@@ -1,7 +1,7 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>Every single-valued text field, in report order.</summary>
 public static class ScalarFields

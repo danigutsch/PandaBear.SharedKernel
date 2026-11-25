@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The properties of a forge release that prerelease pruning reads.</summary>
 /// <param name="Id">The forge's numeric identifier of the release.</param>

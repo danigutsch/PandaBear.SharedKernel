@@ -1,4 +1,4 @@
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// A private temporary folder for the files of one test run (databases, uploads, imported configuration), removed when disposed.

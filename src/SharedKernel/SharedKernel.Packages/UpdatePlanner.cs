@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// Ties the update policy to its sources: it finds what each package could be updated to, then asks for advisories and

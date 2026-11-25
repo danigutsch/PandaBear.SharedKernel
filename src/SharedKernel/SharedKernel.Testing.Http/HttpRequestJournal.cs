@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>Thread-safe record of the requests a test handler received, with waits for a request count.</summary>
 internal sealed class HttpRequestJournal

@@ -1,6 +1,6 @@
 # PostgreSQL test support
 
-Package ID: `PandaBear.SharedKernel.Npgsql.Testing`. Namespace: `PandaBear.Npgsql.Testing`.
+Package ID: `PandaBear.SharedKernel.Npgsql.Testing`. Namespace: `SharedKernel.Npgsql.Testing`.
 Packages remain preview and are consumed from a validated local candidate; registry publication is deferred.
 
 `PostgreSqlTestDatabasePool` leases independent databases on a caller-owned PostgreSQL server. It starts

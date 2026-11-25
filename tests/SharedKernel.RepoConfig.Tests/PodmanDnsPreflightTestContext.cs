@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Builds a temporary fake proc and Podman run-root tree and scripts Podman and stat responses so the verify-podman-dns command can run without a real Podman.</summary>
 internal sealed class PodmanDnsPreflightTestContext : IDisposable

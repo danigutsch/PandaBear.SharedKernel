@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Bitwarden login object.</summary>
 internal sealed record BitwardenLoginDto

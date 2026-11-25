@@ -1,7 +1,7 @@
-using PandaBear.Testing.Mediator;
-using PandaBear.Testing;
+using SharedKernel.Testing.Mediator;
+using SharedKernel.Testing;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>
 /// Tests the reference dispatcher's request, command, notification, and stream handling, including missing and ambiguous handlers and pipeline ordering.

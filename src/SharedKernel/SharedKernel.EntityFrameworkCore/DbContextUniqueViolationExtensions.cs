@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.EntityFrameworkCore;
+namespace SharedKernel.EntityFrameworkCore;
 
 /// <summary>Saves changes and reports unique-index violations by application rule, and optionally concurrency conflicts.</summary>
 public static class DbContextUniqueViolationExtensions

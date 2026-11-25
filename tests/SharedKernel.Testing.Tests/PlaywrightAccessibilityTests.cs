@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the structural accessibility assertions against real pages in Chromium; the tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>

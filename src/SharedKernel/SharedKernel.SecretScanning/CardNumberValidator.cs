@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Luhn check plus brand prefix and length ranges for payment card numbers.</summary>
 public static class CardNumberValidator

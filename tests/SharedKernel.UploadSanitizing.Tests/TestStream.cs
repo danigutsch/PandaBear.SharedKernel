@@ -1,4 +1,4 @@
-namespace PandaBear.UploadSanitizing.Tests;
+namespace SharedKernel.UploadSanitizing.Tests;
 
 /// <summary>A stream over fixed bytes that counts what was read, can hide its seekability, and can report a false length.</summary>
 internal sealed class TestStream : Stream

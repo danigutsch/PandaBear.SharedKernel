@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>One run of the test application in the <c>Staging</c> environment, shared by the tests of a class, that counts its starts.</summary>
 public sealed class PingHostFixture : KestrelHostFixture<Program>

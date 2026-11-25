@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.Net;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Response bodies that fail while they are read.</summary>
 internal static class FaultyBodies

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the attribution of a third-party image: author, title, source, licence and whether it was changed.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

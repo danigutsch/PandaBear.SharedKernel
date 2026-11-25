@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Renders the versioned call graph emitted by the mediator source generator.</summary>
 internal static class MediatorTopologyMermaidDiagram
@@ -17,7 +17,7 @@ internal static class MediatorTopologyMermaidDiagram
     {
         var values = CSharpSyntaxTree.ParseText(File.ReadAllText(path)).GetCompilationUnitRoot()
             .Members.OfType<FileScopedNamespaceDeclarationSyntax>()
-            .Where(static member => member.Name.ToString() == "PandaBear.Mediator.Generated")
+            .Where(static member => member.Name.ToString() == "SharedKernel.Mediator.Generated")
             .SelectMany(static member => member.Members.OfType<ClassDeclarationSyntax>())
             .Where(static member => member.Identifier.ValueText == "MediatorCallGraph")
             .SelectMany(static member => member.Members.OfType<PropertyDeclarationSyntax>())

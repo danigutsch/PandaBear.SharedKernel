@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>openapi generate</c> and <c>openapi refresh</c> commands and the sanitized environment their child builds run in.</summary>
 public sealed class OpenApiGenerationTests : IDisposable

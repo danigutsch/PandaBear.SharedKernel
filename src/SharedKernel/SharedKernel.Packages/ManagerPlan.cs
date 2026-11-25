@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>The plan for the packages that one package manager owns, or why its installed packages could not be read.</summary>
 public sealed class ManagerPlan

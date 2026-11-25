@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PandaBear.Scheduling.Tests</RootNamespace>
+    <RootNamespace>SharedKernel.Scheduling.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Using Include="PandaBear.Testing.Assertions" />
-    <Using Include="PandaBear.Testing.Logging" />
+    <Using Include="SharedKernel.Testing.Assertions" />
+    <Using Include="SharedKernel.Testing.Logging" />
     <Using Include="Xunit" />
   </ItemGroup>
 

@@ -211,6 +211,6 @@ References: [Aspire networking](https://aspire.dev/fundamentals/networking-overv
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.IntegrationTesting`. C# namespace: `PandaBear.IntegrationTesting`. Assembly/project identity: `SharedKernel.IntegrationTesting`.
+Package ID: `PandaBear.SharedKernel.IntegrationTesting`. C# namespace: `SharedKernel.IntegrationTesting`. Assembly/project identity: `SharedKernel.IntegrationTesting`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

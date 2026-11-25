@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>Retains editable text separately from the last accepted value and reports parsing errors on form validation.</summary>
 /// <remarks>Use on the renderer's synchronization context. The caller owns the format, parsing rules, control and error text.</remarks>

@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>A scenario of the load-test configuration file.</summary>
 /// <param name="Name">The name that <see cref="LoadTestSettings.Scenario"/> selects.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// Whether a secret finding is moved to its proposed target. The zero value is <see cref="Pending"/>, so an unset

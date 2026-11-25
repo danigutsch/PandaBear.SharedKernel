@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Sorts the releases of a repository into the prereleases that stay and those that <c>prune-prereleases</c> deletes.</summary>
 /// <param name="Prereleases">Every published prerelease, newest first: by creation date, then by release ID.</param>

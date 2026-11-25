@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the pager, which follows the GOV.UK Design System pagination component.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

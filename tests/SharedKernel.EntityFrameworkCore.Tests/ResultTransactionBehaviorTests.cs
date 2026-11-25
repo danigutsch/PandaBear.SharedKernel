@@ -3,10 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using PandaBear.Results;
-using H = PandaBear.EntityFrameworkCore.Tests.ResultTransactionBehaviorTestsHelpers;
+using SharedKernel.Results;
+using H = SharedKernel.EntityFrameworkCore.Tests.ResultTransactionBehaviorTestsHelpers;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// PostgreSQL tests of ResultTransactionBehavior: commit and rollback by result, declared locks, retries, hooks and isolation.

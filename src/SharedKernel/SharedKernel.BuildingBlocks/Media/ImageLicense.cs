@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The licence of a third-party image: a code as people read it, such as <c>CC BY 2.0</c>, <c>CC BY-SA 4.0</c>, <c>CC0 1.0</c>,

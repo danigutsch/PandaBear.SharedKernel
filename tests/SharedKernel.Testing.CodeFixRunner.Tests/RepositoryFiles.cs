@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>Finds the tool command lines that repository files document.</summary>
 internal static class RepositoryFiles

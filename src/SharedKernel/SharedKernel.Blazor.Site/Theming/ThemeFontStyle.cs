@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The <c>font-style</c> of a self-hosted font face.</summary>
 public enum ThemeFontStyle

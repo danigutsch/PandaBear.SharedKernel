@@ -1,6 +1,6 @@
-using PandaBear.Vault.Pipeline;
+using SharedKernel.Vault.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>Files a review writes.</summary>
 /// <param name="DecisionsPath">Decisions file that saving writes, or <see langword="null"/> when the review cannot save decisions.</param>

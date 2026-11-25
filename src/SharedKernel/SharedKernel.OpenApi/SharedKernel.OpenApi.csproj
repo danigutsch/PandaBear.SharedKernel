@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.OpenApi</PackageId>
         <Description>Reusable OpenAPI helpers for shared-kernel HTTP contract documentation.</Description>
-        <RootNamespace>PandaBear.OpenApi</RootNamespace>
+        <RootNamespace>SharedKernel.OpenApi</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>openapi;http;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

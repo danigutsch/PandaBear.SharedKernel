@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Positive and negative text for every catalog rule, assembled at runtime.</summary>
 internal static class RuleSamples

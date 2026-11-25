@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>How a <see cref="FactGrid" /> lays out its cards.</summary>
 public enum FactGridLayout

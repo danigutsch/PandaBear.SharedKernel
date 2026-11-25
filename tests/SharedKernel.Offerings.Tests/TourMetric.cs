@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>ViajantesTurismo V2's tour metrics.</summary>
 public enum TourMetric

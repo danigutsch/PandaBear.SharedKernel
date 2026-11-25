@@ -3,7 +3,7 @@ using Amazon.S3.Model;
 using Amazon.S3;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.ObjectStorage.S3;
+namespace SharedKernel.ObjectStorage.S3;
 
 /// <summary>
 /// Stores objects in an S3-compatible bucket.

@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// HTTP message handler that serves canned GitHub issue responses and advances the fake clock by 30 seconds when the third response body is disposed.

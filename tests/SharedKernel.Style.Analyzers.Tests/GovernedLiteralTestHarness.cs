@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace PandaBear.Style.Analyzers.Tests;
+namespace SharedKernel.Style.Analyzers.Tests;
 
 /// <summary>
 /// Runs the SharedKernel style analyzer on a consumer source file with an optional governed literal catalog.

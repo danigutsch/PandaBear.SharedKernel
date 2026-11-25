@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>
 /// A service collection wrapper for testing how AddIntegrationEventContract handles existing and keyed JSON metadata registrations.

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the typed look of a card: style, image aspect and shadow, alignment, eyebrow and the more look.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

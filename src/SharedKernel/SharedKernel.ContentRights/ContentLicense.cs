@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>A recorded license or rights statement for a work, with its supplied terms and recognized standard identity.</summary>
 public sealed class ContentLicense

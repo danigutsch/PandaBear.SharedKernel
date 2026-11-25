@@ -96,7 +96,7 @@ EF Core, Dapper, Azure SDKs, browser tooling, and test-only rules in narrower ca
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Style.Analyzers`. C# namespace: `PandaBear.Style.Analyzers`. Assembly/project identity: `SharedKernel.Style.Analyzers`.
+Package ID: `PandaBear.SharedKernel.Style.Analyzers`. C# namespace: `SharedKernel.Style.Analyzers`. Assembly/project identity: `SharedKernel.Style.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

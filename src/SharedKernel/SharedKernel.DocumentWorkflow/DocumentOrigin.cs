@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Identifies the source and template used to generate one revision.</summary>
 /// <param name="SourceId">The application identifier of the source.</param>

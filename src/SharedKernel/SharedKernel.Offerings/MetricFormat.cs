@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The application's format for one metric kind (see <see cref="OfferingText.Metric{TMetric}"/>).</summary>
 /// <param name="Pattern">The format of the number, <c>{0}</c>, with its unit, such as <c>{0} km</c>.</param>

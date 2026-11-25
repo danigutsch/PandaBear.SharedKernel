@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Checks SharedKernel package projects for required public API baseline files.

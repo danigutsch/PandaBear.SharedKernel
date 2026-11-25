@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>What <see cref="SecretsRepository.Edit"/> edits and with what.</summary>
 public sealed record EditSettings

@@ -1,7 +1,7 @@
 using System.Globalization;
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Helpers that turn a generator run result into comparable values for determinism tests.</summary>
 internal static class GeneratorDeterminismTestsHelpers

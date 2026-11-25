@@ -1,9 +1,9 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.ContentRights;
-using static PandaBear.Blazor.Site.Tests.PhotoCreditFixture;
-using static PandaBear.Blazor.Site.Tests.SiteFixtures;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.ContentRights;
+using static SharedKernel.Blazor.Site.Tests.PhotoCreditFixture;
+using static SharedKernel.Blazor.Site.Tests.SiteFixtures;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the optional photo credit on images through the gallery and album entry points.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

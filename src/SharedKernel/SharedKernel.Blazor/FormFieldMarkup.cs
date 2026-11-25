@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>Renders the common form field markup.</summary>
 internal static class FormFieldMarkup

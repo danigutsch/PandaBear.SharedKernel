@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold.EntityFrameworkCore;
+namespace SharedKernel.DispositionHold.EntityFrameworkCore;
 
 /// <summary>
 /// Configures the relational storage owned by one disposition hold DbContext.

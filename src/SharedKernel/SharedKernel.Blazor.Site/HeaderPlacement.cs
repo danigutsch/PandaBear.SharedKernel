@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Where a <see cref="SiteHeader" /> lies.</summary>
 public enum HeaderPlacement

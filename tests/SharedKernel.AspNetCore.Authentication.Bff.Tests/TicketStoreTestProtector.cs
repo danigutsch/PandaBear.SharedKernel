@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.DataProtection;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Provides controlled data protection results and failures for ticket store tests.</summary>
 internal sealed class TicketStoreTestProtector(Func<byte[], byte[]> protect, Func<byte[], byte[]> unprotect) : IDataProtector

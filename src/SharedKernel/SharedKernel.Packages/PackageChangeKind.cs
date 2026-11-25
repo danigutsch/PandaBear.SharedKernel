@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>How an installed package state differs from a requirement.</summary>
 public enum PackageChangeKind

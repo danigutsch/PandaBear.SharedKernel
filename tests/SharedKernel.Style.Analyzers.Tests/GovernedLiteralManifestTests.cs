@@ -1,7 +1,7 @@
-using PandaBear.Testing;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Style.Analyzers.Tests;
+namespace SharedKernel.Style.Analyzers.Tests;
 
 /// <summary>Tests reconstruction of the compilations that the constant guard inspects.</summary>
 public sealed class GovernedLiteralManifestTests

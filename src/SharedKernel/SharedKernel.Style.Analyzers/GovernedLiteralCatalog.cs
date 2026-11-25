@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace PandaBear.Style.Analyzers;
+namespace SharedKernel.Style.Analyzers;
 
 /// <summary>Parses the catalog shared by the literal analyzer and the constant guard.</summary>
 internal static class GovernedLiteralCatalog

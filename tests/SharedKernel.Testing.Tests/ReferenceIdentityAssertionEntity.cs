@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Class entity without equality overrides, so two instances are equal only by reference, used to exercise identity assertions.</summary>
 internal sealed class ReferenceIdentityAssertionEntity

@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>
 /// Renders findings without values: item, kind, confidence, location, length, and target. Every cell is printed on one line

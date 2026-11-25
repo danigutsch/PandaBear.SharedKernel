@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency.Tests;
+namespace SharedKernel.Idempotency.Tests;
 
 /// <summary>
 /// An IIdempotencyStore test double that records the arguments of Complete and throws NotSupportedException for the other operations.

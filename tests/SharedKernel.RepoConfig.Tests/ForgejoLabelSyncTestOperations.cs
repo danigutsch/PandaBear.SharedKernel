@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers for the Forgejo label sync command.</summary>
 internal static class ForgejoLabelSyncTestOperations

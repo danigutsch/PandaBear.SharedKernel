@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Compiles test source together with the generated AppMediator, dispatch and pipeline sources into an in-memory assembly and builds mediator instances from it for runtime assertions.</summary>
 internal sealed class GeneratedMediatorRuntimeContext : IDisposable
@@ -17,7 +17,7 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
         this.mediatorType = mediatorType;
     }
 
-    /// <summary>Runs the generator over the source (with optional extra metadata references), compiles the source plus the generated mediator, dispatch and pipeline files, and wraps the loaded assembly and its PandaBear.Mediator.AppMediator type.</summary>
+    /// <summary>Runs the generator over the source (with optional extra metadata references), compiles the source plus the generated mediator, dispatch and pipeline files, and wraps the loaded assembly and its SharedKernel.Mediator.AppMediator type.</summary>
     public static GeneratedMediatorRuntimeContext Create(string source, IEnumerable<MetadataReference>? additionalReferences = null)
     {
         const string runtimeUsings = """
@@ -43,7 +43,7 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
             additionalReferences: references,
             assemblyName: "SharedKernel.Mediator.Tests.GeneratedDispatchRuntime");
         var assembly = GeneratorTestHarness.LoadAssembly(runtimeCompilation);
-        var mediatorType = assembly.GetType("PandaBear.Mediator.AppMediator", throwOnError: true)!;
+        var mediatorType = assembly.GetType("SharedKernel.Mediator.AppMediator", throwOnError: true)!;
 
         return new GeneratedMediatorRuntimeContext(assembly, mediatorType);
     }

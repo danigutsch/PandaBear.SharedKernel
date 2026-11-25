@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>
 /// Classifies an <c>allowWrite</c> entry. Paths are compared after dropping empty and <c>.</c> segments and after resolving

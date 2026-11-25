@@ -2,7 +2,7 @@
 
 using System.Security.Cryptography;
 
-namespace PandaBear.IO;
+namespace SharedKernel.IO;
 
 /// <summary>Verifies manifest-relative artifacts against their reviewed SHA-256 digests.</summary>
 /// <remarks>

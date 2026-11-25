@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.Authentication;
+namespace SharedKernel.AspNetCore.Authentication;
 
 /// <summary>
 /// Registers the opt-in authentication-event telemetry.

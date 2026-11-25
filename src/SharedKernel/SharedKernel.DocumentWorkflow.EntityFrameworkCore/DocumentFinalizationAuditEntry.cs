@@ -1,6 +1,6 @@
-using PandaBear.AuditTrail;
+using SharedKernel.AuditTrail;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Records successful document finalization as metadata in the owning transaction.</summary>
 /// <param name="LineageId">The document lineage.</param>

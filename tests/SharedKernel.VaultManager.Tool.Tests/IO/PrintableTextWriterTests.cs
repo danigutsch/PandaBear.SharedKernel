@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.VaultManager.Tool.Tests.IO;
+namespace SharedKernel.VaultManager.Tool.Tests.IO;
 
 /// <summary>Tests the text writer that replaces unprintable characters before they reach the wrapped writer.</summary>
 public sealed class PrintableTextWriterTests

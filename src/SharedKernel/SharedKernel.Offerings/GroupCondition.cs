@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// The minimum-group condition of an offering's prices: the prices hold for at least <paramref name="MinimumParticipants"/>, and each missing

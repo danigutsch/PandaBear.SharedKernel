@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Tests reading the target frameworks of a repository from its root Directory.Build.props.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

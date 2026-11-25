@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Blazor.Analyzers.Tests;
+namespace SharedKernel.Blazor.Analyzers.Tests;
 
 /// <summary>Compiles test source against the default usings and runs the Blazor analyzer over it.</summary>
 internal static class AnalyzerTestHarness

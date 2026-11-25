@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Stores integration events in the current EF Core unit of work.

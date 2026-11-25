@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the roadmap order that GitHub import assigns.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

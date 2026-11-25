@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// A page for the footer tests: a language switcher, then a centred primary footer with a separated list of an address, a phone line and

@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentRendering;
+namespace SharedKernel.DocumentRendering;
 
 /// <summary>
 /// Defines an ordered semantic section of a document.

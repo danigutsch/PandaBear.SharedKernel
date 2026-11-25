@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Runtime.Versioning;
 
-namespace PandaBear.Testing.Packaging;
+namespace SharedKernel.Testing.Packaging;
 
 /// <summary>The target framework that the running tests were built for, which is the repository's framework.</summary>
 public static class TestTargetFramework

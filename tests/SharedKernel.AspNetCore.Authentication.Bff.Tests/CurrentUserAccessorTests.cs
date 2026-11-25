@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Tests where the token handlers find the current user: the HTTP request or the Blazor Server circuit.</summary>
 public sealed class CurrentUserAccessorTests

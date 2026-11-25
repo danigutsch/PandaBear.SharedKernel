@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Guards consumer verification of projects covered by the repository's lock exemption policy.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

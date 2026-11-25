@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Testing.Analyzers</PackageId>
         <Description>Analyzers for repository test conventions.</Description>
-        <RootNamespace>PandaBear.Testing.Analyzers</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

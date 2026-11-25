@@ -26,6 +26,6 @@ Usage:
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.OpenApi`. C# namespace: `PandaBear.OpenApi`. Assembly/project identity: `SharedKernel.OpenApi`.
+Package ID: `PandaBear.SharedKernel.OpenApi`. C# namespace: `SharedKernel.OpenApi`. Assembly/project identity: `SharedKernel.OpenApi`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

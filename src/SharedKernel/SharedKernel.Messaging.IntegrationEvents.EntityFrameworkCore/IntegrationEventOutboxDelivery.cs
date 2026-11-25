@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Publication metadata for one retained outbox row.</summary>
 public sealed class IntegrationEventOutboxDelivery

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Bitwarden.Crypto;
+namespace SharedKernel.Vault.Bitwarden.Crypto;
 
 /// <summary>Password key derivation functions used by Bitwarden password-protected exports.</summary>
 internal enum KdfType

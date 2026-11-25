@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Evidence supporting the asserted minimum or explaining why it remains unproven.</summary>
 /// <param name="Status">The outcome of the bounded search.</param>

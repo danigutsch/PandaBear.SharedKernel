@@ -1,4 +1,4 @@
-namespace PandaBear.PlaywrightMcp;
+namespace SharedKernel.PlaywrightMcp;
 
 /// <summary>
 /// What the host asks of <see cref="PlaywrightMcpServer"/>, in the form the <c>PLAYWRIGHT_MCP_*</c> environment variables

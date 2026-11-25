@@ -1,17 +1,17 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.BuildingBlocks;
-using PandaBear.Domain.SourceGenerator;
-using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Domain.SourceGenerator;
+using SharedHarness = SharedKernel.Testing.Roslyn.GeneratorTestHarness;
 
-namespace PandaBear.Domain.GeneratorTests;
+namespace SharedKernel.Domain.GeneratorTests;
 
 /// <summary>Builds compilations and runs the model identity and value object generators for the domain generator tests.</summary>
 internal static class GeneratorTestHarness
 {
     private const string DefaultUsings = """
-        using PandaBear.BuildingBlocks;
-        using PandaBear.Domain;
+        using SharedKernel.BuildingBlocks;
+        using SharedKernel.Domain;
 
         """;
 

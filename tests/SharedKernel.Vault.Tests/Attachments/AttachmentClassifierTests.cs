@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Vault.Attachments;
+using SharedKernel.Vault.Attachments;
 
-namespace PandaBear.Vault.Tests.Attachments;
+namespace SharedKernel.Vault.Tests.Attachments;
 
 /// <summary>Tests classification of attachments by content and file name.</summary>
 public sealed class AttachmentClassifierTests

@@ -1,7 +1,7 @@
 using Npgsql;
 using NpgsqlTypes;
 
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>Reads bounded PostgreSQL integrity reports for separately stored binary artifacts.</summary>
 public static class PostgreSqlArtifactIntegrity

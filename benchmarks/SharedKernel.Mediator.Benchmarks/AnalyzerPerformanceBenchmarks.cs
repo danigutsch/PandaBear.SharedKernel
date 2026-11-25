@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using PandaBear.Mediator.Analyzers;
+using SharedKernel.Mediator.Analyzers;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures mediator analyzer throughput across source size, diagnostic density, and analyzer options.
@@ -47,7 +47,7 @@ public class AnalyzerPerformanceBenchmarks
         var source = AnalyzerBenchmarkSourceFactory.CreateSource(RequestCount, DiagnosticsMode);
         var compilation = BenchmarkCompilationFactory.CreateCompilation(
             source,
-            $"PandaBear.Mediator.Benchmarks.Analyzers.{RequestCount}.{DiagnosticsMode}.{StrictArchitectureRules}.{CancellationScan}");
+            $"SharedKernel.Mediator.Benchmarks.Analyzers.{RequestCount}.{DiagnosticsMode}.{StrictArchitectureRules}.{CancellationScan}");
         var analyzer = new MediatorAnalyzer();
         var optionsProvider = new BenchmarkAnalyzerConfigOptionsProvider(
             ImmutableDictionary<string, string>.Empty

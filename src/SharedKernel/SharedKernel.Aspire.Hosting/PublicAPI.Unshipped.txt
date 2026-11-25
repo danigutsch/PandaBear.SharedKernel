@@ -2,16 +2,16 @@
 Aspire.Hosting.AppHostHealthCheckExtensions
 Aspire.Hosting.GeneratedSecretExtensions
 Aspire.Hosting.SelfOriginExtensions
-const PandaBear.Aspire.Hosting.PostgresContainerImageTags.Digest = "4aabea78cf39b90e834caf3af7d602a18565f6fe2508705c8d01aa63245c2e20" -> string!
-const PandaBear.Aspire.Hosting.PostgresContainerImageTags.Image = "library/postgres" -> string!
-const PandaBear.Aspire.Hosting.PostgresContainerImageTags.Registry = "docker.io" -> string!
-const PandaBear.Aspire.Hosting.PostgresContainerImageTags.Tag = "18.4" -> string!
-const PandaBear.Aspire.Hosting.RedisContainerImageTags.Digest = "2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32" -> string!
-const PandaBear.Aspire.Hosting.RedisContainerImageTags.Image = "library/redis" -> string!
-const PandaBear.Aspire.Hosting.RedisContainerImageTags.Registry = "docker.io" -> string!
-const PandaBear.Aspire.Hosting.RedisContainerImageTags.Tag = "8.8" -> string!
-PandaBear.Aspire.Hosting.PostgresContainerImageTags
-PandaBear.Aspire.Hosting.RedisContainerImageTags
+const SharedKernel.Aspire.Hosting.PostgresContainerImageTags.Digest = "4aabea78cf39b90e834caf3af7d602a18565f6fe2508705c8d01aa63245c2e20" -> string!
+const SharedKernel.Aspire.Hosting.PostgresContainerImageTags.Image = "library/postgres" -> string!
+const SharedKernel.Aspire.Hosting.PostgresContainerImageTags.Registry = "docker.io" -> string!
+const SharedKernel.Aspire.Hosting.PostgresContainerImageTags.Tag = "18.4" -> string!
+const SharedKernel.Aspire.Hosting.RedisContainerImageTags.Digest = "2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32" -> string!
+const SharedKernel.Aspire.Hosting.RedisContainerImageTags.Image = "library/redis" -> string!
+const SharedKernel.Aspire.Hosting.RedisContainerImageTags.Registry = "docker.io" -> string!
+const SharedKernel.Aspire.Hosting.RedisContainerImageTags.Tag = "8.8" -> string!
+SharedKernel.Aspire.Hosting.PostgresContainerImageTags
+SharedKernel.Aspire.Hosting.RedisContainerImageTags
 static Aspire.Hosting.AppHostHealthCheckExtensions.WithHttpHealthCheckInAppHostEnvironment<T>(this Aspire.Hosting.ApplicationModel.IResourceBuilder<T>! builder, string! path = "/health", bool onlyInDevelopment = false) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<T>!
 static Aspire.Hosting.GeneratedSecretExtensions.AddGeneratedSecret(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, int minLength = 32) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.ParameterResource!>!
 static Aspire.Hosting.SelfOriginExtensions.WithSelfOrigin<T>(this Aspire.Hosting.ApplicationModel.IResourceBuilder<T>! builder, string! environmentVariable, string? endpointName = null) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<T>!

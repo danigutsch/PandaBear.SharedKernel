@@ -2,7 +2,7 @@ using System.Text.Json;
 using CloudNative.CloudEvents;
 using CloudNative.CloudEvents.Protobuf;
 
-namespace PandaBear.Messaging.Protobuf.Tests;
+namespace SharedKernel.Messaging.Protobuf.Tests;
 
 /// <summary>Tests the CloudEvents Protobuf event format mapping of event envelopes.</summary>
 public sealed class ProtobufEventEnvelopeFormatTests

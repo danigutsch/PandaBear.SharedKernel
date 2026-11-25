@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>
 /// Which values of an item may be shown to a person or an agent who must not see its secrets, as the catalog and the

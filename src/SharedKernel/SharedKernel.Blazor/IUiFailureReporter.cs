@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>Reports handled UI failures without exposing the exception message or stack.</summary>
 public interface IUiFailureReporter

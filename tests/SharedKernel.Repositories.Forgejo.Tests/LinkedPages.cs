@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Forgejo.Tests;
+namespace SharedKernel.Repositories.Forgejo.Tests;
 
 /// <summary>Builds the label list pages that a Forgejo instance answers with, including their <c>Link</c> header.</summary>
 internal static class LinkedPages

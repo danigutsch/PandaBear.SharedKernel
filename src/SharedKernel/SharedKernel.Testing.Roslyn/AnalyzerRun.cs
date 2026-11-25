@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Testing.Roslyn;
+namespace SharedKernel.Testing.Roslyn;
 
 /// <summary>Runs one analyzer over a compilation and returns what it reports.</summary>
 public static class AnalyzerRun

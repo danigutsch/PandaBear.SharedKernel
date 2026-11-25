@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// The colour tokens of a site theme, each with a light and a dark value. The two hover colours are optional: when one is not

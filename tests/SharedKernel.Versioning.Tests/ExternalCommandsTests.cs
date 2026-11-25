@@ -1,7 +1,7 @@
 using System.ComponentModel;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Tests how the engine runs external programs through the process runner abstraction.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]

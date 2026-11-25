@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Mediator.SourceGenerator;
+namespace SharedKernel.Mediator.SourceGenerator;
 
 internal sealed record DuplicateRegistrationDiagnostic(
     string ServiceType,

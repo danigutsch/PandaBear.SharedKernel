@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Hosting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>A hosted service whose shutdown takes 35 seconds and records that it finished, to show teardown waits longer than the generic host's default 30 seconds.</summary>
 internal sealed class SlowCleanupHostedService : IHostedService

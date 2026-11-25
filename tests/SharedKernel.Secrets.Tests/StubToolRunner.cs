@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>An <see cref="IToolRunner"/> that answers every run with one exit code and error text, or throws.</summary>
 internal sealed class StubToolRunner(int exitCode, string standardError, Exception? failure = null) : IToolRunner

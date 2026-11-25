@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>A caller-routed credits section with addressable photo entries and a coverage introduction.</summary>
 public sealed partial class PhotoCreditsPage

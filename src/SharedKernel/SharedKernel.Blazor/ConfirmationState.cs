@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>The "are you sure" state of a list in which at most one row waits for confirmation, for example before a delete.</summary>
 /// <typeparam name="TKey">The row key type.</typeparam>

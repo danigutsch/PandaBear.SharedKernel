@@ -1,6 +1,6 @@
 using ImageMagick;
 
-namespace PandaBear.ImageProcessing.Tests;
+namespace SharedKernel.ImageProcessing.Tests;
 
 /// <summary>
 /// Tests MagickImageProcessor.Probe, which reports the format, stored dimensions, and animation flag of an image from its headers.

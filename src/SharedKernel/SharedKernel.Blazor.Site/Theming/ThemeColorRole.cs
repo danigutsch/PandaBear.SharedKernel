@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>A colour token of the site theme; each maps to one <c>--site-color-*</c> custom property.</summary>
 public enum ThemeColorRole

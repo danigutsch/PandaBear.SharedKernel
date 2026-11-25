@@ -1,10 +1,10 @@
 #nullable enable
-PandaBear.Domain.CodeFixes.DomainCodeFixProvider
-PandaBear.Domain.CodeFixes.DomainCodeFixProvider.DomainCodeFixProvider() -> void
-override PandaBear.Domain.CodeFixes.DomainCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override PandaBear.Domain.CodeFixes.DomainCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
-override PandaBear.Domain.CodeFixes.DomainCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
-const PandaBear.Domain.Analyzers.DomainDiagnosticIds.AmbientClock = "SKDOM003" -> string!
-const PandaBear.Domain.Analyzers.DomainDiagnosticIds.MutableCollectionExposure = "SKDOM002" -> string!
-const PandaBear.Domain.Analyzers.DomainDiagnosticIds.NonPrivateSetter = "SKDOM001" -> string!
-PandaBear.Domain.Analyzers.DomainDiagnosticIds
+SharedKernel.Domain.CodeFixes.DomainCodeFixProvider
+SharedKernel.Domain.CodeFixes.DomainCodeFixProvider.DomainCodeFixProvider() -> void
+override SharedKernel.Domain.CodeFixes.DomainCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override SharedKernel.Domain.CodeFixes.DomainCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
+override SharedKernel.Domain.CodeFixes.DomainCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+const SharedKernel.Domain.Analyzers.DomainDiagnosticIds.AmbientClock = "SKDOM003" -> string!
+const SharedKernel.Domain.Analyzers.DomainDiagnosticIds.MutableCollectionExposure = "SKDOM002" -> string!
+const SharedKernel.Domain.Analyzers.DomainDiagnosticIds.NonPrivateSetter = "SKDOM001" -> string!
+SharedKernel.Domain.Analyzers.DomainDiagnosticIds

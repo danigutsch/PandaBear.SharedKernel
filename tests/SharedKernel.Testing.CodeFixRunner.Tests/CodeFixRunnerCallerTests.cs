@@ -1,6 +1,6 @@
 using System.CommandLine.Parsing;
 
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>Tests that the command lines documented in the repository READMEs are accepted by the code fix runner command line.</summary>
 public sealed class CodeFixRunnerCallerTests

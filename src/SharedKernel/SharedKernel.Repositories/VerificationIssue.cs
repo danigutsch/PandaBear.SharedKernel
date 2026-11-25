@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Validation problem found in a configuration file.</summary>
 /// <param name="Path">Relative path of the file.</param>

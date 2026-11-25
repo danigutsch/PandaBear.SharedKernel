@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The validated text of an offering in one culture. Lists are read-only and possibly empty.</summary>
 public sealed class OfferingTranslation

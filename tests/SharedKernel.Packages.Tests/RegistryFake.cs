@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Builds registry sources over fake handlers.</summary>
 internal static class RegistryFake

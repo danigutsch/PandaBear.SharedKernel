@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Reads the <c>iss</c> and <c>sub</c> claims of an ID token's payload without validating it, to compare a refreshed ID

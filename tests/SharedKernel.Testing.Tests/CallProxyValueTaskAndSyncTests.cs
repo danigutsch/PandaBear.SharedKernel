@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the proxy for methods that return a value task and for synchronous methods.</summary>
 public sealed class CallProxyValueTaskAndSyncTests

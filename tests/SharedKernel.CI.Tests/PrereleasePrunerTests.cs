@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards the forge-neutral pruning plan and how a failed deletion is reported.</summary>
 public sealed class PrereleasePrunerTests

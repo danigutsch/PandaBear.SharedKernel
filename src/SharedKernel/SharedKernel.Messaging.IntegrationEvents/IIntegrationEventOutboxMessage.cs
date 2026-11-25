@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents;
+namespace SharedKernel.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Exposes durable outbox lifecycle metadata for an integration event message.

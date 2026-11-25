@@ -1,8 +1,8 @@
 using System.Globalization;
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Model;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>Working copy of an item while findings are placed, plus the source removals to apply afterwards.</summary>
 /// <param name="source">Source item.</param>

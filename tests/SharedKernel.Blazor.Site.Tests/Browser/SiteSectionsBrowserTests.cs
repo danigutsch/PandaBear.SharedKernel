@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests in Chromium the measure of section text, centred sections and bands, nested sections and the video link's poster; they skip

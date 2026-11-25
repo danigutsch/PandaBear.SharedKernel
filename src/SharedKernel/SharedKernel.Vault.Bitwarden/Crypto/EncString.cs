@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.Vault.Bitwarden.Crypto;
+namespace SharedKernel.Vault.Bitwarden.Crypto;
 
 /// <summary>Bitwarden type 2 encrypted string: <c>2.iv|ciphertext|mac</c>, AES-256-CBC with HMAC-SHA256.</summary>
 internal static class EncString

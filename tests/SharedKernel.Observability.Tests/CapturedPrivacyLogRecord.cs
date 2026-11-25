@@ -1,4 +1,4 @@
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Snapshot of one log record as seen by the exporter after privacy processing.</summary>
 /// <param name="Body">Message template remaining on the record, or null when absent.</param>

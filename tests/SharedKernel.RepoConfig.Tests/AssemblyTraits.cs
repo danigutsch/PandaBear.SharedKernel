@@ -1,2 +1,2 @@
 [assembly: TestScope(TestScope.Unit)]
-[assembly: Trait(TestTraitNames.AreaName, PandaBear.RepoConfig.Tests.TestTraits.ToolingArea)]
+[assembly: Trait(TestTraitNames.AreaName, SharedKernel.RepoConfig.Tests.TestTraits.ToolingArea)]

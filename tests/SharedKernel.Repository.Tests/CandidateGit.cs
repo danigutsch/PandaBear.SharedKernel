@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Answers the Git commands that stage-candidate runs as a clean top-level checkout of the pinned revision.</summary>
 internal sealed class CandidateGit

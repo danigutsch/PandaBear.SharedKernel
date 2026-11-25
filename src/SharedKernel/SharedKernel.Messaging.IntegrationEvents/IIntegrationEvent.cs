@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents;
+namespace SharedKernel.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Represents an event intended to cross bounded-context or process boundaries.

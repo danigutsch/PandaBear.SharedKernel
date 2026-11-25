@@ -3,10 +3,10 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using PandaBear.IO;
-using PandaBear.Vault.Matching;
+using SharedKernel.IO;
+using SharedKernel.Vault.Matching;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// Reads and writes the versioned decisions file:

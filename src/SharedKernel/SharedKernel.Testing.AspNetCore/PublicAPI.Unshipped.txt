@@ -1,106 +1,106 @@
 #nullable enable
-const PandaBear.Testing.AspNetCore.ApiTestAuthentication.Authority = "https://identity.test" -> string!
-PandaBear.Testing.AspNetCore.ApiTestAuthentication
-PandaBear.Testing.AspNetCore.FakeBrowserFile
-PandaBear.Testing.AspNetCore.FakeBrowserFile.ContentType.get -> string!
-PandaBear.Testing.AspNetCore.FakeBrowserFile.FakeBrowserFile(byte[]! content, string! name, string! contentType = "application/octet-stream") -> void
-PandaBear.Testing.AspNetCore.FakeBrowserFile.LastModified.get -> System.DateTimeOffset
-PandaBear.Testing.AspNetCore.FakeBrowserFile.LastModified.init -> void
-PandaBear.Testing.AspNetCore.FakeBrowserFile.Name.get -> string!
-PandaBear.Testing.AspNetCore.FakeBrowserFile.OpenReadStream(long maxAllowedSize = 512000, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.IO.Stream!
-PandaBear.Testing.AspNetCore.FakeBrowserFile.Size.get -> long
-PandaBear.Testing.AspNetCore.FakeFormFile
-PandaBear.Testing.AspNetCore.FakeFormFile.ContentDisposition.get -> string!
-PandaBear.Testing.AspNetCore.FakeFormFile.ContentType.get -> string!
-PandaBear.Testing.AspNetCore.FakeFormFile.CopyTo(System.IO.Stream! target) -> void
-PandaBear.Testing.AspNetCore.FakeFormFile.CopyToAsync(System.IO.Stream! target, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
-PandaBear.Testing.AspNetCore.FakeFormFile.FakeFormFile(byte[]! content, string! fileName, string! contentType = "application/octet-stream", string! name = "file") -> void
-PandaBear.Testing.AspNetCore.FakeFormFile.FileName.get -> string!
-PandaBear.Testing.AspNetCore.FakeFormFile.Headers.get -> Microsoft.AspNetCore.Http.IHeaderDictionary!
-PandaBear.Testing.AspNetCore.FakeFormFile.Length.get -> long
-PandaBear.Testing.AspNetCore.FakeFormFile.Name.get -> string!
-PandaBear.Testing.AspNetCore.FakeFormFile.OpenReadStream() -> System.IO.Stream!
-PandaBear.Testing.AspNetCore.KestrelTestHost
-PandaBear.Testing.AspNetCore.WorkerTestHost
-PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>
-PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.BaseAddress.get -> System.Uri!
-PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.Services.get -> System.IServiceProvider!
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictByTagAsync(string! tag, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionCancellationToken.get -> System.Threading.CancellationToken
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionException.get -> System.Exception?
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionException.set -> void
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionObserved.get -> bool
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionTag.get -> string?
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.GetAsync(string! key, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<byte[]?>
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.RecordingOutputCacheStore() -> void
-PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.SetAsync(string! key, byte[]! value, string![]? tags, System.TimeSpan validFor, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.AspNetCore.TestHostEnvironment
-PandaBear.Testing.AspNetCore.TestHostEnvironment.ApplicationName.get -> string!
-PandaBear.Testing.AspNetCore.TestHostEnvironment.ApplicationName.set -> void
-PandaBear.Testing.AspNetCore.TestHostEnvironment.ContentRootFileProvider.get -> Microsoft.Extensions.FileProviders.IFileProvider!
-PandaBear.Testing.AspNetCore.TestHostEnvironment.ContentRootFileProvider.set -> void
-PandaBear.Testing.AspNetCore.TestHostEnvironment.ContentRootPath.get -> string!
-PandaBear.Testing.AspNetCore.TestHostEnvironment.ContentRootPath.set -> void
-PandaBear.Testing.AspNetCore.TestHostEnvironment.EnvironmentName.get -> string!
-PandaBear.Testing.AspNetCore.TestHostEnvironment.EnvironmentName.set -> void
-PandaBear.Testing.AspNetCore.TestHostEnvironment.TestHostEnvironment(string! applicationName) -> void
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.Get(string! key) -> byte[]?
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.GetAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]?>!
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.Refresh(string! key) -> void
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.RefreshAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.Remove(string! key) -> void
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.RemoveAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.Set(string! key, byte[]! value, Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions! options) -> void
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.SetAsync(string! key, byte[]! value, Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions! options, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.ThrowingDistributedCache(System.Exception! failure) -> void
-PandaBear.Testing.AspNetCore.WebApplicationTestHost
-static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureAuthenticatedClient(System.Net.Http.HttpClient! client, string! audience, string! role) -> void
-static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureClient(System.Net.Http.HttpClient! client, string! audience, string! issuer, string! role) -> void
-static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureJwtBearer(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! audience) -> void
-static PandaBear.Testing.AspNetCore.KestrelTestHost.Start<TEntryPoint>(string? environment = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null) -> PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint!>!
-static PandaBear.Testing.AspNetCore.WebApplicationTestHost.Create<TEntryPoint>(string? environment = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null, System.Action<System.Net.Http.HttpClient!>? configureClient = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null) -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
-static PandaBear.Testing.AspNetCore.WorkerTestHost.Build(System.Reflection.Assembly! assembly, params string![]! args) -> Microsoft.Extensions.Hosting.IHost!
-PandaBear.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions
-static PandaBear.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions.AddTestRequestBindingDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-const PandaBear.Testing.AspNetCore.FakeBrowserFile.DefaultMaxAllowedSize = 512000 -> long
-PandaBear.Testing.AspNetCore.DistributedCacheOperation
-PandaBear.Testing.AspNetCore.DistributedCacheOperation.Get = 0 -> PandaBear.Testing.AspNetCore.DistributedCacheOperation
-PandaBear.Testing.AspNetCore.DistributedCacheOperation.Refresh = 2 -> PandaBear.Testing.AspNetCore.DistributedCacheOperation
-PandaBear.Testing.AspNetCore.DistributedCacheOperation.Remove = 3 -> PandaBear.Testing.AspNetCore.DistributedCacheOperation
-PandaBear.Testing.AspNetCore.DistributedCacheOperation.Set = 1 -> PandaBear.Testing.AspNetCore.DistributedCacheOperation
-PandaBear.Testing.AspNetCore.FakeBrowserFile.DeclaredSize.get -> long?
-PandaBear.Testing.AspNetCore.FakeBrowserFile.DeclaredSize.init -> void
-PandaBear.Testing.AspNetCore.FakeBrowserFile.MaximumAllowedSize.get -> long?
-PandaBear.Testing.AspNetCore.FakeBrowserFile.OpenFailure.get -> System.Exception?
-PandaBear.Testing.AspNetCore.FakeBrowserFile.OpenFailure.init -> void
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.CallCount(PandaBear.Testing.AspNetCore.DistributedCacheOperation operation) -> int
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.LastRemoveCancellationToken.get -> System.Threading.CancellationToken
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.LastSetOptions.get -> Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions?
-PandaBear.Testing.AspNetCore.ThrowingDistributedCache.ThrowingDistributedCache(Microsoft.Extensions.Caching.Distributed.IDistributedCache! inner, System.Exception! failure, System.Func<PandaBear.Testing.AspNetCore.DistributedCacheOperation, string!, int, bool>! shouldThrow) -> void
-PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions
-static PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions.ClearHealthChecks(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions.RemoveHostedServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-PandaBear.Testing.AspNetCore.StreamFormFile
-PandaBear.Testing.AspNetCore.StreamFormFile.ContentDisposition.get -> string!
-PandaBear.Testing.AspNetCore.StreamFormFile.ContentType.get -> string!
-PandaBear.Testing.AspNetCore.StreamFormFile.CopyTo(System.IO.Stream! target) -> void
-PandaBear.Testing.AspNetCore.StreamFormFile.CopyToAsync(System.IO.Stream! target, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
-PandaBear.Testing.AspNetCore.StreamFormFile.FileName.get -> string!
-PandaBear.Testing.AspNetCore.StreamFormFile.Headers.get -> Microsoft.AspNetCore.Http.IHeaderDictionary!
-PandaBear.Testing.AspNetCore.StreamFormFile.Length.get -> long
-PandaBear.Testing.AspNetCore.StreamFormFile.Name.get -> string!
-PandaBear.Testing.AspNetCore.StreamFormFile.OpenReadStream() -> System.IO.Stream!
-PandaBear.Testing.AspNetCore.StreamFormFile.StreamFormFile(System.IO.Stream! content, long length, string! fileName, string! contentType = "application/octet-stream", string! name = "file") -> void
-static PandaBear.Testing.AspNetCore.KestrelTestHost.StartFromFactory<TEntryPoint>(Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>! factory) -> PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint!>!
-const PandaBear.Testing.AspNetCore.PrerenderedComponentState.GuidanceUrl = "https://learn.microsoft.com/aspnet/core/blazor/fundamentals/signalr?view=aspnetcore-11.0#prerendered-state-size-and-signalr-message-size-limit" -> string!
-const PandaBear.Testing.AspNetCore.PrerenderedComponentState.ServerStateMarker = "<!--Blazor-Server-Component-State:" -> string!
-const PandaBear.Testing.AspNetCore.PrerenderedComponentState.WebAssemblyStateMarker = "<!--Blazor-WebAssembly-Component-State:" -> string!
-PandaBear.Testing.AspNetCore.PrerenderedComponentState
-static PandaBear.Testing.AspNetCore.PrerenderedComponentState.DefaultMaximumReceiveMessageSize.get -> long
-static PandaBear.Testing.AspNetCore.PrerenderedComponentState.ServerStateSize(string! html) -> int
-static PandaBear.Testing.AspNetCore.PrerenderedComponentState.ShouldKeepServerStateBelow(string! html) -> void
-static PandaBear.Testing.AspNetCore.PrerenderedComponentState.ShouldKeepServerStateBelow(string! html, long limit) -> void
-static PandaBear.Testing.AspNetCore.PrerenderedComponentState.WebAssemblyStateSize(string! html) -> int
+const SharedKernel.Testing.AspNetCore.ApiTestAuthentication.Authority = "https://identity.test" -> string!
+SharedKernel.Testing.AspNetCore.ApiTestAuthentication
+SharedKernel.Testing.AspNetCore.FakeBrowserFile
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.ContentType.get -> string!
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.FakeBrowserFile(byte[]! content, string! name, string! contentType = "application/octet-stream") -> void
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.LastModified.get -> System.DateTimeOffset
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.LastModified.init -> void
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.Name.get -> string!
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.OpenReadStream(long maxAllowedSize = 512000, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.IO.Stream!
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.Size.get -> long
+SharedKernel.Testing.AspNetCore.FakeFormFile
+SharedKernel.Testing.AspNetCore.FakeFormFile.ContentDisposition.get -> string!
+SharedKernel.Testing.AspNetCore.FakeFormFile.ContentType.get -> string!
+SharedKernel.Testing.AspNetCore.FakeFormFile.CopyTo(System.IO.Stream! target) -> void
+SharedKernel.Testing.AspNetCore.FakeFormFile.CopyToAsync(System.IO.Stream! target, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.AspNetCore.FakeFormFile.FakeFormFile(byte[]! content, string! fileName, string! contentType = "application/octet-stream", string! name = "file") -> void
+SharedKernel.Testing.AspNetCore.FakeFormFile.FileName.get -> string!
+SharedKernel.Testing.AspNetCore.FakeFormFile.Headers.get -> Microsoft.AspNetCore.Http.IHeaderDictionary!
+SharedKernel.Testing.AspNetCore.FakeFormFile.Length.get -> long
+SharedKernel.Testing.AspNetCore.FakeFormFile.Name.get -> string!
+SharedKernel.Testing.AspNetCore.FakeFormFile.OpenReadStream() -> System.IO.Stream!
+SharedKernel.Testing.AspNetCore.KestrelTestHost
+SharedKernel.Testing.AspNetCore.WorkerTestHost
+SharedKernel.Testing.AspNetCore.KestrelTestHost<TEntryPoint>
+SharedKernel.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.BaseAddress.get -> System.Uri!
+SharedKernel.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.Services.get -> System.IServiceProvider!
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.EvictByTagAsync(string! tag, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.EvictionCancellationToken.get -> System.Threading.CancellationToken
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.EvictionException.get -> System.Exception?
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.EvictionException.set -> void
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.EvictionObserved.get -> bool
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.EvictionTag.get -> string?
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.GetAsync(string! key, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<byte[]?>
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.RecordingOutputCacheStore() -> void
+SharedKernel.Testing.AspNetCore.RecordingOutputCacheStore.SetAsync(string! key, byte[]! value, string![]? tags, System.TimeSpan validFor, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.AspNetCore.TestHostEnvironment
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ApplicationName.get -> string!
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ApplicationName.set -> void
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ContentRootFileProvider.get -> Microsoft.Extensions.FileProviders.IFileProvider!
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ContentRootFileProvider.set -> void
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ContentRootPath.get -> string!
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ContentRootPath.set -> void
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.EnvironmentName.get -> string!
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.EnvironmentName.set -> void
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.TestHostEnvironment(string! applicationName) -> void
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.Get(string! key) -> byte[]?
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.GetAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]?>!
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.Refresh(string! key) -> void
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.RefreshAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.Remove(string! key) -> void
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.RemoveAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.Set(string! key, byte[]! value, Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions! options) -> void
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.SetAsync(string! key, byte[]! value, Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions! options, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.ThrowingDistributedCache(System.Exception! failure) -> void
+SharedKernel.Testing.AspNetCore.WebApplicationTestHost
+static SharedKernel.Testing.AspNetCore.ApiTestAuthentication.ConfigureAuthenticatedClient(System.Net.Http.HttpClient! client, string! audience, string! role) -> void
+static SharedKernel.Testing.AspNetCore.ApiTestAuthentication.ConfigureClient(System.Net.Http.HttpClient! client, string! audience, string! issuer, string! role) -> void
+static SharedKernel.Testing.AspNetCore.ApiTestAuthentication.ConfigureJwtBearer(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! audience) -> void
+static SharedKernel.Testing.AspNetCore.KestrelTestHost.Start<TEntryPoint>(string? environment = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null) -> SharedKernel.Testing.AspNetCore.KestrelTestHost<TEntryPoint!>!
+static SharedKernel.Testing.AspNetCore.WebApplicationTestHost.Create<TEntryPoint>(string? environment = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null, System.Action<System.Net.Http.HttpClient!>? configureClient = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null) -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+static SharedKernel.Testing.AspNetCore.WorkerTestHost.Build(System.Reflection.Assembly! assembly, params string![]! args) -> Microsoft.Extensions.Hosting.IHost!
+SharedKernel.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions
+static SharedKernel.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions.AddTestRequestBindingDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+const SharedKernel.Testing.AspNetCore.FakeBrowserFile.DefaultMaxAllowedSize = 512000 -> long
+SharedKernel.Testing.AspNetCore.DistributedCacheOperation
+SharedKernel.Testing.AspNetCore.DistributedCacheOperation.Get = 0 -> SharedKernel.Testing.AspNetCore.DistributedCacheOperation
+SharedKernel.Testing.AspNetCore.DistributedCacheOperation.Refresh = 2 -> SharedKernel.Testing.AspNetCore.DistributedCacheOperation
+SharedKernel.Testing.AspNetCore.DistributedCacheOperation.Remove = 3 -> SharedKernel.Testing.AspNetCore.DistributedCacheOperation
+SharedKernel.Testing.AspNetCore.DistributedCacheOperation.Set = 1 -> SharedKernel.Testing.AspNetCore.DistributedCacheOperation
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.DeclaredSize.get -> long?
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.DeclaredSize.init -> void
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.MaximumAllowedSize.get -> long?
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.OpenFailure.get -> System.Exception?
+SharedKernel.Testing.AspNetCore.FakeBrowserFile.OpenFailure.init -> void
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.CallCount(SharedKernel.Testing.AspNetCore.DistributedCacheOperation operation) -> int
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.LastRemoveCancellationToken.get -> System.Threading.CancellationToken
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.LastSetOptions.get -> Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions?
+SharedKernel.Testing.AspNetCore.ThrowingDistributedCache.ThrowingDistributedCache(Microsoft.Extensions.Caching.Distributed.IDistributedCache! inner, System.Exception! failure, System.Func<SharedKernel.Testing.AspNetCore.DistributedCacheOperation, string!, int, bool>! shouldThrow) -> void
+SharedKernel.Testing.AspNetCore.TestHostServiceCollectionExtensions
+static SharedKernel.Testing.AspNetCore.TestHostServiceCollectionExtensions.ClearHealthChecks(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static SharedKernel.Testing.AspNetCore.TestHostServiceCollectionExtensions.RemoveHostedServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+SharedKernel.Testing.AspNetCore.StreamFormFile
+SharedKernel.Testing.AspNetCore.StreamFormFile.ContentDisposition.get -> string!
+SharedKernel.Testing.AspNetCore.StreamFormFile.ContentType.get -> string!
+SharedKernel.Testing.AspNetCore.StreamFormFile.CopyTo(System.IO.Stream! target) -> void
+SharedKernel.Testing.AspNetCore.StreamFormFile.CopyToAsync(System.IO.Stream! target, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.AspNetCore.StreamFormFile.FileName.get -> string!
+SharedKernel.Testing.AspNetCore.StreamFormFile.Headers.get -> Microsoft.AspNetCore.Http.IHeaderDictionary!
+SharedKernel.Testing.AspNetCore.StreamFormFile.Length.get -> long
+SharedKernel.Testing.AspNetCore.StreamFormFile.Name.get -> string!
+SharedKernel.Testing.AspNetCore.StreamFormFile.OpenReadStream() -> System.IO.Stream!
+SharedKernel.Testing.AspNetCore.StreamFormFile.StreamFormFile(System.IO.Stream! content, long length, string! fileName, string! contentType = "application/octet-stream", string! name = "file") -> void
+static SharedKernel.Testing.AspNetCore.KestrelTestHost.StartFromFactory<TEntryPoint>(Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>! factory) -> SharedKernel.Testing.AspNetCore.KestrelTestHost<TEntryPoint!>!
+const SharedKernel.Testing.AspNetCore.PrerenderedComponentState.GuidanceUrl = "https://learn.microsoft.com/aspnet/core/blazor/fundamentals/signalr?view=aspnetcore-11.0#prerendered-state-size-and-signalr-message-size-limit" -> string!
+const SharedKernel.Testing.AspNetCore.PrerenderedComponentState.ServerStateMarker = "<!--Blazor-Server-Component-State:" -> string!
+const SharedKernel.Testing.AspNetCore.PrerenderedComponentState.WebAssemblyStateMarker = "<!--Blazor-WebAssembly-Component-State:" -> string!
+SharedKernel.Testing.AspNetCore.PrerenderedComponentState
+static SharedKernel.Testing.AspNetCore.PrerenderedComponentState.DefaultMaximumReceiveMessageSize.get -> long
+static SharedKernel.Testing.AspNetCore.PrerenderedComponentState.ServerStateSize(string! html) -> int
+static SharedKernel.Testing.AspNetCore.PrerenderedComponentState.ShouldKeepServerStateBelow(string! html) -> void
+static SharedKernel.Testing.AspNetCore.PrerenderedComponentState.ShouldKeepServerStateBelow(string! html, long limit) -> void
+static SharedKernel.Testing.AspNetCore.PrerenderedComponentState.WebAssemblyStateSize(string! html) -> int

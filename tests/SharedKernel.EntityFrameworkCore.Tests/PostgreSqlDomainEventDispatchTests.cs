@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// PostgreSQL tests of domain-event dispatch while saving aggregates.

@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Defines a pipeline behavior applied around stream request execution.

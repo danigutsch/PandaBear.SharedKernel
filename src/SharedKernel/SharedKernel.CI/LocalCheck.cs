@@ -2,10 +2,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using PandaBear.IO;
-using PandaBear.InputNormalization;
+using SharedKernel.IO;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Checks the projects that a change affects without creating a Unix domain socket, for a sandbox that refuses them: whitespace in

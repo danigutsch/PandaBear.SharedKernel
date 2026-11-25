@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Reads the process ID that a test script wrote to a file with <c>printf '%s' "$$"</c>.</summary>
 internal static class ProcessIdFile

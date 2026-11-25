@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the layouts of the grid of fact cards.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

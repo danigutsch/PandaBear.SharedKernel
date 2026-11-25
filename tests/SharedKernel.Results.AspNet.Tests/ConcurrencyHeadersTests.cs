@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.Results.AspNet.Tests;
+namespace SharedKernel.Results.AspNet.Tests;
 
 /// <summary>Tests how a record version travels as an entity tag.</summary>
 public sealed class ConcurrencyHeadersTests

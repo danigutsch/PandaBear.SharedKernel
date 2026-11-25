@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Bitwarden folder or collection.</summary>
 /// <param name="Id">Folder or collection id.</param>

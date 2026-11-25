@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Tests the shape of the rule catalog: every rule has a sample, a source, and keywords, and every pattern a one-second timeout.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.SecretScanningCapability)]

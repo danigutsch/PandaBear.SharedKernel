@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the lifecycle of a page that creates or edits one record.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

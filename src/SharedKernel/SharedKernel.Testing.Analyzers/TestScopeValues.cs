@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 /// <summary>
-/// The <c>Scope</c> trait values of <c>PandaBear.Testing.TestScope</c>, in enum order. The analyzer cannot reference the enum.
+/// The <c>Scope</c> trait values of <c>SharedKernel.Testing.TestScope</c>, in enum order. The analyzer cannot reference the enum.
 /// </summary>
 internal static class TestScopeValues
 {

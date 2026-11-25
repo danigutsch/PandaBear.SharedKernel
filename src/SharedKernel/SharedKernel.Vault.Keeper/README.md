@@ -12,7 +12,7 @@ Keeper's [vault export](https://docs.keeper.io/user-guides/export-and-reports/va
 ## Usage
 
 ```csharp
-using PandaBear.Vault.Keeper;
+using SharedKernel.Vault.Keeper;
 
 VaultReadResult json = KeeperJsonReader.Read(text, "keeper.json");
 VaultReadResult zip = KeeperJsonReader.ReadZip("keeper.zip");
@@ -24,7 +24,7 @@ VaultReadResult csv = KeeperCsvReader.Read(text, "keeper.csv");
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Vault.Keeper`. C# namespace: `PandaBear.Vault.Keeper`. Assembly/project identity: `SharedKernel.Vault.Keeper`.
+Package ID: `PandaBear.SharedKernel.Vault.Keeper`. C# namespace: `SharedKernel.Vault.Keeper`. Assembly/project identity: `SharedKernel.Vault.Keeper`.
 
 The project is not packable yet: shipping the vault manager and its engine is a separate decision. Source is public;
 registry publication remains deferred.

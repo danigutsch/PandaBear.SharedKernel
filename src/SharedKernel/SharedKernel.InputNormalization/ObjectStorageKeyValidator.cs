@@ -1,6 +1,6 @@
 using System.Text.Unicode;
 
-namespace PandaBear.InputNormalization;
+namespace SharedKernel.InputNormalization;
 
 /// <summary>
 /// Validates relative slash-delimited keys with well-formed Unicode and no control characters.

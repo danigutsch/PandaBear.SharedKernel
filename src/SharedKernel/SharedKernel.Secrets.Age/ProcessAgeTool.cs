@@ -1,8 +1,8 @@
 using System.Text;
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets.Age;
+namespace SharedKernel.Secrets.Age;
 
 /// <summary>
 /// <see cref="IAgeTool"/> over the <c>age</c> and <c>age-keygen</c> programs, started from absolute paths without a shell. Recipients and

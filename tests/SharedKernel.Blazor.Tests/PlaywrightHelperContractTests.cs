@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Keeps the Playwright test-support package decoupled from this library while its selector copy cannot drift.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.ObjectStorage.S3;
+namespace SharedKernel.ObjectStorage.S3;
 
 /// <summary>
 /// Registers the S3 object-store health check.

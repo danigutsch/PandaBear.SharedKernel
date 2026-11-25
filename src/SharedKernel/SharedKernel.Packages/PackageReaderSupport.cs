@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Text;
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Checks and conversions that the readers share.</summary>
 internal static class PackageReaderSupport

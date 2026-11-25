@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.ConfigurationFiles.Tests;
+namespace SharedKernel.ConfigurationFiles.Tests;
 
 /// <summary>Strict source-generated metadata for <see cref="SampleConfiguration"/>, as tools declare it.</summary>
 [JsonSourceGenerationOptions(

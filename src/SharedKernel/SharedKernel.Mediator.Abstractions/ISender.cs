@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Sends request messages to their generated handlers.

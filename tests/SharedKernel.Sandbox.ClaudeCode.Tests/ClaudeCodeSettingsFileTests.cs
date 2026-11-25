@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.ClaudeCode.Tests;
+namespace SharedKernel.Sandbox.ClaudeCode.Tests;
 
 /// <summary>Tests planning and writing a Claude Code settings file under a repository root.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

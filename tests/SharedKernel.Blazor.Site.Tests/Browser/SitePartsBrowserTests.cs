@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests in Chromium, on a phone (375px) and a desktop (1280px) viewport, a split with its media on the start side, the grid of fact

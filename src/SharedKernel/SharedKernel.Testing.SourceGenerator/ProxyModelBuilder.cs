@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>Turns a wrapped service type into the proxy to generate, or into the diagnostics that explain why it cannot be proxied.</summary>
 internal static class ProxyModelBuilder

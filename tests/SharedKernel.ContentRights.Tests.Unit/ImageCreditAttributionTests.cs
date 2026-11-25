@@ -1,4 +1,4 @@
-namespace PandaBear.ContentRights.Tests;
+namespace SharedKernel.ContentRights.Tests;
 
 /// <summary>Checks conversion from the published image credit contract to a reviewed public credit.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

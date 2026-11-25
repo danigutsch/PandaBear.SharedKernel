@@ -40,7 +40,7 @@ dotnet add package PandaBear.SharedKernel.Messaging.IntegrationEvents.EntityFram
 ```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 public static class Example
 {
@@ -107,6 +107,6 @@ both read and write use.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore`. C# namespace: `PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore`.
+Package ID: `PandaBear.SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore`. C# namespace: `SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

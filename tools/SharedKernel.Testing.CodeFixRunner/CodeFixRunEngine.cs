@@ -9,15 +9,15 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
-using PandaBear.Testing.CodeFixes;
+using SharedKernel.Testing.CodeFixes;
 
-namespace PandaBear.Testing.CodeFixRunner;
+namespace SharedKernel.Testing.CodeFixRunner;
 
 /// <summary>Applies the testing analyzer's code fixes to a project or solution loaded through MSBuild.</summary>
 internal static class CodeFixRunEngine
 {
     private static readonly ImmutableArray<DiagnosticAnalyzer> Analyzers =
-        [new testinganalyzers::PandaBear.Testing.Analyzers.TestingAnalyzer()];
+        [new testinganalyzers::SharedKernel.Testing.Analyzers.TestingAnalyzer()];
 
     private static readonly TestingCodeFixProvider CodeFixProvider = new();
 

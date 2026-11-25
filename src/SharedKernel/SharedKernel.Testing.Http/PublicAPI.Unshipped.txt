@@ -1,110 +1,110 @@
 #nullable enable
-PandaBear.Testing.Http.CapturedHttpRequest
-PandaBear.Testing.Http.CapturedHttpRequest.Body.get -> string?
-PandaBear.Testing.Http.CapturedHttpRequest.CapturedHttpRequest(System.Net.Http.HttpRequestMessage! message, string! pathAndQuery, string? body) -> void
-PandaBear.Testing.Http.CapturedHttpRequest.Message.get -> System.Net.Http.HttpRequestMessage!
-PandaBear.Testing.Http.CapturedHttpRequest.Method.get -> System.Net.Http.HttpMethod!
-PandaBear.Testing.Http.CapturedHttpRequest.PathAndQuery.get -> string!
-PandaBear.Testing.Http.DelegateHttpMessageHandler
-PandaBear.Testing.Http.DelegateHttpMessageHandler.DelegateHttpMessageHandler(System.Func<System.Net.Http.HttpRequestMessage!, System.Net.Http.HttpResponseMessage!>! respond) -> void
-PandaBear.Testing.Http.DelegateHttpMessageHandler.DelegateHttpMessageHandler(System.Func<System.Net.Http.HttpRequestMessage!, System.Threading.CancellationToken, System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!>! respond) -> void
-PandaBear.Testing.Http.HttpResponseFactory
-PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions
-PandaBear.Testing.Http.TestHttpMessageHandler
-PandaBear.Testing.Http.TestHttpMessageHandler.Enqueue(System.Net.Http.HttpResponseMessage! response) -> void
-PandaBear.Testing.Http.TestHttpMessageHandler.EnqueueJson(System.Net.HttpStatusCode statusCode, string! json) -> void
-PandaBear.Testing.Http.TestHttpMessageHandler.LastRequest.get -> PandaBear.Testing.Http.CapturedHttpRequest?
-PandaBear.Testing.Http.TestHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!
-PandaBear.Testing.Http.TestHttpMessageHandler.TestHttpMessageHandler() -> void
-PandaBear.Testing.Http.TestHttpMessageHandler.TestHttpMessageHandler(System.Net.Http.HttpResponseMessage! response) -> void
-PandaBear.Testing.Http.TrackingStreamContent
-PandaBear.Testing.Http.TrackingStreamContent.SerializationCount.get -> int
-PandaBear.Testing.Http.TrackingStreamContent.TrackingStreamContent(System.IO.Stream! source) -> void
-static PandaBear.Testing.Http.HttpResponseFactory.Json(string! json, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.OK) -> System.Net.Http.HttpResponseMessage!
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeProblem(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, string? expectedDetail = null, string? expectedCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeProblem(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, string? expectedDetail, string? expectedCode, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeValidationProblem(this System.Net.Http.HttpResponseMessage! actual, string? expectedDetail = null, string? expectedCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeValidationProblem(this System.Net.Http.HttpResponseMessage! actual, string? expectedDetail, string? expectedCode, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationError(this System.Text.Json.JsonElement actual, string! field, params string![]! expectedMessages) -> void
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationError(this System.Text.Json.JsonElement actual, string! field, string![]! expectedMessages, string! userMessage) -> void
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationErrors(this System.Text.Json.JsonElement actual, System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>! expected) -> void
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationErrors(this System.Text.Json.JsonElement actual, System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>! expected, string! userMessage) -> void
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationField(this System.Text.Json.JsonElement actual, string! field) -> System.Text.Json.JsonElement
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationField(this System.Text.Json.JsonElement actual, string! field, string! userMessage) -> System.Text.Json.JsonElement
-static PandaBear.Testing.Http.TestHttpMessageHandler.FromException(System.Exception! sendException) -> PandaBear.Testing.Http.TestHttpMessageHandler!
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldAllHaveLink(this System.Text.Json.JsonElement actual, string! rel) -> void
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveLink(this System.Text.Json.JsonElement actual, string! rel) -> System.Text.Json.JsonElement
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveGetLink(this System.Text.Json.JsonElement actual, string! rel, string! href) -> void
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveGetLink(this System.Text.Json.JsonElement actual, string! rel, string! href, string! userMessage) -> void
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldAllHaveLink(this System.Text.Json.JsonElement actual, string! rel, string! userMessage) -> void
-static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveLink(this System.Text.Json.JsonElement actual, string! rel, string! userMessage) -> System.Text.Json.JsonElement
-PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveStatus(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.JsonSerializerOptions! options, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! typeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.JsonSerializerOptions! options, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! typeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveLocation(this System.Net.Http.HttpResponseMessage! actual, string! expectedPathPrefix) -> System.Uri!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoContent(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeAccepted(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeFile(this System.Net.Http.HttpResponseMessage! actual, string! contentType, string? fileName = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name, string! expectedValue) -> System.Net.Http.HttpResponseMessage!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoStore(this System.Net.Http.HttpResponseMessage! actual) -> System.Net.Http.HttpResponseMessage!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveETag(this System.Net.Http.HttpResponseMessage! actual, string! expectedStrongTag) -> System.Net.Http.HttpResponseMessage!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveStatus(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.JsonSerializerOptions! options, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! typeInfo, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.JsonSerializerOptions! options, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! typeInfo, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveLocation(this System.Net.Http.HttpResponseMessage! actual, string! expectedPathPrefix, string! userMessage) -> System.Uri!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoContent(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeAccepted(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeFile(this System.Net.Http.HttpResponseMessage! actual, string! contentType, string? fileName, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name, string! expectedValue, string! userMessage) -> System.Net.Http.HttpResponseMessage!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoStore(this System.Net.Http.HttpResponseMessage! actual, string! userMessage) -> System.Net.Http.HttpResponseMessage!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveETag(this System.Net.Http.HttpResponseMessage! actual, string! expectedStrongTag, string! userMessage) -> System.Net.Http.HttpResponseMessage!
-PandaBear.Testing.Http.GatedHttpMessageHandler
-PandaBear.Testing.Http.GatedHttpMessageHandler.GatedHttpMessageHandler() -> void
-PandaBear.Testing.Http.GatedHttpMessageHandler.GatedHttpMessageHandler(System.Net.Http.HttpMessageHandler! innerHandler) -> void
-PandaBear.Testing.Http.GatedHttpMessageHandler.PendingCount.get -> int
-PandaBear.Testing.Http.GatedHttpMessageHandler.Release() -> void
-PandaBear.Testing.Http.GatedHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!
-PandaBear.Testing.Http.GatedHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!>!
-PandaBear.Testing.Http.RecordingHttpMessageHandler
-PandaBear.Testing.Http.RecordingHttpMessageHandler.LastRequest.get -> PandaBear.Testing.Http.CapturedHttpRequest?
-PandaBear.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler() -> void
-PandaBear.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler(System.Func<PandaBear.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! respond) -> void
-PandaBear.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler(System.Net.HttpStatusCode statusCode) -> void
-PandaBear.Testing.Http.RecordingHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!
-PandaBear.Testing.Http.RecordingHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!>!
-PandaBear.Testing.Http.RoutingHttpMessageHandler
-PandaBear.Testing.Http.RoutingHttpMessageHandler.LastRequest.get -> PandaBear.Testing.Http.CapturedHttpRequest?
-PandaBear.Testing.Http.RoutingHttpMessageHandler.Map(System.Net.Http.HttpMethod! method, string! path, System.Func<PandaBear.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! respond) -> void
-PandaBear.Testing.Http.RoutingHttpMessageHandler.Map(System.Net.Http.HttpMethod! method, string! path, System.Net.HttpStatusCode statusCode) -> void
-PandaBear.Testing.Http.RoutingHttpMessageHandler.MapJson(System.Net.Http.HttpMethod! method, string! path, string! json, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.OK) -> void
-PandaBear.Testing.Http.RoutingHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!
-PandaBear.Testing.Http.RoutingHttpMessageHandler.RoutingHttpMessageHandler() -> void
-PandaBear.Testing.Http.RoutingHttpMessageHandler.RoutingHttpMessageHandler(System.Func<PandaBear.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! fallback) -> void
-PandaBear.Testing.Http.RoutingHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!>!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldNotHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name) -> System.Net.Http.HttpResponseMessage!
-static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldNotHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name, string! userMessage) -> System.Net.Http.HttpResponseMessage!
-PandaBear.Testing.Http.GatedChunkContent
-PandaBear.Testing.Http.GatedChunkContent.GatedChunkContent(System.ReadOnlyMemory<byte> payload, int chunkSize, string! contentType, bool declareLength = true) -> void
-PandaBear.Testing.Http.GatedChunkContent.BytesAfter(int chunks) -> long
-PandaBear.Testing.Http.GatedChunkContent.ChunkCount.get -> int
-PandaBear.Testing.Http.GatedChunkContent.ChunksStarted.get -> int
-PandaBear.Testing.Http.GatedChunkContent.ReleaseChunk() -> void
-PandaBear.Testing.Http.LoopbackHttpBodyRequest
-PandaBear.Testing.Http.LoopbackHttpBodyRequest.LoopbackHttpBodyRequest() -> void
-PandaBear.Testing.Http.LoopbackHttpBodyRequest.Send(System.Net.Http.HttpRequestMessage! request, System.ReadOnlyMemory<byte> bodyPrefix, long declaredLength, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.Testing.Http.LoopbackHttpBodyRequest.ReadStatusLine(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-PandaBear.Testing.Http.LoopbackHttpBodyRequest.Abort() -> void
-PandaBear.Testing.Http.LoopbackHttpBodyRequest.Dispose() -> void
+SharedKernel.Testing.Http.CapturedHttpRequest
+SharedKernel.Testing.Http.CapturedHttpRequest.Body.get -> string?
+SharedKernel.Testing.Http.CapturedHttpRequest.CapturedHttpRequest(System.Net.Http.HttpRequestMessage! message, string! pathAndQuery, string? body) -> void
+SharedKernel.Testing.Http.CapturedHttpRequest.Message.get -> System.Net.Http.HttpRequestMessage!
+SharedKernel.Testing.Http.CapturedHttpRequest.Method.get -> System.Net.Http.HttpMethod!
+SharedKernel.Testing.Http.CapturedHttpRequest.PathAndQuery.get -> string!
+SharedKernel.Testing.Http.DelegateHttpMessageHandler
+SharedKernel.Testing.Http.DelegateHttpMessageHandler.DelegateHttpMessageHandler(System.Func<System.Net.Http.HttpRequestMessage!, System.Net.Http.HttpResponseMessage!>! respond) -> void
+SharedKernel.Testing.Http.DelegateHttpMessageHandler.DelegateHttpMessageHandler(System.Func<System.Net.Http.HttpRequestMessage!, System.Threading.CancellationToken, System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!>! respond) -> void
+SharedKernel.Testing.Http.HttpResponseFactory
+SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions
+SharedKernel.Testing.Http.TestHttpMessageHandler
+SharedKernel.Testing.Http.TestHttpMessageHandler.Enqueue(System.Net.Http.HttpResponseMessage! response) -> void
+SharedKernel.Testing.Http.TestHttpMessageHandler.EnqueueJson(System.Net.HttpStatusCode statusCode, string! json) -> void
+SharedKernel.Testing.Http.TestHttpMessageHandler.LastRequest.get -> SharedKernel.Testing.Http.CapturedHttpRequest?
+SharedKernel.Testing.Http.TestHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Http.CapturedHttpRequest!>!
+SharedKernel.Testing.Http.TestHttpMessageHandler.TestHttpMessageHandler() -> void
+SharedKernel.Testing.Http.TestHttpMessageHandler.TestHttpMessageHandler(System.Net.Http.HttpResponseMessage! response) -> void
+SharedKernel.Testing.Http.TrackingStreamContent
+SharedKernel.Testing.Http.TrackingStreamContent.SerializationCount.get -> int
+SharedKernel.Testing.Http.TrackingStreamContent.TrackingStreamContent(System.IO.Stream! source) -> void
+static SharedKernel.Testing.Http.HttpResponseFactory.Json(string! json, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.OK) -> System.Net.Http.HttpResponseMessage!
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeProblem(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, string? expectedDetail = null, string? expectedCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeProblem(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, string? expectedDetail, string? expectedCode, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeValidationProblem(this System.Net.Http.HttpResponseMessage! actual, string? expectedDetail = null, string? expectedCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeValidationProblem(this System.Net.Http.HttpResponseMessage! actual, string? expectedDetail, string? expectedCode, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationError(this System.Text.Json.JsonElement actual, string! field, params string![]! expectedMessages) -> void
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationError(this System.Text.Json.JsonElement actual, string! field, string![]! expectedMessages, string! userMessage) -> void
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationErrors(this System.Text.Json.JsonElement actual, System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>! expected) -> void
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationErrors(this System.Text.Json.JsonElement actual, System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>! expected, string! userMessage) -> void
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationField(this System.Text.Json.JsonElement actual, string! field) -> System.Text.Json.JsonElement
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationField(this System.Text.Json.JsonElement actual, string! field, string! userMessage) -> System.Text.Json.JsonElement
+static SharedKernel.Testing.Http.TestHttpMessageHandler.FromException(System.Exception! sendException) -> SharedKernel.Testing.Http.TestHttpMessageHandler!
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldAllHaveLink(this System.Text.Json.JsonElement actual, string! rel) -> void
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveLink(this System.Text.Json.JsonElement actual, string! rel) -> System.Text.Json.JsonElement
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveGetLink(this System.Text.Json.JsonElement actual, string! rel, string! href) -> void
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveGetLink(this System.Text.Json.JsonElement actual, string! rel, string! href, string! userMessage) -> void
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldAllHaveLink(this System.Text.Json.JsonElement actual, string! rel, string! userMessage) -> void
+static SharedKernel.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveLink(this System.Text.Json.JsonElement actual, string! rel, string! userMessage) -> System.Text.Json.JsonElement
+SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveStatus(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.JsonSerializerOptions! options, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! typeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.JsonSerializerOptions! options, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! typeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveLocation(this System.Net.Http.HttpResponseMessage! actual, string! expectedPathPrefix) -> System.Uri!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoContent(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeAccepted(this System.Net.Http.HttpResponseMessage! actual, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeFile(this System.Net.Http.HttpResponseMessage! actual, string! contentType, string? fileName = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name, string! expectedValue) -> System.Net.Http.HttpResponseMessage!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoStore(this System.Net.Http.HttpResponseMessage! actual) -> System.Net.Http.HttpResponseMessage!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveETag(this System.Net.Http.HttpResponseMessage! actual, string! expectedStrongTag) -> System.Net.Http.HttpResponseMessage!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveStatus(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.JsonSerializerOptions! options, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeOk<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! typeInfo, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.JsonSerializerOptions! options, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeCreated<T>(this System.Net.Http.HttpResponseMessage! actual, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! typeInfo, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveLocation(this System.Net.Http.HttpResponseMessage! actual, string! expectedPathPrefix, string! userMessage) -> System.Uri!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoContent(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeAccepted(this System.Net.Http.HttpResponseMessage! actual, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeFile(this System.Net.Http.HttpResponseMessage! actual, string! contentType, string? fileName, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name, string! expectedValue, string! userMessage) -> System.Net.Http.HttpResponseMessage!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoStore(this System.Net.Http.HttpResponseMessage! actual, string! userMessage) -> System.Net.Http.HttpResponseMessage!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveETag(this System.Net.Http.HttpResponseMessage! actual, string! expectedStrongTag, string! userMessage) -> System.Net.Http.HttpResponseMessage!
+SharedKernel.Testing.Http.GatedHttpMessageHandler
+SharedKernel.Testing.Http.GatedHttpMessageHandler.GatedHttpMessageHandler() -> void
+SharedKernel.Testing.Http.GatedHttpMessageHandler.GatedHttpMessageHandler(System.Net.Http.HttpMessageHandler! innerHandler) -> void
+SharedKernel.Testing.Http.GatedHttpMessageHandler.PendingCount.get -> int
+SharedKernel.Testing.Http.GatedHttpMessageHandler.Release() -> void
+SharedKernel.Testing.Http.GatedHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Http.CapturedHttpRequest!>!
+SharedKernel.Testing.Http.GatedHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Http.CapturedHttpRequest!>!>!
+SharedKernel.Testing.Http.RecordingHttpMessageHandler
+SharedKernel.Testing.Http.RecordingHttpMessageHandler.LastRequest.get -> SharedKernel.Testing.Http.CapturedHttpRequest?
+SharedKernel.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler() -> void
+SharedKernel.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler(System.Func<SharedKernel.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! respond) -> void
+SharedKernel.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler(System.Net.HttpStatusCode statusCode) -> void
+SharedKernel.Testing.Http.RecordingHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Http.CapturedHttpRequest!>!
+SharedKernel.Testing.Http.RecordingHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Http.CapturedHttpRequest!>!>!
+SharedKernel.Testing.Http.RoutingHttpMessageHandler
+SharedKernel.Testing.Http.RoutingHttpMessageHandler.LastRequest.get -> SharedKernel.Testing.Http.CapturedHttpRequest?
+SharedKernel.Testing.Http.RoutingHttpMessageHandler.Map(System.Net.Http.HttpMethod! method, string! path, System.Func<SharedKernel.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! respond) -> void
+SharedKernel.Testing.Http.RoutingHttpMessageHandler.Map(System.Net.Http.HttpMethod! method, string! path, System.Net.HttpStatusCode statusCode) -> void
+SharedKernel.Testing.Http.RoutingHttpMessageHandler.MapJson(System.Net.Http.HttpMethod! method, string! path, string! json, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.OK) -> void
+SharedKernel.Testing.Http.RoutingHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Http.CapturedHttpRequest!>!
+SharedKernel.Testing.Http.RoutingHttpMessageHandler.RoutingHttpMessageHandler() -> void
+SharedKernel.Testing.Http.RoutingHttpMessageHandler.RoutingHttpMessageHandler(System.Func<SharedKernel.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! fallback) -> void
+SharedKernel.Testing.Http.RoutingHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Http.CapturedHttpRequest!>!>!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldNotHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name) -> System.Net.Http.HttpResponseMessage!
+static SharedKernel.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldNotHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name, string! userMessage) -> System.Net.Http.HttpResponseMessage!
+SharedKernel.Testing.Http.GatedChunkContent
+SharedKernel.Testing.Http.GatedChunkContent.GatedChunkContent(System.ReadOnlyMemory<byte> payload, int chunkSize, string! contentType, bool declareLength = true) -> void
+SharedKernel.Testing.Http.GatedChunkContent.BytesAfter(int chunks) -> long
+SharedKernel.Testing.Http.GatedChunkContent.ChunkCount.get -> int
+SharedKernel.Testing.Http.GatedChunkContent.ChunksStarted.get -> int
+SharedKernel.Testing.Http.GatedChunkContent.ReleaseChunk() -> void
+SharedKernel.Testing.Http.LoopbackHttpBodyRequest
+SharedKernel.Testing.Http.LoopbackHttpBodyRequest.LoopbackHttpBodyRequest() -> void
+SharedKernel.Testing.Http.LoopbackHttpBodyRequest.Send(System.Net.Http.HttpRequestMessage! request, System.ReadOnlyMemory<byte> bodyPrefix, long declaredLength, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.Http.LoopbackHttpBodyRequest.ReadStatusLine(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+SharedKernel.Testing.Http.LoopbackHttpBodyRequest.Abort() -> void
+SharedKernel.Testing.Http.LoopbackHttpBodyRequest.Dispose() -> void

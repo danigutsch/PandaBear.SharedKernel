@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using PandaBear.Testing.Mediator;
+using SharedKernel.Results;
+using SharedKernel.Testing.Mediator;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Tests that the unique violation behavior turns only a unique violation into a failed result.</summary>
 public sealed class UniqueViolationBehaviorTests

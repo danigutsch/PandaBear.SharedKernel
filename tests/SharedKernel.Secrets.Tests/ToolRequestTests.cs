@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests that a request cannot carry key material outside standard input.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

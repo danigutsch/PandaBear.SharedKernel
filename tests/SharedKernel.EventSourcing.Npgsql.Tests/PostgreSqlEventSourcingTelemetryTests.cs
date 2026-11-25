@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Tests the activities and metrics emitted by the PostgreSQL event store and checkpoint store.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture that supplies the per-test database.</param>

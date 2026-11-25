@@ -1,6 +1,6 @@
-using static PandaBear.Offerings.Tests.OfferingFixtures;
+using static SharedKernel.Offerings.Tests.OfferingFixtures;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Tests the text of an offering per culture and the publish rule of a translation.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

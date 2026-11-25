@@ -3,7 +3,7 @@ using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using System.Globalization;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Reports allocated bytes per streamed item for each full-enumeration benchmark case.

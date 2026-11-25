@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>A read-only stream that returns a few bytes and then throws <see cref="IOException"/>.</summary>
 internal sealed class ResettingStream : Stream

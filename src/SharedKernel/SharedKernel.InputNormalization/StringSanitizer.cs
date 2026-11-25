@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Unicode;
 
-namespace PandaBear.InputNormalization;
+namespace SharedKernel.InputNormalization;
 
 /// <summary>
 /// Provides string sanitization methods for domain inputs.

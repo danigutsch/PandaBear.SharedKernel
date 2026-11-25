@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// The tokens of one signed-in session, as issued by the identity provider.

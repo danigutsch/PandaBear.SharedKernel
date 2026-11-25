@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the conservative rule: a file is NotSops only when it positively cannot be SOPS.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

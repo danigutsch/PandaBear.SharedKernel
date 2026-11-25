@@ -1,4 +1,4 @@
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// Owns two concurrently started Aspire test applications.

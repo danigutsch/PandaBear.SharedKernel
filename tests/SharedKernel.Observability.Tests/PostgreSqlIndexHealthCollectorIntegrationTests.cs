@@ -1,7 +1,7 @@
 using Npgsql;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Integration tests for <see cref="PostgreSqlIndexHealthCollector"/> against an unreachable server.</summary>
 [TestScope(TestScope.Integration)]

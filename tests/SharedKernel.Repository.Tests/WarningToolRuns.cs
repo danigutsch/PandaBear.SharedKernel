@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Runs the warning commands of the CI tool in a temporary repository and returns their results and reports.</summary>
 internal static class WarningToolRuns

@@ -1,6 +1,6 @@
-using static PandaBear.Repository.Tests.Conventions.LibraryBoundaryFiles;
+using static SharedKernel.Repository.Tests.Conventions.LibraryBoundaryFiles;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>Guards the dependency, naming, and source-text rules that keep SharedKernel libraries product-neutral and consistent.</summary>
 public sealed class LibraryBoundaryTests
@@ -363,7 +363,7 @@ public sealed class LibraryBoundaryTests
 
         // Assert
         areDifferent.ShouldBeFalse(
-            $"Expected PandaBear.Testing to stay neutral and leave product or area-specific trait values local, but found:{Environment.NewLine}{string.Join(Environment.NewLine, offendingLines)}");
+            $"Expected SharedKernel.Testing to stay neutral and leave product or area-specific trait values local, but found:{Environment.NewLine}{string.Join(Environment.NewLine, offendingLines)}");
     }
 
     [Fact]

@@ -32,7 +32,7 @@ dotnet add package PandaBear.SharedKernel.Caching --version <validated-candidate
 ```
 
 ```csharp
-using PandaBear.Caching;
+using SharedKernel.Caching;
 
 public sealed record Catalog(long Revision, IReadOnlyList<string> Titles);
 
@@ -57,6 +57,6 @@ public interface ICatalogStore
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Caching`. C# namespace: `PandaBear.Caching`. Assembly/project identity: `SharedKernel.Caching`.
+Package ID: `PandaBear.SharedKernel.Caching`. C# namespace: `SharedKernel.Caching`. Assembly/project identity: `SharedKernel.Caching`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

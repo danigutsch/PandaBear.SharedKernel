@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// Tests the verify-dependabot command against workspaces with a <c>.github/dependabot.yml</c> file.

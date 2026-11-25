@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the in-memory workspace for analyzer and code fix tests.</summary>
 public sealed class CodeFixWorkspaceTests

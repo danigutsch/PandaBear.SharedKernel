@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// Maps the severity of an OSV record to <see cref="AdvisorySeverity"/>. In order: the database's own label in

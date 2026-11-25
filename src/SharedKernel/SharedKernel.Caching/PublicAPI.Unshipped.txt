@@ -1,4 +1,4 @@
 #nullable enable
-PandaBear.Caching.RevisionCache<TKey, TValue>
-PandaBear.Caching.RevisionCache<TKey, TValue>.Get(TKey key, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TValue>
-PandaBear.Caching.RevisionCache<TKey, TValue>.RevisionCache(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<long>>! readRevision, System.Func<TKey, long, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<TValue>>! load, System.TimeSpan revisionCheckInterval, System.TimeProvider! timeProvider) -> void
+SharedKernel.Caching.RevisionCache<TKey, TValue>
+SharedKernel.Caching.RevisionCache<TKey, TValue>.Get(TKey key, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TValue>
+SharedKernel.Caching.RevisionCache<TKey, TValue>.RevisionCache(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<long>>! readRevision, System.Func<TKey, long, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<TValue>>! load, System.TimeSpan revisionCheckInterval, System.TimeProvider! timeProvider) -> void

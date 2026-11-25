@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>The selected package graph from one project's NuGet assets document.</summary>
 internal sealed class NuGetRestoreGraph(Dictionary<string, Dictionary<string, NuGetRestorePackage>> targets)

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>
 /// Tests that ActivityBehavior and the Mediator telemetry contract emit stable names, tags, and statuses for success, failure, cancellation, and absent listeners.

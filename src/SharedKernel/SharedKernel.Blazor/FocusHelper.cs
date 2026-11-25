@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// Moves keyboard focus after a render without failing the page when there is nothing left to focus. Call it from

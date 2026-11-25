@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Exercises the real SDK's NuGet Audit and proposal paths using synthetic metadata.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

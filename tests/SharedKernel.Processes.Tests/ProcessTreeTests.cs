@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Tests starting a process and ending its process tree.</summary>
 public sealed class ProcessTreeTests

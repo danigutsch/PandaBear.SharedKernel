@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>A package manager that the library can read.</summary>
 public enum PackageManagerKind

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Forms;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// The lifecycle of a page that creates a record (no key) or edits one (a key): follows the route key, loads the record, fills the form,

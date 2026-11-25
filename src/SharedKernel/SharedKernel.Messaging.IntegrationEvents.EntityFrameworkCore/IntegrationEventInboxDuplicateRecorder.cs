@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
-using PandaBear.Idempotency;
+using SharedKernel.Idempotency;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Records completed duplicate deliveries for registered consumer scopes of one PostgreSQL inbox.</summary>
 /// <typeparam name="TContext">The context that owns the inbox and its retention.</typeparam>

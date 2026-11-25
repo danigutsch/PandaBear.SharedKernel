@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Text;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Reads and writes repository-local Git settings through <c>git config --local</c>, run by <see cref="GitProcess"/>:

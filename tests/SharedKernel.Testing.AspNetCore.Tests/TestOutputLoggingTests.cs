@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-namespace PandaBear.Testing.AspNetCore.Tests;
+namespace SharedKernel.Testing.AspNetCore.Tests;
 
 /// <summary>
 /// Tests that the test hosts log to the output of the test that runs them, which the runner shows only for a failing test, and not to the

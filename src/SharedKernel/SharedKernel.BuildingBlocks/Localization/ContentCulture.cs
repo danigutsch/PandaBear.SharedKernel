@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The culture of a piece of content, such as <c>pt</c> or <c>pt-BR</c>, written as a path-safe language tag in canonical casing

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace PandaBear.HttpCaching.AspNetCore;
+namespace SharedKernel.HttpCaching.AspNetCore;
 
 /// <summary>
 /// Adds HTTP cache-safety policies to Minimal API route groups.

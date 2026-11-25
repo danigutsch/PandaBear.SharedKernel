@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>Describes a response body for assertion failure messages without exposing more than a short excerpt.</summary>
 internal static class HttpResponseDescription

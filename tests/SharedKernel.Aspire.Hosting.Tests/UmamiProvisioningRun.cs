@@ -2,7 +2,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>An application model, not started, with Umami's endpoint allocated, whose services report the website's state and log.</summary>
 internal sealed class UmamiProvisioningRun : IAsyncDisposable

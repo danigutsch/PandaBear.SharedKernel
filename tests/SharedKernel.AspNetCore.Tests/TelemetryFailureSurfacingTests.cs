@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Proves a telemetry failure is surfaced on standard error; runs alone because it redirects the process-wide stream.</summary>
 [Collection(SerialConsoleError.Name)]

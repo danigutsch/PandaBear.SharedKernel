@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>
 /// Names one transaction-scoped advisory lock and the tier that fixes where it sorts relative to other locks.

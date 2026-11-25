@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>Where a moved path now lives, as answered by the resolver of <see cref="PermanentRedirectExtensions.UsePermanentRedirects"/>.</summary>
 public sealed record PermanentRedirect

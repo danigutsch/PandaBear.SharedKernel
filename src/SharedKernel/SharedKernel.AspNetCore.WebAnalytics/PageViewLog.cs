@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>Log messages of the page views. None carries visitor data: no address, browser, path, query, referrer or language.</summary>
 internal static partial class PageViewLog

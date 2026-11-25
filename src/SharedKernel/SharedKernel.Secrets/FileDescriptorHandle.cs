@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>A Unix file descriptor that <see cref="Libc.open"/> returned, closed when the handle is released.</summary>
 internal sealed class FileDescriptorHandle : SafeHandle

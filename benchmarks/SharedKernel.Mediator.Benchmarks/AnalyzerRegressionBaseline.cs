@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>Recorded analyzer performance baseline that later runs are compared against.</summary>
 /// <param name="SchemaVersion">Version of the baseline file format.</param>

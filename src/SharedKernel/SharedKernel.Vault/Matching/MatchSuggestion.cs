@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>A weak match between two items in different groups. Suggestions are reported and never applied.</summary>
 /// <param name="Kind">Why the items were suggested.</param>

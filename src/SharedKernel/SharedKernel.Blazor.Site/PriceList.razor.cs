@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The prices of an offering, after the GOV.UK summary list: a <c>dl</c> (<c>site-price-list__items</c>) of rows, each a <c>div</c> of the

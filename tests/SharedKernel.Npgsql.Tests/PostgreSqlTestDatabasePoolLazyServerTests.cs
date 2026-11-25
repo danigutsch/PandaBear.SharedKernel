@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests a test database pool that resolves its server connection string lazily, on the first creation.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture that leases the bootstrap and test databases.</param>

@@ -4,7 +4,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>
 /// Tests that one call registers the meters and activity sources of every SharedKernel package by their name prefix, so a host exports
@@ -61,7 +61,7 @@ public sealed class InstrumentationTests
 
     [Theory]
     [InlineData("Contoso.Orders")]
-    [InlineData("PandaBear.AspNetCore")]
+    [InlineData("PandaBear.SharedKernel.AspNetCore")]
     public void Other_telemetry_is_left_alone(string name)
     {
         // Arrange

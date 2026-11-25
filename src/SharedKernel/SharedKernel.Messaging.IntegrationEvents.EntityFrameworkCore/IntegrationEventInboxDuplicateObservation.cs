@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Retains a bounded observation for a completed inbox operation.</summary>
 internal sealed class IntegrationEventInboxDuplicateObservation

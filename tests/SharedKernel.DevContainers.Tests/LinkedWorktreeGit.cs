@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.DevContainers.Tests;
+namespace SharedKernel.DevContainers.Tests;
 
 /// <summary>Creates a linked worktree and looks up its common Git directory with a fake <c>git</c> in the worktree.</summary>
 internal static class LinkedWorktreeGit

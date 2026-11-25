@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Declares a named behavior a test exercises. Emits the <c>Capability</c> trait, like <c>[Trait("Capability", ...)]</c>.

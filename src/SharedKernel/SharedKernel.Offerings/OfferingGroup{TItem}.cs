@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>One group of the offering listing: the offerings of a year, or those on request.</summary>
 /// <typeparam name="TItem">The listed item, such as an <see cref="OfferingView{TImageId, TPriceKind, TMetric}"/>.</typeparam>

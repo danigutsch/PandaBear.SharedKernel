@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Items read from, or written to, one vault export.</summary>
 /// <param name="Items">Vault items.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.PackageConsumptionTests;
+namespace SharedKernel.Mediator.PackageConsumptionTests;
 
 /// <summary>
 /// Shares one packed feed between every consumption test class, so the packages are built once and never packed concurrently.

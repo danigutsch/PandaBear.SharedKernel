@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>One generated block: its marker name and the document it is written into.</summary>
 internal sealed class DocumentationGeneratorBlock

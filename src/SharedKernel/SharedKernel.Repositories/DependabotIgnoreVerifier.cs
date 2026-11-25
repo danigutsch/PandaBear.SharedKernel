@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Verifies that every <c>ignore</c> entry in the Dependabot configuration names <c>update-types</c>. GitHub applies an

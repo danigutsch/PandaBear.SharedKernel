@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Bitwise CRC-32 (IEEE 802.3, reflected polynomial 0xEDB88320), kept separate from the production table code.</summary>
 internal static class Crc32Reference

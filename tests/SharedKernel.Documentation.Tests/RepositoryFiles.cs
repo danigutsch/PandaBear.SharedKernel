@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Reads tool invocations out of repository files.</summary>
 internal static class RepositoryFiles

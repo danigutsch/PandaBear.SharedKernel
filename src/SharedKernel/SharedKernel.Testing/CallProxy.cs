@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Wraps a service so a test can hold a call, make it fail, follow it up, or replace its result, without writing a decorator class per service.

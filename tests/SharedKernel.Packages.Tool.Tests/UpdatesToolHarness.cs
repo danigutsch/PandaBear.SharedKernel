@@ -1,7 +1,7 @@
 using System.CommandLine;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages.Tool.Tests;
+namespace SharedKernel.Packages.Tool.Tests;
 
 /// <summary>Runs the <c>updates</c> command line with fake tools and fake sources.</summary>
 internal static class UpdatesToolHarness

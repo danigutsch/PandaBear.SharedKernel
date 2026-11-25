@@ -1,4 +1,4 @@
-namespace PandaBear.Encodings;
+namespace SharedKernel.Encodings;
 
 /// <summary>RFC 4648 Base32, the encoding of TOTP secrets, which .NET does not provide.</summary>
 public static class Base32

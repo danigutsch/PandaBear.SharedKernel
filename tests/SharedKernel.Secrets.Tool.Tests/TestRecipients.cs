@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Public recipients of throwaway keys and sample SOPS documents, for tests.</summary>
 internal static class TestRecipients

@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Builds a verification from the recipients a SOPS JSON file names.</summary>
 internal static class VerificationChecks

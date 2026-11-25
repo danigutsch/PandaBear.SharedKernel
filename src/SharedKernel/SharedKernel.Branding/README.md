@@ -19,7 +19,7 @@ dotnet add package PandaBear.SharedKernel.Branding --version <validated-candidat
 ```
 
 ```csharp
-using PandaBear.Branding;
+using SharedKernel.Branding;
 
 public static class Example
 {
@@ -34,6 +34,6 @@ public static class Example
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Branding`. C# namespace: `PandaBear.Branding`. Assembly/project identity: `SharedKernel.Branding`.
+Package ID: `PandaBear.SharedKernel.Branding`. C# namespace: `SharedKernel.Branding`. Assembly/project identity: `SharedKernel.Branding`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

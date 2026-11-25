@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>Where a key of the review UI works.</summary>
 internal enum ReviewArea

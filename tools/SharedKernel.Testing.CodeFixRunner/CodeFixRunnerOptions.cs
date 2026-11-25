@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.CodeFixRunner;
+namespace SharedKernel.Testing.CodeFixRunner;
 
 /// <summary>Arguments of one code fix run.</summary>
 /// <param name="TargetPath">Project or solution file to fix.</param>

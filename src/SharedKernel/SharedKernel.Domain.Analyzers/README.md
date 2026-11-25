@@ -112,6 +112,6 @@ support generation in `SharedKernel.Domain.SourceGenerator`.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Domain.Analyzers`. C# namespace: `PandaBear.Domain.Analyzers`. Assembly/project identity: `SharedKernel.Domain.Analyzers`.
+Package ID: `PandaBear.SharedKernel.Domain.Analyzers`. C# namespace: `SharedKernel.Domain.Analyzers`. Assembly/project identity: `SharedKernel.Domain.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

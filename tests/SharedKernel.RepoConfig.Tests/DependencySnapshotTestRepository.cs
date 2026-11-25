@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>A temporary Git repository with a solution, a project, and an optional lock file for dependency snapshot tests.</summary>
 internal sealed class DependencySnapshotTestRepository : IDisposable

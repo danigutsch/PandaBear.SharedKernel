@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.PageSections.Tests;
+namespace SharedKernel.PageSections.Tests;
 
 /// <summary>
 /// A V2-shaped section context: an image library with alt text per culture, links to known pages or https addresses, a settings block

@@ -1,7 +1,7 @@
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Reads the installed Flatpak applications with <c>flatpak list --app</c>. It changes nothing.</summary>
 public sealed class FlatpakPackageReader : IPackageReader

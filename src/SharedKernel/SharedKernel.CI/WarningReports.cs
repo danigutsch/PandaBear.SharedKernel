@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Classifies, records, and summarizes the warnings of CI steps: the NuGet advisories of a restore log, the counts of a

@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>GraphQL client for the GitHub Projects v2 API.</summary>
 /// <param name="httpClient">Authenticated GitHub client.</param>

@@ -11,7 +11,7 @@ import.
 ## Usage
 
 ```csharp
-using PandaBear.Vault.Bitwarden;
+using SharedKernel.Vault.Bitwarden;
 
 VaultExport vault = BitwardenJsonReader.Read(json, "bitwarden.json", warnings);
 VaultWriteResult written = BitwardenExportWriter.Instance.Write(vault);
@@ -29,7 +29,7 @@ string protectedExport = BitwardenExportWriter.Instance.Encrypt(written.Json, pa
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Vault.Bitwarden`. C# namespace: `PandaBear.Vault.Bitwarden`. Assembly/project identity: `SharedKernel.Vault.Bitwarden`.
+Package ID: `PandaBear.SharedKernel.Vault.Bitwarden`. C# namespace: `SharedKernel.Vault.Bitwarden`. Assembly/project identity: `SharedKernel.Vault.Bitwarden`.
 
 The project is not packable yet: shipping the vault manager and its engine is a separate decision. Source is public;
 registry publication remains deferred.

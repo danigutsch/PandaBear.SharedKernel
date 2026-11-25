@@ -1,4 +1,4 @@
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Tests the bounded reading of a process's two output streams.</summary>
 public sealed class ProcessStreamReadersTests

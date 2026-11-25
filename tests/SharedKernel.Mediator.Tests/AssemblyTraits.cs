@@ -1,2 +1,2 @@
-[assembly: Trait(PandaBear.Testing.TestTraitNames.ScopeName, "unit")]
-[assembly: Trait(PandaBear.Testing.TestTraitNames.AreaName, PandaBear.Mediator.Tests.TestTraits.AbstractionsComponent)]
+[assembly: Trait(SharedKernel.Testing.TestTraitNames.ScopeName, "unit")]
+[assembly: Trait(SharedKernel.Testing.TestTraitNames.AreaName, SharedKernel.Mediator.Tests.TestTraits.AbstractionsComponent)]

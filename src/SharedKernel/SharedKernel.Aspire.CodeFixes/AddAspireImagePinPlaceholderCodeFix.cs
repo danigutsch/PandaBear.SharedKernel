@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
-using PandaBear.Aspire.Analyzers;
+using SharedKernel.Aspire.Analyzers;
 
-namespace PandaBear.Aspire.CodeFixes;
+namespace SharedKernel.Aspire.CodeFixes;
 
 /// <summary>
 /// Registers placeholder fixes for <c>SKASPIRE001</c> diagnostics.

@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>
 /// Acquires PostgreSQL advisory locks held by dedicated database sessions.

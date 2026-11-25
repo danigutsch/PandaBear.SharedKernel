@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Tests construction, defensive copying, equality, formatting, and argument validation of ResultError.

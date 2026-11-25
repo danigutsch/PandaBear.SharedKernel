@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests that the roadmap write-input snapshot digests repository-owned inputs and detects later changes.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

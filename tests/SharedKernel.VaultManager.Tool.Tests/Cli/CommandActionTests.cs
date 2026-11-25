@@ -1,8 +1,8 @@
 using System.CommandLine;
-using PandaBear.VaultManager.Tool.Cli;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.VaultManager.Tool.Cli;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests how command actions end when they are cancelled.</summary>
 public sealed class CommandActionTests

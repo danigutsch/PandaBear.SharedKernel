@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// Where content lies along one axis of its box: the block axis for <see cref="Split.Alignment" /> (top or middle) and the inline axis

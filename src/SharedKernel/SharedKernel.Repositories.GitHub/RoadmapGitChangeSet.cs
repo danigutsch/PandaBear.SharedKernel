@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Working-tree changes captured from git status, with a digest binding their contents.</summary>
 /// <param name="HasChanges">Whether any entry was reported.</param>

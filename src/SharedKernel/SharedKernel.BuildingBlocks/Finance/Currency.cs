@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>An active ISO 4217 alphabetic currency code in upper case, for example <c>BRL</c>. Only codes of the ISO 4217 active list that denote money are accepted; precious metals, testing, SDR and other non-currency codes are not.</summary>
 public sealed class Currency : ValueObject

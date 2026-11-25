@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>A member a pending field decision can choose. It names the member, never its value.</summary>
 /// <param name="OriginKey">Origin key of the member, the value a <see cref="FieldChoiceKind.Member"/> decision names.</param>

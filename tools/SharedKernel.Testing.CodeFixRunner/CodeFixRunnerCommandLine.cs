@@ -3,7 +3,7 @@ extern alias testinganalyzers;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
-namespace PandaBear.Testing.CodeFixRunner;
+namespace SharedKernel.Testing.CodeFixRunner;
 
 /// <summary>Command line of the code fix runner tool.</summary>
 internal static class CodeFixRunnerCommandLine
@@ -35,7 +35,7 @@ internal static class CodeFixRunnerCommandLine
         {
             Description = $"The diagnostic ID to fix: {string.Join(", ", fixableDiagnosticIds)}.",
             HelpName = "id",
-            DefaultValueFactory = static _ => testinganalyzers::PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestClassHelperMethod,
+            DefaultValueFactory = static _ => testinganalyzers::SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestClassHelperMethod,
         };
 
         // The runner calls the code-fix provider directly, so only IDs the provider declares fixable reach it.

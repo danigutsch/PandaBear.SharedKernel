@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Exercises format selection for known raster rendition types.</summary>
 public sealed class RasterImageMediaTypeTests

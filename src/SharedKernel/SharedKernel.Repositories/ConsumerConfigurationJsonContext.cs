@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Source-generated metadata for <c>.config/sharedkernel-repo.json</c>. Property names are camelCase and match exactly.

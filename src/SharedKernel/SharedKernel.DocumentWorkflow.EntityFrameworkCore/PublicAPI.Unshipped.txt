@@ -1,87 +1,87 @@
 #nullable enable
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.<Clone>$() -> PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.ActorPseudonym.get -> string!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.ActorPseudonym.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Deconstruct(out System.Guid LineageId, out int RevisionNumber, out long Version, out string! ActorPseudonym, out System.DateTime OccurredAtUtc) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.DocumentFinalizationAuditEntry(System.Guid LineageId, int RevisionNumber, long Version, string! ActorPseudonym, System.DateTime OccurredAtUtc) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Equals(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? other) -> bool
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.LineageId.get -> System.Guid
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.LineageId.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.OccurredAtUtc.get -> System.DateTime
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.OccurredAtUtc.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.RevisionNumber.get -> int
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.RevisionNumber.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Version.get -> long
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Version.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.<Clone>$() -> PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.ArtifactReference.get -> string!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.ArtifactReference.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Deconstruct(out System.Guid LineageId, out int RevisionNumber, out long Version, out string! ArtifactReference) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.DocumentFinalizationReceipt(System.Guid LineageId, int RevisionNumber, long Version, string! ArtifactReference) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Equals(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? other) -> bool
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.LineageId.get -> System.Guid
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.LineageId.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.RevisionNumber.get -> int
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.RevisionNumber.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Version.get -> long
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Version.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.<Clone>$() -> PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ActorPseudonym.get -> string!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ActorPseudonym.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Deconstruct(out System.Guid LineageId, out int RevisionNumber, out long ExpectedVersion, out PandaBear.Review.ReviewRevision! Reviewed, out string! ActorPseudonym, out PandaBear.Idempotency.IdempotencyKey IdempotencyKey) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.DocumentFinalizationRequest(System.Guid LineageId, int RevisionNumber, long ExpectedVersion, PandaBear.Review.ReviewRevision! Reviewed, string! ActorPseudonym, PandaBear.Idempotency.IdempotencyKey IdempotencyKey) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Equals(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? other) -> bool
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ExpectedVersion.get -> long
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ExpectedVersion.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.IdempotencyKey.get -> PandaBear.Idempotency.IdempotencyKey
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.IdempotencyKey.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.LineageId.get -> System.Guid
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.LineageId.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Reviewed.get -> PandaBear.Review.ReviewRevision!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Reviewed.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.RevisionNumber.get -> int
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.RevisionNumber.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowServiceCollectionExtensions
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.Create(PandaBear.DocumentWorkflow.DocumentRevision! revision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!>>
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.DocumentWorkflowStore(TContext! context, PandaBear.EntityFrameworkCore.IUniqueViolationParser! violationParser) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.Load(System.Guid lineageId, int number, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!>>
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.Replace(PandaBear.DocumentWorkflow.DocumentRevision! previous, PandaBear.DocumentWorkflow.DocumentRevision! current, long expectedVersion, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!>>
-PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.Save(PandaBear.DocumentWorkflow.DocumentRevision! revision, long expectedVersion, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!>>
-PandaBear.DocumentWorkflow.EntityFrameworkCore.FinalizeDocumentRevisionHandler<TContext, TSource>
-PandaBear.DocumentWorkflow.EntityFrameworkCore.FinalizeDocumentRevisionHandler<TContext, TSource>.FinalizeDocumentRevisionHandler(TContext! context, PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext!>! documents, PandaBear.DocumentWorkflow.DocumentFinalizer<TSource>! finalizer, PandaBear.Idempotency.IIdempotencyStore! idempotency, PandaBear.AuditTrail.IAuditTrailSink<PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry!>! auditTrail, System.TimeProvider! clock) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.FinalizeDocumentRevisionHandler<TContext, TSource>.Handle(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt!>>
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.<Clone>$() -> PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Deconstruct(out PandaBear.DocumentWorkflow.DocumentRevision! Revision, out long Version) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Equals(PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? other) -> bool
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.PersistedDocumentRevision(PandaBear.DocumentWorkflow.DocumentRevision! Revision, long Version) -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Revision.get -> PandaBear.DocumentWorkflow.DocumentRevision!
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Revision.init -> void
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Version.get -> long
-PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Version.init -> void
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Equals(object? obj) -> bool
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.GetHashCode() -> int
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.ToString() -> string!
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Equals(object? obj) -> bool
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.GetHashCode() -> int
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.ToString() -> string!
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Equals(object? obj) -> bool
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.GetHashCode() -> int
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ToString() -> string!
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Equals(object? obj) -> bool
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.GetHashCode() -> int
-override PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.ToString() -> string!
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.operator !=(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? left, PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? right) -> bool
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.operator ==(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? left, PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? right) -> bool
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.operator !=(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? left, PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? right) -> bool
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.operator ==(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? left, PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? right) -> bool
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.operator !=(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? left, PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? right) -> bool
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.operator ==(PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? left, PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? right) -> bool
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowServiceCollectionExtensions.AddDocumentFinalizationCommand<TContext, TSource>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowServiceCollectionExtensions.AddDocumentWorkflowStorage<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.operator !=(PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? left, PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? right) -> bool
-static PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.operator ==(PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? left, PandaBear.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? right) -> bool
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.<Clone>$() -> SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.ActorPseudonym.get -> string!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.ActorPseudonym.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Deconstruct(out System.Guid LineageId, out int RevisionNumber, out long Version, out string! ActorPseudonym, out System.DateTime OccurredAtUtc) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.DocumentFinalizationAuditEntry(System.Guid LineageId, int RevisionNumber, long Version, string! ActorPseudonym, System.DateTime OccurredAtUtc) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Equals(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? other) -> bool
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.LineageId.get -> System.Guid
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.LineageId.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.OccurredAtUtc.get -> System.DateTime
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.OccurredAtUtc.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.RevisionNumber.get -> int
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.RevisionNumber.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Version.get -> long
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Version.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.<Clone>$() -> SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.ArtifactReference.get -> string!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.ArtifactReference.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Deconstruct(out System.Guid LineageId, out int RevisionNumber, out long Version, out string! ArtifactReference) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.DocumentFinalizationReceipt(System.Guid LineageId, int RevisionNumber, long Version, string! ArtifactReference) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Equals(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? other) -> bool
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.LineageId.get -> System.Guid
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.LineageId.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.RevisionNumber.get -> int
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.RevisionNumber.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Version.get -> long
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Version.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.<Clone>$() -> SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ActorPseudonym.get -> string!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ActorPseudonym.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Deconstruct(out System.Guid LineageId, out int RevisionNumber, out long ExpectedVersion, out SharedKernel.Review.ReviewRevision! Reviewed, out string! ActorPseudonym, out SharedKernel.Idempotency.IdempotencyKey IdempotencyKey) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.DocumentFinalizationRequest(System.Guid LineageId, int RevisionNumber, long ExpectedVersion, SharedKernel.Review.ReviewRevision! Reviewed, string! ActorPseudonym, SharedKernel.Idempotency.IdempotencyKey IdempotencyKey) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Equals(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? other) -> bool
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ExpectedVersion.get -> long
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ExpectedVersion.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.IdempotencyKey.get -> SharedKernel.Idempotency.IdempotencyKey
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.IdempotencyKey.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.LineageId.get -> System.Guid
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.LineageId.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Reviewed.get -> SharedKernel.Review.ReviewRevision!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Reviewed.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.RevisionNumber.get -> int
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.RevisionNumber.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowServiceCollectionExtensions
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.Create(SharedKernel.DocumentWorkflow.DocumentRevision! revision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!>>
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.DocumentWorkflowStore(TContext! context, SharedKernel.EntityFrameworkCore.IUniqueViolationParser! violationParser) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.Load(System.Guid lineageId, int number, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!>>
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.Replace(SharedKernel.DocumentWorkflow.DocumentRevision! previous, SharedKernel.DocumentWorkflow.DocumentRevision! current, long expectedVersion, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!>>
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext>.Save(SharedKernel.DocumentWorkflow.DocumentRevision! revision, long expectedVersion, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!>>
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.FinalizeDocumentRevisionHandler<TContext, TSource>
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.FinalizeDocumentRevisionHandler<TContext, TSource>.FinalizeDocumentRevisionHandler(TContext! context, SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowStore<TContext!>! documents, SharedKernel.DocumentWorkflow.DocumentFinalizer<TSource>! finalizer, SharedKernel.Idempotency.IIdempotencyStore! idempotency, SharedKernel.AuditTrail.IAuditTrailSink<SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry!>! auditTrail, System.TimeProvider! clock) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.FinalizeDocumentRevisionHandler<TContext, TSource>.Handle(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt!>>
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.<Clone>$() -> SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Deconstruct(out SharedKernel.DocumentWorkflow.DocumentRevision! Revision, out long Version) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Equals(SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? other) -> bool
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.PersistedDocumentRevision(SharedKernel.DocumentWorkflow.DocumentRevision! Revision, long Version) -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Revision.get -> SharedKernel.DocumentWorkflow.DocumentRevision!
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Revision.init -> void
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Version.get -> long
+SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Version.init -> void
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.Equals(object? obj) -> bool
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.GetHashCode() -> int
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.ToString() -> string!
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.Equals(object? obj) -> bool
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.GetHashCode() -> int
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.ToString() -> string!
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.Equals(object? obj) -> bool
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.GetHashCode() -> int
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.ToString() -> string!
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.Equals(object? obj) -> bool
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.GetHashCode() -> int
+override SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.ToString() -> string!
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.operator !=(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? left, SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? right) -> bool
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry.operator ==(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? left, SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationAuditEntry? right) -> bool
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.operator !=(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? left, SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? right) -> bool
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt.operator ==(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? left, SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationReceipt? right) -> bool
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.operator !=(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? left, SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? right) -> bool
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest.operator ==(SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? left, SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentFinalizationRequest? right) -> bool
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowServiceCollectionExtensions.AddDocumentFinalizationCommand<TContext, TSource>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.DocumentWorkflowServiceCollectionExtensions.AddDocumentWorkflowStorage<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.operator !=(SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? left, SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? right) -> bool
+static SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision.operator ==(SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? left, SharedKernel.DocumentWorkflow.EntityFrameworkCore.PersistedDocumentRevision? right) -> bool

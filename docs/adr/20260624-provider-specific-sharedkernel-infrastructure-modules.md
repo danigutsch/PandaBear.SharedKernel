@@ -8,7 +8,7 @@ Reusable storage and hosting integrations need external dependencies and provide
 
 ## Decision
 
-Separate neutral capability contracts from adapters. Package IDs use `PandaBear.SharedKernel.<Capability>` for neutral modules and capability-first provider/adapter suffixes for integrations: `.Npgsql`, `.CloudEvents`, or `.EntityFrameworkCore` when EF itself is the relevant boundary. C# namespaces use `PandaBear.*`.
+Separate neutral capability contracts from adapters. Package IDs use `PandaBear.SharedKernel.<Capability>` for neutral modules and capability-first provider/adapter suffixes for integrations: `.Npgsql`, `.CloudEvents`, or `.EntityFrameworkCore` when EF itself is the relevant boundary. C# namespaces use `SharedKernel.*`.
 
 - Neutral contracts must not depend on EF Core, Npgsql, Dapper, broker/storage SDKs, telemetry exporters, or consumer infrastructure.
 - Provider modules may depend on their neutral contracts and the external SDKs needed for the current integration. Keep abstractions inward-facing.
@@ -18,7 +18,7 @@ Separate neutral capability contracts from adapters. Package IDs use `PandaBear.
 
 ## PostgreSQL-specific primitives
 
-`PandaBear.Npgsql` may expose inherently PostgreSQL-specific primitives without manufacturing a neutral abstraction. Transaction and session advisory locks use parameterized PostgreSQL operations on caller-supplied connections/transactions or data sources. The caller retains the transaction or lease through the critical section; disposal must release session ownership.
+`SharedKernel.Npgsql` may expose inherently PostgreSQL-specific primitives without manufacturing a neutral abstraction. Transaction and session advisory locks use parameterized PostgreSQL operations on caller-supplied connections/transactions or data sources. The caller retains the transaction or lease through the critical section; disposal must release session ownership.
 
 The module does not own schemas, lock-key derivation, authentication, connection-string configuration, retry policy, or transaction lifetime. Tests must prove same-key contention, distinct-key concurrency, cancellation, and release after commit, rollback, or disposal. Do not weaken those guarantees when factoring provider code.
 

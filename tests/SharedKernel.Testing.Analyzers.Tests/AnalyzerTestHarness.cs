@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Test helper that compiles source with the standard usings and xunit reference and runs TestingAnalyzer over it.</summary>
 internal static class AnalyzerTestHarness

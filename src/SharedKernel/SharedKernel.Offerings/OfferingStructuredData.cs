@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// Builds schema.org JSON-LD for an offering's public page with <see cref="System.Text.Json.Nodes"/>, without reflection, so it works

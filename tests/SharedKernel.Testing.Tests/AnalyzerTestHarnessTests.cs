@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the compilation set-up helper used by analyzer tests.</summary>
 public sealed class AnalyzerTestHarnessTests

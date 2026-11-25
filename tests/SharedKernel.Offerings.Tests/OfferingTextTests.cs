@@ -1,7 +1,7 @@
 using System.Globalization;
-using static PandaBear.Offerings.Tests.OfferingFixtures;
+using static SharedKernel.Offerings.Tests.OfferingFixtures;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Tests the display sentences of an offering, in Brazilian Portuguese and English, with the application's formats.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

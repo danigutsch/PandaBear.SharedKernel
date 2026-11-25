@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using PandaBear.Results.SourceGenerator;
+using SharedKernel.Results.SourceGenerator;
 
-namespace PandaBear.Results.GeneratorTests;
+namespace SharedKernel.Results.GeneratorTests;
 
 /// <summary>
 /// Tests the error catalog generator's internal model equality, model builder, emitter, and provider type name sanitizing.

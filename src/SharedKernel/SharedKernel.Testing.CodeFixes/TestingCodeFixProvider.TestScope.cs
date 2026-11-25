@@ -5,11 +5,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 
-using PandaBear.Testing.Analyzers;
+using SharedKernel.Testing.Analyzers;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace PandaBear.Testing.CodeFixes;
+namespace SharedKernel.Testing.CodeFixes;
 
 public sealed partial class TestingCodeFixProvider
 {
@@ -71,11 +71,11 @@ public sealed partial class TestingCodeFixProvider
         ct.ThrowIfCancellationRequested();
 
         var attribute = typed
-            ? Attribute(ParseName("global::PandaBear.Testing.TestScope"))
+            ? Attribute(ParseName("global::SharedKernel.Testing.TestScope"))
                 .WithArgumentList(
                     AttributeArgumentList(
                         SingletonSeparatedList(
-                            AttributeArgument(ParseExpression($"global::PandaBear.Testing.TestScope.{member}")))))
+                            AttributeArgument(ParseExpression($"global::SharedKernel.Testing.TestScope.{member}")))))
             : Attribute(ParseName("global::Xunit.Trait"))
                 .WithArgumentList(
                     AttributeArgumentList(

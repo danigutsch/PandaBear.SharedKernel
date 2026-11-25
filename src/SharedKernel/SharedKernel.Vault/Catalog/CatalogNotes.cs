@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Vault.Merge;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>Notes of a catalog item. The text is shown only after the user shares it in the decisions file.</summary>
 /// <param name="Decision">The user's decision on these notes when the catalog was made.</param>

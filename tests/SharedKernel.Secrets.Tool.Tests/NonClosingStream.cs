@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Forwards writes to an inner stream and does not close it, so a test can read what the tool wrote after the tool disposed its stream.</summary>
 internal sealed class NonClosingStream(Stream inner) : Stream

@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Classifies the NuGet restore and audit warnings in a <c>dotnet restore</c> log: vulnerability advisories of every severity

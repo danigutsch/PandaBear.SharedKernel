@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Read-only stream over a byte array that records how many bytes and reads were requested and whether it was disposed.

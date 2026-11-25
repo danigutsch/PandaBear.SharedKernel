@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace PandaBear.AspNetCore.Authentication;
+namespace SharedKernel.AspNetCore.Authentication;
 
 /// <summary>
 /// Maps antiforgery-protected sign-out endpoints for browser authentication sessions.

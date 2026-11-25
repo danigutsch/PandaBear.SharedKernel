@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Reads the strict, camel-case test taxonomy inventory.</summary>
 [JsonSourceGenerationOptions(

@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
-using PandaBear.Results;
-using PandaBear.IO;
+using SharedKernel.Results;
+using SharedKernel.IO;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Decrypts a whole file or one value (<c>file#key.path</c>) with sops and writes the plaintext to

@@ -1,11 +1,11 @@
 using System.Text;
-using PandaBear.Vault.Analysis;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Analysis;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>
 /// Everything one pipeline run produced. Reports, problems, and warnings hold names, keys, paths, and counts, never

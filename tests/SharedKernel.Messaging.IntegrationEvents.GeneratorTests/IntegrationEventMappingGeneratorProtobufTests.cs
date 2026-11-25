@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Messaging.IntegrationEvents.GeneratorTests;
+namespace SharedKernel.Messaging.IntegrationEvents.GeneratorTests;
 
 /// <summary>Tests that IntegrationEventMappingGenerator serializes mapped Protobuf messages as binary without JSON metadata.</summary>
 public sealed class IntegrationEventMappingGeneratorProtobufTests
@@ -10,7 +10,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Messaging.Protobuf.TestContracts;
+            using SharedKernel.Messaging.Protobuf.TestContracts;
 
             namespace Demo;
 
@@ -34,11 +34,11 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
 
         // Assert
         errors.ShouldBeEmpty();
-        generatedSource.ShouldContain("internal sealed class GeneratedIntegrationEventSerializer : global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventSerializer", StringComparison.Ordinal);
+        generatedSource.ShouldContain("internal sealed class GeneratedIntegrationEventSerializer : global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventSerializer", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("JsonTypeInfo<", StringComparison.Ordinal);
         generatedSource.ShouldContain("global::System.Convert.ToBase64String(global::Google.Protobuf.MessageExtensions.ToByteArray(typed))", StringComparison.Ordinal);
         generatedSource.ShouldContain("SerializePayload<TIntegrationEvent>", StringComparison.Ordinal);
-        generatedSource.ShouldContain("global::PandaBear.Messaging.EventPayloadEncoding.Base64, \"application/protobuf\"", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::SharedKernel.Messaging.EventPayloadEncoding.Base64, \"application/protobuf\"", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Messaging.Protobuf.TestContracts;
+            using SharedKernel.Messaging.Protobuf.TestContracts;
 
             namespace Demo;
 
@@ -83,10 +83,10 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
         // Assert
         errors.ShouldBeEmpty();
         generatedSource.ShouldContain("JsonTypeInfo<global::Demo.InvoiceIssuedIntegrationEvent>", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("JsonTypeInfo<global::PandaBear.Messaging.Protobuf.TestContracts.TourCreated>", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("JsonTypeInfo<global::SharedKernel.Messaging.Protobuf.TestContracts.TourCreated>", StringComparison.Ordinal);
         generatedSource.ShouldContain("ToByteArray(typed)", StringComparison.Ordinal);
         generatedSource.ShouldContain("JsonSerializer.Serialize(typed, jsonTypeInfo", StringComparison.Ordinal);
-        generatedSource.ShouldContain("global::PandaBear.Messaging.EventPayloadEncoding.Json, \"application/json\"", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::SharedKernel.Messaging.EventPayloadEncoding.Json, \"application/json\"", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
         // Arrange
         const string source = """
             using Microsoft.Extensions.DependencyInjection;
-            using PandaBear.Messaging.Protobuf.TestContracts;
+            using SharedKernel.Messaging.Protobuf.TestContracts;
 
             namespace Demo;
 
@@ -118,7 +118,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
         var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
 
         // Assert
-        generatedSource.ShouldContain("JsonTypeInfo<global::PandaBear.Messaging.Protobuf.TestContracts.TourCreated>", StringComparison.Ordinal);
+        generatedSource.ShouldContain("JsonTypeInfo<global::SharedKernel.Messaging.Protobuf.TestContracts.TourCreated>", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("ToByteArray", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("SerializePayload", StringComparison.Ordinal);
     }
@@ -128,7 +128,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Messaging.Protobuf.TestContracts;
+            using SharedKernel.Messaging.Protobuf.TestContracts;
 
             namespace Demo;
 

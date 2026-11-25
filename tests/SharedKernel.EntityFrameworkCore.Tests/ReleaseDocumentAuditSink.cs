@@ -1,7 +1,7 @@
-using PandaBear.AuditTrail;
-using PandaBear.DocumentWorkflow.EntityFrameworkCore;
+using SharedKernel.AuditTrail;
+using SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Appends the finalization audit to the same PostgreSQL transaction.</summary>
 /// <param name="context">The owning context.</param>

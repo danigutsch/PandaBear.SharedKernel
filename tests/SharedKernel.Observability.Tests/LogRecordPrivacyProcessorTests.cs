@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Tests that exported log records are stripped of sensitive attributes, scopes and exception details by the log privacy processor.</summary>
 [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]

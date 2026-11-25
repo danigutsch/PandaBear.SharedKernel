@@ -1,11 +1,11 @@
 #nullable enable
-PandaBear.Blazor.CodeFixes.BlazorCodeFixProvider
-PandaBear.Blazor.CodeFixes.BlazorCodeFixProvider.BlazorCodeFixProvider() -> void
-override PandaBear.Blazor.CodeFixes.BlazorCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override PandaBear.Blazor.CodeFixes.BlazorCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
-override PandaBear.Blazor.CodeFixes.BlazorCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
-const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.LongLivedScopeService = "SKBLZ002" -> string!
-const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.UnguardedBusyFlag = "SKBLZ001" -> string!
-PandaBear.Blazor.Analyzers.BlazorDiagnosticIds
-const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.MissingKey = "SKBLZ003" -> string!
-const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.StaleParameter = "SKBLZ004" -> string!
+SharedKernel.Blazor.CodeFixes.BlazorCodeFixProvider
+SharedKernel.Blazor.CodeFixes.BlazorCodeFixProvider.BlazorCodeFixProvider() -> void
+override SharedKernel.Blazor.CodeFixes.BlazorCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override SharedKernel.Blazor.CodeFixes.BlazorCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
+override SharedKernel.Blazor.CodeFixes.BlazorCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+const SharedKernel.Blazor.Analyzers.BlazorDiagnosticIds.LongLivedScopeService = "SKBLZ002" -> string!
+const SharedKernel.Blazor.Analyzers.BlazorDiagnosticIds.UnguardedBusyFlag = "SKBLZ001" -> string!
+SharedKernel.Blazor.Analyzers.BlazorDiagnosticIds
+const SharedKernel.Blazor.Analyzers.BlazorDiagnosticIds.MissingKey = "SKBLZ003" -> string!
+const SharedKernel.Blazor.Analyzers.BlazorDiagnosticIds.StaleParameter = "SKBLZ004" -> string!

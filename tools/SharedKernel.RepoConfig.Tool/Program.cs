@@ -1,5 +1,5 @@
 using System.CommandLine;
-using PandaBear.RepoConfig.Tool;
+using SharedKernel.RepoConfig.Tool;
 
 var invocation = RepoConfigCommandLine.Create(new RepoConfigToolEnvironment(Environment.CurrentDirectory)).Parse(args);
 if (string.Equals(invocation.CommandResult.Command.Name, RepoConfigCommandLine.IsolatedPodmanCommandName, StringComparison.Ordinal))

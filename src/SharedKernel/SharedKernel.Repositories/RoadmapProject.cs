@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Loaded repository roadmap: its items, status vocabulary, and GitHub integration settings.</summary>
 public sealed class RoadmapProject

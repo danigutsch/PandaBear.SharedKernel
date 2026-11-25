@@ -1,6 +1,6 @@
-using PandaBear.Domain;
+using SharedKernel.Domain;
 
-namespace PandaBear.Testing.Domain;
+namespace SharedKernel.Testing.Domain;
 
 /// <summary>Test dispatch handler that appends its own name to a shared call list each time it handles an event.</summary>
 /// <param name="name">The name appended to the call list on every handled event.</param>

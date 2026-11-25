@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Tests the metrics that PostgreSqlIndexHealthTelemetry emits for collection results, run serially because they share a meter listener.</summary>
 [TestScope(TestScope.Unit)]

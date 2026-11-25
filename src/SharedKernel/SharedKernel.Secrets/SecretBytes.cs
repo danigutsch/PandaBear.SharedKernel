@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Decrypted bytes that do not print themselves. <see cref="ToString"/> never shows the content, the content lives in a

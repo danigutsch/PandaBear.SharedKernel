@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>A component that fails while initializing when asked to.</summary>
 internal sealed class ThrowingChild : ComponentBase

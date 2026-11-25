@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>
 /// Source-generated metadata for <c>.config/sharedkernel-sandbox.json</c>. Property names are camelCase and match

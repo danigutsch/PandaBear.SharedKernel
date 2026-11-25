@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Routing.Patterns;
 
-namespace PandaBear.OpenApi;
+namespace SharedKernel.OpenApi;
 
 /// <summary>Builds the key that identifies an OpenAPI operation by method and normalized route.</summary>
 internal readonly record struct OpenApiOperationKey

@@ -1,7 +1,7 @@
 using System.CommandLine;
 using System.Text.Json;
 
-namespace PandaBear.Documentation.Tool;
+namespace SharedKernel.Documentation.Tool;
 
 /// <summary>
 /// Builds the <c>docs</c> command tree.

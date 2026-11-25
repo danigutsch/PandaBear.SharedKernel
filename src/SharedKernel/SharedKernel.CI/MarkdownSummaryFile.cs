@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Appends Markdown to a step summary file, such as the <c>GITHUB_STEP_SUMMARY</c> file of GitHub Actions or the

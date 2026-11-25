@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Idempotency.Tests;
+namespace SharedKernel.Idempotency.Tests;
 
 /// <summary>
 /// Tests the IdempotencyStartResult factory methods.

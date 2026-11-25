@@ -1,6 +1,6 @@
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>
 /// Tests that every builder AspireTestApplication creates is isolated (its own DCP resource-name suffix), takes configuration values, and

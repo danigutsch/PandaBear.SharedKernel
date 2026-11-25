@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace PandaBear.GitHub.Tests;
+namespace SharedKernel.GitHub.Tests;
 
 /// <summary>Tests the headers of the GitHub API client.</summary>
 public sealed class GitHubApiClientTests

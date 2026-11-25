@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the scope that switches the current culture and UI culture.</summary>
 public sealed class CultureScopeTests

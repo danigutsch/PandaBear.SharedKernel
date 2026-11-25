@@ -12,9 +12,9 @@ describes the run and its security checks.
 ## Usage
 
 ```csharp
-using PandaBear.LoadTesting;
-using PandaBear.LoadTesting.K6;
-using PandaBear.Processes;
+using SharedKernel.LoadTesting;
+using SharedKernel.LoadTesting.K6;
+using SharedKernel.Processes;
 
 var runner = new LoadTestRunner(new K6LoadGenerator(new SystemProcessRunner()), PathExecutableResolver.Default, healthCheckHandler);
 ```
@@ -39,6 +39,6 @@ The flags were checked against the [k6 options reference](https://grafana.com/do
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.LoadTesting.K6`. C# namespace: `PandaBear.LoadTesting.K6`. Assembly/project identity: `SharedKernel.LoadTesting.K6`.
+Package ID: `PandaBear.SharedKernel.LoadTesting.K6`. C# namespace: `SharedKernel.LoadTesting.K6`. Assembly/project identity: `SharedKernel.LoadTesting.K6`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

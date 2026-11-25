@@ -1,7 +1,7 @@
 using System.Xml;
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Reads MSBuild properties from project-style XML files.

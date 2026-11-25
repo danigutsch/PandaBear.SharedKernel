@@ -2,12 +2,12 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.ConfigurationFiles;
-using PandaBear.IO;
-using PandaBear.Processes;
-using PandaBear.Repositories;
+using SharedKernel.ConfigurationFiles;
+using SharedKernel.IO;
+using SharedKernel.Processes;
+using SharedKernel.Repositories;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Runs a consumer repository's command on a clean clone of its committed revision, with a candidate's packages staged

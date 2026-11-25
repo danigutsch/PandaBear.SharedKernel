@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests creating a test database lease directly, including cancellation, failed cleanup and name validation.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture that leases the test databases.</param>

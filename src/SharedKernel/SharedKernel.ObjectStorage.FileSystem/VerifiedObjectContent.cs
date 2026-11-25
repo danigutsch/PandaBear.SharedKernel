@@ -3,7 +3,7 @@
 using System.Buffers;
 using System.Security.Cryptography;
 
-namespace PandaBear.ObjectStorage.FileSystem;
+namespace SharedKernel.ObjectStorage.FileSystem;
 
 /// <summary>Copies and verifies the declared object bytes without buffering the object in memory.</summary>
 internal static class VerifiedObjectContent

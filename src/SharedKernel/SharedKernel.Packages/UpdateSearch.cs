@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>What <see cref="UpdatePlanner.FindUpdates"/> found: the updates, and the packages that could not be checked.</summary>
 public sealed class UpdateSearch

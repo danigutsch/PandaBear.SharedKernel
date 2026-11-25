@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Text;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Fixes the diagnostic <see cref="Id"/> by replacing the text at its location with <c>Fixed</c>.</summary>
 internal sealed class ReplacingCodeFix : CodeFixProvider

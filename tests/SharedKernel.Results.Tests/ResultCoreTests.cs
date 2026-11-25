@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Tests creating results, reading their value and error, and validating the inputs of the Error and Invalid factories.

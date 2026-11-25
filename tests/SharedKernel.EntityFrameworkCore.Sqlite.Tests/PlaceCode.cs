@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>A value object stored as text through a value converter.</summary>
 /// <param name="Value">The text.</param>

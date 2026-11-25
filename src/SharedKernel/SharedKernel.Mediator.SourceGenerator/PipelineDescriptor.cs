@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.SourceGenerator;
+namespace SharedKernel.Mediator.SourceGenerator;
 
 /// <summary>
 /// Describes a pipeline behavior discovered for a request or stream request contract.

@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>Contains scheduling metadata for one observed run.</summary>
 /// <param name="RunId">The run's opaque identifier.</param>

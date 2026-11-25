@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// The display sentences of an offering, with the application's formats: every word is the application's copy, and the numbers, dates and

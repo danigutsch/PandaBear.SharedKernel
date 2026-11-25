@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Messaging</PackageId>
         <Description>Storage-neutral messaging model for event envelopes, messages, metadata, and delivery boundaries.</Description>
-        <RootNamespace>PandaBear.Messaging</RootNamespace>
+        <RootNamespace>SharedKernel.Messaging</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

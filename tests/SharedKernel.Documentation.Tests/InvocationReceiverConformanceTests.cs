@@ -1,6 +1,6 @@
-using Fixture = PandaBear.Documentation.Tests.InvocationReceiverConformanceFixture;
+using Fixture = SharedKernel.Documentation.Tests.InvocationReceiverConformanceFixture;
 
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Verifies receiver-qualified conformance checks against real invocation shapes.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]

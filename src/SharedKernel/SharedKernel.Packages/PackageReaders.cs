@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>The program and the reader for each package manager.</summary>
 internal static class PackageReaders

@@ -1,8 +1,8 @@
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// The projects of a solution and the edges that selection reads from their project files without evaluating MSBuild:

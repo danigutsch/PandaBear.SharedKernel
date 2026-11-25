@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>Tests for <see cref="CsvRow"/>: values kept as given, list access, line numbers and index bounds.</summary>
 public class CsvRowParsingTests

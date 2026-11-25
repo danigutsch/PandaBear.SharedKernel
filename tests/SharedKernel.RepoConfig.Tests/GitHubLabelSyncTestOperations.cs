@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers for the GitHub label sync command.</summary>
 internal static class GitHubLabelSyncTestOperations

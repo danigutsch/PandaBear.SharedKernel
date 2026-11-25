@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Runs the index health hosted service against an unreachable server while recording the telemetry it emits, and stops both on disposal.</summary>
 internal sealed class PostgreSqlIndexHealthHostedServiceScope : IAsyncDisposable

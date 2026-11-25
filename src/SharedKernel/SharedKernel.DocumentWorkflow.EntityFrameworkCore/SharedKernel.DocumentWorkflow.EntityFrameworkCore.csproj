@@ -3,7 +3,6 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.DocumentWorkflow.EntityFrameworkCore</PackageId>
         <Description>Versioned EF Core document workflow persistence with optimistic concurrency.</Description>
-        <RootNamespace>PandaBear.DocumentWorkflow.EntityFrameworkCore</RootNamespace>
         <PackageTags>documents;workflow;shared-kernel;dotnet</PackageTags>
         <!-- EF Core model discovery and query execution require runtime metadata and dynamic code. -->
         <IsAotCompatible>false</IsAotCompatible>

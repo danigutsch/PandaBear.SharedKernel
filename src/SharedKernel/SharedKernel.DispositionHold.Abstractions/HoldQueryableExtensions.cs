@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold;
+namespace SharedKernel.DispositionHold;
 
 /// <summary>Composes disposition hold queries without choosing the caller's scope.</summary>
 public static class HoldQueryableExtensions

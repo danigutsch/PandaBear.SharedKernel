@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>github reconcile</c> roadmap command and its snapshot reads.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

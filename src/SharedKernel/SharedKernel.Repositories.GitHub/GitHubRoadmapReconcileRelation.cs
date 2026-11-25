@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Reference to a related GitHub issue.</summary>
 /// <param name="Number">Issue number.</param>

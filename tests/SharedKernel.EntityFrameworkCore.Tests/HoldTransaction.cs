@@ -1,9 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
-using PandaBear.DispositionHold;
+using SharedKernel.DispositionHold;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// One scope of the hold store, guard and context, optionally inside an open transaction, standing for one caller.

@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>The hooks of one phase of one method, run in the order they were added.</summary>
 /// <typeparam name="TCall">The generated type that describes one call.</typeparam>

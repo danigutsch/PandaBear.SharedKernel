@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore.Seo</PackageId>
         <Description>robots.txt, sitemap XML, and photo rights metadata helpers for ASP.NET Core.</Description>
-        <RootNamespace>PandaBear.AspNetCore.Seo</RootNamespace>
+        <RootNamespace>SharedKernel.AspNetCore.Seo</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;seo;robots-txt;sitemap;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

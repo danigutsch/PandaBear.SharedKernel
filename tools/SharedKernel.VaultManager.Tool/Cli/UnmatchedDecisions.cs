@@ -1,9 +1,9 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// Finds decisions that match nothing in a merge, so a typo in a decisions file is reported instead of silently leaving

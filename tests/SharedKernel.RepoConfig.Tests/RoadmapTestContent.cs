@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Roadmap config and item JSON documents used as test inputs.</summary>
 internal static class RoadmapTestContent

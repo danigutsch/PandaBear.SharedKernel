@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// The glibc functions that .NET does not expose: an atomic exchange of two names, and an fsync of a directory, which

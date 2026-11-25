@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
-using static PandaBear.AspNetCore.Localization.Tests.LocalizationTestCultures;
+using static SharedKernel.AspNetCore.Localization.Tests.LocalizationTestCultures;
 
-namespace PandaBear.AspNetCore.Localization.Tests;
+namespace SharedKernel.AspNetCore.Localization.Tests;
 
 /// <summary>Tests the culture path redirect middleware and the remembered-choice cookie.</summary>
 public sealed class CulturePathRedirectTests

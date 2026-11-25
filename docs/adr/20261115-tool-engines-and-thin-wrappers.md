@@ -86,7 +86,7 @@ capability libraries, each with its own tests, so the engines start from one imp
 
 - `SharedKernel.ConfigurationFiles` (new): `JsonConfigurationFile` reads a strict JSON consumer configuration file
   under a root, as five tools did with identical messages. The library and namespace say "configuration files"
-  because a `PandaBear.Configuration` namespace would shadow every `Configuration` identifier inside `PandaBear.*`
+  because a `SharedKernel.Configuration` namespace would shadow every `Configuration` identifier inside `SharedKernel.*`
   code (CS0118).
 - `SharedKernel.GitHub` (new): `GitHubToken` (find `GH_TOKEN` then `GITHUB_TOKEN`, refuse forwarding them, remove them
   from a child process) and `GitHubApiClient` (REST headers), which CI, K6, and RepoConfig each implemented.
@@ -142,7 +142,7 @@ future SDK lets a solution or a test project include one.
 - Workflows and consumers that build `dotnet ci` or `dotnet repo` from source check out the fixed cone
   `src` and `tools` instead of a per-library cone, so a new engine reference changes no workflow or consumer.
 - `PandaBear.SharedKernel.Packages` changes its public API: `IProcessRunner`, `ProcessOutput`, and `SystemProcessRunner`
-  move to `PandaBear.Processes`, and the bounded runner is `BoundedProcessRunner`. Packages are preview, so this is
+  move to `SharedKernel.Processes`, and the bounded runner is `BoundedProcessRunner`. Packages are preview, so this is
   allowed, and consumers update their namespace and runner type.
 - Engine unit tests live in the library's own test project, such as `tests/SharedKernel.PlaywrightMcp.Tests`, and
   use fakes of the abstractions; the tool's test project keeps the command-line contract tests.

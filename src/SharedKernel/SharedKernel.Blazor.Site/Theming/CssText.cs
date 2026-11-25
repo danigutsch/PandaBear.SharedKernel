@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>Formats the numbers and strings that the theme writes into CSS, independent of the current culture.</summary>
 internal static class CssText

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>
 /// File attached to an item in a source vault. Bitwarden JSON imports cannot carry files, so the user uploads it after

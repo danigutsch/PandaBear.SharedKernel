@@ -6,10 +6,10 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Dependency-free upload sanitizing, recognized by content and never by file name or declared content type:
 
-- Images (`PandaBear.UploadSanitizing.Images`): JPEG, PNG and WebP, and opt-in AVIF, with metadata removal without re-encoding,
+- Images (`SharedKernel.UploadSanitizing.Images`): JPEG, PNG and WebP, and opt-in AVIF, with metadata removal without re-encoding,
   animation detection, and the image size from its header. No native library is needed, unlike `PandaBear.SharedKernel.ImageProcessing`
   (ImageMagick).
-- Fonts (`PandaBear.UploadSanitizing.Fonts`): WOFF2, with a structural check of the header, the table directory and the data blocks.
+- Fonts (`SharedKernel.UploadSanitizing.Fonts`): WOFF2, with a structural check of the header, the table directory and the data blocks.
 
 Both areas share one shape: a `Result` that never throws on untrusted input, options with a size limit and the error field, and three entry
 points (a span, a caller's buffer in place, and a bounded stream read).
@@ -114,8 +114,8 @@ dotnet add package PandaBear.SharedKernel.UploadSanitizing --version <validated-
 
 ```csharp
 using System.Security.Cryptography;
-using PandaBear.UploadSanitizing.Images;
-using PandaBear.Results;
+using SharedKernel.UploadSanitizing.Images;
+using SharedKernel.Results;
 
 public static class Example
 {
@@ -137,6 +137,6 @@ public static class Example
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.UploadSanitizing`. C# namespaces: `PandaBear.UploadSanitizing.Images` and `PandaBear.UploadSanitizing.Fonts`. Assembly/project identity: `SharedKernel.UploadSanitizing`.
+Package ID: `PandaBear.SharedKernel.UploadSanitizing`. C# namespaces: `SharedKernel.UploadSanitizing.Images` and `SharedKernel.UploadSanitizing.Fonts`. Assembly/project identity: `SharedKernel.UploadSanitizing`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Creates a deterministic source inventory and matching generated OpenAPI input.</summary>
 internal static class OpenApiEndpointAuthorizationFixture

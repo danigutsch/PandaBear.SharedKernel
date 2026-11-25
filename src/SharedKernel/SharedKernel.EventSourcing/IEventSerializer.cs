@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing;
+namespace SharedKernel.EventSourcing;
 
 /// <summary>
 /// Serializes and deserializes event payloads for storage providers.

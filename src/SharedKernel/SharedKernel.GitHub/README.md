@@ -10,7 +10,7 @@ away from child processes, and sets the headers the REST API expects. Targets .N
 
 ```csharp
 using System.Net.Http.Headers;
-using PandaBear.GitHub;
+using SharedKernel.GitHub;
 
 var token = GitHubToken.Find(Environment.GetEnvironmentVariable)
     ?? throw new InvalidOperationException("Set GH_TOKEN or GITHUB_TOKEN before syncing labels.");
@@ -34,10 +34,10 @@ using var client = GitHubApiClient.Create(
   keeps the default `HttpClient.Timeout`; a caller that times each request with its own token sets
   `Timeout.InfiniteTimeSpan`. Redirect and certificate policy belong to the handler the caller passes.
 
-Bounded response reading is `PandaBear.IO.BoundedReader.ReadToEnd`.
+Bounded response reading is `SharedKernel.IO.BoundedReader.ReadToEnd`.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.GitHub`. C# namespace: `PandaBear.GitHub`. Assembly/project identity: `SharedKernel.GitHub`.
+Package ID: `PandaBear.SharedKernel.GitHub`. C# namespace: `SharedKernel.GitHub`. Assembly/project identity: `SharedKernel.GitHub`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

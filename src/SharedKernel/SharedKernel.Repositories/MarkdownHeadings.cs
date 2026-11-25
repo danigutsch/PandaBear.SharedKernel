@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Markdown;
+namespace SharedKernel.Markdown;
 
 /// <summary>Reads heading text and GitHub-compatible anchors outside fenced code.</summary>
 internal static partial class MarkdownHeadings

@@ -1,6 +1,6 @@
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Aspire.Hosting.Umami.Testing;
+namespace SharedKernel.Aspire.Hosting.Umami.Testing;
 
 /// <summary>
 /// Resolves the Umami website that an assembly's tests use: the one in an Umami that another process owns when

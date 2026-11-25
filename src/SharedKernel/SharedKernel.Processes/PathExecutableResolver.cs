@@ -1,4 +1,4 @@
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>
 /// Resolves a command to an executable file in an absolute <c>PATH</c> directory. A bare file name passed to

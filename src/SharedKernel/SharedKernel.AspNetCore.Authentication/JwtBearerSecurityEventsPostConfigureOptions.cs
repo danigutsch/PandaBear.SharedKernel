@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace PandaBear.AspNetCore.Authentication;
+namespace SharedKernel.AspNetCore.Authentication;
 
 /// <summary>Wraps the JWT bearer events of every scheme so failures, challenges and forbidden results are reported before the existing handlers run.</summary>
 internal sealed class JwtBearerSecurityEventsPostConfigureOptions : IPostConfigureOptions<JwtBearerOptions>

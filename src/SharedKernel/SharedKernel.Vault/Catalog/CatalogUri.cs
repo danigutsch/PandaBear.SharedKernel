@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>
 /// Website address of a catalog item. An address with user info, a query, or a fragment, which can hold credentials or

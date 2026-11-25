@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The validated or restored data of an offering, with the price-kind flags of the rules it was built with.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

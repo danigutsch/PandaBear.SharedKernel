@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Renders the warning reports of several CI tools as one table of blocking, advisory, and accepted totals. The reports are

@@ -1,10 +1,10 @@
 using System.Net;
 using System.Text.Json;
 
-using static PandaBear.RepoConfig.Tests.ForgejoLabelSyncTestOperations;
-using static PandaBear.RepoConfig.Tests.GitHubLabelSyncTestOperations;
+using static SharedKernel.RepoConfig.Tests.ForgejoLabelSyncTestOperations;
+using static SharedKernel.RepoConfig.Tests.GitHubLabelSyncTestOperations;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>github sync-labels --forgejo</c> command, which synchronizes the labels of a Forgejo repository.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

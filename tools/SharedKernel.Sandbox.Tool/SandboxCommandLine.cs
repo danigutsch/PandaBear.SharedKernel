@@ -1,7 +1,7 @@
 using System.CommandLine;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Sandbox.Tool;
+namespace SharedKernel.Sandbox.Tool;
 
 /// <summary>Builds the <c>sandbox</c> command tree.</summary>
 internal static class SandboxCommandLine

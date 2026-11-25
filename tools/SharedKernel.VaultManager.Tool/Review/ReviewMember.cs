@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>A member of a match group as the review names it. Holds no values.</summary>
 /// <param name="OriginKey">Origin key of the member, which member choices, links, and splits name.</param>

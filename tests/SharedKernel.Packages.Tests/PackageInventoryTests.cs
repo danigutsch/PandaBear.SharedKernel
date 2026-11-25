@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using static PandaBear.Packages.Tests.PackageFactory;
+using SharedKernel.Results;
+using static SharedKernel.Packages.Tests.PackageFactory;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests that the inventory runs the right readers, plans, and judges updates without printing anything.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

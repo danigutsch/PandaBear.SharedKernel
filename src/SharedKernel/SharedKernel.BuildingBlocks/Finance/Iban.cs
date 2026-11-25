@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A canonical IBAN matching SWIFT Registry release 103 and MOD97-10; not proof of ownership or an active account.</summary>
 public sealed class Iban : ValueObject

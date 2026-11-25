@@ -1,7 +1,7 @@
 using System.CommandLine.Parsing;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Finds CI tool command lines, from source or the installed ci tool, in workflows and the tool README.</summary>
 internal static partial class RepositoryToolCallers

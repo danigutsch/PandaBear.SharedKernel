@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>A <see cref="MemoryManager{T}"/> whose memory is not array-backed, so <c>MemoryMarshal.TryGetArray</c> fails.</summary>
 /// <param name="bytes">The bytes to expose.</param>

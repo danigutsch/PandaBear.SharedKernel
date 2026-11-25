@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Tests the activities and outcome tags that the generated mediator records for Send, Publish, notification handlers and streams.</summary>
 public sealed class GeneratorTelemetryBehaviorTests

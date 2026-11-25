@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.PageSections.Tests;
+namespace SharedKernel.PageSections.Tests;
 
 /// <summary>Cultures, rules and helpers shared by the page section tests.</summary>
 internal static class PageSectionFixtures

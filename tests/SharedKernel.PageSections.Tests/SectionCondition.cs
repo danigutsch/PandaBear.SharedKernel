@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections.Tests;
+namespace SharedKernel.PageSections.Tests;
 
 /// <summary>V2's condition of a section of the tour-information page.</summary>
 public enum SectionCondition

@@ -1,4 +1,4 @@
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>Searches the absolute directories of a <c>PATH</c> value for an executable file.</summary>
 internal static class ExecutableSearch

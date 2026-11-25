@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Source-generated metadata for the warning report, which verification steps write and <c>warning-summary</c> reads.

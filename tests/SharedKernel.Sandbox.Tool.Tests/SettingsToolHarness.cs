@@ -1,7 +1,7 @@
 using System.CommandLine;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Sandbox.Tool.Tests;
+namespace SharedKernel.Sandbox.Tool.Tests;
 
 /// <summary>Runs <c>settings</c> commands in a temporary repository and reads the result.</summary>
 internal static class SettingsToolHarness

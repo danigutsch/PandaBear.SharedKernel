@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Testing.Roslyn;
-namespace PandaBear.Mediator.Analyzers.Tests;
+using SharedKernel.Testing.Roslyn;
+namespace SharedKernel.Mediator.Analyzers.Tests;
 
 /// <summary>Compiles test source against the Mediator abstractions and runs the mediator analyzer over it.</summary>
 internal static class AnalyzerTestHarness

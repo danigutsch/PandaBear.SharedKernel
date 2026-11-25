@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>install-playwright</c> command, which finds the built playwright.ps1 installer of a test project and runs it with PowerShell.</summary>
 public sealed class PlaywrightInstallationTests : IDisposable

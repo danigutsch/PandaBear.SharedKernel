@@ -1,7 +1,7 @@
 using System.Net;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Branding.Tests;
+namespace SharedKernel.Branding.Tests;
 
 /// <summary>
 /// Tests that BrandingApiClient requests and deserializes the public branding settings.

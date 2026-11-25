@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
-using PandaBear.Blazor.Site.Theming;
-using PandaBear.Blazor.Site.Tests.Theming;
+using SharedKernel.Blazor.Site.Theming;
+using SharedKernel.Blazor.Site.Tests.Theming;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// The interactive part of the browser test: a <see cref="ThemePreview" /> with the given nonce, a button that changes the text colour

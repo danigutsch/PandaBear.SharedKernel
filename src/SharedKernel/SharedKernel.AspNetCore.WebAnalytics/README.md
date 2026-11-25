@@ -13,7 +13,7 @@ the analytics. The Aspire resource for Umami is in
 ## Usage
 
 ```csharp
-using PandaBear.AspNetCore.WebAnalytics;
+using SharedKernel.AspNetCore.WebAnalytics;
 
 builder.AddPageViews(options => options.Hostname = "example.com")
     .AddUmami();
@@ -187,7 +187,7 @@ Before choosing another service, weigh what it costs:
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AspNetCore.WebAnalytics`. C# namespace: `PandaBear.AspNetCore.WebAnalytics`. Assembly/project
+Package ID: `PandaBear.SharedKernel.AspNetCore.WebAnalytics`. C# namespace: `SharedKernel.AspNetCore.WebAnalytics`. Assembly/project
 identity: `SharedKernel.AspNetCore.WebAnalytics`. It depends on the ASP.NET Core shared framework and `PandaBear.SharedKernel.AspNetCore`
 only.
 

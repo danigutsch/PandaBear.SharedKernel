@@ -1,4 +1,4 @@
-namespace PandaBear.Review.Tests;
+namespace SharedKernel.Review.Tests;
 
 /// <summary>Exercises public review evidence contracts through a two-lane release review.</summary>
 public sealed class ReviewHistoryTests

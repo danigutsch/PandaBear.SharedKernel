@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting.Tests;
+namespace SharedKernel.LoadTesting.Tests;
 
 /// <summary>Tests validation and rewriting of the load-test target URL.</summary>
 public sealed class LoadTestTargetTests

@@ -1,9 +1,9 @@
-using PandaBear.Testing;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using static PandaBear.Vault.Tests.Merge.MergeFixture;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using static SharedKernel.Vault.Tests.Merge.MergeFixture;
 
-namespace PandaBear.Vault.Tests.Merge;
+namespace SharedKernel.Vault.Tests.Merge;
 
 /// <summary>Tests that <see cref="DecisionsFile"/> serializes decisions without secret values, reads them back, and rejects malformed files.</summary>
 public sealed class DecisionsFileTests : IDisposable

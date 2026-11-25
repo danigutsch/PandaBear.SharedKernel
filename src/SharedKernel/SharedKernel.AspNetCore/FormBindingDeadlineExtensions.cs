@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Http.Timeouts;
 
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>Applies ASP.NET Core request deadlines to implicit form binding.</summary>
 public static class FormBindingDeadlineExtensions

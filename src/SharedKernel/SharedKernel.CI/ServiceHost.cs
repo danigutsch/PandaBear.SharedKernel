@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// A slice's service while its tests run. The tool starts it with <c>dotnet run</c> and redirected standard input, output, and

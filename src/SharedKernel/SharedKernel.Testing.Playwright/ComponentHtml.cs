@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>Renders a Razor component to HTML as static server-side rendering does, for a browser test to open without a host.</summary>
 public static class ComponentHtml

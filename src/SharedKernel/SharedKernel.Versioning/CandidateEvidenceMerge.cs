@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Merges the per-platform results that <c>consume-candidate</c> recorded in separate evidence files into a candidate

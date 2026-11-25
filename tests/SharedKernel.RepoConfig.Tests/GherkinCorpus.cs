@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// A seeded corpus with one violation of each Gherkin rule, plus line ending, byte order mark, keyword, and tag

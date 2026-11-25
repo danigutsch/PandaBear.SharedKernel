@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>
 /// An application's real entry point running on Kestrel at a loopback address with an ephemeral port, so a real browser (or any

@@ -1,10 +1,10 @@
 using System.CommandLine;
-using PandaBear.InputNormalization;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
-using PandaBear.VaultManager.Tool.Formats;
+using SharedKernel.InputNormalization;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
+using SharedKernel.VaultManager.Tool.Formats;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// <c>inspect</c>: shows, per input, the detected format, item counts by type, folders, items with and without

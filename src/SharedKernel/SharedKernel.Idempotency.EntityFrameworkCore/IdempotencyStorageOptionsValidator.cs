@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Idempotency.EntityFrameworkCore;
+namespace SharedKernel.Idempotency.EntityFrameworkCore;
 
 /// <summary>Rejects idempotency storage options whose schema or table name is not a valid unquoted PostgreSQL identifier.</summary>
 internal sealed class IdempotencyStorageOptionsValidator : IValidateOptions<IdempotencyStorageOptions>

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>How the members of a match group relate.</summary>
 public enum MatchStatus

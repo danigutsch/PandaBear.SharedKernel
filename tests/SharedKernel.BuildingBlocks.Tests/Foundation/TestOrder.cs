@@ -1,5 +1,5 @@
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// A value object made of a price and an address, used to test equality over nested value objects.

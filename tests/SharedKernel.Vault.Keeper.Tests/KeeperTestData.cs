@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Keeper.Tests;
+namespace SharedKernel.Vault.Keeper.Tests;
 
 /// <summary>Builds Keeper export JSON and helper values for the Keeper reader tests.</summary>
 internal static class KeeperTestData

@@ -1,4 +1,4 @@
-namespace PandaBear.Aspire.Hosting.Umami.Testing;
+namespace SharedKernel.Aspire.Hosting.Umami.Testing;
 
 /// <summary>An Umami test website that an Aspire application of the test assembly started, together with the way to stop it.</summary>
 /// <param name="website">The started website.</param>

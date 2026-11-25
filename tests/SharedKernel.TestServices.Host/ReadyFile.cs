@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.TestServices.Host;
+namespace SharedKernel.TestServices.Host;
 
 /// <summary>
 /// The file in which the host tells its owner that its services are ready: it holds one UTF-8 <c>NAME=value</c> line for each

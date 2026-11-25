@@ -348,7 +348,7 @@ A chosen key without an option (an image deleted since) is listed as `ImagePicke
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Blazor`. C# namespace: `PandaBear.Blazor`. Assembly/project identity: `SharedKernel.Blazor`.
+Package ID: `PandaBear.SharedKernel.Blazor`. C# namespace: `SharedKernel.Blazor`. Assembly/project identity: `SharedKernel.Blazor`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

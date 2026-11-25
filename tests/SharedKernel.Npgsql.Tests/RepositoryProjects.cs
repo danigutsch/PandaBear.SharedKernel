@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Finds project files of this repository for application models that need a real project path.</summary>
 internal static class RepositoryProjects

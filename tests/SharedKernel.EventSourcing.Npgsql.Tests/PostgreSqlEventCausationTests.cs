@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Verifies durable causation metadata on PostgreSQL event envelopes.</summary>
 /// <param name="fixture">The shared PostgreSQL server fixture.</param>

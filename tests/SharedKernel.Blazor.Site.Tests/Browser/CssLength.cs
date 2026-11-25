@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>Reads a computed CSS length, as Chromium reports it.</summary>
 internal static class CssLength

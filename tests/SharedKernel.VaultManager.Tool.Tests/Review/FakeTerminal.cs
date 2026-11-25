@@ -1,6 +1,6 @@
-using PandaBear.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Review;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Terminal for review command tests: records each session the UI would show and acts on it instead of a user.</summary>
 internal sealed class FakeTerminal

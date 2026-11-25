@@ -1,4 +1,4 @@
-namespace PandaBear.ImageProcessing;
+namespace SharedKernel.ImageProcessing;
 
 /// <summary>
 /// Random-access reads over the bytes the animation walk inspects.

@@ -6,7 +6,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>vault</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.VaultManager.Tool</PackageId>
-        <RootNamespace>PandaBear.VaultManager.Tool</RootNamespace>
+        <RootNamespace>SharedKernel.VaultManager.Tool</RootNamespace>
         <Description>Offline review, secret detection, deduplication, and merging of Keeper and Bitwarden vault exports for Bitwarden or Vaultwarden import.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>password-manager;bitwarden;vaultwarden;keeper;migration;dotnet-tool;shared-kernel</PackageTags>

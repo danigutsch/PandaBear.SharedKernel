@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Renders the desired content of each managed file and compares it with the working tree.</summary>
 internal static partial class BaselinePlanner

@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// Checksums of prefixed tokens. GitHub and npm tokens end in six base62 characters that encode the CRC-32 of the

@@ -1,88 +1,88 @@
 #nullable enable
-override PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
-override PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>
-PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.BaseUri.get -> System.Uri!
-PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.KestrelPageTest() -> void
-PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.NavigateTo(string! relativePath) -> System.Threading.Tasks.Task!
-PandaBear.Testing.Playwright.PlaywrightPageExtensions
-PandaBear.Testing.Playwright.PlaywrightShouldAssertionExtensions
-const PandaBear.Testing.Playwright.PlaywrightPageExtensions.InteractiveReadySelector = "[data-interactive='true']" -> string!
-static PandaBear.Testing.Playwright.PlaywrightPageExtensions.GotoInteractive(this Microsoft.Playwright.IPage! page, System.Uri! address) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightPageExtensions.WaitForBlazorInteractive(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightShouldAssertionExtensions.ShouldHaveTitle(this Microsoft.Playwright.IPage! page, string! expectedTitle) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightShouldAssertionExtensions.ShouldHaveTitle(this Microsoft.Playwright.IPage! page, string! expectedTitle, string! userMessage) -> System.Threading.Tasks.Task!
-virtual PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.Configuration.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>?
-virtual PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
-virtual PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.EnvironmentName.get -> string!
-PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnlabelledControls(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnlabelledControls(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnnamedLinksOrButtons(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnnamedLinksOrButtons(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveSingleLevelOneHeading(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveSingleLevelOneHeading(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveLanguage(this Microsoft.Playwright.IPage! page, string! expectedLanguage) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveLanguage(this Microsoft.Playwright.IPage! page, string! expectedLanguage, string! userMessage) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldNotScrollHorizontally(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldNotScrollHorizontally(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveFocusWithin(this Microsoft.Playwright.IPage! page, string! containerSelector) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveFocusWithin(this Microsoft.Playwright.IPage! page, string! containerSelector, string! userMessage) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveAccessibleStructure(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveAccessibleStructure(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
-PandaBear.Testing.Playwright.PageDiagnostics
-PandaBear.Testing.Playwright.PageDiagnostics.PageDiagnostics(Microsoft.Playwright.IPage! page) -> void
-PandaBear.Testing.Playwright.PageDiagnostics.Describe() -> System.Threading.Tasks.Task<string!>!
-PandaBear.Testing.Playwright.PlaywrightArtifacts
-static PandaBear.Testing.Playwright.PlaywrightArtifacts.Save(Microsoft.Playwright.IPage! page, string! folder, string! name) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
-PandaBear.Testing.Playwright.PlaywrightLocatorExtensions
-static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.FillAndExpectValue(this Microsoft.Playwright.ILocator! locator, string! value) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightPageExtensions.WaitForBlazorInteractive(this Microsoft.Playwright.IPage! page, PandaBear.Testing.Playwright.PageDiagnostics! diagnostics, float? timeoutMilliseconds = null) -> System.Threading.Tasks.Task!
-PandaBear.Testing.Playwright.TracedPageTest
-PandaBear.Testing.Playwright.TracedPageTest.TracedPageTest() -> void
-virtual PandaBear.Testing.Playwright.TracedPageTest.ArtifactsFolder.get -> string!
-PandaBear.Testing.Playwright.TracedPageTest.Diagnostics.get -> PandaBear.Testing.Playwright.PageDiagnostics!
-PandaBear.Testing.Playwright.TracedPageTest.GotoInteractive(System.Uri! address) -> System.Threading.Tasks.Task!
-override PandaBear.Testing.Playwright.TracedPageTest.InitializeAsync() -> System.Threading.Tasks.ValueTask
-override PandaBear.Testing.Playwright.TracedPageTest.DisposeAsync() -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions
-static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetButton(this Microsoft.Playwright.IPage! page, string! name) -> Microsoft.Playwright.ILocator!
-static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(this Microsoft.Playwright.IPage! page, string! name, int? level = null) -> Microsoft.Playwright.ILocator!
-static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetLink(this Microsoft.Playwright.IPage! page, string! name) -> Microsoft.Playwright.ILocator!
-static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(this Microsoft.Playwright.IPage! page, int level) -> Microsoft.Playwright.ILocator!
-static PandaBear.Testing.Playwright.PlaywrightPageExtensions.ExpectPath(this Microsoft.Playwright.IPage! page, System.Uri! expected) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightPageExtensions.ExpectPath(this Microsoft.Playwright.IPage! page, System.Uri! baseAddress, string! relativePath) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.SetBlazorInputFile(this Microsoft.Playwright.ILocator! input, Microsoft.Playwright.FilePayload! file) -> System.Threading.Tasks.Task!
-PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.KestrelPageTest(PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint!>! sharedHost) -> void
-PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.Services.get -> System.IServiceProvider!
-PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>
-PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.KestrelHostFixture() -> void
-PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.BaseAddress.get -> System.Uri!
-PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.Services.get -> System.IServiceProvider!
-virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.EnvironmentName.get -> string!
-virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.Configuration.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>?
-virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
-virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
-virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
-PandaBear.Testing.Playwright.CspViolationRecorder
-PandaBear.Testing.Playwright.CspViolationRecorder.Dispose() -> void
-PandaBear.Testing.Playwright.CspViolationRecorder.StyleViolations() -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
-PandaBear.Testing.Playwright.CspViolationRecorder.Violations() -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
-static PandaBear.Testing.Playwright.CspViolationRecorder.Start(Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task<PandaBear.Testing.Playwright.CspViolationRecorder!>!
-static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.SetBlazorInputFiles(this Microsoft.Playwright.ILocator! input, System.Collections.Generic.IEnumerable<Microsoft.Playwright.FilePayload!>! files) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.WaitForBlazorInputFile(this Microsoft.Playwright.ILocator! input) -> System.Threading.Tasks.Task!
-const PandaBear.Testing.Playwright.Chromium.NotInstalledReason = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright." -> string!
-const PandaBear.Testing.Playwright.Chromium.RequiredVariable = "REQUIRE_BROWSER_TESTS" -> string!
-PandaBear.Testing.Playwright.Chromium
-static PandaBear.Testing.Playwright.Chromium.IsInstalled.get -> bool
-static PandaBear.Testing.Playwright.Chromium.Launch() -> System.Threading.Tasks.Task<(Microsoft.Playwright.IPlaywright! Playwright, Microsoft.Playwright.IBrowser! Browser)>!
-PandaBear.Testing.Playwright.ChromiumFixture
-PandaBear.Testing.Playwright.ChromiumFixture.Browser.get -> Microsoft.Playwright.IBrowser!
-PandaBear.Testing.Playwright.ChromiumFixture.ChromiumFixture() -> void
-PandaBear.Testing.Playwright.ChromiumFixture.DisposeAsync() -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.Playwright.ChromiumFixture.InitializeAsync() -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.Playwright.ComponentHtml
-static PandaBear.Testing.Playwright.ComponentHtml.Render<TComponent>(System.Collections.Generic.IDictionary<string!, object?>? parameters = null) -> System.Threading.Tasks.Task<string!>!
-PandaBear.Testing.Playwright.PlaywrightEqualAccessExtensions
-static PandaBear.Testing.Playwright.PlaywrightEqualAccessExtensions.ShouldHaveNoEqualAccessViolations(this Microsoft.Playwright.IPage! page, string! engineBundlePath, string! expectedSha256) -> System.Threading.Tasks.Task!
-static PandaBear.Testing.Playwright.PlaywrightEqualAccessExtensions.ShouldHaveNoEqualAccessViolations(this Microsoft.Playwright.IPage! page, string! engineBundlePath, string! expectedSha256, string! userMessage) -> System.Threading.Tasks.Task!
+override SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>
+SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.BaseUri.get -> System.Uri!
+SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.KestrelPageTest() -> void
+SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.NavigateTo(string! relativePath) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.Playwright.PlaywrightPageExtensions
+SharedKernel.Testing.Playwright.PlaywrightShouldAssertionExtensions
+const SharedKernel.Testing.Playwright.PlaywrightPageExtensions.InteractiveReadySelector = "[data-interactive='true']" -> string!
+static SharedKernel.Testing.Playwright.PlaywrightPageExtensions.GotoInteractive(this Microsoft.Playwright.IPage! page, System.Uri! address) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightPageExtensions.WaitForBlazorInteractive(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightShouldAssertionExtensions.ShouldHaveTitle(this Microsoft.Playwright.IPage! page, string! expectedTitle) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightShouldAssertionExtensions.ShouldHaveTitle(this Microsoft.Playwright.IPage! page, string! expectedTitle, string! userMessage) -> System.Threading.Tasks.Task!
+virtual SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.Configuration.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>?
+virtual SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+virtual SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.EnvironmentName.get -> string!
+SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnlabelledControls(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnlabelledControls(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnnamedLinksOrButtons(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnnamedLinksOrButtons(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveSingleLevelOneHeading(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveSingleLevelOneHeading(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveLanguage(this Microsoft.Playwright.IPage! page, string! expectedLanguage) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveLanguage(this Microsoft.Playwright.IPage! page, string! expectedLanguage, string! userMessage) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldNotScrollHorizontally(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldNotScrollHorizontally(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveFocusWithin(this Microsoft.Playwright.IPage! page, string! containerSelector) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveFocusWithin(this Microsoft.Playwright.IPage! page, string! containerSelector, string! userMessage) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveAccessibleStructure(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveAccessibleStructure(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.Playwright.PageDiagnostics
+SharedKernel.Testing.Playwright.PageDiagnostics.PageDiagnostics(Microsoft.Playwright.IPage! page) -> void
+SharedKernel.Testing.Playwright.PageDiagnostics.Describe() -> System.Threading.Tasks.Task<string!>!
+SharedKernel.Testing.Playwright.PlaywrightArtifacts
+static SharedKernel.Testing.Playwright.PlaywrightArtifacts.Save(Microsoft.Playwright.IPage! page, string! folder, string! name) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+SharedKernel.Testing.Playwright.PlaywrightLocatorExtensions
+static SharedKernel.Testing.Playwright.PlaywrightLocatorExtensions.FillAndExpectValue(this Microsoft.Playwright.ILocator! locator, string! value) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightPageExtensions.WaitForBlazorInteractive(this Microsoft.Playwright.IPage! page, SharedKernel.Testing.Playwright.PageDiagnostics! diagnostics, float? timeoutMilliseconds = null) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.Playwright.TracedPageTest
+SharedKernel.Testing.Playwright.TracedPageTest.TracedPageTest() -> void
+virtual SharedKernel.Testing.Playwright.TracedPageTest.ArtifactsFolder.get -> string!
+SharedKernel.Testing.Playwright.TracedPageTest.Diagnostics.get -> SharedKernel.Testing.Playwright.PageDiagnostics!
+SharedKernel.Testing.Playwright.TracedPageTest.GotoInteractive(System.Uri! address) -> System.Threading.Tasks.Task!
+override SharedKernel.Testing.Playwright.TracedPageTest.InitializeAsync() -> System.Threading.Tasks.ValueTask
+override SharedKernel.Testing.Playwright.TracedPageTest.DisposeAsync() -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.Playwright.PlaywrightRoleLocatorExtensions
+static SharedKernel.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetButton(this Microsoft.Playwright.IPage! page, string! name) -> Microsoft.Playwright.ILocator!
+static SharedKernel.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(this Microsoft.Playwright.IPage! page, string! name, int? level = null) -> Microsoft.Playwright.ILocator!
+static SharedKernel.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetLink(this Microsoft.Playwright.IPage! page, string! name) -> Microsoft.Playwright.ILocator!
+static SharedKernel.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(this Microsoft.Playwright.IPage! page, int level) -> Microsoft.Playwright.ILocator!
+static SharedKernel.Testing.Playwright.PlaywrightPageExtensions.ExpectPath(this Microsoft.Playwright.IPage! page, System.Uri! expected) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightPageExtensions.ExpectPath(this Microsoft.Playwright.IPage! page, System.Uri! baseAddress, string! relativePath) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightLocatorExtensions.SetBlazorInputFile(this Microsoft.Playwright.ILocator! input, Microsoft.Playwright.FilePayload! file) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.KestrelPageTest(SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint!>! sharedHost) -> void
+SharedKernel.Testing.Playwright.KestrelPageTest<TEntryPoint>.Services.get -> System.IServiceProvider!
+SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>
+SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>.KestrelHostFixture() -> void
+SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>.BaseAddress.get -> System.Uri!
+SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>.Services.get -> System.IServiceProvider!
+virtual SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>.EnvironmentName.get -> string!
+virtual SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>.Configuration.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>?
+virtual SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+virtual SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+virtual SharedKernel.Testing.Playwright.KestrelHostFixture<TEntryPoint>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+SharedKernel.Testing.Playwright.CspViolationRecorder
+SharedKernel.Testing.Playwright.CspViolationRecorder.Dispose() -> void
+SharedKernel.Testing.Playwright.CspViolationRecorder.StyleViolations() -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+SharedKernel.Testing.Playwright.CspViolationRecorder.Violations() -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+static SharedKernel.Testing.Playwright.CspViolationRecorder.Start(Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task<SharedKernel.Testing.Playwright.CspViolationRecorder!>!
+static SharedKernel.Testing.Playwright.PlaywrightLocatorExtensions.SetBlazorInputFiles(this Microsoft.Playwright.ILocator! input, System.Collections.Generic.IEnumerable<Microsoft.Playwright.FilePayload!>! files) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightLocatorExtensions.WaitForBlazorInputFile(this Microsoft.Playwright.ILocator! input) -> System.Threading.Tasks.Task!
+const SharedKernel.Testing.Playwright.Chromium.NotInstalledReason = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright." -> string!
+const SharedKernel.Testing.Playwright.Chromium.RequiredVariable = "REQUIRE_BROWSER_TESTS" -> string!
+SharedKernel.Testing.Playwright.Chromium
+static SharedKernel.Testing.Playwright.Chromium.IsInstalled.get -> bool
+static SharedKernel.Testing.Playwright.Chromium.Launch() -> System.Threading.Tasks.Task<(Microsoft.Playwright.IPlaywright! Playwright, Microsoft.Playwright.IBrowser! Browser)>!
+SharedKernel.Testing.Playwright.ChromiumFixture
+SharedKernel.Testing.Playwright.ChromiumFixture.Browser.get -> Microsoft.Playwright.IBrowser!
+SharedKernel.Testing.Playwright.ChromiumFixture.ChromiumFixture() -> void
+SharedKernel.Testing.Playwright.ChromiumFixture.DisposeAsync() -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.Playwright.ChromiumFixture.InitializeAsync() -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.Playwright.ComponentHtml
+static SharedKernel.Testing.Playwright.ComponentHtml.Render<TComponent>(System.Collections.Generic.IDictionary<string!, object?>? parameters = null) -> System.Threading.Tasks.Task<string!>!
+SharedKernel.Testing.Playwright.PlaywrightEqualAccessExtensions
+static SharedKernel.Testing.Playwright.PlaywrightEqualAccessExtensions.ShouldHaveNoEqualAccessViolations(this Microsoft.Playwright.IPage! page, string! engineBundlePath, string! expectedSha256) -> System.Threading.Tasks.Task!
+static SharedKernel.Testing.Playwright.PlaywrightEqualAccessExtensions.ShouldHaveNoEqualAccessViolations(this Microsoft.Playwright.IPage! page, string! engineBundlePath, string! expectedSha256, string! userMessage) -> System.Threading.Tasks.Task!

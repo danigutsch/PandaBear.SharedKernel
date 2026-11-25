@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The editor fields of one self-hosted font.</summary>
 public sealed class ThemeFontFields

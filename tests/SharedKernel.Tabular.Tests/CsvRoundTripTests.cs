@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>
 /// Property-style tests of the round-trip guarantee: for random documents built from every character the format treats specially,

@@ -1,6 +1,6 @@
-using static PandaBear.Galleries.Tests.AlbumFixtures;
+using static SharedKernel.Galleries.Tests.AlbumFixtures;
 
-namespace PandaBear.Galleries.Tests;
+namespace SharedKernel.Galleries.Tests;
 
 /// <summary>Tests that the album photo knowledge is the shared image eligibility of BuildingBlocks.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

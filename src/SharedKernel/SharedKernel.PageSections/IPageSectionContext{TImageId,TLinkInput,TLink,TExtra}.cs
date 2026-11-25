@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>
 /// What the section rules ask the application: its images (whether one exists and may be shown in a culture), its link targets, and its

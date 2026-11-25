@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests the name validation performed before a leased test database is dropped.</summary>
 public sealed class PostgreSqlTestDatabaseLeaseTests

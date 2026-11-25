@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>File attached to a Keeper record in a Commander export.</summary>
 /// <param name="FileUid">File identifier; Commander zips store the file at <c>files/&lt;FileUid&gt;</c>.</param>

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Forms;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the factory of a submission for a form that edits one kind of record.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

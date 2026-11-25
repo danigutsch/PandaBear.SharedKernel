@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the text screening used before text reaches a user-facing surface.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

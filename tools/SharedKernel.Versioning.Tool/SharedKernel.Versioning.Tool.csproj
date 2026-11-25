@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Versioning.Tool</RootNamespace>
+        <RootNamespace>SharedKernel.Versioning.Tool</RootNamespace>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>release</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.Versioning.Tool</PackageId>

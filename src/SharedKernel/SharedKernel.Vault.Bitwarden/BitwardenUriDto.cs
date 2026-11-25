@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Bitwarden login URI.</summary>
 /// <param name="Match">URI match detection mode, or null for the default.</param>

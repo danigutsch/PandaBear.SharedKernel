@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace PandaBear.AspNetCore.Authentication;
+namespace SharedKernel.AspNetCore.Authentication;
 
 /// <summary>
 /// Provides authorization policy helpers for application-owned permissions.

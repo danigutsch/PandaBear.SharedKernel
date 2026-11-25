@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>The identifying information and query of a configured Grafana target.</summary>
 /// <param name="PanelId">The panel ID from the dashboard.</param>

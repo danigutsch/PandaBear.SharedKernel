@@ -1,6 +1,6 @@
-using PandaBear.Messaging.IntegrationEvents;
+using SharedKernel.Messaging.IntegrationEvents;
 
-namespace PandaBear.Messaging.Protobuf.Tests;
+namespace SharedKernel.Messaging.Protobuf.Tests;
 
 /// <summary>An integration event that is not a Protobuf message.</summary>
 /// <param name="EventId">The event identifier.</param>

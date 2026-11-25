@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>Tests the contains-pattern built from user input.</summary>
 [Trait("Scope", "Unit")]

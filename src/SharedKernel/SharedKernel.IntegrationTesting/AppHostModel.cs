@@ -2,7 +2,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// Reads an AppHost's application model without starting it, for fast tests of the wiring: which project waits for what, which variables

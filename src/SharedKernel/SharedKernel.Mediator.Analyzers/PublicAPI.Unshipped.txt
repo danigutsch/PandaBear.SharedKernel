@@ -1,5 +1,5 @@
 #nullable enable
-PandaBear.Mediator.Analyzers.MediatorAnalyzer
-PandaBear.Mediator.Analyzers.MediatorAnalyzer.MediatorAnalyzer() -> void
-override PandaBear.Mediator.Analyzers.MediatorAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
-override PandaBear.Mediator.Analyzers.MediatorAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+SharedKernel.Mediator.Analyzers.MediatorAnalyzer
+SharedKernel.Mediator.Analyzers.MediatorAnalyzer.MediatorAnalyzer() -> void
+override SharedKernel.Mediator.Analyzers.MediatorAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override SharedKernel.Mediator.Analyzers.MediatorAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

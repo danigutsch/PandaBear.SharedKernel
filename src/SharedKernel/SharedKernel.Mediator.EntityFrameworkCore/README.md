@@ -24,9 +24,9 @@ public sealed class TransactionBehavior<TRequest, TResponse>(DbContext dbContext
     where TResponse : struct, IResultLike<TResponse>;
 ```
 
-- **Locks.** A command implements `PandaBear.Mediator.Transactions.ITransactionLockDeclaration` from
+- **Locks.** A command implements `SharedKernel.Mediator.Transactions.ITransactionLockDeclaration` from
   Mediator.Abstractions and exposes its advisory lock names through `TransactionLocks`. The behavior also
-  accepts the existing `PandaBear.Mediator.EntityFrameworkCore.ITransactionLockDeclaration` and combines the
+  accepts the existing `SharedKernel.Mediator.EntityFrameworkCore.ITransactionLockDeclaration` and combines the
   lists when a command implements both. After beginning the transaction, it acquires the names at tier 0 through
   one new `PostgreSqlOrderedTransactionLocks` per attempt.
 - **Hooks.** `IAfterRollback<TRequest, TResponse>` runs once after the last attempt when the result was not successful (not for exceptions); `IAfterCommit<TRequest, TResponse>` runs once after a commit. Both resolve from a fresh scope outside the transaction. A hook failure is logged and never changes the response. Put records that must outlive a rollback, such as rejection audits, in an after-rollback hook.
@@ -53,8 +53,8 @@ dotnet add package PandaBear.SharedKernel.Mediator.EntityFrameworkCore --version
 ```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Mediator;
-using PandaBear.Mediator.EntityFrameworkCore;
+using SharedKernel.Mediator;
+using SharedKernel.Mediator.EntityFrameworkCore;
 
 public sealed record SaveItem : ICommand<int>;
 public sealed class AppDbContext : DbContext;
@@ -68,6 +68,6 @@ public static class Example
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Mediator.EntityFrameworkCore`. C# namespace: `PandaBear.Mediator.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.Mediator.EntityFrameworkCore`.
+Package ID: `PandaBear.SharedKernel.Mediator.EntityFrameworkCore`. C# namespace: `SharedKernel.Mediator.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.Mediator.EntityFrameworkCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

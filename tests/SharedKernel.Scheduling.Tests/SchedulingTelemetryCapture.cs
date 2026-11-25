@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.Scheduling.Tests;
+namespace SharedKernel.Scheduling.Tests;
 
 /// <summary>
 /// Captures the polling spans and measurements of one service name, so tests that run in parallel and share the scheduling

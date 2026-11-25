@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage.FileSystem.Tests;
+namespace SharedKernel.ObjectStorage.FileSystem.Tests;
 
 /// <summary>Checks publication boundaries and directory containment for the filesystem adapter.</summary>
 public sealed class FileSystemPublicationTests

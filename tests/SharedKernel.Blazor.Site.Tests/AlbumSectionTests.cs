@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using static PandaBear.Blazor.Site.Tests.SiteFixtures;
+using SharedKernel.BuildingBlocks;
+using static SharedKernel.Blazor.Site.Tests.SiteFixtures;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the album section: a named section with one page of photos and the pager.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

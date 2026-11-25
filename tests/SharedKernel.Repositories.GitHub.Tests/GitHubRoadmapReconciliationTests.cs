@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Engine tests split from the command-line tests in GitHubRoadmapExternalBlockerTests.</summary>
 public sealed class GitHubRoadmapReconciliationTests

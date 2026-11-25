@@ -3,7 +3,7 @@ using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>Logs and counts authentication and rate-limit events using only bounded values.</summary>
 internal sealed partial class SecurityEventReporter

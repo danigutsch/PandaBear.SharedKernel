@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>
 /// Describes the draft pull request that roadmap publication would create, without file contents.

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Identifies a Linux process by its ID and start time, so a reused process ID never matches it.</summary>
 /// <param name="ProcessId">The process ID.</param>

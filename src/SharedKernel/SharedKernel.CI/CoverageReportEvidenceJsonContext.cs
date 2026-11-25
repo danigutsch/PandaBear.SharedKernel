@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Strict source-generated JSON metadata for locally collected coverage evidence.</summary>
 [JsonSourceGenerationOptions(

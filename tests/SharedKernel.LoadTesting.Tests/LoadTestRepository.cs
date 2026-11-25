@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.LoadTesting.Tests;
+namespace SharedKernel.LoadTesting.Tests;
 
 /// <summary>A temporary repository with a load-test configuration and a script.</summary>
 internal sealed class LoadTestRepository : IDisposable

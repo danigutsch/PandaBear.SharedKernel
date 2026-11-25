@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.Vault.Bitwarden.Crypto;
+namespace SharedKernel.Vault.Bitwarden.Crypto;
 
 /// <summary>AES-256 encryption key and HMAC-SHA256 key pair. Disposing zeroes both keys.</summary>
 internal sealed class SymmetricKeys(byte[] encryptionKey, byte[] macKey) : IDisposable

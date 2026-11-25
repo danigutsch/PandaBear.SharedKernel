@@ -1,6 +1,6 @@
 using Aspire.Hosting;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests WithDataBindMountFromConfiguration: the database persists in the configured folder, and stays ephemeral without one.</summary>
 public sealed class SqliteDataBindMountFromConfigurationTests

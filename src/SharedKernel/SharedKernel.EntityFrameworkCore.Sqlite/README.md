@@ -70,7 +70,7 @@ Limits:
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.EntityFrameworkCore.Sqlite`. C# namespace: `PandaBear.EntityFrameworkCore.Sqlite`.
+Package ID: `PandaBear.SharedKernel.EntityFrameworkCore.Sqlite`. C# namespace: `SharedKernel.EntityFrameworkCore.Sqlite`.
 Assembly/project identity: `SharedKernel.EntityFrameworkCore.Sqlite`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

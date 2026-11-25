@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace PandaBear.AspNetCore.RateLimiting.Tests;
+namespace SharedKernel.AspNetCore.RateLimiting.Tests;
 
 /// <summary>
 /// Tests the opt-in rejection response: 429, never stored by a browser or proxy, with <c>Retry-After</c> in whole seconds when the limiter

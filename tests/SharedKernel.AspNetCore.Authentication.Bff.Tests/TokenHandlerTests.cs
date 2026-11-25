@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Tests the HttpClient handlers that attach the user's token or an exchanged token.</summary>
 public sealed class TokenHandlerTests

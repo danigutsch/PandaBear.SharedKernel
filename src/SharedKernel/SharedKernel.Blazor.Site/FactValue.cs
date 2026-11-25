@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One value of a <see cref="FactCard" />: its text and, optionally, the address it links to.</summary>
 /// <param name="Text">The text, for example "8 days" or "info@example.org". It must not be blank.</param>

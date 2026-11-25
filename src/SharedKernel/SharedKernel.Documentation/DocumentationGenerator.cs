@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>
 /// Generates configured Markdown blocks from repository files.

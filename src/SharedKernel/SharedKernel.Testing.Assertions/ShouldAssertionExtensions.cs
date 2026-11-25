@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using static PandaBear.Testing.Assertions.UserMessageAssertions;
+using static SharedKernel.Testing.Assertions.UserMessageAssertions;
 
-namespace PandaBear.Testing.Assertions;
+namespace SharedKernel.Testing.Assertions;
 
 /// <summary>
 /// Provides assertion helpers for values used in tests.

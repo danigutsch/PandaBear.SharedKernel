@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>What <see cref="SecretsRepository.CreateIdentity"/> creates.</summary>
 public sealed record CreateIdentitySettings

@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Reads an application's document source data and its deterministic version.</summary>
 /// <typeparam name="TSource">The application-owned source model.</typeparam>

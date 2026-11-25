@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Finds the principal of a request's authentication cookie, which can differ from <see cref="HttpContext.User" /> when
@@ -15,7 +15,7 @@ namespace PandaBear.AspNetCore.Authentication.Bff;
 /// </remarks>
 internal static class CookiePrincipal
 {
-    private const string ItemKeyPrefix = "PandaBear.AspNetCore.Authentication.Bff.CookiePrincipal:";
+    private const string ItemKeyPrefix = "SharedKernel.AspNetCore.Authentication.Bff.CookiePrincipal:";
 
     /// <summary>Records the principal the cookie handler validates for this request.</summary>
     /// <param name="context">The request.</param>

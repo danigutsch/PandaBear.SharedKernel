@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 
-namespace PandaBear.OpenApi;
+namespace SharedKernel.OpenApi;
 
 /// <summary>
 /// Maps development-only OpenAPI endpoints.

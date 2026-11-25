@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PandaBear.Scheduling.Tests;
+namespace SharedKernel.Scheduling.Tests;
 
 /// <summary>Tests the observable batch duration throughout the lifetime of a polling service.</summary>
 public sealed class PollingLivenessTests

@@ -1,11 +1,11 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Brief;
+namespace SharedKernel.Vault.Tests.Brief;
 
 /// <summary>
 /// A brief with one group of two logins: their passwords need a decision, only the first has website addresses, and the

@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// Tests the verify-target-frameworks command against seeded Git repositories of project files.

@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Tests the generated-block documentation generator: atomic file writes, block replacement, check-only mode, target and marker validation, and diagram generation from repository sources.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]

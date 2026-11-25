@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// The copy of an <see cref="ImagePicker{TKey, TOption}"/>, in English by default. Replace any of it with <c>with</c> or an object

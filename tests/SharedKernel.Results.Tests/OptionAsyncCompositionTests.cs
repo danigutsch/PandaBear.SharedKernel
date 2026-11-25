@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Tests the asynchronous Map, Bind, and Match overloads for options and for tasks or value tasks that produce options, including null-argument checks.

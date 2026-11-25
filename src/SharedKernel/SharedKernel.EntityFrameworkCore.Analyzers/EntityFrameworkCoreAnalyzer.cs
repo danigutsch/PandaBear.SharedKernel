@@ -2,13 +2,13 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.EntityFrameworkCore.Analyzers;
+namespace SharedKernel.EntityFrameworkCore.Analyzers;
 
 /// <summary>
 /// Reports unique indexes in Entity Framework Core model configuration that are not tagged with an application rule through
 /// <c>HasUniqueRule</c>.
 /// </summary>
-/// <remarks>The analyzer is inert unless the compilation references <c>PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions</c>.</remarks>
+/// <remarks>The analyzer is inert unless the compilation references <c>SharedKernel.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions</c>.</remarks>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class EntityFrameworkCoreAnalyzer : DiagnosticAnalyzer
 {
@@ -37,7 +37,7 @@ public sealed class EntityFrameworkCoreAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(static compilationContext =>
         {
             var compilation = compilationContext.Compilation;
-            var ruleExtensions = compilation.GetTypeByMetadataName("PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions");
+            var ruleExtensions = compilation.GetTypeByMetadataName("SharedKernel.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions");
             if (ruleExtensions is null)
             {
                 return;

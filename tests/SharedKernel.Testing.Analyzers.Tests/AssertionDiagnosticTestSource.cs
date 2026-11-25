@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Builds the sample test class source used by the assertion diagnostic tests.</summary>
 internal static class AssertionDiagnosticTestSource
@@ -8,7 +8,7 @@ internal static class AssertionDiagnosticTestSource
     /// <param name="isTest">True to mark the method with [Fact], false to leave it a plain method.</param>
     public static string Create(string body, bool isTest = true) => $$"""
         using System.Linq;
-        using PandaBear.Testing.Assertions;
+        using SharedKernel.Testing.Assertions;
         public sealed class SampleTests
         {
             {{(isTest ? "[Fact]" : "")}}

@@ -10,9 +10,9 @@ the API base address, and the headers.
 
 ```csharp
 using System.Net.Http.Headers;
-using PandaBear.CI;
-using PandaBear.CI.Forgejo;
-using PandaBear.Forgejo;
+using SharedKernel.CI;
+using SharedKernel.CI.Forgejo;
+using SharedKernel.Forgejo;
 
 using var releases = new ForgejoReleaseStore(
     new SocketsHttpHandler { AllowAutoRedirect = false },
@@ -44,6 +44,6 @@ engine emits none either.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.CI.Forgejo`. C# namespace: `PandaBear.CI.Forgejo`. Assembly/project identity: `SharedKernel.CI.Forgejo`.
+Package ID: `PandaBear.SharedKernel.CI.Forgejo`. C# namespace: `SharedKernel.CI.Forgejo`. Assembly/project identity: `SharedKernel.CI.Forgejo`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -1,193 +1,193 @@
 #nullable enable
-PandaBear.Packages.Advisory
-PandaBear.Packages.Advisory.AffectedVersions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageVersion!>!
-PandaBear.Packages.Advisory.Affects(PandaBear.Packages.PackageVersion! version) -> bool
-PandaBear.Packages.Advisory.Id.get -> string!
-PandaBear.Packages.Advisory.Package.get -> PandaBear.Packages.PackageName!
-PandaBear.Packages.Advisory.Severity.get -> PandaBear.Packages.AdvisorySeverity
-PandaBear.Packages.AdvisorySeverity
-PandaBear.Packages.AdvisorySeverity.Critical = 3 -> PandaBear.Packages.AdvisorySeverity
-PandaBear.Packages.AdvisorySeverity.High = 2 -> PandaBear.Packages.AdvisorySeverity
-PandaBear.Packages.AdvisorySeverity.Low = 0 -> PandaBear.Packages.AdvisorySeverity
-PandaBear.Packages.AdvisorySeverity.Medium = 1 -> PandaBear.Packages.AdvisorySeverity
-PandaBear.Packages.AptPackageReader
-PandaBear.Packages.AptPackageReader.AptPackageReader(PandaBear.Processes.IProcessRunner! runner, string! dpkgQueryPath) -> void
-PandaBear.Packages.AptPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.BrewPackageReader
-PandaBear.Packages.BrewPackageReader.BrewPackageReader(PandaBear.Processes.IProcessRunner! runner, string! brewPath) -> void
-PandaBear.Packages.BrewPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.CargoPackageReader
-PandaBear.Packages.CargoPackageReader.CargoPackageReader(PandaBear.Processes.IProcessRunner! runner, string! cargoPath) -> void
-PandaBear.Packages.CargoPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.DeclaredPackages
-PandaBear.Packages.DeclaredPackages.For(PandaBear.Packages.PackageManagerKind manager) -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageRequirement!>!
-PandaBear.Packages.DeclaredPackages.Managers.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageManagerKind>!
-PandaBear.Packages.FlatpakPackageReader
-PandaBear.Packages.FlatpakPackageReader.FlatpakPackageReader(PandaBear.Processes.IProcessRunner! runner, string! flatpakPath) -> void
-PandaBear.Packages.FlatpakPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.IPackageReader
-PandaBear.Packages.IPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.InstalledPackage
-PandaBear.Packages.InstalledPackage.InstalledPackage(PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion! version) -> void
-PandaBear.Packages.InstalledPackage.Name.get -> PandaBear.Packages.PackageName!
-PandaBear.Packages.InstalledPackage.Version.get -> PandaBear.Packages.PackageVersion!
-PandaBear.Packages.MinimumReleaseAge
-PandaBear.Packages.MinimumReleaseAge.Value.get -> System.TimeSpan
-PandaBear.Packages.NpmPackageReader
-PandaBear.Packages.NpmPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.NpmPackageReader.NpmPackageReader(PandaBear.Processes.IProcessRunner! runner, string! npmPath) -> void
-PandaBear.Packages.PackageChange
-PandaBear.Packages.PackageChange.InstalledVersion.get -> PandaBear.Packages.PackageVersion?
-PandaBear.Packages.PackageChange.Kind.get -> PandaBear.Packages.PackageChangeKind
-PandaBear.Packages.PackageChange.PackageChange(PandaBear.Packages.PackageChangeKind kind, PandaBear.Packages.PackageRequirement! requirement, PandaBear.Packages.PackageVersion? installedVersion = null) -> void
-PandaBear.Packages.PackageChange.Requirement.get -> PandaBear.Packages.PackageRequirement!
-PandaBear.Packages.PackageChangeKind
-PandaBear.Packages.PackageChangeKind.ChangeVersion = 1 -> PandaBear.Packages.PackageChangeKind
-PandaBear.Packages.PackageChangeKind.Install = 0 -> PandaBear.Packages.PackageChangeKind
-PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.PackageManagerKind.Apt = 0 -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.PackageManagerKind.Brew = 5 -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.PackageManagerKind.Cargo = 1 -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.PackageManagerKind.Flatpak = 3 -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.PackageManagerKind.Npm = 2 -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.PackageManagerKind.Snap = 4 -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.PackageManagers
-PandaBear.Packages.PackageName
-PandaBear.Packages.PackageName.Value.get -> string!
-PandaBear.Packages.PackagePlanner
-PandaBear.Packages.PackageRequirement
-PandaBear.Packages.PackageRequirement.Name.get -> PandaBear.Packages.PackageName!
-PandaBear.Packages.PackageRequirement.PackageRequirement(PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion? version = null) -> void
-PandaBear.Packages.PackageRequirement.Version.get -> PandaBear.Packages.PackageVersion?
-PandaBear.Packages.PackageVersion
-PandaBear.Packages.PackageVersion.Value.get -> string!
-PandaBear.Packages.SnapPackageReader
-PandaBear.Packages.SnapPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.SnapPackageReader.SnapPackageReader(PandaBear.Processes.IProcessRunner! runner, string! snapPath) -> void
-PandaBear.Packages.UpdateCandidate
-PandaBear.Packages.UpdateCandidate.CandidateVersion.get -> PandaBear.Packages.PackageVersion!
-PandaBear.Packages.UpdateCandidate.InstalledVersion.get -> PandaBear.Packages.PackageVersion!
-PandaBear.Packages.UpdateCandidate.Package.get -> PandaBear.Packages.PackageName!
-PandaBear.Packages.UpdateCandidate.ReleasedAt.get -> System.DateTimeOffset
-PandaBear.Packages.UpdateCandidate.UpdateCandidate(PandaBear.Packages.PackageName! package, PandaBear.Packages.PackageVersion! installedVersion, PandaBear.Packages.PackageVersion! candidateVersion, System.DateTimeOffset releasedAt) -> void
-PandaBear.Packages.UpdateDecision
-PandaBear.Packages.UpdateDecision.Candidate.get -> PandaBear.Packages.UpdateCandidate!
-PandaBear.Packages.UpdateDecision.Kind.get -> PandaBear.Packages.UpdateDecisionKind
-PandaBear.Packages.UpdateDecision.Reason.get -> string!
-PandaBear.Packages.UpdateDecision.UpdateDecision(PandaBear.Packages.UpdateDecisionKind kind, PandaBear.Packages.UpdateCandidate! candidate, string! reason) -> void
-PandaBear.Packages.UpdateDecisionKind
-PandaBear.Packages.UpdateDecisionKind.Allow = 0 -> PandaBear.Packages.UpdateDecisionKind
-PandaBear.Packages.UpdateDecisionKind.Block = 3 -> PandaBear.Packages.UpdateDecisionKind
-PandaBear.Packages.UpdateDecisionKind.Hold = 1 -> PandaBear.Packages.UpdateDecisionKind
-PandaBear.Packages.UpdateDecisionKind.Urgent = 2 -> PandaBear.Packages.UpdateDecisionKind
-PandaBear.Packages.UpdatePolicy
-const PandaBear.Packages.Advisory.MaxIdLength = 128 -> int
-const PandaBear.Packages.MinimumReleaseAge.MaxDays = 3650 -> int
-const PandaBear.Packages.PackageName.MaxLength = 214 -> int
-const PandaBear.Packages.PackageVersion.MaxLength = 128 -> int
-override PandaBear.Packages.Advisory.ToString() -> string!
-override PandaBear.Packages.InstalledPackage.ToString() -> string!
-override PandaBear.Packages.MinimumReleaseAge.ToString() -> string!
-override PandaBear.Packages.PackageChange.ToString() -> string!
-override PandaBear.Packages.PackageName.ToString() -> string!
-override PandaBear.Packages.PackageRequirement.ToString() -> string!
-override PandaBear.Packages.PackageVersion.ToString() -> string!
-override PandaBear.Packages.UpdateCandidate.ToString() -> string!
-override PandaBear.Packages.UpdateDecision.ToString() -> string!
-static PandaBear.Packages.Advisory.Create(string? id, PandaBear.Packages.PackageName! package, PandaBear.Packages.AdvisorySeverity severity, System.Collections.Generic.IEnumerable<PandaBear.Packages.PackageVersion!>! affectedVersions, string! field = "advisory") -> PandaBear.Results.Result<PandaBear.Packages.Advisory!>
-static PandaBear.Packages.DeclaredPackages.Create(System.Collections.Generic.IReadOnlyDictionary<PandaBear.Packages.PackageManagerKind, System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageRequirement!>!>! declared, string! field = "packages") -> PandaBear.Results.Result<PandaBear.Packages.DeclaredPackages!>
-static PandaBear.Packages.MinimumReleaseAge.FromDays(int days, string! field = "minimumReleaseAge") -> PandaBear.Results.Result<PandaBear.Packages.MinimumReleaseAge!>
-static PandaBear.Packages.PackageManagers.Id(PandaBear.Packages.PackageManagerKind manager) -> string!
-static PandaBear.Packages.PackageManagers.Ids.get -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Packages.PackageManagers.TryParse(string? id, out PandaBear.Packages.PackageManagerKind? manager) -> bool
-static PandaBear.Packages.PackageName.Create(string? value, string! field = "name") -> PandaBear.Results.Result<PandaBear.Packages.PackageName!>
-static PandaBear.Packages.PackagePlanner.Plan(System.Collections.Generic.IEnumerable<PandaBear.Packages.PackageRequirement!>! requirements, System.Collections.Generic.IEnumerable<PandaBear.Packages.InstalledPackage!>! installed) -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageChange!>!
-static PandaBear.Packages.PackageVersion.Create(string? value, string! field = "version") -> PandaBear.Results.Result<PandaBear.Packages.PackageVersion!>
-static PandaBear.Packages.UpdatePolicy.Decide(PandaBear.Packages.UpdateCandidate! candidate, System.Collections.Generic.IEnumerable<PandaBear.Packages.Advisory!>! advisories, PandaBear.Packages.MinimumReleaseAge! minimumAge, System.DateTimeOffset now) -> PandaBear.Packages.UpdateDecision!
-PandaBear.Packages.IAdvisorySource
-PandaBear.Packages.IAdvisorySource.Query(PandaBear.Packages.PackageManagerKind manager, System.Collections.Generic.IReadOnlyCollection<PandaBear.Packages.InstalledPackage!>! packages, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.Advisory!>!>>!
-PandaBear.Packages.IReleaseDateSource
-PandaBear.Packages.IReleaseDateSource.GetReleaseDate(PandaBear.Packages.PackageManagerKind manager, PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion! version, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.DateTimeOffset>>!
-PandaBear.Packages.ILatestVersionSource
-PandaBear.Packages.ILatestVersionSource.GetLatest(PandaBear.Packages.PackageManagerKind manager, PandaBear.Packages.PackageName! name, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Packages.PackageVersion!>>!
-PandaBear.Packages.NetworkAccess
-PandaBear.Packages.NetworkAccess.Allowed = 1 -> PandaBear.Packages.NetworkAccess
-PandaBear.Packages.NetworkAccess.Denied = 0 -> PandaBear.Packages.NetworkAccess
-PandaBear.Packages.OsvAdvisorySource
-const PandaBear.Packages.OsvAdvisorySource.BatchSize = 100 -> int
-const PandaBear.Packages.OsvAdvisorySource.MaxListedVersions = 1000 -> int
-const PandaBear.Packages.OsvAdvisorySource.MaxPages = 20 -> int
-const PandaBear.Packages.OsvAdvisorySource.MaxResponseBytes = 8388608 -> int
-const PandaBear.Packages.OsvAdvisorySource.MaxVulnerabilities = 1000 -> int
-PandaBear.Packages.OsvAdvisorySource.OsvAdvisorySource(System.Net.Http.HttpClient! client, System.TimeProvider! timeProvider, string? aptEcosystem = null, System.TimeSpan? cacheLifetime = null, System.TimeSpan? requestTimeout = null) -> void
-PandaBear.Packages.OsvAdvisorySource.Query(PandaBear.Packages.PackageManagerKind manager, System.Collections.Generic.IReadOnlyCollection<PandaBear.Packages.InstalledPackage!>! packages, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.Advisory!>!>>!
-PandaBear.Packages.OsvEcosystems
-static PandaBear.Packages.OsvEcosystems.For(PandaBear.Packages.PackageManagerKind manager, string? aptEcosystem = null) -> PandaBear.Results.Result<string!>
-PandaBear.Packages.PackageHttp
-const PandaBear.Packages.PackageHttp.UserAgent = "sharedkernel-packages/1.0 (+https://github.com/danigutsch/PandaBear.SharedKernel)" -> string!
-static PandaBear.Packages.PackageHttp.CreateHandler() -> System.Net.Http.HttpMessageHandler!
-PandaBear.Packages.PackageUpdate
-PandaBear.Packages.PackageUpdate.CandidateVersion.get -> PandaBear.Packages.PackageVersion!
-PandaBear.Packages.PackageUpdate.InstalledVersion.get -> PandaBear.Packages.PackageVersion!
-PandaBear.Packages.PackageUpdate.Package.get -> PandaBear.Packages.PackageName!
-PandaBear.Packages.PackageUpdate.PackageUpdate(PandaBear.Packages.PackageName! package, PandaBear.Packages.PackageVersion! installedVersion, PandaBear.Packages.PackageVersion! candidateVersion) -> void
-PandaBear.Packages.RegistryReleaseSource
-const PandaBear.Packages.RegistryReleaseSource.MaxResponseBytes = 33554432 -> int
-PandaBear.Packages.RegistryReleaseSource.GetLatest(PandaBear.Packages.PackageManagerKind manager, PandaBear.Packages.PackageName! name, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Packages.PackageVersion!>>!
-PandaBear.Packages.RegistryReleaseSource.GetReleaseDate(PandaBear.Packages.PackageManagerKind manager, PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion! version, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.DateTimeOffset>>!
-PandaBear.Packages.RegistryReleaseSource.RegistryReleaseSource(System.Net.Http.HttpClient! client, System.TimeProvider! timeProvider, System.TimeSpan? cacheLifetime = null, System.TimeSpan? requestTimeout = null) -> void
-PandaBear.Packages.UpdatePlanner
-PandaBear.Packages.UpdatePlanner.Plan(PandaBear.Packages.PackageManagerKind manager, System.Collections.Generic.IEnumerable<PandaBear.Packages.PackageUpdate!>! updates, PandaBear.Packages.MinimumReleaseAge! minimumAge, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.UpdateDecision!>!>>!
-PandaBear.Packages.UpdatePlanner.UpdatePlanner(PandaBear.Packages.IAdvisorySource! advisories, PandaBear.Packages.IReleaseDateSource! releaseDates, PandaBear.Packages.ILatestVersionSource! latest, System.TimeProvider! timeProvider) -> void
-override PandaBear.Packages.PackageUpdate.ToString() -> string!
-PandaBear.Packages.UpdatePlanner.FindUpdates(PandaBear.Packages.PackageManagerKind manager, System.Collections.Generic.IEnumerable<PandaBear.Packages.InstalledPackage!>! installed, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Packages.UpdateSearch!>>!
-PandaBear.Packages.UpdateSearch
-PandaBear.Packages.UpdateSearch.NotOnRegistry.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageName!>!
-PandaBear.Packages.UpdateSearch.UpdateSearch(System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageUpdate!>! updates, System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageName!>! notOnRegistry) -> void
-PandaBear.Packages.UpdateSearch.Updates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageUpdate!>!
-PandaBear.Packages.ManagerPlan
-PandaBear.Packages.ManagerPlan.Changes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageChange!>!
-PandaBear.Packages.ManagerPlan.DeclaredCount.get -> int
-PandaBear.Packages.ManagerPlan.Error.get -> string?
-PandaBear.Packages.ManagerPlan.Manager.get -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.ManagerUpdates
-PandaBear.Packages.ManagerUpdates.CheckedCount.get -> int
-PandaBear.Packages.ManagerUpdates.Decisions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.UpdateDecision!>!
-PandaBear.Packages.ManagerUpdates.Error.get -> string?
-PandaBear.Packages.ManagerUpdates.Manager.get -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.ManagerUpdates.NotOnRegistry.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageName!>!
-PandaBear.Packages.ManagerUpdates.Pinned.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageRequirement!>!
-PandaBear.Packages.MissingTool
-PandaBear.Packages.MissingTool.Executable.get -> string!
-PandaBear.Packages.MissingTool.Manager.get -> PandaBear.Packages.PackageManagerKind
-PandaBear.Packages.PackageInventory
-PandaBear.Packages.PackageInventory.CheckUpdates(PandaBear.Packages.DeclaredPackages! declared, PandaBear.Packages.MinimumReleaseAge! minimumAge, PandaBear.Packages.NetworkAccess access, System.Func<PandaBear.Packages.UpdateSources!>! createSources, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.PackageUpdatesReport!>!
-PandaBear.Packages.PackageInventory.PackageInventory(PandaBear.Processes.IProcessRunner! runner, PandaBear.Processes.IExecutableResolver! executables) -> void
-PandaBear.Packages.PackageInventory.Plan(PandaBear.Packages.DeclaredPackages! declared, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.PackagePlanReport!>!
-PandaBear.Packages.PackagePlanReport
-PandaBear.Packages.PackagePlanReport.ChangeCount.get -> int
-PandaBear.Packages.PackagePlanReport.DeclaredCount.get -> int
-PandaBear.Packages.PackagePlanReport.IsComplete.get -> bool
-PandaBear.Packages.PackagePlanReport.Managers.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.ManagerPlan!>!
-PandaBear.Packages.PackagePlanReport.MissingTools.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.MissingTool!>!
-PandaBear.Packages.PackagesConfiguration
-PandaBear.Packages.PackagesConfiguration.MinimumReleaseAge.get -> PandaBear.Packages.MinimumReleaseAge?
-PandaBear.Packages.PackagesConfiguration.Packages.get -> PandaBear.Packages.DeclaredPackages!
-PandaBear.Packages.PackageUpdatesReport
-PandaBear.Packages.PackageUpdatesReport.CheckedCount.get -> int
-PandaBear.Packages.PackageUpdatesReport.HasFailure.get -> bool
-PandaBear.Packages.PackageUpdatesReport.HasSkipped.get -> bool
-PandaBear.Packages.PackageUpdatesReport.Managers.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.ManagerUpdates!>!
-PandaBear.Packages.PackageUpdatesReport.MissingTools.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.MissingTool!>!
-PandaBear.Packages.PackageUpdatesReport.Unsupported.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageManagerKind>!
-PandaBear.Packages.PackageUpdatesReport.UpdateCount.get -> int
-PandaBear.Packages.UpdateSources
-PandaBear.Packages.UpdateSources.Advisories.get -> PandaBear.Packages.IAdvisorySource!
-PandaBear.Packages.UpdateSources.Dispose() -> void
-PandaBear.Packages.UpdateSources.Latest.get -> PandaBear.Packages.ILatestVersionSource!
-PandaBear.Packages.UpdateSources.ReleaseDates.get -> PandaBear.Packages.IReleaseDateSource!
-PandaBear.Packages.UpdateSources.Time.get -> System.TimeProvider!
-PandaBear.Packages.UpdateSources.UpdateSources(PandaBear.Packages.IAdvisorySource! advisories, PandaBear.Packages.IReleaseDateSource! releaseDates, PandaBear.Packages.ILatestVersionSource! latest, System.TimeProvider! time, System.IDisposable? owned = null) -> void
-const PandaBear.Packages.PackagesConfiguration.RelativePath = ".config/sharedkernel-packages.json" -> string!
-static PandaBear.Packages.PackagesConfiguration.Read(string! root, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.PackagesConfiguration!>!
-static PandaBear.Packages.UpdateSources.CreateDefault() -> PandaBear.Packages.UpdateSources!
+SharedKernel.Packages.Advisory
+SharedKernel.Packages.Advisory.AffectedVersions.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageVersion!>!
+SharedKernel.Packages.Advisory.Affects(SharedKernel.Packages.PackageVersion! version) -> bool
+SharedKernel.Packages.Advisory.Id.get -> string!
+SharedKernel.Packages.Advisory.Package.get -> SharedKernel.Packages.PackageName!
+SharedKernel.Packages.Advisory.Severity.get -> SharedKernel.Packages.AdvisorySeverity
+SharedKernel.Packages.AdvisorySeverity
+SharedKernel.Packages.AdvisorySeverity.Critical = 3 -> SharedKernel.Packages.AdvisorySeverity
+SharedKernel.Packages.AdvisorySeverity.High = 2 -> SharedKernel.Packages.AdvisorySeverity
+SharedKernel.Packages.AdvisorySeverity.Low = 0 -> SharedKernel.Packages.AdvisorySeverity
+SharedKernel.Packages.AdvisorySeverity.Medium = 1 -> SharedKernel.Packages.AdvisorySeverity
+SharedKernel.Packages.AptPackageReader
+SharedKernel.Packages.AptPackageReader.AptPackageReader(SharedKernel.Processes.IProcessRunner! runner, string! dpkgQueryPath) -> void
+SharedKernel.Packages.AptPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.InstalledPackage!>!>>!
+SharedKernel.Packages.BrewPackageReader
+SharedKernel.Packages.BrewPackageReader.BrewPackageReader(SharedKernel.Processes.IProcessRunner! runner, string! brewPath) -> void
+SharedKernel.Packages.BrewPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.InstalledPackage!>!>>!
+SharedKernel.Packages.CargoPackageReader
+SharedKernel.Packages.CargoPackageReader.CargoPackageReader(SharedKernel.Processes.IProcessRunner! runner, string! cargoPath) -> void
+SharedKernel.Packages.CargoPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.InstalledPackage!>!>>!
+SharedKernel.Packages.DeclaredPackages
+SharedKernel.Packages.DeclaredPackages.For(SharedKernel.Packages.PackageManagerKind manager) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageRequirement!>!
+SharedKernel.Packages.DeclaredPackages.Managers.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageManagerKind>!
+SharedKernel.Packages.FlatpakPackageReader
+SharedKernel.Packages.FlatpakPackageReader.FlatpakPackageReader(SharedKernel.Processes.IProcessRunner! runner, string! flatpakPath) -> void
+SharedKernel.Packages.FlatpakPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.InstalledPackage!>!>>!
+SharedKernel.Packages.IPackageReader
+SharedKernel.Packages.IPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.InstalledPackage!>!>>!
+SharedKernel.Packages.InstalledPackage
+SharedKernel.Packages.InstalledPackage.InstalledPackage(SharedKernel.Packages.PackageName! name, SharedKernel.Packages.PackageVersion! version) -> void
+SharedKernel.Packages.InstalledPackage.Name.get -> SharedKernel.Packages.PackageName!
+SharedKernel.Packages.InstalledPackage.Version.get -> SharedKernel.Packages.PackageVersion!
+SharedKernel.Packages.MinimumReleaseAge
+SharedKernel.Packages.MinimumReleaseAge.Value.get -> System.TimeSpan
+SharedKernel.Packages.NpmPackageReader
+SharedKernel.Packages.NpmPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.InstalledPackage!>!>>!
+SharedKernel.Packages.NpmPackageReader.NpmPackageReader(SharedKernel.Processes.IProcessRunner! runner, string! npmPath) -> void
+SharedKernel.Packages.PackageChange
+SharedKernel.Packages.PackageChange.InstalledVersion.get -> SharedKernel.Packages.PackageVersion?
+SharedKernel.Packages.PackageChange.Kind.get -> SharedKernel.Packages.PackageChangeKind
+SharedKernel.Packages.PackageChange.PackageChange(SharedKernel.Packages.PackageChangeKind kind, SharedKernel.Packages.PackageRequirement! requirement, SharedKernel.Packages.PackageVersion? installedVersion = null) -> void
+SharedKernel.Packages.PackageChange.Requirement.get -> SharedKernel.Packages.PackageRequirement!
+SharedKernel.Packages.PackageChangeKind
+SharedKernel.Packages.PackageChangeKind.ChangeVersion = 1 -> SharedKernel.Packages.PackageChangeKind
+SharedKernel.Packages.PackageChangeKind.Install = 0 -> SharedKernel.Packages.PackageChangeKind
+SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageManagerKind.Apt = 0 -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageManagerKind.Brew = 5 -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageManagerKind.Cargo = 1 -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageManagerKind.Flatpak = 3 -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageManagerKind.Npm = 2 -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageManagerKind.Snap = 4 -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageManagers
+SharedKernel.Packages.PackageName
+SharedKernel.Packages.PackageName.Value.get -> string!
+SharedKernel.Packages.PackagePlanner
+SharedKernel.Packages.PackageRequirement
+SharedKernel.Packages.PackageRequirement.Name.get -> SharedKernel.Packages.PackageName!
+SharedKernel.Packages.PackageRequirement.PackageRequirement(SharedKernel.Packages.PackageName! name, SharedKernel.Packages.PackageVersion? version = null) -> void
+SharedKernel.Packages.PackageRequirement.Version.get -> SharedKernel.Packages.PackageVersion?
+SharedKernel.Packages.PackageVersion
+SharedKernel.Packages.PackageVersion.Value.get -> string!
+SharedKernel.Packages.SnapPackageReader
+SharedKernel.Packages.SnapPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.InstalledPackage!>!>>!
+SharedKernel.Packages.SnapPackageReader.SnapPackageReader(SharedKernel.Processes.IProcessRunner! runner, string! snapPath) -> void
+SharedKernel.Packages.UpdateCandidate
+SharedKernel.Packages.UpdateCandidate.CandidateVersion.get -> SharedKernel.Packages.PackageVersion!
+SharedKernel.Packages.UpdateCandidate.InstalledVersion.get -> SharedKernel.Packages.PackageVersion!
+SharedKernel.Packages.UpdateCandidate.Package.get -> SharedKernel.Packages.PackageName!
+SharedKernel.Packages.UpdateCandidate.ReleasedAt.get -> System.DateTimeOffset
+SharedKernel.Packages.UpdateCandidate.UpdateCandidate(SharedKernel.Packages.PackageName! package, SharedKernel.Packages.PackageVersion! installedVersion, SharedKernel.Packages.PackageVersion! candidateVersion, System.DateTimeOffset releasedAt) -> void
+SharedKernel.Packages.UpdateDecision
+SharedKernel.Packages.UpdateDecision.Candidate.get -> SharedKernel.Packages.UpdateCandidate!
+SharedKernel.Packages.UpdateDecision.Kind.get -> SharedKernel.Packages.UpdateDecisionKind
+SharedKernel.Packages.UpdateDecision.Reason.get -> string!
+SharedKernel.Packages.UpdateDecision.UpdateDecision(SharedKernel.Packages.UpdateDecisionKind kind, SharedKernel.Packages.UpdateCandidate! candidate, string! reason) -> void
+SharedKernel.Packages.UpdateDecisionKind
+SharedKernel.Packages.UpdateDecisionKind.Allow = 0 -> SharedKernel.Packages.UpdateDecisionKind
+SharedKernel.Packages.UpdateDecisionKind.Block = 3 -> SharedKernel.Packages.UpdateDecisionKind
+SharedKernel.Packages.UpdateDecisionKind.Hold = 1 -> SharedKernel.Packages.UpdateDecisionKind
+SharedKernel.Packages.UpdateDecisionKind.Urgent = 2 -> SharedKernel.Packages.UpdateDecisionKind
+SharedKernel.Packages.UpdatePolicy
+const SharedKernel.Packages.Advisory.MaxIdLength = 128 -> int
+const SharedKernel.Packages.MinimumReleaseAge.MaxDays = 3650 -> int
+const SharedKernel.Packages.PackageName.MaxLength = 214 -> int
+const SharedKernel.Packages.PackageVersion.MaxLength = 128 -> int
+override SharedKernel.Packages.Advisory.ToString() -> string!
+override SharedKernel.Packages.InstalledPackage.ToString() -> string!
+override SharedKernel.Packages.MinimumReleaseAge.ToString() -> string!
+override SharedKernel.Packages.PackageChange.ToString() -> string!
+override SharedKernel.Packages.PackageName.ToString() -> string!
+override SharedKernel.Packages.PackageRequirement.ToString() -> string!
+override SharedKernel.Packages.PackageVersion.ToString() -> string!
+override SharedKernel.Packages.UpdateCandidate.ToString() -> string!
+override SharedKernel.Packages.UpdateDecision.ToString() -> string!
+static SharedKernel.Packages.Advisory.Create(string? id, SharedKernel.Packages.PackageName! package, SharedKernel.Packages.AdvisorySeverity severity, System.Collections.Generic.IEnumerable<SharedKernel.Packages.PackageVersion!>! affectedVersions, string! field = "advisory") -> SharedKernel.Results.Result<SharedKernel.Packages.Advisory!>
+static SharedKernel.Packages.DeclaredPackages.Create(System.Collections.Generic.IReadOnlyDictionary<SharedKernel.Packages.PackageManagerKind, System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageRequirement!>!>! declared, string! field = "packages") -> SharedKernel.Results.Result<SharedKernel.Packages.DeclaredPackages!>
+static SharedKernel.Packages.MinimumReleaseAge.FromDays(int days, string! field = "minimumReleaseAge") -> SharedKernel.Results.Result<SharedKernel.Packages.MinimumReleaseAge!>
+static SharedKernel.Packages.PackageManagers.Id(SharedKernel.Packages.PackageManagerKind manager) -> string!
+static SharedKernel.Packages.PackageManagers.Ids.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Packages.PackageManagers.TryParse(string? id, out SharedKernel.Packages.PackageManagerKind? manager) -> bool
+static SharedKernel.Packages.PackageName.Create(string? value, string! field = "name") -> SharedKernel.Results.Result<SharedKernel.Packages.PackageName!>
+static SharedKernel.Packages.PackagePlanner.Plan(System.Collections.Generic.IEnumerable<SharedKernel.Packages.PackageRequirement!>! requirements, System.Collections.Generic.IEnumerable<SharedKernel.Packages.InstalledPackage!>! installed) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageChange!>!
+static SharedKernel.Packages.PackageVersion.Create(string? value, string! field = "version") -> SharedKernel.Results.Result<SharedKernel.Packages.PackageVersion!>
+static SharedKernel.Packages.UpdatePolicy.Decide(SharedKernel.Packages.UpdateCandidate! candidate, System.Collections.Generic.IEnumerable<SharedKernel.Packages.Advisory!>! advisories, SharedKernel.Packages.MinimumReleaseAge! minimumAge, System.DateTimeOffset now) -> SharedKernel.Packages.UpdateDecision!
+SharedKernel.Packages.IAdvisorySource
+SharedKernel.Packages.IAdvisorySource.Query(SharedKernel.Packages.PackageManagerKind manager, System.Collections.Generic.IReadOnlyCollection<SharedKernel.Packages.InstalledPackage!>! packages, SharedKernel.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.Advisory!>!>>!
+SharedKernel.Packages.IReleaseDateSource
+SharedKernel.Packages.IReleaseDateSource.GetReleaseDate(SharedKernel.Packages.PackageManagerKind manager, SharedKernel.Packages.PackageName! name, SharedKernel.Packages.PackageVersion! version, SharedKernel.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.DateTimeOffset>>!
+SharedKernel.Packages.ILatestVersionSource
+SharedKernel.Packages.ILatestVersionSource.GetLatest(SharedKernel.Packages.PackageManagerKind manager, SharedKernel.Packages.PackageName! name, SharedKernel.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<SharedKernel.Packages.PackageVersion!>>!
+SharedKernel.Packages.NetworkAccess
+SharedKernel.Packages.NetworkAccess.Allowed = 1 -> SharedKernel.Packages.NetworkAccess
+SharedKernel.Packages.NetworkAccess.Denied = 0 -> SharedKernel.Packages.NetworkAccess
+SharedKernel.Packages.OsvAdvisorySource
+const SharedKernel.Packages.OsvAdvisorySource.BatchSize = 100 -> int
+const SharedKernel.Packages.OsvAdvisorySource.MaxListedVersions = 1000 -> int
+const SharedKernel.Packages.OsvAdvisorySource.MaxPages = 20 -> int
+const SharedKernel.Packages.OsvAdvisorySource.MaxResponseBytes = 8388608 -> int
+const SharedKernel.Packages.OsvAdvisorySource.MaxVulnerabilities = 1000 -> int
+SharedKernel.Packages.OsvAdvisorySource.OsvAdvisorySource(System.Net.Http.HttpClient! client, System.TimeProvider! timeProvider, string? aptEcosystem = null, System.TimeSpan? cacheLifetime = null, System.TimeSpan? requestTimeout = null) -> void
+SharedKernel.Packages.OsvAdvisorySource.Query(SharedKernel.Packages.PackageManagerKind manager, System.Collections.Generic.IReadOnlyCollection<SharedKernel.Packages.InstalledPackage!>! packages, SharedKernel.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.Advisory!>!>>!
+SharedKernel.Packages.OsvEcosystems
+static SharedKernel.Packages.OsvEcosystems.For(SharedKernel.Packages.PackageManagerKind manager, string? aptEcosystem = null) -> SharedKernel.Results.Result<string!>
+SharedKernel.Packages.PackageHttp
+const SharedKernel.Packages.PackageHttp.UserAgent = "sharedkernel-packages/1.0 (+https://github.com/danigutsch/PandaBear.SharedKernel)" -> string!
+static SharedKernel.Packages.PackageHttp.CreateHandler() -> System.Net.Http.HttpMessageHandler!
+SharedKernel.Packages.PackageUpdate
+SharedKernel.Packages.PackageUpdate.CandidateVersion.get -> SharedKernel.Packages.PackageVersion!
+SharedKernel.Packages.PackageUpdate.InstalledVersion.get -> SharedKernel.Packages.PackageVersion!
+SharedKernel.Packages.PackageUpdate.Package.get -> SharedKernel.Packages.PackageName!
+SharedKernel.Packages.PackageUpdate.PackageUpdate(SharedKernel.Packages.PackageName! package, SharedKernel.Packages.PackageVersion! installedVersion, SharedKernel.Packages.PackageVersion! candidateVersion) -> void
+SharedKernel.Packages.RegistryReleaseSource
+const SharedKernel.Packages.RegistryReleaseSource.MaxResponseBytes = 33554432 -> int
+SharedKernel.Packages.RegistryReleaseSource.GetLatest(SharedKernel.Packages.PackageManagerKind manager, SharedKernel.Packages.PackageName! name, SharedKernel.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<SharedKernel.Packages.PackageVersion!>>!
+SharedKernel.Packages.RegistryReleaseSource.GetReleaseDate(SharedKernel.Packages.PackageManagerKind manager, SharedKernel.Packages.PackageName! name, SharedKernel.Packages.PackageVersion! version, SharedKernel.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.DateTimeOffset>>!
+SharedKernel.Packages.RegistryReleaseSource.RegistryReleaseSource(System.Net.Http.HttpClient! client, System.TimeProvider! timeProvider, System.TimeSpan? cacheLifetime = null, System.TimeSpan? requestTimeout = null) -> void
+SharedKernel.Packages.UpdatePlanner
+SharedKernel.Packages.UpdatePlanner.Plan(SharedKernel.Packages.PackageManagerKind manager, System.Collections.Generic.IEnumerable<SharedKernel.Packages.PackageUpdate!>! updates, SharedKernel.Packages.MinimumReleaseAge! minimumAge, SharedKernel.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.UpdateDecision!>!>>!
+SharedKernel.Packages.UpdatePlanner.UpdatePlanner(SharedKernel.Packages.IAdvisorySource! advisories, SharedKernel.Packages.IReleaseDateSource! releaseDates, SharedKernel.Packages.ILatestVersionSource! latest, System.TimeProvider! timeProvider) -> void
+override SharedKernel.Packages.PackageUpdate.ToString() -> string!
+SharedKernel.Packages.UpdatePlanner.FindUpdates(SharedKernel.Packages.PackageManagerKind manager, System.Collections.Generic.IEnumerable<SharedKernel.Packages.InstalledPackage!>! installed, SharedKernel.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<SharedKernel.Packages.UpdateSearch!>>!
+SharedKernel.Packages.UpdateSearch
+SharedKernel.Packages.UpdateSearch.NotOnRegistry.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageName!>!
+SharedKernel.Packages.UpdateSearch.UpdateSearch(System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageUpdate!>! updates, System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageName!>! notOnRegistry) -> void
+SharedKernel.Packages.UpdateSearch.Updates.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageUpdate!>!
+SharedKernel.Packages.ManagerPlan
+SharedKernel.Packages.ManagerPlan.Changes.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageChange!>!
+SharedKernel.Packages.ManagerPlan.DeclaredCount.get -> int
+SharedKernel.Packages.ManagerPlan.Error.get -> string?
+SharedKernel.Packages.ManagerPlan.Manager.get -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.ManagerUpdates
+SharedKernel.Packages.ManagerUpdates.CheckedCount.get -> int
+SharedKernel.Packages.ManagerUpdates.Decisions.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.UpdateDecision!>!
+SharedKernel.Packages.ManagerUpdates.Error.get -> string?
+SharedKernel.Packages.ManagerUpdates.Manager.get -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.ManagerUpdates.NotOnRegistry.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageName!>!
+SharedKernel.Packages.ManagerUpdates.Pinned.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageRequirement!>!
+SharedKernel.Packages.MissingTool
+SharedKernel.Packages.MissingTool.Executable.get -> string!
+SharedKernel.Packages.MissingTool.Manager.get -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageInventory
+SharedKernel.Packages.PackageInventory.CheckUpdates(SharedKernel.Packages.DeclaredPackages! declared, SharedKernel.Packages.MinimumReleaseAge! minimumAge, SharedKernel.Packages.NetworkAccess access, System.Func<SharedKernel.Packages.UpdateSources!>! createSources, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Packages.PackageUpdatesReport!>!
+SharedKernel.Packages.PackageInventory.PackageInventory(SharedKernel.Processes.IProcessRunner! runner, SharedKernel.Processes.IExecutableResolver! executables) -> void
+SharedKernel.Packages.PackageInventory.Plan(SharedKernel.Packages.DeclaredPackages! declared, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Packages.PackagePlanReport!>!
+SharedKernel.Packages.PackagePlanReport
+SharedKernel.Packages.PackagePlanReport.ChangeCount.get -> int
+SharedKernel.Packages.PackagePlanReport.DeclaredCount.get -> int
+SharedKernel.Packages.PackagePlanReport.IsComplete.get -> bool
+SharedKernel.Packages.PackagePlanReport.Managers.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.ManagerPlan!>!
+SharedKernel.Packages.PackagePlanReport.MissingTools.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.MissingTool!>!
+SharedKernel.Packages.PackagesConfiguration
+SharedKernel.Packages.PackagesConfiguration.MinimumReleaseAge.get -> SharedKernel.Packages.MinimumReleaseAge?
+SharedKernel.Packages.PackagesConfiguration.Packages.get -> SharedKernel.Packages.DeclaredPackages!
+SharedKernel.Packages.PackageUpdatesReport
+SharedKernel.Packages.PackageUpdatesReport.CheckedCount.get -> int
+SharedKernel.Packages.PackageUpdatesReport.HasFailure.get -> bool
+SharedKernel.Packages.PackageUpdatesReport.HasSkipped.get -> bool
+SharedKernel.Packages.PackageUpdatesReport.Managers.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.ManagerUpdates!>!
+SharedKernel.Packages.PackageUpdatesReport.MissingTools.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.MissingTool!>!
+SharedKernel.Packages.PackageUpdatesReport.Unsupported.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageManagerKind>!
+SharedKernel.Packages.PackageUpdatesReport.UpdateCount.get -> int
+SharedKernel.Packages.UpdateSources
+SharedKernel.Packages.UpdateSources.Advisories.get -> SharedKernel.Packages.IAdvisorySource!
+SharedKernel.Packages.UpdateSources.Dispose() -> void
+SharedKernel.Packages.UpdateSources.Latest.get -> SharedKernel.Packages.ILatestVersionSource!
+SharedKernel.Packages.UpdateSources.ReleaseDates.get -> SharedKernel.Packages.IReleaseDateSource!
+SharedKernel.Packages.UpdateSources.Time.get -> System.TimeProvider!
+SharedKernel.Packages.UpdateSources.UpdateSources(SharedKernel.Packages.IAdvisorySource! advisories, SharedKernel.Packages.IReleaseDateSource! releaseDates, SharedKernel.Packages.ILatestVersionSource! latest, System.TimeProvider! time, System.IDisposable? owned = null) -> void
+const SharedKernel.Packages.PackagesConfiguration.RelativePath = ".config/sharedkernel-packages.json" -> string!
+static SharedKernel.Packages.PackagesConfiguration.Read(string! root, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Packages.PackagesConfiguration!>!
+static SharedKernel.Packages.UpdateSources.CreateDefault() -> SharedKernel.Packages.UpdateSources!

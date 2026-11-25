@@ -1,6 +1,6 @@
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// Password prompts of one command run. Each prompt observes cancellation and shows its text on one line, a prompt

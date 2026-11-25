@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>
 /// String content that records when it is disposed.

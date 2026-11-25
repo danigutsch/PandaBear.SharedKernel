@@ -1,9 +1,9 @@
-using PandaBear.DocumentWorkflow;
-using PandaBear.DocumentWorkflow.EntityFrameworkCore;
-using PandaBear.Idempotency;
-using PandaBear.Review;
+using SharedKernel.DocumentWorkflow;
+using SharedKernel.DocumentWorkflow.EntityFrameworkCore;
+using SharedKernel.Idempotency;
+using SharedKernel.Review;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Creates the authorized finalization request for an approved neutral release document.</summary>
 internal static class ReleaseDocumentFinalizationSetup

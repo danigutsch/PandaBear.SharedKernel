@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using PandaBear.Domain.Analyzers;
+using SharedKernel.Domain.Analyzers;
 
-namespace PandaBear.Domain.CodeFixes;
+namespace SharedKernel.Domain.CodeFixes;
 
 /// <summary>
 /// Provides safe SharedKernel domain-model encapsulation code fixes.

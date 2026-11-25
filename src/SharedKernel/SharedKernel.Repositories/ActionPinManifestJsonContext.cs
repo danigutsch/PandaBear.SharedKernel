@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Source-generated metadata for the action pin manifest. Property names are camelCase; an unknown or repeated

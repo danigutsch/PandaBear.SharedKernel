@@ -8,7 +8,7 @@ Cross-process events need stable identity, source, type, subject, timestamp, con
 
 ## Decision
 
-Keep typed contracts and dispatch boundaries in `PandaBear.Messaging.IntegrationEvents`. Keep the CloudEvents SDK and explicit transport mapping in `PandaBear.Messaging.IntegrationEvents.CloudEvents`. Consumers own concrete payload contracts. Domain events never become CloudEvents implicitly.
+Keep typed contracts and dispatch boundaries in `SharedKernel.Messaging.IntegrationEvents`. Keep the CloudEvents SDK and explicit transport mapping in `SharedKernel.Messaging.IntegrationEvents.CloudEvents`. Consumers own concrete payload contracts. Domain events never become CloudEvents implicitly.
 
 A neutral envelope adapter, if required by a concrete use case, belongs behind its own capability boundary rather than changing the typed integration-event contract. The current typed adapter does not establish a requirement to add such a package.
 

@@ -2,7 +2,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the SeaweedFS S3 container resource builder: image, endpoints, credentials, data storage, host port, filer UI and argument validation.</summary>
 public sealed class SeaweedFsResourceTests

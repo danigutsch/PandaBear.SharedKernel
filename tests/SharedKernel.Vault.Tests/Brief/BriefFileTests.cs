@@ -1,10 +1,10 @@
-using PandaBear.SecretScanning;
-using PandaBear.Testing;
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Model;
+using SharedKernel.SecretScanning;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Brief;
+namespace SharedKernel.Vault.Tests.Brief;
 
 /// <summary>Tests reading and writing the brief file.</summary>
 public sealed class BriefFileTests : IDisposable

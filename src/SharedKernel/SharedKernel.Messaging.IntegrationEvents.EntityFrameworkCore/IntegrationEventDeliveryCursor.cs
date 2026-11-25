@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>The last position returned by a delivery inspection page. Keep the same filters for the next request.</summary>
 /// <param name="RecordedAt">When the storage row was created.</param>

@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Packs all SharedKernel projects into a local package directory.</summary>
 internal static class ReleasePack

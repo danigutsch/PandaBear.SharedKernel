@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Names used by the user token management services.

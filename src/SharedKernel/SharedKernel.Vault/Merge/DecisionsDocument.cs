@@ -1,6 +1,6 @@
-using PandaBear.Vault.Matching;
+using SharedKernel.Vault.Matching;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// On-disk shape of the decisions file. Holds group keys, field paths, origin keys, item names, finding identifiers, and

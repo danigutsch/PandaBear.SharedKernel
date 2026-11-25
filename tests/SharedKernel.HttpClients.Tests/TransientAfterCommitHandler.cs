@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>
 /// Test handler that reads the full request body and then fails with a retryable status for the first attempts before returning 200.

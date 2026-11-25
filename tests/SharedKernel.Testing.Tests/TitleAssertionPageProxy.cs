@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 // DispatchProxy derives a page type from this class at run time, so the class can be neither sealed nor abstract. The
 // page holds no resources and fails on every member, so one shared instance serves every test.

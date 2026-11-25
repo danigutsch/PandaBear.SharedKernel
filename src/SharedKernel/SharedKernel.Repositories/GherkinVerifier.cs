@@ -3,9 +3,9 @@ using System.IO.Enumeration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Unicode;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Checks the working-tree content of the tracked Gherkin feature files against the configured rules.

@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Verifies the UTF-8 output budget and cancellation of bounded HTML.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]

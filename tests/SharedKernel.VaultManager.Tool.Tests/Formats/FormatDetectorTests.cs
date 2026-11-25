@@ -1,7 +1,7 @@
-using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats;
+using SharedKernel.Testing;
+using SharedKernel.VaultManager.Tool.Formats;
 
-namespace PandaBear.VaultManager.Tool.Tests.Formats;
+namespace SharedKernel.VaultManager.Tool.Tests.Formats;
 
 /// <summary>Tests that the format detector classifies vault files by content.</summary>
 public sealed class FormatDetectorTests : IDisposable

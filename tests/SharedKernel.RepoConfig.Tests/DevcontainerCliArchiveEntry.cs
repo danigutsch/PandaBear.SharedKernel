@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>An archive entry: a regular file with <paramref name="Content"/>, or a symbolic link to <paramref name="LinkTarget"/>.</summary>
 /// <param name="Name">The path of the entry inside the archive.</param>

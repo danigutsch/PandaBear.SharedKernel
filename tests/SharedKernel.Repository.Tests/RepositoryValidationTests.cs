@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>run</c> command, which restores, builds, and tests the test projects that a selection plan chose for a slice.</summary>
 public sealed class RepositoryValidationTests

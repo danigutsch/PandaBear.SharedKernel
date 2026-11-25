@@ -1,6 +1,6 @@
-using PandaBear.ContentRights;
+using SharedKernel.ContentRights;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One approved credit and its presentation in a photo gallery or credits page.</summary>
 /// <param name="Id">The unique fragment identifier for the photo on its credits page.</param>

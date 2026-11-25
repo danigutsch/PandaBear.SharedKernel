@@ -1,6 +1,6 @@
 using System.CommandLine.Parsing;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Reads the command lines that the tool README documents.</summary>
 internal static class DocumentedCommandLines

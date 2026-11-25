@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting.K6.Tests;
+namespace SharedKernel.LoadTesting.K6.Tests;
 
 /// <summary>Tests the rules that block k6 arguments the tool controls or considers unsafe.</summary>
 public sealed class K6ArgumentPolicyTests

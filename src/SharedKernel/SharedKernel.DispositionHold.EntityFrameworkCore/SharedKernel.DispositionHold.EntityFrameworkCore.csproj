@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.DispositionHold.EntityFrameworkCore</PackageId>
         <Description>Entity Framework Core store and fail-closed guard for disposition holds on PostgreSQL.</Description>
-        <RootNamespace>PandaBear.DispositionHold.EntityFrameworkCore</RootNamespace>
+        <RootNamespace>SharedKernel.DispositionHold.EntityFrameworkCore</RootNamespace>
         <PackageTags>disposition-hold;retention;entity-framework-core;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

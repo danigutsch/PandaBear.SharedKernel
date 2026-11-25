@@ -10,9 +10,9 @@ The Forgejo provider of `PandaBear.SharedKernel.Repositories`: it implements the
 
 ```csharp
 using System.Net.Http.Headers;
-using PandaBear.Forgejo;
-using PandaBear.Repositories;
-using PandaBear.Repositories.Forgejo;
+using SharedKernel.Forgejo;
+using SharedKernel.Repositories;
+using SharedKernel.Repositories.Forgejo;
 
 using var labels = new ForgejoLabelStore(
     new SocketsHttpHandler { AllowAutoRedirect = false },
@@ -45,6 +45,6 @@ category.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Repositories.Forgejo`. C# namespace: `PandaBear.Repositories.Forgejo`. Assembly/project identity: `SharedKernel.Repositories.Forgejo`.
+Package ID: `PandaBear.SharedKernel.Repositories.Forgejo`. C# namespace: `SharedKernel.Repositories.Forgejo`. Assembly/project identity: `SharedKernel.Repositories.Forgejo`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

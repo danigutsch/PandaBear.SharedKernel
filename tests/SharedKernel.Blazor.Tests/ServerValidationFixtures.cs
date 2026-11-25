@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Builds options and error dictionaries for server validation tests.</summary>
 internal static class ServerValidationFixtures

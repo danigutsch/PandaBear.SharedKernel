@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A canonical Brazilian CPF with validated check digits; not proof of registration or identity.</summary>
 public sealed class Cpf : ValueObject

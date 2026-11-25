@@ -1,6 +1,6 @@
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>recipients list</c> and <c>recipients check</c>, which start no process.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

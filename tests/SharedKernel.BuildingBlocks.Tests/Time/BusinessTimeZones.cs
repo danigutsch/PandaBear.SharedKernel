@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Business time zones used by the time provider tests.</summary>
 internal static class BusinessTimeZones

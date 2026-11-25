@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the time provider that counts how often the current time is read.</summary>
 public sealed class CountingTimeProviderTests

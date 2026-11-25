@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
-namespace PandaBear.AspNetCore.Authentication.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Tests;
 
 /// <summary>
 /// Verifies the shared bearer-authentication boundary configuration.

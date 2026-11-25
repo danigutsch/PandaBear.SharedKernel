@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Creates <see cref="UpdateSources"/> over fakes and records whether they were created and disposed.</summary>
 internal sealed class CountingSources(IAdvisorySource advisories, FakeRegistrySource registry) : IDisposable

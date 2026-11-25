@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.SourceGenerator;
+namespace SharedKernel.Mediator.SourceGenerator;
 
 /// <summary>
 /// Identifies the semantic role of a discovered request.

@@ -1,7 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>Tests accent- and case-insensitive contains search against a real SQLite database.</summary>
 [Trait("Scope", "Integration")]

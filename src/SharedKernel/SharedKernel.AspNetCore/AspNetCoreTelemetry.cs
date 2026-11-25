@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>
 /// Names the meter, instruments, tags and log event identifiers that the opt-in ASP.NET Core error and security

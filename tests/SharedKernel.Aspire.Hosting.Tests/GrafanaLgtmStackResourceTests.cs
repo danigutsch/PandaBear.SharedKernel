@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the individual Grafana, Loki, Prometheus and Tempo container resource builders.</summary>
 public sealed class GrafanaLgtmStackResourceTests

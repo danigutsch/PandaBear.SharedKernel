@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>How a managed file compares with the content that the baseline configuration produces.</summary>
 internal enum BaselineStatus

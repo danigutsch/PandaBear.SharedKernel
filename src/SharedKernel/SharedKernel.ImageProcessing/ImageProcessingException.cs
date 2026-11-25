@@ -1,4 +1,4 @@
-namespace PandaBear.ImageProcessing;
+namespace SharedKernel.ImageProcessing;
 
 /// <summary>
 /// Represents an image processing failure caused by invalid input or unsupported image data.

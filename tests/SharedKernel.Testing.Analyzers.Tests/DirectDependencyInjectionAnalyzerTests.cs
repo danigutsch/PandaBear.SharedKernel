@@ -1,9 +1,9 @@
 using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using static PandaBear.Testing.Analyzers.Tests.DirectDependencyInjectionTestSource;
+using static SharedKernel.Testing.Analyzers.Tests.DirectDependencyInjectionTestSource;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests direct dependency injection diagnostics and the opt-in test boundary.</summary>
 public sealed class DirectDependencyInjectionAnalyzerTests

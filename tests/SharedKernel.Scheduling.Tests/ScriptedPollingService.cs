@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Scheduling.Tests;
+namespace SharedKernel.Scheduling.Tests;
 
 /// <summary>
 /// A polling service whose batches follow a script of processed counts, exceptions, delays, and controlled operations.

@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>
 /// Reads the telemetry names that libraries declare: <c>MeterName</c> and <c>ActivitySourceName</c> constants anywhere, and the

@@ -2,10 +2,10 @@ using System.Buffers;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Writes unencrypted Bitwarden JSON exports that Bitwarden and Vaultwarden can import.</summary>
 internal static class BitwardenJsonWriter

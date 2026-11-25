@@ -14,7 +14,7 @@ Define typed `IIntegrationEvent` contracts and `IIntegrationEventHandler<TIntegr
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Messaging.IntegrationEvents`. C# namespace: `PandaBear.Messaging.IntegrationEvents`. Assembly/project identity: `SharedKernel.Messaging.IntegrationEvents`.
+Package ID: `PandaBear.SharedKernel.Messaging.IntegrationEvents`. C# namespace: `SharedKernel.Messaging.IntegrationEvents`. Assembly/project identity: `SharedKernel.Messaging.IntegrationEvents`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 
@@ -28,7 +28,7 @@ extensions. No additional package or transport dependency is needed.
 A producer host can own an outbox and relay messages to a durable PostgreSQL destination:
 
 ```csharp
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 services.AddIntegrationEvents<ProducerDbContext>()
     .WithOutbox(storage =>

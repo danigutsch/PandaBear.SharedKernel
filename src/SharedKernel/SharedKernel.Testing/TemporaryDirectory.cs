@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Owns a uniquely created temporary directory and deletes it on disposal.</summary>
 public sealed class TemporaryDirectory : IDisposable

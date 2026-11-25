@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>The size of a <see cref="ButtonLink" /> and of the more look of a <see cref="Card" />, relative to the button's own font size.</summary>
 public enum ButtonSize

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// A small live preview of a theme draft: headings, text with a link, small print, a primary and a secondary button, a card and a

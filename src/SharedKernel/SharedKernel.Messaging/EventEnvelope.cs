@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging;
+namespace SharedKernel.Messaging;
 
 /// <summary>
 /// Carries event envelope metadata, payload content, and extension attributes across messaging boundaries.

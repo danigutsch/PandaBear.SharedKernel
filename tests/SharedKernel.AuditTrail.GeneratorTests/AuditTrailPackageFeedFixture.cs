@@ -1,7 +1,7 @@
-using PandaBear.Testing;
-using PandaBear.Testing.Packaging;
+using SharedKernel.Testing;
+using SharedKernel.Testing.Packaging;
 
-namespace PandaBear.AuditTrail.GeneratorTests;
+namespace SharedKernel.AuditTrail.GeneratorTests;
 
 /// <summary>
 /// Packs the audit trail packages and their dependencies into a temporary local NuGet feed for package consumption tests.

@@ -5,7 +5,7 @@
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
 Roslyn analyzers for upload and import stream handling. They steer unbounded buffering to
-`PandaBear.IO.SeekableContent.Create` from `PandaBear.SharedKernel.IO`. The package has no runtime
+`SharedKernel.IO.SeekableContent.Create` from `PandaBear.SharedKernel.IO`. The package has no runtime
 dependency and does not require `PandaBear.SharedKernel.IO`.
 
 ## Diagnostics
@@ -84,6 +84,6 @@ dotnet_diagnostic.SKIO003.severity = warning
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.IO.Analyzers`. C# namespace: `PandaBear.IO.Analyzers`. Assembly/project identity: `SharedKernel.IO.Analyzers`.
+Package ID: `PandaBear.SharedKernel.IO.Analyzers`. C# namespace: `SharedKernel.IO.Analyzers`. Assembly/project identity: `SharedKernel.IO.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

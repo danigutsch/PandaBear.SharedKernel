@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.CloudEvents;
+namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents;
 
 /// <summary>
 /// Provides transport metadata used when adapting typed integration events to CloudEvents.

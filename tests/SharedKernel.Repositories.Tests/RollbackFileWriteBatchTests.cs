@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Tests that a rollback file write batch applies all planned writes or none, and refuses writes outside or through symbolic links in its scope.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

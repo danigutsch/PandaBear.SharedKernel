@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.K6.Tool.Tests;
+namespace SharedKernel.K6.Tool.Tests;
 
 /// <summary>The configuration and fake host script of a scenario with a managed host.</summary>
 internal static class K6HostScenario

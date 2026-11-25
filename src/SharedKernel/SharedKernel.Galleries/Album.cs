@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>Creates and restores <see cref="Album{TPhotoId, TRelatedId}"/> values.</summary>
 public static class Album

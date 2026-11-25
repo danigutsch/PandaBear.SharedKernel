@@ -1,10 +1,10 @@
-using PandaBear.DocumentWorkflow;
-using PandaBear.DocumentWorkflow.EntityFrameworkCore;
-using PandaBear.Results;
-using PandaBear.Review;
-using static PandaBear.EntityFrameworkCore.Tests.ReleaseDocumentFinalizationSetup;
+using SharedKernel.DocumentWorkflow;
+using SharedKernel.DocumentWorkflow.EntityFrameworkCore;
+using SharedKernel.Results;
+using SharedKernel.Review;
+using static SharedKernel.EntityFrameworkCore.Tests.ReleaseDocumentFinalizationSetup;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Proves transaction, audit and durable replay for a neutral release document.</summary>
 /// <param name="fixture">The shared PostgreSQL fixture.</param>

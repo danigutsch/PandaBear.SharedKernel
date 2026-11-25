@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Merge;
+namespace SharedKernel.Vault.Tests.Merge;
 
 /// <summary>Lists the values an item carries, wherever they are stored.</summary>
 internal static class MergedValues

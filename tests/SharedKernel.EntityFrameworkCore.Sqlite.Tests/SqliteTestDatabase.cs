@@ -1,7 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>A private in-memory SQLite database with the schema created.</summary>
 public sealed class SqliteTestDatabase : IDisposable

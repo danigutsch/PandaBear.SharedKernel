@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
-using static PandaBear.Blazor.Tests.ComponentFixtures;
-using static PandaBear.Blazor.Tests.UploadStatusRendering;
+using static SharedKernel.Blazor.Tests.ComponentFixtures;
+using static SharedKernel.Blazor.Tests.UploadStatusRendering;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the accessible upload status component.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

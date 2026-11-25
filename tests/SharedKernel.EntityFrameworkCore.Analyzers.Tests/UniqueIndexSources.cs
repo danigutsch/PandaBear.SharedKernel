@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Analyzers.Tests;
+namespace SharedKernel.EntityFrameworkCore.Analyzers.Tests;
 
 /// <summary>Builds EF Core model configuration sources for the unique index analyzer tests.</summary>
 internal static class UniqueIndexSources

@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Adds optional activity-based observability around mediator request dispatch: a <c>mediator.handle</c> span tagged with the

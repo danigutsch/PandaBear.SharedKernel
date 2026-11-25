@@ -1,4 +1,4 @@
-namespace PandaBear.Results;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Extension methods for converting failed results.

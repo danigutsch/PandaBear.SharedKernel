@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>The fields a consumer can use to display credit for a work after deciding to publish them.</summary>
 public sealed class PublicContentCredit

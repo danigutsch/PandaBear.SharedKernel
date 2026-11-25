@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Declares the priority of the test. Emits the <c>Priority</c> trait, like <c>[Trait("Priority", ...)]</c>.

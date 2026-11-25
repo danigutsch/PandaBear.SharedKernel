@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.PlaywrightMcp;
+namespace SharedKernel.PlaywrightMcp;
 
 /// <summary>Builds the process start information for each container command that runs Playwright MCP.</summary>
 internal static class PlaywrightMcpContainerArguments

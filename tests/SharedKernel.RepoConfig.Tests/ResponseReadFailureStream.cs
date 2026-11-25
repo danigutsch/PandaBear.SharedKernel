@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>A stream whose asynchronous reads fail with an <see cref="IOException"/> whose message contains a token-like secret.</summary>
 internal sealed class ResponseReadFailureStream : MemoryStream

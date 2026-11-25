@@ -3,7 +3,7 @@
 using System.Collections.Concurrent;
 using Microsoft.Playwright;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>Observes Content Security Policy events in the current document and policy messages on the page console.</summary>
 public sealed class CspViolationRecorder : IDisposable

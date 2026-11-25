@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// What a test verifies. The value of the <c>Focus</c> trait. Add a member only when a repository needs to filter by it.

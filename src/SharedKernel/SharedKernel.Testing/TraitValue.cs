@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Converts enum members to the kebab-case values used by trait attributes.</summary>
 internal static class TraitValue

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Source-generated metadata for the versioned restore graph report.</summary>
 [JsonSourceGenerationOptions(

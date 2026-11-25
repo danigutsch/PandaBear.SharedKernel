@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Guards how a Playwright installation that does not finish is stopped.</summary>
 public sealed class PlaywrightInstallationTests : IDisposable

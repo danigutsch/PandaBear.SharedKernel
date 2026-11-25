@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using PandaBear.HttpCaching.AspNetCore;
+using SharedKernel.HttpCaching.AspNetCore;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>
 /// Tests the RFC 9110 <c>If-Match</c> condition: strict parsing of <c>*</c> or a list of entity tags, strong comparison against the current

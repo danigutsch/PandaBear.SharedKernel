@@ -1,5 +1,5 @@
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// A value object made of two strings, used to test that equality depends on component order.

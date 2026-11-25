@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace PandaBear.Style.CodeFixes;
+namespace SharedKernel.Style.CodeFixes;
 
 internal static class UseTimeProviderCodeFix
 {

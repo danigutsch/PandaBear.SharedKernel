@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Attaches the current user's access token, refreshed when needed, as a Bearer Authorization header.

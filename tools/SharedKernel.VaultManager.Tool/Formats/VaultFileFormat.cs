@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Formats;
+namespace SharedKernel.VaultManager.Tool.Formats;
 
 /// <summary>Vault export formats the tool reads.</summary>
 internal enum VaultFileFormat

@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.UploadSanitizing.Tests.Fonts;
+namespace SharedKernel.UploadSanitizing.Tests.Fonts;
 
 /// <summary>
 /// Builds small WOFF2 files: a well-formed header, table directory and compressed-data block of arbitrary bytes. The data is not a

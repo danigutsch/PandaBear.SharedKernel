@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>A form model with a numeric field, for parse-error tests.</summary>
 internal sealed class NumericFormModel

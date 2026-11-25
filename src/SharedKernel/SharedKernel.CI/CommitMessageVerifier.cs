@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Verifies that a pull request title or a commit message header is a Conventional Commit header and that breaking-change

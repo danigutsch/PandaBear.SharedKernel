@@ -1,4 +1,4 @@
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Tests the byte capture of the bounded runner with real child processes.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

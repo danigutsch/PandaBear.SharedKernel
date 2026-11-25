@@ -4,7 +4,6 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.AI</PackageId>
         <Description>Deterministic test doubles for SharedKernel AI contracts.</Description>
-        <RootNamespace>PandaBear.Testing.AI</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;ai;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

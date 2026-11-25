@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.DispositionHold.EntityFrameworkCore;
+namespace SharedKernel.DispositionHold.EntityFrameworkCore;
 
 /// <summary>
 /// Stores holds and answers hold checks in one DbContext. Both operations lock the affected scopes first, so a hold

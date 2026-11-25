@@ -1,7 +1,7 @@
 using System.CommandLine;
-using PandaBear.Repository.Tests.Conventions;
+using SharedKernel.Repository.Tests.Conventions;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards that the CI tool command lines in workflows and the tool README parse against the real command tree.</summary>
 public sealed class RepositoryToolCallerTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>The operations the probes try, each tried and undone. <see cref="SystemSandboxEnvironment"/> tries them for real; tests pass a fake.</summary>
 public interface ISandboxEnvironment

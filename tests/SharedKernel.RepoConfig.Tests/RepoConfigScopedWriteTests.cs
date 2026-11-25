@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Checks that repo-config initialize, set and GitHub sync refuse to write through symbolic links and leave the link targets unchanged.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Computes a stable digest of GitHub issue snapshots.</summary>
 public static class GitHubIssueSnapshotDigest

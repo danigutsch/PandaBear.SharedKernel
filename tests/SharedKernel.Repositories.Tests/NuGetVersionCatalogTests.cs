@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Tests the request and response boundary of the isolated SDK metadata process.</summary>
 public sealed class NuGetVersionCatalogTests

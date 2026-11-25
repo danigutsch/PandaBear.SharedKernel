@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// Settings of the page views that every target shares, registered by <see cref="PageViewHostApplicationBuilderExtensions.AddPageViews"/>

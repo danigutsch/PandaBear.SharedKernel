@@ -3,7 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Protocol;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>
 /// Reads the component state that a prerendered Blazor page carries, and checks that the Interactive Server state fits in the

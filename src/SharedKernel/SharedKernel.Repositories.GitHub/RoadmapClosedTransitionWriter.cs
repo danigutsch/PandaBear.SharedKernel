@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Writes approved closed-item transitions into the roadmap reconciliation manifest.</summary>
 internal static class RoadmapClosedTransitionWriter

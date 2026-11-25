@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Http.Resilience;
 
-namespace PandaBear.ServiceDefaults;
+namespace SharedKernel.ServiceDefaults;
 
 /// <summary>Settings of <see cref="ServiceDefaultsExtensions.AddApplicationDefaults{TBuilder}"/>.</summary>
 public sealed class ServiceDefaultsOptions

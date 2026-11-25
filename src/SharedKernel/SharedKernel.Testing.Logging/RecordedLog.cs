@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Testing.Logging;
+namespace SharedKernel.Testing.Logging;
 
 /// <summary>A captured log record: level, identifier, rendered message, structured state and attached exception.</summary>
 /// <param name="Level">The log level.</param>

@@ -9,7 +9,7 @@ canonical `ASPNETCORE_ENVIRONMENT` name) only; the PostgreSQL and Redis pins are
 `Aspire.Hosting.PostgreSQL` or `Aspire.Hosting.Redis` into an AppHost that does not use them.
 
 ```csharp
-using PandaBear.Aspire.Hosting;
+using SharedKernel.Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -35,7 +35,7 @@ var site = builder.AddProject<Projects.Site>("site")
 | `PostgresContainerImageTags`, `RedisContainerImageTags` | `Registry`, `Image`, `Tag` and `Digest` of a pinned `docker.io/library/postgres:18.4` and `docker.io/library/redis:8.8`. |
 
 The extension methods live in the `Aspire.Hosting` namespace, as Aspire hosting integrations and the other SharedKernel hosting packages
-do, so an AppHost finds them without a `using`. The pins live in `PandaBear.Aspire.Hosting`.
+do, so an AppHost finds them without a `using`. The pins live in `SharedKernel.Aspire.Hosting`.
 
 ## Decisions
 

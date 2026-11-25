@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>
 /// The look of a section's button. It mirrors the button variants of <c>PandaBear.SharedKernel.Blazor.Site</c>, which the renderer maps

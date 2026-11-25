@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Feeds a started process its standard input and reads its standard output and error, each into a bounded buffer.

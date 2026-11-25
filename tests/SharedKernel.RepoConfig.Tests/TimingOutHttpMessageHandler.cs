@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// HTTP message handler that advances the fake clock before each response so that deadlines expire.

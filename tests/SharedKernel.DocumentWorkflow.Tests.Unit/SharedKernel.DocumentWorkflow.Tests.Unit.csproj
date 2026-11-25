@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.DocumentWorkflow.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.DocumentWorkflow.Tests</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <Using Include="PandaBear.Results" />
-        <Using Include="PandaBear.Review" />
-        <Using Include="PandaBear.DocumentRendering" />
-        <Using Include="PandaBear.DocumentWorkflow" />
-        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="SharedKernel.Results" />
+        <Using Include="SharedKernel.Review" />
+        <Using Include="SharedKernel.DocumentRendering" />
+        <Using Include="SharedKernel.DocumentWorkflow" />
+        <Using Include="SharedKernel.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
     <ItemGroup>

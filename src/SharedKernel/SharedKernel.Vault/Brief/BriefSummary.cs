@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>Counts of a merge, as the merge summary on standard output gives them.</summary>
 /// <param name="Items">Items in the merged vault.</param>

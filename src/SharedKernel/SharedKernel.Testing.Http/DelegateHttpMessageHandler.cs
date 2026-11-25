@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>An <see cref="HttpMessageHandler" /> that answers every request with a caller-supplied delegate.</summary>
 public sealed class DelegateHttpMessageHandler : HttpMessageHandler

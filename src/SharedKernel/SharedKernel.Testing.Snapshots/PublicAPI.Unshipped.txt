@@ -1,74 +1,74 @@
 #nullable enable
-PandaBear.Testing.Snapshots.JsonSnapshotArtifactSet
-PandaBear.Testing.Snapshots.JsonSnapshotArtifactSet.AssertCanonicalArtifactsMatchGeneratedArtifacts() -> void
-PandaBear.Testing.Snapshots.JsonSnapshotArtifactSet.AssertGeneratedArtifactMatchesCanonicalSnapshot(string! snapshotName) -> void
-PandaBear.Testing.Snapshots.JsonSnapshotArtifactSet.GetArtifactDrift() -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Testing.Snapshots.JsonSnapshotArtifactSet.GetCanonicalSnapshot(string! snapshotName) -> System.Text.Json.Nodes.JsonNode!
-PandaBear.Testing.Snapshots.JsonSnapshotArtifactSet.GetGeneratedArtifact(string! snapshotName) -> System.Text.Json.Nodes.JsonNode!
-PandaBear.Testing.Snapshots.JsonSnapshotArtifactSet.JsonSnapshotArtifactSet(string! canonicalDirectory, string! generatedDirectory, string! canonicalArtifactSuffix, string! generatedArtifactPrefix, string! artifactDisplayName, string! refreshHint, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? generatedFileNameOverrides = null) -> void
-PandaBear.Testing.Snapshots.SnapshotText
-static PandaBear.Testing.Snapshots.JsonSnapshotArtifactSet.Equals(System.Text.Json.Nodes.JsonNode? expected, System.Text.Json.Nodes.JsonNode? actual) -> bool
-static PandaBear.Testing.Snapshots.SnapshotText.Normalize(string! text) -> string!
-PandaBear.Testing.Snapshots.ReproductionManifest
-PandaBear.Testing.Snapshots.ReproductionManifest.ReproductionManifest(string! Revision, string! Scenario, System.Guid AttemptId, System.Collections.Generic.IReadOnlyList<System.Diagnostics.ActivityTraceId>! TraceIds, PandaBear.Testing.Snapshots.ReproductionOutcome! Outcome, System.DateTimeOffset StartedUtc, int DurationMs, int? Seed = null) -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.<Clone>$() -> PandaBear.Testing.Snapshots.ReproductionManifest!
-PandaBear.Testing.Snapshots.ReproductionManifest.Deconstruct(out string! Revision, out string! Scenario, out System.Guid AttemptId, out System.Collections.Generic.IReadOnlyList<System.Diagnostics.ActivityTraceId>! TraceIds, out PandaBear.Testing.Snapshots.ReproductionOutcome! Outcome, out System.DateTimeOffset StartedUtc, out int DurationMs, out int? Seed) -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.Equals(PandaBear.Testing.Snapshots.ReproductionManifest? other) -> bool
-override PandaBear.Testing.Snapshots.ReproductionManifest.Equals(object? obj) -> bool
-override PandaBear.Testing.Snapshots.ReproductionManifest.GetHashCode() -> int
-override PandaBear.Testing.Snapshots.ReproductionManifest.ToString() -> string!
-static PandaBear.Testing.Snapshots.ReproductionManifest.operator !=(PandaBear.Testing.Snapshots.ReproductionManifest? left, PandaBear.Testing.Snapshots.ReproductionManifest? right) -> bool
-static PandaBear.Testing.Snapshots.ReproductionManifest.operator ==(PandaBear.Testing.Snapshots.ReproductionManifest? left, PandaBear.Testing.Snapshots.ReproductionManifest? right) -> bool
-PandaBear.Testing.Snapshots.ReproductionManifest.Revision.get -> string!
-PandaBear.Testing.Snapshots.ReproductionManifest.Revision.init -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.Scenario.get -> string!
-PandaBear.Testing.Snapshots.ReproductionManifest.Scenario.init -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.AttemptId.get -> System.Guid
-PandaBear.Testing.Snapshots.ReproductionManifest.AttemptId.init -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.TraceIds.get -> System.Collections.Generic.IReadOnlyList<System.Diagnostics.ActivityTraceId>!
-PandaBear.Testing.Snapshots.ReproductionManifest.TraceIds.init -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.Outcome.get -> PandaBear.Testing.Snapshots.ReproductionOutcome!
-PandaBear.Testing.Snapshots.ReproductionManifest.Outcome.init -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.StartedUtc.get -> System.DateTimeOffset
-PandaBear.Testing.Snapshots.ReproductionManifest.StartedUtc.init -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.DurationMs.get -> int
-PandaBear.Testing.Snapshots.ReproductionManifest.DurationMs.init -> void
-PandaBear.Testing.Snapshots.ReproductionManifest.Seed.get -> int?
-PandaBear.Testing.Snapshots.ReproductionManifest.Seed.init -> void
-PandaBear.Testing.Snapshots.ReproductionOutcome
-PandaBear.Testing.Snapshots.ReproductionOutcome.ReproductionOutcome(string! Result, string! OutcomeCode, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! ResourceStates) -> void
-PandaBear.Testing.Snapshots.ReproductionOutcome.<Clone>$() -> PandaBear.Testing.Snapshots.ReproductionOutcome!
-PandaBear.Testing.Snapshots.ReproductionOutcome.Deconstruct(out string! Result, out string! OutcomeCode, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! ResourceStates) -> void
-PandaBear.Testing.Snapshots.ReproductionOutcome.Equals(PandaBear.Testing.Snapshots.ReproductionOutcome? other) -> bool
-override PandaBear.Testing.Snapshots.ReproductionOutcome.Equals(object? obj) -> bool
-override PandaBear.Testing.Snapshots.ReproductionOutcome.GetHashCode() -> int
-override PandaBear.Testing.Snapshots.ReproductionOutcome.ToString() -> string!
-static PandaBear.Testing.Snapshots.ReproductionOutcome.operator !=(PandaBear.Testing.Snapshots.ReproductionOutcome? left, PandaBear.Testing.Snapshots.ReproductionOutcome? right) -> bool
-static PandaBear.Testing.Snapshots.ReproductionOutcome.operator ==(PandaBear.Testing.Snapshots.ReproductionOutcome? left, PandaBear.Testing.Snapshots.ReproductionOutcome? right) -> bool
-PandaBear.Testing.Snapshots.ReproductionOutcome.Result.get -> string!
-PandaBear.Testing.Snapshots.ReproductionOutcome.Result.init -> void
-PandaBear.Testing.Snapshots.ReproductionOutcome.OutcomeCode.get -> string!
-PandaBear.Testing.Snapshots.ReproductionOutcome.OutcomeCode.init -> void
-PandaBear.Testing.Snapshots.ReproductionOutcome.ResourceStates.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
-PandaBear.Testing.Snapshots.ReproductionOutcome.ResourceStates.init -> void
-PandaBear.Testing.Snapshots.ReproductionSpecification
-PandaBear.Testing.Snapshots.ReproductionSpecification.ReproductionSpecification(string! Scenario, string! Revision, System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Snapshots.ReproductionOutcome!>! AllowedOutcomes, int? Seed = null) -> void
-PandaBear.Testing.Snapshots.ReproductionSpecification.<Clone>$() -> PandaBear.Testing.Snapshots.ReproductionSpecification!
-PandaBear.Testing.Snapshots.ReproductionSpecification.Deconstruct(out string! Scenario, out string! Revision, out System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Snapshots.ReproductionOutcome!>! AllowedOutcomes, out int? Seed) -> void
-PandaBear.Testing.Snapshots.ReproductionSpecification.Equals(PandaBear.Testing.Snapshots.ReproductionSpecification? other) -> bool
-override PandaBear.Testing.Snapshots.ReproductionSpecification.Equals(object? obj) -> bool
-override PandaBear.Testing.Snapshots.ReproductionSpecification.GetHashCode() -> int
-override PandaBear.Testing.Snapshots.ReproductionSpecification.ToString() -> string!
-static PandaBear.Testing.Snapshots.ReproductionSpecification.operator !=(PandaBear.Testing.Snapshots.ReproductionSpecification? left, PandaBear.Testing.Snapshots.ReproductionSpecification? right) -> bool
-static PandaBear.Testing.Snapshots.ReproductionSpecification.operator ==(PandaBear.Testing.Snapshots.ReproductionSpecification? left, PandaBear.Testing.Snapshots.ReproductionSpecification? right) -> bool
-PandaBear.Testing.Snapshots.ReproductionSpecification.Scenario.get -> string!
-PandaBear.Testing.Snapshots.ReproductionSpecification.Scenario.init -> void
-PandaBear.Testing.Snapshots.ReproductionSpecification.Revision.get -> string!
-PandaBear.Testing.Snapshots.ReproductionSpecification.Revision.init -> void
-PandaBear.Testing.Snapshots.ReproductionSpecification.AllowedOutcomes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Snapshots.ReproductionOutcome!>!
-PandaBear.Testing.Snapshots.ReproductionSpecification.AllowedOutcomes.init -> void
-PandaBear.Testing.Snapshots.ReproductionSpecification.Seed.get -> int?
-PandaBear.Testing.Snapshots.ReproductionSpecification.Seed.init -> void
-PandaBear.Testing.Snapshots.ReproductionManifestCodec
-static PandaBear.Testing.Snapshots.ReproductionManifestCodec.Read(string! path, PandaBear.Testing.Snapshots.ReproductionSpecification! specification, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Testing.Snapshots.ReproductionManifest!>!
-static PandaBear.Testing.Snapshots.ReproductionManifestCodec.Write(string! resultsDirectory, PandaBear.Testing.Snapshots.ReproductionSpecification! specification, PandaBear.Testing.Snapshots.ReproductionManifest! manifest, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.AssertCanonicalArtifactsMatchGeneratedArtifacts() -> void
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.AssertGeneratedArtifactMatchesCanonicalSnapshot(string! snapshotName) -> void
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.GetArtifactDrift() -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.GetCanonicalSnapshot(string! snapshotName) -> System.Text.Json.Nodes.JsonNode!
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.GetGeneratedArtifact(string! snapshotName) -> System.Text.Json.Nodes.JsonNode!
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.JsonSnapshotArtifactSet(string! canonicalDirectory, string! generatedDirectory, string! canonicalArtifactSuffix, string! generatedArtifactPrefix, string! artifactDisplayName, string! refreshHint, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? generatedFileNameOverrides = null) -> void
+SharedKernel.Testing.Snapshots.SnapshotText
+static SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.Equals(System.Text.Json.Nodes.JsonNode? expected, System.Text.Json.Nodes.JsonNode? actual) -> bool
+static SharedKernel.Testing.Snapshots.SnapshotText.Normalize(string! text) -> string!
+SharedKernel.Testing.Snapshots.ReproductionManifest
+SharedKernel.Testing.Snapshots.ReproductionManifest.ReproductionManifest(string! Revision, string! Scenario, System.Guid AttemptId, System.Collections.Generic.IReadOnlyList<System.Diagnostics.ActivityTraceId>! TraceIds, SharedKernel.Testing.Snapshots.ReproductionOutcome! Outcome, System.DateTimeOffset StartedUtc, int DurationMs, int? Seed = null) -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.<Clone>$() -> SharedKernel.Testing.Snapshots.ReproductionManifest!
+SharedKernel.Testing.Snapshots.ReproductionManifest.Deconstruct(out string! Revision, out string! Scenario, out System.Guid AttemptId, out System.Collections.Generic.IReadOnlyList<System.Diagnostics.ActivityTraceId>! TraceIds, out SharedKernel.Testing.Snapshots.ReproductionOutcome! Outcome, out System.DateTimeOffset StartedUtc, out int DurationMs, out int? Seed) -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.Equals(SharedKernel.Testing.Snapshots.ReproductionManifest? other) -> bool
+override SharedKernel.Testing.Snapshots.ReproductionManifest.Equals(object? obj) -> bool
+override SharedKernel.Testing.Snapshots.ReproductionManifest.GetHashCode() -> int
+override SharedKernel.Testing.Snapshots.ReproductionManifest.ToString() -> string!
+static SharedKernel.Testing.Snapshots.ReproductionManifest.operator !=(SharedKernel.Testing.Snapshots.ReproductionManifest? left, SharedKernel.Testing.Snapshots.ReproductionManifest? right) -> bool
+static SharedKernel.Testing.Snapshots.ReproductionManifest.operator ==(SharedKernel.Testing.Snapshots.ReproductionManifest? left, SharedKernel.Testing.Snapshots.ReproductionManifest? right) -> bool
+SharedKernel.Testing.Snapshots.ReproductionManifest.Revision.get -> string!
+SharedKernel.Testing.Snapshots.ReproductionManifest.Revision.init -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.Scenario.get -> string!
+SharedKernel.Testing.Snapshots.ReproductionManifest.Scenario.init -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.AttemptId.get -> System.Guid
+SharedKernel.Testing.Snapshots.ReproductionManifest.AttemptId.init -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.TraceIds.get -> System.Collections.Generic.IReadOnlyList<System.Diagnostics.ActivityTraceId>!
+SharedKernel.Testing.Snapshots.ReproductionManifest.TraceIds.init -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.Outcome.get -> SharedKernel.Testing.Snapshots.ReproductionOutcome!
+SharedKernel.Testing.Snapshots.ReproductionManifest.Outcome.init -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.StartedUtc.get -> System.DateTimeOffset
+SharedKernel.Testing.Snapshots.ReproductionManifest.StartedUtc.init -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.DurationMs.get -> int
+SharedKernel.Testing.Snapshots.ReproductionManifest.DurationMs.init -> void
+SharedKernel.Testing.Snapshots.ReproductionManifest.Seed.get -> int?
+SharedKernel.Testing.Snapshots.ReproductionManifest.Seed.init -> void
+SharedKernel.Testing.Snapshots.ReproductionOutcome
+SharedKernel.Testing.Snapshots.ReproductionOutcome.ReproductionOutcome(string! Result, string! OutcomeCode, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! ResourceStates) -> void
+SharedKernel.Testing.Snapshots.ReproductionOutcome.<Clone>$() -> SharedKernel.Testing.Snapshots.ReproductionOutcome!
+SharedKernel.Testing.Snapshots.ReproductionOutcome.Deconstruct(out string! Result, out string! OutcomeCode, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! ResourceStates) -> void
+SharedKernel.Testing.Snapshots.ReproductionOutcome.Equals(SharedKernel.Testing.Snapshots.ReproductionOutcome? other) -> bool
+override SharedKernel.Testing.Snapshots.ReproductionOutcome.Equals(object? obj) -> bool
+override SharedKernel.Testing.Snapshots.ReproductionOutcome.GetHashCode() -> int
+override SharedKernel.Testing.Snapshots.ReproductionOutcome.ToString() -> string!
+static SharedKernel.Testing.Snapshots.ReproductionOutcome.operator !=(SharedKernel.Testing.Snapshots.ReproductionOutcome? left, SharedKernel.Testing.Snapshots.ReproductionOutcome? right) -> bool
+static SharedKernel.Testing.Snapshots.ReproductionOutcome.operator ==(SharedKernel.Testing.Snapshots.ReproductionOutcome? left, SharedKernel.Testing.Snapshots.ReproductionOutcome? right) -> bool
+SharedKernel.Testing.Snapshots.ReproductionOutcome.Result.get -> string!
+SharedKernel.Testing.Snapshots.ReproductionOutcome.Result.init -> void
+SharedKernel.Testing.Snapshots.ReproductionOutcome.OutcomeCode.get -> string!
+SharedKernel.Testing.Snapshots.ReproductionOutcome.OutcomeCode.init -> void
+SharedKernel.Testing.Snapshots.ReproductionOutcome.ResourceStates.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+SharedKernel.Testing.Snapshots.ReproductionOutcome.ResourceStates.init -> void
+SharedKernel.Testing.Snapshots.ReproductionSpecification
+SharedKernel.Testing.Snapshots.ReproductionSpecification.ReproductionSpecification(string! Scenario, string! Revision, System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Snapshots.ReproductionOutcome!>! AllowedOutcomes, int? Seed = null) -> void
+SharedKernel.Testing.Snapshots.ReproductionSpecification.<Clone>$() -> SharedKernel.Testing.Snapshots.ReproductionSpecification!
+SharedKernel.Testing.Snapshots.ReproductionSpecification.Deconstruct(out string! Scenario, out string! Revision, out System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Snapshots.ReproductionOutcome!>! AllowedOutcomes, out int? Seed) -> void
+SharedKernel.Testing.Snapshots.ReproductionSpecification.Equals(SharedKernel.Testing.Snapshots.ReproductionSpecification? other) -> bool
+override SharedKernel.Testing.Snapshots.ReproductionSpecification.Equals(object? obj) -> bool
+override SharedKernel.Testing.Snapshots.ReproductionSpecification.GetHashCode() -> int
+override SharedKernel.Testing.Snapshots.ReproductionSpecification.ToString() -> string!
+static SharedKernel.Testing.Snapshots.ReproductionSpecification.operator !=(SharedKernel.Testing.Snapshots.ReproductionSpecification? left, SharedKernel.Testing.Snapshots.ReproductionSpecification? right) -> bool
+static SharedKernel.Testing.Snapshots.ReproductionSpecification.operator ==(SharedKernel.Testing.Snapshots.ReproductionSpecification? left, SharedKernel.Testing.Snapshots.ReproductionSpecification? right) -> bool
+SharedKernel.Testing.Snapshots.ReproductionSpecification.Scenario.get -> string!
+SharedKernel.Testing.Snapshots.ReproductionSpecification.Scenario.init -> void
+SharedKernel.Testing.Snapshots.ReproductionSpecification.Revision.get -> string!
+SharedKernel.Testing.Snapshots.ReproductionSpecification.Revision.init -> void
+SharedKernel.Testing.Snapshots.ReproductionSpecification.AllowedOutcomes.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Snapshots.ReproductionOutcome!>!
+SharedKernel.Testing.Snapshots.ReproductionSpecification.AllowedOutcomes.init -> void
+SharedKernel.Testing.Snapshots.ReproductionSpecification.Seed.get -> int?
+SharedKernel.Testing.Snapshots.ReproductionSpecification.Seed.init -> void
+SharedKernel.Testing.Snapshots.ReproductionManifestCodec
+static SharedKernel.Testing.Snapshots.ReproductionManifestCodec.Read(string! path, SharedKernel.Testing.Snapshots.ReproductionSpecification! specification, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Testing.Snapshots.ReproductionManifest!>!
+static SharedKernel.Testing.Snapshots.ReproductionManifestCodec.Write(string! resultsDirectory, SharedKernel.Testing.Snapshots.ReproductionSpecification! specification, SharedKernel.Testing.Snapshots.ReproductionManifest! manifest, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!

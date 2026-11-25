@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Checks the verification rules against a fictional venue operations dashboard.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]

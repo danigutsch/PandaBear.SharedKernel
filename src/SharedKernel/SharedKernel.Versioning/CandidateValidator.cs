@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Creates release candidates of the SharedKernel packages and records the evidence that they are consumable: packs a

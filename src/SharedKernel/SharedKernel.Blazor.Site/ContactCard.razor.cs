@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// Contact data: an optional heading, and an <c>address</c> (only when there is something to show) with postal lines and <c>tel:</c>, <c>mailto:</c> and <c>https://wa.me/</c>

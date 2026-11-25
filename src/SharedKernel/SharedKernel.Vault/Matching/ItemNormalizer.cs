@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using PandaBear.InputNormalization;
-using PandaBear.SecretScanning;
+using SharedKernel.InputNormalization;
+using SharedKernel.SecretScanning;
 
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>
 /// Comparison keys for item values. Keys are used to compare and group values; they are never written to the output.

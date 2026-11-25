@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// Checks the <see cref="UmamiPageViewTargetOptions"/> of one connection name when the host starts; a failure names the configuration key

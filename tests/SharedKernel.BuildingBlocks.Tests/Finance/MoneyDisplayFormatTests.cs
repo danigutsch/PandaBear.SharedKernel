@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// Tests the culture-aware display of money: the currency's symbol, the culture's separators and symbol position, and the currency's minor

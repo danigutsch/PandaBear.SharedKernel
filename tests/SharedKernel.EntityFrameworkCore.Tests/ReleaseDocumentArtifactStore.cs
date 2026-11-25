@@ -1,7 +1,7 @@
-using PandaBear.DocumentWorkflow;
-using PandaBear.Results;
+using SharedKernel.DocumentWorkflow;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Records calls and returns the immutable handle for the test release document.</summary>
 internal sealed class ReleaseDocumentArtifactStore : IDocumentArtifactStore

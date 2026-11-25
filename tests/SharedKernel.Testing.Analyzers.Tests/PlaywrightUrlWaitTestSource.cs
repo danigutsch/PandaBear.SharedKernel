@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Builds sources with minimal stand-ins for Playwright's page and frame and for the SharedKernel address wait, for the SKTEST020 tests.</summary>
 internal static class PlaywrightUrlWaitTestSource
@@ -31,7 +31,7 @@ internal static class PlaywrightUrlWaitTestSource
 
     /// <summary>The stand-in SharedKernel address wait.</summary>
     public const string ExpectPath = """
-        namespace PandaBear.Testing.Playwright
+        namespace SharedKernel.Testing.Playwright
         {
             public static class PlaywrightPageExtensions
             {

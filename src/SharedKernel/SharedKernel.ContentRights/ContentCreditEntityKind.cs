@@ -1,4 +1,4 @@
-namespace PandaBear.ContentRights;
+namespace SharedKernel.ContentRights;
 
 /// <summary>The recorded kind of the credited party.</summary>
 public enum ContentCreditEntityKind

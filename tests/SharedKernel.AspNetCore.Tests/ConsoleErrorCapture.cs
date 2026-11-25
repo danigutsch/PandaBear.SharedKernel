@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Redirects standard error to a buffer until disposed.</summary>
 [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The original writer is owned by the console and is only restored.")]

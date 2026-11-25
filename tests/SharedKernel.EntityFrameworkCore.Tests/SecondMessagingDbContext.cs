@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// In-memory test context that maps SecondMessagingBusinessRecord to second_messaging.second_records and applies every supplied model configuration.

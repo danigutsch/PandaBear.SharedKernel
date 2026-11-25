@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using PandaBear.Mediator;
-using PandaBear.Mediator.EntityFrameworkCore;
-using PandaBear.Results;
+using SharedKernel.Mediator;
+using SharedKernel.Mediator.EntityFrameworkCore;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Builds a service provider with a retrying PostgreSQL context, recording hooks and logger for the result transaction behavior.

@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace PandaBear.CodeFixes;
+namespace SharedKernel.CodeFixes;
 
 /// <summary>
 /// Restricts Fix All to the diagnostics that are proven safe to fix in bulk, which it applies with the batch fixer; with none, it

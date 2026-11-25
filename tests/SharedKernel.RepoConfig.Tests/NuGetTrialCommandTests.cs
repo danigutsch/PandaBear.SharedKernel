@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Exercises dependency trials with the repository-selected SDK and a mapped feed.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

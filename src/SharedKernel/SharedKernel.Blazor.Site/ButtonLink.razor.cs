@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A link styled as a button. A link that opens a new tab always carries <c>rel="noopener noreferrer"</c> and a visually hidden

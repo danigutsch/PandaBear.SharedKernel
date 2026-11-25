@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Forgejo.Tests;
+namespace SharedKernel.Forgejo.Tests;
 
 /// <summary>Tests reading the Forgejo token and keeping it from child processes.</summary>
 public sealed class ForgejoTokenTests

@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>A selected test project and what selected it.</summary>
 /// <param name="Project">The repository-relative test project.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>An image library for the tests: which images exist, and in which cultures each may be shown.</summary>
 internal sealed class ImageLibrary : IImageEligibility<Guid>

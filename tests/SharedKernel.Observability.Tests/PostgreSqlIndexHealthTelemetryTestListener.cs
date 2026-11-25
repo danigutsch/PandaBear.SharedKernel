@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Creates meter listeners that capture long measurements from the PostgreSQL index health meter.</summary>
 internal static class PostgreSqlIndexHealthTelemetryTestListener

@@ -1,8 +1,8 @@
 using System.CommandLine;
-using PandaBear.Secrets.Age;
-using PandaBear.Secrets.Sops;
+using SharedKernel.Secrets.Age;
+using SharedKernel.Secrets.Sops;
 
-namespace PandaBear.Secrets.Tool;
+namespace SharedKernel.Secrets.Tool;
 
 /// <summary>Builds the <c>secrets</c> command tree.</summary>
 internal static class SecretsCommandLine

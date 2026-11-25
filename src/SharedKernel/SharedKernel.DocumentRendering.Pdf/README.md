@@ -12,7 +12,7 @@ document date chosen by the host. The operation converts it to UTC and
 keeps second precision, matching Chromium's PDF Info date format.
 
 ```csharp
-using PandaBear.DocumentRendering.Pdf;
+using SharedKernel.DocumentRendering.Pdf;
 
 var normalizer = new QpdfDocumentNormalizer(qpdfPath, maximumPdfBytes, timeLimit);
 var pdf = await normalizer.Normalize(generatedPdf, approvedDocumentDate, cancellationToken);

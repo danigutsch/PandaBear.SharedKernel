@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Domain</PackageId>
         <Description>Persistence-agnostic DDD primitives and typed domain-event dispatch contracts.</Description>
-        <RootNamespace>PandaBear.Domain</RootNamespace>
+        <RootNamespace>SharedKernel.Domain</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

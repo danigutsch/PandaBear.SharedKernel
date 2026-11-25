@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Verifies comparison of evaluated NuGet package graphs.</summary>
 public sealed class NuGetRestoreGraphTests

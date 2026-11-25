@@ -1,4 +1,4 @@
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Trait names and values used to categorize the PostgreSQL observability tests.</summary>
 internal static class TestTraits

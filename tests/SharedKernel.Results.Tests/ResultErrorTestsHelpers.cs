@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Helpers that build invalid inputs for the result error tests.

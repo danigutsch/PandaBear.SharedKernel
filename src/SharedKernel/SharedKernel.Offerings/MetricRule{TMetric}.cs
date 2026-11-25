@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The application's rule for one metric kind. The order of the rules is the display order of the metrics.</summary>
 /// <typeparam name="TMetric">The application's metric kind enum.</typeparam>

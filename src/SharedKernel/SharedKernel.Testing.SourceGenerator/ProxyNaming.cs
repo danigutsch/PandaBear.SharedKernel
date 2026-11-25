@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>The naming rules of generated members and types.</summary>
 internal static class ProxyNaming

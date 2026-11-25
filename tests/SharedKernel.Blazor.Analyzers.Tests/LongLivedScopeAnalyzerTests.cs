@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Analyzers.Tests;
+namespace SharedKernel.Blazor.Analyzers.Tests;
 
 /// <summary>Tests that the analyzer reports components that inject services that go stale in a circuit scope (SKBLZ002) only where intended.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
@@ -14,7 +14,7 @@ public sealed class LongLivedScopeAnalyzerTests
             public sealed class Page : ComponentBase
             {
                 [Inject]
-                public PandaBear.Mediator.ISender Sender { get; set; } = default!;
+                public SharedKernel.Mediator.ISender Sender { get; set; } = default!;
             }
             """;
 
@@ -34,12 +34,12 @@ public sealed class LongLivedScopeAnalyzerTests
         const string source = """
             namespace Demo;
 
-            public sealed record Feed : PandaBear.Mediator.IStreamRequest<int>;
+            public sealed record Feed : SharedKernel.Mediator.IStreamRequest<int>;
 
             public sealed class Page : ComponentBase
             {
                 [Inject]
-                public PandaBear.Mediator.ISender Sender { get; set; } = default!;
+                public SharedKernel.Mediator.ISender Sender { get; set; } = default!;
 
                 public void Run() => _ = Sender.Send(new Feed(), default);
             }
@@ -88,7 +88,7 @@ public sealed class LongLivedScopeAnalyzerTests
             public sealed class Page : ComponentBase
             {
                 [Inject]
-                public PandaBear.Mediator.ScopedSender Sender { get; set; } = default!;
+                public SharedKernel.Mediator.ScopedSender Sender { get; set; } = default!;
 
                 [Inject]
                 public Microsoft.EntityFrameworkCore.IDbContextFactory<ShopDb> Factory { get; set; } = default!;
@@ -111,13 +111,13 @@ public sealed class LongLivedScopeAnalyzerTests
 
             public sealed class Page : ComponentBase
             {
-                public PandaBear.Mediator.ISender? Sender { get; set; }
+                public SharedKernel.Mediator.ISender? Sender { get; set; }
             }
 
             public sealed class Service
             {
                 [Inject]
-                public PandaBear.Mediator.ISender Sender { get; set; } = default!;
+                public SharedKernel.Mediator.ISender Sender { get; set; } = default!;
             }
             """;
 

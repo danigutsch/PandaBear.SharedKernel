@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>Builds a site with page views and the Umami target on <see cref="UmamiConnections.Key"/>, so starting it checks the settings.</summary>
 internal static class OptionsTestHost

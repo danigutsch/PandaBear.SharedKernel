@@ -1,12 +1,12 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Analysis;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Analysis;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>
 /// Makes the brief of a merge: the groups that need a decision, their members, the fields on which the members differ,

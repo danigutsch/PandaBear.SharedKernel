@@ -1,6 +1,6 @@
-using static PandaBear.Offerings.Tests.OfferingFixtures;
+using static SharedKernel.Offerings.Tests.OfferingFixtures;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Tests the application's offering rules and the field paths of errors.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

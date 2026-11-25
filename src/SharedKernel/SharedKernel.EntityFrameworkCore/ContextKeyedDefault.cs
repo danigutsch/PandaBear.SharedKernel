@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace PandaBear.EntityFrameworkCore;
+namespace SharedKernel.EntityFrameworkCore;
 
 /// <summary>
 /// Resolves the unkeyed service for context-keyed registrations: the explicitly chosen context, or the only

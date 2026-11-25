@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Converts the <c>sops:</c> block of a SOPS-written YAML file into JSON. It understands block mappings, block sequences,

@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency;
+namespace SharedKernel.Idempotency;
 
 /// <summary>
 /// Describes the current state of an idempotent operation.

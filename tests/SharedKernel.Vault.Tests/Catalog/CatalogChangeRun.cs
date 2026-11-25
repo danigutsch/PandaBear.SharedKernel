@@ -1,8 +1,8 @@
-using PandaBear.Vault.Catalog;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Catalog;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Catalog;
+namespace SharedKernel.Vault.Tests.Catalog;
 
 /// <summary>Applies an edit of the single catalog entry of a one-item vault, as an agent edits a catalog.</summary>
 internal static class CatalogChangeRun

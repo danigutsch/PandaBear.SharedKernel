@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>
 /// Builds large synthetic attachment texts of a given length that stress the scanner, with the location of every secret

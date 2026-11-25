@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A short code made of ASCII letters, digits, <c>-</c> and <c>_</c>, stored in upper case so codes that differ only in case are the same code.</summary>
 public sealed class ReferenceCode : ValueObject

@@ -9,8 +9,8 @@ In-memory `IObjectStore` for SharedKernel test suites, with call recording and f
 ## Usage
 
 ```csharp
-using PandaBear.ObjectStorage;
-using PandaBear.Testing.ObjectStorage;
+using SharedKernel.ObjectStorage;
+using SharedKernel.Testing.ObjectStorage;
 
 var store = new InMemoryObjectStore { PublicBaseUri = new Uri("https://cdn.example/") };
 store.Seed("uploads/original.jpg", originalBytes, "image/jpeg");
@@ -66,6 +66,6 @@ matching failure wins. A failed `Put` throws before it reads the content, so it 
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.ObjectStorage`. C# namespace: `PandaBear.Testing.ObjectStorage`. Assembly/project identity: `SharedKernel.Testing.ObjectStorage`.
+Package ID: `PandaBear.SharedKernel.Testing.ObjectStorage`. C# namespace: `SharedKernel.Testing.ObjectStorage`. Assembly/project identity: `SharedKernel.Testing.ObjectStorage`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

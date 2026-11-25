@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Builds sources that create a text writer, for the SKTEST022 tests.</summary>
 internal static class StringWriterNewLineTestSource

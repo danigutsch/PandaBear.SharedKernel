@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Analyzers.Tests;
+namespace SharedKernel.Blazor.Analyzers.Tests;
 
 /// <summary>Builds component sources with a single loop for the keyed-loop analyzer tests.</summary>
 internal static class KeyedLoopSources

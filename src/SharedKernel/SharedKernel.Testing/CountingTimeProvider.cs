@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// A time provider that counts how often the current time is read and otherwise delegates to an inner provider. Use it to prove that an

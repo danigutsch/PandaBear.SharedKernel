@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// The search state of a picker over a large option set, such as an image library: the query, the options that match it, at most

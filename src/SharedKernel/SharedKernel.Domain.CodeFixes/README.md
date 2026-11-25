@@ -37,6 +37,6 @@ repository-wide style fixes or test-only fixes here.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Domain.CodeFixes`. C# namespace: `PandaBear.Domain.CodeFixes`. Assembly/project identity: `SharedKernel.Domain.CodeFixes`.
+Package ID: `PandaBear.SharedKernel.Domain.CodeFixes`. C# namespace: `SharedKernel.Domain.CodeFixes`. Assembly/project identity: `SharedKernel.Domain.CodeFixes`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

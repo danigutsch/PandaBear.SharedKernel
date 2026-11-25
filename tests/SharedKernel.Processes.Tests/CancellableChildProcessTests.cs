@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Processes.Tests;
+namespace SharedKernel.Processes.Tests;
 
 /// <summary>Tests the child process helper that other tests use to check cancellation.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

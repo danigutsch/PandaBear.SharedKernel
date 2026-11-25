@@ -1,7 +1,7 @@
-using PandaBear.Vault.Model;
-using static PandaBear.Vault.Keeper.Tests.KeeperTestData;
+using SharedKernel.Vault.Model;
+using static SharedKernel.Vault.Keeper.Tests.KeeperTestData;
 
-namespace PandaBear.Vault.Keeper.Tests;
+namespace SharedKernel.Vault.Keeper.Tests;
 
 /// <summary>Tests the reader for Keeper CSV exports.</summary>
 public sealed class KeeperCsvReaderTests

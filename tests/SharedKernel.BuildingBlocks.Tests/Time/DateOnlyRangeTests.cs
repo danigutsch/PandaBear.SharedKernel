@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the validated range of calendar days.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

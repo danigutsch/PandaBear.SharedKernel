@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The contrast of one colour pair that the components use, in one scheme, against its WCAG 2.2 minimum.</summary>
 /// <param name="Foreground">The text or indicator colour.</param>

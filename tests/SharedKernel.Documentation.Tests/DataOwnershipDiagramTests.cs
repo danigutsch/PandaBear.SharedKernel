@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Exercises typed data ownership generation, stable ordering and check-only drift detection.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]

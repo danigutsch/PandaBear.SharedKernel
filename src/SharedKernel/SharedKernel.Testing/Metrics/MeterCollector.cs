@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.Testing.Metrics;
+namespace SharedKernel.Testing.Metrics;
 
 /// <summary>An <see cref="IMeterFactory" /> that also collects the long measurements of the meters it creates, isolated from other tests.</summary>
 public sealed class MeterCollector : IMeterFactory

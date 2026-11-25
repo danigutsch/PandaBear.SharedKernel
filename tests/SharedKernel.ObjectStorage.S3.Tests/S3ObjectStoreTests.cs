@@ -1,7 +1,7 @@
 using Amazon.S3.Model;
 using Amazon.S3;
 
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>Tests S3 object store reads, writes, listing, and bucket provisioning against a fake client.</summary>
 public sealed class S3ObjectStoreTests

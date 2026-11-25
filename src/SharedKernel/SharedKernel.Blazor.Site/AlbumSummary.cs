@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One album of an <see cref="AlbumIndex" />: what its card shows.</summary>
 /// <param name="Title">The album title, the card's heading.</param>

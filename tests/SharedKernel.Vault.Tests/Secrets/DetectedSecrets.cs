@@ -1,6 +1,6 @@
-using PandaBear.SecretScanning;
+using SharedKernel.SecretScanning;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Builds findings of the text scanner for tests.</summary>
 internal static class DetectedSecrets

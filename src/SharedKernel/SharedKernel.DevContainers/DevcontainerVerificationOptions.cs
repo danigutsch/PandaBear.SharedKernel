@@ -1,4 +1,4 @@
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>
 /// Options of <c>verify-devcontainer</c>.

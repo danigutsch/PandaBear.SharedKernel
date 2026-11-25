@@ -1,6 +1,6 @@
 using System.Collections.Frozen;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 // Source: ISO 4217 "List one" (current currency and funds codes), published by SIX Group as the ISO 4217 maintenance
 // agency (https://www.six-group.com/en/products-services/financial-information/data-standards.html), read through the

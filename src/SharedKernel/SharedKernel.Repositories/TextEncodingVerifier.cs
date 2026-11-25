@@ -2,9 +2,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Verifies that tracked repository text files are valid UTF-8 as git would check them out, using an isolated copy of the repository to ignore local git attribute config.</summary>
 public static class TextEncodingVerifier

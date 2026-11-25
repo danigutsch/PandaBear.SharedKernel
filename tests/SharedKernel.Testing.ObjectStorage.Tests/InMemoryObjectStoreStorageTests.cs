@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.ObjectStorage;
+using SharedKernel.ObjectStorage;
 
-namespace PandaBear.Testing.ObjectStorage.Tests;
+namespace SharedKernel.Testing.ObjectStorage.Tests;
 
 /// <summary>Tests that the in-memory object store keeps the <see cref="IObjectStore" /> contract of the S3 provider.</summary>
 public sealed class InMemoryObjectStoreStorageTests

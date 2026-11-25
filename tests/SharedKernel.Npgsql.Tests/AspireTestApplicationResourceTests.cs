@@ -1,6 +1,6 @@
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>
 /// Tests what AspireTestApplication tells about the resources of the running application model, with a small executable that never starts

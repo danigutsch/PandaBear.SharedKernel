@@ -1,7 +1,7 @@
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A postal address with sanitized parts; it is not geocoded or checked against a postal database.</summary>
 public sealed class PostalAddress : ValueObject

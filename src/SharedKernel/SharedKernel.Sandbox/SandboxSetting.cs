@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>A sandbox setting that <see cref="SettingsMerger"/> manages in an agent settings file.</summary>
 public enum SandboxSetting

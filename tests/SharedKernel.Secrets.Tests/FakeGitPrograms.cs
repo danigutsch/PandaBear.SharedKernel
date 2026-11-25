@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Creates the programs of the secrets repository with the real runner and a fake <c>git</c>.</summary>
 internal static class FakeGitPrograms

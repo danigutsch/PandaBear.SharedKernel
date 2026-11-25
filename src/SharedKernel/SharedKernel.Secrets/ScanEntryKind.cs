@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>What a walk found at a path.</summary>
 internal enum ScanEntryKind

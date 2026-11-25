@@ -1,17 +1,17 @@
-using PandaBear.SecretScanning;
-using PandaBear.Testing;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Review;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.SecretScanning;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 using Terminal.Gui.App;
 using Terminal.Gui.Input;
-using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
+using static SharedKernel.VaultManager.Tool.Tests.Review.ReviewVaults;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Drives the review window headlessly with injected keys and checks the review state and the dialogs asked.</summary>
 [Collection(HeadlessTerminal.Collection)]

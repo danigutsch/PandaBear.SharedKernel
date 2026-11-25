@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// Tests in Chromium, with reduced motion so a hover shows at once, that buttons, the more look of a card, headings and the divider

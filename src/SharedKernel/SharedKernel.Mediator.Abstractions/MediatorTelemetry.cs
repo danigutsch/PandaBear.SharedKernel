@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Defines the stable telemetry names of the SharedKernel mediator: the meter and activity source that <c>SharedKernel.Mediator</c>

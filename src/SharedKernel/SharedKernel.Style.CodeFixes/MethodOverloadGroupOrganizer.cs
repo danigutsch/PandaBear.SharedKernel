@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-namespace PandaBear.Style.CodeFixes;
+namespace SharedKernel.Style.CodeFixes;
 
 /// <summary>
 /// Regroups overloaded methods so same-name declarations stay adjacent after a rename.

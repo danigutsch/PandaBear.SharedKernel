@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Implements only the event store methods available before causation support.</summary>
 internal sealed class LegacyEventStore : IEventStore

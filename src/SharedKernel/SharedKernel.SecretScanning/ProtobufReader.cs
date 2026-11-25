@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Minimal protobuf wire-format reader: varints, length-delimited fields, and skipping fixed-width fields.</summary>
 /// <param name="buffer">Encoded message.</param>

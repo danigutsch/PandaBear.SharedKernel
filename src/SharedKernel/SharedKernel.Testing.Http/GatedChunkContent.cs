@@ -2,7 +2,7 @@
 
 using System.Net;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>
 /// Request content that sends a fixed payload in chunks, holding each chunk back until the test releases it.

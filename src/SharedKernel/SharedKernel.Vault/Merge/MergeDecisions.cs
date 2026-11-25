@@ -1,7 +1,7 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// User decisions that steer secret placement, matching, and merging. Holds keys and choices, never values. Pending

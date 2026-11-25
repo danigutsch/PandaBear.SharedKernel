@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets.Sops.Tests;
+namespace SharedKernel.Secrets.Sops.Tests;
 
 /// <summary>Tests the sops operations that produce a new version of an encrypted document, with a fake process runner.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

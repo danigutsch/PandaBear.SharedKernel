@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>Finds later rows sharing a caller-defined key.</summary>
 public static class DuplicateRowScanner

@@ -1,22 +1,22 @@
 #nullable enable
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.CreateUploadUrl(PandaBear.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectUploadTicket!>
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.Exists(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.FileSystemObjectStore(PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions! options) -> void
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.GetPublicUri(string! objectKey) -> System.Uri!
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.ListKeys(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.ListObjects(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!>
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.OpenRead(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectReadResult!>
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStore.Put(PandaBear.ObjectStorage.ObjectWriteRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectWriteResult!>
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.FileSystemObjectStoreOptions(string! rootPath, System.Func<PandaBear.ObjectStorage.ObjectStorageKey, System.Uri!>! publicUri, System.Func<PandaBear.ObjectStorage.ObjectStorageKey, (string! ContentType, string? Checksum)>! readMetadata) -> void
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.KeyAllowed.get -> System.Func<PandaBear.ObjectStorage.ObjectStorageKey, bool>?
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.KeyAllowed.init -> void
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.MaxKeyLength.get -> int
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.MaxKeyLength.init -> void
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.PublicUri.get -> System.Func<PandaBear.ObjectStorage.ObjectStorageKey, System.Uri!>!
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.ReadMetadata.get -> System.Func<PandaBear.ObjectStorage.ObjectStorageKey, (string! ContentType, string? Checksum)>!
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.RootPath.get -> string!
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.TemporaryFilePrefix.get -> string!
-PandaBear.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.TemporaryFilePrefix.init -> void
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.CreateUploadUrl(SharedKernel.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectUploadTicket!>
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.Exists(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.FileSystemObjectStore(SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions! options) -> void
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.GetPublicUri(string! objectKey) -> System.Uri!
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.ListKeys(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.ListObjects(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<SharedKernel.ObjectStorage.ObjectInventoryItem!>!>
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.OpenRead(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectReadResult!>
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStore.Put(SharedKernel.ObjectStorage.ObjectWriteRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectWriteResult!>
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.FileSystemObjectStoreOptions(string! rootPath, System.Func<SharedKernel.ObjectStorage.ObjectStorageKey, System.Uri!>! publicUri, System.Func<SharedKernel.ObjectStorage.ObjectStorageKey, (string! ContentType, string? Checksum)>! readMetadata) -> void
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.KeyAllowed.get -> System.Func<SharedKernel.ObjectStorage.ObjectStorageKey, bool>?
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.KeyAllowed.init -> void
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.MaxKeyLength.get -> int
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.MaxKeyLength.init -> void
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.PublicUri.get -> System.Func<SharedKernel.ObjectStorage.ObjectStorageKey, System.Uri!>!
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.ReadMetadata.get -> System.Func<SharedKernel.ObjectStorage.ObjectStorageKey, (string! ContentType, string? Checksum)>!
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.RootPath.get -> string!
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.TemporaryFilePrefix.get -> string!
+SharedKernel.ObjectStorage.FileSystem.FileSystemObjectStoreOptions.TemporaryFilePrefix.init -> void

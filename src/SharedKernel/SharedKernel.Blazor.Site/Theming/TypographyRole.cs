@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>A typography role of the site theme; each maps to seven <c>--site-{role}-*</c> custom properties.</summary>
 public enum TypographyRole

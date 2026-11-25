@@ -2,12 +2,12 @@ using Microsoft.Extensions.Time.Testing;
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using PandaBear.Messaging;
-using PandaBear.Messaging.IntegrationEvents;
-using PandaBear.Messaging.IntegrationEvents.CloudEvents;
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Messaging;
+using SharedKernel.Messaging.IntegrationEvents;
+using SharedKernel.Messaging.IntegrationEvents.CloudEvents;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests the integration event outbox message, relay options validation, relay publishing and claiming, PostgreSQL claim SQL and transport storage.

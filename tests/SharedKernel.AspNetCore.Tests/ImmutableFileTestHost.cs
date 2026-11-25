@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>
 /// A loopback host that serves <c>/media/{fileName}</c> from a temporary folder holding <c>abc123.jpg</c> and <c>notes.txt</c>, next to a

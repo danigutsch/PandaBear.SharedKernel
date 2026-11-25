@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.AspNetCore.Seo.Tests;
+namespace SharedKernel.AspNetCore.Seo.Tests;
 
 /// <summary>Tests the hreflang alternate links of sitemap entries.</summary>
 public sealed class SitemapAlternatesTests

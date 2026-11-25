@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>
 /// Generates a typed <c>CallProxy</c> for every interface that a test wraps with <c>CallProxy.Create&lt;T&gt;</c> or

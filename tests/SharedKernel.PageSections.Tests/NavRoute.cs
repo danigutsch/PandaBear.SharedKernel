@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.PageSections.Tests;
+namespace SharedKernel.PageSections.Tests;
 
 /// <summary>
 /// A validated button target of the tests, opaque like V2's NavTarget: a private constructor, a Result factory from the raw input, and

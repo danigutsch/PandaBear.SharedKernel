@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>A fictional inventory item backed by a reviewed file.</summary>
 /// <param name="Name">The exhibit name.</param>

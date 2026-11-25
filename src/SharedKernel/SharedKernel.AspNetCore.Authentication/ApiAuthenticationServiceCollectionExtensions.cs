@@ -8,9 +8,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using PandaBear.OpenApi;
+using SharedKernel.OpenApi;
 
-namespace PandaBear.AspNetCore.Authentication;
+namespace SharedKernel.AspNetCore.Authentication;
 
 /// <summary>
 /// Configures a fail-closed JWT bearer authentication boundary for an API.

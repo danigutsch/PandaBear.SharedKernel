@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Lists and checks the recipients of a file. Both read the file's metadata; only a proof starts sops.</summary>
 internal static class RecipientsOperation

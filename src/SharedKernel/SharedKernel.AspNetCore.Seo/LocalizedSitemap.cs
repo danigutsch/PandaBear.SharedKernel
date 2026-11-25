@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Seo;
+namespace SharedKernel.AspNetCore.Seo;
 
 /// <summary>Builds the reciprocal sitemap entries of one published page.</summary>
 public static class LocalizedSitemap

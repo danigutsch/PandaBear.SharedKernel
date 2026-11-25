@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Sqlite</PackageId>
         <Description>A private in-memory SQLite database per test, kept alive by an open connection and released with its pooled connections.</Description>
-        <RootNamespace>PandaBear.Testing.Sqlite</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.Sqlite</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;sqlite;in-memory;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

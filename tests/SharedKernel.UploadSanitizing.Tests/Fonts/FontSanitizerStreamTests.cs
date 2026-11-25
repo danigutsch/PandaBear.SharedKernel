@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.UploadSanitizing.Tests.Fonts;
+namespace SharedKernel.UploadSanitizing.Tests.Fonts;
 
 /// <summary>Tests validating a font read from a stream: bounded reads, no trust in a declared length, and the stream left open.</summary>
 [TestScope(TestScope.Unit)]

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.Testing.AspNetCore.Tests;
+namespace SharedKernel.Testing.AspNetCore.Tests;
 
 /// <summary>Tests the service overrides that remove an application's hosted services and health checks in a test host.</summary>
 public sealed class TestHostServiceCollectionExtensionsTests

@@ -1,7 +1,7 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>
 /// Merges match groups field by field. A merge never replaces a whole item and never drops a non-empty value unless a

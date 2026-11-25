@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The application's knowledge of its images, which content rules read: whether an image exists, and whether it may be shown in content

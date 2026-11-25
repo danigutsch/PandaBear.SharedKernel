@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>
 /// A readable in-memory stream that reports CanSeek as false and throws NotSupportedException for Length and Position.

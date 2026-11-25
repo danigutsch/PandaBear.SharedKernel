@@ -1,7 +1,7 @@
 using System.Runtime.Versioning;
-using static PandaBear.RepoConfig.Tests.BaselineGitTestOperations;
+using static SharedKernel.RepoConfig.Tests.BaselineGitTestOperations;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>gitConfig</c> and <c>hooks</c> parts of the <c>baseline</c> commands against real Git repositories.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Blocking relationship where at least one issue lives outside the roadmap repository.</summary>
 /// <param name="Blocker">Blocking issue.</param>

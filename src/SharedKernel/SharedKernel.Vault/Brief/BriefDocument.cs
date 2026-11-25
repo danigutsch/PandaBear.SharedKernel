@@ -1,6 +1,6 @@
-using PandaBear.Vault.Matching;
+using SharedKernel.Vault.Matching;
 
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>
 /// On-disk shape of a merge brief: what an agent needs to propose decisions for a merge, without secret values. It lists

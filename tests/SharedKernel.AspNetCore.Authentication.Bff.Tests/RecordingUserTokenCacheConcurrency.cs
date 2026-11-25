@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Conditionally mutates protected values in the shared recording cache and records the attempts.</summary>
 internal sealed class RecordingUserTokenCacheConcurrency(RecordingDistributedCache cache, TimeProvider clock) : IUserTokenCacheConcurrency

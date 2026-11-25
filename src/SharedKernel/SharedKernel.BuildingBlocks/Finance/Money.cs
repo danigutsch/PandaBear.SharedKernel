@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// An amount of one <see cref="Currency"/>, rounded away from zero to the currency's minor unit. No currency conversion is performed.

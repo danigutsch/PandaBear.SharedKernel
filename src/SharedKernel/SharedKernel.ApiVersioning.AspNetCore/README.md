@@ -16,6 +16,6 @@ Use `ApiVersionRouteGroupExtensions` when mapping ASP.NET Core route groups so t
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.ApiVersioning.AspNetCore`. C# namespace: `PandaBear.ApiVersioning.AspNetCore`. Assembly/project identity: `SharedKernel.ApiVersioning.AspNetCore`.
+Package ID: `PandaBear.SharedKernel.ApiVersioning.AspNetCore`. C# namespace: `SharedKernel.ApiVersioning.AspNetCore`. Assembly/project identity: `SharedKernel.ApiVersioning.AspNetCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

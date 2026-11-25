@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using PandaBear.Testing;
+using SharedKernel.Results;
+using SharedKernel.Testing;
 
-namespace PandaBear.UploadSanitizing.Tests.Images;
+namespace SharedKernel.UploadSanitizing.Tests.Images;
 
 /// <summary>
 /// Tests that the sanitizer recognizes the format by the bytes alone and rejects, with a validation result rather than an exception, every

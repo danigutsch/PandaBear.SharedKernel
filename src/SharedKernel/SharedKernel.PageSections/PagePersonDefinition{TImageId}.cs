@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>An unvalidated person line of a section: a round photo, a name and a role.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

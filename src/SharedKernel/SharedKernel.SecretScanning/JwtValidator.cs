@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Checks that a JSON web token header decodes to a JSON object with an <c>alg</c> member.</summary>
 internal static class JwtValidator

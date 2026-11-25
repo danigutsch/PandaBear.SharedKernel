@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Microsoft.Extensions.Hosting;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>Owns the diagnostics and host lifetime during one worker entry-point invocation.</summary>
 internal sealed class WorkerHostCapture : IObserver<DiagnosticListener>, IObserver<KeyValuePair<string, object?>>, IDisposable

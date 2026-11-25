@@ -1,8 +1,8 @@
-using PandaBear.Messaging;
+using SharedKernel.Messaging;
 
 
 
-namespace PandaBear.Testing.Messaging;
+namespace SharedKernel.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher that stores published envelopes and can be set to fail every call or only the first.

@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Counts blocker or parent reads during a graph traversal and fails once the count passes a limit, to prove traversal is linear.</summary>
 /// <param name="maximumReads">The most reads allowed before <see cref="RecordRead"/> throws.</param>

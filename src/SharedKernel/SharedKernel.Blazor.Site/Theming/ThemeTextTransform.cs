@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The <c>text-transform</c> of a typography role.</summary>
 public enum ThemeTextTransform

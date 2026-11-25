@@ -1,8 +1,8 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// A pager for a list paged through the URL, after the GOV.UK Design System pagination component: a named <c>nav</c> landmark of plain

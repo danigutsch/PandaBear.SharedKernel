@@ -160,6 +160,6 @@ Variable names are letters, digits, and `_`; `GH_TOKEN`, `GITHUB_TOKEN`, `FORGEJ
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.K6.Tool`. C# namespace: `PandaBear.K6.Tool`. Assembly/project identity: `SharedKernel.K6.Tool`.
+Package ID: `PandaBear.SharedKernel.K6.Tool`. C# namespace: `SharedKernel.K6.Tool`. Assembly/project identity: `SharedKernel.K6.Tool`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

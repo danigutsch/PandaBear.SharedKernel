@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub.Tests;
+namespace SharedKernel.Repositories.GitHub.Tests;
 
 /// <summary>Tests creating, writing, loading, and validating roadmap automation plans and their closed-item transitions.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Tests the ticket store's failure counter and its bounded dimensions.</summary>
 [Collection(SerialTicketStoreMetrics.Name)]

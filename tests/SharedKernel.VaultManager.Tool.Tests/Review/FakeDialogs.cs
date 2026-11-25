@@ -1,6 +1,6 @@
-using PandaBear.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Review;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Answers the questions of the review window and records every question and message.</summary>
 internal sealed class FakeDialogs : IReviewDialogs

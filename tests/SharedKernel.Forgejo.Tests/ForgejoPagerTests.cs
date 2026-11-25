@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.Forgejo.Tests;
+namespace SharedKernel.Forgejo.Tests;
 
 /// <summary>Tests how every page of a Forgejo list is read and when reading stops.</summary>
 public sealed class ForgejoPagerTests

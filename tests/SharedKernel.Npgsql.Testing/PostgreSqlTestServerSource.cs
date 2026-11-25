@@ -1,8 +1,8 @@
 using Aspire.Hosting.Testing;
 using Npgsql;
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Testing;
+namespace SharedKernel.Npgsql.Testing;
 
 /// <summary>
 /// Resolves the PostgreSQL server that an assembly's tests use: the server another process owns when

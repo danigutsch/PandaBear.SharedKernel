@@ -1,8 +1,8 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Tests how accepted secret findings move from notes into the fields of an item or into new items.</summary>
 public sealed class SecretPlacerTests

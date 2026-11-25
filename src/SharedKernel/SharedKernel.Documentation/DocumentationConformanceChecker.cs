@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>
 /// Checks machine-readable documentation facts against configured source files.

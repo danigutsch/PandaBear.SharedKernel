@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>A parser that never recognizes a violation, standing in for an application's own registration.</summary>
 internal sealed class FixedTestParser : IUniqueViolationParser

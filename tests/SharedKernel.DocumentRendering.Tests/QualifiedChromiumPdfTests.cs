@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Qualifies the optional renderer with the caller-provisioned Chromium and qpdf runtimes.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]

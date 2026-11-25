@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>Configures which server validation fields are accepted and how much text is kept.</summary>
 public sealed record ServerValidationOptions

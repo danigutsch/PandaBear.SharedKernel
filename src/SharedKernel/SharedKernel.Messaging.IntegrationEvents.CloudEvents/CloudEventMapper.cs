@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.CloudEvents;
+namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents;
 
 /// <summary>
 /// Maps typed integration events to CloudEvents metadata envelopes.

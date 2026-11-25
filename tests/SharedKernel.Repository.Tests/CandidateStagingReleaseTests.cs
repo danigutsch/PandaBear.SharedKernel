@@ -2,7 +2,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Tests staging pinned candidate packages by downloading them from a published release, using a fake release server.</summary>
 public sealed class CandidateStagingReleaseTests

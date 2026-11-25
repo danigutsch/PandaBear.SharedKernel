@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>
 /// Tests that integration event contracts stay independent of the mediator and expose their metadata.
@@ -31,8 +31,8 @@ public sealed class IntegrationEventDispatchTests
         typeNames.ShouldNotContain("MediatorIntegrationEventDispatcher");
         typeNames.ShouldNotContain("IIntegrationEventConsumerRegistration");
         typeNames.ShouldNotContain("IntegrationEventConsumerRegistration`1");
-        integrationEventInterfaces.ShouldNotContain("PandaBear.Mediator.INotification");
-        handlerInterfaces.ShouldNotContain("PandaBear.Mediator.INotificationHandler`1");
+        integrationEventInterfaces.ShouldNotContain("SharedKernel.Mediator.INotification");
+        handlerInterfaces.ShouldNotContain("SharedKernel.Mediator.INotificationHandler`1");
     }
 
     [Fact]

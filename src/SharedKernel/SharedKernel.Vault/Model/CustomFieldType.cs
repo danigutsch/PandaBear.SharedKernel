@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Custom field kinds, numbered like Bitwarden field types.</summary>
 public enum CustomFieldType

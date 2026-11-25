@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Builds element references bound to the test context's JavaScript runtime, as a render's <c>@ref</c> capture would.</summary>
 internal static class FocusTargets

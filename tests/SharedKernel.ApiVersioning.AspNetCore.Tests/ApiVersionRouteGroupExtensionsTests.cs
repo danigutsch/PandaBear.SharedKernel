@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
-namespace PandaBear.ApiVersioning.AspNetCore.Tests;
+namespace SharedKernel.ApiVersioning.AspNetCore.Tests;
 
 /// <summary>
 /// Verifies ASP.NET Core API version route helpers.

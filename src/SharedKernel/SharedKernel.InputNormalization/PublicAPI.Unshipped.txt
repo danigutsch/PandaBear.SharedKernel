@@ -1,32 +1,32 @@
 #nullable enable
-PandaBear.InputNormalization.ControlCharacters
-static PandaBear.InputNormalization.ControlCharacters.Escape(string! value) -> string!
-static PandaBear.InputNormalization.ControlCharacters.EscapeLines(string! value) -> string![]!
-PandaBear.InputNormalization.NumericSanitizer
-static PandaBear.InputNormalization.NumericSanitizer.SanitizePrice(decimal value) -> decimal
-PandaBear.InputNormalization.ObjectStorageKeyValidator
-static PandaBear.InputNormalization.ObjectStorageKeyValidator.IsValidRelativeKey(string? value, int maxLength) -> bool
-PandaBear.InputNormalization.PrintableText
-static PandaBear.InputNormalization.PrintableText.OneLine(string! text) -> string!
-const PandaBear.InputNormalization.PrintableText.Replacement = '�' -> char
-static PandaBear.InputNormalization.PrintableText.TableCell(string! text) -> string!
-PandaBear.InputNormalization.StringSanitizer
-static PandaBear.InputNormalization.StringSanitizer.NormalizeKey(string! value) -> string!
-static PandaBear.InputNormalization.StringSanitizer.NormalizeKeyRemovingDiacritics(string! value) -> string!
-static PandaBear.InputNormalization.StringSanitizer.Sanitize(string? value) -> string?
-static PandaBear.InputNormalization.StringSanitizer.SanitizeCollection(System.Collections.Generic.IEnumerable<string!>? values) -> string![]!
-static PandaBear.InputNormalization.StringSanitizer.SanitizeNotes(string? value) -> string?
-static PandaBear.InputNormalization.StringSanitizer.TryNormalizeKey(string! value, out string? key) -> bool
-static PandaBear.InputNormalization.StringSanitizer.TrySanitize(string? value, out string? sanitized) -> bool
-static PandaBear.InputNormalization.StringSanitizer.TrySanitizeNotes(string? value, out string? sanitized) -> bool
-PandaBear.InputNormalization.WebAssetUriSanitizer
-static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRasterDataImage(string? value, int maxLength) -> string?
-static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
-static PandaBear.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?
-PandaBear.InputNormalization.RasterImageMediaType
-PandaBear.InputNormalization.RasterImageMediaType.FileExtension.get -> string!
-PandaBear.InputNormalization.RasterImageMediaType.MediaType.get -> string!
-static PandaBear.InputNormalization.RasterImageMediaType.Find(string? mediaType) -> PandaBear.InputNormalization.RasterImageMediaType?
-static PandaBear.InputNormalization.StringSanitizer.TrySanitizeParagraphs(string? value, out System.Collections.Generic.IReadOnlyList<string!>! paragraphs) -> bool
-PandaBear.InputNormalization.PostgreSqlIdentifier
-static PandaBear.InputNormalization.PostgreSqlIdentifier.IsUnquoted(string? value) -> bool
+SharedKernel.InputNormalization.ControlCharacters
+static SharedKernel.InputNormalization.ControlCharacters.Escape(string! value) -> string!
+static SharedKernel.InputNormalization.ControlCharacters.EscapeLines(string! value) -> string![]!
+SharedKernel.InputNormalization.NumericSanitizer
+static SharedKernel.InputNormalization.NumericSanitizer.SanitizePrice(decimal value) -> decimal
+SharedKernel.InputNormalization.ObjectStorageKeyValidator
+static SharedKernel.InputNormalization.ObjectStorageKeyValidator.IsValidRelativeKey(string? value, int maxLength) -> bool
+SharedKernel.InputNormalization.PrintableText
+static SharedKernel.InputNormalization.PrintableText.OneLine(string! text) -> string!
+const SharedKernel.InputNormalization.PrintableText.Replacement = '�' -> char
+static SharedKernel.InputNormalization.PrintableText.TableCell(string! text) -> string!
+SharedKernel.InputNormalization.StringSanitizer
+static SharedKernel.InputNormalization.StringSanitizer.NormalizeKey(string! value) -> string!
+static SharedKernel.InputNormalization.StringSanitizer.NormalizeKeyRemovingDiacritics(string! value) -> string!
+static SharedKernel.InputNormalization.StringSanitizer.Sanitize(string? value) -> string?
+static SharedKernel.InputNormalization.StringSanitizer.SanitizeCollection(System.Collections.Generic.IEnumerable<string!>? values) -> string![]!
+static SharedKernel.InputNormalization.StringSanitizer.SanitizeNotes(string? value) -> string?
+static SharedKernel.InputNormalization.StringSanitizer.TryNormalizeKey(string! value, out string? key) -> bool
+static SharedKernel.InputNormalization.StringSanitizer.TrySanitize(string? value, out string? sanitized) -> bool
+static SharedKernel.InputNormalization.StringSanitizer.TrySanitizeNotes(string? value, out string? sanitized) -> bool
+SharedKernel.InputNormalization.WebAssetUriSanitizer
+static SharedKernel.InputNormalization.WebAssetUriSanitizer.NormalizeRasterDataImage(string? value, int maxLength) -> string?
+static SharedKernel.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
+static SharedKernel.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?
+SharedKernel.InputNormalization.RasterImageMediaType
+SharedKernel.InputNormalization.RasterImageMediaType.FileExtension.get -> string!
+SharedKernel.InputNormalization.RasterImageMediaType.MediaType.get -> string!
+static SharedKernel.InputNormalization.RasterImageMediaType.Find(string? mediaType) -> SharedKernel.InputNormalization.RasterImageMediaType?
+static SharedKernel.InputNormalization.StringSanitizer.TrySanitizeParagraphs(string? value, out System.Collections.Generic.IReadOnlyList<string!>! paragraphs) -> bool
+SharedKernel.InputNormalization.PostgreSqlIdentifier
+static SharedKernel.InputNormalization.PostgreSqlIdentifier.IsUnquoted(string? value) -> bool

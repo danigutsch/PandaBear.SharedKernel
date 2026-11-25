@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>User decision for one field of one group. It names a member, never a value.</summary>
 /// <param name="FieldPath">Field path, one of <see cref="FieldPaths"/>.</param>

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>An in-memory <see cref="IFormFile" /> for binding and upload tests.</summary>
 public sealed class FakeFormFile : IFormFile

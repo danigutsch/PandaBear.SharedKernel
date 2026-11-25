@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>The outcome of one probe, with the reason and what it means for the user.</summary>
 /// <param name="Id">A short stable name such as <c>unix-socket</c>.</param>

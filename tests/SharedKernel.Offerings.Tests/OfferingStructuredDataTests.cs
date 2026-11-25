@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using static PandaBear.Offerings.Tests.OfferingFixtures;
+using static SharedKernel.Offerings.Tests.OfferingFixtures;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Tests the schema.org JSON-LD of an offering's public view.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

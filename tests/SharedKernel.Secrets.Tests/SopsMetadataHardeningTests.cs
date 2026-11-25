@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the inputs of a security review: files that hide the real metadata, forge labels, or leave data in clear must not read as exact.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

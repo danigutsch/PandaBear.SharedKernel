@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>Value-free summary of a merge. It holds counts, item names, field paths, and resolutions only.</summary>
 public sealed record MergeReport

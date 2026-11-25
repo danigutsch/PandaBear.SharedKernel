@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures mid-stream cancellation latency for the stream-dispatch strategies under comparison.

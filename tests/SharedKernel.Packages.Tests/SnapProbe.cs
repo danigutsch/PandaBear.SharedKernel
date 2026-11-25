@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tells tests whether the real <c>snap</c> is available.</summary>
 internal static class SnapProbe

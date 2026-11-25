@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization;
+namespace SharedKernel.InputNormalization;
 
 /// <summary>
 /// Provides numeric sanitization methods for domain inputs.

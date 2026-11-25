@@ -1,7 +1,7 @@
-using PandaBear.Blazor.Site.Theming;
-using PandaBear.Results;
+using SharedKernel.Blazor.Site.Theming;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site.Tests.Theming;
+namespace SharedKernel.Blazor.Site.Tests.Theming;
 
 /// <summary>Builds the themes and fonts that the theme tests share.</summary>
 internal static class ThemeFixtures

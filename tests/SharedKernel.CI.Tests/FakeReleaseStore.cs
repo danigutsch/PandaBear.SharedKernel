@@ -1,4 +1,4 @@
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>Holds releases in memory and fails the deletion of chosen releases with chosen exceptions.</summary>
 internal sealed class FakeReleaseStore(params RepositoryRelease[] releases) : IReleaseStore

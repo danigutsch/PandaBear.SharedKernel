@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// The shape of a theme: the <see cref="ControlShape" /> of controls and surfaces, and the decorative divider that a section draws

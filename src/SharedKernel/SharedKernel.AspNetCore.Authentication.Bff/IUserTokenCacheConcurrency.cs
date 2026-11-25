@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>Performs atomic conditional mutations on the protected user-token entries in an <see cref="IDistributedCache" />.</summary>
 /// <remarks>

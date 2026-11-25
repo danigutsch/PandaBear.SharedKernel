@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>The outcomes of comparing a stored artifact with its recorded metadata.</summary>
 public enum PostgreSqlArtifactIntegrityStatus

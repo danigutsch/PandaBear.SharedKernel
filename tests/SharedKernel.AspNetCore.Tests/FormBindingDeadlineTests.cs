@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Testing;
-using PandaBear.Testing.Http;
+using SharedKernel.Testing;
+using SharedKernel.Testing.Http;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Exercises timeout behavior during implicit multipart binding over a real socket.</summary>
 [TestScope(TestScope.Integration)]

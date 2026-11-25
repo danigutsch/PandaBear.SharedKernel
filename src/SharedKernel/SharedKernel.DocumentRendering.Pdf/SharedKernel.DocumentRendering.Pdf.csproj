@@ -3,7 +3,6 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.DocumentRendering.Pdf</PackageId>
         <Description>Bounded normalization for generated tagged PDF documents.</Description>
-        <RootNamespace>PandaBear.DocumentRendering.Pdf</RootNamespace>
         <PackageTags>documents;pdf;tagged-pdf;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

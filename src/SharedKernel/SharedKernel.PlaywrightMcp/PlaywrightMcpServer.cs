@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.PlaywrightMcp;
+namespace SharedKernel.PlaywrightMcp;
 
 /// <summary>
 /// Runs the digest-pinned Playwright MCP image as a stdio MCP server on a local Docker engine or rootless Podman, and pulls

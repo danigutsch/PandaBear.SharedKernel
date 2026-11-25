@@ -1,6 +1,6 @@
 # PandaBear C# namespaces
 
-Date: 2026-10-20. Status: accepted.
+Date: 2026-10-20. Status: superseded by [SharedKernel C# namespaces](20261124-sharedkernel-namespaces.md).
 
 The standalone repository owns reusable library capabilities. C# namespaces migrate from `SharedKernel.*` to `PandaBear.*`, including generated source and tooling contracts. This deliberately breaks source compatibility; consumers must update imports and qualified names in a separate adoption change.
 

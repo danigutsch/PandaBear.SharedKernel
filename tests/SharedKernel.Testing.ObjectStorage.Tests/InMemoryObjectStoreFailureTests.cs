@@ -1,6 +1,6 @@
-using PandaBear.ObjectStorage;
+using SharedKernel.ObjectStorage;
 
-namespace PandaBear.Testing.ObjectStorage.Tests;
+namespace SharedKernel.Testing.ObjectStorage.Tests;
 
 /// <summary>Tests failure injection on the in-memory object store.</summary>
 public sealed class InMemoryObjectStoreFailureTests

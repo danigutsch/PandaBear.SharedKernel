@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Tests how <c>allowWrite</c> entries are classified.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

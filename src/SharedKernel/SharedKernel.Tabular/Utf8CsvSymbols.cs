@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>
 /// The CSV symbols of UTF-8 bytes. Every structural character is ASCII, and no byte of a multibyte UTF-8 sequence is ASCII, so fields are

@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Tests splitting plain text into sanitized paragraphs on blank lines.</summary>
 public sealed class StringSanitizerParagraphTests

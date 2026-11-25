@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>A new directory under <c>/dev/shm</c>, a memory-backed file system, for the temporary root of <c>edit</c>.</summary>
 internal sealed class MemoryRoot : IDisposable

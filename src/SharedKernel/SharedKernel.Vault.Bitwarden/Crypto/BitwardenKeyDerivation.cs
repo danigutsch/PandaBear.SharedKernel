@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Konscious.Security.Cryptography;
 
-namespace PandaBear.Vault.Bitwarden.Crypto;
+namespace SharedKernel.Vault.Bitwarden.Crypto;
 
 /// <summary>Derives Bitwarden export keys from a file password.</summary>
 internal static class BitwardenKeyDerivation

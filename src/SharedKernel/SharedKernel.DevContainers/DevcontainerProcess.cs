@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>
 /// Runs the child processes of <c>verify-devcontainer</c> and copies their output, line by line as it arrives, to

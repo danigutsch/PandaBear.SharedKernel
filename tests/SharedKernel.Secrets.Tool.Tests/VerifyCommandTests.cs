@@ -1,6 +1,6 @@
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>verify</c>, which checks every covered file and starts no process.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

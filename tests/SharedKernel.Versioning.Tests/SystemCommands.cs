@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>The engine's external commands with the real process runner and the PATH-only executable resolver.</summary>
 internal static class SystemCommands

@@ -1,4 +1,4 @@
-namespace PandaBear.ApiVersioning;
+namespace SharedKernel.ApiVersioning;
 
 /// <summary>
 /// Describes the lifecycle state of an API contract version.

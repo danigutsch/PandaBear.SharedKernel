@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>How a page section lays out its images.</summary>
 public enum SectionImageLayout

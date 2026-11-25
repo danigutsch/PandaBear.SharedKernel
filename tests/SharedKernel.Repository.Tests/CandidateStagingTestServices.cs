@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Builds stage-candidate services from test doubles, so no test reaches Git or the network.</summary>
 internal static class CandidateStagingTestServices

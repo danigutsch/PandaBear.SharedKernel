@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Imports GitHub issues into the roadmap according to the reconciliation manifest.</summary>
 public sealed class GitHubRoadmapIntake

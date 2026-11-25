@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold.Tests;
+namespace SharedKernel.DispositionHold.Tests;
 
 /// <summary>
 /// Shared trait constants for SharedKernel disposition hold tests.

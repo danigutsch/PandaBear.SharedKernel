@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Formats;
+namespace SharedKernel.Vault.Formats;
 
 /// <summary>
 /// Bitwarden server limits on encrypted field length. Vaultwarden only checks notes, so targeting these limits keeps

@@ -1,9 +1,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using PandaBear.Testing.Roslyn;
-using PandaBear.Domain.Analyzers;
+using SharedKernel.Testing.Roslyn;
+using SharedKernel.Domain.Analyzers;
 
-namespace PandaBear.Domain.CodeFixes.Tests;
+namespace SharedKernel.Domain.CodeFixes.Tests;
 
 /// <summary>Tests the code fix provider that makes non-private domain property setters private.</summary>
 public sealed class DomainCodeFixProviderTests

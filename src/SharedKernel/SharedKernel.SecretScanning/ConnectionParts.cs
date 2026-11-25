@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Text;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Credentials and address split out of a database URI, URL with user info, or connection string.</summary>
 /// <param name="Username">User name, when present.</param>

@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>An advisory source that returns a fixed result and records what it was asked.</summary>
 internal sealed class FakeAdvisorySource(Result<IReadOnlyList<Advisory>> result) : IAdvisorySource

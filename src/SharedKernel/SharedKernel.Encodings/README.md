@@ -14,7 +14,7 @@ writes its public recipients (`age1...`) and private identities (`AGE-SECRET-KEY
 characters, so the limit is a parameter.
 
 ```csharp
-using PandaBear.Encodings;
+using SharedKernel.Encodings;
 
 if (Bech32.TryDecode(text, maxLength: null, out var prefix, out var fiveBit)
     && prefix == "age"

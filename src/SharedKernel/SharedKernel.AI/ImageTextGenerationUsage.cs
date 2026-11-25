@@ -1,4 +1,4 @@
-namespace PandaBear.AI;
+namespace SharedKernel.AI;
 
 /// <summary>Contains optional provider-reported measurements for a completed generation.</summary>
 /// <param name="InputTokens">Input token count, when reported.</param>

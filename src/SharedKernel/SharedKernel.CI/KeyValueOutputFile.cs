@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Appends run outputs to a file as one <c>name=value</c> line each, the format of the <c>GITHUB_OUTPUT</c> file of GitHub Actions

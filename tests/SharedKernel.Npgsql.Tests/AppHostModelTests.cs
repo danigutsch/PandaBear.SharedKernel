@@ -1,6 +1,6 @@
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests AppHostModel, which reads an AppHost's application model (projects, waits, environment, health checks) without starting it.</summary>
 public sealed class AppHostModelTests

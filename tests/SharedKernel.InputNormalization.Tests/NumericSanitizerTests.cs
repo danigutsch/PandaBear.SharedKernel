@@ -1,7 +1,7 @@
 
 using System.Globalization;
 
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Unit tests for NumericSanitizer.SanitizePrice rounding to two decimal places.</summary>
 public sealed class NumericSanitizerTests

@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Tests the format-independent merge against an in-memory document.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

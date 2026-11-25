@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>Configures deterministic request-binding failures in ASP.NET Core test hosts.</summary>
 public static class TestRequestBindingServiceCollectionExtensions

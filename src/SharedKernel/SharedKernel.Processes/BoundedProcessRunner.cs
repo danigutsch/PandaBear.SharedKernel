@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>
 /// Runs a real child process that is expected to finish quickly, such as a package manager query, with a time limit (two

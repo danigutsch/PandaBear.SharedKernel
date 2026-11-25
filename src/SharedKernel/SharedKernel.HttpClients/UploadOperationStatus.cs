@@ -1,4 +1,4 @@
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>Describes the transport and server-processing stages of a caller-owned upload operation.</summary>
 public enum UploadOperationStatus

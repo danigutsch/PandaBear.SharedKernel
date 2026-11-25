@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>Which way a probe's outcome is good.</summary>
 public enum ProbeKind

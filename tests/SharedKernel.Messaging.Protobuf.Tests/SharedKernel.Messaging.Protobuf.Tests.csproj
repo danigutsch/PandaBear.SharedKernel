@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Messaging.Protobuf.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.Messaging.Protobuf.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Messaging.Protobuf.TestContracts" />
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing.Messaging" />
+        <Using Include="SharedKernel.Messaging.Protobuf.TestContracts" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Messaging" />
         <Using Include="Xunit" />
     </ItemGroup>
 

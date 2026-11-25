@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Runs every <c>git</c> call of this library the same way: start information from <see cref="GitStartInfo"/>, and a

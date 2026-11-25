@@ -23,6 +23,6 @@ from the image or another update process. The image is pinned by tag and digest.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Aspire.Hosting.ClamAv`. C# namespace: `PandaBear.Aspire.Hosting.ClamAv`. Assembly/project identity: `SharedKernel.Aspire.Hosting.ClamAv`.
+Package ID: `PandaBear.SharedKernel.Aspire.Hosting.ClamAv`. C# namespace: `SharedKernel.Aspire.Hosting.ClamAv`. Assembly/project identity: `SharedKernel.Aspire.Hosting.ClamAv`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

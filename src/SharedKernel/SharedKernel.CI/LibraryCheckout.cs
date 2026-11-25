@@ -1,6 +1,6 @@
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Requires the library root to be a clean Git checkout, at its top level, of the pinned revision.</summary>
 internal static class LibraryCheckout

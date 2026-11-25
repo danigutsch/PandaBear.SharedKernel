@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>
 /// An unvalidated page section, and the round-trip form of a stored one (see <see cref="PageSection{TImageId, TLink, TExtra}.ToDefinition{TLinkInput}"/>).

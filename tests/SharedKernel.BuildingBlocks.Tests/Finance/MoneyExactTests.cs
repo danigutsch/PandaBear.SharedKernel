@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests creating money that must already have the currency's precision.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

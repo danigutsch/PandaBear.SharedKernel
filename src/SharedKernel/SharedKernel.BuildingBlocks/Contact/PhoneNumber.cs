@@ -1,7 +1,7 @@
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>A phone number reduced to digits with an optional leading <c>+</c>; not verified to be reachable or in service.</summary>
 public sealed class PhoneNumber : ValueObject

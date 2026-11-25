@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Writes the validation plan for the test projects affected since a base revision.</summary>
 internal static class ProjectSelectionPlan

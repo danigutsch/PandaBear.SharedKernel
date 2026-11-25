@@ -1,6 +1,6 @@
-using static PandaBear.Blazor.Site.Tests.SiteFixtures;
+using static SharedKernel.Blazor.Site.Tests.SiteFixtures;
 
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>
 /// Tests that a title in another language than the page is marked on the title alone (WCAG 3.1.2, language of parts), so the rest of a

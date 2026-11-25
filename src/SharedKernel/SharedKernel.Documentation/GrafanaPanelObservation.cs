@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>A host observation of a rendered Grafana panel.</summary>
 /// <param name="Title">The title reported by the dashboard.</param>

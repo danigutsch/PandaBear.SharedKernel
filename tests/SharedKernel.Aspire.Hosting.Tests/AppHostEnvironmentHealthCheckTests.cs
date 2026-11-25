@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>
 /// Tests WithHttpHealthCheckInAppHostEnvironment: the project runs in the AppHost's environment, so the health check is added exactly when the

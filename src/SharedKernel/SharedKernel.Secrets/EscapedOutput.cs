@@ -1,6 +1,6 @@
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Writes lines with control characters escaped, so file names and tool messages cannot steer a terminal or forge a log line.</summary>
 internal static class EscapedOutput

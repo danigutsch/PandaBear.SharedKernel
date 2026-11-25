@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages.Tool.Tests;
+namespace SharedKernel.Packages.Tool.Tests;
 
 /// <summary>Fixed answers for the three source ports; nothing reaches the network.</summary>
 internal sealed class FakeUpdateSources(

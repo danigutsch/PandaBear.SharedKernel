@@ -1,4 +1,4 @@
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>Collects the host-owned attribute predicates the privacy processors apply on top of the shared baseline.</summary>
 internal sealed class TelemetryPrivacyPolicy

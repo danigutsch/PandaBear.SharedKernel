@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>A finding while the scan runs, with the value it found, which <see cref="DetectedSecret"/> never holds.</summary>
 internal sealed record Hit

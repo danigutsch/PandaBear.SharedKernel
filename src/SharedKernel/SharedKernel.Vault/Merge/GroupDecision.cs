@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>Field decisions and pending entries for one match group.</summary>
 /// <param name="GroupKey">Stable group key.</param>

@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
 
-namespace PandaBear.Vault.Tests.Pipeline;
+namespace SharedKernel.Vault.Tests.Pipeline;
 
 /// <summary>Tests that <see cref="SshKeyNormalizer"/> derives public keys and fingerprints, rewrites keys as PKCS#8, and falls back to secure notes without losing key text.</summary>
 public sealed class SshKeyNormalizerTests

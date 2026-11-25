@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Finds the user on whose behalf an outgoing HTTP call is made.

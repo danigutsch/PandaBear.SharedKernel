@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// The programs that <see cref="SecretsRepository"/> runs, injected so a host passes the real ones and a test passes fakes.

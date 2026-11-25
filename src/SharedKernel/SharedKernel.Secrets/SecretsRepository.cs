@@ -1,6 +1,6 @@
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// The age and SOPS secrets of one repository: the creation rules in <c>.config/sharedkernel-secrets.json</c> under its

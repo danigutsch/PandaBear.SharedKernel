@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Bitwarden.Crypto;
+namespace SharedKernel.Vault.Bitwarden.Crypto;
 
 /// <summary>Key derivation settings of a password-protected export.</summary>
 /// <param name="Type">Derivation function.</param>

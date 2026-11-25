@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Mediator.SourceGenerator;
+namespace SharedKernel.Mediator.SourceGenerator;
 
 /// <summary>
 /// Emits common XML documentation blocks for generated source.

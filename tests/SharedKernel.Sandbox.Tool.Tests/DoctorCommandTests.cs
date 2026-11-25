@@ -1,6 +1,6 @@
-using static PandaBear.Sandbox.Tool.Tests.SandboxToolHarness;
+using static SharedKernel.Sandbox.Tool.Tests.SandboxToolHarness;
 
-namespace PandaBear.Sandbox.Tool.Tests;
+namespace SharedKernel.Sandbox.Tool.Tests;
 
 /// <summary>Tests the <c>doctor</c> command.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

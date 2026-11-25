@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests reading installed packages from <c>dpkg-query</c> output.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

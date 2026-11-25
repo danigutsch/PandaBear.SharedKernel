@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The application's composite formats for the full credit of an image, as a credits page lists it (see

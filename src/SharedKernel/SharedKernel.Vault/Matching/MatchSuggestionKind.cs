@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>Why two items were suggested as possible duplicates.</summary>
 public enum MatchSuggestionKind

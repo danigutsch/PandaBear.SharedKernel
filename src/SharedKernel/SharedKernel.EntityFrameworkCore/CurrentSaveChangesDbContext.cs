@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore;
+namespace SharedKernel.EntityFrameworkCore;
 
 /// <summary>
 /// Tracks the DbContext currently executing a SaveChanges pipeline on the async control flow.

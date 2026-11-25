@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Locates a method, or the top-level statements, in a C# source file.</summary>
 internal sealed class DocumentationSourceMethod

@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Tests how PostgreSqlIndexHealthRecommendationPolicy maps index and table evidence to an action and reason.</summary>
 [TestScope(TestScope.Unit)]

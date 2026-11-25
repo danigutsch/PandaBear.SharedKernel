@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>The CSV symbols of UTF-16 text.</summary>
 internal readonly struct Utf16CsvSymbols : ICsvSymbols<char>

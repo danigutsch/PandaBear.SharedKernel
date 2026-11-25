@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.FindSymbols;
 
-namespace PandaBear.Domain.CodeFixes;
+namespace SharedKernel.Domain.CodeFixes;
 
 /// <summary>
 /// Registers the <c>SKDOM001</c> fix that makes a domain-model setter private.

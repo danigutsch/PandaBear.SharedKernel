@@ -1,4 +1,4 @@
-namespace PandaBear.HttpClients.Tests;
+namespace SharedKernel.HttpClients.Tests;
 
 /// <summary>
 /// Unit tests for UploadOperationState progress reporting, cancellation, retry, and screen-reader announcements.

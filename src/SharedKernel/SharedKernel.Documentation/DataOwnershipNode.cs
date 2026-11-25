@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>A service or data store in a data ownership diagram.</summary>
 /// <param name="id">The stable Mermaid node identifier.</param>

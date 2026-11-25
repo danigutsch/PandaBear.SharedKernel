@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Verifies the evidence and stopping rules for the ordered minimum search.</summary>
 public sealed class NuGetAuditSearchTests

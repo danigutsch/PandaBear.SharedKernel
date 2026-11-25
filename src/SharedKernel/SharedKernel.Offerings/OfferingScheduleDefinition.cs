@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Unvalidated schedule of an offering, as an editor entered it.</summary>
 /// <param name="Availability">The availability; the default value is not defined and is refused as missing.</param>

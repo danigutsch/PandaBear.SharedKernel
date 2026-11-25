@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency.Tests;
+namespace SharedKernel.Idempotency.Tests;
 
 /// <summary>Verifies how an existing strict-only store behaves through the additive retention contract.</summary>
 public sealed class IIdempotencyRetentionStoreCutoffTests

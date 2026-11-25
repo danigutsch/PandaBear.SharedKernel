@@ -1,4 +1,4 @@
-namespace PandaBear.Caching.Tests;
+namespace SharedKernel.Caching.Tests;
 
 /// <summary>A revision store and value loader for <see cref="RevisionCache{TKey, TValue}"/> tests that counts its calls.</summary>
 internal sealed class RevisionSource

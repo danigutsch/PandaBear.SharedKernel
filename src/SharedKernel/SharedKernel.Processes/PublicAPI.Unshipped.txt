@@ -1,42 +1,42 @@
 #nullable enable
-PandaBear.Processes.BoundedProcessRunner
-PandaBear.Processes.BoundedProcessRunner.BoundedProcessRunner() -> void
-PandaBear.Processes.BoundedProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!
-PandaBear.Processes.IExecutableResolver
-PandaBear.Processes.IExecutableResolver.Find(string! command) -> string?
-PandaBear.Processes.IProcessRunner
-PandaBear.Processes.IProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!
-PandaBear.Processes.PathExecutableResolver
-PandaBear.Processes.PathExecutableResolver.Find(string! command) -> string?
-PandaBear.Processes.PathExecutableResolver.PathExecutableResolver(string? path, bool isWindows) -> void
-PandaBear.Processes.PathExecutableResolver.Resolve(string! fileName) -> string!
-PandaBear.Processes.ProcessOutput
-PandaBear.Processes.ProcessOutput.ExitCode.get -> int
-PandaBear.Processes.ProcessOutput.ProcessOutput(int exitCode, string! standardOutput, string! standardError = "") -> void
-PandaBear.Processes.ProcessOutput.StandardError.get -> string!
-PandaBear.Processes.ProcessOutput.StandardOutput.get -> string!
-PandaBear.Processes.SystemProcessRunner
-PandaBear.Processes.SystemProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!
-PandaBear.Processes.SystemProcessRunner.SystemProcessRunner() -> void
-static PandaBear.Processes.PathExecutableResolver.Default.get -> PandaBear.Processes.PathExecutableResolver!
-PandaBear.Processes.ProcessEnvironment
-PandaBear.Processes.ProcessTree
-static PandaBear.Processes.ProcessEnvironment.Remove(System.Diagnostics.ProcessStartInfo! startInfo, System.Collections.Generic.IEnumerable<string!>! names) -> void
-static PandaBear.Processes.ProcessEnvironment.RemoveGitVariables(System.Diagnostics.ProcessStartInfo! startInfo) -> void
-static PandaBear.Processes.ProcessTree.Start(System.Diagnostics.ProcessStartInfo! startInfo) -> System.Diagnostics.Process!
-static PandaBear.Processes.ProcessTree.Terminate(System.Diagnostics.Process! process, System.TimeSpan exitTimeout) -> System.Threading.Tasks.Task!
-static PandaBear.Processes.ProcessEnvironment.ForgeTokenVariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Processes.ProcessEnvironment.IsForgeTokenVariable(string! name) -> bool
-static PandaBear.Processes.ProcessEnvironment.RemoveForgeTokens(System.Diagnostics.ProcessStartInfo! startInfo) -> void
-PandaBear.Processes.BoundedProcessRunner.BoundedProcessRunner(System.TimeSpan timeout) -> void
-PandaBear.Processes.BoundedProcessRunner.Capture(System.Diagnostics.ProcessStartInfo! startInfo, System.ReadOnlyMemory<byte> standardInput, int maxOutputBytes, int maxErrorBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.CapturedProcessOutput!>!
-PandaBear.Processes.CapturedProcessOutput
-PandaBear.Processes.CapturedProcessOutput.CapturedProcessOutput(int exitCode, System.ReadOnlyMemory<byte> standardOutput, string! standardError) -> void
-PandaBear.Processes.CapturedProcessOutput.ExitCode.get -> int
-PandaBear.Processes.CapturedProcessOutput.StandardError.get -> string!
-PandaBear.Processes.CapturedProcessOutput.StandardOutput.get -> System.ReadOnlyMemory<byte>
-PandaBear.Processes.GitStartInfo
-static PandaBear.Processes.GitStartInfo.Create(string! workingDirectory, System.Collections.Generic.IEnumerable<string!>! arguments) -> System.Diagnostics.ProcessStartInfo!
-static PandaBear.Processes.GitStartInfo.Create(string! workingDirectory, System.Collections.Generic.IEnumerable<string!>! arguments, PandaBear.Processes.IExecutableResolver! resolver) -> System.Diagnostics.ProcessStartInfo!
-static PandaBear.Processes.GitStartInfo.Timeout.get -> System.TimeSpan
-static PandaBear.Processes.GitStartInfo.ApplyEnvironment(System.Diagnostics.ProcessStartInfo! startInfo) -> void
+SharedKernel.Processes.BoundedProcessRunner
+SharedKernel.Processes.BoundedProcessRunner.BoundedProcessRunner() -> void
+SharedKernel.Processes.BoundedProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Processes.ProcessOutput!>!
+SharedKernel.Processes.IExecutableResolver
+SharedKernel.Processes.IExecutableResolver.Find(string! command) -> string?
+SharedKernel.Processes.IProcessRunner
+SharedKernel.Processes.IProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Processes.ProcessOutput!>!
+SharedKernel.Processes.PathExecutableResolver
+SharedKernel.Processes.PathExecutableResolver.Find(string! command) -> string?
+SharedKernel.Processes.PathExecutableResolver.PathExecutableResolver(string? path, bool isWindows) -> void
+SharedKernel.Processes.PathExecutableResolver.Resolve(string! fileName) -> string!
+SharedKernel.Processes.ProcessOutput
+SharedKernel.Processes.ProcessOutput.ExitCode.get -> int
+SharedKernel.Processes.ProcessOutput.ProcessOutput(int exitCode, string! standardOutput, string! standardError = "") -> void
+SharedKernel.Processes.ProcessOutput.StandardError.get -> string!
+SharedKernel.Processes.ProcessOutput.StandardOutput.get -> string!
+SharedKernel.Processes.SystemProcessRunner
+SharedKernel.Processes.SystemProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Processes.ProcessOutput!>!
+SharedKernel.Processes.SystemProcessRunner.SystemProcessRunner() -> void
+static SharedKernel.Processes.PathExecutableResolver.Default.get -> SharedKernel.Processes.PathExecutableResolver!
+SharedKernel.Processes.ProcessEnvironment
+SharedKernel.Processes.ProcessTree
+static SharedKernel.Processes.ProcessEnvironment.Remove(System.Diagnostics.ProcessStartInfo! startInfo, System.Collections.Generic.IEnumerable<string!>! names) -> void
+static SharedKernel.Processes.ProcessEnvironment.RemoveGitVariables(System.Diagnostics.ProcessStartInfo! startInfo) -> void
+static SharedKernel.Processes.ProcessTree.Start(System.Diagnostics.ProcessStartInfo! startInfo) -> System.Diagnostics.Process!
+static SharedKernel.Processes.ProcessTree.Terminate(System.Diagnostics.Process! process, System.TimeSpan exitTimeout) -> System.Threading.Tasks.Task!
+static SharedKernel.Processes.ProcessEnvironment.ForgeTokenVariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static SharedKernel.Processes.ProcessEnvironment.IsForgeTokenVariable(string! name) -> bool
+static SharedKernel.Processes.ProcessEnvironment.RemoveForgeTokens(System.Diagnostics.ProcessStartInfo! startInfo) -> void
+SharedKernel.Processes.BoundedProcessRunner.BoundedProcessRunner(System.TimeSpan timeout) -> void
+SharedKernel.Processes.BoundedProcessRunner.Capture(System.Diagnostics.ProcessStartInfo! startInfo, System.ReadOnlyMemory<byte> standardInput, int maxOutputBytes, int maxErrorBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Processes.CapturedProcessOutput!>!
+SharedKernel.Processes.CapturedProcessOutput
+SharedKernel.Processes.CapturedProcessOutput.CapturedProcessOutput(int exitCode, System.ReadOnlyMemory<byte> standardOutput, string! standardError) -> void
+SharedKernel.Processes.CapturedProcessOutput.ExitCode.get -> int
+SharedKernel.Processes.CapturedProcessOutput.StandardError.get -> string!
+SharedKernel.Processes.CapturedProcessOutput.StandardOutput.get -> System.ReadOnlyMemory<byte>
+SharedKernel.Processes.GitStartInfo
+static SharedKernel.Processes.GitStartInfo.Create(string! workingDirectory, System.Collections.Generic.IEnumerable<string!>! arguments) -> System.Diagnostics.ProcessStartInfo!
+static SharedKernel.Processes.GitStartInfo.Create(string! workingDirectory, System.Collections.Generic.IEnumerable<string!>! arguments, SharedKernel.Processes.IExecutableResolver! resolver) -> System.Diagnostics.ProcessStartInfo!
+static SharedKernel.Processes.GitStartInfo.Timeout.get -> System.TimeSpan
+static SharedKernel.Processes.GitStartInfo.ApplyEnvironment(System.Diagnostics.ProcessStartInfo! startInfo) -> void

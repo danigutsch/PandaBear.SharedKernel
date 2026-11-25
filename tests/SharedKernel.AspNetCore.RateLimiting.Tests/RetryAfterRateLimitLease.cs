@@ -1,6 +1,6 @@
 using System.Threading.RateLimiting;
 
-namespace PandaBear.AspNetCore.RateLimiting.Tests;
+namespace SharedKernel.AspNetCore.RateLimiting.Tests;
 
 /// <summary>A rate-limit lease that was not acquired and says when to retry.</summary>
 /// <param name="retryAfter">The retry-after metadata.</param>

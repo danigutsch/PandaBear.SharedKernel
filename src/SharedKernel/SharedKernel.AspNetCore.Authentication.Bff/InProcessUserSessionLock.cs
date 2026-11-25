@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Locks a session within this process; entries are dropped when nobody holds or waits for them.

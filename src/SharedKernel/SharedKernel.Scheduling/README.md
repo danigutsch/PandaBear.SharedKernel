@@ -46,6 +46,6 @@ and increasing measurements before alerting on a long-running batch.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Scheduling`. C# namespace: `PandaBear.Scheduling`. Assembly/project identity: `SharedKernel.Scheduling`.
+Package ID: `PandaBear.SharedKernel.Scheduling`. C# namespace: `SharedKernel.Scheduling`. Assembly/project identity: `SharedKernel.Scheduling`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

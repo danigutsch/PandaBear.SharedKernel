@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Classifies multilingual notes labels after lowercasing and removing <c>_ - .</c> and spaces.</summary>
 internal static class KeyClassifier

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Defines the canonical structured content encoding for review hashes.</summary>
 [JsonSerializable(typeof(DocumentReviewFingerprint))]

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Server.Circuits;
 
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Publishes the circuit's services in <see cref="CircuitServicesAccessor" /> for the duration of each inbound activity.

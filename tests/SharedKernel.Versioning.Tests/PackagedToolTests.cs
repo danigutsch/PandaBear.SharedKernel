@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Tests which projects the package planner packs as candidates.

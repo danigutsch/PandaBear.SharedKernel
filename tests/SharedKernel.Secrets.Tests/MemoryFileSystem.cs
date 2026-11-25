@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tells tests where a memory-backed file system and a disk are.</summary>
 internal static class MemoryFileSystem

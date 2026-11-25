@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>The stored record of the edit session tests.</summary>
 /// <param name="Name">The name.</param>

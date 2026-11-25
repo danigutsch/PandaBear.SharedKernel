@@ -2,7 +2,7 @@ using System.Runtime.Versioning;
 using Aspire.Hosting;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Tests the default, ephemeral SQLite database: a fresh temporary directory per run that is deleted when the AppHost stops.</summary>
 public sealed class SqliteEphemeralTests

@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Tests.Formats;
+namespace SharedKernel.VaultManager.Tool.Tests.Formats;
 
 /// <summary>Writes small sample files in each supported and unsupported vault format into a directory.</summary>
 internal static class FormatSamples

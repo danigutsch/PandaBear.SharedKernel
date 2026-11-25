@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the walk up from a test's output directory to the repository root.</summary>
 public sealed class RepositoryRootTests

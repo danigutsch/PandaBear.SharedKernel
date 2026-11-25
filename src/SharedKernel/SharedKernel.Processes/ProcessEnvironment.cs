@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>
 /// Removes inherited environment variables from a child process, so that a value the host holds, such as a token or a

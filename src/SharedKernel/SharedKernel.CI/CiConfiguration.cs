@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The consumer policy in <c>.config/sharedkernel-ci.json</c>.</summary>
 /// <param name="Version">Format version; only <c>1</c> is supported.</param>

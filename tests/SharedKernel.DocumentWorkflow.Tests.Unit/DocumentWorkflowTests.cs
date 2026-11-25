@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.DocumentWorkflow.Tests;
+namespace SharedKernel.DocumentWorkflow.Tests;
 
 /// <summary>Exercises the lifecycle for a release-note consumer.</summary>
 public sealed class DocumentWorkflowTests

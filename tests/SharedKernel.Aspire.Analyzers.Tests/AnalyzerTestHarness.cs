@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Aspire.Analyzers.Tests;
+namespace SharedKernel.Aspire.Analyzers.Tests;
 
 /// <summary>
 /// Builds in-memory compilations and runs AspireAnalyzer over them for the Aspire analyzer tests.

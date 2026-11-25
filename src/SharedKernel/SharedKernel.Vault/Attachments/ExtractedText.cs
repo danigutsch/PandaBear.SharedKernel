@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Attachments;
+namespace SharedKernel.Vault.Attachments;
 
 /// <summary>Text read from an attachment within the extraction limits.</summary>
 /// <param name="Text">Extracted text.</param>

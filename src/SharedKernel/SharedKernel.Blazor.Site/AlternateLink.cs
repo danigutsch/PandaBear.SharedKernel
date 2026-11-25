@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>An alternate-language version of a page, rendered as a <c>hreflang</c> link.</summary>
 /// <param name="Culture">The culture of the alternate page, for example <c>pt-BR</c>.</param>

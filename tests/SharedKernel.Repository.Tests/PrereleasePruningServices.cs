@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>What a test gives <c>prune-prereleases</c> to reach the GitHub API and to read its token.</summary>
 /// <param name="CreateHttpHandler">Creates the HTTP handler of the run.</param>

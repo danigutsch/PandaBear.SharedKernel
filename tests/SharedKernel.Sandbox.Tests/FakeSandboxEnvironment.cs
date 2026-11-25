@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>A scripted environment: every operation answers from a table and every call is recorded.</summary>
 internal sealed class FakeSandboxEnvironment : ISandboxEnvironment

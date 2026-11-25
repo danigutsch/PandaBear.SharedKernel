@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Creates temporary repositories with a package configuration.</summary>
 internal static class ConfigurationRepository

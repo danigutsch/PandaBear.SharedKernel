@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Scheduling;
+namespace SharedKernel.Scheduling;
 
 /// <summary>
 /// Runs batches of background work until the queue is drained, then waits before polling again.

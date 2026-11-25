@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace PandaBear.Style.Analyzers;
+namespace SharedKernel.Style.Analyzers;
 
 public sealed partial class StyleAnalyzer
 {

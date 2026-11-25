@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Sops.Tests;
+namespace SharedKernel.Secrets.Sops.Tests;
 
 /// <summary>Builds edit sessions for tests.</summary>
 internal static class EditSessions

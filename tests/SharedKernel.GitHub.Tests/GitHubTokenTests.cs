@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.GitHub.Tests;
+namespace SharedKernel.GitHub.Tests;
 
 /// <summary>Tests reading the GitHub token and keeping it from child processes.</summary>
 public sealed class GitHubTokenTests

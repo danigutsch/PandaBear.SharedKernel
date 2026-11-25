@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Tour summary test type whose string form is the code and title joined by a pipe, used to check what gets logged.

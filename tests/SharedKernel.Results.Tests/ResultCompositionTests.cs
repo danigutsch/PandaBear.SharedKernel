@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Tests converting, mapping, binding, and ensuring on results, including failure short-circuiting.

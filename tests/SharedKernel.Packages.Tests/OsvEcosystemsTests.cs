@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the mapping from package managers to OSV ecosystems.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

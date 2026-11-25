@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace PandaBear.Testing.Roslyn;
+namespace SharedKernel.Testing.Roslyn;
 
 /// <summary>Reads the compiler inputs that the build records for the governed literal guard.</summary>
 public static class GovernedLiteralManifest

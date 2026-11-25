@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>
 /// Stores objects in a provider-neutral object store.

@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Authentication.Bff;
+namespace SharedKernel.AspNetCore.Authentication.Bff;
 
 /// <summary>
 /// Serializes token refresh, token exchange and sign-out for one token session.

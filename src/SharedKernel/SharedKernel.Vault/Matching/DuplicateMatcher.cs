@@ -1,7 +1,7 @@
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>
 /// Groups items that describe the same account. Duplicates within one input and across inputs use the same rules.

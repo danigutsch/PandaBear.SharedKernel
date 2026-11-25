@@ -2,7 +2,7 @@
 
 using System.Net;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Renders typed data ownership facts in the shared Mermaid format.</summary>
 internal static class DataOwnershipMermaidDiagram

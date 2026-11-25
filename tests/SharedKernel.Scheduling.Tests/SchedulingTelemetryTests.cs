@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PandaBear.Scheduling.Tests;
+namespace SharedKernel.Scheduling.Tests;
 
 /// <summary>Tests the names, units, duration advice and attributes of the polling telemetry.</summary>
 public sealed class SchedulingTelemetryTests

@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>
 /// Describes an object write.

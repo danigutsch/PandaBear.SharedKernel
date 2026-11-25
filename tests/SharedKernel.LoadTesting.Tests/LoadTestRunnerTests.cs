@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.LoadTesting.Tests;
+namespace SharedKernel.LoadTesting.Tests;
 
 /// <summary>Tests the runner through a recording load generator, a mapped resolver, and a scripted health handler.</summary>
 public sealed class LoadTestRunnerTests

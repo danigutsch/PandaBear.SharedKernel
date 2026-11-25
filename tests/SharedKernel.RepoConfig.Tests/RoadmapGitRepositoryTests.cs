@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests how the roadmap Git repository starts <c>git</c>, handles its failures, and passes cancellation through.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

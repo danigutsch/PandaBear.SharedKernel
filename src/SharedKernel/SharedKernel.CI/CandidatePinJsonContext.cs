@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Source-generated JSON metadata for candidate manifests. Names are matched exactly, comments and trailing commas are

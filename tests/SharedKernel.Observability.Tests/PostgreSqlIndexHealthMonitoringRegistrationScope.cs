@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Holds a service collection populated by AddPostgreSqlIndexHealthMonitoring so tests can inspect the resulting registrations.</summary>
 internal sealed class PostgreSqlIndexHealthMonitoringRegistrationScope

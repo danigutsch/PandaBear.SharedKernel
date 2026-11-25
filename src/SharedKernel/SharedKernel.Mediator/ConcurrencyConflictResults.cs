@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Conflict results for a handler that finds the record it loaded has a newer version than the one the caller saw, before it saves anything.

@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Reads unencrypted Bitwarden JSON exports, individual or organization.</summary>
 public static class BitwardenJsonReader

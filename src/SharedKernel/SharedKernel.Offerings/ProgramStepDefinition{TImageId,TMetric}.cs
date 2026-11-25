@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Unvalidated language-neutral part of a step.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

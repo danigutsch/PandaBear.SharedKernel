@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// Tests the verify-devcontainer command against a fake devcontainer CLI and fake docker executable.

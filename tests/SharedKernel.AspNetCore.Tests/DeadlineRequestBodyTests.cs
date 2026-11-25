@@ -1,6 +1,6 @@
 // Adapted from ViajantesTurismo under its MIT license. See LICENSE.ViajantesTurismo.txt.
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Verifies the read view links cancellation and retains ownership with the caller.</summary>
 public sealed class DeadlineRequestBodyTests

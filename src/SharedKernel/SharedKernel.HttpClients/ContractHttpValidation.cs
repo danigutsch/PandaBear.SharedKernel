@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>
 /// Reads validation problem responses for contract-owned API clients.

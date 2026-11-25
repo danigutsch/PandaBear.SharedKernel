@@ -1,6 +1,6 @@
-using PandaBear.Idempotency;
+using SharedKernel.Idempotency;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Creates idempotency operations for tests.

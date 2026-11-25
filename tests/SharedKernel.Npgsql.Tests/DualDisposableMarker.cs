@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>A test value that is both async and sync disposable and counts calls to each, to show which one a caller uses.</summary>
 internal sealed class DualDisposableMarker : IAsyncDisposable, IDisposable

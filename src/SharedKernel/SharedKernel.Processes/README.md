@@ -9,7 +9,7 @@ Targets .NET 10, has no package dependencies, and is trimming- and NativeAOT-com
 
 ```csharp
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
 IExecutableResolver resolver = PathExecutableResolver.Default;
 IProcessRunner runner = new BoundedProcessRunner();
@@ -64,6 +64,6 @@ sets the locale on the start information, as `PandaBear.SharedKernel.Packages` d
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Processes`. C# namespace: `PandaBear.Processes`. Assembly/project identity: `SharedKernel.Processes`.
+Package ID: `PandaBear.SharedKernel.Processes`. C# namespace: `SharedKernel.Processes`. Assembly/project identity: `SharedKernel.Processes`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

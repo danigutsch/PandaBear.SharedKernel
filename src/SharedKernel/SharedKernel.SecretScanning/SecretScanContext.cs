@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>What is known about where a scanned text comes from, which steers what <see cref="SecretScanner"/> looks for.</summary>
 public sealed record SecretScanContext

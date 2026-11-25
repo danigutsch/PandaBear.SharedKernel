@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests that an SSH recipient is one exact, canonical key and nothing else.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

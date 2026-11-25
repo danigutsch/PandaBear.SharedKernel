@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>One parameter of a proxied method and the call property that shows its argument to hooks.</summary>
 /// <param name="Name">The parameter name as an escaped C# identifier.</param>

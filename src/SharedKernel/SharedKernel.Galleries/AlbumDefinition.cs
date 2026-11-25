@@ -1,4 +1,4 @@
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>Unvalidated album data, as an editor entered it.</summary>
 /// <typeparam name="TPhotoId">The photo id type.</typeparam>

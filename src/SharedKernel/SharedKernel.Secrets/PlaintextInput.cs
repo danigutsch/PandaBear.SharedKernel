@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Reads standard input into one array, up to a limit, and clears it afterwards.</summary>
 internal static class PlaintextInput

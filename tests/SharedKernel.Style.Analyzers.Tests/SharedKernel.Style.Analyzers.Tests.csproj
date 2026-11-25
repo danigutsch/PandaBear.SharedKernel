@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.Style.Analyzers.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.Style.Analyzers.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="../../src/SharedKernel/SharedKernel.Style.Analyzers/GovernedLiterals.txt" Link="GovernedLiterals.txt" CopyToOutputDirectory="PreserveNewest" />
-        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 

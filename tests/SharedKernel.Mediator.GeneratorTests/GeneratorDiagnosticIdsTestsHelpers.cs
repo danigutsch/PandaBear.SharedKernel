@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Helpers for locating the generator's AnalyzerReleases file in the repository.</summary>
 internal static class GeneratorDiagnosticIdsTestsHelpers

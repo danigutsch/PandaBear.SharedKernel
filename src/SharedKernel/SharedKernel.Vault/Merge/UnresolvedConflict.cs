@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>A field whose winner needs a user decision. Holds no values.</summary>
 /// <param name="GroupKey">Group key.</param>

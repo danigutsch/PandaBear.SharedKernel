@@ -1,7 +1,7 @@
-using PandaBear.Blazor.Site.Theming;
-using PandaBear.Results;
+using SharedKernel.Blazor.Site.Theming;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site.Tests.Theming;
+namespace SharedKernel.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the shape of a theme: the control shape and the divider, their rules and their custom properties.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

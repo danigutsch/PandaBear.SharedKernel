@@ -1,4 +1,4 @@
-namespace PandaBear.Style.Analyzers;
+namespace SharedKernel.Style.Analyzers;
 
 /// <summary>A catalogued literal and its canonical or compatibility declaration.</summary>
 /// <param name="value">The exact governed value.</param>

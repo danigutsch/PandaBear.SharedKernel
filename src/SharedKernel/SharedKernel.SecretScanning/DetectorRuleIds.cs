@@ -1,6 +1,6 @@
 using System.Collections.Frozen;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Rule identifiers of the findings that the structural detectors report, as opposed to catalog rules.</summary>
 internal static class DetectorRuleIds

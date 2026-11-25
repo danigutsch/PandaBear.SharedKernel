@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Tests that the index-health metrics use the names of the SharedKernel telemetry standard.</summary>
 [TestScope(TestScope.Unit)]

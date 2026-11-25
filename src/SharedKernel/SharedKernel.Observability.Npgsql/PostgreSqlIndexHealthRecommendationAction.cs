@@ -1,4 +1,4 @@
-namespace PandaBear.Observability.Npgsql;
+namespace SharedKernel.Observability.Npgsql;
 
 /// <summary>Classifies the advisory action supported by index-health evidence.</summary>
 public enum PostgreSqlIndexHealthRecommendationAction

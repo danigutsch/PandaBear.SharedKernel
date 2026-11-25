@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
-using PandaBear.Blazor.Analyzers;
+using SharedKernel.Blazor.Analyzers;
 
-namespace PandaBear.Blazor.CodeFixes;
+namespace SharedKernel.Blazor.CodeFixes;
 
 /// <summary>
 /// Registers the <c>SKBLZ001</c> fix that wraps the statements between <c>flag = true;</c> and <c>flag = false;</c> in a

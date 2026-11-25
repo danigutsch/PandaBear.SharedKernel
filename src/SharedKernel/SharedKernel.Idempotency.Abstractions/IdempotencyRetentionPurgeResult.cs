@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency;
+namespace SharedKernel.Idempotency;
 
 /// <summary>
 /// Reports what one retention purge batch did to the expired entries it considered.

@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace PandaBear.Testing.Roslyn;
+namespace SharedKernel.Testing.Roslyn;
 
 /// <summary>
 /// Provides the mechanical setup shared by incremental source generator test suites: compilations, drivers, runs, and

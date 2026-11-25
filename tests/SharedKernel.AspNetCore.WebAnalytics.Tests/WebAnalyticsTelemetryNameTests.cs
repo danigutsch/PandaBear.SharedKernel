@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>Tests that dropped page views are counted under the names of the SharedKernel telemetry standard.</summary>
 public sealed class WebAnalyticsTelemetryNameTests

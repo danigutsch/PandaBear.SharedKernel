@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.DocumentRendering.Pdf;
+namespace SharedKernel.DocumentRendering.Pdf;
 
 /// <summary>Edits the qpdf JSON envelope for the qualified Chromium Info dictionary.</summary>
 internal static class QpdfDocumentMetadata

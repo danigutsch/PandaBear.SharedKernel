@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore.Localization</PackageId>
         <Description>Culture path-prefix localization for ASP.NET Core: a request culture provider, a redirect to the best culture, and language-switcher path helpers.</Description>
-        <RootNamespace>PandaBear.AspNetCore.Localization</RootNamespace>
+        <RootNamespace>SharedKernel.AspNetCore.Localization</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;localization;culture;routing;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

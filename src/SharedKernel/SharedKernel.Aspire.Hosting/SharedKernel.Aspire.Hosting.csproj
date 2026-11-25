@@ -3,7 +3,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Aspire.Hosting</PackageId>
         <Description>Aspire AppHost helpers that are not tied to one container: generated secrets, self-origin variables, health checks that match the project environment, and pinned PostgreSQL and Redis image coordinates.</Description>
-        <RootNamespace>PandaBear.Aspire.Hosting</RootNamespace>
+        <RootNamespace>SharedKernel.Aspire.Hosting</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspire;apphost;hosting;secrets;health-checks;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

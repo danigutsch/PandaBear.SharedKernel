@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>
 /// Serializes a known-length stream while reporting file bytes written to the HTTP transport.

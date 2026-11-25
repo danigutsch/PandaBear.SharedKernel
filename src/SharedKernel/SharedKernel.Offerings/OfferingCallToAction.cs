@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>What the public page of an offering asks the reader to do. The default value, <see cref="Unspecified"/>, means "not set".</summary>
 public enum OfferingCallToAction

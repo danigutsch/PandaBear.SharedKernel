@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// A <see cref="StringWriter"/> that captures text the same way on every operating system: it formats with

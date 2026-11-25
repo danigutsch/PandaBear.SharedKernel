@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>Base integration event fixture carrying a tour name and the "admin.tour.created" event type at version 1.</summary>
 /// <param name="EventId">Unique identifier of the event instance.</param>

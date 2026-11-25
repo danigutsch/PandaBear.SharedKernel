@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace PandaBear.GitHub;
+namespace SharedKernel.GitHub;
 
 /// <summary>Creates an <see cref="HttpClient"/> that sends the headers the GitHub REST API expects.</summary>
 public static class GitHubApiClient

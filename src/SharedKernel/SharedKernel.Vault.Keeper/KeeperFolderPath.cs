@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>Converts Keeper folder paths to folder paths with <c>/</c> separators.</summary>
 internal static class KeeperFolderPath

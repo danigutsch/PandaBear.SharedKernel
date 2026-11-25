@@ -1,4 +1,4 @@
-namespace PandaBear.Observability.Npgsql;
+namespace SharedKernel.Observability.Npgsql;
 
 /// <summary>Applies a conservative, side-effect-free policy to PostgreSQL index-health evidence.</summary>
 public static class PostgreSqlIndexHealthRecommendationPolicy

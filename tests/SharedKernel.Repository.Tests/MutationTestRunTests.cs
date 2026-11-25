@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>run-mutation-tests</c> command, which installs the pinned Stryker version and runs each configured Stryker file.</summary>
 public sealed class MutationTestRunTests : IDisposable

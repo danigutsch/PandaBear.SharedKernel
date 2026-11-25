@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The outcome of a trial decryption and a short reason when it failed.</summary>
 public sealed class SopsTrial

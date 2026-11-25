@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.EntityFrameworkCore</PackageId>
         <Description>Reusable Entity Framework Core test context and entity for SharedKernel test suites.</Description>
-        <RootNamespace>PandaBear.Testing.EntityFrameworkCore</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.EntityFrameworkCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;entity-framework-core;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

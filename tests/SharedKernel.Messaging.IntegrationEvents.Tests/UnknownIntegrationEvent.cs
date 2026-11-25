@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>Integration event fixture whose "unknown.event" type is not registered with any mapping or serializer.</summary>
 /// <param name="EventId">Unique identifier of the event instance.</param>

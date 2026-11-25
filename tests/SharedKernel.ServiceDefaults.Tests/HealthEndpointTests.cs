@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.ServiceDefaults.Tests;
+namespace SharedKernel.ServiceDefaults.Tests;
 
 /// <summary>Tests the health endpoints that MapHealthEndpoints maps.</summary>
 public sealed class HealthEndpointTests

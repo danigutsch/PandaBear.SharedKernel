@@ -1,8 +1,8 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using PandaBear.VaultManager.Tool.Cli;
+using SharedKernel.VaultManager.Tool.Cli;
 
-namespace PandaBear.VaultManager.Tool;
+namespace SharedKernel.VaultManager.Tool;
 
 /// <summary>Builds and parses the <c>vault</c> command tree.</summary>
 internal static class VaultCommandLine

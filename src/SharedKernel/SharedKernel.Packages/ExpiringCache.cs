@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// A small in-memory cache whose entries expire after a fixed time measured by a <see cref="TimeProvider"/>. Only

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Builds the configured OpenAPI targets with their generate or refresh property, through the dotnet host that runs the
@@ -9,7 +9,7 @@ namespace PandaBear.CI;
 /// </summary>
 internal static class OpenApiGeneration
 {
-    /// <summary>The host environment that <c>PandaBear.OpenApi.OpenApiGenerationMode</c> recognizes.</summary>
+    /// <summary>The host environment that <c>SharedKernel.OpenApi.OpenApiGenerationMode</c> recognizes.</summary>
     private const string OpenApiGenerationEnvironment = "OpenApiGeneration";
 
     private const string NuGetPackagesEnvironmentVariable = "NUGET_PACKAGES";
@@ -141,7 +141,7 @@ internal static class OpenApiGeneration
             startInfo.Environment["PATH"] = string.Join(Path.PathSeparator, dotnetDirectory, "/usr/bin", "/bin");
         }
 
-        // The engine stays free of ASP.NET Core, so it spells the host environment names that PandaBear.AspNetCore governs.
+        // The engine stays free of ASP.NET Core, so it spells the host environment names that SharedKernel.AspNetCore governs.
 #pragma warning disable SKSTYLE012
         startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = OpenApiGenerationEnvironment;
         startInfo.Environment["DOTNET_ENVIRONMENT"] = OpenApiGenerationEnvironment;

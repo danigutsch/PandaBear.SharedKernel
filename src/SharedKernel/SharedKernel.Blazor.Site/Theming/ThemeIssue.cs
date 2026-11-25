@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>A rule finding about a theme, on the field path an editor links to, such as <c>typography.h1.size</c>.</summary>
 /// <param name="Field">The field path.</param>

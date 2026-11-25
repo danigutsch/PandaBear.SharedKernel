@@ -1,6 +1,6 @@
 using Terminal.Gui.Views;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>Table of display text for a <see cref="TableView"/>, without reflection or data tables.</summary>
 /// <param name="columnNames">Column headers.</param>

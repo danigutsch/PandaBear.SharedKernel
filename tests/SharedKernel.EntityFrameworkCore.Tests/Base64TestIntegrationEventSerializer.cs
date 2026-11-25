@@ -1,7 +1,7 @@
-using PandaBear.Messaging;
-using PandaBear.Messaging.IntegrationEvents;
+using SharedKernel.Messaging;
+using SharedKernel.Messaging.IntegrationEvents;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Serializer stub that reports a fixed binary payload with the Base64 encoding and the <c>application/protobuf</c> content type.

@@ -1,4 +1,4 @@
-namespace PandaBear.AI.Tests;
+namespace SharedKernel.AI.Tests;
 
 /// <summary>Exercises the LiteLLM transport's deadline and cancellation behavior.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]

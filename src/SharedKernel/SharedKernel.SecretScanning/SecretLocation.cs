@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>Where a secret sits in a scanned text, without the secret itself.</summary>
 /// <param name="FieldPath">

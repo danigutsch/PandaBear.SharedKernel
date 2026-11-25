@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Tests the registration rules of the fluent integration-event builder for hosted consumers, competing consumers and competing producers.

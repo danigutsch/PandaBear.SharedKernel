@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Keeps the newest prereleases of a forge repository and the protected versions, and deletes the other prereleases but

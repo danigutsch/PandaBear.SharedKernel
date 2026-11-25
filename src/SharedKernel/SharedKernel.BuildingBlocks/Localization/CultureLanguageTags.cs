@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The language tag that each culture of a <see cref="SupportedCultures"/> set declares, for a site whose culture (the content key and

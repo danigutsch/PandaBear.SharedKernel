@@ -1,7 +1,7 @@
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Reads the installed snaps with <c>snap list</c>. It changes nothing.</summary>
 /// <remarks>

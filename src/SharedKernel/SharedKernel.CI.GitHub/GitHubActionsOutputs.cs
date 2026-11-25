@@ -1,4 +1,4 @@
-namespace PandaBear.CI.GitHub;
+namespace SharedKernel.CI.GitHub;
 
 /// <summary>
 /// Writes run outputs to the file that GitHub Actions names in <c>GITHUB_OUTPUT</c>, one <c>name=value</c> line each, as

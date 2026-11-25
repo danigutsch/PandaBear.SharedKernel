@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>
 /// Tests the verify-action-pins command against workspaces with a manifest, workflows, and composite actions.

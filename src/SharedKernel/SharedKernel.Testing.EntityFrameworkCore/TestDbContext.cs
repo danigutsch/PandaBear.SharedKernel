@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.Testing.EntityFrameworkCore;
+namespace SharedKernel.Testing.EntityFrameworkCore;
 
 /// <summary>A minimal context exposing a set of <see cref="TestEntity" />, usable as a transaction target without touching the set.</summary>
 /// <param name="options">The EF Core options used to configure the context.</param>

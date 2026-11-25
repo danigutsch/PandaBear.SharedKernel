@@ -1,8 +1,8 @@
 using System.Text.Json;
-using PandaBear.IO;
-using PandaBear.InputNormalization;
+using SharedKernel.IO;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Implements the security command: verifies the security baseline policy and optionally runs the secret scan.</summary>
 public static class RepositorySecurity

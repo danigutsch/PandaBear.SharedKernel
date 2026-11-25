@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage.FileSystem.Tests;
+namespace SharedKernel.ObjectStorage.FileSystem.Tests;
 
 /// <summary>Configures a fictional community venue poster store for compatibility tests.</summary>
 internal static class VenueObjectStore

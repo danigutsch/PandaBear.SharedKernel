@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>When an offering runs: its availability, its days when fixed, its year and its length in days.</summary>
 /// <param name="Availability">The availability.</param>

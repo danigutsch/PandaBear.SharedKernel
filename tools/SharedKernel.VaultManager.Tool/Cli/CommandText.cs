@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>Formats the lines the commands print.</summary>
 internal static class CommandText

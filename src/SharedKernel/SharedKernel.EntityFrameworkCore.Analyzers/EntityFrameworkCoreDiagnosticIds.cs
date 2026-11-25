@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Analyzers;
+namespace SharedKernel.EntityFrameworkCore.Analyzers;
 
 /// <summary>
 /// Exposes the public diagnostic identifiers for SharedKernel Entity Framework Core analyzers.

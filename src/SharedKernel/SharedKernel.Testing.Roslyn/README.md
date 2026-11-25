@@ -71,6 +71,6 @@ The package depends on `Microsoft.CodeAnalysis.CSharp.Workspaces`, at the same v
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Roslyn`. C# namespace: `PandaBear.Testing.Roslyn`. Assembly/project identity: `SharedKernel.Testing.Roslyn`.
+Package ID: `PandaBear.SharedKernel.Testing.Roslyn`. C# namespace: `SharedKernel.Testing.Roslyn`. Assembly/project identity: `SharedKernel.Testing.Roslyn`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

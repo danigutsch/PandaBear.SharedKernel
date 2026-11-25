@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 /// <summary>Shares the SKTEST017 assertion, coverage, and blocker checks between the diagnostic and its code fix.</summary>
 internal static class AssertionUserMessageOverload

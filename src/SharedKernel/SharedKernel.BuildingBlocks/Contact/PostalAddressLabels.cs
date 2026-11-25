@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The labels that name the parts of a <see cref="PostalAddress"/> in its validation messages, so that a message such as

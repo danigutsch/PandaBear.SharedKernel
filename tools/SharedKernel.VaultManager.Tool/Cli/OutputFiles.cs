@@ -1,8 +1,8 @@
 using System.Text;
-using PandaBear.InputNormalization;
-using PandaBear.IO;
+using SharedKernel.InputNormalization;
+using SharedKernel.IO;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>Checks the files a command writes before it does any work.</summary>
 internal static class OutputFiles

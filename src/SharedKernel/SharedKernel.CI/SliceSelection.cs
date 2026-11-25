@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The test projects that a slice runs.</summary>
 /// <param name="Name">The configured slice name.</param>

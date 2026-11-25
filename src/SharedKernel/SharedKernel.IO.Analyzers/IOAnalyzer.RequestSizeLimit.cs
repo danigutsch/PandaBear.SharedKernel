@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace PandaBear.IO.Analyzers;
+namespace SharedKernel.IO.Analyzers;
 
 public sealed partial class IOAnalyzer
 {

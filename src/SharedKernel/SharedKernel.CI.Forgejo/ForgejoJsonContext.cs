@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.CI.Forgejo;
+namespace SharedKernel.CI.Forgejo;
 
 /// <summary>
 /// Source-generated JSON metadata for the Forgejo releases API. The properties that the provider reads are required and

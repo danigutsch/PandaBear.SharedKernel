@@ -1,6 +1,6 @@
-using PandaBear.SecretScanning;
+using SharedKernel.SecretScanning;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>Removes placed values from source text, dropping lines left empty and applying edits in descending offset order.</summary>
 internal static class SourceTextEditor

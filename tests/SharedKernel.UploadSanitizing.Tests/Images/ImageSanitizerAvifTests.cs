@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using PandaBear.Testing;
+using SharedKernel.Results;
+using SharedKernel.Testing;
 
-namespace PandaBear.UploadSanitizing.Tests.Images;
+namespace SharedKernel.UploadSanitizing.Tests.Images;
 
 /// <summary>
 /// Tests that AVIF is refused unless <see cref="ImageSanitizerOptions.AllowAvif"/> is set, and that an allowed AVIF is recognized by its

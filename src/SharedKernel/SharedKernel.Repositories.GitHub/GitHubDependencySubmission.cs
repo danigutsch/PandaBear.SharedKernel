@@ -2,11 +2,11 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Unicode;
-using PandaBear.GitHub;
-using PandaBear.IO;
-using PandaBear.InputNormalization;
+using SharedKernel.GitHub;
+using SharedKernel.IO;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>
 /// Submits a dependency snapshot to the GitHub dependency submission API, or previews the submission.

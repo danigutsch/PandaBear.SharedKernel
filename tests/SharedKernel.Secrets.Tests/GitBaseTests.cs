@@ -1,6 +1,6 @@
-using PandaBear.Processes.Tests;
+using SharedKernel.Processes.Tests;
 
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>
 /// Tests that the base-revision reader runs git as every other git caller does: no prompt and none of the host's tokens or

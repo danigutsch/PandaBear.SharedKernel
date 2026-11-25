@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using PandaBear.Testing.Mediator;
+using SharedKernel.Results;
+using SharedKernel.Testing.Mediator;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Tests that the concurrency conflict behavior turns only a concurrency conflict into a failed result.</summary>
 public sealed class ConcurrencyConflictBehaviorTests

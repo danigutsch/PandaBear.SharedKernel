@@ -1,6 +1,6 @@
-using static PandaBear.Packages.Tool.Tests.PackagesToolHarness;
+using static SharedKernel.Packages.Tool.Tests.PackagesToolHarness;
 
-namespace PandaBear.Packages.Tool.Tests;
+namespace SharedKernel.Packages.Tool.Tests;
 
 /// <summary>Tests the <c>plan</c> command.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

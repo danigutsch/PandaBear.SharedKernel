@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>
 /// Origin keys identify an input item across runs, so decisions and overrides can refer to it without storing values.

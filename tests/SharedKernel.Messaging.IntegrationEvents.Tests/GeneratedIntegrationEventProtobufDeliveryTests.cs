@@ -1,6 +1,6 @@
-using PandaBear.Messaging.Protobuf.TestContracts;
+using SharedKernel.Messaging.Protobuf.TestContracts;
 
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>Tests that the generated publisher delivers Protobuf envelopes to their handler exactly once and still delivers JSON envelopes.</summary>
 public sealed class GeneratedIntegrationEventProtobufDeliveryTests

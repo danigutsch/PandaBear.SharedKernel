@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Text;
-using PandaBear.IO;
-using PandaBear.Processes;
+using SharedKernel.IO;
+using SharedKernel.Processes;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Restores, builds, and tests the selected test projects of one or more slices through one solution filter, and records

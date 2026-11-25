@@ -1,4 +1,4 @@
-namespace PandaBear.Domain.Analyzers;
+namespace SharedKernel.Domain.Analyzers;
 
 /// <summary>
 /// Exposes the public diagnostic identifiers for SharedKernel domain-model analyzers.

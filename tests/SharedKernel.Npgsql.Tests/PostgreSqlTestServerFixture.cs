@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 using Aspire.Hosting.Testing;
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Creates the Aspire builder in this test project's assembly.</summary>
 public sealed class PostgreSqlTestServerFixture : Testing.PostgreSqlTestServerFixture

@@ -1,6 +1,6 @@
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Scripted programs and repositories shared by the proof and base-revision tests.</summary>
 internal static class ToolScripts

@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Locates the public download address of a release asset of one forge repository.</summary>
 public interface IReleaseAssets

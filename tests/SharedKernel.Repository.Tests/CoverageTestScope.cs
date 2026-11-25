@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// A repository with a coverage policy, a changed <c>src/Core.cs</c> of five added lines, its Cobertura report, and a

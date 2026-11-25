@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Tests the registration helper of the concurrency conflict behavior.</summary>
 public sealed class ConcurrencyConflictRegistrationTests

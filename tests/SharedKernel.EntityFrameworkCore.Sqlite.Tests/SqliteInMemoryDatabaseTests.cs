@@ -1,6 +1,6 @@
-using PandaBear.Testing.Sqlite;
+using SharedKernel.Testing.Sqlite;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>Tests SqliteInMemoryDatabase: a private in-memory database per test that lives while the object lives and is gone after disposal.</summary>
 public sealed class SqliteInMemoryDatabaseTests

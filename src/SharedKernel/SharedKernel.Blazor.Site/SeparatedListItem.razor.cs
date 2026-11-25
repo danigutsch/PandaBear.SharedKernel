@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// One item of a <see cref="SeparatedList" />: an <c>li</c> (<c>site-separated-list__item</c>) kept together on its line, after a bar

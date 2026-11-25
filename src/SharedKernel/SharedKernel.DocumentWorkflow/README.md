@@ -2,7 +2,7 @@
 
 Generates versioned structured documents from host-provided source and template ports.
 A draft captures the source version, template identity and version, classified fields,
-and branding. Human review uses `PandaBear.Review` for ordered lanes and retained evidence.
+and branding. Human review uses `SharedKernel.Review` for ordered lanes and retained evidence.
 The review fingerprint includes the lineage, revision number, provenance, and exact
 content, so an approval cannot move between two revisions with matching field values.
 
@@ -15,7 +15,7 @@ An edit to an editable value requires fresh approval. Prior evidence stays reada
 Read fresh provenance from the selected source and template before approval and
 finalization. Use the exact review version presented to the human reviewer.
 Project the approved structured content with `ToRenderRequest()` and use the
-existing `PandaBear.DocumentRendering.IDocumentRenderer` contract. The host stores
+existing `SharedKernel.DocumentRendering.IDocumentRenderer` contract. The host stores
 the rendered artifact immutably and passes the resulting handle to `Seal`. A
 superseded or voided finalized revision retains its original handle and structured
 snapshot.
@@ -28,7 +28,7 @@ artifact persistence and delivery, and optional retention and disposition holds
 build on this lifecycle.
 
 The package ID is `PandaBear.SharedKernel.DocumentWorkflow` and the namespace is
-`PandaBear.DocumentWorkflow`.
+`SharedKernel.DocumentWorkflow`.
 
 ## Immutable artifact writes
 

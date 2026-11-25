@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>The update decisions for the installed packages that one package manager owns, or why they could not be made.</summary>
 public sealed class ManagerUpdates

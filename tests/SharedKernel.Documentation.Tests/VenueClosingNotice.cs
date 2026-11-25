@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>A fictional event announcing the venue's closing time.</summary>
 /// <param name="Room">The room name on the front desk schedule.</param>

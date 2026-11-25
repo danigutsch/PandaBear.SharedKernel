@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using PandaBear.ContentRights;
+using SharedKernel.ContentRights;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>A localized compact credit and its corresponding standalone page entry.</summary>
 public sealed class PhotoCreditsSample : ComponentBase

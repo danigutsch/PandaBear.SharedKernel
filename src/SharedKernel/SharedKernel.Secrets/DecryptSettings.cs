@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>What <see cref="SecretsRepository.Decrypt"/> decrypts and where the plaintext goes.</summary>
 public sealed record DecryptSettings

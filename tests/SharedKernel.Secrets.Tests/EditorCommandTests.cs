@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the editor command that sops edit starts.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

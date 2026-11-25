@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using PandaBear.Idempotency;
-using PandaBear.Idempotency.EntityFrameworkCore;
-using PandaBear.Messaging;
-using PandaBear.Messaging.IntegrationEvents;
-using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using SharedKernel.Idempotency;
+using SharedKernel.Idempotency.EntityFrameworkCore;
+using SharedKernel.Messaging;
+using SharedKernel.Messaging.IntegrationEvents;
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// In-memory host with two messaging contexts (first and second) carrying outbox, inbox, transport and relay registrations, with helpers to enqueue, publish and inspect their storage.

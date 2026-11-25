@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Aspire.Hosting.Umami</PackageId>
         <Description>Aspire hosting integration for a self-hosted Umami web analytics container with its own PostgreSQL database or one on an existing server, a generated app secret, a pinned image, and websites that are set up in Umami when it starts.</Description>
-        <RootNamespace>PandaBear.Aspire.Hosting.Umami</RootNamespace>
+        <RootNamespace>SharedKernel.Aspire.Hosting.Umami</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspire;umami;analytics;privacy;postgresql;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

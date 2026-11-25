@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// Retries an assertion until it passes or a timeout ends it, for state another process reaches later (a cache that refreshes, a redirect

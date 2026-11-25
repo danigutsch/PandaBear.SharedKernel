@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.ImageProcessing;
+namespace SharedKernel.ImageProcessing;
 
 /// <summary>
 /// Detects animated PNG and WebP images from their container headers, before any pixel data is decoded.

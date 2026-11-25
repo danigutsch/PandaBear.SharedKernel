@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>How certain a finding is, ordered from weakest to strongest.</summary>
 public enum Confidence

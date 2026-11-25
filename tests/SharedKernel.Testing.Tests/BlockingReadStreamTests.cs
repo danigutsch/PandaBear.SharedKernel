@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the stream that serves a prefix, then blocks until it is released, cancelled or disposed.</summary>
 public sealed class BlockingReadStreamTests

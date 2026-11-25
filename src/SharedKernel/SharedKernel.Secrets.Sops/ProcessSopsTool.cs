@@ -1,8 +1,8 @@
 using System.Text;
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets.Sops;
+namespace SharedKernel.Secrets.Sops;
 
 /// <summary>
 /// <see cref="ISopsTool"/> over the <c>sops</c> program, started from an absolute path without a shell. Plaintext goes in on

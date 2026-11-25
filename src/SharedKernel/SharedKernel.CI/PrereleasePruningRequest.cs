@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The validated options of one <c>prune-prereleases</c> run.</summary>
 /// <param name="Repository">The repository as <c>owner/name</c>, which names it in the report.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// A repository-local Git setting that <c>baseline apply</c> sets with <c>git config --local</c>.

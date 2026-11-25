@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore.Authentication</PackageId>
         <Description>JWT bearer API authentication, permission policies, claims helpers, antiforgery sign-out and authentication-event telemetry for ASP.NET Core.</Description>
-        <RootNamespace>PandaBear.AspNetCore.Authentication</RootNamespace>
+        <RootNamespace>SharedKernel.AspNetCore.Authentication</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;authentication;authorization;jwt;bearer;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

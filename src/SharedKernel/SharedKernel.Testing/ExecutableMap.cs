@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// An <see cref="IExecutableResolver"/> that finds the executables a test maps, to the paths it maps them to, instead of

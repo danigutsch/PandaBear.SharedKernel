@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization;
+namespace SharedKernel.InputNormalization;
 
 /// <summary>
 /// Checks names that are written into SQL text as PostgreSQL identifiers, such as a configured schema or table name.

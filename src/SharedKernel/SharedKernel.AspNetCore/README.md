@@ -62,12 +62,12 @@ The concerns that need extra dependencies live in their own packages:
 
 | Need | Package | Namespace |
 | --- | --- | --- |
-| JWT bearer authentication, permission policies, claims helpers, antiforgery sign-out | [`PandaBear.SharedKernel.AspNetCore.Authentication`](../SharedKernel.AspNetCore.Authentication/README.md) | `PandaBear.AspNetCore.Authentication` |
-| Remote-IP fixed-window rate limiting | [`PandaBear.SharedKernel.AspNetCore.RateLimiting`](../SharedKernel.AspNetCore.RateLimiting/README.md) | `PandaBear.AspNetCore.RateLimiting` |
-| Culture path prefixes (`/pt/...`), request culture provider, redirect to the best culture | [`PandaBear.SharedKernel.AspNetCore.Localization`](../SharedKernel.AspNetCore.Localization/README.md) | `PandaBear.AspNetCore.Localization` |
-| `robots.txt` and sitemap XML | [`PandaBear.SharedKernel.AspNetCore.Seo`](../SharedKernel.AspNetCore.Seo/README.md) | `PandaBear.AspNetCore.Seo` |
-| Server-side, cookieless page views sent to the configured targets, such as a self-hosted Umami | [`PandaBear.SharedKernel.AspNetCore.WebAnalytics`](../SharedKernel.AspNetCore.WebAnalytics/README.md) | `PandaBear.AspNetCore.WebAnalytics` |
-| `Idempotency-Key` header and key-bound data protector | [`PandaBear.SharedKernel.Idempotency.AspNetCore`](../SharedKernel.Idempotency.AspNetCore/README.md) | `PandaBear.Idempotency.AspNetCore` |
+| JWT bearer authentication, permission policies, claims helpers, antiforgery sign-out | [`PandaBear.SharedKernel.AspNetCore.Authentication`](../SharedKernel.AspNetCore.Authentication/README.md) | `SharedKernel.AspNetCore.Authentication` |
+| Remote-IP fixed-window rate limiting | [`PandaBear.SharedKernel.AspNetCore.RateLimiting`](../SharedKernel.AspNetCore.RateLimiting/README.md) | `SharedKernel.AspNetCore.RateLimiting` |
+| Culture path prefixes (`/pt/...`), request culture provider, redirect to the best culture | [`PandaBear.SharedKernel.AspNetCore.Localization`](../SharedKernel.AspNetCore.Localization/README.md) | `SharedKernel.AspNetCore.Localization` |
+| `robots.txt` and sitemap XML | [`PandaBear.SharedKernel.AspNetCore.Seo`](../SharedKernel.AspNetCore.Seo/README.md) | `SharedKernel.AspNetCore.Seo` |
+| Server-side, cookieless page views sent to the configured targets, such as a self-hosted Umami | [`PandaBear.SharedKernel.AspNetCore.WebAnalytics`](../SharedKernel.AspNetCore.WebAnalytics/README.md) | `SharedKernel.AspNetCore.WebAnalytics` |
+| `Idempotency-Key` header and key-bound data protector | [`PandaBear.SharedKernel.Idempotency.AspNetCore`](../SharedKernel.Idempotency.AspNetCore/README.md) | `SharedKernel.Idempotency.AspNetCore` |
 
 ## Install
 
@@ -76,7 +76,7 @@ dotnet add package PandaBear.SharedKernel.AspNetCore
 ```
 
 ```csharp
-using PandaBear.AspNetCore;
+using SharedKernel.AspNetCore;
 
 builder.Services.AddUnhandledExceptionHandler();
 builder.Services.AddConfiguredTrustedForwardedHeaders(builder.Configuration);
@@ -88,16 +88,16 @@ app.UseSecurityHeaders(contentSecurityPolicy: "default-src 'self'");
 
 ## Migrating from the previous single package
 
-Before this split, `PandaBear.SharedKernel.AspNetCore` carried every concern below in the namespace `PandaBear.AspNetCore`.
+Before this split, `PandaBear.SharedKernel.AspNetCore` carried every concern below in the namespace `SharedKernel.AspNetCore`.
 The package id is unchanged and shrank to the core listed above; there is no meta-package. Add the package that now owns
 each type you use and update the `using` directive:
 
 | Types | Now in package | New namespace |
 | --- | --- | --- |
-| `ApiAuthenticationDefaults`, `ApiAuthenticationServiceCollectionExtensions`, `ApiBearerScheme`, `ApiSecurityApplicationBuilderExtensions`, `AuthorizationPolicyBuilderExtensions`, `ClaimsPrincipalExtensions`, `AntiforgerySignOutEndpointRouteBuilderExtensions` | `PandaBear.SharedKernel.AspNetCore.Authentication` | `PandaBear.AspNetCore.Authentication` |
-| `AspNetCoreRateLimitingExtensions`, `RemoteIpFixedWindowRateLimitPolicy` | `PandaBear.SharedKernel.AspNetCore.RateLimiting` | `PandaBear.AspNetCore.RateLimiting` |
-| `AspNetCoreRobotsTxtExtensions`, `SitemapCanonicalOrigin`, `SitemapEntry`, `SitemapXmlSerializer` | `PandaBear.SharedKernel.AspNetCore.Seo` | `PandaBear.AspNetCore.Seo` |
-| `IdempotencyKeyHeader`, `KeyBoundDataProtector` | `PandaBear.SharedKernel.Idempotency.AspNetCore` | `PandaBear.Idempotency.AspNetCore` |
+| `ApiAuthenticationDefaults`, `ApiAuthenticationServiceCollectionExtensions`, `ApiBearerScheme`, `ApiSecurityApplicationBuilderExtensions`, `AuthorizationPolicyBuilderExtensions`, `ClaimsPrincipalExtensions`, `AntiforgerySignOutEndpointRouteBuilderExtensions` | `PandaBear.SharedKernel.AspNetCore.Authentication` | `SharedKernel.AspNetCore.Authentication` |
+| `AspNetCoreRateLimitingExtensions`, `RemoteIpFixedWindowRateLimitPolicy` | `PandaBear.SharedKernel.AspNetCore.RateLimiting` | `SharedKernel.AspNetCore.RateLimiting` |
+| `AspNetCoreRobotsTxtExtensions`, `SitemapCanonicalOrigin`, `SitemapEntry`, `SitemapXmlSerializer` | `PandaBear.SharedKernel.AspNetCore.Seo` | `SharedKernel.AspNetCore.Seo` |
+| `IdempotencyKeyHeader`, `KeyBoundDataProtector` | `PandaBear.SharedKernel.Idempotency.AspNetCore` | `SharedKernel.Idempotency.AspNetCore` |
 
 `AddSecurityEventTelemetry()` was split by concern: `AddAuthenticationEventTelemetry()` (Authentication) and
 `AddRateLimitEventTelemetry()` (RateLimiting). Meter, instrument, tag and log event names stay in `AspNetCoreTelemetry`
@@ -116,7 +116,7 @@ and alerting guidance.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.AspNetCore`. C# namespace: `PandaBear.AspNetCore`. Assembly/project identity: `SharedKernel.AspNetCore`.
+Package ID: `PandaBear.SharedKernel.AspNetCore`. C# namespace: `SharedKernel.AspNetCore`. Assembly/project identity: `SharedKernel.AspNetCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

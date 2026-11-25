@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing;
+namespace SharedKernel.EventSourcing;
 
 /// <summary>
 /// Defines storage-neutral projection checkpoint operations.

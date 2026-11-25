@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace PandaBear.Forgejo;
+namespace SharedKernel.Forgejo;
 
 /// <summary>Creates an <see cref="HttpClient"/> for the REST API of a Forgejo instance.</summary>
 public static class ForgejoApiClient

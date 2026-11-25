@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Hosting;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>Captures the Generic Host built by a managed worker entry point before startup.</summary>
 public static class WorkerTestHost

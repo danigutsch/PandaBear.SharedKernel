@@ -7,11 +7,11 @@ using Microsoft.CodeAnalysis.Simplification;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace PandaBear.Testing.CodeFixes;
+namespace SharedKernel.Testing.CodeFixes;
 
 public sealed partial class TestingCodeFixProvider
 {
-    private const string InvariantStringWriterNamespace = "PandaBear.Testing";
+    private const string InvariantStringWriterNamespace = "SharedKernel.Testing";
     private const string InvariantStringWriterName = InvariantStringWriterNamespace + ".InvariantStringWriter";
 
     // Rewrites new StringWriter() and new StringWriter(CultureInfo.InvariantCulture) to new InvariantStringWriter(), keeping any

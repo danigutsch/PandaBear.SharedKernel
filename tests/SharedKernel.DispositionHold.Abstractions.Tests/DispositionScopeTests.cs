@@ -1,4 +1,4 @@
-namespace PandaBear.DispositionHold.Tests;
+namespace SharedKernel.DispositionHold.Tests;
 
 /// <summary>
 /// Tests DispositionScope identifier validation.

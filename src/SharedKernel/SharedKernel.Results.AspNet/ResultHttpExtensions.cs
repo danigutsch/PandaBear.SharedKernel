@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using HttpResults = Microsoft.AspNetCore.Http.Results;
 
-namespace PandaBear.Results.AspNet;
+namespace SharedKernel.Results.AspNet;
 
 /// <summary>Converts results to minimal API responses.</summary>
 public static class ResultHttpExtensions

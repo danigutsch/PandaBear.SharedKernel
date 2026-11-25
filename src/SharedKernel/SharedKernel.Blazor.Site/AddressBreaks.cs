@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// Renders text with a line-break opportunity (<c>wbr</c>) before every <c>@</c> and <c>.</c> inside a word that holds an <c>@</c>, such

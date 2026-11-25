@@ -1,4 +1,4 @@
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>
 /// Deterministic locations in two fields: a fifth are empty, most are short, and a tenth are long enough to cross index

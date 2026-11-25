@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Brief;
+namespace SharedKernel.Vault.Brief;
 
 /// <summary>A field on which the members of a group differ.</summary>
 /// <param name="FieldPath">Field path, as decisions name it.</param>

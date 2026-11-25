@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
-using PandaBear.Forgejo;
+using SharedKernel.Forgejo;
 
-namespace PandaBear.CI.Forgejo;
+namespace SharedKernel.CI.Forgejo;
 
 /// <summary>
 /// Locates the download address of a Forgejo release attachment: it reads the release of the tag with

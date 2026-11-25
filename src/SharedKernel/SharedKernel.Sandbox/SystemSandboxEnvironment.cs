@@ -1,7 +1,7 @@
 using System.IO.Pipes;
 using System.Net.Sockets;
 
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>The real environment: every operation is tried and undone, and no detail carries a path.</summary>
 public sealed class SystemSandboxEnvironment : ISandboxEnvironment

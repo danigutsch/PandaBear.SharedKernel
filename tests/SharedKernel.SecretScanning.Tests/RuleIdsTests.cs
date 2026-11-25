@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Tests that the scanner lists every rule identifier it can report, so a caller can check its own map against them.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.SecretScanningCapability)]

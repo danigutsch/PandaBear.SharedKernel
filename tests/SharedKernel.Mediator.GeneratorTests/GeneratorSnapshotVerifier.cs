@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 using Xunit.Sdk;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>
 /// Verifies generated source against a committed approval snapshot.

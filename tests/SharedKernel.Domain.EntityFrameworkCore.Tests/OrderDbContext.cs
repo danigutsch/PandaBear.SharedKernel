@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.Domain.EntityFrameworkCore.Tests;
+namespace SharedKernel.Domain.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// In-memory test context exposing the Order set.

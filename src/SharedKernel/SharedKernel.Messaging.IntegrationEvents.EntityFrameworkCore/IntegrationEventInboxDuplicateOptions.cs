@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Stores the optional observation mapping for one inbox context.</summary>
 /// <typeparam name="TContext">The context that owns the inbox.</typeparam>

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Secrets.Sops.Tests;
+namespace SharedKernel.Secrets.Sops.Tests;
 
 /// <summary>Tests the sops adapter with a fake process runner.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

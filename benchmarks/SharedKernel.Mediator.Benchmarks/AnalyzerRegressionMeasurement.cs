@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>Time, CPU time, allocation, and diagnostic count measured for one analyzer suite.</summary>
 /// <param name="Suite">Name of the analyzer suite.</param>

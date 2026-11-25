@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
 
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>Tests what registering the S3 object store adds to a host's telemetry.</summary>
 public sealed class S3ObjectStoreRegistrationTests

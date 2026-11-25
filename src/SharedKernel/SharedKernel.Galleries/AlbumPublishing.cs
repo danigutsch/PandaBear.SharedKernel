@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>Reads the publish rule of albums.</summary>
 public static class AlbumPublishing

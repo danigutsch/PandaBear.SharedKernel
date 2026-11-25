@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.DispositionHold.EntityFrameworkCore;
+namespace SharedKernel.DispositionHold.EntityFrameworkCore;
 
 /// <summary>Rejects storage options whose schema or table name is not a valid unquoted PostgreSQL identifier.</summary>
 internal sealed class DispositionHoldStorageOptionsValidator : IValidateOptions<DispositionHoldStorageOptions>

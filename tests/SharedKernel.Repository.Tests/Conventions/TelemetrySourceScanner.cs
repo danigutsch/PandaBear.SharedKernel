@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>
 /// Reads the telemetry a library declares from its source: the meters and activity sources it creates, the instruments it creates

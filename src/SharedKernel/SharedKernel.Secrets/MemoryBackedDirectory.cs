@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Creates and removes the private directory in which <c>edit</c> lets sops and the editor keep plaintext.</summary>
 internal static class MemoryBackedDirectory

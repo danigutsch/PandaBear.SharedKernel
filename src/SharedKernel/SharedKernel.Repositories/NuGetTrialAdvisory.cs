@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Identifies an advisory reported by the SDK under the evaluated NuGet audit policy.</summary>
 /// <param name="Code">NuGet audit severity code.</param>

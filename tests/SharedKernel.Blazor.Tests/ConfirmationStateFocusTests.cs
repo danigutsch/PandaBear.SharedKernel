@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests where focus goes when an inline confirmation opens, is cancelled or is closed.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

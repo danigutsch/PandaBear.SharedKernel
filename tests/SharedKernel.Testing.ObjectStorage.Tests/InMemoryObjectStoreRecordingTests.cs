@@ -1,6 +1,6 @@
-using PandaBear.ObjectStorage;
+using SharedKernel.ObjectStorage;
 
-namespace PandaBear.Testing.ObjectStorage.Tests;
+namespace SharedKernel.Testing.ObjectStorage.Tests;
 
 /// <summary>Tests the calls, writes, reads and deletes that the in-memory object store records.</summary>
 public sealed class InMemoryObjectStoreRecordingTests

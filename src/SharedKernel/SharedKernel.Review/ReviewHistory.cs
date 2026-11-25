@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Review;
+namespace SharedKernel.Review;
 
 /// <summary>Tracks ordered human decisions and append-only advisory evidence for versioned content.</summary>
 public sealed class ReviewHistory

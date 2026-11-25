@@ -1,4 +1,4 @@
-namespace PandaBear.ImageProcessing;
+namespace SharedKernel.ImageProcessing;
 
 /// <summary>
 /// The outcome of a header-only animation check. Treat every value other than <see cref="Static" /> as a rejection when

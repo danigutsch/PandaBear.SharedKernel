@@ -1,8 +1,8 @@
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using static PandaBear.Vault.Tests.Merge.MergeFixture;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using static SharedKernel.Vault.Tests.Merge.MergeFixture;
 
-namespace PandaBear.Vault.Tests.Merge;
+namespace SharedKernel.Vault.Tests.Merge;
 
 /// <summary>Tests the Markdown rendering of <see cref="MergeReport"/>.</summary>
 public sealed class MergeReportTests

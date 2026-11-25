@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Exercises CSP observation against an enforced policy in Chromium.</summary>
 public sealed class CspViolationRecorderTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>

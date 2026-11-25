@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>
 /// Supplies the host services that <c>verify-devcontainer</c> uses.

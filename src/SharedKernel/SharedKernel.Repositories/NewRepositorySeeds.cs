@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The neutral files that <c>new</c> writes once and never manages afterwards: formats without a comment for the

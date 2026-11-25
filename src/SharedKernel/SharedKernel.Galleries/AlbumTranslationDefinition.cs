@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>Unvalidated text of an album in one culture.</summary>
 /// <param name="Culture">The culture name, one of <see cref="AlbumRules.Cultures"/>.</param>

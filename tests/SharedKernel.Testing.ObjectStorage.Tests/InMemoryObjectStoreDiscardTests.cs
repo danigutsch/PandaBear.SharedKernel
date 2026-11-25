@@ -1,6 +1,6 @@
-using PandaBear.ObjectStorage;
+using SharedKernel.ObjectStorage;
 
-namespace PandaBear.Testing.ObjectStorage.Tests;
+namespace SharedKernel.Testing.ObjectStorage.Tests;
 
 /// <summary>Tests the write-discarding mode of the in-memory object store.</summary>
 public sealed class InMemoryObjectStoreDiscardTests

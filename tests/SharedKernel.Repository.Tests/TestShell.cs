@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Builds a platform shell command for child process tests.</summary>
 internal static class TestShell

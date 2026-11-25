@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>
 /// On-disk shape of a catalog: the parts of a vault that people and agents may read and edit, without secret values.

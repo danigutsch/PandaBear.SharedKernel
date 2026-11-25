@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The changed-code coverage policy and the symbols that <c>coverage record-symbols</c> records.</summary>
 /// <param name="ThresholdPercent">The least share, from 0 to 100, of changed executable lines and conditions that the tests must cover.</param>

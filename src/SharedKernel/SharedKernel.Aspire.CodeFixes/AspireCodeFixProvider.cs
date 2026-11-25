@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using PandaBear.Aspire.Analyzers;
+using SharedKernel.Aspire.Analyzers;
 
-namespace PandaBear.Aspire.CodeFixes;
+namespace SharedKernel.Aspire.CodeFixes;
 
 /// <summary>
 /// Provides SharedKernel Aspire code fixes, including placeholders that intentionally require manual completion.

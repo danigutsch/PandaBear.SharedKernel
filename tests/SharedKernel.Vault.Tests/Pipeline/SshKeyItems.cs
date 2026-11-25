@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Tests.Pipeline;
+namespace SharedKernel.Vault.Tests.Pipeline;
 
 /// <summary>Builds SSH key items read from a Keeper export.</summary>
 internal static class SshKeyItems

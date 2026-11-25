@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Supplies bounded resolver process outcomes in the order they are requested.</summary>
 /// <param name="responses">The responses the test expects the resolver to consume.</param>

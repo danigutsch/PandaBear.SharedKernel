@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// A safe repository-relative path of a SOPS-encrypted file: segments separated by <c>/</c>, none empty, <c>.</c>, or

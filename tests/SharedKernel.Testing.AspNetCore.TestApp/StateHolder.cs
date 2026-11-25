@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace PandaBear.Testing.AspNetCore.TestApp;
+namespace SharedKernel.Testing.AspNetCore.TestApp;
 
 /// <summary>An Interactive Server component that persists a text of a given length across prerendering.</summary>
 public sealed class StateHolder : ComponentBase

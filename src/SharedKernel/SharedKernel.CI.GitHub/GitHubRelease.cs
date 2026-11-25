@@ -1,4 +1,4 @@
-namespace PandaBear.CI.GitHub;
+namespace SharedKernel.CI.GitHub;
 
 /// <summary>The properties of a GitHub release that prerelease pruning reads from the releases API.</summary>
 /// <param name="Id">The release ID that the delete endpoint takes.</param>

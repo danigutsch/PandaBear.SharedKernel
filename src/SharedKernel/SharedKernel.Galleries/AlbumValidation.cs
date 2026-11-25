@@ -1,8 +1,8 @@
 using System.Globalization;
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>Validates album definitions into album data. Messages never echo the input.</summary>
 internal static class AlbumValidation

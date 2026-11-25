@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>What <c>local-check</c> runs and how.</summary>
 /// <param name="Base">The revision to compare with <c>HEAD</c>, or <see langword="null"/> to select every test project.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Keeper;
+namespace SharedKernel.Vault.Keeper;
 
 /// <summary>Parses Keeper custom field keys such as <c>$oneTimeCode::1</c>, <c>$url:account:1</c>, or <c>$text:label</c>.</summary>
 internal static class KeeperFieldKey

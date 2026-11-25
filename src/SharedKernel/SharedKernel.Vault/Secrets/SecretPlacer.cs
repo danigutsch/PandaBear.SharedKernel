@@ -1,10 +1,10 @@
 using System.Globalization;
-using PandaBear.Encodings;
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.Encodings;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>
 /// Moves accepted findings to their targets. Values are re-read from the item at their recorded location; source text

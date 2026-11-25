@@ -1,10 +1,10 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// Picks one image (single mode: <see cref="Value"/>) or an ordered list of images (multiple mode: <see cref="Values"/>) from a library

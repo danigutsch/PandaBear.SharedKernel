@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Mediator;
+namespace SharedKernel.Mediator;
 
 /// <summary>
 /// Converts a <see cref="UniqueConstraintViolationException"/> thrown while a request runs into a failed result, so handlers that return

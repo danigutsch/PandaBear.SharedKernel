@@ -1,4 +1,4 @@
-namespace PandaBear.Branding;
+namespace SharedKernel.Branding;
 
 /// <summary>
 /// Defines branding API route paths.

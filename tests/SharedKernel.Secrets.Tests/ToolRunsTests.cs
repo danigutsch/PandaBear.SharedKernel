@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the run helper that every provider uses.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

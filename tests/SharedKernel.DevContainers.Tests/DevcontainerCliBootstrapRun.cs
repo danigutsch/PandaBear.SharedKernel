@@ -1,4 +1,4 @@
-namespace PandaBear.DevContainers.Tests;
+namespace SharedKernel.DevContainers.Tests;
 
 /// <summary>Runs the Dev Container CLI bootstrap against scripted archive downloads.</summary>
 internal static class DevcontainerCliBootstrapRun

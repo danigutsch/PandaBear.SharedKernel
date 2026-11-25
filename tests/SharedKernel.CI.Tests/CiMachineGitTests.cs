@@ -1,6 +1,6 @@
-using PandaBear.Processes.Tests;
+using SharedKernel.Processes.Tests;
 
-namespace PandaBear.CI.Tests;
+namespace SharedKernel.CI.Tests;
 
 /// <summary>
 /// Tests that every <c>git</c> run of the CI engine, which its selection, coverage, local-check, slice, and candidate

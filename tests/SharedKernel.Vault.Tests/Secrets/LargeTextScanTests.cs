@@ -1,8 +1,8 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Attachments;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Attachments;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>
 /// Scans texts as large as the attachment text limit. Every secret of the text is expected to be reported, or to lie in

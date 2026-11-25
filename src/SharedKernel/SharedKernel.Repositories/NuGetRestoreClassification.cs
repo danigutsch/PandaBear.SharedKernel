@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>How the package enters the evaluated project framework.</summary>
 internal enum NuGetRestoreClassification

@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>
 /// Finds the helpers through which test projects borrow the services of slices: the solution projects, neither test projects nor slice

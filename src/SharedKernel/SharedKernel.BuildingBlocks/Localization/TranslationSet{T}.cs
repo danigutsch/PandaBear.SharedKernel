@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>The translations of one entity, one per <see cref="ContentCulture"/>, with culture fallback. Create it with <see cref="TranslationSet.Create{T}"/>.</summary>
 /// <typeparam name="T">The translation type.</typeparam>

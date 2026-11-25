@@ -6,7 +6,7 @@
         <ToolCommandName>loadtest</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.K6.Tool</PackageId>
         <Description>Runs configured k6 scenarios locally or in a digest-pinned container, with loopback targets, a minimal k6 environment, confined results, and a managed host process.</Description>
-        <RootNamespace>PandaBear.K6.Tool</RootNamespace>
+        <RootNamespace>SharedKernel.K6.Tool</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>k6;performance;load-testing;benchmark;dotnet-tool</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>

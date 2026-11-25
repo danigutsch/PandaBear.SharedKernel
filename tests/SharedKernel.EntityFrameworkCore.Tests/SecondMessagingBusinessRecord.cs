@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Business record stored in the second_records table of the second_messaging schema by the second messaging context.

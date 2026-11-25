@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>
 /// An <see cref="IFormFile" /> over a caller-supplied stream, for upload tests that need a non-seekable, slow or failing source.

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace PandaBear.Blazor.Tests.Browser;
+namespace SharedKernel.Blazor.Tests.Browser;
 
 /// <summary>
 /// The statically rendered document of the picker's browser tests: it reads how many images are chosen from the <c>chosen</c> query

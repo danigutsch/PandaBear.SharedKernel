@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.Scheduling.Tests;
+namespace SharedKernel.Scheduling.Tests;
 
 /// <summary>Observes duration measurements for a single named test poller.</summary>
 internal sealed class PollingMeasurementRecorder : IDisposable

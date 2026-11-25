@@ -1,4 +1,4 @@
-namespace PandaBear.UploadSanitizing.Fonts;
+namespace SharedKernel.UploadSanitizing.Fonts;
 
 /// <summary>The limit of <see cref="FontSanitizer"/> and the field its validation errors belong to.</summary>
 public sealed record FontSanitizerOptions

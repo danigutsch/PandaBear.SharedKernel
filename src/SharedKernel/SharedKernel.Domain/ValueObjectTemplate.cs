@@ -1,4 +1,4 @@
-namespace PandaBear.Domain;
+namespace SharedKernel.Domain;
 
 /// <summary>
 /// Identifies reusable technical templates for generated scalar value objects.

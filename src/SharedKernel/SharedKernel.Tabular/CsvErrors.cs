@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Tabular;
+namespace SharedKernel.Tabular;
 
 /// <summary>
 /// Defines common error results for CSV document processing, such as inconsistent column counts across rows.

@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The validation plan that <c>select</c> writes to <c>selection.json</c>.</summary>
 /// <param name="Revision">The selected <c>HEAD</c>, or <c>unavailable</c> outside a Git checkout.</param>

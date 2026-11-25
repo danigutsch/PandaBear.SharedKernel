@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Outcome of a git process run with bounded output capture.</summary>
 /// <param name="ExitCode">Process exit code.</param>

@@ -1,7 +1,7 @@
-using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.Testing;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests the inspect command.</summary>
 public sealed class InspectCommandTests : IDisposable

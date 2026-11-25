@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The embedded generic baseline content. It names no forge, owner, host, or registry; the consumer picks each target

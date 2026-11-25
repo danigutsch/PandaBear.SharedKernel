@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>A CI test slice: one matrix job that runs the selected test projects it lists.</summary>
 /// <param name="Name">Lowercase letters and digits in hyphen-separated words; it names the job, the filter, and the output.</param>

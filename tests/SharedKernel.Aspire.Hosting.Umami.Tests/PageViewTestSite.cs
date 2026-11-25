@@ -2,9 +2,9 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
-using PandaBear.AspNetCore.WebAnalytics;
+using SharedKernel.AspNetCore.WebAnalytics;
 
-namespace PandaBear.Aspire.Hosting.Umami.Tests;
+namespace SharedKernel.Aspire.Hosting.Umami.Tests;
 
 /// <summary>A site on a test server that sends its page views to Umami through the Umami page-view target, as a site referencing the website would.</summary>
 internal sealed class PageViewTestSite : IAsyncDisposable

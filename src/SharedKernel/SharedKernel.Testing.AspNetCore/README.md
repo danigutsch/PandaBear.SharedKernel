@@ -106,7 +106,7 @@ Blazor script has run.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.AspNetCore`. C# namespace: `PandaBear.Testing.AspNetCore`. Assembly/project identity: `SharedKernel.Testing.AspNetCore`.
+Package ID: `PandaBear.SharedKernel.Testing.AspNetCore`. C# namespace: `SharedKernel.Testing.AspNetCore`. Assembly/project identity: `SharedKernel.Testing.AspNetCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 
@@ -122,7 +122,7 @@ For a manually constructed TestServer or WebApplication test host, use the same 
 ```csharp
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
-using PandaBear.Testing.AspNetCore;
+using SharedKernel.Testing.AspNetCore;
 
 var builder = WebApplication.CreateBuilder();
 builder.WebHost.UseTestServer();

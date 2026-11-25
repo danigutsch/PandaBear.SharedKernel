@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing.CodeFixRunner.Tests;
+namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
 /// <summary>Sample project, solution, source and configuration texts, plus helpers that write them to a temporary directory for code fix runner tests.</summary>
 internal static class CodeFixRunnerTestProject

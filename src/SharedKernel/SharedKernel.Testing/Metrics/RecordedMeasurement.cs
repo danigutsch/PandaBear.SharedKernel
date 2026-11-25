@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Metrics;
+namespace SharedKernel.Testing.Metrics;
 
 /// <summary>A captured counter measurement.</summary>
 /// <param name="Instrument">The instrument name.</param>

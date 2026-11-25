@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeFixes;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Mediator.CodeFixes.Tests;
+namespace SharedKernel.Mediator.CodeFixes.Tests;
 
 /// <summary>
 /// Verifies safe fixes for the currently implemented mediator diagnostics.
@@ -48,7 +48,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -166,7 +166,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -194,7 +194,7 @@ public sealed class MediatorCodeFixProviderTests
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IRequest<string>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -202,7 +202,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -238,7 +238,7 @@ public sealed class MediatorCodeFixProviderTests
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IQuery<string>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IQuery<string>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -246,7 +246,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -282,7 +282,7 @@ public sealed class MediatorCodeFixProviderTests
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        updatedDocumentText.ShouldContain("public sealed record CreateTour(string Name) : global::PandaBear.Mediator.ICommand<int>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record CreateTour(string Name) : global::SharedKernel.Mediator.ICommand<int>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -290,7 +290,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -326,7 +326,7 @@ public sealed class MediatorCodeFixProviderTests
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        updatedDocumentText.ShouldContain("public sealed record ArchiveTour(int Id) : global::PandaBear.Mediator.ICommand;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record ArchiveTour(int Id) : global::SharedKernel.Mediator.ICommand;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -334,7 +334,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -367,7 +367,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -405,7 +405,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo
             {
@@ -432,7 +432,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string globalUsingsSource = """
-            global using PandaBear.Mediator;
+            global using SharedKernel.Mediator;
             global using System.Threading;
             global using System.Threading.Tasks;
             """;
@@ -461,7 +461,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -487,7 +487,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -504,7 +504,7 @@ public sealed class MediatorCodeFixProviderTests
         var generatedHandlerSource = await workspace.GetDocumentText("LookupTourHandler.cs");
 
         // Assert
-        generatedHandlerSource.ShouldContain("public sealed class LookupTourHandler : global::PandaBear.Mediator.IRequestHandler<global::Demo.LookupTour, string>", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public sealed class LookupTourHandler : global::SharedKernel.Mediator.IRequestHandler<global::Demo.LookupTour, string>", StringComparison.Ordinal);
         generatedHandlerSource.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(", StringComparison.Ordinal);
     }
 
@@ -513,7 +513,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -530,7 +530,7 @@ public sealed class MediatorCodeFixProviderTests
         var generatedHandlerSource = await workspace.GetDocumentText("CreateTourHandler.cs");
 
         // Assert
-        generatedHandlerSource.ShouldContain("public sealed class CreateTourHandler : global::PandaBear.Mediator.ICommandHandler<global::Demo.CreateTour, int>", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public sealed class CreateTourHandler : global::SharedKernel.Mediator.ICommandHandler<global::Demo.CreateTour, int>", StringComparison.Ordinal);
         generatedHandlerSource.ShouldContain("public global::System.Threading.Tasks.ValueTask<int> Handle(", StringComparison.Ordinal);
     }
 
@@ -539,7 +539,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -556,8 +556,8 @@ public sealed class MediatorCodeFixProviderTests
         var generatedHandlerSource = await workspace.GetDocumentText("ArchiveTourHandler.cs");
 
         // Assert
-        generatedHandlerSource.ShouldContain("public sealed class ArchiveTourHandler : global::PandaBear.Mediator.ICommandHandler<global::Demo.ArchiveTour>", StringComparison.Ordinal);
-        generatedHandlerSource.ShouldContain("public global::System.Threading.Tasks.ValueTask<global::PandaBear.Mediator.Unit> Handle(", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public sealed class ArchiveTourHandler : global::SharedKernel.Mediator.ICommandHandler<global::Demo.ArchiveTour>", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Handle(", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -565,7 +565,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -598,7 +598,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo
             {
@@ -625,7 +625,7 @@ public sealed class MediatorCodeFixProviderTests
 
         // Assert
         updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::SharedKernel.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -633,7 +633,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string globalUsingsSource = """
-            global using PandaBear.Mediator;
+            global using SharedKernel.Mediator;
             global using System.Threading;
             global using System.Threading.Tasks;
             """;
@@ -662,7 +662,7 @@ public sealed class MediatorCodeFixProviderTests
 
         // Assert
         updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::SharedKernel.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -670,7 +670,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -696,7 +696,7 @@ public sealed class MediatorCodeFixProviderTests
 
         // Assert
         updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string?> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string?>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::SharedKernel.Mediator.IQueryHandler<global::Demo.LookupTour, string?>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -704,7 +704,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo
             {
@@ -733,7 +733,7 @@ public sealed class MediatorCodeFixProviderTests
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IRequest<string>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -741,7 +741,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string globalUsingsSource = """
-            global using PandaBear.Mediator;
+            global using SharedKernel.Mediator;
             global using System.Threading;
             global using System.Threading.Tasks;
             """;
@@ -772,7 +772,7 @@ public sealed class MediatorCodeFixProviderTests
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IRequest<string>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -780,7 +780,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -808,7 +808,7 @@ public sealed class MediatorCodeFixProviderTests
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string?>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IRequest<string?>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -816,7 +816,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -842,7 +842,7 @@ public sealed class MediatorCodeFixProviderTests
 
         // Assert
         updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IRequestHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::SharedKernel.Mediator.IRequestHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -850,7 +850,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -875,8 +875,8 @@ public sealed class MediatorCodeFixProviderTests
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<global::PandaBear.Mediator.Unit> Handle(global::Demo.ArchiveTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.ICommandHandler<global::Demo.ArchiveTour>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Handle(global::Demo.ArchiveTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::SharedKernel.Mediator.ICommandHandler<global::Demo.ArchiveTour>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -884,7 +884,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -922,7 +922,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -949,7 +949,7 @@ public sealed class MediatorCodeFixProviderTests
 
         // Assert
         updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::SharedKernel.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
         diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InvalidHandlerSignature);
         diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingHandler);
     }
@@ -959,7 +959,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string moduleSource = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             [assembly: MediatorModule]
 
@@ -973,7 +973,7 @@ public sealed class MediatorCodeFixProviderTests
             }
             """;
         const string primarySource = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1011,7 +1011,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1052,7 +1052,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1089,7 +1089,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1126,7 +1126,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1166,7 +1166,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1203,7 +1203,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string moduleSource = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             [assembly: MediatorModule]
 
@@ -1217,7 +1217,7 @@ public sealed class MediatorCodeFixProviderTests
             }
             """;
         const string primarySource = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1256,7 +1256,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string moduleSource = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace ModuleA;
 
@@ -1268,7 +1268,7 @@ public sealed class MediatorCodeFixProviderTests
             }
             """;
         const string primarySource = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1295,7 +1295,7 @@ public sealed class MediatorCodeFixProviderTests
         var generatedSource = await workspace.GetGeneratedSource("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
-        markerSource.ShouldContain("[assembly: global::PandaBear.Mediator.MediatorModuleAttribute]", StringComparison.Ordinal);
+        markerSource.ShouldContain("[assembly: global::SharedKernel.Mediator.MediatorModuleAttribute]", StringComparison.Ordinal);
         diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingModuleMarker);
         generatedSource.ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
     }
@@ -1305,7 +1305,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1342,7 +1342,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1381,7 +1381,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1418,7 +1418,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1459,7 +1459,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1497,7 +1497,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 
@@ -1535,7 +1535,7 @@ public sealed class MediatorCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             namespace Demo;
 

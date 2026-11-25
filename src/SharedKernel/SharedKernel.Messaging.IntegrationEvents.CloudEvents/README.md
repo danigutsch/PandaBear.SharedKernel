@@ -14,6 +14,6 @@ Call `CloudEventMapper.ToCloudEvent` with a typed integration event and `CloudEv
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Messaging.IntegrationEvents.CloudEvents`. C# namespace: `PandaBear.Messaging.IntegrationEvents.CloudEvents`. Assembly/project identity: `SharedKernel.Messaging.IntegrationEvents.CloudEvents`.
+Package ID: `PandaBear.SharedKernel.Messaging.IntegrationEvents.CloudEvents`. C# namespace: `SharedKernel.Messaging.IntegrationEvents.CloudEvents`. Assembly/project identity: `SharedKernel.Messaging.IntegrationEvents.CloudEvents`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

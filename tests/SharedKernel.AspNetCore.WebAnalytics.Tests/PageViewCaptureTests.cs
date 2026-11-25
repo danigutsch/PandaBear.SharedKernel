@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>Tests what a page view keeps of the request: the path with only the <c>utm_*</c> query values, the referrer without query or fragment, the first language, the host, the browser and the shortened address.</summary>
 public sealed class PageViewCaptureTests

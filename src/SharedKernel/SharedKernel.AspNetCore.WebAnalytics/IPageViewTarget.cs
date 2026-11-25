@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// A destination of page views, such as Umami. Register it with <see cref="PageViewBuilder.AddTarget{TTarget}"/> or

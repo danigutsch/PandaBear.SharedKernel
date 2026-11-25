@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite;
+namespace SharedKernel.EntityFrameworkCore.Sqlite;
 
 /// <summary>Registers the search fold function on the connections of a context.</summary>
 public static class SearchFoldDbContextOptionsBuilderExtensions

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Timeout applied to GitHub requests.</summary>
 internal static class GitHubRequestTimeout

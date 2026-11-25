@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PandaBear.Testing.Logging;
-using PandaBear.Testing.Metrics;
+using SharedKernel.Testing.Logging;
+using SharedKernel.Testing.Metrics;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>
 /// A site on a test server that records page views into a fake Umami and any further targets: every path answers an HTML page, except
@@ -59,7 +59,7 @@ internal sealed class PageViewTestApp : IAsyncDisposable
         builder.Logging.ClearProviders();
         builder.Logging.AddProvider(logs);
         builder.Logging.SetMinimumLevel(LogLevel.None);
-        builder.Logging.AddFilter("PandaBear", LogLevel.Trace);
+        builder.Logging.AddFilter("SharedKernel", LogLevel.Trace);
         builder.Logging.AddFilter("System.Net.Http.HttpClient", LogLevel.Trace);
         builder.Configuration[UmamiConnections.Key] = connectionString;
         builder.Services.AddSingleton<IMeterFactory>(meters);

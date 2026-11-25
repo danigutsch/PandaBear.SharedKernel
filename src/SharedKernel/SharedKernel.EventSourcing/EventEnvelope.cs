@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing;
+namespace SharedKernel.EventSourcing;
 
 /// <summary>
 /// Represents one event read from or appended to an event stream.

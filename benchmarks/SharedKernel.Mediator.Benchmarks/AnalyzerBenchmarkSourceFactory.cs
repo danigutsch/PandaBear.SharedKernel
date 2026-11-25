@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.Mediator.Benchmarks;
+namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Creates synthetic source for mediator analyzer performance benchmarks.
@@ -24,7 +24,7 @@ internal static class AnalyzerBenchmarkSourceFactory
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestCount);
 
         var builder = new StringBuilder();
-        builder.AppendLine("using PandaBear.Mediator;");
+        builder.AppendLine("using SharedKernel.Mediator;");
         builder.AppendLine();
         builder.AppendLine("namespace BenchmarkApp;");
         builder.AppendLine();

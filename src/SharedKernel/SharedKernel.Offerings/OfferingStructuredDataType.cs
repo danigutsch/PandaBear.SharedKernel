@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The schema.org type <see cref="OfferingStructuredData"/> marks an offering up as.</summary>
 public enum OfferingStructuredDataType

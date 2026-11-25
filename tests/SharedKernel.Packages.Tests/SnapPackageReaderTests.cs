@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests the snap reader against canned and real <c>snap list</c> output.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

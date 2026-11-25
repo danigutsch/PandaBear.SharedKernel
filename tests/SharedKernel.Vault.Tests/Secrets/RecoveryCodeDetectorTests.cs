@@ -1,7 +1,7 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Secrets;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Tests.Secrets;
+namespace SharedKernel.Vault.Tests.Secrets;
 
 /// <summary>Tests how the secret scanner detects blocks of recovery codes.</summary>
 public sealed class RecoveryCodeDetectorTests

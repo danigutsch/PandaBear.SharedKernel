@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.EntityFrameworkCore.Analyzers.Tests;
+namespace SharedKernel.EntityFrameworkCore.Analyzers.Tests;
 
 /// <summary>Compiles test source against the default usings and runs the Entity Framework Core analyzer over it.</summary>
 internal static class AnalyzerTestHarness
@@ -16,7 +16,7 @@ internal static class AnalyzerTestHarness
 
         """;
 
-    private const string EntityFrameworkCoreUsing = "using PandaBear.EntityFrameworkCore;\n";
+    private const string EntityFrameworkCoreUsing = "using SharedKernel.EntityFrameworkCore;\n";
 
     /// <summary>Compiles the source and returns the diagnostics reported by EntityFrameworkCoreAnalyzer, throwing when the source has compile errors.</summary>
     public static Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(string source) =>

@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Tests that text is made safe for printing on one line.</summary>
 public sealed class PrintableTextTests

@@ -4,7 +4,7 @@
         <PackageId>PandaBear.SharedKernel.Encodings</PackageId>
         <Description>Text encodings that .NET does not provide: BIP-173 Bech32 without a length limit, as age uses it for recipients and identities, and RFC 4648 Base32, as TOTP secrets use it.</Description>
         <PackageTags>encodings;bech32;base32;shared-kernel;dotnet</PackageTags>
-        <RootNamespace>PandaBear.Encodings</RootNamespace>
+        <RootNamespace>SharedKernel.Encodings</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>

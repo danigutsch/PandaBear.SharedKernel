@@ -1,8 +1,8 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Aspire.Hosting.K6.Tests;
+namespace SharedKernel.Aspire.Hosting.K6.Tests;
 
 /// <summary>Tests the K6 scenario resource builder: image pinning, mounts, arguments, log-file preparation, client credentials and the bundled library scripts.</summary>
 public sealed class K6ScenarioResourceExtensionsTests : IDisposable

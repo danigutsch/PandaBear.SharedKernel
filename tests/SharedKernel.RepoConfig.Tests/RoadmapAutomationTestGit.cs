@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Builds a roadmap Git repository that answers commands from canned data instead of running Git.</summary>
 internal static class RoadmapAutomationTestGit

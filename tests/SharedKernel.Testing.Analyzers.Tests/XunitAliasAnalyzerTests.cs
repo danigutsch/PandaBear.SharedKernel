@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests analyzer classification of aliased and unrelated test attributes.</summary>
 public sealed class XunitAliasAnalyzerTests

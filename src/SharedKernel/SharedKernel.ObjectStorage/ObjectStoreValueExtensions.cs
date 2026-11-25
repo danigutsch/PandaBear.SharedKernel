@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>Adapts validated keys to existing provider string contracts.</summary>
 public static class ObjectStoreValueExtensions

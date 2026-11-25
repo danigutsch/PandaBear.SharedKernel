@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>A timer of <see cref="ManualTimeProvider"/> that remembers whether it fired or was disposed.</summary>
 internal sealed class PendingTimer(DateTimeOffset due) : ITimer

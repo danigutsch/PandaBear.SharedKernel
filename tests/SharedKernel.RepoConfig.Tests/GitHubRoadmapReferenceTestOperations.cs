@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Test helpers for the GitHub roadmap reference tests.</summary>
 internal static class GitHubRoadmapReferenceTestOperations

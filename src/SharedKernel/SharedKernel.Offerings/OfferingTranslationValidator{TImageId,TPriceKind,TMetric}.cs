@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
-using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Validates the text of an offering in one culture, and its publish rule.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

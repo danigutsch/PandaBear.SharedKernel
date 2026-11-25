@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency.Tests;
+namespace SharedKernel.Idempotency.Tests;
 
 /// <summary>Represents an existing retention implementation with only the strict overloads.</summary>
 internal sealed class StrictIdempotencyRetentionStore : IIdempotencyRetentionStore

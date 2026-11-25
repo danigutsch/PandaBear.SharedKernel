@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Configuration file model for the documentation generator.</summary>
 internal sealed class DocumentationGeneratorConfig

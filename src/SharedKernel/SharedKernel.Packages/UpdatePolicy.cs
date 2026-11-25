@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// Decides whether an update may be installed. A candidate that an advisory affects is blocked. Otherwise an installed

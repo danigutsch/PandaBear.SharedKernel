@@ -1,4 +1,4 @@
-namespace PandaBear.Style.Analyzers.Tests;
+namespace SharedKernel.Style.Analyzers.Tests;
 
 /// <summary>Tests for the file-name rule SKSTYLE016, which compares a single top-level type with its file name.</summary>
 public sealed class FileNameAnalyzerTests

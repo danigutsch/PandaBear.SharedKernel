@@ -10,10 +10,10 @@ It has no NuGet dependency beyond other SharedKernel libraries, makes no network
 the programs do.
 
 ```csharp
-using PandaBear.Processes;
-using PandaBear.Secrets;
-using PandaBear.Secrets.Age;
-using PandaBear.Secrets.Sops;
+using SharedKernel.Processes;
+using SharedKernel.Secrets;
+using SharedKernel.Secrets.Age;
+using SharedKernel.Secrets.Sops;
 
 var runner = new SystemToolRunner();
 var repository = new SecretsRepository("/repo", new SecretsPrograms
@@ -79,7 +79,7 @@ control characters escaped, writes a refusal or failure to the error writer, and
 - `Verify` judges every file named `*.sops.*` against its rule, rejects every other file in a rule's scope, and with a base
   revision reports each label whose `enc` changed.
 
-`SecretsConfigurationFile` reads `.config/sharedkernel-secrets.json` with `PandaBear.ConfigurationFiles.JsonConfigurationFile`.
+`SecretsConfigurationFile` reads `.config/sharedkernel-secrets.json` with `SharedKernel.ConfigurationFiles.JsonConfigurationFile`.
 The [tool README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.Secrets.Tool/README.md) describes the
 format and each command's exact behavior.
 

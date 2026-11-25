@@ -1,4 +1,4 @@
-namespace PandaBear.AI;
+namespace SharedKernel.AI;
 
 /// <summary>
 /// Configures the LiteLLM OpenAI-compatible image text generation client.

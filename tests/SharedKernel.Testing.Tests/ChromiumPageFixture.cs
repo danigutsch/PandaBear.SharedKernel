@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Owns one Chromium browser for the tests of a class, when Chromium is installed, and opens pages with given content.</summary>
 public sealed class ChromiumPageFixture : IAsyncLifetime

@@ -2,7 +2,7 @@ extern alias testingcodefixes;
 
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST020 code fix that replaces an exact-address page wait with ExpectPath.</summary>
 public sealed class PlaywrightUrlWaitCodeFixTests
@@ -21,7 +21,7 @@ public sealed class PlaywrightUrlWaitCodeFixTests
         var source = PlaywrightUrlWaitTestSource.Create($"await {wait};");
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, wait);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -33,7 +33,7 @@ public sealed class PlaywrightUrlWaitCodeFixTests
 
         // Assert
         updated.ShouldContain($"await {expected};", StringComparison.Ordinal);
-        updated.ShouldContain("using PandaBear.Testing.Playwright;", StringComparison.Ordinal);
+        updated.ShouldContain("using SharedKernel.Testing.Playwright;", StringComparison.Ordinal);
         compilerErrors.ShouldBeEmpty();
         analyzerDiagnostics.ShouldNotContain(static d => d.Id == DiagnosticId);
     }
@@ -57,7 +57,7 @@ public sealed class PlaywrightUrlWaitCodeFixTests
         var source = PlaywrightUrlWaitTestSource.Create($"await {wait};");
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, wait);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);
@@ -74,7 +74,7 @@ public sealed class PlaywrightUrlWaitCodeFixTests
         var source = PlaywrightUrlWaitTestSource.Create($"await {wait};", withExpectPath: false);
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, wait);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var actions = await workspace.GetCodeActions(provider, diagnostic);

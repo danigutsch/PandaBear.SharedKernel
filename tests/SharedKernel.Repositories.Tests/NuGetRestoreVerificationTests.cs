@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Verifies provenance and output of optional restore comparison receipts.</summary>
 public sealed class NuGetRestoreVerificationTests

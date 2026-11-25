@@ -1,95 +1,95 @@
 #nullable enable
-PandaBear.Galleries.Album
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.CoverId.get -> TPhotoId?
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.EffectiveCoverId.get -> TPhotoId?
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.IsPublishedIn(PandaBear.BuildingBlocks.ContentCulture! culture) -> bool
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.PhotoIds.get -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.PublishedIn(PandaBear.BuildingBlocks.ContentCulture? requested, PandaBear.BuildingBlocks.SupportedCultures! cultures) -> PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>?
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.RelatedId.get -> TRelatedId?
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.Revise(PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>! definition, PandaBear.Galleries.AlbumRules! rules, PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>! photos) -> PandaBear.Results.Result<bool>
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.SortOrder.get -> int
-PandaBear.Galleries.Album<TPhotoId, TRelatedId>.Translations.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Galleries.AlbumTranslation!>!
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.<Clone>$() -> PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>!
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.AlbumDefinition(int SortOrder, TRelatedId? RelatedId, System.Collections.Generic.IReadOnlyList<TPhotoId>? PhotoIds, TPhotoId? CoverId, System.Collections.Generic.IReadOnlyList<PandaBear.Galleries.AlbumTranslationDefinition!>? Translations) -> void
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.CoverId.get -> TPhotoId?
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.CoverId.init -> void
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Deconstruct(out int SortOrder, out TRelatedId? RelatedId, out System.Collections.Generic.IReadOnlyList<TPhotoId>? PhotoIds, out TPhotoId? CoverId, out System.Collections.Generic.IReadOnlyList<PandaBear.Galleries.AlbumTranslationDefinition!>? Translations) -> void
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Equals(PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? other) -> bool
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.PhotoIds.get -> System.Collections.Generic.IReadOnlyList<TPhotoId>?
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.PhotoIds.init -> void
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.RelatedId.get -> TRelatedId?
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.RelatedId.init -> void
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.SortOrder.get -> int
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.SortOrder.init -> void
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Translations.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Galleries.AlbumTranslationDefinition!>?
-PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Translations.init -> void
-PandaBear.Galleries.AlbumFields
-PandaBear.Galleries.AlbumOrdering
-PandaBear.Galleries.AlbumPage<TPhotoId>
-PandaBear.Galleries.AlbumPage<TPhotoId>.PhotoIds.get -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
-PandaBear.Galleries.AlbumPage<TPhotoId>.Window.get -> PandaBear.BuildingBlocks.PageWindow
-PandaBear.Galleries.AlbumPublishing
-PandaBear.Galleries.AlbumRules
-PandaBear.Galleries.AlbumRules.AlbumRules(PandaBear.BuildingBlocks.SupportedCultures! cultures, int maxPhotos) -> void
-PandaBear.Galleries.AlbumRules.Cultures.get -> PandaBear.BuildingBlocks.SupportedCultures!
-PandaBear.Galleries.AlbumRules.MaxPhotos.get -> int
-PandaBear.Galleries.AlbumRules.MaxSlugLength.get -> int
-PandaBear.Galleries.AlbumRules.MaxSlugLength.init -> void
-PandaBear.Galleries.AlbumRules.MaxTitleLength.get -> int
-PandaBear.Galleries.AlbumRules.MaxTitleLength.init -> void
-PandaBear.Galleries.AlbumTranslation
-PandaBear.Galleries.AlbumTranslation.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.Galleries.AlbumTranslation.Slug.get -> PandaBear.BuildingBlocks.Slug!
-PandaBear.Galleries.AlbumTranslation.Status.get -> PandaBear.BuildingBlocks.PublicationStatus
-PandaBear.Galleries.AlbumTranslation.Title.get -> string!
-PandaBear.Galleries.AlbumTranslationDefinition
-PandaBear.Galleries.AlbumTranslationDefinition.<Clone>$() -> PandaBear.Galleries.AlbumTranslationDefinition!
-PandaBear.Galleries.AlbumTranslationDefinition.AlbumTranslationDefinition(string? Culture, string? Title, string? Slug, PandaBear.BuildingBlocks.PublicationStatus Status) -> void
-PandaBear.Galleries.AlbumTranslationDefinition.Culture.get -> string?
-PandaBear.Galleries.AlbumTranslationDefinition.Culture.init -> void
-PandaBear.Galleries.AlbumTranslationDefinition.Deconstruct(out string? Culture, out string? Title, out string? Slug, out PandaBear.BuildingBlocks.PublicationStatus Status) -> void
-PandaBear.Galleries.AlbumTranslationDefinition.Equals(PandaBear.Galleries.AlbumTranslationDefinition? other) -> bool
-PandaBear.Galleries.AlbumTranslationDefinition.Slug.get -> string?
-PandaBear.Galleries.AlbumTranslationDefinition.Slug.init -> void
-PandaBear.Galleries.AlbumTranslationDefinition.Status.get -> PandaBear.BuildingBlocks.PublicationStatus
-PandaBear.Galleries.AlbumTranslationDefinition.Status.init -> void
-PandaBear.Galleries.AlbumTranslationDefinition.Title.get -> string?
-PandaBear.Galleries.AlbumTranslationDefinition.Title.init -> void
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.CoverId.get -> TPhotoId?
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.Page(int? requestedPage, int pageSize) -> PandaBear.Galleries.AlbumPage<TPhotoId>!
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.Page(string? requestedPage, int pageSize) -> PandaBear.Galleries.AlbumPage<TPhotoId>!
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.PhotoCount.get -> int
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.PhotoIds.get -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.RelatedId.get -> TRelatedId?
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.Slug.get -> PandaBear.BuildingBlocks.Slug!
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.SortOrder.get -> int
-PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.Title.get -> string!
-PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>
-const PandaBear.Galleries.AlbumFields.CoverId = "coverId" -> string!
-const PandaBear.Galleries.AlbumFields.PhotoIds = "photoIds" -> string!
-const PandaBear.Galleries.AlbumFields.Photos = "photos" -> string!
-const PandaBear.Galleries.AlbumFields.Slug = "slug" -> string!
-const PandaBear.Galleries.AlbumFields.Status = "status" -> string!
-const PandaBear.Galleries.AlbumFields.Title = "title" -> string!
-const PandaBear.Galleries.AlbumFields.Translations = "translations" -> string!
-const PandaBear.Galleries.AlbumRules.DefaultMaxTitleLength = 150 -> int
-override PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Equals(object? obj) -> bool
-override PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.GetHashCode() -> int
-override PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.ToString() -> string!
-override PandaBear.Galleries.AlbumTranslationDefinition.Equals(object? obj) -> bool
-override PandaBear.Galleries.AlbumTranslationDefinition.GetHashCode() -> int
-override PandaBear.Galleries.AlbumTranslationDefinition.ToString() -> string!
-static PandaBear.Galleries.Album.Create<TPhotoId, TRelatedId>(PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>! definition, PandaBear.Galleries.AlbumRules! rules, PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>! photos) -> PandaBear.Results.Result<PandaBear.Galleries.Album<TPhotoId, TRelatedId>!>
-static PandaBear.Galleries.Album.Restore<TPhotoId, TRelatedId>(int sortOrder, TRelatedId? relatedId, System.Collections.Generic.IReadOnlyList<TPhotoId>! photoIds, TPhotoId? coverId, System.Collections.Generic.IReadOnlyList<PandaBear.Galleries.AlbumTranslation!>! translations) -> PandaBear.Galleries.Album<TPhotoId, TRelatedId>!
-static PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.operator !=(PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? left, PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? right) -> bool
-static PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.operator ==(PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? left, PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? right) -> bool
-static PandaBear.Galleries.AlbumFields.Of(PandaBear.BuildingBlocks.ContentCulture! culture, string! field) -> string!
-static PandaBear.Galleries.AlbumOrdering.InDisplayOrder<TAlbum, TAlbumId>(System.Collections.Generic.IEnumerable<TAlbum>! albums, System.Func<TAlbum, int>! sortOrder, System.Func<TAlbum, TAlbumId>! id) -> System.Linq.IOrderedEnumerable<TAlbum>!
-static PandaBear.Galleries.AlbumPublishing.FindIneligible<TPhotoId>(System.Collections.Generic.IEnumerable<TPhotoId>! photoIds, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>! photos) -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
-static PandaBear.Galleries.AlbumTranslation.Restore(PandaBear.BuildingBlocks.ContentCulture! culture, string! title, PandaBear.BuildingBlocks.Slug! slug, PandaBear.BuildingBlocks.PublicationStatus status) -> PandaBear.Galleries.AlbumTranslation!
-static PandaBear.Galleries.AlbumTranslationDefinition.operator !=(PandaBear.Galleries.AlbumTranslationDefinition? left, PandaBear.Galleries.AlbumTranslationDefinition? right) -> bool
-static PandaBear.Galleries.AlbumTranslationDefinition.operator ==(PandaBear.Galleries.AlbumTranslationDefinition? left, PandaBear.Galleries.AlbumTranslationDefinition? right) -> bool
+SharedKernel.Galleries.Album
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.CoverId.get -> TPhotoId?
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.EffectiveCoverId.get -> TPhotoId?
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.IsPublishedIn(SharedKernel.BuildingBlocks.ContentCulture! culture) -> bool
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.PhotoIds.get -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.PublishedIn(SharedKernel.BuildingBlocks.ContentCulture? requested, SharedKernel.BuildingBlocks.SupportedCultures! cultures) -> SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>?
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.RelatedId.get -> TRelatedId?
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.Revise(SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>! definition, SharedKernel.Galleries.AlbumRules! rules, SharedKernel.Galleries.IAlbumPhotoEligibility<TPhotoId>! photos) -> SharedKernel.Results.Result<bool>
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.SortOrder.get -> int
+SharedKernel.Galleries.Album<TPhotoId, TRelatedId>.Translations.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Galleries.AlbumTranslation!>!
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.<Clone>$() -> SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>!
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.AlbumDefinition(int SortOrder, TRelatedId? RelatedId, System.Collections.Generic.IReadOnlyList<TPhotoId>? PhotoIds, TPhotoId? CoverId, System.Collections.Generic.IReadOnlyList<SharedKernel.Galleries.AlbumTranslationDefinition!>? Translations) -> void
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.CoverId.get -> TPhotoId?
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.CoverId.init -> void
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Deconstruct(out int SortOrder, out TRelatedId? RelatedId, out System.Collections.Generic.IReadOnlyList<TPhotoId>? PhotoIds, out TPhotoId? CoverId, out System.Collections.Generic.IReadOnlyList<SharedKernel.Galleries.AlbumTranslationDefinition!>? Translations) -> void
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Equals(SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? other) -> bool
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.PhotoIds.get -> System.Collections.Generic.IReadOnlyList<TPhotoId>?
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.PhotoIds.init -> void
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.RelatedId.get -> TRelatedId?
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.RelatedId.init -> void
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.SortOrder.get -> int
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.SortOrder.init -> void
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Translations.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Galleries.AlbumTranslationDefinition!>?
+SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Translations.init -> void
+SharedKernel.Galleries.AlbumFields
+SharedKernel.Galleries.AlbumOrdering
+SharedKernel.Galleries.AlbumPage<TPhotoId>
+SharedKernel.Galleries.AlbumPage<TPhotoId>.PhotoIds.get -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
+SharedKernel.Galleries.AlbumPage<TPhotoId>.Window.get -> SharedKernel.BuildingBlocks.PageWindow
+SharedKernel.Galleries.AlbumPublishing
+SharedKernel.Galleries.AlbumRules
+SharedKernel.Galleries.AlbumRules.AlbumRules(SharedKernel.BuildingBlocks.SupportedCultures! cultures, int maxPhotos) -> void
+SharedKernel.Galleries.AlbumRules.Cultures.get -> SharedKernel.BuildingBlocks.SupportedCultures!
+SharedKernel.Galleries.AlbumRules.MaxPhotos.get -> int
+SharedKernel.Galleries.AlbumRules.MaxSlugLength.get -> int
+SharedKernel.Galleries.AlbumRules.MaxSlugLength.init -> void
+SharedKernel.Galleries.AlbumRules.MaxTitleLength.get -> int
+SharedKernel.Galleries.AlbumRules.MaxTitleLength.init -> void
+SharedKernel.Galleries.AlbumTranslation
+SharedKernel.Galleries.AlbumTranslation.Culture.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.Galleries.AlbumTranslation.Slug.get -> SharedKernel.BuildingBlocks.Slug!
+SharedKernel.Galleries.AlbumTranslation.Status.get -> SharedKernel.BuildingBlocks.PublicationStatus
+SharedKernel.Galleries.AlbumTranslation.Title.get -> string!
+SharedKernel.Galleries.AlbumTranslationDefinition
+SharedKernel.Galleries.AlbumTranslationDefinition.<Clone>$() -> SharedKernel.Galleries.AlbumTranslationDefinition!
+SharedKernel.Galleries.AlbumTranslationDefinition.AlbumTranslationDefinition(string? Culture, string? Title, string? Slug, SharedKernel.BuildingBlocks.PublicationStatus Status) -> void
+SharedKernel.Galleries.AlbumTranslationDefinition.Culture.get -> string?
+SharedKernel.Galleries.AlbumTranslationDefinition.Culture.init -> void
+SharedKernel.Galleries.AlbumTranslationDefinition.Deconstruct(out string? Culture, out string? Title, out string? Slug, out SharedKernel.BuildingBlocks.PublicationStatus Status) -> void
+SharedKernel.Galleries.AlbumTranslationDefinition.Equals(SharedKernel.Galleries.AlbumTranslationDefinition? other) -> bool
+SharedKernel.Galleries.AlbumTranslationDefinition.Slug.get -> string?
+SharedKernel.Galleries.AlbumTranslationDefinition.Slug.init -> void
+SharedKernel.Galleries.AlbumTranslationDefinition.Status.get -> SharedKernel.BuildingBlocks.PublicationStatus
+SharedKernel.Galleries.AlbumTranslationDefinition.Status.init -> void
+SharedKernel.Galleries.AlbumTranslationDefinition.Title.get -> string?
+SharedKernel.Galleries.AlbumTranslationDefinition.Title.init -> void
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.CoverId.get -> TPhotoId?
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.Culture.get -> SharedKernel.BuildingBlocks.ContentCulture!
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.Page(int? requestedPage, int pageSize) -> SharedKernel.Galleries.AlbumPage<TPhotoId>!
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.Page(string? requestedPage, int pageSize) -> SharedKernel.Galleries.AlbumPage<TPhotoId>!
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.PhotoCount.get -> int
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.PhotoIds.get -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.RelatedId.get -> TRelatedId?
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.Slug.get -> SharedKernel.BuildingBlocks.Slug!
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.SortOrder.get -> int
+SharedKernel.Galleries.AlbumView<TPhotoId, TRelatedId>.Title.get -> string!
+SharedKernel.Galleries.IAlbumPhotoEligibility<TPhotoId>
+const SharedKernel.Galleries.AlbumFields.CoverId = "coverId" -> string!
+const SharedKernel.Galleries.AlbumFields.PhotoIds = "photoIds" -> string!
+const SharedKernel.Galleries.AlbumFields.Photos = "photos" -> string!
+const SharedKernel.Galleries.AlbumFields.Slug = "slug" -> string!
+const SharedKernel.Galleries.AlbumFields.Status = "status" -> string!
+const SharedKernel.Galleries.AlbumFields.Title = "title" -> string!
+const SharedKernel.Galleries.AlbumFields.Translations = "translations" -> string!
+const SharedKernel.Galleries.AlbumRules.DefaultMaxTitleLength = 150 -> int
+override SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.Equals(object? obj) -> bool
+override SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.GetHashCode() -> int
+override SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.ToString() -> string!
+override SharedKernel.Galleries.AlbumTranslationDefinition.Equals(object? obj) -> bool
+override SharedKernel.Galleries.AlbumTranslationDefinition.GetHashCode() -> int
+override SharedKernel.Galleries.AlbumTranslationDefinition.ToString() -> string!
+static SharedKernel.Galleries.Album.Create<TPhotoId, TRelatedId>(SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>! definition, SharedKernel.Galleries.AlbumRules! rules, SharedKernel.Galleries.IAlbumPhotoEligibility<TPhotoId>! photos) -> SharedKernel.Results.Result<SharedKernel.Galleries.Album<TPhotoId, TRelatedId>!>
+static SharedKernel.Galleries.Album.Restore<TPhotoId, TRelatedId>(int sortOrder, TRelatedId? relatedId, System.Collections.Generic.IReadOnlyList<TPhotoId>! photoIds, TPhotoId? coverId, System.Collections.Generic.IReadOnlyList<SharedKernel.Galleries.AlbumTranslation!>! translations) -> SharedKernel.Galleries.Album<TPhotoId, TRelatedId>!
+static SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.operator !=(SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? left, SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? right) -> bool
+static SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.operator ==(SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? left, SharedKernel.Galleries.AlbumDefinition<TPhotoId, TRelatedId>? right) -> bool
+static SharedKernel.Galleries.AlbumFields.Of(SharedKernel.BuildingBlocks.ContentCulture! culture, string! field) -> string!
+static SharedKernel.Galleries.AlbumOrdering.InDisplayOrder<TAlbum, TAlbumId>(System.Collections.Generic.IEnumerable<TAlbum>! albums, System.Func<TAlbum, int>! sortOrder, System.Func<TAlbum, TAlbumId>! id) -> System.Linq.IOrderedEnumerable<TAlbum>!
+static SharedKernel.Galleries.AlbumPublishing.FindIneligible<TPhotoId>(System.Collections.Generic.IEnumerable<TPhotoId>! photoIds, SharedKernel.BuildingBlocks.ContentCulture! culture, SharedKernel.Galleries.IAlbumPhotoEligibility<TPhotoId>! photos) -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
+static SharedKernel.Galleries.AlbumTranslation.Restore(SharedKernel.BuildingBlocks.ContentCulture! culture, string! title, SharedKernel.BuildingBlocks.Slug! slug, SharedKernel.BuildingBlocks.PublicationStatus status) -> SharedKernel.Galleries.AlbumTranslation!
+static SharedKernel.Galleries.AlbumTranslationDefinition.operator !=(SharedKernel.Galleries.AlbumTranslationDefinition? left, SharedKernel.Galleries.AlbumTranslationDefinition? right) -> bool
+static SharedKernel.Galleries.AlbumTranslationDefinition.operator ==(SharedKernel.Galleries.AlbumTranslationDefinition? left, SharedKernel.Galleries.AlbumTranslationDefinition? right) -> bool

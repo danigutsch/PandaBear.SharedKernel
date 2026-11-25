@@ -1,7 +1,7 @@
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Reads the installed packages of a Debian-based system with <c>dpkg-query</c>. It changes nothing.</summary>
 public sealed class AptPackageReader : IPackageReader

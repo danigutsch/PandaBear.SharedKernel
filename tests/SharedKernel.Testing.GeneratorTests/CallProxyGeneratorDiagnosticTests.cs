@@ -1,9 +1,9 @@
 using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Testing.SourceGenerator;
+using SharedKernel.Testing.SourceGenerator;
 
-namespace PandaBear.Testing.GeneratorTests;
+namespace SharedKernel.Testing.GeneratorTests;
 
 /// <summary>Tests the diagnostics the CallProxy generator reports for a service it cannot proxy.</summary>
 public sealed class CallProxyGeneratorDiagnosticTests

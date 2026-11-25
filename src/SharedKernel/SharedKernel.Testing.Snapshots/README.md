@@ -15,7 +15,7 @@ Configure `JsonSnapshotArtifactSet` with canonical/generated directories and art
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Snapshots`. C# namespace: `PandaBear.Testing.Snapshots`. Assembly/project identity: `SharedKernel.Testing.Snapshots`.
+Package ID: `PandaBear.SharedKernel.Testing.Snapshots`. C# namespace: `SharedKernel.Testing.Snapshots`. Assembly/project identity: `SharedKernel.Testing.Snapshots`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

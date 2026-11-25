@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Builds the provider exceptions the unique-violation parser reads, without a database.</summary>
 internal static class UniqueViolationTestExceptions

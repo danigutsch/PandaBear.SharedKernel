@@ -1,9 +1,9 @@
 using System.Net;
 using System.Text.Json;
-using PandaBear.Testing.Assertions;
-using static PandaBear.Testing.Assertions.UserMessageAssertions;
+using SharedKernel.Testing.Assertions;
+using static SharedKernel.Testing.Assertions.UserMessageAssertions;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>Provides assertions for HTTP problem responses without reflection-based deserialization.</summary>
 public static class HttpResponseShouldAssertionExtensions

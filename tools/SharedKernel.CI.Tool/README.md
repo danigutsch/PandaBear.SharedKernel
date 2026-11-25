@@ -64,7 +64,7 @@ dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-mess
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run-mutation-tests
 ```
 
-Package ID: `PandaBear.SharedKernel.CI.Tool`. C# namespace: `PandaBear.CI.Tool`. Assembly/project identity:
+Package ID: `PandaBear.SharedKernel.CI.Tool`. C# namespace: `SharedKernel.CI.Tool`. Assembly/project identity:
 `SharedKernel.CI.Tool`. Source is public; registry publication remains deferred, and nothing here implies
 availability on nuget.org.
 
@@ -389,7 +389,7 @@ build runs through the dotnet host that runs the tool, from the root, with an en
 `TMPDIR` (on Windows `TEMP`, `TMP`, `USERPROFILE`, `APPDATA`, `LOCALAPPDATA`, `SystemRoot`, and `ComSpec`),
 `NUGET_PACKAGES` when it is the repository's `.nuget/packages`, and a `PATH` of the dotnet host directory and the system
 directories, plus the variables that the target's `preserveEnvironment` lists. It sets `ASPNETCORE_ENVIRONMENT` and `DOTNET_ENVIRONMENT` to `OpenApiGeneration`, the host environment
-that `PandaBear.OpenApi.OpenApiGenerationMode` recognizes, turns off telemetry and the first-run experience, and
+that `SharedKernel.OpenApi.OpenApiGenerationMode` recognizes, turns off telemetry and the first-run experience, and
 disables OpenTelemetry export. Credentials, connection strings, proxies, and startup hooks of the parent environment do
 not reach the build. Restore the projects first. A configuration without `openApi` targets fails the command.
 

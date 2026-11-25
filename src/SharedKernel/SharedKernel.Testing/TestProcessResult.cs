@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>The outcome of a process run by <see cref="TestProcess" />.</summary>
 /// <param name="ExitCode">The exit code of the process.</param>

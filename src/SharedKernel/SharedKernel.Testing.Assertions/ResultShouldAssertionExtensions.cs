@@ -1,7 +1,7 @@
-using PandaBear.Results;
-using static PandaBear.Testing.Assertions.UserMessageAssertions;
+using SharedKernel.Results;
+using static SharedKernel.Testing.Assertions.UserMessageAssertions;
 
-namespace PandaBear.Testing.Assertions;
+namespace SharedKernel.Testing.Assertions;
 
 /// <summary>Provides assertions for operation results and their errors.</summary>
 public static class ResultShouldAssertionExtensions

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Xunit;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>
 /// Creates ASP.NET Core test hosts with consistent bad-request responses and optional environment and service overrides. The hosts do not

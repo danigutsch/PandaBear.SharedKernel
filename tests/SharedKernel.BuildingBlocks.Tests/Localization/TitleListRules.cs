@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Translation-list rules over <c>pt</c> (the default) and <c>en</c>, on the field <c>translations</c>, for albums.</summary>
 internal static class TitleListRules

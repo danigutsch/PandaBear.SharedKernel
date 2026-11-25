@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Bitwarden password-protected export wrapper.</summary>
 internal sealed record PasswordProtectedEnvelopeDto

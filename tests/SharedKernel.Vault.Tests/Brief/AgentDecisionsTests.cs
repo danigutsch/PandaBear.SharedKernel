@@ -1,12 +1,12 @@
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Tests.Merge;
-using static PandaBear.Vault.Tests.Brief.BriefSamples;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Tests.Merge;
+using static SharedKernel.Vault.Tests.Brief.BriefSamples;
 
-namespace PandaBear.Vault.Tests.Brief;
+namespace SharedKernel.Vault.Tests.Brief;
 
 /// <summary>Tests which agent decisions are accepted against the limits of a brief and how they combine with user decisions.</summary>
 public sealed class AgentDecisionsTests

@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Forgejo;
+namespace SharedKernel.Forgejo;
 
 /// <summary>
 /// The Forgejo token that a command reads from <c>FORGEJO_TOKEN</c>, the variable that

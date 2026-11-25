@@ -1,10 +1,10 @@
-using PandaBear.Testing;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Review;
-using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Review;
+using static SharedKernel.VaultManager.Tool.Tests.Review.ReviewVaults;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>Runs the review as the command does, with the real dialogs, and cancels it while a dialog is open.</summary>
 [Collection(HeadlessTerminal.Collection)]

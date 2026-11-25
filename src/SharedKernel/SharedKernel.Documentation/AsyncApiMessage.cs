@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
 
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Describes one AsyncAPI message and the runtime JSON metadata of its payload.</summary>
 /// <param name="channel">The channel key and address.</param>

@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Vault.Pipeline;
+using SharedKernel.Vault.Pipeline;
 
-namespace PandaBear.VaultManager.Tool;
+namespace SharedKernel.VaultManager.Tool;
 
 /// <summary>Reads passwords from the terminal without echoing them.</summary>
 /// <param name="readKey">Reads one key press without displaying it.</param>

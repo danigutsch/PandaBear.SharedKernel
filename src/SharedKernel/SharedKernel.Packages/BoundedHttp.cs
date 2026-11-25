@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Headers;
-using PandaBear.IO;
-using PandaBear.Results;
+using SharedKernel.IO;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>
 /// Sends one HTTPS request with a time limit and a limit on the response size. A redirect, another host, a plain HTTP

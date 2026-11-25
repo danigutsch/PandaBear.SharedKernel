@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.AspNetCore.RateLimiting.Tests;
+namespace SharedKernel.AspNetCore.RateLimiting.Tests;
 
 /// <summary>Tests the rate-limit rejection event through the real rate-limiter middleware.</summary>
 public sealed class RateLimitEventPipelineTests

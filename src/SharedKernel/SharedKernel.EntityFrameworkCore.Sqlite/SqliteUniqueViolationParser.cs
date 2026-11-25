@@ -1,7 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite;
+namespace SharedKernel.EntityFrameworkCore.Sqlite;
 
 /// <summary>
 /// Recognizes SQLite unique and primary-key violations. SQLite reports the violated columns as <c>Table.Column</c> (or an

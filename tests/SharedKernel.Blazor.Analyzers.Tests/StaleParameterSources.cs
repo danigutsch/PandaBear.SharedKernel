@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Analyzers.Tests;
+namespace SharedKernel.Blazor.Analyzers.Tests;
 
 /// <summary>Builds component sources with a parameter read in a lifecycle method for the stale-parameter analyzer tests.</summary>
 internal static class StaleParameterSources

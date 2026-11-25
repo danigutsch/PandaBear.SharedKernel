@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Text.Json;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Tests the generated discovery report and the diagnostics the generator raises while discovering requests, handlers, pipelines and notifications.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
@@ -293,7 +293,7 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
-        generatedSource.ShouldContain("global::Demo.DeleteTour | Kind=Command | Response=global::PandaBear.Mediator.Unit", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::Demo.DeleteTour | Kind=Command | Response=global::SharedKernel.Mediator.Unit", StringComparison.Ordinal);
         generatedSource.ShouldContain("global::Demo.DeleteTourHandler(Command,Public,Handle)", StringComparison.Ordinal);
     }
 

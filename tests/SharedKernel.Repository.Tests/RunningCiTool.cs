@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Versioning;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// A <c>dotnet exec</c> of the built CI tool that a test started in a process of its own. The test can signal it and wait

@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Creates a temporary repository with a sandbox configuration file.</summary>
 internal static class ConfigurationRepository

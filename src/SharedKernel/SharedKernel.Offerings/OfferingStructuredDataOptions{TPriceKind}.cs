@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>What <see cref="OfferingStructuredData.Build{TImageId, TPriceKind, TMetric}"/> adds to the view's own data. Mark up only what the page shows.</summary>
 /// <typeparam name="TPriceKind">The application's price kind enum.</typeparam>

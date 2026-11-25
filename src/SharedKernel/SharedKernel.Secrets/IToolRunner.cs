@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Runs a child process. Tests replace it with a fake.</summary>
 public interface IToolRunner

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The short credit under an image: a <c>small</c> element (<c>site-image-credit</c>, a muted line of small text) of the

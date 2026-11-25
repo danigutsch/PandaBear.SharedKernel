@@ -1,8 +1,8 @@
 using System.Globalization;
 using Microsoft.CodeAnalysis;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST022 rule that reports a test StringWriter whose captured text ends lines with the platform line ending.</summary>
 public sealed class StringWriterNewLineAnalyzerTests
@@ -25,7 +25,7 @@ public sealed class StringWriterNewLineAnalyzerTests
         // Assert
         var diagnostic = diagnostics.ShouldHaveSingleItem();
         diagnostic.GetMessage(CultureInfo.InvariantCulture).ShouldBe(
-            "Use PandaBear.Testing.InvariantStringWriter instead of StringWriter, or set NewLine in the initializer; the captured text ends lines with the platform line ending");
+            "Use SharedKernel.Testing.InvariantStringWriter instead of StringWriter, or set NewLine in the initializer; the captured text ends lines with the platform line ending");
         var sourceText = await diagnostic.Location.SourceTree.ShouldNotBeNull().GetTextAsync(TestContext.Current.CancellationToken);
         sourceText.ToString(diagnostic.Location.SourceSpan).ShouldBe(creation);
     }
@@ -56,7 +56,7 @@ public sealed class StringWriterNewLineAnalyzerTests
     [Theory]
     [InlineData("new StringWriter(CultureInfo.InvariantCulture) { NewLine = \"\\r\\n\" }")]
     [InlineData("new StringWriter { NewLine = \"\\n\" }")]
-    [InlineData("new PandaBear.Testing.InvariantStringWriter()")]
+    [InlineData("new SharedKernel.Testing.InvariantStringWriter()")]
     [InlineData("new ConsoleCapture()")]
     [InlineData("new StreamWriter(new MemoryStream())")]
     public async Task A_writer_with_a_chosen_line_ending_or_another_type_is_not_reported(string creation)

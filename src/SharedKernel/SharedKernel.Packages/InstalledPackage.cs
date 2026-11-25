@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>A package that a package manager reports as installed.</summary>
 public sealed class InstalledPackage : ValueObject

@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Domain.EntityFrameworkCore</PackageId>
         <Description>Entity Framework Core SaveChanges integration for dispatching aggregate domain events.</Description>
-        <RootNamespace>PandaBear.Domain.EntityFrameworkCore</RootNamespace>
+        <RootNamespace>SharedKernel.Domain.EntityFrameworkCore</RootNamespace>
         <PackageTags>domain-events;entity-framework-core;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

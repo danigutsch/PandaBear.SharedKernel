@@ -1,4 +1,4 @@
-namespace PandaBear.Aspire.Analyzers.Tests;
+namespace SharedKernel.Aspire.Analyzers.Tests;
 
 /// <summary>
 /// Tests that AspireAnalyzer reports the image tag and digest diagnostic for incomplete or malformed Aspire image pin chains.

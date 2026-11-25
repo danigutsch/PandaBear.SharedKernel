@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Audits the packages that the tool packages of a package feed carry, installs the tools, and runs each of their commands

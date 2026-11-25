@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.AspNetCore;
+namespace SharedKernel.AspNetCore;
 
 /// <summary>Status-code pages that leave the answers under some path prefixes, such as an API, as the endpoints wrote them.</summary>
 public static class StatusCodePagesExclusionExtensions

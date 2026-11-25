@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.DevContainers;
+namespace SharedKernel.DevContainers;
 
 /// <summary>
 /// Describes the machine that <c>verify-podman-dns</c> inspects.

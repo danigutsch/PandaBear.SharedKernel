@@ -2,7 +2,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using Amazon.S3;
 
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>Tests <see cref="S3ObjectStore"/> over a real <see cref="AmazonS3Client"/> pipeline against a loopback stub.</summary>
 public sealed class S3ObjectStoreRealSdkTests

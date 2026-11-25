@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>Builds literal contains patterns for SQL LIKE and ILIKE queries with percent and underscore wildcards.</summary>
 public static class SqlLikePattern

@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>A signed 64-bit PostgreSQL advisory lock key. Every numeric value, including zero, is valid.</summary>
 /// <param name="Value">The exact advisory lock key sent to PostgreSQL.</param>

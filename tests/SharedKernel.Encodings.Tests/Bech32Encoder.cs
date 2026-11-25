@@ -1,4 +1,4 @@
-namespace PandaBear.Encodings.Tests;
+namespace SharedKernel.Encodings.Tests;
 
 /// <summary>Encodes Bech32 strings with a valid checksum so tests can build recipients with chosen human-readable parts.</summary>
 internal static class Bech32Encoder

@@ -1,6 +1,6 @@
-using PandaBear.DocumentRendering;
+using SharedKernel.DocumentRendering;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Preserves the branding properties stored in version-one document payloads.</summary>
 /// <param name="Version">The branding revision.</param>

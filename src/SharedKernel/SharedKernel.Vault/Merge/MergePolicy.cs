@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Merge;
+namespace SharedKernel.Vault.Merge;
 
 /// <summary>Conflict policy of a merge.</summary>
 /// <param name="Kind">How a winner is picked.</param>

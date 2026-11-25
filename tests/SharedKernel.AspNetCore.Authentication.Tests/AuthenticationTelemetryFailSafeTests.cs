@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace PandaBear.AspNetCore.Authentication.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Tests;
 
 /// <summary>Proves a faulty logger, meter factory or listener never breaks the host's JWT bearer handlers.</summary>
 public sealed class AuthenticationTelemetryFailSafeTests

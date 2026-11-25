@@ -1,8 +1,8 @@
 using System.Text;
 using Microsoft.Data.Sqlite;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite;
+namespace SharedKernel.EntityFrameworkCore.Sqlite;
 
 /// <summary>
 /// Accent- and case-insensitive contains search for SQLite. SQLite's <c>LIKE</c>, <c>lower()</c> and <c>NOCASE</c> fold only ASCII

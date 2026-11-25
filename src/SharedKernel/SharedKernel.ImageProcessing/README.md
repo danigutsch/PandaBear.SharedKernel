@@ -23,7 +23,7 @@ dotnet add package PandaBear.SharedKernel.ImageProcessing --version <validated-c
 ```
 
 ```csharp
-using PandaBear.ImageProcessing;
+using SharedKernel.ImageProcessing;
 
 public static class Example
 {
@@ -36,6 +36,6 @@ public static class Example
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.ImageProcessing`. C# namespace: `PandaBear.ImageProcessing`. Assembly/project identity: `SharedKernel.ImageProcessing`.
+Package ID: `PandaBear.SharedKernel.ImageProcessing`. C# namespace: `SharedKernel.ImageProcessing`. Assembly/project identity: `SharedKernel.ImageProcessing`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

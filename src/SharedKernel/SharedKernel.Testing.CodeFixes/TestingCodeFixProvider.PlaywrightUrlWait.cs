@@ -8,12 +8,12 @@ using Microsoft.CodeAnalysis.Simplification;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace PandaBear.Testing.CodeFixes;
+namespace SharedKernel.Testing.CodeFixes;
 
 public sealed partial class TestingCodeFixProvider
 {
     private const string ExpectPathName = "ExpectPath";
-    private const string ExpectPathNamespace = "PandaBear.Testing.Playwright";
+    private const string ExpectPathNamespace = "SharedKernel.Testing.Playwright";
     private const string ExpectPathContainer = ExpectPathNamespace + ".PlaywrightPageExtensions";
 
     // Characters with a meaning in a Playwright URL glob; a string with any of them is a pattern, not an address. A query's '?' is among

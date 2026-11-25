@@ -1,7 +1,7 @@
 using System.CommandLine;
-using PandaBear.VaultManager.Tool.Cli;
+using SharedKernel.VaultManager.Tool.Cli;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Builds root commands whose action runs test work through <see cref="CommandAction"/>.</summary>
 internal static class ActionCommands

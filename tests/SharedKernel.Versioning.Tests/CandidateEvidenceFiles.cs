@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Writes candidate evidence manifests with fixed library revision, package version, and pending consumption status for tests.

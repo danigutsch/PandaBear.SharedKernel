@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Reads the key holders from the <c>sops</c> block of an encrypted YAML or JSON file, without decrypting anything and

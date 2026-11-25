@@ -1,6 +1,6 @@
 using Xunit.Sdk;
 
-namespace PandaBear.Testing.Assertions;
+namespace SharedKernel.Testing.Assertions;
 
 /// <summary>
 /// Runs an assertion that takes no user message and puts the message before the failure that it reports.

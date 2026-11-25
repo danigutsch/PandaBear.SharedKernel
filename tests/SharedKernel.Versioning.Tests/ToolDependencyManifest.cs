@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>Writes the dependency manifest (<c>.deps.json</c>) that the build puts beside a framework-dependent tool's entry point.</summary>
 internal static class ToolDependencyManifest

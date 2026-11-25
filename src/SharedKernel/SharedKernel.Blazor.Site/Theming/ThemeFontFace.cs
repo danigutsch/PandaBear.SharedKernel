@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>One file of a self-hosted font: its weight, its style and a root-relative or https <c>.woff2</c> address.</summary>
 public sealed class ThemeFontFace : ValueObject

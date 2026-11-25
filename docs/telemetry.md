@@ -196,7 +196,7 @@ unique across all of SharedKernel, not only within an assembly as SYSLIB1006 req
 3. **Placeholders** are PascalCase and keep one name per meaning across packages. An exception type logged as a property is
    `{ErrorType}` with the value `exception.GetType().FullName`, mirroring the `error.type` attribute. An exception object is never a
    property; where a message passes the exception, the logger attaches it to the record.
-4. **Categories** stay the `ILogger<T>` type names, in the `PandaBear.*` namespaces.
+4. **Categories** stay the `ILogger<T>` type names, in the `SharedKernel.*` namespaces.
 
 `LogMessageConventionTests` in `tests/SharedKernel.Repository.Tests` enforces these rules on the library sources: an id and a
 PascalCase name on every message, each id inside its package's block and unique across `src/`, PascalCase placeholders, and one row

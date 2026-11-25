@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>
 /// Shared trait constants for mediator source generator tests.

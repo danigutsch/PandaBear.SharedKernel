@@ -2,7 +2,7 @@ using System.Net;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
 
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>Customizations of the standard HTTP resilience pipeline.</summary>
 public static class HttpResilienceOptionsExtensions

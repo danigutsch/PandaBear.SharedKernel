@@ -1,6 +1,6 @@
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.PlaywrightMcp;
+namespace SharedKernel.PlaywrightMcp;
 
 /// <summary>The container engine and options that <see cref="PlaywrightMcpSettings"/> resolve to on this machine.</summary>
 /// <param name="Engine">Container engine to use.</param>

@@ -1,9 +1,9 @@
 using System.CommandLine;
 using System.Globalization;
-using PandaBear.InputNormalization;
-using PandaBear.Sandbox.ClaudeCode;
+using SharedKernel.InputNormalization;
+using SharedKernel.Sandbox.ClaudeCode;
 
-namespace PandaBear.Sandbox.Tool;
+namespace SharedKernel.Sandbox.Tool;
 
 /// <summary>The <c>settings plan|apply|verify</c> command group.</summary>
 internal static class SettingsCommand

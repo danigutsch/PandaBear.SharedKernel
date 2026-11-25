@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
+namespace SharedKernel.AspNetCore.Authentication.Bff.Tests;
 
 /// <summary>Tests that user tokens are kept per session, refreshed once before expiry, rotated and never logged.</summary>
 public sealed class UserTokenManagerTests

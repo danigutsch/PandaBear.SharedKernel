@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Thrown when the current location of a GitHub issue cannot be looked up.</summary>
 internal sealed class GitHubIssueLookupUnavailableException : InvalidOperationException

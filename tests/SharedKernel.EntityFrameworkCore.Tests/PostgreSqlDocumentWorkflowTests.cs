@@ -1,8 +1,8 @@
-using PandaBear.DocumentWorkflow;
-using PandaBear.Results;
-using PandaBear.Review;
+using SharedKernel.DocumentWorkflow;
+using SharedKernel.Results;
+using SharedKernel.Review;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Proves document workflow persistence against PostgreSQL.</summary>
 /// <param name="fixture">The shared PostgreSQL test fixture.</param>

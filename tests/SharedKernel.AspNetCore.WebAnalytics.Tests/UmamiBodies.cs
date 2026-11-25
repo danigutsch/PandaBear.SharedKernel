@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PandaBear.AspNetCore.WebAnalytics.Tests;
+namespace SharedKernel.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>Reads the JSON bodies the fake Umami received.</summary>
 internal static class UmamiBodies

@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Exercises repository test taxonomy through the command line.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

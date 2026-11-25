@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Installs Playwright browsers with the <c>playwright.ps1</c> that a built project's output holds.</summary>
 internal static class PlaywrightInstallation

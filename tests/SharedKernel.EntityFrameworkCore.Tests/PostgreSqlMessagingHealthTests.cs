@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Verifies messaging health aggregates against context-specific PostgreSQL mappings.</summary>
 [Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]

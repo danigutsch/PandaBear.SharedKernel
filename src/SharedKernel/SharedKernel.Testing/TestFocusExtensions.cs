@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Maps <see cref="TestFocus" /> to its <c>Focus</c> trait value.

@@ -22,7 +22,7 @@ dotnet add package PandaBear.SharedKernel.Idempotency.AspNetCore
 ```
 
 ```csharp
-using PandaBear.Idempotency.AspNetCore;
+using SharedKernel.Idempotency.AspNetCore;
 
 var key = IdempotencyKeyHeader.Create(httpContext.Request.Headers[IdempotencyKeyHeader.Name]);
 var protector = new KeyBoundDataProtector(dataProtectionProvider, "orders-idempotency");
@@ -32,12 +32,12 @@ var protectedBytes = protector.Protect("entry-key", payload);
 ## Migrating from SharedKernel.AspNetCore
 
 `IdempotencyKeyHeader` and `KeyBoundDataProtector` moved from `PandaBear.SharedKernel.AspNetCore` (namespace
-`PandaBear.AspNetCore`) into this package and namespace `PandaBear.Idempotency.AspNetCore`. Add the package reference
-and replace `using PandaBear.AspNetCore;` with `using PandaBear.Idempotency.AspNetCore;` where they are used.
+`SharedKernel.AspNetCore`) into this package and namespace `SharedKernel.Idempotency.AspNetCore`. Add the package reference
+and replace `using SharedKernel.AspNetCore;` with `using SharedKernel.Idempotency.AspNetCore;` where they are used.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Idempotency.AspNetCore`. C# namespace: `PandaBear.Idempotency.AspNetCore`.
+Package ID: `PandaBear.SharedKernel.Idempotency.AspNetCore`. C# namespace: `SharedKernel.Idempotency.AspNetCore`.
 Assembly/project identity: `SharedKernel.Idempotency.AspNetCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured

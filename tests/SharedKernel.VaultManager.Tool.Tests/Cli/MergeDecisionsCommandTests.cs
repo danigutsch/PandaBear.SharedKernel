@@ -1,13 +1,13 @@
-using PandaBear.SecretScanning;
-using PandaBear.Testing;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.SecretScanning;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests merging with a decisions file.</summary>
 public sealed class MergeDecisionsCommandTests : IDisposable

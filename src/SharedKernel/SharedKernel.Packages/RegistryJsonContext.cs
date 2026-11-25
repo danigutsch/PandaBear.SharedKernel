@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Source-generated JSON metadata for the registry answers, so that no reflection is needed.</summary>
 [JsonSerializable(typeof(RegistryWire.CrateAnswer))]

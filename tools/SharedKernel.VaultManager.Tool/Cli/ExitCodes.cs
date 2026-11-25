@@ -1,4 +1,4 @@
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// Exit codes of the <c>vault</c> commands. System.CommandLine also exits with

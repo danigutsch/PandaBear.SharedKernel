@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Ordered creation rules. The first rule that matches a path applies, as in SOPS.</summary>
 public sealed class SopsCreationRuleSet

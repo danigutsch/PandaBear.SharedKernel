@@ -1,7 +1,7 @@
 using System.Buffers.Binary;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.UploadSanitizing.Tests.Fonts;
+namespace SharedKernel.UploadSanitizing.Tests.Fonts;
 
 /// <summary>
 /// Fuzz-style tests of <see cref="FontSanitizer"/>: truncations, single-byte mutations, lengths that overflow 32 bits and random bytes

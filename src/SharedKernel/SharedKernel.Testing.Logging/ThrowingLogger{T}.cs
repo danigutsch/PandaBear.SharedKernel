@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Testing.Logging;
+namespace SharedKernel.Testing.Logging;
 
 /// <summary>A logger whose every call throws, to prove telemetry never breaks the surrounding flow.</summary>
 /// <typeparam name="T">The logger category.</typeparam>

@@ -7,7 +7,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 A private in-memory SQLite database per test.
 
 ```csharp
-using PandaBear.Testing.Sqlite;
+using SharedKernel.Testing.Sqlite;
 
 using var database = new SqliteInMemoryDatabase("orders");
 services.AddDbContext<OrdersContext>(options => options.UseSqlite(database.ConnectionString));
@@ -27,6 +27,6 @@ SharedKernel.IntegrationTesting, pass `SqliteConnection.ClearAllPools` as its `r
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Sqlite`. C# namespace: `PandaBear.Testing.Sqlite`. Assembly/project identity: `SharedKernel.Testing.Sqlite`.
+Package ID: `PandaBear.SharedKernel.Testing.Sqlite`. C# namespace: `SharedKernel.Testing.Sqlite`. Assembly/project identity: `SharedKernel.Testing.Sqlite`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

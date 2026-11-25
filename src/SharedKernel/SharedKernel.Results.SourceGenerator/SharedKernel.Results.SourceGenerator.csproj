@@ -6,7 +6,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <IsPackable>false</IsPackable>
         <GovernedLiteralProject>true</GovernedLiteralProject>
-        <RootNamespace>PandaBear.Results.SourceGenerator</RootNamespace>
+        <RootNamespace>SharedKernel.Results.SourceGenerator</RootNamespace>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     </PropertyGroup>

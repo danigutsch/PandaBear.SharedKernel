@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Fixed values and a factory for a valid roadmap automation plan used in tests.</summary>
 internal static class RoadmapAutomationTestPlan

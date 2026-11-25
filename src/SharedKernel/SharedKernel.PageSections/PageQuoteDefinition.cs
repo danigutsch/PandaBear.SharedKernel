@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>An unvalidated quote of a section.</summary>
 /// <param name="Text">The quoted words; required.</param>

@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using PandaBear.Domain;
-using PandaBear.Domain.EntityFrameworkCore;
+using SharedKernel.Domain;
+using SharedKernel.Domain.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// PostgreSQL-backed host that saves placed orders through domain-event dispatch, with a dispatcher that can be made to fail.

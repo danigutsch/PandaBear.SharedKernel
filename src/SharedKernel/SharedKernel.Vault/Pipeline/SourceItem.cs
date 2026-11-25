@@ -1,6 +1,6 @@
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>Item read from an input file, with what later stages need to find it again.</summary>
 /// <param name="Item">Item as read, with its SSH key completed by <see cref="SshKeyNormalizer"/>.</param>

@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests where focus goes after a list deletion and what the deletion announces.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

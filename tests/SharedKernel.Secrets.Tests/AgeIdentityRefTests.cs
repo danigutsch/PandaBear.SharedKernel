@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests that an identity reference is a file path and never key material.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

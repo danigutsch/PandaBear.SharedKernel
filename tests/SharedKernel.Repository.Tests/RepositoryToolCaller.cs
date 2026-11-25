@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>A CI tool command line found in a workflow or README file.</summary>
 /// <param name="File">The repository-relative path, with forward slashes, of the file that holds the command line.</param>

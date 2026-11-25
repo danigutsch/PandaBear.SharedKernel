@@ -3,7 +3,7 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Security.Cryptography;
 
-namespace PandaBear.Vault.Attachments;
+namespace SharedKernel.Vault.Attachments;
 
 /// <summary>
 /// Zip archive that was fully validated before use: entry count, expanded size, per-entry compression ratio measured on

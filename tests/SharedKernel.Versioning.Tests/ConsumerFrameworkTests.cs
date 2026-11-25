@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Tests the <c>--framework</c> option of the commands that build packed consumers, and the per-framework consumer runs and evidence.

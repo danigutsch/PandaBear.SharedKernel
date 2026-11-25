@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xunit;
 
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>
 /// Verifies runtime OpenAPI endpoint mapping behavior.

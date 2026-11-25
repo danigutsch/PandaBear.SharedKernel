@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the recipient set and its order-insensitive equality.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

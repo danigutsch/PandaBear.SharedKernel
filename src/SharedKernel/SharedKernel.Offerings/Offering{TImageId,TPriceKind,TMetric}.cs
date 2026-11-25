@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// A sellable programme, such as a tour: its schedule and availability, priced lines in the application's price kinds, conditions,
@@ -14,7 +14,7 @@ namespace PandaBear.Offerings;
 /// <typeparam name="TMetric">The application's metric kind enum, stored by name.</typeparam>
 /// <remarks>
 /// It keeps no id, version, persistence, events or authorization: the application's own entity holds it and owns those concerns. Alias the
-/// closed type once, for example <c>using TourOffering = PandaBear.Offerings.Offering&lt;Guid, TourPriceKind, TourMetric&gt;;</c>. The
+/// closed type once, for example <c>using TourOffering = SharedKernel.Offerings.Offering&lt;Guid, TourPriceKind, TourMetric&gt;;</c>. The
 /// offering keeps the price-kind flags of the rules it was last created, revised or restored with, which decide <see cref="FromPrice"/> and
 /// which prices take a label.
 /// </remarks>

@@ -5,7 +5,7 @@ using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Trace;
 
-namespace PandaBear.ServiceDefaults.Tests;
+namespace SharedKernel.ServiceDefaults.Tests;
 
 /// <summary>Tests the OpenTelemetry part of the service defaults: the probe filter, the privacy processors and the OTLP switch.</summary>
 public sealed class TelemetryDefaultsTests

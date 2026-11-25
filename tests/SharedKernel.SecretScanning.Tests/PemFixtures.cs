@@ -3,7 +3,7 @@ using System.Formats.Asn1;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>
 /// Assembles private key fixtures at runtime. Keys come from the BCL or from a double-base64 body file, and PEM

@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using static PandaBear.RepoConfig.Tests.RoadmapPublishResultTestOperations;
+using static SharedKernel.RepoConfig.Tests.RoadmapPublishResultTestOperations;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>automation publish-result</c> command's use of the configured pull request body, required workflow files, and returned pull request URL.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

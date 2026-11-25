@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>An HTTP handler that runs a callback, honors cancellation, and then returns a freshly created response.</summary>
 /// <param name="createResponse">Creates the response returned for every request.</param>

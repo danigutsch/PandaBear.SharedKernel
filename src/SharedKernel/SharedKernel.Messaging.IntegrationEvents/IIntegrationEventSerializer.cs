@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents;
+namespace SharedKernel.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Serializes integration events for durable storage.

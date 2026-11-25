@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Checks the addresses structured data carries.</summary>
 internal static class AbsoluteUrl

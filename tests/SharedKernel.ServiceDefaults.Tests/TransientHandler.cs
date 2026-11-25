@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.ServiceDefaults.Tests;
+namespace SharedKernel.ServiceDefaults.Tests;
 
 /// <summary>Answers 503 with a zero Retry-After to the first attempts, then 200, and counts the attempts.</summary>
 /// <param name="failures">The number of attempts that fail before a 200 is returned.</param>

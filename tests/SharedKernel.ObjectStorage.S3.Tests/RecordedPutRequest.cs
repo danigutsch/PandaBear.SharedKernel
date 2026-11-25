@@ -1,4 +1,4 @@
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>One HTTP request received by <see cref="LoopbackS3Stub"/>.</summary>
 /// <param name="Method">The HTTP method.</param>

@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Headers;
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using Xunit.Sdk;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the header, no-store, and entity tag assertions.</summary>
 public sealed class HttpHeaderAssertionTests

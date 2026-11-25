@@ -1,4 +1,4 @@
-namespace PandaBear.ConfigurationFiles.Tests;
+namespace SharedKernel.ConfigurationFiles.Tests;
 
 /// <summary>A configuration with a version and one required name.</summary>
 /// <param name="Version">The format version.</param>

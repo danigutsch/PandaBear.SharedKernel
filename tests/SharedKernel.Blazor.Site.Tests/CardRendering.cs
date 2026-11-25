@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Renders the cards and button links that the card option tests share.</summary>
 internal static class CardRendering

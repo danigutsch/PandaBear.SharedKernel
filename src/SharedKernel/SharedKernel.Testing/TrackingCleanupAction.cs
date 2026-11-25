@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>A cleanup action that records its name in a shared list when invoked, optionally returning a faulted task.</summary>
 /// <param name="name">The name appended to the cleanup list on each invocation.</param>

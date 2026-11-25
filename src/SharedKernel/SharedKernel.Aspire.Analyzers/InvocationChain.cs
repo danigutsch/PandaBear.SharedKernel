@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Aspire.Analyzers;
+namespace SharedKernel.Aspire.Analyzers;
 
 /// <summary>
 /// Walks a fluent chain of invocations such as <c>builder.AddContainer(...).WithImageTag(...)</c>. The analyzer and the code fix

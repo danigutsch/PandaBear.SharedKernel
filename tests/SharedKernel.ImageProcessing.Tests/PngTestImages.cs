@@ -2,7 +2,7 @@ using System.Buffers.Binary;
 using System.Text;
 using ImageMagick;
 
-namespace PandaBear.ImageProcessing.Tests;
+namespace SharedKernel.ImageProcessing.Tests;
 
 /// <summary>
 /// Builds RGBA PNG sources and inspects PNG output pixels and chunks for the PNG output tests.

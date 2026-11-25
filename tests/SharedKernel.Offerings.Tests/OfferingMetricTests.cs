@@ -1,6 +1,6 @@
-using static PandaBear.Offerings.Tests.OfferingFixtures;
+using static SharedKernel.Offerings.Tests.OfferingFixtures;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Tests the application-defined metrics on the offering and on its steps.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

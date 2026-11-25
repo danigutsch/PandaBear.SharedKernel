@@ -70,7 +70,7 @@ Fix: `SharedKernel.Blazor.CodeFixes` offers "Reset the flag in a finally block" 
 
 ## SKBLZ002
 
-Reports a property marked `[Inject]` (this includes `@inject` in `.razor` files) of type `PandaBear.Mediator.ISender` or of a type
+Reports a property marked `[Inject]` (this includes `@inject` in `.razor` files) of type `SharedKernel.Mediator.ISender` or of a type
 derived from `DbContext`, inside a component. The diagnostic points at the property type.
 
 ```csharp
@@ -142,6 +142,6 @@ encapsulation rules in `SharedKernel.Domain.Analyzers`.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Blazor.Analyzers`. C# namespace: `PandaBear.Blazor.Analyzers`. Assembly/project identity: `SharedKernel.Blazor.Analyzers`.
+Package ID: `PandaBear.SharedKernel.Blazor.Analyzers`. C# namespace: `SharedKernel.Blazor.Analyzers`. Assembly/project identity: `SharedKernel.Blazor.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -1,15 +1,15 @@
 #nullable enable
-PandaBear.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>
-PandaBear.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>.EfCoreCommandTransactionBehavior(Microsoft.EntityFrameworkCore.DbContext! dbContext) -> void
-PandaBear.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
-PandaBear.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions
-static PandaBear.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions.AddEfCoreCommandTransaction<TContext, TRequest, TResponse>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-PandaBear.Mediator.EntityFrameworkCore.IAfterCommit<TRequest, TResponse>
-PandaBear.Mediator.EntityFrameworkCore.IAfterCommit<TRequest, TResponse>.Handle(TRequest request, TResponse response, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.Mediator.EntityFrameworkCore.IAfterRollback<TRequest, TResponse>
-PandaBear.Mediator.EntityFrameworkCore.IAfterRollback<TRequest, TResponse>.Handle(TRequest request, TResponse response, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.Mediator.EntityFrameworkCore.ITransactionLockDeclaration
-PandaBear.Mediator.EntityFrameworkCore.ITransactionLockDeclaration.TransactionLocks.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>
-PandaBear.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
-PandaBear.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>.ResultTransactionBehavior(Microsoft.EntityFrameworkCore.DbContext! dbContext, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory, Microsoft.Extensions.Logging.ILogger! logger) -> void
+SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>
+SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>.EfCoreCommandTransactionBehavior(Microsoft.EntityFrameworkCore.DbContext! dbContext) -> void
+SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>.Handle(TRequest request, SharedKernel.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+SharedKernel.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions
+static SharedKernel.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions.AddEfCoreCommandTransaction<TContext, TRequest, TResponse>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+SharedKernel.Mediator.EntityFrameworkCore.IAfterCommit<TRequest, TResponse>
+SharedKernel.Mediator.EntityFrameworkCore.IAfterCommit<TRequest, TResponse>.Handle(TRequest request, TResponse response, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Mediator.EntityFrameworkCore.IAfterRollback<TRequest, TResponse>
+SharedKernel.Mediator.EntityFrameworkCore.IAfterRollback<TRequest, TResponse>.Handle(TRequest request, TResponse response, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Mediator.EntityFrameworkCore.ITransactionLockDeclaration
+SharedKernel.Mediator.EntityFrameworkCore.ITransactionLockDeclaration.TransactionLocks.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>
+SharedKernel.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>.Handle(TRequest request, SharedKernel.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+SharedKernel.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>.ResultTransactionBehavior(Microsoft.EntityFrameworkCore.DbContext! dbContext, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory, Microsoft.Extensions.Logging.ILogger! logger) -> void

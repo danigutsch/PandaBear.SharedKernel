@@ -81,6 +81,6 @@ references the OpenAPI packages that this one does not.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.HttpCaching.AspNetCore`. C# namespace: `PandaBear.HttpCaching.AspNetCore`. Assembly/project identity: `SharedKernel.HttpCaching.AspNetCore`.
+Package ID: `PandaBear.SharedKernel.HttpCaching.AspNetCore`. C# namespace: `SharedKernel.HttpCaching.AspNetCore`. Assembly/project identity: `SharedKernel.HttpCaching.AspNetCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

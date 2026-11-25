@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using System.Runtime.ExceptionServices;
 
-namespace PandaBear.Testing.AspNetCore;
+namespace SharedKernel.Testing.AspNetCore;
 
 /// <summary>An <see cref="IDistributedCache" /> that throws the supplied exception, to prove callers degrade safely. By default every operation throws; with an inner cache and a predicate it throws selectively and forwards the rest. Synchronous members rethrow with the original stack trace preserved; asynchronous members return a task faulted with the exception.</summary>
 public sealed class ThrowingDistributedCache : IDistributedCache

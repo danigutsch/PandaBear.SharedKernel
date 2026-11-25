@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>
 /// Tests SeekableContent.Create, which copies non-seekable or offset input into seekable memory or file-backed content and passes seekable input at zero through.

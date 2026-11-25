@@ -6,8 +6,8 @@ should be installed, and update decisions against advisories and a minimum relea
 removes, and updates nothing.
 
 ```csharp
-using PandaBear.Packages;
-using PandaBear.Processes;
+using SharedKernel.Packages;
+using SharedKernel.Processes;
 
 var configuration = await PackagesConfiguration.Read(repositoryRoot, ct);
 var inventory = new PackageInventory(new BoundedProcessRunner(), PathExecutableResolver.Default);

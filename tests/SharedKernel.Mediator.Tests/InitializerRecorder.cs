@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Records the two providers a scope initializer received, and the markers they hold.</summary>
 internal sealed class InitializerRecorder

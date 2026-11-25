@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.Seo;
+namespace SharedKernel.AspNetCore.Seo;
 
 /// <summary>Registers the canonical origin of a public site.</summary>
 public static class CanonicalOriginServiceCollectionExtensions

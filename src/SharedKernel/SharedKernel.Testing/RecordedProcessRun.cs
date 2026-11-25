@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>One run that a <see cref="ScriptedProcessRunner"/> answered instead of starting a process.</summary>
 public sealed class RecordedProcessRun

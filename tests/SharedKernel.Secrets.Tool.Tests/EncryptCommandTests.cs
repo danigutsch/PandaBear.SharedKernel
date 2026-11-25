@@ -1,7 +1,7 @@
 using System.Text;
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>encrypt</c> with a fake sops.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

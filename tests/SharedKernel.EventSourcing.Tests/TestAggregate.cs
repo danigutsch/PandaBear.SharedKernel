@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing.Tests;
+namespace SharedKernel.EventSourcing.Tests;
 
 /// <summary>A test event-sourced aggregate whose only state is a name set by NameChanged events.</summary>
 /// <param name="id">The aggregate identifier.</param>

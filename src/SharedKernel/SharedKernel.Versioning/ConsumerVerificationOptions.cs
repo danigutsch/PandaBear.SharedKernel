@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Which consumer <see cref="ConsumerVerifier.Verify"/> checks against which candidate, and how.</summary>
 /// <param name="RepoRoot">The consumer repository root.</param>

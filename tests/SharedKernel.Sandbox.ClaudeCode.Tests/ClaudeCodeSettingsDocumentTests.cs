@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.ClaudeCode.Tests;
+namespace SharedKernel.Sandbox.ClaudeCode.Tests;
 
 /// <summary>Tests the mapping of the managed settings to Claude Code's JSON keys and the layout of the rewritten text.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

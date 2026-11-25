@@ -1,4 +1,4 @@
-namespace PandaBear.ImageProcessing.Tests;
+namespace SharedKernel.ImageProcessing.Tests;
 
 /// <summary>
 /// Runs ImageAnimationDetector.Detect over byte arrays through either the span or the stream overload.

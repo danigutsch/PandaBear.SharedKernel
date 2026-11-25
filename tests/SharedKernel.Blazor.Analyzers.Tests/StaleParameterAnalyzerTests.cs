@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Analyzers.Tests;
+namespace SharedKernel.Blazor.Analyzers.Tests;
 
 /// <summary>Tests that the analyzer reports route parameters read in OnInitialized (SKBLZ004) only where intended.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]

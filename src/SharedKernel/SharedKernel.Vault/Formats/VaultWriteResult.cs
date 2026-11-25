@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Formats;
+namespace SharedKernel.Vault.Formats;
 
 /// <summary>Unencrypted export JSON written by an <see cref="IVaultExportWriter"/> and the import problems found while writing it.</summary>
 /// <param name="Json">Unencrypted export JSON.</param>

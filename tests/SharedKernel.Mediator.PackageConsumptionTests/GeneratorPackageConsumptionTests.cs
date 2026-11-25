@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Mediator.PackageConsumptionTests;
+namespace SharedKernel.Mediator.PackageConsumptionTests;
 
 /// <summary>
 /// Builds fresh consumer projects against the packed Domain, Results and Testing packages to prove their source generators run for package consumers.
@@ -37,8 +37,8 @@ public sealed class GeneratorPackageConsumptionTests(MediatorPackageFeedFixture 
             </Project>
             """,
             ("Consumer.cs", """
-            using PandaBear.BuildingBlocks;
-            using PandaBear.Domain;
+            using SharedKernel.BuildingBlocks;
+            using SharedKernel.Domain;
 
             namespace Consumer;
 
@@ -96,7 +96,7 @@ public sealed class GeneratorPackageConsumptionTests(MediatorPackageFeedFixture 
             </Project>
             """,
             ("Consumer.cs", """
-            using PandaBear.Results;
+            using SharedKernel.Results;
 
             namespace Consumer;
 
@@ -143,7 +143,7 @@ public sealed class GeneratorPackageConsumptionTests(MediatorPackageFeedFixture 
             """,
             ("Consumer.cs", """
             using System.Globalization;
-            using PandaBear.Testing;
+            using SharedKernel.Testing;
 
             namespace Consumer;
 

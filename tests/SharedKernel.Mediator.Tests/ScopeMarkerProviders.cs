@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Builds the service providers of the scope initializer tests.</summary>
 internal static class ScopeMarkerProviders

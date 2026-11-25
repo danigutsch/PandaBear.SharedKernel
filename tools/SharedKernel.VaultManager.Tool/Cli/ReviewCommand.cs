@@ -1,14 +1,14 @@
 using System.CommandLine;
 using System.Globalization;
-using PandaBear.InputNormalization;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.Review;
+using SharedKernel.InputNormalization;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.VaultManager.Tool.Review;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// <c>review</c>: opens the full-screen review UI on the inputs. It refuses to start unless standard input and output are

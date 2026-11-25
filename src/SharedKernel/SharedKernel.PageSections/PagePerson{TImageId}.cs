@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>The person line of a section: an optional round photo, a name and an optional role.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

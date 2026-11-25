@@ -1,10 +1,10 @@
-using PandaBear.Testing;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
-using PandaBear.VaultManager.Tool.Tests.Review;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
+using SharedKernel.VaultManager.Tool.Tests.Review;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests that command output shows item names and paths with escape sequences, line separators, and bidirectional overrides replaced.</summary>
 public sealed class PrintableOutputTests : IDisposable

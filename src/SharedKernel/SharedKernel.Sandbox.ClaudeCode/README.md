@@ -11,8 +11,8 @@ Writes the entries that [PandaBear.SharedKernel.Sandbox](https://github.com/dani
 ## Usage
 
 ```csharp
-using PandaBear.Sandbox;
-using PandaBear.Sandbox.ClaudeCode;
+using SharedKernel.Sandbox;
+using SharedKernel.Sandbox.ClaudeCode;
 
 var desired = DesiredSettings.Build(configuration, flags, homeDirectories, enforce: true);
 var file = ClaudeCodeSettingsFile.Locate(repositoryRoot, desired.Target);
@@ -36,6 +36,6 @@ if (plan.Changes.Count > 0)
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Sandbox.ClaudeCode`. C# namespace: `PandaBear.Sandbox.ClaudeCode`. Assembly/project identity: `SharedKernel.Sandbox.ClaudeCode`.
+Package ID: `PandaBear.SharedKernel.Sandbox.ClaudeCode`. C# namespace: `SharedKernel.Sandbox.ClaudeCode`. Assembly/project identity: `SharedKernel.Sandbox.ClaudeCode`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>Tests cancellation of database creation in the test database pool.</summary>
 /// <param name="fixture">The shared PostgreSQL test server fixture that leases the test databases.</param>

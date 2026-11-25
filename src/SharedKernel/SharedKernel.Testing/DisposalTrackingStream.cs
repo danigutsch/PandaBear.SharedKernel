@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Stream wrapper that delegates every operation to an inner stream and records how it was disposed, so a test can prove that code

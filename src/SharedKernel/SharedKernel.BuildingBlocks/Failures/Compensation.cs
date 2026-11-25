@@ -1,6 +1,6 @@
 using System.Runtime.ExceptionServices;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// Provides helpers for compensating a side effect when the following operation fails.

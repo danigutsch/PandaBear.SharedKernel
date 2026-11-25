@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Logger that records every formatted message and every structured key/value pair into caller-supplied lists.</summary>
 /// <param name="messages">List receiving each formatted log message.</param>

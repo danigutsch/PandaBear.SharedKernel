@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// A <see cref="TimeProvider"/> that reports a configured business time zone as its local time zone, so

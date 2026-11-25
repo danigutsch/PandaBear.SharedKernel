@@ -1,7 +1,7 @@
-using PandaBear.AI;
-using PandaBear.Testing.AI;
+using SharedKernel.AI;
+using SharedKernel.Testing.AI;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Verifies how the configured AI fake records and answers image text requests.</summary>
 public sealed class TestImageTextGeneratorTests

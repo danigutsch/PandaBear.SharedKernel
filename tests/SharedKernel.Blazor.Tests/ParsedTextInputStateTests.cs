@@ -2,7 +2,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components.Forms;
 
 using TestContext = Xunit.TestContext;
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests retaining edited text while participating in Blazor form validation.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

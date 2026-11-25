@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Tests validation and service registration performed by AddPostgreSqlIndexHealthMonitoring.</summary>
 [TestScope(TestScope.Unit)]

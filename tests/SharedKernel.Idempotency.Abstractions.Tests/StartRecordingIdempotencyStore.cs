@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency.Tests;
+namespace SharedKernel.Idempotency.Tests;
 
 /// <summary>
 /// An IIdempotencyStore that predates retention owners: it implements only the four-argument TryStart and records its arguments.

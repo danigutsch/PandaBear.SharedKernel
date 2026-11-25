@@ -2,9 +2,9 @@ using Microsoft.Extensions.Time.Testing;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Tests the versioning tool library: release calculation, API compatibility, packing, release preparation, package metadata validation, and process handling.
@@ -190,7 +190,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -211,7 +211,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -494,7 +494,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -510,7 +510,7 @@ public static class VersioningToolTests
             TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "Sample.cs"),
-            "namespace PandaBear.Sample; public sealed class Sample;",
+            "namespace SharedKernel.Sample; public sealed class Sample;",
             TestContext.Current.CancellationToken);
 
         string[] args =
@@ -1362,7 +1362,7 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -1407,14 +1407,14 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
             """
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <PackageID>PandaBear.Sample</PackageID>
+                <PackageID>SharedKernel.Sample</PackageID>
                 <Description>Sample package.</Description>
                 <PackageTags>sample;shared-kernel;dotnet</PackageTags>
               </PropertyGroup>
@@ -1448,7 +1448,7 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),

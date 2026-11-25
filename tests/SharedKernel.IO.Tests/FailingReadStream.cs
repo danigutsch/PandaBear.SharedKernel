@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>
 /// A 200,000-byte in-memory stream whose first read succeeds and later reads fail, used to test spooling errors.

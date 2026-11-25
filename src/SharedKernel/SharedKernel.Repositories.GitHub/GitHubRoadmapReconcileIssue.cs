@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Roadmap-relevant state of one GitHub issue.</summary>
 /// <param name="Number">Issue number.</param>

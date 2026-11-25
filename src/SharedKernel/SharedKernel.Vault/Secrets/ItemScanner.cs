@@ -1,10 +1,10 @@
 using System.Collections.Frozen;
 using System.Globalization;
-using PandaBear.SecretScanning;
-using PandaBear.Vault.Formats;
-using PandaBear.Vault.Model;
+using SharedKernel.SecretScanning;
+using SharedKernel.Vault.Formats;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>
 /// Scans vault items with <see cref="SecretScanner"/> and proposes where each secret belongs in Bitwarden: the login's

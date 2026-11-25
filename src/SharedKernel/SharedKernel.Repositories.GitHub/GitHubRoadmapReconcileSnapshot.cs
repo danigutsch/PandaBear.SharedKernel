@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Snapshot of GitHub issue state used for roadmap reconciliation.</summary>
 /// <param name="RepositoryCommit">Repository commit at snapshot time, if known.</param>

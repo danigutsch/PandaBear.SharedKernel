@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests.Browser;
+namespace SharedKernel.Blazor.Tests.Browser;
 
 /// <summary>
 /// A loopback Interactive Server host of <see cref="PickerDocument"/> over a library of 1000 images, the page of the picker's browser

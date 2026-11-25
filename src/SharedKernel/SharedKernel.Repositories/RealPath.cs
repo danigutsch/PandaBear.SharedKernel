@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Resolves the symbolic links in a path the way Python's <c>os.path.realpath</c> does.

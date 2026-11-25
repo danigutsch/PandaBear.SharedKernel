@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Declares how the test is hosted. Emits the <c>Host</c> trait, like <c>[Trait("Host", ...)]</c>.

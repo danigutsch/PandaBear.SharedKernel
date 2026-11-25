@@ -1,8 +1,8 @@
 using Microsoft.CodeAnalysis;
-using PandaBear.Testing.Mediator;
-using PandaBear.Testing;
+using SharedKernel.Testing.Mediator;
+using SharedKernel.Testing;
 
-namespace PandaBear.Mediator.GeneratorTests;
+namespace SharedKernel.Mediator.GeneratorTests;
 
 /// <summary>Tests the runtime behavior of the generated mediator for requests, streams and notifications, usually against a reference dispatcher.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
@@ -13,7 +13,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             [assembly: MediatorModule]
 
@@ -57,7 +57,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             [assembly: MediatorModule]
 
@@ -90,7 +90,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
 
             [assembly: MediatorModule]
@@ -181,7 +181,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
 
             [assembly: MediatorModule]
 
@@ -223,7 +223,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
 
             [assembly: MediatorModule]
@@ -281,7 +281,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Runtime.CompilerServices;
 
             [assembly: MediatorModule]
@@ -328,7 +328,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Runtime.CompilerServices;
 
             [assembly: MediatorModule]
@@ -389,7 +389,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Runtime.CompilerServices;
 
             [assembly: MediatorModule]
@@ -649,7 +649,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
 
             [assembly: MediatorModule]
@@ -726,7 +726,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
 
             [assembly: MediatorModule]
@@ -756,7 +756,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
 
             [assembly: MediatorModule]
@@ -797,7 +797,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
             using System.Threading;
             using System.Threading.Tasks;
@@ -907,7 +907,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
 
             [assembly: MediatorModule]
@@ -960,7 +960,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Collections.Generic;
 
             [assembly: MediatorModule]
@@ -1001,7 +1001,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading;
             using System.Threading.Tasks;
 
@@ -1088,7 +1088,7 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
+            using SharedKernel.Mediator;
             using System.Threading;
             using System.Threading.Tasks;
 
@@ -1193,8 +1193,8 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
-            using PandaBear.Results;
+            using SharedKernel.Mediator;
+            using SharedKernel.Results;
 
             [assembly: MediatorModule]
 
@@ -1264,7 +1264,7 @@ public sealed class GeneratorDispatchBehaviorTests
         var okGeneric = await mediator.Send((IRequest<Results.Result<int>>)Activator.CreateInstance(createType, "n")!, CancellationToken.None);
 
         // Assert
-        var constructorParameterTypes = runtime.GetRequiredType("PandaBear.Mediator.AppMediator").GetConstructors().ShouldHaveSingleItem().GetParameters()
+        var constructorParameterTypes = runtime.GetRequiredType("SharedKernel.Mediator.AppMediator").GetConstructors().ShouldHaveSingleItem().GetParameters()
             .SelectMany(static parameter => parameter.ParameterType.IsGenericType && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>)
                 ? parameter.ParameterType.GenericTypeArguments
                 : [parameter.ParameterType])
@@ -1284,8 +1284,8 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
-            using PandaBear.Results;
+            using SharedKernel.Mediator;
+            using SharedKernel.Results;
 
             [assembly: MediatorModule]
 
@@ -1329,8 +1329,8 @@ public sealed class GeneratorDispatchBehaviorTests
     {
         // Arrange
         const string source = """
-            using PandaBear.Mediator;
-            using PandaBear.Results;
+            using SharedKernel.Mediator;
+            using SharedKernel.Results;
 
             [assembly: MediatorModule]
 

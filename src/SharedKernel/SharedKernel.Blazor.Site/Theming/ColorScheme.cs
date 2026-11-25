@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>A colour scheme: the light or the dark side of every <see cref="ThemeColor" />.</summary>
 public enum ColorScheme

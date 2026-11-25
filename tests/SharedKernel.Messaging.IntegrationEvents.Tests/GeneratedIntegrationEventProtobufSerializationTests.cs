@@ -1,7 +1,7 @@
 using Google.Protobuf;
-using PandaBear.Messaging.Protobuf.TestContracts;
+using SharedKernel.Messaging.Protobuf.TestContracts;
 
-namespace PandaBear.Messaging.IntegrationEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 /// <summary>Tests that the generated serializer serializes a mapped Protobuf event as binary and a JSON event as JSON.</summary>
 public sealed class GeneratedIntegrationEventProtobufSerializationTests

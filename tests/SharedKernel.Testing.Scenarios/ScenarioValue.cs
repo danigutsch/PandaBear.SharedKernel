@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Scenarios;
+namespace SharedKernel.Testing.Scenarios;
 
 /// <summary>
 /// Stores one scenario value and fails clearly when a test reads it before setup.

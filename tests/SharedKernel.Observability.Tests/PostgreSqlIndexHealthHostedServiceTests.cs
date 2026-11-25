@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Observability.Npgsql.Tests;
+namespace SharedKernel.Observability.Npgsql.Tests;
 
 /// <summary>Integration tests for the PostgreSQL index health hosted service lifecycle and telemetry.</summary>
 [Collection("PostgreSQL index health telemetry")]

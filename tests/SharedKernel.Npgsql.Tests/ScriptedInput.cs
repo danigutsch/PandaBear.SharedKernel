@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>
 /// A readable stream that delivers the chunks it was given and then blocks every read until the test ends it or fails it,

@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Verifies that the tests cover enough of the executable lines and conditions that a change adds, and writes

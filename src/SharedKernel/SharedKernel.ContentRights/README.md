@@ -7,7 +7,7 @@ framework, image format, storage provider or application policy.
 ## Record a sourced work
 
 ```csharp
-using PandaBear.ContentRights;
+using SharedKernel.ContentRights;
 
 var declaration = ContentLicense.Create(
     ContentLicenseKind.CcBy,

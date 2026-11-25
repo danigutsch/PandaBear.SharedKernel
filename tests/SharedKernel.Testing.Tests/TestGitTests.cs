@@ -1,6 +1,6 @@
-using PandaBear.Processes.Tests;
+using SharedKernel.Processes.Tests;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>
 /// Tests that the <c>git</c> that test setup runs gets no prompt and none of the host's tokens or Git variables, keeps

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Vault item kinds, numbered like Bitwarden cipher types 1 to 5.</summary>
 [SuppressMessage("Design", "CA1008:Enums should have zero value", Justification = "Values mirror Bitwarden cipher types, which start at 1.")]

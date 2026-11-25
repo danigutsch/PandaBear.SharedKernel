@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <param name="FileName">The requested executable.</param>
 /// <param name="Arguments">The requested arguments.</param>

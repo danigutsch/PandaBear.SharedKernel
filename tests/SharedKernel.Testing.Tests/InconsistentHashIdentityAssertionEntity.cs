@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Entity that compares by <see cref="Id" /> but returns a caller-chosen hash code, so equal instances can hash differently to exercise hash-consistency assertions.</summary>
 /// <param name="hashCode">The value returned from <see cref="GetHashCode" /> regardless of the identity.</param>

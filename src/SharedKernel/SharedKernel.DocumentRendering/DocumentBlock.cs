@@ -1,4 +1,4 @@
-namespace PandaBear.DocumentRendering;
+namespace SharedKernel.DocumentRendering;
 
 /// <summary>
 /// Defines a <see cref="DocumentParagraph"/>, <see cref="DocumentList"/>, or <see cref="DocumentLink"/> that keeps its

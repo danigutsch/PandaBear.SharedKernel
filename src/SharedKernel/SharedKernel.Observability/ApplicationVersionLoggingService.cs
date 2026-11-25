@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Observability;
+namespace SharedKernel.Observability;
 
 /// <summary>
 /// Hosted service that logs the application name and version once at startup, so deployed versions are visible in logs.

@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>The real <see cref="IGreeter"/>, which records whether it was disposed.</summary>
 internal sealed class TrackedGreeter : IGreeter, IDisposable

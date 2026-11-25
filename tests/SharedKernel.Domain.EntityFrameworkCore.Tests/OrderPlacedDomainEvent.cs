@@ -1,5 +1,5 @@
 
-namespace PandaBear.Domain.EntityFrameworkCore.Tests;
+namespace SharedKernel.Domain.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Domain event raised when an order is placed.

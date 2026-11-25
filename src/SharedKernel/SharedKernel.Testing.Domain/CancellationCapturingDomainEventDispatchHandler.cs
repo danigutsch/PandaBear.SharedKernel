@@ -1,6 +1,6 @@
-using PandaBear.Domain;
+using SharedKernel.Domain;
 
-namespace PandaBear.Testing.Domain;
+namespace SharedKernel.Testing.Domain;
 
 /// <summary>Test dispatch handler that remembers the cancellation token passed to its last Handle call.</summary>
 public sealed class CancellationCapturingDomainEventDispatchHandler : IDomainEventDispatchHandler

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>An entry of the header navigation: a link, or a group of links shown as a native disclosure.</summary>
 /// <param name="Text">The visible text.</param>

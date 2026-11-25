@@ -1,9 +1,9 @@
-using PandaBear.Testing.Http;
+using SharedKernel.Testing.Http;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the recording HTTP message handler.</summary>
 public sealed class RecordingHttpMessageHandlerTests

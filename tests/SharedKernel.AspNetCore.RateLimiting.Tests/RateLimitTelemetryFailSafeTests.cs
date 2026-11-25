@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.RateLimiting.Tests;
+namespace SharedKernel.AspNetCore.RateLimiting.Tests;
 
 /// <summary>Proves a faulty logger, meter factory or listener never breaks the host's rate-limit rejection callback.</summary>
 public sealed class RateLimitTelemetryFailSafeTests

@@ -2,13 +2,13 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Globalization;
-using PandaBear.DevContainers;
-using PandaBear.Forgejo;
-using PandaBear.Processes;
-using PandaBear.Repositories;
-using PandaBear.Repositories.GitHub;
+using SharedKernel.DevContainers;
+using SharedKernel.Forgejo;
+using SharedKernel.Processes;
+using SharedKernel.Repositories;
+using SharedKernel.Repositories.GitHub;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace SharedKernel.RepoConfig.Tool;
 
 /// <summary>
 /// Builds the <c>repo</c> command tree.

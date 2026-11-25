@@ -1,8 +1,8 @@
-using PandaBear.DocumentWorkflow.EntityFrameworkCore;
-using PandaBear.Mediator;
-using PandaBear.Results;
+using SharedKernel.DocumentWorkflow.EntityFrameworkCore;
+using SharedKernel.Mediator;
+using SharedKernel.Results;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Lets the generated host dispatch delegate to the reusable finalizer.</summary>
 /// <param name="handler">The EF-backed finalization handler.</param>

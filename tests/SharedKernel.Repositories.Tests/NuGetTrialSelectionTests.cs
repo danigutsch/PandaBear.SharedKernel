@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Tests invalid trial requests before the SDK or Git workspace runs.</summary>
 public sealed class NuGetTrialSelectionTests

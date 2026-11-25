@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Verifies that the files in the Git index, staged and in the working tree, use the line endings that their

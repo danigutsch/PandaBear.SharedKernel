@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>The log entries the tests of <see cref="TestOutputLoggerProvider"/> write.</summary>
 internal static partial class SampleLogs

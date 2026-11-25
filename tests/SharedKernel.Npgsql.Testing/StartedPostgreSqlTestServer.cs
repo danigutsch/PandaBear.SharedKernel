@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql.Testing;
+namespace SharedKernel.Npgsql.Testing;
 
 /// <summary>A PostgreSQL test server that an Aspire application started, together with the way to stop it.</summary>
 /// <param name="connectionString">The connection string of the server, without a database.</param>

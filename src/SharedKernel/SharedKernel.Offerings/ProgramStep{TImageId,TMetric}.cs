@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The language-neutral part of one step of an offering's programme, such as a day of a tour: its image and its metrics.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

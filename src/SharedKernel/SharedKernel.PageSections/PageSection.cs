@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>Restores stored <see cref="PageSection{TImageId, TLink, TExtra}"/> values.</summary>
 public static class PageSection

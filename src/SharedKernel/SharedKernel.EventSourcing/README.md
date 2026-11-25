@@ -12,6 +12,6 @@ composition, schema names, migrations, read models, and context-specific project
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.EventSourcing`. C# namespace: `PandaBear.EventSourcing`. Assembly/project identity: `SharedKernel.EventSourcing`.
+Package ID: `PandaBear.SharedKernel.EventSourcing`. C# namespace: `SharedKernel.EventSourcing`. Assembly/project identity: `SharedKernel.EventSourcing`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

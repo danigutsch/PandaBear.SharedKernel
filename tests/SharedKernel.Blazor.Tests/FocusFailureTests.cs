@@ -1,6 +1,6 @@
-using static PandaBear.Blazor.Tests.ComponentFixtures;
+using static SharedKernel.Blazor.Tests.ComponentFixtures;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests that a focus call failing because the circuit is gone never fails a component.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

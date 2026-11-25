@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using static PandaBear.Blazor.Tests.ComponentFixtures;
+using static SharedKernel.Blazor.Tests.ComponentFixtures;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the public focus helper that pages call after a render.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

@@ -2,9 +2,9 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
-using PandaBear.HttpClients;
+using SharedKernel.HttpClients;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// An accessible view of an <see cref="UploadOperationState" />: a labelled status region, progress, and a cancel button.

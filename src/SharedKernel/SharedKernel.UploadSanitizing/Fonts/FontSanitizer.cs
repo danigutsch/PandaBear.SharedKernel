@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.UploadSanitizing.Fonts;
+namespace SharedKernel.UploadSanitizing.Fonts;
 
 /// <summary>
 /// Accepts an upload only when its own bytes are a single, structurally sound WOFF2 font (W3C WOFF File Format 2.0): the <c>wOF2</c>

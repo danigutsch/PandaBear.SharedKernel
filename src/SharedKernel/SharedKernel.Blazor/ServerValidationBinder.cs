@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Forms;
-using PandaBear.HttpClients;
+using SharedKernel.HttpClients;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// Shows server validation errors on an <see cref="EditContext" /> through a <see cref="ValidationMessageStore" />.

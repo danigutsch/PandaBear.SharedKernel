@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.PageSections.Blazor.Tests;
+namespace SharedKernel.PageSections.Blazor.Tests;
 
 /// <summary>Builds the sections, the image and link resolution and the renders that the page section tests share.</summary>
 internal static partial class SectionFixtures

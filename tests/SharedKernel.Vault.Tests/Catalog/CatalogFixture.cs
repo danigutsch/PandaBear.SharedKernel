@@ -1,11 +1,11 @@
-using PandaBear.Vault.Catalog;
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Tests.Pipeline;
+using SharedKernel.Vault.Catalog;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Tests.Pipeline;
 
-namespace PandaBear.Vault.Tests.Catalog;
+namespace SharedKernel.Vault.Tests.Catalog;
 
 /// <summary>Builds a vault item with many kinds of secret and metadata, and the vault, catalog, and decisions around it.</summary>
 internal static class CatalogFixture

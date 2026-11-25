@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Aspire.Hosting.Testing;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Leases isolated PostgreSQL databases for this test assembly on a server that the shared fixture borrows from the run

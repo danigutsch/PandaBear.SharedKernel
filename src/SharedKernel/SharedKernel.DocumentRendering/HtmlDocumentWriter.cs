@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace PandaBear.DocumentRendering;
+namespace SharedKernel.DocumentRendering;
 
 /// <summary>Accumulates semantic HTML and enforces the optional UTF-8 output budget.</summary>
 /// <param name="remainingBytes">The initial byte budget, or null for unbounded rendering.</param>

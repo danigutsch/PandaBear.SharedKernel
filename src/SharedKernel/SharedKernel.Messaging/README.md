@@ -15,6 +15,6 @@ Use `EventEnvelope` for storage-neutral metadata and encoded payloads. Implement
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Messaging`. C# namespace: `PandaBear.Messaging`. Assembly/project identity: `SharedKernel.Messaging`.
+Package ID: `PandaBear.SharedKernel.Messaging`. C# namespace: `SharedKernel.Messaging`. Assembly/project identity: `SharedKernel.Messaging`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

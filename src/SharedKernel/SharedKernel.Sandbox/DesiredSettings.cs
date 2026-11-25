@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>
 /// What the configuration, its profile, and the accepted risks ask the settings file to contain, independent of the agent's

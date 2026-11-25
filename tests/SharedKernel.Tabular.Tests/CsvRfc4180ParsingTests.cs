@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>
 /// Tests the RFC 4180 reading rules: quoted fields with doubled quotes, commas and line breaks; an optional byte order mark; CRLF or LF;

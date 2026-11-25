@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
-using PandaBear.InputNormalization;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Rejects integration event storage options whose schemas or table names are not valid unquoted PostgreSQL identifiers.</summary>
 internal sealed class IntegrationEventStorageOptionsValidator : IValidateOptions<IntegrationEventStorageOptions>

@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>Where and with what <see cref="ISopsTool.Edit"/> lets a person edit the decrypted document.</summary>
 public sealed record SopsEditSession

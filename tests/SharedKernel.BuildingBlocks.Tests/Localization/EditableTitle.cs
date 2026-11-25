@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>A stored translated title whose text changes, used to exercise <see cref="TranslationListRules.Merge{T}" />.</summary>
 /// <param name="culture">The culture of the translation.</param>

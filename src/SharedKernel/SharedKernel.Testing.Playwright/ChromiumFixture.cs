@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using Xunit;
 
-namespace PandaBear.Testing.Playwright;
+namespace SharedKernel.Testing.Playwright;
 
 /// <summary>
 /// Owns one Chromium browser for the tests of a class, when <see cref="Chromium.IsInstalled"/> is <see langword="true"/>. Use it as

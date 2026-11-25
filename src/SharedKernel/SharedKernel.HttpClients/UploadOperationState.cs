@@ -1,4 +1,4 @@
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>Tracks one caller-owned upload lifecycle, byte progress, and accessible status announcements.</summary>
 /// <remarks>

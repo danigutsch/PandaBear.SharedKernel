@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// Tests equality, hashing and redaction shared by the payment identifier value objects Iban, Bic, Cpf, Cnpj and PixKey.

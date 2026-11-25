@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>Findings of one item, for reporting.</summary>
 /// <param name="ItemName">Item name.</param>

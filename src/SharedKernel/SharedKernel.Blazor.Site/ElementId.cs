@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Checks an element id that a component writes into <c>id</c>, such as the id of a heading that a link or <c>aria-labelledby</c> points at.</summary>
 public static class ElementId

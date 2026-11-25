@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the persistence-only Restore factories, which rebuild stored text without re-running input validation.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging;
+namespace SharedKernel.Messaging;
 
 /// <summary>
 /// Exposes transport-neutral event payload metadata.

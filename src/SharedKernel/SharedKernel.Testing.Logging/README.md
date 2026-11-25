@@ -9,7 +9,7 @@ Recording and throwing `ILogger` fakes for SharedKernel test suites.
 ## Usage
 
 ```csharp
-using PandaBear.Testing.Logging;
+using SharedKernel.Testing.Logging;
 
 var logger = new RecordingLogger<MyService>();
 new MyService(logger).Run();
@@ -20,6 +20,6 @@ logger.Records.ShouldContain(record => record.Level == LogLevel.Warning);
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing.Logging`. C# namespace: `PandaBear.Testing.Logging`. Assembly/project identity: `SharedKernel.Testing.Logging`.
+Package ID: `PandaBear.SharedKernel.Testing.Logging`. C# namespace: `SharedKernel.Testing.Logging`. Assembly/project identity: `SharedKernel.Testing.Logging`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

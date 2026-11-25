@@ -1,4 +1,4 @@
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace SharedKernel.EventSourcing.Npgsql.Tests;
 
 /// <summary>Cancels the append at the second event's serialization boundary.</summary>
 /// <param name="cancellation">The cancellation source for the append under test.</param>

@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>A unique SQLite file path for <see cref="LedgerDbContext"/>, deleted on dispose; the file itself is created only by a writer.</summary>
 public sealed class TemporaryLedgerFile : IDisposable

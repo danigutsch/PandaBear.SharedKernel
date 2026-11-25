@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Blazor.Site</PackageId>
         <Description>Brand-neutral, accessible, JavaScript-free site components for static server rendering, with one design-token stylesheet.</Description>
-        <RootNamespace>PandaBear.Blazor.Site</RootNamespace>
+        <RootNamespace>SharedKernel.Blazor.Site</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>blazor;razor-components;accessibility;css;static-ssr;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

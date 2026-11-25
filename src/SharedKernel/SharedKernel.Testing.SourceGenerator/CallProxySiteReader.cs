@@ -2,14 +2,14 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Testing.SourceGenerator;
+namespace SharedKernel.Testing.SourceGenerator;
 
 /// <summary>Finds the places in the source that wrap or hook a service: the entry points and the typed hooks they configure.</summary>
 internal static class CallProxySiteReader
 {
-    private const string CallProxyTypeName = "PandaBear.Testing.CallProxy";
-    private const string ServiceCollectionExtensionsTypeName = "PandaBear.Testing.CallProxyServiceCollectionExtensions";
-    private const string CallHooksMetadataName = "PandaBear.Testing.CallHooks`1";
+    private const string CallProxyTypeName = "SharedKernel.Testing.CallProxy";
+    private const string ServiceCollectionExtensionsTypeName = "SharedKernel.Testing.CallProxyServiceCollectionExtensions";
+    private const string CallHooksMetadataName = "SharedKernel.Testing.CallHooks`1";
     private const string CallProxyName = "CallProxy";
     private const string CreateName = "Create";
     private const string WrapName = "WrapWithCallProxy";

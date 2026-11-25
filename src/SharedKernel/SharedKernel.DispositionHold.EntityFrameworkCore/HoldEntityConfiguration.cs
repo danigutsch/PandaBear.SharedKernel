@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace PandaBear.DispositionHold.EntityFrameworkCore;
+namespace SharedKernel.DispositionHold.EntityFrameworkCore;
 
 /// <summary>
 /// Maps <see cref="Hold" /> to one table. The scope is stored as one <c>kind/key</c> column, which is unambiguous

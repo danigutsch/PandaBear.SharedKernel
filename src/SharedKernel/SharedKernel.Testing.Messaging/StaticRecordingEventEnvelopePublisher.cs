@@ -1,6 +1,6 @@
-using PandaBear.Messaging;
+using SharedKernel.Messaging;
 
-namespace PandaBear.Testing.Messaging;
+namespace SharedKernel.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher the container creates by type, which records the envelopes it receives in a static list.

@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Creates an age identity file: previews, or with <see cref="CreateIdentitySettings.Force"/> runs <c>age-keygen</c>, which writes the identity file with

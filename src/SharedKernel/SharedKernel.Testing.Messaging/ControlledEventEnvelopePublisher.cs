@@ -1,6 +1,6 @@
-using PandaBear.Messaging;
+using SharedKernel.Messaging;
 
-namespace PandaBear.Testing.Messaging;
+namespace SharedKernel.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher that blocks its first two publish calls until the test releases them, so ordering of consumption can be observed.

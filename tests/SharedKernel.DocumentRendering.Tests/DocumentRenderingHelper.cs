@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>
 /// Renders requests to HTML text for the paragraph and compatibility tests.

@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore.Seo;
+namespace SharedKernel.AspNetCore.Seo;
 
 /// <summary>
 /// The canonical origin of a public site (scheme, host and port), bound from configuration by

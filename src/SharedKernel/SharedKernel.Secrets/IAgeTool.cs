@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>The <c>age</c> and <c>age-keygen</c> operations. Plaintext and ciphertext travel on standard input and output only.</summary>
 public interface IAgeTool

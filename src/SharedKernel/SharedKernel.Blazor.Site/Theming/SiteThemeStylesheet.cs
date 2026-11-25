@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>
 /// Renders a <see cref="SiteTheme" /> as a stylesheet that <c>site.css</c> consumes: <c>@font-face</c> rules with

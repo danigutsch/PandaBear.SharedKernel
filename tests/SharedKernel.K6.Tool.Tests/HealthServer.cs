@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace PandaBear.K6.Tool.Tests;
+namespace SharedKernel.K6.Tool.Tests;
 
 /// <summary>A loopback HTTP listener that answers every request with one status code and records request lines.</summary>
 internal sealed class HealthServer : IAsyncDisposable

@@ -1,4 +1,4 @@
-namespace PandaBear.Review;
+namespace SharedKernel.Review;
 
 /// <summary>Identifies a version of content within a review history.</summary>
 public sealed record ReviewRevision

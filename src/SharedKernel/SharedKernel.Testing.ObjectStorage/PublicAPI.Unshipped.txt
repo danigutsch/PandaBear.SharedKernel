@@ -1,111 +1,111 @@
 #nullable enable
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.CallCount(PandaBear.Testing.ObjectStorage.ObjectStoreOperation operation) -> int
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.Calls.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.ObjectStorage.ObjectStoreCall!>!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.ClearFailures() -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.CreateUploadUrl(PandaBear.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectUploadTicket!>
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.Deletes.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.DiscardWrites.get -> bool
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.DiscardWrites.init -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.Exists(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.FailAlways(PandaBear.Testing.ObjectStorage.ObjectStoreOperation operation, System.Exception! exception, string? target = null) -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.FailNext(PandaBear.Testing.ObjectStorage.ObjectStoreOperation operation, System.Exception! exception, string? target = null) -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.FindObject(string! objectKey) -> PandaBear.Testing.ObjectStorage.StoredObject?
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.GetPublicUri(string! objectKey) -> System.Uri!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.InMemoryObjectStore() -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.ListKeys(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.ListObjects(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!>
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.MaxObjectKeyLength.get -> int
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.MaxObjectKeyLength.init -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.ObjectKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.OpenRead(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectReadResult!>
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.PublicBaseUri.get -> System.Uri!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.PublicBaseUri.init -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.Put(PandaBear.ObjectStorage.ObjectWriteRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectWriteResult!>
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.Puts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.ObjectStorage.RecordedObjectPut!>!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.Reads.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectReadResult!>!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.Seed(string! objectKey, System.ReadOnlySpan<byte> content, string! contentType, string? checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.SetLastModified(string! objectKey, System.DateTimeOffset lastModifiedAt) -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.StorageBaseUri.get -> System.Uri!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.StorageBaseUri.init -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.TimeProvider.get -> System.TimeProvider!
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.TimeProvider.init -> void
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.WrapReadContent.get -> System.Func<string!, System.IO.Stream!, System.IO.Stream!>?
-PandaBear.Testing.ObjectStorage.InMemoryObjectStore.WrapReadContent.init -> void
-PandaBear.Testing.ObjectStorage.ObjectStoreCall
-PandaBear.Testing.ObjectStorage.ObjectStoreCall.ObjectStoreCall(PandaBear.Testing.ObjectStorage.ObjectStoreOperation Operation, string! Target) -> void
-PandaBear.Testing.ObjectStorage.ObjectStoreCall.Operation.get -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreCall.Operation.init -> void
-PandaBear.Testing.ObjectStorage.ObjectStoreCall.Target.get -> string!
-PandaBear.Testing.ObjectStorage.ObjectStoreCall.Target.init -> void
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation.CreateUploadUrl = 6 -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation.Delete = 7 -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation.Exists = 2 -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation.GetPublicUri = 5 -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation.ListKeys = 3 -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation.ListObjects = 4 -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation.OpenRead = 1 -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.ObjectStoreOperation.Put = 0 -> PandaBear.Testing.ObjectStorage.ObjectStoreOperation
-PandaBear.Testing.ObjectStorage.RecordedObjectPut
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.BytesRead.get -> long
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.BytesRead.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.Checksum.get -> string?
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.Checksum.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.Content.get -> System.ReadOnlyMemory<byte>
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.Content.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.ContentCanWrite.get -> bool
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.ContentCanWrite.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.ContentStreamType.get -> System.Type!
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.ContentStreamType.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.ContentType.get -> string!
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.ContentType.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.DeclaredLength.get -> long
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.DeclaredLength.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.Metadata.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.ObjectKey.get -> string!
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.ObjectKey.init -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.RecordedObjectPut(string! ObjectKey, string! ContentType, long DeclaredLength, string? Checksum, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata, long? StartPosition, bool ContentCanWrite, System.Type! ContentStreamType, long BytesRead, System.ReadOnlyMemory<byte> Content) -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.StartPosition.get -> long?
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.StartPosition.init -> void
-PandaBear.Testing.ObjectStorage.StoredObject
-PandaBear.Testing.ObjectStorage.StoredObject.Checksum.get -> string?
-PandaBear.Testing.ObjectStorage.StoredObject.Checksum.init -> void
-PandaBear.Testing.ObjectStorage.StoredObject.Content.get -> System.ReadOnlyMemory<byte>
-PandaBear.Testing.ObjectStorage.StoredObject.Content.init -> void
-PandaBear.Testing.ObjectStorage.StoredObject.ContentType.get -> string!
-PandaBear.Testing.ObjectStorage.StoredObject.ContentType.init -> void
-PandaBear.Testing.ObjectStorage.StoredObject.LastModifiedAt.get -> System.DateTimeOffset
-PandaBear.Testing.ObjectStorage.StoredObject.LastModifiedAt.init -> void
-PandaBear.Testing.ObjectStorage.StoredObject.Length.get -> long
-PandaBear.Testing.ObjectStorage.StoredObject.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
-PandaBear.Testing.ObjectStorage.StoredObject.Metadata.init -> void
-PandaBear.Testing.ObjectStorage.StoredObject.ObjectKey.get -> string!
-PandaBear.Testing.ObjectStorage.StoredObject.ObjectKey.init -> void
-PandaBear.Testing.ObjectStorage.StoredObject.StoredObject(string! ObjectKey, System.ReadOnlyMemory<byte> Content, string! ContentType, string? Checksum, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Metadata, System.DateTimeOffset LastModifiedAt) -> void
-PandaBear.Testing.ObjectStorage.ObjectStoreCall.<Clone>$() -> PandaBear.Testing.ObjectStorage.ObjectStoreCall!
-PandaBear.Testing.ObjectStorage.ObjectStoreCall.Deconstruct(out PandaBear.Testing.ObjectStorage.ObjectStoreOperation Operation, out string! Target) -> void
-PandaBear.Testing.ObjectStorage.ObjectStoreCall.Equals(PandaBear.Testing.ObjectStorage.ObjectStoreCall? other) -> bool
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.<Clone>$() -> PandaBear.Testing.ObjectStorage.RecordedObjectPut!
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.Deconstruct(out string! ObjectKey, out string! ContentType, out long DeclaredLength, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata, out long? StartPosition, out bool ContentCanWrite, out System.Type! ContentStreamType, out long BytesRead, out System.ReadOnlyMemory<byte> Content) -> void
-PandaBear.Testing.ObjectStorage.RecordedObjectPut.Equals(PandaBear.Testing.ObjectStorage.RecordedObjectPut? other) -> bool
-PandaBear.Testing.ObjectStorage.StoredObject.<Clone>$() -> PandaBear.Testing.ObjectStorage.StoredObject!
-PandaBear.Testing.ObjectStorage.StoredObject.Deconstruct(out string! ObjectKey, out System.ReadOnlyMemory<byte> Content, out string! ContentType, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Metadata, out System.DateTimeOffset LastModifiedAt) -> void
-PandaBear.Testing.ObjectStorage.StoredObject.Equals(PandaBear.Testing.ObjectStorage.StoredObject? other) -> bool
-override PandaBear.Testing.ObjectStorage.ObjectStoreCall.Equals(object? obj) -> bool
-override PandaBear.Testing.ObjectStorage.ObjectStoreCall.GetHashCode() -> int
-override PandaBear.Testing.ObjectStorage.ObjectStoreCall.ToString() -> string!
-override PandaBear.Testing.ObjectStorage.RecordedObjectPut.Equals(object? obj) -> bool
-override PandaBear.Testing.ObjectStorage.RecordedObjectPut.GetHashCode() -> int
-override PandaBear.Testing.ObjectStorage.RecordedObjectPut.ToString() -> string!
-override PandaBear.Testing.ObjectStorage.StoredObject.Equals(object? obj) -> bool
-override PandaBear.Testing.ObjectStorage.StoredObject.GetHashCode() -> int
-override PandaBear.Testing.ObjectStorage.StoredObject.ToString() -> string!
-static PandaBear.Testing.ObjectStorage.ObjectStoreCall.operator !=(PandaBear.Testing.ObjectStorage.ObjectStoreCall? left, PandaBear.Testing.ObjectStorage.ObjectStoreCall? right) -> bool
-static PandaBear.Testing.ObjectStorage.ObjectStoreCall.operator ==(PandaBear.Testing.ObjectStorage.ObjectStoreCall? left, PandaBear.Testing.ObjectStorage.ObjectStoreCall? right) -> bool
-static PandaBear.Testing.ObjectStorage.RecordedObjectPut.operator !=(PandaBear.Testing.ObjectStorage.RecordedObjectPut? left, PandaBear.Testing.ObjectStorage.RecordedObjectPut? right) -> bool
-static PandaBear.Testing.ObjectStorage.RecordedObjectPut.operator ==(PandaBear.Testing.ObjectStorage.RecordedObjectPut? left, PandaBear.Testing.ObjectStorage.RecordedObjectPut? right) -> bool
-static PandaBear.Testing.ObjectStorage.StoredObject.operator !=(PandaBear.Testing.ObjectStorage.StoredObject? left, PandaBear.Testing.ObjectStorage.StoredObject? right) -> bool
-static PandaBear.Testing.ObjectStorage.StoredObject.operator ==(PandaBear.Testing.ObjectStorage.StoredObject? left, PandaBear.Testing.ObjectStorage.StoredObject? right) -> bool
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.CallCount(SharedKernel.Testing.ObjectStorage.ObjectStoreOperation operation) -> int
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.Calls.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.ObjectStorage.ObjectStoreCall!>!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.ClearFailures() -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.CreateUploadUrl(SharedKernel.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectUploadTicket!>
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.Deletes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.DiscardWrites.get -> bool
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.DiscardWrites.init -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.Exists(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.FailAlways(SharedKernel.Testing.ObjectStorage.ObjectStoreOperation operation, System.Exception! exception, string? target = null) -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.FailNext(SharedKernel.Testing.ObjectStorage.ObjectStoreOperation operation, System.Exception! exception, string? target = null) -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.FindObject(string! objectKey) -> SharedKernel.Testing.ObjectStorage.StoredObject?
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.GetPublicUri(string! objectKey) -> System.Uri!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.InMemoryObjectStore() -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.ListKeys(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.ListObjects(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<SharedKernel.ObjectStorage.ObjectInventoryItem!>!>
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.MaxObjectKeyLength.get -> int
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.MaxObjectKeyLength.init -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.ObjectKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.OpenRead(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectReadResult!>
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.PublicBaseUri.get -> System.Uri!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.PublicBaseUri.init -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.Put(SharedKernel.ObjectStorage.ObjectWriteRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.ObjectStorage.ObjectWriteResult!>
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.Puts.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.ObjectStorage.RecordedObjectPut!>!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.Reads.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ObjectStorage.ObjectReadResult!>!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.Seed(string! objectKey, System.ReadOnlySpan<byte> content, string! contentType, string? checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.SetLastModified(string! objectKey, System.DateTimeOffset lastModifiedAt) -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.StorageBaseUri.get -> System.Uri!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.StorageBaseUri.init -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.TimeProvider.get -> System.TimeProvider!
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.TimeProvider.init -> void
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.WrapReadContent.get -> System.Func<string!, System.IO.Stream!, System.IO.Stream!>?
+SharedKernel.Testing.ObjectStorage.InMemoryObjectStore.WrapReadContent.init -> void
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall.ObjectStoreCall(SharedKernel.Testing.ObjectStorage.ObjectStoreOperation Operation, string! Target) -> void
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall.Operation.get -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall.Operation.init -> void
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall.Target.get -> string!
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall.Target.init -> void
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation.CreateUploadUrl = 6 -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation.Delete = 7 -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation.Exists = 2 -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation.GetPublicUri = 5 -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation.ListKeys = 3 -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation.ListObjects = 4 -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation.OpenRead = 1 -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.ObjectStoreOperation.Put = 0 -> SharedKernel.Testing.ObjectStorage.ObjectStoreOperation
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.BytesRead.get -> long
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.BytesRead.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Checksum.get -> string?
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Checksum.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Content.get -> System.ReadOnlyMemory<byte>
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Content.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ContentCanWrite.get -> bool
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ContentCanWrite.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ContentStreamType.get -> System.Type!
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ContentStreamType.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ContentType.get -> string!
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ContentType.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.DeclaredLength.get -> long
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.DeclaredLength.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Metadata.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ObjectKey.get -> string!
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ObjectKey.init -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.RecordedObjectPut(string! ObjectKey, string! ContentType, long DeclaredLength, string? Checksum, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata, long? StartPosition, bool ContentCanWrite, System.Type! ContentStreamType, long BytesRead, System.ReadOnlyMemory<byte> Content) -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.StartPosition.get -> long?
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.StartPosition.init -> void
+SharedKernel.Testing.ObjectStorage.StoredObject
+SharedKernel.Testing.ObjectStorage.StoredObject.Checksum.get -> string?
+SharedKernel.Testing.ObjectStorage.StoredObject.Checksum.init -> void
+SharedKernel.Testing.ObjectStorage.StoredObject.Content.get -> System.ReadOnlyMemory<byte>
+SharedKernel.Testing.ObjectStorage.StoredObject.Content.init -> void
+SharedKernel.Testing.ObjectStorage.StoredObject.ContentType.get -> string!
+SharedKernel.Testing.ObjectStorage.StoredObject.ContentType.init -> void
+SharedKernel.Testing.ObjectStorage.StoredObject.LastModifiedAt.get -> System.DateTimeOffset
+SharedKernel.Testing.ObjectStorage.StoredObject.LastModifiedAt.init -> void
+SharedKernel.Testing.ObjectStorage.StoredObject.Length.get -> long
+SharedKernel.Testing.ObjectStorage.StoredObject.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+SharedKernel.Testing.ObjectStorage.StoredObject.Metadata.init -> void
+SharedKernel.Testing.ObjectStorage.StoredObject.ObjectKey.get -> string!
+SharedKernel.Testing.ObjectStorage.StoredObject.ObjectKey.init -> void
+SharedKernel.Testing.ObjectStorage.StoredObject.StoredObject(string! ObjectKey, System.ReadOnlyMemory<byte> Content, string! ContentType, string? Checksum, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Metadata, System.DateTimeOffset LastModifiedAt) -> void
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall.<Clone>$() -> SharedKernel.Testing.ObjectStorage.ObjectStoreCall!
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall.Deconstruct(out SharedKernel.Testing.ObjectStorage.ObjectStoreOperation Operation, out string! Target) -> void
+SharedKernel.Testing.ObjectStorage.ObjectStoreCall.Equals(SharedKernel.Testing.ObjectStorage.ObjectStoreCall? other) -> bool
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.<Clone>$() -> SharedKernel.Testing.ObjectStorage.RecordedObjectPut!
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Deconstruct(out string! ObjectKey, out string! ContentType, out long DeclaredLength, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata, out long? StartPosition, out bool ContentCanWrite, out System.Type! ContentStreamType, out long BytesRead, out System.ReadOnlyMemory<byte> Content) -> void
+SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Equals(SharedKernel.Testing.ObjectStorage.RecordedObjectPut? other) -> bool
+SharedKernel.Testing.ObjectStorage.StoredObject.<Clone>$() -> SharedKernel.Testing.ObjectStorage.StoredObject!
+SharedKernel.Testing.ObjectStorage.StoredObject.Deconstruct(out string! ObjectKey, out System.ReadOnlyMemory<byte> Content, out string! ContentType, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Metadata, out System.DateTimeOffset LastModifiedAt) -> void
+SharedKernel.Testing.ObjectStorage.StoredObject.Equals(SharedKernel.Testing.ObjectStorage.StoredObject? other) -> bool
+override SharedKernel.Testing.ObjectStorage.ObjectStoreCall.Equals(object? obj) -> bool
+override SharedKernel.Testing.ObjectStorage.ObjectStoreCall.GetHashCode() -> int
+override SharedKernel.Testing.ObjectStorage.ObjectStoreCall.ToString() -> string!
+override SharedKernel.Testing.ObjectStorage.RecordedObjectPut.Equals(object? obj) -> bool
+override SharedKernel.Testing.ObjectStorage.RecordedObjectPut.GetHashCode() -> int
+override SharedKernel.Testing.ObjectStorage.RecordedObjectPut.ToString() -> string!
+override SharedKernel.Testing.ObjectStorage.StoredObject.Equals(object? obj) -> bool
+override SharedKernel.Testing.ObjectStorage.StoredObject.GetHashCode() -> int
+override SharedKernel.Testing.ObjectStorage.StoredObject.ToString() -> string!
+static SharedKernel.Testing.ObjectStorage.ObjectStoreCall.operator !=(SharedKernel.Testing.ObjectStorage.ObjectStoreCall? left, SharedKernel.Testing.ObjectStorage.ObjectStoreCall? right) -> bool
+static SharedKernel.Testing.ObjectStorage.ObjectStoreCall.operator ==(SharedKernel.Testing.ObjectStorage.ObjectStoreCall? left, SharedKernel.Testing.ObjectStorage.ObjectStoreCall? right) -> bool
+static SharedKernel.Testing.ObjectStorage.RecordedObjectPut.operator !=(SharedKernel.Testing.ObjectStorage.RecordedObjectPut? left, SharedKernel.Testing.ObjectStorage.RecordedObjectPut? right) -> bool
+static SharedKernel.Testing.ObjectStorage.RecordedObjectPut.operator ==(SharedKernel.Testing.ObjectStorage.RecordedObjectPut? left, SharedKernel.Testing.ObjectStorage.RecordedObjectPut? right) -> bool
+static SharedKernel.Testing.ObjectStorage.StoredObject.operator !=(SharedKernel.Testing.ObjectStorage.StoredObject? left, SharedKernel.Testing.ObjectStorage.StoredObject? right) -> bool
+static SharedKernel.Testing.ObjectStorage.StoredObject.operator ==(SharedKernel.Testing.ObjectStorage.StoredObject? left, SharedKernel.Testing.ObjectStorage.StoredObject? right) -> bool

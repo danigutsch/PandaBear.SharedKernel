@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the security scanner's exit codes, report publication, and handling of cancellation, a missing scanner, and unsafe report locations.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

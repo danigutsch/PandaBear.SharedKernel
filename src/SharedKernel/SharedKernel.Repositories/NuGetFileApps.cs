@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Discovers file-based apps and uses the selected SDK to evaluate their NuGet inputs without running them.</summary>
 internal static class NuGetFileApps

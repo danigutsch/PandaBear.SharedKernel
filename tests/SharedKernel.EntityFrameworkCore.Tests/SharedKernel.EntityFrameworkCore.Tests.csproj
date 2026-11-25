@@ -2,17 +2,17 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.EntityFrameworkCore.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.EntityFrameworkCore.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.IntegrationTesting" />
-        <Using Include="PandaBear.Testing.EntityFrameworkCore" />
-        <Using Include="PandaBear.Testing" />
-        <Using Include="PandaBear.Npgsql.Testing" />
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing.Logging" />
-        <Using Include="PandaBear.Testing.Messaging" />
+        <Using Include="SharedKernel.IntegrationTesting" />
+        <Using Include="SharedKernel.Testing.EntityFrameworkCore" />
+        <Using Include="SharedKernel.Testing" />
+        <Using Include="SharedKernel.Npgsql.Testing" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Logging" />
+        <Using Include="SharedKernel.Testing.Messaging" />
         <Using Include="Xunit" />
     </ItemGroup>
 

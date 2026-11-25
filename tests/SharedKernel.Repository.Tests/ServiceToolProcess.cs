@@ -1,6 +1,6 @@
 using System.Runtime.Versioning;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>
 /// A <see cref="ServiceRunScope"/> whose tool runs in a process of its own, where signals and the default invocation

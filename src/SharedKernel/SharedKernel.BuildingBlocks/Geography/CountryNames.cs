@@ -1,6 +1,6 @@
 using System.Collections.Frozen;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 // Source: Unicode CLDR 'en' territory display names (cldr-json cldr-localenames-full/main/en/territories.json, default
 // forms, no alt variants), https://github.com/unicode-org/cldr-json. These are the common English short names of the

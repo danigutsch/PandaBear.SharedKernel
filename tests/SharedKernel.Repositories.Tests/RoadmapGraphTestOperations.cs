@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Builds roadmap item snapshots and invokes the verifier's private graph checks by name.</summary>
 internal static class RoadmapGraphTestOperations

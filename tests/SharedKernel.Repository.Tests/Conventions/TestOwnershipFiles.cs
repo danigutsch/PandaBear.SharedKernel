@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>Computes which SharedKernel projects the test projects reach through project references.</summary>
 internal static class TestOwnershipFiles

@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Analyzers;
+namespace SharedKernel.Blazor.Analyzers;
 
 /// <summary>
 /// Exposes the public diagnostic identifiers for SharedKernel Blazor analyzers.

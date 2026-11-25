@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Unvalidated text of one step in one culture.</summary>
 /// <param name="Title">The title; required, and it must not begin with a forbidden prefix and a number, such as "Dia 1".</param>

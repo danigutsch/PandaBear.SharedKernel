@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Trait values used to tag input normalization tests.</summary>
 internal static class TestTraits

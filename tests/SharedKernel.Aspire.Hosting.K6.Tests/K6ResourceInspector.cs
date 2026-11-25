@@ -2,7 +2,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PandaBear.Aspire.Hosting.K6.Tests;
+namespace SharedKernel.Aspire.Hosting.K6.Tests;
 
 /// <summary>Reads the effective command-line arguments and environment of a K6 resource in tests.</summary>
 internal static class K6ResourceInspector

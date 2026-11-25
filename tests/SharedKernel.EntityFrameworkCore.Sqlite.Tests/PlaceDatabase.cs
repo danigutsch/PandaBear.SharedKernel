@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using PandaBear.Testing.Sqlite;
+using SharedKernel.Testing.Sqlite;
 
-namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
+namespace SharedKernel.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>A private in-memory database of places whose contexts register the search fold on every connection they open.</summary>
 public sealed class PlaceDatabase : IDisposable

@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Domain.GeneratorTests;
+namespace SharedKernel.Domain.GeneratorTests;
 
 /// <summary>Tests that the value object generator emits creation, parsing, JSON, EF Core and template code for readonly partial record structs and reports SKMDL010 to SKMDL021 for unsupported declarations.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]

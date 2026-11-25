@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Mediator.EntityFrameworkCore;
+namespace SharedKernel.Mediator.EntityFrameworkCore;
 
 /// <summary>
 /// Provides EF Core-backed mediator pipeline registration helpers.

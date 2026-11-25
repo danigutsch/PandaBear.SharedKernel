@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Requirement that a method be invoked a given number of times with given arguments in a C# source file.</summary>
 internal sealed class DocumentationInvocationRequirement

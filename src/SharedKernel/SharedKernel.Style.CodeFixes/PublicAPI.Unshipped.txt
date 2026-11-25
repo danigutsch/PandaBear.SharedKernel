@@ -1,25 +1,25 @@
 #nullable enable
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod = "SKSTYLE009" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.OptionalResultMethod = "SKSTYLE010" -> string!
-PandaBear.Style.CodeFixes.StyleCodeFixProvider
-PandaBear.Style.CodeFixes.StyleCodeFixProvider.StyleCodeFixProvider() -> void
-override PandaBear.Style.CodeFixes.StyleCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override PandaBear.Style.CodeFixes.StyleCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
-override PandaBear.Style.CodeFixes.StyleCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
-PandaBear.Style.Analyzers.StyleDiagnosticIds
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter = "SKSTYLE006" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.DomainEventSuffix = "SKSTYLE008" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix = "SKSTYLE005" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.MultipleTopLevelTypesPerFile = "SKSTYLE004" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.NonSourceGeneratedLogging = "SKSTYLE007" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.UnboundedWholeRead = "SKSTYLE011" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.GovernedLiteral = "SKSTYLE012" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.InvalidGovernedLiteralCatalog = "SKSTYLE013" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.DirectCurrentTime = "SKSTYLE014" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext = "SKSTYLE015" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.FileNameMismatch = "SKSTYLE016" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.UndocumentedMember = "SKSTYLE017" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.UndocumentedThrownException = "SKSTYLE018" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod = "SKSTYLE009" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.OptionalResultMethod = "SKSTYLE010" -> string!
+SharedKernel.Style.CodeFixes.StyleCodeFixProvider
+SharedKernel.Style.CodeFixes.StyleCodeFixProvider.StyleCodeFixProvider() -> void
+override SharedKernel.Style.CodeFixes.StyleCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override SharedKernel.Style.CodeFixes.StyleCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
+override SharedKernel.Style.CodeFixes.StyleCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+SharedKernel.Style.Analyzers.StyleDiagnosticIds
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter = "SKSTYLE006" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.DomainEventSuffix = "SKSTYLE008" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix = "SKSTYLE005" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.MultipleTopLevelTypesPerFile = "SKSTYLE004" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.NonSourceGeneratedLogging = "SKSTYLE007" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.UnboundedWholeRead = "SKSTYLE011" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.GovernedLiteral = "SKSTYLE012" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.InvalidGovernedLiteralCatalog = "SKSTYLE013" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.DirectCurrentTime = "SKSTYLE014" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext = "SKSTYLE015" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.FileNameMismatch = "SKSTYLE016" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.UndocumentedMember = "SKSTYLE017" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.UndocumentedThrownException = "SKSTYLE018" -> string!

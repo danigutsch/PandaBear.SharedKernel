@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Matching;
+namespace SharedKernel.Vault.Matching;
 
 /// <summary>Result of duplicate matching.</summary>
 /// <param name="Groups">Every input item in exactly one group, ordered by the first member's input position.</param>

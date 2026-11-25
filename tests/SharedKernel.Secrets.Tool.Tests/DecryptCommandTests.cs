@@ -1,7 +1,7 @@
 using System.Text;
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>decrypt</c> with a fake sops: standard output only unless <c>--output</c> and <c>--force</c>.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

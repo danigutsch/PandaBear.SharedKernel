@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using PandaBear.Mediator.SourceGenerator;
-using PandaBear.Testing.Roslyn;
+using SharedKernel.Mediator.SourceGenerator;
+using SharedKernel.Testing.Roslyn;
 
-namespace PandaBear.Mediator.CodeFixes.Tests;
+namespace SharedKernel.Mediator.CodeFixes.Tests;
 
 /// <summary>Creates the code fix workspaces of the mediator code fix tests and runs the mediator generator over them.</summary>
 internal static class CodeFixTestWorkspace

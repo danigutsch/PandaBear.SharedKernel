@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using PandaBear.EntityFrameworkCore;
+using SharedKernel.EntityFrameworkCore;
 
-namespace PandaBear.Domain.EntityFrameworkCore;
+namespace SharedKernel.Domain.EntityFrameworkCore;
 
 /// <summary>
 /// Adds domain-event dispatch interception to a DbContext.

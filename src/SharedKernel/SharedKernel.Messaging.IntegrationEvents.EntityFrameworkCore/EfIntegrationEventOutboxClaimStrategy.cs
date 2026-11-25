@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Provider-neutral claim strategy: loads due messages with a query, marks them claimed, and saves, relying on concurrency tokens to detect competing claimers.</summary>
 internal sealed class EfIntegrationEventOutboxClaimStrategy<TContext>

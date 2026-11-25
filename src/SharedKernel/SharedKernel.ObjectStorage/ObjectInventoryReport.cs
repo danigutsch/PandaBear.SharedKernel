@@ -1,6 +1,6 @@
 // Adapted from ViajantesTurismo. See NOTICE.ViajantesTurismo.txt for the MIT license and attribution.
 
-namespace PandaBear.ObjectStorage;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>Compares observed object inventory with the consuming application's live references.</summary>
 public sealed class ObjectInventoryReport

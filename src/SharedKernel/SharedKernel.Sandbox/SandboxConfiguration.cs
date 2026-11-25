@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>The optional consumer policy in <c>.config/sharedkernel-sandbox.json</c>.</summary>
 /// <param name="Version">Format version; only <c>1</c> is supported.</param>

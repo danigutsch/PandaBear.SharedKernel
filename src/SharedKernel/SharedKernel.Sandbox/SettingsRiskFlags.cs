@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>The explicit acceptances that let the settings command widen what a sandbox allows.</summary>
 /// <param name="AllowAllUnixSockets">Accept <c>allowAllUnixSockets: true</c>.</param>

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>
 /// Reflection helpers for calling OpenAPI service collection extensions with arguments the compiler would reject.

@@ -1,6 +1,6 @@
-using PandaBear.Vault.Attachments;
+using SharedKernel.Vault.Attachments;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>Opens each input archive once, after the inputs were read, so attachment text can be scanned.</summary>
 internal sealed class InputArchives : IDisposable

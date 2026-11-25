@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards how the restore warning verification applies the exception ledger to its findings.</summary>
 public sealed class WarningExceptionTests

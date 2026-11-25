@@ -1,6 +1,6 @@
-using PandaBear.Vault.Formats;
+using SharedKernel.Vault.Formats;
 
-namespace PandaBear.VaultManager.Tool.Formats;
+namespace SharedKernel.VaultManager.Tool.Formats;
 
 /// <summary>
 /// Reads every export format the tool supports through <see cref="VaultFileReader"/>, which detects the format from the

@@ -1,4 +1,4 @@
-namespace PandaBear.CI.GitHub;
+namespace SharedKernel.CI.GitHub;
 
 /// <summary>
 /// Locates the public download address of a GitHub release asset,

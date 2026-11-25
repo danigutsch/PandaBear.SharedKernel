@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>
 /// Records each arriving request, with its body buffered, then holds it until <see cref="Release" /> opens the gate and

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the culture-aware display of a range of days with patterns chosen by the shared month and year.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

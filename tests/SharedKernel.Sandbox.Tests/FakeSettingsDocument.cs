@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>An in-memory settings document: lists, a flag, and environment variables, with locations named after the setting.</summary>
 internal sealed class FakeSettingsDocument : ISandboxSettingsDocument

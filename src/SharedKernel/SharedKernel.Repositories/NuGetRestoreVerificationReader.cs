@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Reads applicable verification results from the existing CI execution manifest format.</summary>
 internal static class NuGetRestoreVerificationReader

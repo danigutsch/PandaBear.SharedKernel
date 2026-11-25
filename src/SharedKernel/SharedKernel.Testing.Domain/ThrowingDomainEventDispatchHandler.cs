@@ -1,6 +1,6 @@
-using PandaBear.Domain;
+using SharedKernel.Domain;
 
-namespace PandaBear.Testing.Domain;
+namespace SharedKernel.Testing.Domain;
 
 /// <summary>Test dispatch handler that always fails with an InvalidOperationException.</summary>
 public sealed class ThrowingDomainEventDispatchHandler : IDomainEventDispatchHandler

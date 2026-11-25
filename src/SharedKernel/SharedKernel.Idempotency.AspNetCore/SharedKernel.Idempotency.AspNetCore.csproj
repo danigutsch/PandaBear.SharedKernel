@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Idempotency.AspNetCore</PackageId>
         <Description>ASP.NET Core adapters for idempotency: the Idempotency-Key header and a key-bound data protector.</Description>
-        <RootNamespace>PandaBear.Idempotency.AspNetCore</RootNamespace>
+        <RootNamespace>SharedKernel.Idempotency.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>idempotency;aspnetcore;data-protection;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

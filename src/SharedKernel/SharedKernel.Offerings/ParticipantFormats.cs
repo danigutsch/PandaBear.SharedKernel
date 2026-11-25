@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The application's sentences for a group size (see <see cref="OfferingText.Participants"/>).</summary>
 /// <param name="Range">The format of a smallest and a largest group, <c>{0}</c> and <c>{1}</c>, such as <c>{0} a {1} participantes</c>.</param>

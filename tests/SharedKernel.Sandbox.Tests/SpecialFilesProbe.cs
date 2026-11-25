@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Tells tests whether a FIFO can be created, and creates one.</summary>
 internal static class SpecialFilesProbe

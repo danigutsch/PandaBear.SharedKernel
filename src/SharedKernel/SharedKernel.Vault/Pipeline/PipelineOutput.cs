@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>Where and how the merged vault is written.</summary>
 /// <param name="Path">Output file. It must not be one of the input files.</param>

@@ -1,8 +1,8 @@
 using System.Net;
 using System.Text.Json;
-using static PandaBear.RepoConfig.Tests.GitHubSubissueTestOperations;
+using static SharedKernel.RepoConfig.Tests.GitHubSubissueTestOperations;
 
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the <c>github link-subissue</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]

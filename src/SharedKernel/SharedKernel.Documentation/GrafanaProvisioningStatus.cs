@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>Whether observed dashboard provisioning matches its expected targets.</summary>
 public enum GrafanaProvisioningStatus

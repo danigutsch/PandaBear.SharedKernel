@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Passkey stored on a login, in Bitwarden export shape.</summary>
 public sealed record Fido2Credential

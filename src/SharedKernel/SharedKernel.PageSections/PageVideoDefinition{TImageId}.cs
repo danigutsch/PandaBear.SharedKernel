@@ -1,4 +1,4 @@
-namespace PandaBear.PageSections;
+namespace SharedKernel.PageSections;
 
 /// <summary>An unvalidated video of a section: a poster image that links to the video, which is never embedded.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>

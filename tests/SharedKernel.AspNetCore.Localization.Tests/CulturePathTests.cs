@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
-using static PandaBear.AspNetCore.Localization.Tests.LocalizationTestCultures;
+using static SharedKernel.AspNetCore.Localization.Tests.LocalizationTestCultures;
 
-namespace PandaBear.AspNetCore.Localization.Tests;
+namespace SharedKernel.AspNetCore.Localization.Tests;
 
 /// <summary>Tests <see cref="CulturePath" />, the helper that reads, prepends, and swaps the culture path segment.</summary>
 public sealed class CulturePathTests

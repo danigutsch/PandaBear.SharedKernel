@@ -1,4 +1,4 @@
-namespace PandaBear.PlaywrightMcp.Tests;
+namespace SharedKernel.PlaywrightMcp.Tests;
 
 /// <summary>Tests how the settings resolve to a container engine and the security options.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

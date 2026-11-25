@@ -1,8 +1,8 @@
 #nullable enable
-PandaBear.Results.Analyzers.ResultsDiagnosticIds
-const PandaBear.Results.Analyzers.ResultsDiagnosticIds.DiscardedResult = "SKRES002" -> string!
-const PandaBear.Results.Analyzers.ResultsDiagnosticIds.RawResultEndpoint = "SKRES001" -> string!
-PandaBear.Results.Analyzers.ResultsAnalyzer
-PandaBear.Results.Analyzers.ResultsAnalyzer.ResultsAnalyzer() -> void
-override PandaBear.Results.Analyzers.ResultsAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
-override PandaBear.Results.Analyzers.ResultsAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+SharedKernel.Results.Analyzers.ResultsDiagnosticIds
+const SharedKernel.Results.Analyzers.ResultsDiagnosticIds.DiscardedResult = "SKRES002" -> string!
+const SharedKernel.Results.Analyzers.ResultsDiagnosticIds.RawResultEndpoint = "SKRES001" -> string!
+SharedKernel.Results.Analyzers.ResultsAnalyzer
+SharedKernel.Results.Analyzers.ResultsAnalyzer.ResultsAnalyzer() -> void
+override SharedKernel.Results.Analyzers.ResultsAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override SharedKernel.Results.Analyzers.ResultsAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

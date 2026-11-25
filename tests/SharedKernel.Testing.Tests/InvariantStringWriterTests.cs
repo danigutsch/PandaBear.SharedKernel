@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests that the string writer for captured output produces the same text on every operating system.</summary>
 public sealed class InvariantStringWriterTests

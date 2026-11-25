@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Checks a <c>srcset</c>: one descriptor kind, no repeated descriptor, at least one candidate.</summary>
 internal static class CandidateSet

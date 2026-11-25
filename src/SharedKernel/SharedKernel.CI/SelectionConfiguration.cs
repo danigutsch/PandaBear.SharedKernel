@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>The path rules of <c>select</c>.</summary>
 /// <param name="FullValidation">Path patterns whose change selects every test project.</param>

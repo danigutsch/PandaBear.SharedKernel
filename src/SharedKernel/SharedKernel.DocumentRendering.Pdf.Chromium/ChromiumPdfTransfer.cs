@@ -2,7 +2,7 @@ using System.Buffers;
 using System.Text.Json;
 using Microsoft.Playwright;
 
-namespace PandaBear.DocumentRendering.Pdf.Chromium;
+namespace SharedKernel.DocumentRendering.Pdf.Chromium;
 
 /// <summary>Reads a tagged Chromium PDF through the bounded DevTools stream.</summary>
 internal static class ChromiumPdfTransfer

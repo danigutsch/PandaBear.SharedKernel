@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>How long a release must have been public before it may be installed: 0 to 3650 whole days.</summary>
 public sealed class MinimumReleaseAge : ValueObject

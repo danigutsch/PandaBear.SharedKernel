@@ -1,4 +1,4 @@
-namespace PandaBear.DevContainers.Tests;
+namespace SharedKernel.DevContainers.Tests;
 
 /// <summary>Tests the archive checks of the pinned Node.js and Dev Container CLI bootstrap.</summary>
 public sealed class DevcontainerCliArchiveTests

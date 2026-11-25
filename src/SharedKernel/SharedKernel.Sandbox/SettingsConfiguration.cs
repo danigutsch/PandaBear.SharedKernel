@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox;
+namespace SharedKernel.Sandbox;
 
 /// <summary>The optional <c>settings</c> section of <c>.config/sharedkernel-sandbox.json</c>: what <c>dotnet sandbox settings</c> manages in an agent settings file.</summary>
 /// <param name="Profile">Name of a built-in profile; only <c>dotnet</c> exists. Without it nothing but the lists below is managed.</param>

@@ -1,9 +1,9 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Decides whether tracked build files are inert: they cannot read other repository files, so a documentation change

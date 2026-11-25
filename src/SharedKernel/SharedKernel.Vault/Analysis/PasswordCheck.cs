@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Analysis;
+namespace SharedKernel.Vault.Analysis;
 
 /// <summary>
 /// How the password of one member of a match group compares, for a reader who decides between the members without seeing

@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.InputNormalization.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Unit tests for ObjectStorageKeyValidator.IsValidRelativeKey.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]

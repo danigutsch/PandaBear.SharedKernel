@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.IO;
-using PandaBear.InputNormalization;
+using SharedKernel.IO;
+using SharedKernel.InputNormalization;
 
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// Implements <c>new</c>: starts a repository from a language and features by planning a baseline in memory, writing

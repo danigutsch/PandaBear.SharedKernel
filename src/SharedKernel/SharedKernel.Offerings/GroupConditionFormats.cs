@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The application's sentence for a group condition (see <see cref="OfferingText.GroupCondition"/>).</summary>
 /// <param name="Sentence">

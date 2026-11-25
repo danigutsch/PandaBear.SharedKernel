@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The text of one step in one culture: a title without its number, paragraphs, and a short note such as "+ barco" or "40 ou 53 km".</summary>
 public sealed class ProgramStepText

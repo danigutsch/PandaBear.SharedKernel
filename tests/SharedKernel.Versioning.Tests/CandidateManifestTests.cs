@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Tests reading, verifying, and discovering candidate manifests and consuming them.

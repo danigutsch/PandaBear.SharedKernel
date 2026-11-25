@@ -1,6 +1,6 @@
 using System.Threading.Channels;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>
 /// The bounded queue between the requests that record page views and one target. Adding never waits: a full queue, or one closed

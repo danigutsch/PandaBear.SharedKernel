@@ -1,9 +1,9 @@
 using System.IO.Enumeration;
 using System.Text.Json;
-using PandaBear.IO;
-using PandaBear.Versioning;
+using SharedKernel.IO;
+using SharedKernel.Versioning;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Binds fresh local coverage reports to the Git index tree built and tested by the slice runner.</summary>
 internal static class CoverageReportEvidence

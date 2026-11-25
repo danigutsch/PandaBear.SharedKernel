@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// The page introduction with the one level-1 heading, an optional eyebrow above it and subtitle under it, an optional image and

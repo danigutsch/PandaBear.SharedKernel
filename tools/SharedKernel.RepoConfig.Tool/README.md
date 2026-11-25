@@ -36,7 +36,7 @@ dotnet tool run repo -- <command>
 
 .NET tools run in full trust. Install only from trusted manifests and package sources.
 
-Package ID: `PandaBear.SharedKernel.RepoConfig.Tool`. C# namespace: `PandaBear.RepoConfig.Tool`.
+Package ID: `PandaBear.SharedKernel.RepoConfig.Tool`. C# namespace: `SharedKernel.RepoConfig.Tool`.
 Assembly/project identity: `SharedKernel.RepoConfig.Tool`. Source is public; registry publication remains
 deferred, and nothing here implies availability on nuget.org.
 

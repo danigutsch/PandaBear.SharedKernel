@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using PandaBear.ConfigurationFiles;
-using PandaBear.IO;
-using PandaBear.Processes;
+using SharedKernel.ConfigurationFiles;
+using SharedKernel.IO;
+using SharedKernel.Processes;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>
 /// Reads and validates <c>.config/sharedkernel-ci.json</c>. Errors name the file and the JSON path of the problem.

@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Immutable, digest-sealed record binding a roadmap automation result to its plan and artifact so later steps can detect tampering.</summary>
 public sealed class RoadmapAutomationResultSeal

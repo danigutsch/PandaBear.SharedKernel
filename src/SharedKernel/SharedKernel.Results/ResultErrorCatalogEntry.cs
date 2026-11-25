@@ -1,4 +1,4 @@
-namespace PandaBear.Results;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Describes one generated centralized error entry.

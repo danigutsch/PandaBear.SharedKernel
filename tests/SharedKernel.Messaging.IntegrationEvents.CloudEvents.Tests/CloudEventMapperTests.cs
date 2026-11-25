@@ -1,5 +1,5 @@
 
-namespace PandaBear.Messaging.IntegrationEvents.CloudEvents.Tests;
+namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests;
 
 /// <summary>
 /// Tests CloudEventMapper.ToCloudEvent, which wraps an integration event in a CloudEvents envelope.

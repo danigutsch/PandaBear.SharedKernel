@@ -1,4 +1,4 @@
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>A scoped state holder that records its creation and disposal in a shared log.</summary>
 internal sealed class ScopeMarker : IDisposable

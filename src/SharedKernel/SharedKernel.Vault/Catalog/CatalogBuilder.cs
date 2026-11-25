@@ -1,9 +1,9 @@
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Model;
-using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Secrets;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Model;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.Vault.Secrets;
 
-namespace PandaBear.Vault.Catalog;
+namespace SharedKernel.Vault.Catalog;
 
 /// <summary>
 /// Makes the catalog of a vault. A catalog holds names, folders, favorites, website addresses with their credential

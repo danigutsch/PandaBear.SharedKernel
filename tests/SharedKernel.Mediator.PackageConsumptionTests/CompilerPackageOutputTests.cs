@@ -1,8 +1,8 @@
 using System.IO.Compression;
 using System.Security.Cryptography;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Mediator.PackageConsumptionTests;
+namespace SharedKernel.Mediator.PackageConsumptionTests;
 
 /// <summary>Verifies the compiler assemblies embedded by NuGet pack.</summary>
 [Trait(TestTraitNames.CategoryName, "PackageConsumption")]

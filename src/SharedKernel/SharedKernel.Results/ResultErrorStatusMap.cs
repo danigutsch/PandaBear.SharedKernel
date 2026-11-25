@@ -1,4 +1,4 @@
-namespace PandaBear.Results;
+namespace SharedKernel.Results;
 
 /// <summary>Maps a <see cref="ResultError"/> code to the failure status of a result.</summary>
 internal static class ResultErrorStatusMap

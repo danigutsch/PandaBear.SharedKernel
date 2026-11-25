@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tests;
+namespace SharedKernel.Packages.Tests;
 
 /// <summary>Tests reading and validating <c>.config/sharedkernel-packages.json</c>.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

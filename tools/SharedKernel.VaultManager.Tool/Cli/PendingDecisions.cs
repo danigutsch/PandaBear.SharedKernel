@@ -1,7 +1,7 @@
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>Fields and findings that need a decision before a merge writes the merged vault. Holds no values.</summary>
 /// <param name="Fields">Fields that neither the policy nor a decision resolved.</param>

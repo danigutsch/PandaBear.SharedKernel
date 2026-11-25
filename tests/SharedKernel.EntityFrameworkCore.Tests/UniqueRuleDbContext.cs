@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>A PostgreSQL context with one rule-tagged unique index and one untagged unique index.</summary>
 /// <param name="options">The options.</param>

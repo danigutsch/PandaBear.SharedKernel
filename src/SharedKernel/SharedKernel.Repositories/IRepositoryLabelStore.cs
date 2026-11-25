@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The labels of one repository on a forge. <see cref="RepositoryLabelSync"/> reads them and creates or updates the

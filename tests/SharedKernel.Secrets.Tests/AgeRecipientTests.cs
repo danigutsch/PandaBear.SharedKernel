@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the validated age recipient.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

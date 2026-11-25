@@ -1,10 +1,10 @@
 using System.CommandLine;
 using System.CommandLine.Help;
 using System.Diagnostics;
-using PandaBear.CI.Tool;
-using PandaBear.Processes;
+using SharedKernel.CI.Tool;
+using SharedKernel.Processes;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Parses and invokes the real CI tool command tree with captured output.</summary>
 internal static class RepositoryToolInvocation

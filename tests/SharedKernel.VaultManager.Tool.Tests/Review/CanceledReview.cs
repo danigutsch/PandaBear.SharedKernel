@@ -1,8 +1,8 @@
-using PandaBear.VaultManager.Tool.Review;
+using SharedKernel.VaultManager.Tool.Review;
 using Terminal.Gui.App;
 using Terminal.Gui.Input;
 
-namespace PandaBear.VaultManager.Tool.Tests.Review;
+namespace SharedKernel.VaultManager.Tool.Tests.Review;
 
 /// <summary>
 /// Runs the review headlessly through <see cref="ReviewApp"/> with the real dialogs, presses a key that opens a dialog, and

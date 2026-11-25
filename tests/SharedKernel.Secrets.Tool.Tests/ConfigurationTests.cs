@@ -1,6 +1,6 @@
-using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
+using static SharedKernel.Secrets.Tool.Tests.SecretsToolHarness;
 
-namespace PandaBear.Secrets.Tool.Tests;
+namespace SharedKernel.Secrets.Tool.Tests;
 
 /// <summary>Tests the strict JSON configuration, through <c>verify</c>, which reads it first.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

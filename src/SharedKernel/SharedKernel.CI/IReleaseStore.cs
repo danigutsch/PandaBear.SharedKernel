@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Lists and deletes the releases of one forge repository. Deleting a release keeps its tag.</summary>
 public interface IReleaseStore

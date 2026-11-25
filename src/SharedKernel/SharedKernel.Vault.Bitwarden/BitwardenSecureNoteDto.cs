@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Bitwarden secure note object; type 0 is the only defined note type.</summary>
 /// <param name="Type">Note type; 0 is the only defined value.</param>

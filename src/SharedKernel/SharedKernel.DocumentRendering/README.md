@@ -50,7 +50,7 @@ dotnet add package PandaBear.SharedKernel.DocumentRendering --version <validated
 ```
 
 ```csharp
-using PandaBear.DocumentRendering;
+using SharedKernel.DocumentRendering;
 
 public static class Example
 {
@@ -85,7 +85,7 @@ public static class Example
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.DocumentRendering`. C# namespace: `PandaBear.DocumentRendering`. Assembly/project identity: `SharedKernel.DocumentRendering`.
+Package ID: `PandaBear.SharedKernel.DocumentRendering`. C# namespace: `SharedKernel.DocumentRendering`. Assembly/project identity: `SharedKernel.DocumentRendering`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 

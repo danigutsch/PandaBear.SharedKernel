@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Review;
+namespace SharedKernel.Review;
 
 /// <summary>Supplies the current review version and ordered evidence for durable storage.</summary>
 /// <param name="Revision">The current content revision.</param>

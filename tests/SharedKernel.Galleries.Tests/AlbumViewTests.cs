@@ -1,6 +1,6 @@
-using static PandaBear.Galleries.Tests.AlbumFixtures;
+using static SharedKernel.Galleries.Tests.AlbumFixtures;
 
-namespace PandaBear.Galleries.Tests;
+namespace SharedKernel.Galleries.Tests;
 
 /// <summary>Tests the published read view of an album and its pages of photos.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

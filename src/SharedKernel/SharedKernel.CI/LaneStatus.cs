@@ -1,4 +1,4 @@
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>How a lane of <c>local-check</c> ended.</summary>
 internal enum LaneStatus

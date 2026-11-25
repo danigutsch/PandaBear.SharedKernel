@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>
 /// The delete flow of a list page: which row waits for confirmation, the error to show, the announcement of a completed deletion,

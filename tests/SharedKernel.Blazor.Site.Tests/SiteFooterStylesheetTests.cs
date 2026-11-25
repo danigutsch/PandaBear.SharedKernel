@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the stylesheet rules of the footer tones, the separated list and the tap targets on narrow screens.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

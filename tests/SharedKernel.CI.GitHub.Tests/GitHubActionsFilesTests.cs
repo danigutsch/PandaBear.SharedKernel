@@ -1,4 +1,4 @@
-namespace PandaBear.CI.GitHub.Tests;
+namespace SharedKernel.CI.GitHub.Tests;
 
 /// <summary>Guards the GitHub Actions output and step summary files.</summary>
 public sealed class GitHubActionsFilesTests

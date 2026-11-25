@@ -1,5 +1,5 @@
 
-namespace PandaBear.Domain.EntityFrameworkCore.Tests;
+namespace SharedKernel.Domain.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Test aggregate root that collects OrderPlacedDomainEvent instances until they are cleared.

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests privacy-safe reporting of handled UI failures.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

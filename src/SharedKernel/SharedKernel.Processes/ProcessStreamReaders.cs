@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>
 /// Reads the standard output and standard error of a started process, each up to a limit. Disposing waits for both

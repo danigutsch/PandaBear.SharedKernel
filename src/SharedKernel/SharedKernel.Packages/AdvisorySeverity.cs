@@ -1,4 +1,4 @@
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>How serious a security advisory is.</summary>
 public enum AdvisorySeverity

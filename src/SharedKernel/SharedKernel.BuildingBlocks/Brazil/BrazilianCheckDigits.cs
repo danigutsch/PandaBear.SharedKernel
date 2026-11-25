@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>Check digit arithmetic shared by the Brazilian CPF and CNPJ value objects.</summary>
 internal static class BrazilianCheckDigits

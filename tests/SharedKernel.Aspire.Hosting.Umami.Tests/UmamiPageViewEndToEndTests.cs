@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.Aspire.Hosting.Umami.Tests;
+namespace SharedKernel.Aspire.Hosting.Umami.Tests;
 
 /// <summary>
 /// Proves the zero-configuration path end to end with real containers: Umami runs with the website that its website resource set up, and

@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>Packs SharedKernel with package validation and writes an API compatibility report.</summary>
 internal static class ApiCompatibilityCheck

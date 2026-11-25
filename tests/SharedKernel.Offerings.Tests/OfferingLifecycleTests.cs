@@ -1,6 +1,6 @@
-using static PandaBear.Offerings.Tests.OfferingFixtures;
+using static SharedKernel.Offerings.Tests.OfferingFixtures;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Tests revising an offering, its round trip through a definition, and restoring a stored one.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

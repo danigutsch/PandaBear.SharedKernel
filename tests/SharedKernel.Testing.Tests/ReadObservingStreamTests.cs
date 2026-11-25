@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Checks the read observations and ownership of the borrowed stream.</summary>
 public sealed class ReadObservingStreamTests

@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using PandaBear.Idempotency;
-using PandaBear.Idempotency.EntityFrameworkCore;
+using SharedKernel.Idempotency;
+using SharedKernel.Idempotency.EntityFrameworkCore;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// PostgreSQL-backed idempotency store host whose save interceptor holds two concurrent TryStart calls until both are saving.

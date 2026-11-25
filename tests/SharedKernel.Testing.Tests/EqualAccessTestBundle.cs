@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Owns a synthetic Equal Access browser bundle for one test.</summary>
 internal sealed class EqualAccessTestBundle : IDisposable

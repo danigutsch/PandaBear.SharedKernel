@@ -1,4 +1,4 @@
-namespace PandaBear.Processes;
+namespace SharedKernel.Processes;
 
 /// <summary>The exit code and collected output of a finished child process.</summary>
 public sealed class ProcessOutput

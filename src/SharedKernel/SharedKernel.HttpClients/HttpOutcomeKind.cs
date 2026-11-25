@@ -1,4 +1,4 @@
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>
 /// Describes an HTTP request outcome without applying caller fallback or user-interface policy.

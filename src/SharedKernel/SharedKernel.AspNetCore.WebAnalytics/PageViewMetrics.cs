@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>Counts the page views that were not delivered, by target and reason. A failing meter or listener never reaches the caller.</summary>
 internal sealed class PageViewMetrics

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>A <see cref="FakeTimeProvider"/> that also counts the timers still waiting to fire, for code that creates its timer after an asynchronous step.</summary>
 internal sealed class ManualTimeProvider() : FakeTimeProvider(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero))

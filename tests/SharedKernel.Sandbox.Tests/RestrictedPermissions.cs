@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Sets the Unix permissions of a file or folder for the lifetime of the object and restores them on disposal, so cleanup can still delete it.</summary>
 internal sealed class RestrictedPermissions : IDisposable

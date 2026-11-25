@@ -1,7 +1,7 @@
 using System.Globalization;
-using PandaBear.IO;
+using SharedKernel.IO;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Runs the Stryker.NET configs of <c>.config/sharedkernel-ci.json</c> with a <c>dotnet-stryker</c> installed on demand.</summary>
 internal static class MutationTestRun

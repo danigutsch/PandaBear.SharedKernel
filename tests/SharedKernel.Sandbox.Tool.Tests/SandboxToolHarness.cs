@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace PandaBear.Sandbox.Tool.Tests;
+namespace SharedKernel.Sandbox.Tool.Tests;
 
 /// <summary>Runs the tool with a fake environment in a temporary repository.</summary>
 internal static class SandboxToolHarness

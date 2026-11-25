@@ -2,9 +2,9 @@ using System.Buffers;
 using System.Collections.Frozen;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.SecretScanning;
+namespace SharedKernel.SecretScanning;
 
 /// <summary>
 /// Finds secrets in text. Catalog rules run only on bounded windows around keyword hits; structural detectors cover

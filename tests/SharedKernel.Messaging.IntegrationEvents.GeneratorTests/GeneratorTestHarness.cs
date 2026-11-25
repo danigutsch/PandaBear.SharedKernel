@@ -1,12 +1,12 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Domain;
-using PandaBear.Mediator;
-using PandaBear.Messaging.IntegrationEvents.SourceGenerator;
-using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
+using SharedKernel.Domain;
+using SharedKernel.Mediator;
+using SharedKernel.Messaging.IntegrationEvents.SourceGenerator;
+using SharedHarness = SharedKernel.Testing.Roslyn.GeneratorTestHarness;
 
-namespace PandaBear.Messaging.IntegrationEvents.GeneratorTests;
+namespace SharedKernel.Messaging.IntegrationEvents.GeneratorTests;
 
 /// <summary>Compiles integration event test sources and runs the integration event generators against them.</summary>
 internal static class GeneratorTestHarness
@@ -18,8 +18,8 @@ internal static class GeneratorTestHarness
 
     private const string DefaultUsings = """
         using System;
-        using PandaBear.Domain;
-        using PandaBear.Messaging.IntegrationEvents;
+        using SharedKernel.Domain;
+        using SharedKernel.Messaging.IntegrationEvents;
 
         """;
 

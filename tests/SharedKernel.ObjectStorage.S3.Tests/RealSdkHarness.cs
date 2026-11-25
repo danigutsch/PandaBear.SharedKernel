@@ -2,7 +2,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>Builds a real S3 client and store against a loopback stub and decodes recorded request bodies.</summary>
 internal static class RealSdkHarness

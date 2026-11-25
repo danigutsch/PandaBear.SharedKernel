@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>GraphQL response of a GitHub project query or mutation.</summary>
 /// <param name="Data">Response payload.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Aspire.Hosting.Tests;
+namespace SharedKernel.Aspire.Hosting.Tests;
 
 /// <summary>Creates clients that send through one handler, which the clients do not dispose.</summary>
 /// <param name="handler">The handler.</param>

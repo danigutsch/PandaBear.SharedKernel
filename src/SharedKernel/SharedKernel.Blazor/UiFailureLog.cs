@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Blazor;
+namespace SharedKernel.Blazor;
 
 /// <summary>Source-generated log messages for handled UI failures.</summary>
 internal static partial class UiFailureLog

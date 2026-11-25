@@ -1,7 +1,7 @@
-using PandaBear.Vault.Matching;
-using PandaBear.Vault.Model;
+using SharedKernel.Vault.Matching;
+using SharedKernel.Vault.Model;
 
-namespace PandaBear.Vault.Analysis;
+namespace SharedKernel.Vault.Analysis;
 
 /// <summary>Password weaknesses of a vault. Holds item names, issue kinds, and counts only, never passwords or hashes.</summary>
 /// <param name="Issues">Issues in item order.</param>

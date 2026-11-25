@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>Result of checking an issue's labels against the configured set.</summary>
 /// <param name="ExtraLabels">Labels on the issue that are not configured.</param>

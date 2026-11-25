@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Contracts;
+namespace SharedKernel.Testing.Contracts;
 
 /// <summary>
 /// A stream that throws a specified exception when asynchronously disposed.

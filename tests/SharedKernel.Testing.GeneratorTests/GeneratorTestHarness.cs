@@ -2,10 +2,10 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.Testing.SourceGenerator;
-using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
+using SharedKernel.Testing.SourceGenerator;
+using SharedHarness = SharedKernel.Testing.Roslyn.GeneratorTestHarness;
 
-namespace PandaBear.Testing.GeneratorTests;
+namespace SharedKernel.Testing.GeneratorTests;
 
 /// <summary>Builds compilations that reference SharedKernel.Testing and runs the CallProxy generator over them.</summary>
 internal static class GeneratorTestHarness
@@ -16,7 +16,7 @@ internal static class GeneratorTestHarness
         using System.Threading;
         using System.Threading.Tasks;
         using Microsoft.Extensions.DependencyInjection;
-        using PandaBear.Testing;
+        using SharedKernel.Testing;
 
         """;
 

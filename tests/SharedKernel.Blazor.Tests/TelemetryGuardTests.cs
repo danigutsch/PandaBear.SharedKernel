@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the telemetry guard that the Blazor package links from SharedKernel.AspNetCore.</summary>
 public sealed class TelemetryGuardTests

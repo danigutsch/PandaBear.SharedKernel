@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>One row of a <see cref="FactsTable" />.</summary>
 /// <param name="Label">The row header, for example "Duration".</param>

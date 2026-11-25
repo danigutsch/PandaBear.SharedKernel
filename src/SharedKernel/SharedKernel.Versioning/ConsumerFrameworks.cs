@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>The target frameworks that packed consumers are built for.</summary>
 public static class ConsumerFrameworks

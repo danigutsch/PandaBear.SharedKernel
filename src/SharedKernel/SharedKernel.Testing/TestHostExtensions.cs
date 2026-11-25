@@ -1,4 +1,4 @@
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>
 /// Maps <see cref="TestHost" /> to its <c>Host</c> trait value.

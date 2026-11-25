@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Relative paths of the roadmap configuration files and directories.</summary>
 public static class RoadmapPaths

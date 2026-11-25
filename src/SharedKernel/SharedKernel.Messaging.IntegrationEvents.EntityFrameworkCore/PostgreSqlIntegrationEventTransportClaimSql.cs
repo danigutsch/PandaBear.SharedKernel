@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Claims transport messages for one consumer with a single atomic PostgreSQL statement that skips rows locked by other consumers.</summary>
 internal static class PostgreSqlIntegrationEventTransportClaimSql

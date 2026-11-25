@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PandaBear.SecretScanning.Tests;
+namespace SharedKernel.SecretScanning.Tests;
 
 /// <summary>Builds BIP39 mnemonics with an independent checksum computation.</summary>
 internal static class Bip39Reference
@@ -75,7 +75,7 @@ internal static class Bip39Reference
 
     private static string[] LoadWords()
     {
-        using Stream stream = typeof(SecretScanner).Assembly.GetManifestResourceStream("PandaBear.SecretScanning.bip39-english.txt")
+        using Stream stream = typeof(SecretScanner).Assembly.GetManifestResourceStream("SharedKernel.SecretScanning.bip39-english.txt")
             ?? throw new InvalidOperationException("Wordlist resource missing.");
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd().Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);

@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Cancels its caller when rendering reaches the first section.</summary>
 /// <param name="section">The document section supplied for rendering.</param>

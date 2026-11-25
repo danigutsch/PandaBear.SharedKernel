@@ -6,11 +6,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
-using PandaBear.Testing.Analyzers;
+using SharedKernel.Testing.Analyzers;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace PandaBear.Testing.CodeFixes;
+namespace SharedKernel.Testing.CodeFixes;
 
 public sealed partial class TestingCodeFixProvider
 {

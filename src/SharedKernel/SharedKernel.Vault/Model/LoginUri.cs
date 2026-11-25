@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Vault.Model;
+namespace SharedKernel.Vault.Model;
 
 /// <summary>Website address attached to a login.</summary>
 /// <param name="Value">

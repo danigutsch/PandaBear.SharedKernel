@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace PandaBear.Testing.AspNetCore.TestApp;
+namespace SharedKernel.Testing.AspNetCore.TestApp;
 
 /// <summary>A prerendered page with one Interactive Server component whose persisted state has the size the query asks for.</summary>
 [Route("/state")]

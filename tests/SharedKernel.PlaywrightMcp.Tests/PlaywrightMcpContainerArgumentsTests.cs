@@ -1,4 +1,4 @@
-namespace PandaBear.PlaywrightMcp.Tests;
+namespace SharedKernel.PlaywrightMcp.Tests;
 
 /// <summary>Tests the container engine command lines built for Docker and Podman.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]

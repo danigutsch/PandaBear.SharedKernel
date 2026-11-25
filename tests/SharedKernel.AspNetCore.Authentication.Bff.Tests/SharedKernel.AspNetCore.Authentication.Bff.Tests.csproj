@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.AspNetCore.Authentication.Bff.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.AspNetCore.Authentication.Bff.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,8 +18,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing.Logging" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Logging" />
         <Using Include="Xunit" />
     </ItemGroup>
 

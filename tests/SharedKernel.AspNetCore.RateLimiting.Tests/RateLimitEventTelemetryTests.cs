@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.RateLimiting.Tests;
+namespace SharedKernel.AspNetCore.RateLimiting.Tests;
 
 /// <summary>Tests the opt-in rate-limit rejection events.</summary>
 public sealed class RateLimitEventTelemetryTests

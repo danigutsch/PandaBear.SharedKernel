@@ -2,14 +2,14 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Globalization;
 using System.Text;
-using PandaBear.InputNormalization;
-using PandaBear.IO;
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
-using PandaBear.VaultManager.Tool.Formats;
+using SharedKernel.InputNormalization;
+using SharedKernel.IO;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
+using SharedKernel.VaultManager.Tool.Formats;
 
-namespace PandaBear.VaultManager.Tool.Cli;
+namespace SharedKernel.VaultManager.Tool.Cli;
 
 /// <summary>
 /// <c>merge</c>: merges the inputs into one Bitwarden export, password-protected unless <c>--plaintext</c> is given. While

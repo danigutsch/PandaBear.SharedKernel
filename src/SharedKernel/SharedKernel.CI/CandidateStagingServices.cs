@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace PandaBear.CI;
+namespace SharedKernel.CI;
 
 /// <summary>Supplies what candidate staging uses to reach Git, the network, and the clock.</summary>
 /// <param name="Git">Runs Git in a directory and returns its standard output.</param>

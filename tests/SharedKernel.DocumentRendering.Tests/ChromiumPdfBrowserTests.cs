@@ -1,8 +1,8 @@
 using System.ComponentModel;
-using PandaBear.Testing;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.DocumentRendering.Tests;
+namespace SharedKernel.DocumentRendering.Tests;
 
 /// <summary>Exercises the renderer's failure boundaries using the shared test browser.</summary>
 [Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]

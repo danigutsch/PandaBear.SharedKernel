@@ -1,7 +1,7 @@
-using PandaBear.BuildingBlocks;
-using PandaBear.Results;
+using SharedKernel.BuildingBlocks;
+using SharedKernel.Results;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>
 /// A photo album: an ordered sequence of distinct photos with a cover, a sort order, an optional related item such as a tour, and a

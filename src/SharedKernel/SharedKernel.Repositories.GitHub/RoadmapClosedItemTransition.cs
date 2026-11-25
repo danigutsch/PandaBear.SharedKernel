@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.GitHub;
+namespace SharedKernel.Repositories.GitHub;
 
 /// <summary>
 /// A closed GitHub issue approved to move its roadmap item to a closed status.

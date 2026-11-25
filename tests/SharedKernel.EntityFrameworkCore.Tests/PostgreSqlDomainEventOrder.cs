@@ -1,6 +1,6 @@
-using PandaBear.Domain;
+using SharedKernel.Domain;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Test aggregate root that collects PostgreSqlOrderPlacedDomainEvent instances until they are cleared.

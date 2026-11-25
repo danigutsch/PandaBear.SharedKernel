@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.IO;
+namespace SharedKernel.IO;
 
 /// <summary>Writes files that hold secrets, such as a decrypted export or a report that names them.</summary>
 public static class SecureFile

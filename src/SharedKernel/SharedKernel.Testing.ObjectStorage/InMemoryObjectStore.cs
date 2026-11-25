@@ -2,9 +2,9 @@ using System.Buffers;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using PandaBear.ObjectStorage;
+using SharedKernel.ObjectStorage;
 
-namespace PandaBear.Testing.ObjectStorage;
+namespace SharedKernel.Testing.ObjectStorage;
 
 /// <summary>
 /// Thread-safe in-memory <see cref="IObjectStore" /> that keeps the argument, missing-object, listing and upload-ticket contract of

@@ -1,6 +1,6 @@
-using PandaBear.Domain;
+using SharedKernel.Domain;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Dispatcher test double that records every event and optionally fails each dispatch.

@@ -1,12 +1,12 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
-using PandaBear.Testing;
-using PandaBear.Vault.Brief;
-using PandaBear.Vault.Merge;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Brief;
+using SharedKernel.Vault.Merge;
+using SharedKernel.VaultManager.Tool.Tests.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Cli;
+namespace SharedKernel.VaultManager.Tool.Tests.Cli;
 
 /// <summary>Tests that command output never contains vault values.</summary>
 public sealed class CommandSecrecyTests : IDisposable

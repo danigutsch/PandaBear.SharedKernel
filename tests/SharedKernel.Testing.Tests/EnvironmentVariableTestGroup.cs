@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Collection definition that runs tests touching process-wide environment variables serially.</summary>
 [CollectionDefinition("Environment variables", DisableParallelization = true)]

@@ -1,6 +1,6 @@
-using PandaBear.Idempotency;
+using SharedKernel.Idempotency;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Assertions over the entries stored by a PostgreSQL idempotency scenario.

@@ -1,4 +1,4 @@
-namespace PandaBear.AI.Tests;
+namespace SharedKernel.AI.Tests;
 
 /// <summary>Trait values that tag the AI tests by component and capability.</summary>
 internal static class TestTraits

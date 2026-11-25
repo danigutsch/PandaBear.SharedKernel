@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.ObjectStorage;
+using SharedKernel.ObjectStorage;
 
-namespace PandaBear.Testing.ObjectStorage.Tests;
+namespace SharedKernel.Testing.ObjectStorage.Tests;
 
 /// <summary>Tests direct-upload tickets from the in-memory object store.</summary>
 public sealed class InMemoryObjectStoreUploadTests

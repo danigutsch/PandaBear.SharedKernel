@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace PandaBear.IO.Tests;
+namespace SharedKernel.IO.Tests;
 
 /// <summary>Exercises reviewed artifacts with an independent inventory manifest.</summary>
 public sealed class VerifiedArtifactTests : IDisposable

@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.PageSections.Blazor</PackageId>
         <Description>Renders typed page sections with the accessible site components: each section on the band of its tone, its parts in a fixed order, its images as a mosaic or beside the text.</Description>
-        <RootNamespace>PandaBear.PageSections.Blazor</RootNamespace>
+        <RootNamespace>SharedKernel.PageSections.Blazor</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>blazor;razor-components;pages;sections;static-ssr;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace PandaBear.Blazor.Site.Tests.Browser;
+namespace SharedKernel.Blazor.Site.Tests.Browser;
 
 /// <summary>A page for the card grid tests: eight short cards in the gutter container, in a grid with the given column widths.</summary>
 public sealed class GridSample : ComponentBase

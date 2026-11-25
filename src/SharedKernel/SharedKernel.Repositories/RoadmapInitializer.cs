@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>Creates the default roadmap configuration files.</summary>
 public static class RoadmapInitializer

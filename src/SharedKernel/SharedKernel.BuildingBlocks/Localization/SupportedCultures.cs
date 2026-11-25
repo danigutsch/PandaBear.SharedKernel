@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>An immutable set of allowed <see cref="ContentCulture"/> values with one default culture, for example the languages of a site.</summary>
 public sealed class SupportedCultures : ValueObject

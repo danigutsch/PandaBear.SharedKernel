@@ -1,4 +1,4 @@
-namespace PandaBear.Aspire.Analyzers;
+namespace SharedKernel.Aspire.Analyzers;
 
 /// <summary>
 /// Exposes the public diagnostic identifiers for SharedKernel Aspire analyzers.

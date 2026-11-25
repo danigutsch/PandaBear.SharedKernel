@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace PandaBear.Blazor.Tests.Browser;
+namespace SharedKernel.Blazor.Tests.Browser;
 
 /// <summary>
 /// Tests the image picker on an Interactive Server page in Chromium: the controls work once the circuit starts, and focus lands where a

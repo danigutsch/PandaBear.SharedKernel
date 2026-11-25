@@ -4,7 +4,7 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Results</PackageId>
         <Description>Core result primitives for shared-kernel workflows.</Description>
-        <RootNamespace>PandaBear.Results</RootNamespace>
+        <RootNamespace>SharedKernel.Results</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

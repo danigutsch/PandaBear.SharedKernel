@@ -1,6 +1,6 @@
 using System.Runtime.Versioning;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>Writes executable POSIX shell scripts that stand in for external tools.</summary>
 public static class FakeExecutable

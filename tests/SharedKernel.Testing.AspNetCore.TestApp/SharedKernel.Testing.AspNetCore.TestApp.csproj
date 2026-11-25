@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <RootNamespace>PandaBear.Testing.AspNetCore.TestApp</RootNamespace>
+        <RootNamespace>SharedKernel.Testing.AspNetCore.TestApp</RootNamespace>
         <IsPackable>false</IsPackable>
         <EnableTestingAnalyzers>false</EnableTestingAnalyzers>
     </PropertyGroup>

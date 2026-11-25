@@ -1,4 +1,4 @@
-namespace PandaBear.Secrets.Tests;
+namespace SharedKernel.Secrets.Tests;
 
 /// <summary>Tests the glibc calls that make a replacement atomic and durable.</summary>
 [Trait(TestTraitNames.CapabilityName, "Secrets")]

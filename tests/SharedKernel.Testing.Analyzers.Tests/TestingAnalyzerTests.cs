@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST001 to SKTEST009 xUnit test conventions enforced by TestingAnalyzer.</summary>
 public sealed class TestingAnalyzerTests
@@ -631,7 +631,7 @@ public sealed class TestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace PandaBear.Testing
+            namespace SharedKernel.Testing
             {
                 public static class TestTraitNames
                 {
@@ -662,7 +662,7 @@ public sealed class TestingAnalyzerTests
         var reportedText = sourceText.ToString(diagnostic.Location.SourceSpan);
 
         reportedText.ShouldBe("\"Category\"");
-        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
+        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
     }
 
     [Fact]
@@ -670,7 +670,7 @@ public sealed class TestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace PandaBear.Testing
+            namespace SharedKernel.Testing
             {
                 public static class TestTraitNames
                 {
@@ -702,7 +702,7 @@ public sealed class TestingAnalyzerTests
 
         // Assert
         var diagnostic = diagnostics.ShouldHaveSingleItem();
-        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CapabilityName");
+        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CapabilityName");
     }
 
     [Fact]
@@ -746,7 +746,7 @@ public sealed class TestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace PandaBear.Testing
+            namespace SharedKernel.Testing
             {
                 public static class TestTraitNames
                 {
@@ -778,7 +778,7 @@ public sealed class TestingAnalyzerTests
         // Assert
         var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
 
-        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
+        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
     }
 
     [Fact]
@@ -786,7 +786,7 @@ public sealed class TestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace PandaBear.Testing
+            namespace SharedKernel.Testing
             {
                 public static class TestTraitNames
                 {
@@ -804,7 +804,7 @@ public sealed class TestingAnalyzerTests
                 public sealed class TourLoaderTests
                 {
                     [Fact]
-                    [Trait(global::PandaBear.Testing.TestTraitNames.CategoryName, TestTraits.SmokeCategory)]
+                    [Trait(global::SharedKernel.Testing.TestTraitNames.CategoryName, TestTraits.SmokeCategory)]
                     public void Creates_a_tour_when_the_request_is_valid()
                     {
                     }
@@ -824,7 +824,7 @@ public sealed class TestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace PandaBear.Testing
+            namespace SharedKernel.Testing
             {
                 public static class TestTraitNames
                 {

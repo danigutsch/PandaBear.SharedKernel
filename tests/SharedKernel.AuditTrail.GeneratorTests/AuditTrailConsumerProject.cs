@@ -1,6 +1,6 @@
-using PandaBear.Testing.Packaging;
+using SharedKernel.Testing.Packaging;
 
-namespace PandaBear.AuditTrail.GeneratorTests;
+namespace SharedKernel.AuditTrail.GeneratorTests;
 
 /// <summary>
 /// Writes the consumer project used by the audit trail package consumption tests.
@@ -32,8 +32,8 @@ internal static class AuditTrailConsumerProject
             """,
             ("Consumer.cs", """
             using Microsoft.Extensions.DependencyInjection;
-            using PandaBear.AuditTrail;
-            using PandaBear.Domain;
+            using SharedKernel.AuditTrail;
+            using SharedKernel.Domain;
 
             namespace Consumer;
 

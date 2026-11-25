@@ -1,4 +1,4 @@
-namespace PandaBear.ApiVersioning;
+namespace SharedKernel.ApiVersioning;
 
 /// <summary>
 /// Provides helpers for API deprecation policy metadata.

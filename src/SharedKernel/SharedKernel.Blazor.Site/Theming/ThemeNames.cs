@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Theming;
+namespace SharedKernel.Blazor.Site.Theming;
 
 /// <summary>The CSS names and field-path names of the theme roles.</summary>
 internal static class ThemeNames

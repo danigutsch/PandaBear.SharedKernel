@@ -1,4 +1,4 @@
-namespace PandaBear.Tabular.Tests;
+namespace SharedKernel.Tabular.Tests;
 
 /// <summary>Random CSV documents and the comparisons of the round-trip tests.</summary>
 internal static class CsvSamples

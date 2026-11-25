@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
-using PandaBear.Forgejo;
+using SharedKernel.Forgejo;
 
-namespace PandaBear.CI.Forgejo;
+namespace SharedKernel.CI.Forgejo;
 
 /// <summary>
 /// Lists and deletes the releases of a Forgejo repository through the releases API, <c>GET</c> and <c>DELETE</c>

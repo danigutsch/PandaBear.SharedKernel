@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Verifies the shared filter used to select database integration tests.</summary>
 public sealed class IntegrationTestTraitValuesTests

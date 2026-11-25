@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>Guards the build wiring that makes the testing analyzers run in the assertion libraries.</summary>
 public static class AssertionLibraryAnalyzerTests

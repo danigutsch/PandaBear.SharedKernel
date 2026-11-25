@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Marks a test that starts a fake process written as a POSIX shell script; Windows skips it.</summary>
 [AttributeUsage(AttributeTargets.Method)]

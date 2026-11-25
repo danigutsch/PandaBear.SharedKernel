@@ -1,8 +1,8 @@
-using PandaBear.Results;
-using static PandaBear.Packages.Tool.Tests.PackagesToolHarness;
-using static PandaBear.Packages.Tool.Tests.UpdatesToolHarness;
+using SharedKernel.Results;
+using static SharedKernel.Packages.Tool.Tests.PackagesToolHarness;
+using static SharedKernel.Packages.Tool.Tests.UpdatesToolHarness;
 
-namespace PandaBear.Packages.Tool.Tests;
+namespace SharedKernel.Packages.Tool.Tests;
 
 /// <summary>Tests the <c>updates</c> command.</summary>
 [Trait(TestTraitNames.CapabilityName, "Packages")]

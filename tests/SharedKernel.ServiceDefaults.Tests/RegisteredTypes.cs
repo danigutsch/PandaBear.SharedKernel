@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.ServiceDefaults.Tests;
+namespace SharedKernel.ServiceDefaults.Tests;
 
 /// <summary>Lists the types a service registration names.</summary>
 internal static class RegisteredTypes

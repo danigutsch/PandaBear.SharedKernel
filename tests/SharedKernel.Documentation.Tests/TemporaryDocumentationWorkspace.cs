@@ -1,6 +1,6 @@
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Temporary repository root with a <c>docs/architecture</c> folder, deleted on disposal.</summary>
 internal sealed class TemporaryDocumentationWorkspace : IDisposable

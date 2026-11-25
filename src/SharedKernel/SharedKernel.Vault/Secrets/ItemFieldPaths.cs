@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Vault.Secrets;
+namespace SharedKernel.Vault.Secrets;
 
 /// <summary>
 /// The field paths of a vault item that the scanner names in a <see cref="SecretScanning.SecretLocation"/>, for example

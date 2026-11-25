@@ -7,7 +7,7 @@ using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Trace;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Tests that <see cref="ObservabilityBuilderExtensions.AddObservability{TBuilder}"/> applies the privacy baseline without a separate opt-in call.</summary>
 [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]

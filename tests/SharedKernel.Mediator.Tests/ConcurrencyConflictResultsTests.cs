@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Mediator.Tests;
+namespace SharedKernel.Mediator.Tests;
 
 /// <summary>Tests the stale-data conflict results a handler returns when the loaded version is outdated.</summary>
 public sealed class ConcurrencyConflictResultsTests

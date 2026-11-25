@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Results.Analyzers;
+namespace SharedKernel.Results.Analyzers;
 
 /// <summary>
 /// Reports misuse of SharedKernel Result values.
@@ -19,7 +19,7 @@ public sealed class ResultsAnalyzer : DiagnosticAnalyzer
         category: "Security",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "The framework serializes a returned Result struct as JSON: error details leak and the status is always 200. Convert it with ToHttpResult from PandaBear.Results.AspNet.");
+        description: "The framework serializes a returned Result struct as JSON: error details leak and the status is always 200. Convert it with ToHttpResult from SharedKernel.Results.AspNet.");
 
     private static readonly DiagnosticDescriptor DiscardedResultRule = new(
         ResultsDiagnosticIds.DiscardedResult,
@@ -170,8 +170,8 @@ public sealed class ResultsAnalyzer : DiagnosticAnalyzer
 
         public static ResultTypes? Create(Compilation compilation)
         {
-            var result = compilation.GetTypeByMetadataName("PandaBear.Results.Result");
-            var resultOfT = compilation.GetTypeByMetadataName("PandaBear.Results.Result`1");
+            var result = compilation.GetTypeByMetadataName("SharedKernel.Results.Result");
+            var resultOfT = compilation.GetTypeByMetadataName("SharedKernel.Results.Result`1");
             return result is null || resultOfT is null
                 ? null
                 : new ResultTypes(

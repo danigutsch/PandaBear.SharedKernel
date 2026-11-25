@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>How a <see cref="Hero" /> places its text and its image.</summary>
 public enum HeroLayout

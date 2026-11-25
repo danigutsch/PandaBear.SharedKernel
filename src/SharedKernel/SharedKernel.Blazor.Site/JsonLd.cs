@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// Structured data for search engines: a <c>&lt;script type="application/ld+json"&gt;</c> holding <see cref="Data" />, written with

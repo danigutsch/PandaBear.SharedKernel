@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation;
+namespace SharedKernel.Documentation;
 
 /// <summary>A labelled service-to-store connection in a data ownership diagram.</summary>
 /// <param name="serviceId">The consuming service's node identifier.</param>

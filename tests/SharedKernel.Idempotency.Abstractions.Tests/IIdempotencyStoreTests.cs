@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency.Tests;
+namespace SharedKernel.Idempotency.Tests;
 
 /// <summary>
 /// Tests the Complete overloads of IIdempotencyStore and that the other store methods remain the implementer's responsibility.

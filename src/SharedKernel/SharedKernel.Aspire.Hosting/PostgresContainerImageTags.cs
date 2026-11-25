@@ -1,4 +1,4 @@
-namespace PandaBear.Aspire.Hosting;
+namespace SharedKernel.Aspire.Hosting;
 
 /// <summary>
 /// A pinned PostgreSQL server image, for <c>AddPostgres(...).WithImageTag(Tag).WithImageSHA256(Digest)</c>. Only constants: referencing them

@@ -1,4 +1,4 @@
-namespace PandaBear.Results;
+namespace SharedKernel.Results;
 
 /// <summary>Reads validation errors from results and drops result values.</summary>
 public static class ResultValidationExtensions

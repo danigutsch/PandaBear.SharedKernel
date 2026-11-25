@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Lists of items that each break one rule of <see cref="SanitizedText.Lines" /> at most 2 items of at most 10 characters.</summary>
 public static class RefusedLineCases

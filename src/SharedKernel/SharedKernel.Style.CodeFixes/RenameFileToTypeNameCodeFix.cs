@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Style.CodeFixes;
+namespace SharedKernel.Style.CodeFixes;
 
 internal static class RenameFileToTypeNameCodeFix
 {

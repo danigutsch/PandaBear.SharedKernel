@@ -1,6 +1,6 @@
-using PandaBear.Repository.Tests.Conventions;
+using SharedKernel.Repository.Tests.Conventions;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>select</c> command: its Git comparison, its plan files, and its GitHub Actions outputs.</summary>
 public static class SelectionCommandTests

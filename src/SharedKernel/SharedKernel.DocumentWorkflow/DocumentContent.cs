@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using System.Security.Cryptography;
 using System.Text.Json;
-using PandaBear.DocumentRendering;
+using SharedKernel.DocumentRendering;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Contains one immutable structure presented for document review and rendering.</summary>
 public sealed class DocumentContent

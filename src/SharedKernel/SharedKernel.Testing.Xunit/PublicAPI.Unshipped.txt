@@ -1,34 +1,34 @@
 #nullable enable
-PandaBear.Testing.TestScopeAttribute
-PandaBear.Testing.TestScopeAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.Testing.TestScopeAttribute.Scope.get -> PandaBear.Testing.TestScope
-PandaBear.Testing.TestScopeAttribute.TestScopeAttribute(PandaBear.Testing.TestScope scope) -> void
-PandaBear.Testing.TestHostAttribute
-PandaBear.Testing.TestHostAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.Testing.TestHostAttribute.Host.get -> PandaBear.Testing.TestHost
-PandaBear.Testing.TestHostAttribute.TestHostAttribute(PandaBear.Testing.TestHost host) -> void
-PandaBear.Testing.TestFocusAttribute
-PandaBear.Testing.TestFocusAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.Testing.TestFocusAttribute.Focus.get -> PandaBear.Testing.TestFocus
-PandaBear.Testing.TestFocusAttribute.TestFocusAttribute(PandaBear.Testing.TestFocus focus) -> void
-PandaBear.Testing.TestPriorityAttribute
-PandaBear.Testing.TestPriorityAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.Testing.TestPriorityAttribute.Priority.get -> PandaBear.Testing.TestPriority
-PandaBear.Testing.TestPriorityAttribute.TestPriorityAttribute(PandaBear.Testing.TestPriority priority) -> void
-PandaBear.Testing.TestAreaAttribute
-PandaBear.Testing.TestAreaAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.Testing.TestAreaAttribute.TestAreaAttribute(string! value) -> void
-PandaBear.Testing.TestSurfaceAttribute
-PandaBear.Testing.TestSurfaceAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.Testing.TestSurfaceAttribute.TestSurfaceAttribute(string! value) -> void
-PandaBear.Testing.TestAreaAttribute.Value.get -> string!
-PandaBear.Testing.TestSurfaceAttribute.Value.get -> string!
-PandaBear.Testing.TestCapabilityAttribute
-PandaBear.Testing.TestCapabilityAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
-PandaBear.Testing.TestCapabilityAttribute.TestCapabilityAttribute(string! value) -> void
-PandaBear.Testing.TestCapabilityAttribute.Value.get -> string!
-PandaBear.Testing.TestOutputLoggerProvider
-PandaBear.Testing.TestOutputLoggerProvider.CreateLogger(string! categoryName) -> Microsoft.Extensions.Logging.ILogger!
-PandaBear.Testing.TestOutputLoggerProvider.Dispose() -> void
-PandaBear.Testing.TestOutputLoggerProvider.TestOutputLoggerProvider() -> void
-PandaBear.Testing.TestOutputLoggerProvider.TestOutputLoggerProvider(Xunit.ITestOutputHelper? owner) -> void
+SharedKernel.Testing.TestScopeAttribute
+SharedKernel.Testing.TestScopeAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.Testing.TestScopeAttribute.Scope.get -> SharedKernel.Testing.TestScope
+SharedKernel.Testing.TestScopeAttribute.TestScopeAttribute(SharedKernel.Testing.TestScope scope) -> void
+SharedKernel.Testing.TestHostAttribute
+SharedKernel.Testing.TestHostAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.Testing.TestHostAttribute.Host.get -> SharedKernel.Testing.TestHost
+SharedKernel.Testing.TestHostAttribute.TestHostAttribute(SharedKernel.Testing.TestHost host) -> void
+SharedKernel.Testing.TestFocusAttribute
+SharedKernel.Testing.TestFocusAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.Testing.TestFocusAttribute.Focus.get -> SharedKernel.Testing.TestFocus
+SharedKernel.Testing.TestFocusAttribute.TestFocusAttribute(SharedKernel.Testing.TestFocus focus) -> void
+SharedKernel.Testing.TestPriorityAttribute
+SharedKernel.Testing.TestPriorityAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.Testing.TestPriorityAttribute.Priority.get -> SharedKernel.Testing.TestPriority
+SharedKernel.Testing.TestPriorityAttribute.TestPriorityAttribute(SharedKernel.Testing.TestPriority priority) -> void
+SharedKernel.Testing.TestAreaAttribute
+SharedKernel.Testing.TestAreaAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.Testing.TestAreaAttribute.TestAreaAttribute(string! value) -> void
+SharedKernel.Testing.TestSurfaceAttribute
+SharedKernel.Testing.TestSurfaceAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.Testing.TestSurfaceAttribute.TestSurfaceAttribute(string! value) -> void
+SharedKernel.Testing.TestAreaAttribute.Value.get -> string!
+SharedKernel.Testing.TestSurfaceAttribute.Value.get -> string!
+SharedKernel.Testing.TestCapabilityAttribute
+SharedKernel.Testing.TestCapabilityAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+SharedKernel.Testing.TestCapabilityAttribute.TestCapabilityAttribute(string! value) -> void
+SharedKernel.Testing.TestCapabilityAttribute.Value.get -> string!
+SharedKernel.Testing.TestOutputLoggerProvider
+SharedKernel.Testing.TestOutputLoggerProvider.CreateLogger(string! categoryName) -> Microsoft.Extensions.Logging.ILogger!
+SharedKernel.Testing.TestOutputLoggerProvider.Dispose() -> void
+SharedKernel.Testing.TestOutputLoggerProvider.TestOutputLoggerProvider() -> void
+SharedKernel.Testing.TestOutputLoggerProvider.TestOutputLoggerProvider(Xunit.ITestOutputHelper? owner) -> void

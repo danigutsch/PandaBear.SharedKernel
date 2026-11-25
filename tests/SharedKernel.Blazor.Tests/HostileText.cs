@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Hostile strings that must never reach free-form user messages unchanged.</summary>
 internal static class HostileText

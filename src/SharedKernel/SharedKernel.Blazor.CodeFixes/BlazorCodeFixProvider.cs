@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using PandaBear.Blazor.Analyzers;
+using SharedKernel.Blazor.Analyzers;
 
-namespace PandaBear.Blazor.CodeFixes;
+namespace SharedKernel.Blazor.CodeFixes;
 
 /// <summary>
 /// Provides the safe code fixes for the SharedKernel Blazor component analyzers.

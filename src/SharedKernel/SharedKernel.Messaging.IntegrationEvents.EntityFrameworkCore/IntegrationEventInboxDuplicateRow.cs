@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>Metadata for a completed inbox operation with at least one observed duplicate.</summary>
 /// <param name="EventId">The immutable integration event identifier.</param>

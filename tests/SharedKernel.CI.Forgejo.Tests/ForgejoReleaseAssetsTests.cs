@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace PandaBear.CI.Forgejo.Tests;
+namespace SharedKernel.CI.Forgejo.Tests;
 
 /// <summary>Guards how release attachments are located through the Forgejo API.</summary>
 public sealed class ForgejoReleaseAssetsTests

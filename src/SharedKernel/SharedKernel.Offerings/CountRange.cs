@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>An inclusive range of item counts, such as three to ten highlights.</summary>
 public sealed record CountRange

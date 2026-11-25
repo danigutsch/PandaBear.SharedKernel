@@ -1,7 +1,7 @@
-using PandaBear.VaultManager.Tool.Cli;
+using SharedKernel.VaultManager.Tool.Cli;
 using Terminal.Gui.App;
 
-namespace PandaBear.VaultManager.Tool.Review;
+namespace SharedKernel.VaultManager.Tool.Review;
 
 /// <summary>Runs the review window on the terminal of the current process.</summary>
 internal static class ReviewApp

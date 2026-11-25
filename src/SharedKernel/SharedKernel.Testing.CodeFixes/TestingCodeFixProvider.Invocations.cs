@@ -4,11 +4,11 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
-using PandaBear.Testing.Analyzers;
+using SharedKernel.Testing.Analyzers;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace PandaBear.Testing.CodeFixes;
+namespace SharedKernel.Testing.CodeFixes;
 
 public sealed partial class TestingCodeFixProvider
 {
@@ -75,7 +75,7 @@ public sealed partial class TestingCodeFixProvider
             updatedRoot = AddAssertionUsing(root.ReplaceNode(invocation, replacement));
         }
         else if (diagnostic.Id == TestingDiagnosticIds.ConditionalAssertion
-            && method.ContainingType.ToDisplayString() == "PandaBear.Testing.Assertions.ShouldAssertionExtensions"
+            && method.ContainingType.ToDisplayString() == "SharedKernel.Testing.Assertions.ShouldAssertionExtensions"
             && method.Name.StartsWith("ShouldBe", StringComparison.Ordinal)
             && invocation.FirstAncestorOrSelf<ExpressionStatementSyntax>() is { Parent: BlockSyntax block } statement
             && statement.Expression is ConditionalAccessExpressionSyntax conditional
@@ -162,7 +162,7 @@ public sealed partial class TestingCodeFixProvider
         var updatedInvocation = updatedTree?.GetAnnotatedNodes(annotation).OfType<InvocationExpressionSyntax>().SingleOrDefault();
         if (updatedInvocation is null || updatedModel is null
             || updatedModel.GetSymbolInfo(updatedInvocation, context.CancellationToken).Symbol is not IMethodSymbol replacementMethod
-            || replacementMethod.ContainingType.ToDisplayString() != "PandaBear.Testing.Assertions.ShouldAssertionExtensions"
+            || replacementMethod.ContainingType.ToDisplayString() != "SharedKernel.Testing.Assertions.ShouldAssertionExtensions"
             || updatedModel.GetDiagnostics(updatedInvocation.Span, context.CancellationToken).Any(static d => d.Severity == DiagnosticSeverity.Error))
         {
             return;

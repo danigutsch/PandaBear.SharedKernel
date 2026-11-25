@@ -1,4 +1,4 @@
-namespace PandaBear.IO.Analyzers.Tests;
+namespace SharedKernel.IO.Analyzers.Tests;
 
 /// <summary>
 /// Tests that IOAnalyzer reports unbounded stream buffering and hand-rolled copy loops, and accepts explicitly bounded code.

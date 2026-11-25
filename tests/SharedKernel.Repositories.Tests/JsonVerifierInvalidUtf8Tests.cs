@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories.Tests;
+namespace SharedKernel.Repositories.Tests;
 
 /// <summary>Pins the position that <see cref="JsonVerifier.DescribeInvalidUtf8"/> reports for the first invalid UTF-8 sequence.</summary>
 public sealed class JsonVerifierInvalidUtf8Tests

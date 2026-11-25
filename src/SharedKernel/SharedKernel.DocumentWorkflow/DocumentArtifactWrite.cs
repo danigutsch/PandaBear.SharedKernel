@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
-using PandaBear.Review;
+using SharedKernel.Review;
 
-namespace PandaBear.DocumentWorkflow;
+namespace SharedKernel.DocumentWorkflow;
 
 /// <summary>Describes the bounded renderer output to store immutably for an approved draft.</summary>
 public sealed class DocumentArtifactWrite

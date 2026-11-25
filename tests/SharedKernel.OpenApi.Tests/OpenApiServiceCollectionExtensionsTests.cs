@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using PandaBear.ApiVersioning;
+using SharedKernel.ApiVersioning;
 using System.Reflection;
 using Xunit;
 
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>
 /// Verifies named document registration and route filtering behavior.

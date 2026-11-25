@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Secrets;
+namespace SharedKernel.Secrets;
 
 /// <summary>
 /// Source-generated metadata for <c>.config/sharedkernel-secrets.json</c>. Property names are camelCase and match exactly.

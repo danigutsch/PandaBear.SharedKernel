@@ -1,4 +1,4 @@
-namespace PandaBear.Documentation.Tests;
+namespace SharedKernel.Documentation.Tests;
 
 /// <summary>Tests that the documentation tool invocations written in the CI workflow and READMEs still parse against the current command line.</summary>
 [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.CommandLineCapability)]

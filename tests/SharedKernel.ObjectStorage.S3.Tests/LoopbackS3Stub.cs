@@ -1,7 +1,7 @@
 using System.Net;
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
-namespace PandaBear.ObjectStorage.S3.Tests;
+namespace SharedKernel.ObjectStorage.S3.Tests;
 
 /// <summary>An in-process loopback HTTP endpoint that records requests and answers with scripted S3 status codes.</summary>
 internal sealed class LoopbackS3Stub : IDisposable

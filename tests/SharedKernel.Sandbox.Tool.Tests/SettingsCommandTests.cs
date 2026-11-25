@@ -1,6 +1,6 @@
-using static PandaBear.Sandbox.Tool.Tests.SettingsToolHarness;
+using static SharedKernel.Sandbox.Tool.Tests.SettingsToolHarness;
 
-namespace PandaBear.Sandbox.Tool.Tests;
+namespace SharedKernel.Sandbox.Tool.Tests;
 
 /// <summary>Tests the <c>settings plan</c>, <c>apply</c>, and <c>verify</c> commands.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

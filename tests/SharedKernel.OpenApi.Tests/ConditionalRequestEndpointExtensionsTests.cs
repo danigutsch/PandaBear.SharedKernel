@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi;
 using Xunit;
 
-namespace PandaBear.OpenApi.Tests;
+namespace SharedKernel.OpenApi.Tests;
 
 /// <summary>
 /// Verifies that conditional-request endpoints document the required <c>If-Match</c> header with their 400, 412 and 428 problems, and that

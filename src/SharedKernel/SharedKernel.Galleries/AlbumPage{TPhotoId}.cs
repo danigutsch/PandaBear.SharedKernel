@@ -1,6 +1,6 @@
-using PandaBear.BuildingBlocks;
+using SharedKernel.BuildingBlocks;
 
-namespace PandaBear.Galleries;
+namespace SharedKernel.Galleries;
 
 /// <summary>One page of an album's photos: the page window and the photos on it.</summary>
 /// <typeparam name="TPhotoId">The photo id type.</typeparam>

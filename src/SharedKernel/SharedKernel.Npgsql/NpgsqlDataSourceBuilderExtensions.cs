@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>
 /// Provides reusable privacy-safe tracing configuration for Npgsql data sources.

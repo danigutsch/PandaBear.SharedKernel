@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>Guards the <c>verify-restore-warnings</c> command, which fails on NuGet vulnerability warnings of every severity and on audits that could not run, and reports the rest.</summary>
 public sealed class RestoreWarningVerificationTests

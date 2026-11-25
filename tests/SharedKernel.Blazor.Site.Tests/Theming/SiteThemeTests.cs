@@ -1,7 +1,7 @@
-using PandaBear.Blazor.Site.Theming;
-using PandaBear.Results;
+using SharedKernel.Blazor.Site.Theming;
+using SharedKernel.Results;
 
-namespace PandaBear.Blazor.Site.Tests.Theming;
+namespace SharedKernel.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the theme rules: contrast in both schemes, readable sizes, heading order and font references.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

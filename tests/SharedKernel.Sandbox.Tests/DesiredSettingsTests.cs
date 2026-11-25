@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Tests how the configuration, the dotnet profile, and the risk flags become the desired entries.</summary>
 [Trait(TestTraitNames.CapabilityName, "Sandbox")]

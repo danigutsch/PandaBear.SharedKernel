@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the polling address wait against routed pages in Chromium; the browser tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>

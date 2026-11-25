@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the native disclosure.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

@@ -1,4 +1,4 @@
-namespace PandaBear.Messaging.Tests;
+namespace SharedKernel.Messaging.Tests;
 
 /// <summary>Unit tests for EventEnvelope construction and argument validation.</summary>
 public sealed class EventEnvelopeTests

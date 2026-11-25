@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear;
+namespace SharedKernel;
 
 /// <summary>
 /// Keeps telemetry from breaking the host or its failure handling: a failing logger, meter factory or listener is surfaced on

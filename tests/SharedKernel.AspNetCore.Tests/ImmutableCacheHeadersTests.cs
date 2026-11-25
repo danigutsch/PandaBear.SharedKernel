@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
-using PandaBear.HttpCaching.AspNetCore;
+using SharedKernel.HttpCaching.AspNetCore;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Tests the cache header of content-addressed responses: public, one year, immutable.</summary>
 public sealed class ImmutableCacheHeadersTests

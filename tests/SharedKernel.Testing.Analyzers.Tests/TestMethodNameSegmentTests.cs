@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST002 built-in and configured test method name segments and the SKTEST021 configuration check.</summary>
 public sealed class TestMethodNameSegmentTests

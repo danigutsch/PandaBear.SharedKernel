@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// The rules of a list of per-culture translations over <see cref="SupportedCultures"/>: each translation uses one of the cultures, each

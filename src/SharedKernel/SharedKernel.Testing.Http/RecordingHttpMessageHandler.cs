@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace PandaBear.Testing.Http;
+namespace SharedKernel.Testing.Http;
 
 /// <summary>
 /// Records every request, with its body buffered, and answers each one with a new response, so a test

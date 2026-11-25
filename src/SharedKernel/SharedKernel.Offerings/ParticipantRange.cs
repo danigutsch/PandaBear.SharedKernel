@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>The smallest and largest group an offering takes; either may be absent. It is also the entered value.</summary>
 /// <param name="Min">The smallest group.</param>

@@ -1,7 +1,7 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 
-namespace PandaBear.Blazor.Site;
+namespace SharedKernel.Blazor.Site;
 
 /// <summary>Renders an <c>h1</c> to <c>h6</c> element for a level the caller configures.</summary>
 internal static class Heading

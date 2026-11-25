@@ -1,135 +1,135 @@
 #nullable enable
-PandaBear.ImageProcessing.ImageAnimationDetector
-PandaBear.ImageProcessing.ImageAnimationStatus
-PandaBear.ImageProcessing.ImageAnimationStatus.Animated = 2 -> PandaBear.ImageProcessing.ImageAnimationStatus
-PandaBear.ImageProcessing.ImageAnimationStatus.Malformed = 0 -> PandaBear.ImageProcessing.ImageAnimationStatus
-PandaBear.ImageProcessing.ImageAnimationStatus.Static = 1 -> PandaBear.ImageProcessing.ImageAnimationStatus
-PandaBear.ImageProcessing.ImageAnimationStatus.Unsupported = 3 -> PandaBear.ImageProcessing.ImageAnimationStatus
-PandaBear.ImageProcessing.ImageInputFormat
-PandaBear.ImageProcessing.ImageInputFormat.Avif = 3 -> PandaBear.ImageProcessing.ImageInputFormat
-PandaBear.ImageProcessing.ImageInputFormat.Jpeg = 0 -> PandaBear.ImageProcessing.ImageInputFormat
-PandaBear.ImageProcessing.ImageInputFormat.Png = 1 -> PandaBear.ImageProcessing.ImageInputFormat
-PandaBear.ImageProcessing.ImageInputFormat.WebP = 2 -> PandaBear.ImageProcessing.ImageInputFormat
-PandaBear.ImageProcessing.ImageOutputFormat
-PandaBear.ImageProcessing.ImageOutputFormat.Avif = 0 -> PandaBear.ImageProcessing.ImageOutputFormat
-PandaBear.ImageProcessing.ImageOutputFormat.Ico = 3 -> PandaBear.ImageProcessing.ImageOutputFormat
-PandaBear.ImageProcessing.ImageOutputFormat.Jpeg = 2 -> PandaBear.ImageProcessing.ImageOutputFormat
-PandaBear.ImageProcessing.ImageOutputFormat.Png = 4 -> PandaBear.ImageProcessing.ImageOutputFormat
-PandaBear.ImageProcessing.ImageOutputFormat.WebP = 1 -> PandaBear.ImageProcessing.ImageOutputFormat
-PandaBear.ImageProcessing.ImageProbeResult
-PandaBear.ImageProcessing.ImageProbeResult.Format.get -> PandaBear.ImageProcessing.ImageInputFormat
-PandaBear.ImageProcessing.ImageProbeResult.Format.init -> void
-PandaBear.ImageProcessing.ImageProbeResult.Height.get -> int
-PandaBear.ImageProcessing.ImageProbeResult.Height.init -> void
-PandaBear.ImageProcessing.ImageProbeResult.ImageProbeResult(PandaBear.ImageProcessing.ImageInputFormat Format, int Width, int Height, bool IsAnimated) -> void
-PandaBear.ImageProcessing.ImageProbeResult.IsAnimated.get -> bool
-PandaBear.ImageProcessing.ImageProbeResult.IsAnimated.init -> void
-PandaBear.ImageProcessing.ImageProbeResult.Width.get -> int
-PandaBear.ImageProcessing.ImageProbeResult.Width.init -> void
-PandaBear.ImageProcessing.ImageProcessingException
-PandaBear.ImageProcessing.ImageProcessingException.ImageProcessingException() -> void
-PandaBear.ImageProcessing.ImageProcessingException.ImageProcessingException(string! message) -> void
-PandaBear.ImageProcessing.ImageProcessingException.ImageProcessingException(string! message, System.Exception! innerException) -> void
-PandaBear.ImageProcessing.ImageProcessingLimits
-PandaBear.ImageProcessing.ImageProcessingLimits.ImageProcessingLimits(int MaxWidth, int MaxHeight, long MaxPixelCount) -> void
-PandaBear.ImageProcessing.ImageProcessingLimits.MaxHeight.get -> int
-PandaBear.ImageProcessing.ImageProcessingLimits.MaxHeight.init -> void
-PandaBear.ImageProcessing.ImageProcessingLimits.MaxPixelCount.get -> long
-PandaBear.ImageProcessing.ImageProcessingLimits.MaxPixelCount.init -> void
-PandaBear.ImageProcessing.ImageProcessingLimits.MaxWidth.get -> int
-PandaBear.ImageProcessing.ImageProcessingLimits.MaxWidth.init -> void
-PandaBear.ImageProcessing.ImageProcessingRequest
-PandaBear.ImageProcessing.ImageProcessingRequest.Content.get -> System.IO.Stream!
-PandaBear.ImageProcessing.ImageProcessingRequest.Content.init -> void
-PandaBear.ImageProcessing.ImageProcessingRequest.ImageProcessingRequest(System.IO.Stream! Content, System.Collections.Generic.IReadOnlyList<PandaBear.ImageProcessing.ImageVariantRequest!>! Variants, PandaBear.ImageProcessing.ImageProcessingLimits! Limits) -> void
-PandaBear.ImageProcessing.ImageProcessingRequest.Limits.get -> PandaBear.ImageProcessing.ImageProcessingLimits!
-PandaBear.ImageProcessing.ImageProcessingRequest.Limits.init -> void
-PandaBear.ImageProcessing.ImageProcessingRequest.Variants.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ImageProcessing.ImageVariantRequest!>!
-PandaBear.ImageProcessing.ImageProcessingRequest.Variants.init -> void
-PandaBear.ImageProcessing.ImageProcessingResult
-PandaBear.ImageProcessing.ImageProcessingResult.Height.get -> int
-PandaBear.ImageProcessing.ImageProcessingResult.Height.init -> void
-PandaBear.ImageProcessing.ImageProcessingResult.ImageProcessingResult(int Width, int Height, System.Collections.Generic.IReadOnlyList<PandaBear.ImageProcessing.ProcessedImageVariant!>! Variants) -> void
-PandaBear.ImageProcessing.ImageProcessingResult.Variants.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ImageProcessing.ProcessedImageVariant!>!
-PandaBear.ImageProcessing.ImageProcessingResult.Variants.init -> void
-PandaBear.ImageProcessing.ImageProcessingResult.Width.get -> int
-PandaBear.ImageProcessing.ImageProcessingResult.Width.init -> void
-PandaBear.ImageProcessing.ImageVariantRequest
-PandaBear.ImageProcessing.ImageVariantRequest.Format.get -> PandaBear.ImageProcessing.ImageOutputFormat
-PandaBear.ImageProcessing.ImageVariantRequest.Format.init -> void
-PandaBear.ImageProcessing.ImageVariantRequest.ImageVariantRequest(string! Name, PandaBear.ImageProcessing.ImageOutputFormat Format, int MaxWidth, int Quality, int? MaxHeight = null) -> void
-PandaBear.ImageProcessing.ImageVariantRequest.MaxHeight.get -> int?
-PandaBear.ImageProcessing.ImageVariantRequest.MaxHeight.init -> void
-PandaBear.ImageProcessing.ImageVariantRequest.MaxWidth.get -> int
-PandaBear.ImageProcessing.ImageVariantRequest.MaxWidth.init -> void
-PandaBear.ImageProcessing.ImageVariantRequest.Name.get -> string!
-PandaBear.ImageProcessing.ImageVariantRequest.Name.init -> void
-PandaBear.ImageProcessing.ImageVariantRequest.Quality.get -> int
-PandaBear.ImageProcessing.ImageVariantRequest.Quality.init -> void
-PandaBear.ImageProcessing.MagickImageProcessor
-PandaBear.ImageProcessing.ProcessedImageVariant
-PandaBear.ImageProcessing.ProcessedImageVariant.Content.get -> System.ReadOnlyMemory<byte>
-PandaBear.ImageProcessing.ProcessedImageVariant.Content.init -> void
-PandaBear.ImageProcessing.ProcessedImageVariant.Format.get -> PandaBear.ImageProcessing.ImageOutputFormat
-PandaBear.ImageProcessing.ProcessedImageVariant.Format.init -> void
-PandaBear.ImageProcessing.ProcessedImageVariant.Height.get -> int
-PandaBear.ImageProcessing.ProcessedImageVariant.Height.init -> void
-PandaBear.ImageProcessing.ProcessedImageVariant.Name.get -> string!
-PandaBear.ImageProcessing.ProcessedImageVariant.Name.init -> void
-PandaBear.ImageProcessing.ProcessedImageVariant.ProcessedImageVariant(string! Name, PandaBear.ImageProcessing.ImageOutputFormat Format, int Width, int Height, System.ReadOnlyMemory<byte> Content) -> void
-PandaBear.ImageProcessing.ProcessedImageVariant.Width.get -> int
-PandaBear.ImageProcessing.ProcessedImageVariant.Width.init -> void
-const PandaBear.ImageProcessing.ImageAnimationDetector.MaxChunkCount = 4096 -> int
-static PandaBear.ImageProcessing.ImageAnimationDetector.Detect(System.IO.Stream! content) -> PandaBear.ImageProcessing.ImageAnimationStatus
-static PandaBear.ImageProcessing.ImageAnimationDetector.Detect(System.ReadOnlySpan<byte> content) -> PandaBear.ImageProcessing.ImageAnimationStatus
-static PandaBear.ImageProcessing.ImageProcessingLimits.WebDefault.get -> PandaBear.ImageProcessing.ImageProcessingLimits!
-static PandaBear.ImageProcessing.MagickImageProcessor.Probe(System.IO.Stream! content, PandaBear.ImageProcessing.ImageProcessingLimits! limits) -> PandaBear.ImageProcessing.ImageProbeResult!
-static PandaBear.ImageProcessing.MagickImageProcessor.Process(PandaBear.ImageProcessing.ImageProcessingRequest! request, System.Threading.CancellationToken ct) -> PandaBear.ImageProcessing.ImageProcessingResult!
-PandaBear.ImageProcessing.ImageProbeResult.<Clone>$() -> PandaBear.ImageProcessing.ImageProbeResult!
-PandaBear.ImageProcessing.ImageProbeResult.Deconstruct(out PandaBear.ImageProcessing.ImageInputFormat Format, out int Width, out int Height, out bool IsAnimated) -> void
-PandaBear.ImageProcessing.ImageProbeResult.Equals(PandaBear.ImageProcessing.ImageProbeResult? other) -> bool
-PandaBear.ImageProcessing.ImageProcessingLimits.<Clone>$() -> PandaBear.ImageProcessing.ImageProcessingLimits!
-PandaBear.ImageProcessing.ImageProcessingLimits.Deconstruct(out int MaxWidth, out int MaxHeight, out long MaxPixelCount) -> void
-PandaBear.ImageProcessing.ImageProcessingLimits.Equals(PandaBear.ImageProcessing.ImageProcessingLimits? other) -> bool
-PandaBear.ImageProcessing.ImageProcessingRequest.<Clone>$() -> PandaBear.ImageProcessing.ImageProcessingRequest!
-PandaBear.ImageProcessing.ImageProcessingRequest.Deconstruct(out System.IO.Stream! Content, out System.Collections.Generic.IReadOnlyList<PandaBear.ImageProcessing.ImageVariantRequest!>! Variants, out PandaBear.ImageProcessing.ImageProcessingLimits! Limits) -> void
-PandaBear.ImageProcessing.ImageProcessingRequest.Equals(PandaBear.ImageProcessing.ImageProcessingRequest? other) -> bool
-PandaBear.ImageProcessing.ImageProcessingResult.<Clone>$() -> PandaBear.ImageProcessing.ImageProcessingResult!
-PandaBear.ImageProcessing.ImageProcessingResult.Deconstruct(out int Width, out int Height, out System.Collections.Generic.IReadOnlyList<PandaBear.ImageProcessing.ProcessedImageVariant!>! Variants) -> void
-PandaBear.ImageProcessing.ImageProcessingResult.Equals(PandaBear.ImageProcessing.ImageProcessingResult? other) -> bool
-PandaBear.ImageProcessing.ImageVariantRequest.<Clone>$() -> PandaBear.ImageProcessing.ImageVariantRequest!
-PandaBear.ImageProcessing.ImageVariantRequest.Deconstruct(out string! Name, out PandaBear.ImageProcessing.ImageOutputFormat Format, out int MaxWidth, out int Quality, out int? MaxHeight) -> void
-PandaBear.ImageProcessing.ImageVariantRequest.Equals(PandaBear.ImageProcessing.ImageVariantRequest? other) -> bool
-PandaBear.ImageProcessing.ProcessedImageVariant.<Clone>$() -> PandaBear.ImageProcessing.ProcessedImageVariant!
-PandaBear.ImageProcessing.ProcessedImageVariant.Deconstruct(out string! Name, out PandaBear.ImageProcessing.ImageOutputFormat Format, out int Width, out int Height, out System.ReadOnlyMemory<byte> Content) -> void
-PandaBear.ImageProcessing.ProcessedImageVariant.Equals(PandaBear.ImageProcessing.ProcessedImageVariant? other) -> bool
-override PandaBear.ImageProcessing.ImageProbeResult.Equals(object? obj) -> bool
-override PandaBear.ImageProcessing.ImageProbeResult.GetHashCode() -> int
-override PandaBear.ImageProcessing.ImageProbeResult.ToString() -> string!
-override PandaBear.ImageProcessing.ImageProcessingLimits.Equals(object? obj) -> bool
-override PandaBear.ImageProcessing.ImageProcessingLimits.GetHashCode() -> int
-override PandaBear.ImageProcessing.ImageProcessingLimits.ToString() -> string!
-override PandaBear.ImageProcessing.ImageProcessingRequest.Equals(object? obj) -> bool
-override PandaBear.ImageProcessing.ImageProcessingRequest.GetHashCode() -> int
-override PandaBear.ImageProcessing.ImageProcessingRequest.ToString() -> string!
-override PandaBear.ImageProcessing.ImageProcessingResult.Equals(object? obj) -> bool
-override PandaBear.ImageProcessing.ImageProcessingResult.GetHashCode() -> int
-override PandaBear.ImageProcessing.ImageProcessingResult.ToString() -> string!
-override PandaBear.ImageProcessing.ImageVariantRequest.Equals(object? obj) -> bool
-override PandaBear.ImageProcessing.ImageVariantRequest.GetHashCode() -> int
-override PandaBear.ImageProcessing.ImageVariantRequest.ToString() -> string!
-override PandaBear.ImageProcessing.ProcessedImageVariant.Equals(object? obj) -> bool
-override PandaBear.ImageProcessing.ProcessedImageVariant.GetHashCode() -> int
-override PandaBear.ImageProcessing.ProcessedImageVariant.ToString() -> string!
-static PandaBear.ImageProcessing.ImageProbeResult.operator !=(PandaBear.ImageProcessing.ImageProbeResult? left, PandaBear.ImageProcessing.ImageProbeResult? right) -> bool
-static PandaBear.ImageProcessing.ImageProbeResult.operator ==(PandaBear.ImageProcessing.ImageProbeResult? left, PandaBear.ImageProcessing.ImageProbeResult? right) -> bool
-static PandaBear.ImageProcessing.ImageProcessingLimits.operator !=(PandaBear.ImageProcessing.ImageProcessingLimits? left, PandaBear.ImageProcessing.ImageProcessingLimits? right) -> bool
-static PandaBear.ImageProcessing.ImageProcessingLimits.operator ==(PandaBear.ImageProcessing.ImageProcessingLimits? left, PandaBear.ImageProcessing.ImageProcessingLimits? right) -> bool
-static PandaBear.ImageProcessing.ImageProcessingRequest.operator !=(PandaBear.ImageProcessing.ImageProcessingRequest? left, PandaBear.ImageProcessing.ImageProcessingRequest? right) -> bool
-static PandaBear.ImageProcessing.ImageProcessingRequest.operator ==(PandaBear.ImageProcessing.ImageProcessingRequest? left, PandaBear.ImageProcessing.ImageProcessingRequest? right) -> bool
-static PandaBear.ImageProcessing.ImageProcessingResult.operator !=(PandaBear.ImageProcessing.ImageProcessingResult? left, PandaBear.ImageProcessing.ImageProcessingResult? right) -> bool
-static PandaBear.ImageProcessing.ImageProcessingResult.operator ==(PandaBear.ImageProcessing.ImageProcessingResult? left, PandaBear.ImageProcessing.ImageProcessingResult? right) -> bool
-static PandaBear.ImageProcessing.ImageVariantRequest.operator !=(PandaBear.ImageProcessing.ImageVariantRequest? left, PandaBear.ImageProcessing.ImageVariantRequest? right) -> bool
-static PandaBear.ImageProcessing.ImageVariantRequest.operator ==(PandaBear.ImageProcessing.ImageVariantRequest? left, PandaBear.ImageProcessing.ImageVariantRequest? right) -> bool
-static PandaBear.ImageProcessing.ProcessedImageVariant.operator !=(PandaBear.ImageProcessing.ProcessedImageVariant? left, PandaBear.ImageProcessing.ProcessedImageVariant? right) -> bool
-static PandaBear.ImageProcessing.ProcessedImageVariant.operator ==(PandaBear.ImageProcessing.ProcessedImageVariant? left, PandaBear.ImageProcessing.ProcessedImageVariant? right) -> bool
+SharedKernel.ImageProcessing.ImageAnimationDetector
+SharedKernel.ImageProcessing.ImageAnimationStatus
+SharedKernel.ImageProcessing.ImageAnimationStatus.Animated = 2 -> SharedKernel.ImageProcessing.ImageAnimationStatus
+SharedKernel.ImageProcessing.ImageAnimationStatus.Malformed = 0 -> SharedKernel.ImageProcessing.ImageAnimationStatus
+SharedKernel.ImageProcessing.ImageAnimationStatus.Static = 1 -> SharedKernel.ImageProcessing.ImageAnimationStatus
+SharedKernel.ImageProcessing.ImageAnimationStatus.Unsupported = 3 -> SharedKernel.ImageProcessing.ImageAnimationStatus
+SharedKernel.ImageProcessing.ImageInputFormat
+SharedKernel.ImageProcessing.ImageInputFormat.Avif = 3 -> SharedKernel.ImageProcessing.ImageInputFormat
+SharedKernel.ImageProcessing.ImageInputFormat.Jpeg = 0 -> SharedKernel.ImageProcessing.ImageInputFormat
+SharedKernel.ImageProcessing.ImageInputFormat.Png = 1 -> SharedKernel.ImageProcessing.ImageInputFormat
+SharedKernel.ImageProcessing.ImageInputFormat.WebP = 2 -> SharedKernel.ImageProcessing.ImageInputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.Avif = 0 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.Ico = 3 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.Jpeg = 2 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.Png = 4 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.WebP = 1 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageProbeResult
+SharedKernel.ImageProcessing.ImageProbeResult.Format.get -> SharedKernel.ImageProcessing.ImageInputFormat
+SharedKernel.ImageProcessing.ImageProbeResult.Format.init -> void
+SharedKernel.ImageProcessing.ImageProbeResult.Height.get -> int
+SharedKernel.ImageProcessing.ImageProbeResult.Height.init -> void
+SharedKernel.ImageProcessing.ImageProbeResult.ImageProbeResult(SharedKernel.ImageProcessing.ImageInputFormat Format, int Width, int Height, bool IsAnimated) -> void
+SharedKernel.ImageProcessing.ImageProbeResult.IsAnimated.get -> bool
+SharedKernel.ImageProcessing.ImageProbeResult.IsAnimated.init -> void
+SharedKernel.ImageProcessing.ImageProbeResult.Width.get -> int
+SharedKernel.ImageProcessing.ImageProbeResult.Width.init -> void
+SharedKernel.ImageProcessing.ImageProcessingException
+SharedKernel.ImageProcessing.ImageProcessingException.ImageProcessingException() -> void
+SharedKernel.ImageProcessing.ImageProcessingException.ImageProcessingException(string! message) -> void
+SharedKernel.ImageProcessing.ImageProcessingException.ImageProcessingException(string! message, System.Exception! innerException) -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits
+SharedKernel.ImageProcessing.ImageProcessingLimits.ImageProcessingLimits(int MaxWidth, int MaxHeight, long MaxPixelCount) -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxHeight.get -> int
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxHeight.init -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxPixelCount.get -> long
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxPixelCount.init -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxWidth.get -> int
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxWidth.init -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest
+SharedKernel.ImageProcessing.ImageProcessingRequest.Content.get -> System.IO.Stream!
+SharedKernel.ImageProcessing.ImageProcessingRequest.Content.init -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest.ImageProcessingRequest(System.IO.Stream! Content, System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ImageVariantRequest!>! Variants, SharedKernel.ImageProcessing.ImageProcessingLimits! Limits) -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest.Limits.get -> SharedKernel.ImageProcessing.ImageProcessingLimits!
+SharedKernel.ImageProcessing.ImageProcessingRequest.Limits.init -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest.Variants.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ImageVariantRequest!>!
+SharedKernel.ImageProcessing.ImageProcessingRequest.Variants.init -> void
+SharedKernel.ImageProcessing.ImageProcessingResult
+SharedKernel.ImageProcessing.ImageProcessingResult.Height.get -> int
+SharedKernel.ImageProcessing.ImageProcessingResult.Height.init -> void
+SharedKernel.ImageProcessing.ImageProcessingResult.ImageProcessingResult(int Width, int Height, System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ProcessedImageVariant!>! Variants) -> void
+SharedKernel.ImageProcessing.ImageProcessingResult.Variants.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ProcessedImageVariant!>!
+SharedKernel.ImageProcessing.ImageProcessingResult.Variants.init -> void
+SharedKernel.ImageProcessing.ImageProcessingResult.Width.get -> int
+SharedKernel.ImageProcessing.ImageProcessingResult.Width.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest
+SharedKernel.ImageProcessing.ImageVariantRequest.Format.get -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageVariantRequest.Format.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.ImageVariantRequest(string! Name, SharedKernel.ImageProcessing.ImageOutputFormat Format, int MaxWidth, int Quality, int? MaxHeight = null) -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.MaxHeight.get -> int?
+SharedKernel.ImageProcessing.ImageVariantRequest.MaxHeight.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.MaxWidth.get -> int
+SharedKernel.ImageProcessing.ImageVariantRequest.MaxWidth.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.Name.get -> string!
+SharedKernel.ImageProcessing.ImageVariantRequest.Name.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.Quality.get -> int
+SharedKernel.ImageProcessing.ImageVariantRequest.Quality.init -> void
+SharedKernel.ImageProcessing.MagickImageProcessor
+SharedKernel.ImageProcessing.ProcessedImageVariant
+SharedKernel.ImageProcessing.ProcessedImageVariant.Content.get -> System.ReadOnlyMemory<byte>
+SharedKernel.ImageProcessing.ProcessedImageVariant.Content.init -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Format.get -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ProcessedImageVariant.Format.init -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Height.get -> int
+SharedKernel.ImageProcessing.ProcessedImageVariant.Height.init -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Name.get -> string!
+SharedKernel.ImageProcessing.ProcessedImageVariant.Name.init -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.ProcessedImageVariant(string! Name, SharedKernel.ImageProcessing.ImageOutputFormat Format, int Width, int Height, System.ReadOnlyMemory<byte> Content) -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Width.get -> int
+SharedKernel.ImageProcessing.ProcessedImageVariant.Width.init -> void
+const SharedKernel.ImageProcessing.ImageAnimationDetector.MaxChunkCount = 4096 -> int
+static SharedKernel.ImageProcessing.ImageAnimationDetector.Detect(System.IO.Stream! content) -> SharedKernel.ImageProcessing.ImageAnimationStatus
+static SharedKernel.ImageProcessing.ImageAnimationDetector.Detect(System.ReadOnlySpan<byte> content) -> SharedKernel.ImageProcessing.ImageAnimationStatus
+static SharedKernel.ImageProcessing.ImageProcessingLimits.WebDefault.get -> SharedKernel.ImageProcessing.ImageProcessingLimits!
+static SharedKernel.ImageProcessing.MagickImageProcessor.Probe(System.IO.Stream! content, SharedKernel.ImageProcessing.ImageProcessingLimits! limits) -> SharedKernel.ImageProcessing.ImageProbeResult!
+static SharedKernel.ImageProcessing.MagickImageProcessor.Process(SharedKernel.ImageProcessing.ImageProcessingRequest! request, System.Threading.CancellationToken ct) -> SharedKernel.ImageProcessing.ImageProcessingResult!
+SharedKernel.ImageProcessing.ImageProbeResult.<Clone>$() -> SharedKernel.ImageProcessing.ImageProbeResult!
+SharedKernel.ImageProcessing.ImageProbeResult.Deconstruct(out SharedKernel.ImageProcessing.ImageInputFormat Format, out int Width, out int Height, out bool IsAnimated) -> void
+SharedKernel.ImageProcessing.ImageProbeResult.Equals(SharedKernel.ImageProcessing.ImageProbeResult? other) -> bool
+SharedKernel.ImageProcessing.ImageProcessingLimits.<Clone>$() -> SharedKernel.ImageProcessing.ImageProcessingLimits!
+SharedKernel.ImageProcessing.ImageProcessingLimits.Deconstruct(out int MaxWidth, out int MaxHeight, out long MaxPixelCount) -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits.Equals(SharedKernel.ImageProcessing.ImageProcessingLimits? other) -> bool
+SharedKernel.ImageProcessing.ImageProcessingRequest.<Clone>$() -> SharedKernel.ImageProcessing.ImageProcessingRequest!
+SharedKernel.ImageProcessing.ImageProcessingRequest.Deconstruct(out System.IO.Stream! Content, out System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ImageVariantRequest!>! Variants, out SharedKernel.ImageProcessing.ImageProcessingLimits! Limits) -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest.Equals(SharedKernel.ImageProcessing.ImageProcessingRequest? other) -> bool
+SharedKernel.ImageProcessing.ImageProcessingResult.<Clone>$() -> SharedKernel.ImageProcessing.ImageProcessingResult!
+SharedKernel.ImageProcessing.ImageProcessingResult.Deconstruct(out int Width, out int Height, out System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ProcessedImageVariant!>! Variants) -> void
+SharedKernel.ImageProcessing.ImageProcessingResult.Equals(SharedKernel.ImageProcessing.ImageProcessingResult? other) -> bool
+SharedKernel.ImageProcessing.ImageVariantRequest.<Clone>$() -> SharedKernel.ImageProcessing.ImageVariantRequest!
+SharedKernel.ImageProcessing.ImageVariantRequest.Deconstruct(out string! Name, out SharedKernel.ImageProcessing.ImageOutputFormat Format, out int MaxWidth, out int Quality, out int? MaxHeight) -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.Equals(SharedKernel.ImageProcessing.ImageVariantRequest? other) -> bool
+SharedKernel.ImageProcessing.ProcessedImageVariant.<Clone>$() -> SharedKernel.ImageProcessing.ProcessedImageVariant!
+SharedKernel.ImageProcessing.ProcessedImageVariant.Deconstruct(out string! Name, out SharedKernel.ImageProcessing.ImageOutputFormat Format, out int Width, out int Height, out System.ReadOnlyMemory<byte> Content) -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Equals(SharedKernel.ImageProcessing.ProcessedImageVariant? other) -> bool
+override SharedKernel.ImageProcessing.ImageProbeResult.Equals(object? obj) -> bool
+override SharedKernel.ImageProcessing.ImageProbeResult.GetHashCode() -> int
+override SharedKernel.ImageProcessing.ImageProbeResult.ToString() -> string!
+override SharedKernel.ImageProcessing.ImageProcessingLimits.Equals(object? obj) -> bool
+override SharedKernel.ImageProcessing.ImageProcessingLimits.GetHashCode() -> int
+override SharedKernel.ImageProcessing.ImageProcessingLimits.ToString() -> string!
+override SharedKernel.ImageProcessing.ImageProcessingRequest.Equals(object? obj) -> bool
+override SharedKernel.ImageProcessing.ImageProcessingRequest.GetHashCode() -> int
+override SharedKernel.ImageProcessing.ImageProcessingRequest.ToString() -> string!
+override SharedKernel.ImageProcessing.ImageProcessingResult.Equals(object? obj) -> bool
+override SharedKernel.ImageProcessing.ImageProcessingResult.GetHashCode() -> int
+override SharedKernel.ImageProcessing.ImageProcessingResult.ToString() -> string!
+override SharedKernel.ImageProcessing.ImageVariantRequest.Equals(object? obj) -> bool
+override SharedKernel.ImageProcessing.ImageVariantRequest.GetHashCode() -> int
+override SharedKernel.ImageProcessing.ImageVariantRequest.ToString() -> string!
+override SharedKernel.ImageProcessing.ProcessedImageVariant.Equals(object? obj) -> bool
+override SharedKernel.ImageProcessing.ProcessedImageVariant.GetHashCode() -> int
+override SharedKernel.ImageProcessing.ProcessedImageVariant.ToString() -> string!
+static SharedKernel.ImageProcessing.ImageProbeResult.operator !=(SharedKernel.ImageProcessing.ImageProbeResult? left, SharedKernel.ImageProcessing.ImageProbeResult? right) -> bool
+static SharedKernel.ImageProcessing.ImageProbeResult.operator ==(SharedKernel.ImageProcessing.ImageProbeResult? left, SharedKernel.ImageProcessing.ImageProbeResult? right) -> bool
+static SharedKernel.ImageProcessing.ImageProcessingLimits.operator !=(SharedKernel.ImageProcessing.ImageProcessingLimits? left, SharedKernel.ImageProcessing.ImageProcessingLimits? right) -> bool
+static SharedKernel.ImageProcessing.ImageProcessingLimits.operator ==(SharedKernel.ImageProcessing.ImageProcessingLimits? left, SharedKernel.ImageProcessing.ImageProcessingLimits? right) -> bool
+static SharedKernel.ImageProcessing.ImageProcessingRequest.operator !=(SharedKernel.ImageProcessing.ImageProcessingRequest? left, SharedKernel.ImageProcessing.ImageProcessingRequest? right) -> bool
+static SharedKernel.ImageProcessing.ImageProcessingRequest.operator ==(SharedKernel.ImageProcessing.ImageProcessingRequest? left, SharedKernel.ImageProcessing.ImageProcessingRequest? right) -> bool
+static SharedKernel.ImageProcessing.ImageProcessingResult.operator !=(SharedKernel.ImageProcessing.ImageProcessingResult? left, SharedKernel.ImageProcessing.ImageProcessingResult? right) -> bool
+static SharedKernel.ImageProcessing.ImageProcessingResult.operator ==(SharedKernel.ImageProcessing.ImageProcessingResult? left, SharedKernel.ImageProcessing.ImageProcessingResult? right) -> bool
+static SharedKernel.ImageProcessing.ImageVariantRequest.operator !=(SharedKernel.ImageProcessing.ImageVariantRequest? left, SharedKernel.ImageProcessing.ImageVariantRequest? right) -> bool
+static SharedKernel.ImageProcessing.ImageVariantRequest.operator ==(SharedKernel.ImageProcessing.ImageVariantRequest? left, SharedKernel.ImageProcessing.ImageVariantRequest? right) -> bool
+static SharedKernel.ImageProcessing.ProcessedImageVariant.operator !=(SharedKernel.ImageProcessing.ProcessedImageVariant? left, SharedKernel.ImageProcessing.ProcessedImageVariant? right) -> bool
+static SharedKernel.ImageProcessing.ProcessedImageVariant.operator ==(SharedKernel.ImageProcessing.ProcessedImageVariant? left, SharedKernel.ImageProcessing.ProcessedImageVariant? right) -> bool

@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// Tests creating money from an amount a person typed, whose written decimal places, trailing zeros included, must fit the currency's

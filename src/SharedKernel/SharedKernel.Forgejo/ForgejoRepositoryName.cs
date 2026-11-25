@@ -1,4 +1,4 @@
-namespace PandaBear.Forgejo;
+namespace SharedKernel.Forgejo;
 
 /// <summary>Checks the <c>owner/name</c> form of a Forgejo repository before it becomes part of a request address.</summary>
 public static class ForgejoRepositoryName

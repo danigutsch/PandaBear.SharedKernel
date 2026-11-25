@@ -1,6 +1,6 @@
-using PandaBear.Testing.Playwright;
+using SharedKernel.Testing.Playwright;
 
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>Tests the exact-name role locators against real pages in Chromium; the tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightRoleLocatorTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PandaBear.Mediator.EntityFrameworkCore.Tests;
+namespace SharedKernel.Mediator.EntityFrameworkCore.Tests;
 
 /// <summary>A DI scope with two in-memory contexts and a transaction behavior registered for each context's command, disposed together.</summary>
 internal sealed class EfCoreMediatorTestScope : IDisposable

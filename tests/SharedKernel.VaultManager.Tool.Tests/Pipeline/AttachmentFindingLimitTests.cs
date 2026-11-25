@@ -1,10 +1,10 @@
 using System.Globalization;
-using PandaBear.Testing;
-using PandaBear.Vault.Attachments;
-using PandaBear.Vault.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.Testing;
+using SharedKernel.Vault.Attachments;
+using SharedKernel.Vault.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
+namespace SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 /// <summary>Tests the cap on findings that <see cref="VaultPipeline"/> lists for one attachment.</summary>
 public sealed class AttachmentFindingLimitTests : IDisposable

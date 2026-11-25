@@ -1,8 +1,8 @@
 using System.Net.Http.Headers;
 using System.Reflection;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.CI.Tool;
+namespace SharedKernel.CI.Tool;
 
 /// <summary>What the commands use to reach processes, the network, the environment, and the clock.</summary>
 /// <param name="Machine">Runs Git, dotnet, and the other child processes, starts services, and tells time.</param>

@@ -1,4 +1,4 @@
-namespace PandaBear.Npgsql;
+namespace SharedKernel.Npgsql;
 
 /// <summary>Describes the evidence available for an observed scheduling run.</summary>
 public enum PostgreSqlScheduleRunStatus

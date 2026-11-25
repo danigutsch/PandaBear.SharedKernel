@@ -1,4 +1,4 @@
-namespace PandaBear.Idempotency.Tests;
+namespace SharedKernel.Idempotency.Tests;
 
 /// <summary>
 /// Tests the default retention-owner overload of IIdempotencyStore.TryStart for stores that predate retention owners.

@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>Tests the persistence-neutral unique-rule exception.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

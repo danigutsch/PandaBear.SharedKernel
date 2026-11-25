@@ -1,4 +1,4 @@
-namespace PandaBear.InputNormalization;
+namespace SharedKernel.InputNormalization;
 
 /// <summary>
 /// Unicode character properties that .NET does not expose, for the contexts in which <see cref="PrintableText"/> keeps a

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace PandaBear.Testing;
+namespace SharedKernel.Testing;
 
 /// <summary>A logger of <see cref="TestOutputLoggerProvider"/>: it writes an entry to the output of the test the entry belongs to.</summary>
 /// <param name="category">The category of the logger.</param>

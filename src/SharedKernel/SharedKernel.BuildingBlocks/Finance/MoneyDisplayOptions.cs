@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// How <see cref="Money.ToDisplayString(IFormatProvider, MoneyDisplayOptions)"/> departs from the culture's currency format, for example

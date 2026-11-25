@@ -1,4 +1,4 @@
-namespace PandaBear.Blazor.Site.Tests;
+namespace SharedKernel.Blazor.Site.Tests;
 
 /// <summary>Tests the hero's decorative rule between its title and its eyebrow and subtitle.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

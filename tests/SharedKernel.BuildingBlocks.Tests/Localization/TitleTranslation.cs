@@ -1,4 +1,4 @@
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>A translated title used to exercise <see cref="TranslationSet{T}" />.</summary>
 /// <param name="Culture">The culture of the translation.</param>

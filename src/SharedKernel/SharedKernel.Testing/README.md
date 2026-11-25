@@ -105,14 +105,14 @@ body.BlockedReadCancelled.ShouldBeTrue();
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Testing`. C# namespace: `PandaBear.Testing`. Assembly/project identity: `SharedKernel.Testing`.
+Package ID: `PandaBear.SharedKernel.Testing`. C# namespace: `SharedKernel.Testing`. Assembly/project identity: `SharedKernel.Testing`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
 
 ## Temporary resources
 
 ```csharp
-using PandaBear.Testing;
+using SharedKernel.Testing;
 
 using var directory = new TemporaryDirectory();
 File.WriteAllText(Path.Combine(directory.Path, "fixture.txt"), "fixture");

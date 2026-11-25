@@ -1,7 +1,7 @@
 using System.Text;
-using PandaBear.Vault.Attachments;
+using SharedKernel.Vault.Attachments;
 
-namespace PandaBear.Vault.Tests.Attachments;
+namespace SharedKernel.Vault.Tests.Attachments;
 
 /// <summary>Tests safe opening and reading of zip archives and their limits.</summary>
 public sealed class SafeArchiveTests

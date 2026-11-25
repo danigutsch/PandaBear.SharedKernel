@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql;
-using PandaBear.Npgsql;
+using SharedKernel.Npgsql;
 
-namespace PandaBear.DispositionHold.EntityFrameworkCore;
+namespace SharedKernel.DispositionHold.EntityFrameworkCore;
 
 /// <summary>
 /// Serializes placing a hold against checking for one, per scope, with PostgreSQL transaction-scoped advisory locks

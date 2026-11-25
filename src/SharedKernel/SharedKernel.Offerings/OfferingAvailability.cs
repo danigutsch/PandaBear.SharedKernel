@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>
 /// Whether an offering can be booked and on what dates. It is required: the default value, <see cref="Unspecified"/>, means "not set", so a

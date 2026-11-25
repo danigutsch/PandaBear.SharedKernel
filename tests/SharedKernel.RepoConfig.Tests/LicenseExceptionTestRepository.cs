@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Creates Git repositories with an approval, a candidate pin, and lock files for the license exception tests.</summary>
 internal static class LicenseExceptionTestRepository

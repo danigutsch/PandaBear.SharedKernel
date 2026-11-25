@@ -1,6 +1,6 @@
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.Offerings.Tests;
+namespace SharedKernel.Offerings.Tests;
 
 /// <summary>Cultures, rules and definitions shared by the offering tests, shaped like ViajantesTurismo V2's tours.</summary>
 internal static class OfferingFixtures

@@ -1,4 +1,4 @@
-namespace PandaBear.Sandbox.Tests;
+namespace SharedKernel.Sandbox.Tests;
 
 /// <summary>Builds desired settings with only the entries a test names.</summary>
 internal static class TestSettings

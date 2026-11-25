@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.EventSourcing.Npgsql;
+namespace SharedKernel.EventSourcing.Npgsql;
 
 /// <summary>
 /// Defines stable telemetry names emitted by the PostgreSQL event-sourcing provider.

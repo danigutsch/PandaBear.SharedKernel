@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Vault.Bitwarden;
+namespace SharedKernel.Vault.Bitwarden;
 
 /// <summary>Source-generated JSON metadata for Bitwarden exports.</summary>
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web, WriteIndented = true)]

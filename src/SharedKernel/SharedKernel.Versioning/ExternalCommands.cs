@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.Processes;
+using SharedKernel.Processes;
 
-namespace PandaBear.Versioning;
+namespace SharedKernel.Versioning;
 
 /// <summary>
 /// Runs the external programs of the versioning engine, such as <c>git</c> and <c>dotnet</c>, through an

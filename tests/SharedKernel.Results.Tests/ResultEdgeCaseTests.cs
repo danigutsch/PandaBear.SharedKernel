@@ -1,4 +1,4 @@
-namespace PandaBear.Results.Tests;
+namespace SharedKernel.Results.Tests;
 
 /// <summary>
 /// Tests Result edge cases: value access on failures, null guards, string formatting, uninitialized and malformed results, and Ensure with invalid errors.

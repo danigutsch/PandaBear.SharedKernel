@@ -1,6 +1,6 @@
-using static PandaBear.BuildingBlocks.Tests.ValueObjectTestsHelpers;
+using static SharedKernel.BuildingBlocks.Tests.ValueObjectTestsHelpers;
 
-namespace PandaBear.BuildingBlocks.Tests;
+namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>
 /// Tests ValueObject equality, hashing, operators and use as a collection key.

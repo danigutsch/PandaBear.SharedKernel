@@ -1,4 +1,4 @@
-namespace PandaBear.IntegrationTesting;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>Shared trait values for integration tests that need hosted resources.</summary>
 public static class IntegrationTestTraitValues

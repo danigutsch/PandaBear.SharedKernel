@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Builds nullable-enabled source files that host assertion members for the user-message overload analyzer tests.</summary>
 internal static class AssertionUserMessageOverloadTestSource

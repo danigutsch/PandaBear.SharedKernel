@@ -1,4 +1,4 @@
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>
 /// Guards the lock file policy: a library under <c>src</c> may drop its <c>packages.lock.json</c> only when it is listed in

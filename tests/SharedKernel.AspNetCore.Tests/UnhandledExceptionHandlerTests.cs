@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace SharedKernel.AspNetCore.Tests;
 
 /// <summary>Tests the opt-in unhandled-exception handler end to end through <c>UseExceptionHandler</c>.</summary>
 public sealed class UnhandledExceptionHandlerTests

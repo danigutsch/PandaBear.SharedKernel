@@ -1,7 +1,7 @@
-using PandaBear.Processes;
-using PandaBear.Results;
+using SharedKernel.Processes;
+using SharedKernel.Results;
 
-namespace PandaBear.Packages;
+namespace SharedKernel.Packages;
 
 /// <summary>Reads the crates that <c>cargo install</c> installed, with <c>cargo install --list</c>. It changes nothing.</summary>
 public sealed class CargoPackageReader : IPackageReader

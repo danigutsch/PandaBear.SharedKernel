@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace PandaBear.Blazor.Tests.Browser;
+namespace SharedKernel.Blazor.Tests.Browser;
 
 /// <summary>Opens the picker page in Chromium and finds its controls.</summary>
 internal static class PickerBrowser

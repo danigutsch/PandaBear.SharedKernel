@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Stores the revision identity, concurrency token and versioned document data.</summary>
 internal sealed class DocumentWorkflowRow

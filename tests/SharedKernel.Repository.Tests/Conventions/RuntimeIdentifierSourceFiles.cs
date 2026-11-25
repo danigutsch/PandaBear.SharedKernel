@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repository.Tests.Conventions;
+namespace SharedKernel.Repository.Tests.Conventions;
 
 /// <summary>Reads the string literals and named HTTP client constants of the SharedKernel sources for the runtime identifier guards.</summary>
 internal static partial class RuntimeIdentifierSourceFiles

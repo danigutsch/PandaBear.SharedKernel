@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tests;
+namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Skip conditions for tests that need POSIX file permissions that bind the current user.</summary>
 internal static class PosixTestSupport

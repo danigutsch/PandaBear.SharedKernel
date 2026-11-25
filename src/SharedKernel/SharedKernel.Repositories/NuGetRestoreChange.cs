@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>A package difference between two evaluated restore graphs.</summary>
 /// <param name="Target">The framework, with the RID suffix where applicable.</param>

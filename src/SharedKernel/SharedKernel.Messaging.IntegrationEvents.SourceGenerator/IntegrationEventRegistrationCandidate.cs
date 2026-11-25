@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace PandaBear.Messaging.IntegrationEvents.SourceGenerator;
+namespace SharedKernel.Messaging.IntegrationEvents.SourceGenerator;
 
 internal sealed record IntegrationEventRegistrationCandidate(
     IntegrationEventRegistrationModel? Registration,

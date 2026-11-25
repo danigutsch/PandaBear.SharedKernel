@@ -1,6 +1,6 @@
-using PandaBear.Vault.Merge;
+using SharedKernel.Vault.Merge;
 
-namespace PandaBear.Vault.Pipeline;
+namespace SharedKernel.Vault.Pipeline;
 
 /// <summary>
 /// Decisions, policy, and output of one merge of a scanned vault through <see cref="VaultPipeline.Merge"/>. The review UI

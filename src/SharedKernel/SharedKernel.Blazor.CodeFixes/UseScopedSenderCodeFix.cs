@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PandaBear.Blazor.CodeFixes;
+namespace SharedKernel.Blazor.CodeFixes;
 
 /// <summary>
 /// Registers the <c>SKBLZ002</c> fix that replaces an injected <c>ISender</c> with <c>ScopedSender</c>.
@@ -29,7 +29,7 @@ internal static class UseScopedSenderCodeFix
         var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
         if (root is null
             || node is not TypeSyntax type
-            || semanticModel?.GetSymbolInfo(type, cancellationToken).Symbol is not INamedTypeSymbol { Name: "ISender", ContainingNamespace: { Name: "Mediator", ContainingNamespace.Name: "PandaBear" } })
+            || semanticModel?.GetSymbolInfo(type, cancellationToken).Symbol is not INamedTypeSymbol { Name: "ISender", ContainingNamespace: { Name: "Mediator", ContainingNamespace.Name: "SharedKernel" } })
         {
             return;
         }

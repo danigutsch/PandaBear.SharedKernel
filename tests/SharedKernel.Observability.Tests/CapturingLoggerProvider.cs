@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.Observability.Tests;
+namespace SharedKernel.Observability.Tests;
 
 /// <summary>Logger provider whose loggers all write into one shared set of captured messages and structured values.</summary>
 internal sealed class CapturingLoggerProvider : ILoggerProvider

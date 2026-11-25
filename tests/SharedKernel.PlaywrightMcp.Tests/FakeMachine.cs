@@ -1,4 +1,4 @@
-namespace PandaBear.PlaywrightMcp.Tests;
+namespace SharedKernel.PlaywrightMcp.Tests;
 
 /// <summary>Fake environment variables and installed executables for resolving <see cref="PlaywrightMcpSettings"/>.</summary>
 internal sealed class FakeMachine : IExecutableResolver

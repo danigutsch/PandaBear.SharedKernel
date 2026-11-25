@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using PandaBear.Results;
+using SharedKernel.Results;
 
-namespace PandaBear.BuildingBlocks;
+namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
 /// Represents a hypermedia link in a REST response. The JSON wire shape is

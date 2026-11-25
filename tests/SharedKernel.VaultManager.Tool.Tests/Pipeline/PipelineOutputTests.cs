@@ -1,12 +1,12 @@
 using System.Globalization;
-using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.Merge;
-using PandaBear.Vault.Pipeline;
-using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
+using SharedKernel.Testing;
+using SharedKernel.VaultManager.Tool.Formats;
+using SharedKernel.Vault.Bitwarden;
+using SharedKernel.Vault.Merge;
+using SharedKernel.Vault.Pipeline;
+using static SharedKernel.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
-namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
+namespace SharedKernel.VaultManager.Tool.Tests.Pipeline;
 
 /// <summary>Tests how <see cref="VaultPipeline"/> validates and writes its output file and withholds output while findings or conflicts await decisions.</summary>
 public sealed class PipelineOutputTests : IDisposable

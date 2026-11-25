@@ -2,7 +2,7 @@ using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Testing.Analyzers.Tests;
+namespace SharedKernel.Testing.Analyzers.Tests;
 
 /// <summary>Tests the SKTEST017 analyzer that asks public Should assertion methods to offer an overload taking a string userMessage.</summary>
 public sealed class AssertionUserMessageOverloadAnalyzerTests

@@ -19,7 +19,7 @@ of the actual workload justify mapping. Do not bypass malware scanning or valida
 
 ## API decision
 
-Add one concrete `PandaBear.IO.SeekableContent` lease in `PandaBear.SharedKernel.IO`, with no runtime
+Add one concrete `SharedKernel.IO.SeekableContent` lease in `PandaBear.SharedKernel.IO`, with no runtime
 package dependencies. `Create(Stream source, long maxLength, int memoryThreshold, CancellationToken ct)`
 leaves source open and returns `Content` positioned at zero with `Length` equal to the content length.
 A non-seekable source, or a seekable one not at position zero, is copied from its current position and the

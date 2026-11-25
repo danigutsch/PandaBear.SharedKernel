@@ -3,7 +3,6 @@
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.DocumentWorkflow</PackageId>
         <Description>Versioned structured documents with human review and immutable artifact references.</Description>
-        <RootNamespace>PandaBear.DocumentWorkflow</RootNamespace>
         <PackageTags>documents;workflow;shared-kernel;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>

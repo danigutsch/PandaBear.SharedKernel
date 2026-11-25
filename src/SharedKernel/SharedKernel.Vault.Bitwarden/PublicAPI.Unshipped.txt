@@ -1,17 +1,17 @@
 #nullable enable
-const PandaBear.Vault.Bitwarden.BitwardenJsonReader.Provider = "bitwarden" -> string!
-PandaBear.Vault.Bitwarden.BitwardenCsvReader
-PandaBear.Vault.Bitwarden.BitwardenExportWriter
-PandaBear.Vault.Bitwarden.BitwardenExportWriter.BitwardenExportWriter() -> void
-PandaBear.Vault.Bitwarden.BitwardenExportWriter.Encrypt(string! json, string! password) -> string!
-PandaBear.Vault.Bitwarden.BitwardenExportWriter.Write(PandaBear.Vault.Model.VaultExport! vault) -> PandaBear.Vault.Formats.VaultWriteResult!
-PandaBear.Vault.Bitwarden.BitwardenJsonReader
-PandaBear.Vault.Bitwarden.BitwardenZipReader
-PandaBear.Vault.Bitwarden.PasswordProtectedExport
-static PandaBear.Vault.Bitwarden.BitwardenCsvReader.IsHeader(System.Collections.Generic.IReadOnlyList<string!>! header) -> bool
-static PandaBear.Vault.Bitwarden.BitwardenCsvReader.Read(string! text, string! sourceFile) -> PandaBear.Vault.Formats.VaultReadResult!
-static PandaBear.Vault.Bitwarden.BitwardenExportWriter.Instance.get -> PandaBear.Vault.Bitwarden.BitwardenExportWriter!
-static PandaBear.Vault.Bitwarden.BitwardenJsonReader.Read(string! json, string! sourceFile, System.Collections.Generic.ICollection<string!>? warnings = null) -> PandaBear.Vault.Model.VaultExport!
-static PandaBear.Vault.Bitwarden.BitwardenZipReader.Read(string! path) -> PandaBear.Vault.Formats.VaultReadResult!
-static PandaBear.Vault.Bitwarden.PasswordProtectedExport.CheckEnvelope(string! envelopeJson) -> void
-static PandaBear.Vault.Bitwarden.PasswordProtectedExport.Decrypt(string! envelopeJson, string! password) -> string!
+const SharedKernel.Vault.Bitwarden.BitwardenJsonReader.Provider = "bitwarden" -> string!
+SharedKernel.Vault.Bitwarden.BitwardenCsvReader
+SharedKernel.Vault.Bitwarden.BitwardenExportWriter
+SharedKernel.Vault.Bitwarden.BitwardenExportWriter.BitwardenExportWriter() -> void
+SharedKernel.Vault.Bitwarden.BitwardenExportWriter.Encrypt(string! json, string! password) -> string!
+SharedKernel.Vault.Bitwarden.BitwardenExportWriter.Write(SharedKernel.Vault.Model.VaultExport! vault) -> SharedKernel.Vault.Formats.VaultWriteResult!
+SharedKernel.Vault.Bitwarden.BitwardenJsonReader
+SharedKernel.Vault.Bitwarden.BitwardenZipReader
+SharedKernel.Vault.Bitwarden.PasswordProtectedExport
+static SharedKernel.Vault.Bitwarden.BitwardenCsvReader.IsHeader(System.Collections.Generic.IReadOnlyList<string!>! header) -> bool
+static SharedKernel.Vault.Bitwarden.BitwardenCsvReader.Read(string! text, string! sourceFile) -> SharedKernel.Vault.Formats.VaultReadResult!
+static SharedKernel.Vault.Bitwarden.BitwardenExportWriter.Instance.get -> SharedKernel.Vault.Bitwarden.BitwardenExportWriter!
+static SharedKernel.Vault.Bitwarden.BitwardenJsonReader.Read(string! json, string! sourceFile, System.Collections.Generic.ICollection<string!>? warnings = null) -> SharedKernel.Vault.Model.VaultExport!
+static SharedKernel.Vault.Bitwarden.BitwardenZipReader.Read(string! path) -> SharedKernel.Vault.Formats.VaultReadResult!
+static SharedKernel.Vault.Bitwarden.PasswordProtectedExport.CheckEnvelope(string! envelopeJson) -> void
+static SharedKernel.Vault.Bitwarden.PasswordProtectedExport.Decrypt(string! envelopeJson, string! password) -> string!

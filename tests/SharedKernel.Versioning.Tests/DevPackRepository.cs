@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>A throwaway SharedKernel-shaped repository with project files only, for planning tests.</summary>
 internal sealed class DevPackRepository : IDisposable

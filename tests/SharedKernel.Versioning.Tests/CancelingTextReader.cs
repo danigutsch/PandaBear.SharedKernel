@@ -1,4 +1,4 @@
-namespace PandaBear.Versioning.Tests;
+namespace SharedKernel.Versioning.Tests;
 
 /// <summary>
 /// Standard input that cancels the invocation and then fails, as a process that Ctrl+C also stops can fail before the

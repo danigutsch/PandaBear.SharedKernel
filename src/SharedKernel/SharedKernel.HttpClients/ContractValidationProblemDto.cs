@@ -1,4 +1,4 @@
-namespace PandaBear.HttpClients;
+namespace SharedKernel.HttpClients;
 
 /// <summary>
 /// Represents the validation problem errors member consumed by contract-owned API clients.

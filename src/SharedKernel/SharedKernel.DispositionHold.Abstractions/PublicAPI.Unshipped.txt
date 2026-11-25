@@ -1,62 +1,62 @@
 #nullable enable
-const PandaBear.DispositionHold.DispositionScope.MaxKeyLength = 128 -> int
-const PandaBear.DispositionHold.DispositionScope.MaxKindLength = 64 -> int
-const PandaBear.DispositionHold.Hold.MaxIdentifierLength = 128 -> int
-override PandaBear.DispositionHold.DispositionScope.ToString() -> string!
-PandaBear.DispositionHold.DispositionHoldDecision
-PandaBear.DispositionHold.DispositionHoldDecision.DispositionHoldDecision() -> void
-PandaBear.DispositionHold.DispositionHoldDecision.HoldIds.get -> System.Collections.Generic.IReadOnlyList<System.Guid>!
-PandaBear.DispositionHold.DispositionHoldDecision.IsClear.get -> bool
-PandaBear.DispositionHold.DispositionHoldStateUnknownException
-PandaBear.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException() -> void
-PandaBear.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException(string! message) -> void
-PandaBear.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException(string! message, System.Exception! innerException) -> void
-PandaBear.DispositionHold.DispositionScope
-PandaBear.DispositionHold.DispositionScope.DispositionScope() -> void
-PandaBear.DispositionHold.DispositionScope.Key.get -> string!
-PandaBear.DispositionHold.DispositionScope.Kind.get -> string!
-PandaBear.DispositionHold.Hold
-PandaBear.DispositionHold.Hold.AuthorityReference.get -> string!
-PandaBear.DispositionHold.Hold.Basis.get -> PandaBear.DispositionHold.HoldBasis
-PandaBear.DispositionHold.Hold.EffectiveFrom.get -> System.DateTimeOffset
-PandaBear.DispositionHold.Hold.ExpiresAt.get -> System.DateTimeOffset?
-PandaBear.DispositionHold.Hold.Id.get -> System.Guid
-PandaBear.DispositionHold.Hold.IsReleased.get -> bool
-PandaBear.DispositionHold.Hold.PlacedAt.get -> System.DateTimeOffset
-PandaBear.DispositionHold.Hold.PlacedBy.get -> string!
-PandaBear.DispositionHold.Hold.PurposeCode.get -> string!
-PandaBear.DispositionHold.Hold.Release(string? releasedBy, string? reasonCode, System.DateTimeOffset releasedAt) -> void
-PandaBear.DispositionHold.Hold.ReleasedAt.get -> System.DateTimeOffset?
-PandaBear.DispositionHold.Hold.ReleasedBy.get -> string?
-PandaBear.DispositionHold.Hold.ReleaseReasonCode.get -> string?
-PandaBear.DispositionHold.Hold.RestrainsAt(System.DateTimeOffset at) -> bool
-PandaBear.DispositionHold.Hold.ReviewDueAt.get -> System.DateTimeOffset
-PandaBear.DispositionHold.Hold.Scope.get -> PandaBear.DispositionHold.DispositionScope
-PandaBear.DispositionHold.HoldBasis
-PandaBear.DispositionHold.HoldBasis.DataSubjectRestriction = 2 -> PandaBear.DispositionHold.HoldBasis
-PandaBear.DispositionHold.HoldBasis.Investigation = 4 -> PandaBear.DispositionHold.HoldBasis
-PandaBear.DispositionHold.HoldBasis.LegalClaim = 0 -> PandaBear.DispositionHold.HoldBasis
-PandaBear.DispositionHold.HoldBasis.LegalObligation = 1 -> PandaBear.DispositionHold.HoldBasis
-PandaBear.DispositionHold.HoldBasis.RegulatoryInquiry = 3 -> PandaBear.DispositionHold.HoldBasis
-PandaBear.DispositionHold.IDispositionHoldGuard
-PandaBear.DispositionHold.IDispositionHoldGuard.Check(System.Collections.Generic.IReadOnlyCollection<PandaBear.DispositionHold.DispositionScope>! scopes, System.DateTimeOffset at, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.DispositionHold.DispositionHoldDecision>
-PandaBear.DispositionHold.IDispositionHoldStore
-PandaBear.DispositionHold.IDispositionHoldStore.Add(PandaBear.DispositionHold.Hold! hold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-PandaBear.DispositionHold.IDispositionHoldStore.Find(System.Guid id, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.DispositionHold.Hold?>
-static PandaBear.DispositionHold.DispositionHoldDecision.Clear.get -> PandaBear.DispositionHold.DispositionHoldDecision
-static PandaBear.DispositionHold.DispositionHoldDecision.HeldBy(System.Collections.Generic.IReadOnlyList<System.Guid>! holdIds) -> PandaBear.DispositionHold.DispositionHoldDecision
-static PandaBear.DispositionHold.DispositionScope.From(string? kind, string? key) -> PandaBear.DispositionHold.DispositionScope
-static PandaBear.DispositionHold.Hold.Place(PandaBear.DispositionHold.DispositionScope scope, PandaBear.DispositionHold.HoldBasis basis, string? purposeCode, string? authorityReference, string? placedBy, System.DateTimeOffset placedAt, System.DateTimeOffset effectiveFrom, System.DateTimeOffset reviewDueAt, System.DateTimeOffset? expiresAt = null) -> PandaBear.DispositionHold.Hold!
-PandaBear.DispositionHold.DispositionHoldDecision.Equals(PandaBear.DispositionHold.DispositionHoldDecision other) -> bool
-PandaBear.DispositionHold.DispositionScope.Equals(PandaBear.DispositionHold.DispositionScope other) -> bool
-override PandaBear.DispositionHold.DispositionHoldDecision.GetHashCode() -> int
-override PandaBear.DispositionHold.DispositionScope.GetHashCode() -> int
-static PandaBear.DispositionHold.DispositionHoldDecision.operator !=(PandaBear.DispositionHold.DispositionHoldDecision left, PandaBear.DispositionHold.DispositionHoldDecision right) -> bool
-static PandaBear.DispositionHold.DispositionHoldDecision.operator ==(PandaBear.DispositionHold.DispositionHoldDecision left, PandaBear.DispositionHold.DispositionHoldDecision right) -> bool
-static PandaBear.DispositionHold.DispositionScope.operator !=(PandaBear.DispositionHold.DispositionScope left, PandaBear.DispositionHold.DispositionScope right) -> bool
-static PandaBear.DispositionHold.DispositionScope.operator ==(PandaBear.DispositionHold.DispositionScope left, PandaBear.DispositionHold.DispositionScope right) -> bool
-~override PandaBear.DispositionHold.DispositionHoldDecision.Equals(object obj) -> bool
-~override PandaBear.DispositionHold.DispositionHoldDecision.ToString() -> string
-~override PandaBear.DispositionHold.DispositionScope.Equals(object obj) -> bool
-PandaBear.DispositionHold.HoldQueryableExtensions
-static PandaBear.DispositionHold.HoldQueryableExtensions.WhereRestrainingAt(this System.Linq.IQueryable<PandaBear.DispositionHold.Hold!>! holds, System.DateTimeOffset at) -> System.Linq.IQueryable<PandaBear.DispositionHold.Hold!>!
+const SharedKernel.DispositionHold.DispositionScope.MaxKeyLength = 128 -> int
+const SharedKernel.DispositionHold.DispositionScope.MaxKindLength = 64 -> int
+const SharedKernel.DispositionHold.Hold.MaxIdentifierLength = 128 -> int
+override SharedKernel.DispositionHold.DispositionScope.ToString() -> string!
+SharedKernel.DispositionHold.DispositionHoldDecision
+SharedKernel.DispositionHold.DispositionHoldDecision.DispositionHoldDecision() -> void
+SharedKernel.DispositionHold.DispositionHoldDecision.HoldIds.get -> System.Collections.Generic.IReadOnlyList<System.Guid>!
+SharedKernel.DispositionHold.DispositionHoldDecision.IsClear.get -> bool
+SharedKernel.DispositionHold.DispositionHoldStateUnknownException
+SharedKernel.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException() -> void
+SharedKernel.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException(string! message) -> void
+SharedKernel.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException(string! message, System.Exception! innerException) -> void
+SharedKernel.DispositionHold.DispositionScope
+SharedKernel.DispositionHold.DispositionScope.DispositionScope() -> void
+SharedKernel.DispositionHold.DispositionScope.Key.get -> string!
+SharedKernel.DispositionHold.DispositionScope.Kind.get -> string!
+SharedKernel.DispositionHold.Hold
+SharedKernel.DispositionHold.Hold.AuthorityReference.get -> string!
+SharedKernel.DispositionHold.Hold.Basis.get -> SharedKernel.DispositionHold.HoldBasis
+SharedKernel.DispositionHold.Hold.EffectiveFrom.get -> System.DateTimeOffset
+SharedKernel.DispositionHold.Hold.ExpiresAt.get -> System.DateTimeOffset?
+SharedKernel.DispositionHold.Hold.Id.get -> System.Guid
+SharedKernel.DispositionHold.Hold.IsReleased.get -> bool
+SharedKernel.DispositionHold.Hold.PlacedAt.get -> System.DateTimeOffset
+SharedKernel.DispositionHold.Hold.PlacedBy.get -> string!
+SharedKernel.DispositionHold.Hold.PurposeCode.get -> string!
+SharedKernel.DispositionHold.Hold.Release(string? releasedBy, string? reasonCode, System.DateTimeOffset releasedAt) -> void
+SharedKernel.DispositionHold.Hold.ReleasedAt.get -> System.DateTimeOffset?
+SharedKernel.DispositionHold.Hold.ReleasedBy.get -> string?
+SharedKernel.DispositionHold.Hold.ReleaseReasonCode.get -> string?
+SharedKernel.DispositionHold.Hold.RestrainsAt(System.DateTimeOffset at) -> bool
+SharedKernel.DispositionHold.Hold.ReviewDueAt.get -> System.DateTimeOffset
+SharedKernel.DispositionHold.Hold.Scope.get -> SharedKernel.DispositionHold.DispositionScope
+SharedKernel.DispositionHold.HoldBasis
+SharedKernel.DispositionHold.HoldBasis.DataSubjectRestriction = 2 -> SharedKernel.DispositionHold.HoldBasis
+SharedKernel.DispositionHold.HoldBasis.Investigation = 4 -> SharedKernel.DispositionHold.HoldBasis
+SharedKernel.DispositionHold.HoldBasis.LegalClaim = 0 -> SharedKernel.DispositionHold.HoldBasis
+SharedKernel.DispositionHold.HoldBasis.LegalObligation = 1 -> SharedKernel.DispositionHold.HoldBasis
+SharedKernel.DispositionHold.HoldBasis.RegulatoryInquiry = 3 -> SharedKernel.DispositionHold.HoldBasis
+SharedKernel.DispositionHold.IDispositionHoldGuard
+SharedKernel.DispositionHold.IDispositionHoldGuard.Check(System.Collections.Generic.IReadOnlyCollection<SharedKernel.DispositionHold.DispositionScope>! scopes, System.DateTimeOffset at, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.DispositionHold.DispositionHoldDecision>
+SharedKernel.DispositionHold.IDispositionHoldStore
+SharedKernel.DispositionHold.IDispositionHoldStore.Add(SharedKernel.DispositionHold.Hold! hold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.DispositionHold.IDispositionHoldStore.Find(System.Guid id, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.DispositionHold.Hold?>
+static SharedKernel.DispositionHold.DispositionHoldDecision.Clear.get -> SharedKernel.DispositionHold.DispositionHoldDecision
+static SharedKernel.DispositionHold.DispositionHoldDecision.HeldBy(System.Collections.Generic.IReadOnlyList<System.Guid>! holdIds) -> SharedKernel.DispositionHold.DispositionHoldDecision
+static SharedKernel.DispositionHold.DispositionScope.From(string? kind, string? key) -> SharedKernel.DispositionHold.DispositionScope
+static SharedKernel.DispositionHold.Hold.Place(SharedKernel.DispositionHold.DispositionScope scope, SharedKernel.DispositionHold.HoldBasis basis, string? purposeCode, string? authorityReference, string? placedBy, System.DateTimeOffset placedAt, System.DateTimeOffset effectiveFrom, System.DateTimeOffset reviewDueAt, System.DateTimeOffset? expiresAt = null) -> SharedKernel.DispositionHold.Hold!
+SharedKernel.DispositionHold.DispositionHoldDecision.Equals(SharedKernel.DispositionHold.DispositionHoldDecision other) -> bool
+SharedKernel.DispositionHold.DispositionScope.Equals(SharedKernel.DispositionHold.DispositionScope other) -> bool
+override SharedKernel.DispositionHold.DispositionHoldDecision.GetHashCode() -> int
+override SharedKernel.DispositionHold.DispositionScope.GetHashCode() -> int
+static SharedKernel.DispositionHold.DispositionHoldDecision.operator !=(SharedKernel.DispositionHold.DispositionHoldDecision left, SharedKernel.DispositionHold.DispositionHoldDecision right) -> bool
+static SharedKernel.DispositionHold.DispositionHoldDecision.operator ==(SharedKernel.DispositionHold.DispositionHoldDecision left, SharedKernel.DispositionHold.DispositionHoldDecision right) -> bool
+static SharedKernel.DispositionHold.DispositionScope.operator !=(SharedKernel.DispositionHold.DispositionScope left, SharedKernel.DispositionHold.DispositionScope right) -> bool
+static SharedKernel.DispositionHold.DispositionScope.operator ==(SharedKernel.DispositionHold.DispositionScope left, SharedKernel.DispositionHold.DispositionScope right) -> bool
+~override SharedKernel.DispositionHold.DispositionHoldDecision.Equals(object obj) -> bool
+~override SharedKernel.DispositionHold.DispositionHoldDecision.ToString() -> string
+~override SharedKernel.DispositionHold.DispositionScope.Equals(object obj) -> bool
+SharedKernel.DispositionHold.HoldQueryableExtensions
+static SharedKernel.DispositionHold.HoldQueryableExtensions.WhereRestrainingAt(this System.Linq.IQueryable<SharedKernel.DispositionHold.Hold!>! holds, System.DateTimeOffset at) -> System.Linq.IQueryable<SharedKernel.DispositionHold.Hold!>!

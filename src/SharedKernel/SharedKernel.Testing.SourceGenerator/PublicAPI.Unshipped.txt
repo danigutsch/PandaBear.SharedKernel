@@ -1,4 +1,4 @@
 #nullable enable
-PandaBear.Testing.SourceGenerator.CallProxyGenerator
-PandaBear.Testing.SourceGenerator.CallProxyGenerator.CallProxyGenerator() -> void
-PandaBear.Testing.SourceGenerator.CallProxyGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
+SharedKernel.Testing.SourceGenerator.CallProxyGenerator
+SharedKernel.Testing.SourceGenerator.CallProxyGenerator.CallProxyGenerator() -> void
+SharedKernel.Testing.SourceGenerator.CallProxyGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void

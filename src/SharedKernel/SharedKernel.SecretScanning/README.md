@@ -9,7 +9,7 @@ SharedKernel libraries and makes no network request. The vault manager uses it t
 exports; any tool that scans notes, files, or configuration can use it the same way.
 
 ```csharp
-using PandaBear.SecretScanning;
+using SharedKernel.SecretScanning;
 
 IReadOnlyList<DetectedSecret> findings = SecretScanner.Default.Scan(text, "notes", SecretScanContext.None);
 foreach (DetectedSecret finding in findings)

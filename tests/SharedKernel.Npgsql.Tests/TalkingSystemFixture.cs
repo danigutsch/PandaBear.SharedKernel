@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
-using PandaBear.IntegrationTesting;
+using SharedKernel.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Tests;
+namespace SharedKernel.Npgsql.Tests;
 
 /// <summary>A system fixture whose profiles each run one talking process, recording the folder each profile was given.</summary>
 internal sealed class TalkingSystemFixture : AspireSystemFixture

@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PandaBear.Testing.Analyzers;
+namespace SharedKernel.Testing.Analyzers;
 
 public sealed partial class TestingAnalyzer
 {

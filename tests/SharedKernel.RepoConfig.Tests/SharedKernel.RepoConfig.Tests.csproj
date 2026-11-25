@@ -2,18 +2,18 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>PandaBear.RepoConfig.Tests</RootNamespace>
+        <RootNamespace>SharedKernel.RepoConfig.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing.Http" />
-        <Using Include="PandaBear.Testing" />
-        <Using Include="PandaBear.DevContainers" />
-        <Using Include="PandaBear.RepoConfig.Tool" />
-        <Using Include="PandaBear.Repositories" />
-        <Using Include="PandaBear.Repositories.GitHub" />
-        <Using Include="PandaBear.Repository.Tests" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Http" />
+        <Using Include="SharedKernel.Testing" />
+        <Using Include="SharedKernel.DevContainers" />
+        <Using Include="SharedKernel.RepoConfig.Tool" />
+        <Using Include="SharedKernel.Repositories" />
+        <Using Include="SharedKernel.Repositories.GitHub" />
+        <Using Include="SharedKernel.Repository.Tests" />
         <Using Include="Xunit" />
     </ItemGroup>
 

@@ -1,4 +1,4 @@
-namespace PandaBear.LoadTesting;
+namespace SharedKernel.LoadTesting;
 
 /// <summary>The container that a container run starts the load generator in.</summary>
 /// <param name="Engine"><c>docker</c> or <c>podman</c>.</param>

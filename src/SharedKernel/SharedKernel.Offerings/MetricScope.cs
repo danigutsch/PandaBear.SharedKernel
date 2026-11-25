@@ -1,4 +1,4 @@
-namespace PandaBear.Offerings;
+namespace SharedKernel.Offerings;
 
 /// <summary>Where a metric may be given: on the whole offering, on each step, or both.</summary>
 [Flags]

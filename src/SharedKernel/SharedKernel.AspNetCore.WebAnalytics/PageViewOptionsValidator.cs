@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.WebAnalytics;
+namespace SharedKernel.AspNetCore.WebAnalytics;
 
 /// <summary>Checks <see cref="PageViewOptions"/> when the host starts; a failure names the setting, never a configured value.</summary>
 internal sealed class PageViewOptionsValidator : IValidateOptions<PageViewOptions>

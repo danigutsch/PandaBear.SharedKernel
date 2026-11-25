@@ -1,4 +1,4 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>Injects one failure into transactional audit storage.</summary>
 internal sealed class ReleaseDocumentAuditFailure

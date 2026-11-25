@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using PandaBear.AuditTrail;
-using PandaBear.EntityFrameworkCore;
-using PandaBear.Idempotency;
+using SharedKernel.AuditTrail;
+using SharedKernel.EntityFrameworkCore;
+using SharedKernel.Idempotency;
 
-namespace PandaBear.DocumentWorkflow.EntityFrameworkCore;
+namespace SharedKernel.DocumentWorkflow.EntityFrameworkCore;
 
 /// <summary>Registers the optional document workflow EF storage.</summary>
 public static class DocumentWorkflowServiceCollectionExtensions

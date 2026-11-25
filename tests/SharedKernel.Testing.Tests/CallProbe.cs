@@ -1,4 +1,4 @@
-namespace PandaBear.Testing.Tests;
+namespace SharedKernel.Testing.Tests;
 
 /// <summary>The real <see cref="ICallProbe"/> that records what was called.</summary>
 internal sealed class CallProbe : ICallProbe

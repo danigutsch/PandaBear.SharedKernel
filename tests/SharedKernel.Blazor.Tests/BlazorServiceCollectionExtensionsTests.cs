@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.Blazor.Tests;
+namespace SharedKernel.Blazor.Tests;
 
 /// <summary>Tests the registration of the UI failure reporter.</summary>
 [Testing.TestScope(Testing.TestScope.Unit)]

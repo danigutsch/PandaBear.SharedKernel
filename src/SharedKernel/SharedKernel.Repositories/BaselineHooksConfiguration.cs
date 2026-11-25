@@ -1,4 +1,4 @@
-namespace PandaBear.Repositories;
+namespace SharedKernel.Repositories;
 
 /// <summary>
 /// The tracked hooks directory and its hooks. <c>baseline apply</c> activates it by setting <c>core.hooksPath</c>, the

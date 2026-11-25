@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PandaBear.Repository.Tests;
+namespace SharedKernel.Repository.Tests;
 
 /// <summary>A temporary directory that holds a copy of the setup script and a fake <c>dotnet</c> that logs each call and exits with a configured code.</summary>
 internal sealed class SetupScriptTestScope : IDisposable
