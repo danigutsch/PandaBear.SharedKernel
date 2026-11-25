@@ -11,7 +11,8 @@
     <Target Name="RecordGovernedLiteralInputs" AfterTargets="CoreCompile"
             Condition="'$(GovernedLiteralProject)' == 'true' or ($([System.String]::Copy('$(PackageId)').StartsWith('PandaBear.SharedKernel.')) and '$(IsPackable)' != 'false')">
         <PropertyGroup>
-            <GovernedLiteralInputsDirectory>$(MSBuildThisFileDirectory)TestResults/governed-literals/$(Configuration)/$(MSBuildProjectName)</GovernedLiteralInputsDirectory>
+            <GovernedLiteralInputsRoot Condition="'$(GovernedLiteralInputsRoot)' == ''">$(MSBuildThisFileDirectory)TestResults/governed-literals</GovernedLiteralInputsRoot>
+            <GovernedLiteralInputsDirectory>$(GovernedLiteralInputsRoot)/$(Configuration)/$(MSBuildProjectName)</GovernedLiteralInputsDirectory>
         </PropertyGroup>
         <ItemGroup>
             <GovernedLiteralInput Include="assembly|$(AssemblyName)" />

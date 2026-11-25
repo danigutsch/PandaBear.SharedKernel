@@ -11,8 +11,8 @@
         <PackageTags>testing;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <IncludeBuildOutput>false</IncludeBuildOutput>
-        <TestingAnalyzerPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">..\SharedKernel.Testing.Analyzers\bin\$(Configuration)\netstandard2.0\SharedKernel.Testing.Analyzers.dll</TestingAnalyzerPackageFile>
-        <TestingAnalyzerPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\SharedKernel.Testing.Analyzers\$(Configuration)\netstandard2.0\SharedKernel.Testing.Analyzers.dll</TestingAnalyzerPackageFile>
+        <PackCompilerOutputs>true</PackCompilerOutputs>
+        <PackOwnCompilerOutput>true</PackOwnCompilerOutput>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
+        <ProjectReference Include="..\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" PackCompilerOutput="true" />
         <Compile Include="..\SharedKernel.Style.CodeFixes\AllowListedFixAll.cs" Link="AllowListedFixAll.cs" />
         <Compile Include="..\SharedKernel.Testing.Analyzers\AssertionDelegateInlining.cs" Link="AssertionDelegateInlining.cs" />
         <Compile Include="..\SharedKernel.Testing.Analyzers\AssertionUserMessageOverload.cs" Link="AssertionUserMessageOverload.cs" />
@@ -35,8 +35,6 @@
         <AdditionalFiles Include="..\SharedKernel.Testing.Analyzers\AnalyzerReleases.Unshipped.md" Link="AnalyzerReleases.Unshipped.md" />
         <None Include="README.md" Pack="true" PackagePath="\" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
-        <None Include="$(TestingAnalyzerPackageFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Link="SharedKernel.Testing.Analyzers.dll" Visible="false" />
-        <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 
 </Project>

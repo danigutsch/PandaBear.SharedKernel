@@ -317,26 +317,31 @@ public sealed class WorkflowContractTests
         // Arrange
         var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+        var action = File.ReadAllText(Path.Combine(root, ".github", "actions", "read-published-candidate", "action.yml"));
 
         // Act
         var consumption = WorkflowJobs.Read(workflow, "published-candidate-consumption");
         var steps = consumption.Split("\n      - ", StringSplitOptions.None);
-        var discovery = steps.ShouldHaveSingleItem(static step => step.Contains("gh release view", StringComparison.Ordinal));
+        var discovery = steps.ShouldHaveSingleItem(static step => step.Contains("uses: ./.github/actions/read-published-candidate", StringComparison.Ordinal));
+        var historicalCheckout = steps.ShouldHaveSingleItem(static step => step.Contains("ref: ${{ steps.candidate.outputs.library_revision }}", StringComparison.Ordinal));
 
         // Assert
         workflow.ShouldContain("&& inputs.candidate_version == ''", StringComparison.Ordinal);
         consumption.ShouldContain("os: [ubuntu-latest, windows-latest]", StringComparison.Ordinal);
-        discovery.ShouldContain("CANDIDATE_VERSION: ${{ inputs.candidate_version }}", StringComparison.Ordinal);
-        discovery.ShouldContain(
+        discovery.ShouldContain("version: ${{ inputs.candidate_version }}", StringComparison.Ordinal);
+        discovery.ShouldContain("directory: published-candidate", StringComparison.Ordinal);
+        Array.IndexOf(steps, discovery).ShouldBeLessThan(Array.IndexOf(steps, historicalCheckout));
+        action.ShouldContain("CANDIDATE_VERSION: ${{ inputs.version }}", StringComparison.Ordinal);
+        action.ShouldContain(
             "if ($env:CANDIDATE_VERSION -cnotmatch '^[0-9]+\\.[0-9]+\\.[0-9]+-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*$')", StringComparison.Ordinal);
-        discovery.ShouldContain("--repo $env:GITHUB_REPOSITORY --json isPrerelease,assets\n", StringComparison.Ordinal);
-        discovery.ShouldContain("if ($release.isPrerelease -ne $true)", StringComparison.Ordinal);
-        discovery.ShouldContain("--dir $directory --pattern candidate.json\n", StringComparison.Ordinal);
-        discovery.Split("--pattern").Length.ShouldBe(2, "Only candidate.json is downloaded; stage-candidate downloads and verifies the packages.");
-        discovery.ShouldContain("$candidate.packageVersion -cne $env:CANDIDATE_VERSION", StringComparison.Ordinal);
-        discovery.ShouldContain("Compare-Object $expectedAssets $actualAssets -CaseSensitive", StringComparison.Ordinal);
-        consumption.Split("GH_TOKEN").Length.ShouldBe(2, "Only the gh step receives a token; staging downloads the public release without one.");
-        consumption.ShouldContain("ref: ${{ steps.candidate.outputs.library_revision }}", StringComparison.Ordinal);
+        action.ShouldContain("--repo $env:GITHUB_REPOSITORY --json isPrerelease,assets\n", StringComparison.Ordinal);
+        action.ShouldContain("if ($release.isPrerelease -ne $true)", StringComparison.Ordinal);
+        action.ShouldContain("--dir $directory --pattern candidate.json\n", StringComparison.Ordinal);
+        action.Split("--pattern").Length.ShouldBe(2, "Only candidate.json is downloaded; stage-candidate downloads and verifies the packages.");
+        action.ShouldContain("$candidate.packageVersion -cne $env:CANDIDATE_VERSION", StringComparison.Ordinal);
+        action.ShouldContain("Compare-Object $expectedAssets $actualAssets -CaseSensitive", StringComparison.Ordinal);
+        action.Split("GH_TOKEN").Length.ShouldBe(2, "Only the manifest discovery action receives a token.");
+        consumption.ShouldNotContain("GH_TOKEN", StringComparison.Ordinal);
         consumption.ShouldContain("project: tools/SharedKernel.CI.Tool\n", StringComparison.Ordinal);
         consumption.ShouldContain("project: tools/SharedKernel.Versioning.Tool\n", StringComparison.Ordinal);
         consumption.ShouldContain(
@@ -347,6 +352,41 @@ public sealed class WorkflowContractTests
         consumption.ShouldContain("if: always()", StringComparison.Ordinal);
         consumption.ShouldContain("published-candidate/consumption.json", StringComparison.Ordinal);
         workflow.ShouldContain("test \"$PUBLISHED_CANDIDATE_RESULT\" = success", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Published_candidate_comparison_requires_explicit_versions_and_retains_evidence()
+    {
+        // Arrange
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var comparison = WorkflowJobs.Read(workflow, "published-candidate-comparison");
+        var selection = WorkflowJobs.Read(workflow, "selection");
+        var consumption = WorkflowJobs.Read(workflow, "published-candidate-consumption");
+        var summary = WorkflowJobs.Read(workflow, "validation-summary");
+
+        // Assert
+        workflow.ShouldContain("      baseline_candidate_version:\n", StringComparison.Ordinal);
+        selection.ShouldContain("inputs.candidate_version == '' && inputs.baseline_candidate_version == ''", StringComparison.Ordinal);
+        comparison.ShouldContain("github.event_name == 'workflow_dispatch' && inputs.candidate_version != '' && inputs.baseline_candidate_version != ''", StringComparison.Ordinal);
+        comparison.ShouldContain("inputs.candidate_version != inputs.baseline_candidate_version", StringComparison.Ordinal);
+        consumption.ShouldContain("inputs.candidate_version != inputs.baseline_candidate_version", StringComparison.Ordinal);
+        comparison.ShouldContain("ref: ${{ github.sha }}", StringComparison.Ordinal);
+        comparison.Split("uses: ./.github/actions/read-published-candidate", StringSplitOptions.None).Length.ShouldBe(3);
+        comparison.ShouldContain("ref: ${{ steps.baseline.outputs.library_revision }}", StringComparison.Ordinal);
+        comparison.ShouldContain("ref: ${{ steps.candidate.outputs.library_revision }}", StringComparison.Ordinal);
+        comparison.ShouldContain("--root \"${source}\" --library-root \"${source}\"", StringComparison.Ordinal);
+        comparison.ShouldContain("0|3) test -s \"${report}\"", StringComparison.Ordinal);
+        comparison.ShouldContain("*) exit \"${status}\"", StringComparison.Ordinal);
+        comparison.ShouldContain("name: published-candidate-api-comparison", StringComparison.Ordinal);
+        comparison.ShouldContain("published-api-comparison/api-comparison.json", StringComparison.Ordinal);
+        comparison.ShouldContain("published-api-comparison/comparison-failure.txt", StringComparison.Ordinal);
+        comparison.ShouldNotContain("contents: write", StringComparison.Ordinal);
+        comparison.ShouldNotContain("GH_TOKEN", StringComparison.Ordinal);
+        summary.ShouldContain("PUBLISHED_BASELINE_VERSION: ${{ inputs.baseline_candidate_version }}", StringComparison.Ordinal);
+        summary.ShouldContain("PUBLISHED_COMPARISON_RESULT: ${{ needs.published-candidate-comparison.result }}", StringComparison.Ordinal);
     }
 
     [Fact]

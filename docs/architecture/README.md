@@ -202,6 +202,7 @@ flowchart TB
     windows_package_consumption[windows-package-consumption]
     repository_quality[repository-quality]
     published_candidate_consumption[published-candidate-consumption]
+    published_candidate_comparison[published-candidate-comparison]
     validation_summary[validation-summary]
     trigger --> selection
     selection --> validate
@@ -213,6 +214,7 @@ flowchart TB
     candidate --> windows_package_consumption
     selection --> repository_quality
     trigger --> published_candidate_consumption
+    trigger --> published_candidate_comparison
     trigger --> validation_summary
 ```
 <!-- generated:library-ci:end -->

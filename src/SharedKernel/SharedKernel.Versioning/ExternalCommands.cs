@@ -50,9 +50,7 @@ internal sealed class ExternalCommands
         var argumentList = arguments.ToArray();
         // A start failure is the InvalidOperationException that IProcessRunner documents. SystemProcessRunner and
         // BoundedProcessRunner put the file name and the operating system's reason in its message; another runner may not.
-        var result = fileName == "git"
-            ? await RunGit(argumentList, workingDirectory, ct).ConfigureAwait(false)
-            : await _processRunner.Run(CreateStartInfo(fileName, argumentList, workingDirectory), forward: null, ct).ConfigureAwait(false);
+        var result = await RunWithExitCode(fileName, argumentList, workingDirectory, ct).ConfigureAwait(false);
         if (result.ExitCode == 0)
         {
             return result.StandardOutput;
@@ -67,6 +65,12 @@ internal sealed class ExternalCommands
         throw new InvalidOperationException(
             $"Command failed ({result.ExitCode}): {command}{Environment.NewLine}{result.StandardOutput}{Environment.NewLine}{result.StandardError}");
     }
+
+    /// <summary>Runs a process and captures its result, including nonzero exit codes.</summary>
+    internal Task<ProcessOutput> RunWithExitCode(string fileName, string[] arguments, string? workingDirectory, CancellationToken ct) =>
+        fileName == "git"
+            ? RunGit(arguments, workingDirectory, ct)
+            : _processRunner.Run(CreateStartInfo(fileName, arguments, workingDirectory), forward: null, ct);
 
     /// <summary>
     /// Runs a process with <paramref name="environment"/> applied, where a <see langword="null"/> value removes a

@@ -11,6 +11,7 @@ internal static class VersioningCommandLine
     private const int CommandFailed = 2;
 
     private const int NoBreakingChangeMarker = 3;
+    private const int ApiDifferencesFound = 3;
 
     private const string BaselineVersionDescription =
         "Published package version to compare APIs against. Requires PandaBear.SharedKernel.* mapped only to an existing local feed in NuGet.Config.";
@@ -49,6 +50,7 @@ internal static class VersioningCommandLine
             CreatePrepareRelease(input),
             CreateVerifyLockCoverage(),
             CreateCreateCandidate(candidates),
+            CreateCompareCandidates(candidates),
             CreateValidateCandidate(candidates),
             CreateConsumeCandidate(candidates),
             CreateConsumePackages(packager),
@@ -453,6 +455,28 @@ internal static class VersioningCommandLine
             output,
             parseResult.InvocationConfiguration.Error,
             ct));
+        return command;
+    }
+
+    private static Command CreateCompareCandidates(CandidateValidator candidates)
+    {
+        var baseline = new Option<string>("--baseline") { Description = "Baseline candidate.json.", HelpName = "path", Required = true };
+        var candidate = new Option<string>("--candidate") { Description = "Candidate.json to check against the baseline.", HelpName = "path", Required = true };
+        var apiCompat = new Option<string>("--apicompat") { Description = "Microsoft ApiCompat executable path.", HelpName = "path", Required = true };
+        var report = new Option<string>("--output") { Description = "New JSON comparison report path.", HelpName = "path", Required = true };
+        var command = new Command("compare-candidates", "Compares two hash-verified package candidates and writes separate API comparison evidence.")
+        {
+            baseline, candidate, apiCompat, report,
+        };
+        SetAction(command, async (parseResult, output, ct) =>
+        {
+            var destination = parseResult.GetRequiredValue(report);
+            var passed = await candidates.CompareApi(parseResult.GetRequiredValue(baseline), parseResult.GetRequiredValue(candidate),
+                parseResult.GetRequiredValue(apiCompat), destination, ct).ConfigureAwait(false);
+            var summary = passed ? "Candidate API comparison passed." : "Candidate API comparison found differences.";
+            await output.WriteLineAsync($"{summary} Report: {destination}".AsMemory(), ct).ConfigureAwait(false);
+            return passed ? 0 : ApiDifferencesFound;
+        });
         return command;
     }
 

@@ -107,6 +107,9 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `verify-target-frameworks` | Checks the target frameworks, roll-forward, lock files, pinned SDK, and `dotnet run --project` lines of the tracked project files against the configured policy; see [Target frameworks](#target-frameworks). |
 | `verify-test-taxonomy` | Checks declared production and test ownership, test types, project names, and seam registers; see [Test taxonomy](#test-taxonomy). |
 | `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
+| `dependency trial-upgrade` | Tests a NuGet version set in a disposable checkout and writes review artifacts. See [NuGet upgrade trials](#nuget-upgrade-trials). |
+| `dependency compare-restore` | Compares restored versions, classifications, dependencies, and selected assets across two checkouts. |
+| `dependency inspect-pin` | Reports resolved package ownership and the SDK dependency paths for one package. |
 | `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
 | `verify-devcontainer` | Starts the dev container of the root, runs each `--exec` command in it, and removes it; see [Dev container validation](#dev-container-validation). |
@@ -711,6 +714,75 @@ dotnet repo verify-devcontainer --devcontainer-cli /usr/local/bin/devcontainer -
 `security scan --root <path> --output <directory>` also scans current source with Gitleaks.
 See the [security baseline](../../docs/security-baseline.md) for configuration and exit codes.
 
+## NuGet upgrade trials
+
+Use `dependency trial-upgrade` to test a coordinated package change under the repository's pinned .NET SDK.
+Select the central file that owns the declarations, including an imported file, with `--props`. Repeat
+`--update package@version` for each member of the candidate set. `--remove-pin` removes a single
+transitive declaration only when the evaluated solution and tracked file-based apps allow that
+declaration to be removed. A file-based app can use its nearest central file or an imported version.
+
+```sh
+repo dependency trial-upgrade --props eng/Versions.props --remove-pin Contoso.Driver.Core --update Contoso.Driver.PostgreSql@2.0.0 --update Contoso.Driver.Hosting@2.0.0 --plan TestResults/nuget-upgrade.patch
+```
+
+Use `--propose` with `--remove-pin` to ask the SDK for updates of the direct owners of the pin.
+Add `--coordinate <package>` for each additional direct package in a coupled family.
+The report lists the selected direct IDs and shows the SDK's chosen versions in the verified graph.
+The SDK chooses the highest version available for each selected ID from the configured package sources.
+Use exact `--update` versions when you need a different compatible set.
+
+```sh
+repo dependency trial-upgrade --props eng/Versions.props --remove-pin Contoso.Driver.Core --propose --coordinate Contoso.Driver.Hosting --plan TestResults/nuget-proposal.patch
+```
+
+The trial snapshots the current revision and tracked working changes into a disposable checkout. For a mapped
+repository-relative feed that is absent from Git, pass its directory to `--copy-local-source`. The trial copies
+its package archives to the same relative location and uses the repository's existing `NuGet.Config`. Other
+untracked files stay in the source checkout.
+
+Locked baseline restore, candidate restore and locked candidate restore cover all evaluated projects, including
+projects that intentionally keep no lock file. The trial restores tracked file-based apps in the disposable
+checkout and includes their resolved dependencies in the report. It withholds the patch when their restore
+evidence is incomplete or when they reference other MSBuild projects. Each app uses its tracked lock or
+a separate scratch lock when repository settings enable locking without a tracked file. Add `--build` for a Release solution build or `--test` for the
+Release build and full tests. The JSON report has the restore comparison, SDK diagnostics, verification outcomes
+and the patch digest. Where removing a pin would lower or leave an unconfirmed version floor, the report shows
+the projects and targets where the graph changed. The trial writes a report and withholds the patch.
+
+Use `--vulnerable` to find a minimum upgrade for reported advisories. The search includes directly
+affected packages and direct owners of transitive dependency paths. Use `--coordinate <package>` for
+other direct members of a coupled family. Each considered owner must have one literal version
+declaration in the selected `--props` file. The search considers upgrades above every current direct
+resolution. It considers stable releases unless a scope already resolves a prerelease.
+
+The search orders exact sets by the number of changed direct declarations, then the case-insensitive
+sequence of package IDs, then ascending NuGet versions in that order. It evaluates at most 12 owners,
+512 relevant versions per owner and 32 sets. Each attempt starts from the same tracked state, performs
+fresh restore under the original audit policy, and verifies the selected versions and locked restore.
+The trial keeps the strict baseline result when advisory errors require a diagnostic warning-only
+restore to read the initial graph. The final candidate uses the original severities and suppressions.
+
+A successful earlier set proves the minimum only within the listed owners and eligible releases.
+Missing or ambiguous source data, an indeterminate earlier restore, or a search limit produces
+`minimumUnproven` with evidence and no patch. A source availability diagnostic prevents a minimum claim
+even if the repository allows the restore to report it as a warning. The report separates unavailable or partial package
+metadata from an exhaustive set that cannot resolve the advisories. Use explicit `--update` versions
+to verify another reviewed set when a complete automatic proposal is unavailable.
+
+The trial builds a managed metadata resolver in a temporary directory using the checkout's selected
+.NET 10 or 11 SDK. The resolver uses that SDK's NuGet settings, package source mappings and
+noninteractive credential providers. The tool's packaged and NativeAOT builds carry the resolver
+sources and use the installed SDK at runtime. Before release, run the mapped audit trial on Windows
+alongside the hosted package and NativeAOT consumption checks.
+
+Review the JSON and the patch, then verify and apply it with Git. Use a fresh output path for the next trial.
+
+```sh
+git apply --check TestResults/nuget-upgrade.patch
+git apply TestResults/nuget-upgrade.patch
+```
+
 ## Offline dependency snapshots
 
 Generate a GitHub dependency-submission snapshot from the exact clean reviewed commit, without restoring,
@@ -740,6 +812,48 @@ dirty/mislabeled commits, and unsafe output paths fail before publication. Exist
 The command itself performs no network calls. One source-built tool can inspect both historical base and
 current head checkouts, so retired releases are unnecessary for dependency review. Actual application builds
 still require the current candidate's artifacts.
+
+### Compare evaluated restores
+
+Run an audited locked restore in each checkout using its pinned SDK and configured package sources.
+Pass the two checkouts to the comparison command.
+
+```sh
+repo dependency compare-restore --root /path/to/baseline --candidate /path/to/candidate --output TestResults/restore-graph.json
+```
+
+The command asks each selected SDK to evaluate the solution's restore inputs and compares them
+with the restored assets and successful restore cache. It reports stale or missing evidence per
+project and exits with status 1 if any project is unavailable. The comparison includes projects
+whose evaluated settings disable lock files, plus separate target entries for runtime identifiers.
+Tracked file-based C# apps with build or dependency directives appear under their source paths.
+When their current assets are missing or outside the checkout, the report marks that app's graph
+unavailable and the command returns status 1. The comparison uses SDK project evaluation and existing restore assets.
+The report includes both Git revisions, dirty flags, SDK versions, and package additions,
+removals, or changes to versions, requested dependencies, content hashes, classifications,
+and selected asset paths. To record build and test outcomes, pass an existing CI execution
+manifest from `ci run` as `--baseline-verification` or `--candidate-verification`.
+Each manifest must match the exact clean checkout and is resolved inside that checkout.
+The report retains the named validation slices and their restore, build, and test outcomes.
+Use a fresh output path inside the baseline checkout.
+
+### Inspect a transitive pin
+
+After locked restore, inspect a package before trying to update or remove its central pin.
+
+```sh
+repo dependency inspect-pin --package Microsoft.Extensions.Logging
+```
+
+The report names the checkout revision, SDK, and each project, framework, and RID selecting the
+package. It includes direct, central transitive, or transitive classification and whether the project
+uses a lock file. The SDK dependency tree identifies which direct packages and project references
+requested it. The command leaves package declarations and lock files untouched and returns status 1
+when a restored project or its SDK path report is unavailable.
+For tracked file-based apps, the SDK evaluates their requested direct packages and names the
+file that defines each central version. That declaration can come from an imported props file
+or a nearer `Directory.Packages.props`. File-app declarations in this report describe requests.
+The SDK dependency tree describes resolved solution projects.
 
 `dependency submit` sends the snapshot to GitHub's dependency submission API:
 

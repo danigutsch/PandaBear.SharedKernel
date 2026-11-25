@@ -1,4 +1,53 @@
 #nullable enable
+PandaBear.Repositories.NuGetPinInspection
+PandaBear.Repositories.NuGetUpgradeTrial
+PandaBear.Repositories.NuGetUpgradeTrialOptions
+PandaBear.Repositories.NuGetUpgradeTrialOptions.<Clone>$() -> PandaBear.Repositories.NuGetUpgradeTrialOptions!
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Build.get -> bool
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Build.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.CoordinatedPackages.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Repositories.NuGetUpgradeTrialOptions.CoordinatedPackages.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Deconstruct(out string! Root, out string! PlanPath, out string! PropsPath, out string? RemovePin, out System.Collections.Generic.IReadOnlyList<string!>! Updates, out bool Vulnerable, out System.Collections.Generic.IReadOnlyList<string!>! LocalSources, out bool Build, out bool Test) -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Equals(PandaBear.Repositories.NuGetUpgradeTrialOptions? other) -> bool
+PandaBear.Repositories.NuGetUpgradeTrialOptions.LocalSources.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Repositories.NuGetUpgradeTrialOptions.LocalSources.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.NuGetUpgradeTrialOptions(string! Root, string! PlanPath, string! PropsPath, string? RemovePin, System.Collections.Generic.IReadOnlyList<string!>! Updates, bool Vulnerable, System.Collections.Generic.IReadOnlyList<string!>! LocalSources, bool Build, bool Test) -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.PlanPath.get -> string!
+PandaBear.Repositories.NuGetUpgradeTrialOptions.PlanPath.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.PropsPath.get -> string!
+PandaBear.Repositories.NuGetUpgradeTrialOptions.PropsPath.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.ProposePinUpdates.get -> bool
+PandaBear.Repositories.NuGetUpgradeTrialOptions.ProposePinUpdates.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.RemovePin.get -> string?
+PandaBear.Repositories.NuGetUpgradeTrialOptions.RemovePin.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Root.get -> string!
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Root.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Test.get -> bool
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Test.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Updates.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Updates.init -> void
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Vulnerable.get -> bool
+PandaBear.Repositories.NuGetUpgradeTrialOptions.Vulnerable.init -> void
+override PandaBear.Repositories.NuGetUpgradeTrialOptions.Equals(object? obj) -> bool
+override PandaBear.Repositories.NuGetUpgradeTrialOptions.GetHashCode() -> int
+override PandaBear.Repositories.NuGetUpgradeTrialOptions.ToString() -> string!
+static PandaBear.Repositories.NuGetPinInspection.Run(string! root, string! packageId, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+PandaBear.Repositories.NuGetRestoreGraphComparison
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.<Clone>$() -> PandaBear.Repositories.NuGetRestoreGraphComparisonOptions!
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.BaselineRoot.get -> string!
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.BaselineRoot.init -> void
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.BaselineVerification.get -> string?
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.BaselineVerification.init -> void
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.CandidateRoot.get -> string!
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.CandidateRoot.init -> void
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.CandidateVerification.get -> string?
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.CandidateVerification.init -> void
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.Deconstruct(out string! BaselineRoot, out string! CandidateRoot, out string! OutputPath, out string? BaselineVerification, out string? CandidateVerification) -> void
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.Equals(PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? other) -> bool
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.NuGetRestoreGraphComparisonOptions(string! BaselineRoot, string! CandidateRoot, string! OutputPath, string? BaselineVerification, string? CandidateVerification) -> void
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.OutputPath.get -> string!
+PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.OutputPath.init -> void
 const PandaBear.Repositories.ActionPinVerifier.DefaultManifestPath = ".github/action-pins.json" -> string!
 const PandaBear.Repositories.ConsumerConfigurationFile.RelativePath = ".config/sharedkernel-repo.json" -> string!
 const PandaBear.Repositories.GherkinVerifier.MaxFileBytes = 67108864 -> int
@@ -38,6 +87,9 @@ override PandaBear.Repositories.LicenseExceptionVerification.ToString() -> strin
 override PandaBear.Repositories.LinkVerification.Equals(object? obj) -> bool
 override PandaBear.Repositories.LinkVerification.GetHashCode() -> int
 override PandaBear.Repositories.LinkVerification.ToString() -> string!
+override PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.Equals(object? obj) -> bool
+override PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.GetHashCode() -> int
+override PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.ToString() -> string!
 override PandaBear.Repositories.RepositoryFeature.Equals(object? obj) -> bool
 override PandaBear.Repositories.RepositoryFeature.GetHashCode() -> int
 override PandaBear.Repositories.RepositoryFeature.ToString() -> string!
@@ -296,6 +348,12 @@ static PandaBear.Repositories.LineEndingVerifier.Verify(string! rootPath, System
 static PandaBear.Repositories.LinkVerification.operator !=(PandaBear.Repositories.LinkVerification? left, PandaBear.Repositories.LinkVerification? right) -> bool
 static PandaBear.Repositories.LinkVerification.operator ==(PandaBear.Repositories.LinkVerification? left, PandaBear.Repositories.LinkVerification? right) -> bool
 static PandaBear.Repositories.LinkVerifier.Verify(string! rootPath, System.Collections.Generic.IReadOnlyList<string!>! paths, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.LinkVerification!>!
+static PandaBear.Repositories.NuGetRestoreGraphComparison.Run(PandaBear.Repositories.NuGetRestoreGraphComparisonOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.operator !=(PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? left, PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? right) -> bool
+static PandaBear.Repositories.NuGetRestoreGraphComparisonOptions.operator ==(PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? left, PandaBear.Repositories.NuGetRestoreGraphComparisonOptions? right) -> bool
+static PandaBear.Repositories.NuGetUpgradeTrial.Run(PandaBear.Repositories.NuGetUpgradeTrialOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static PandaBear.Repositories.NuGetUpgradeTrialOptions.operator !=(PandaBear.Repositories.NuGetUpgradeTrialOptions? left, PandaBear.Repositories.NuGetUpgradeTrialOptions? right) -> bool
+static PandaBear.Repositories.NuGetUpgradeTrialOptions.operator ==(PandaBear.Repositories.NuGetUpgradeTrialOptions? left, PandaBear.Repositories.NuGetUpgradeTrialOptions? right) -> bool
 static PandaBear.Repositories.RepositoryBaseline.Apply(string! rootPath, bool force, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 static PandaBear.Repositories.RepositoryBaseline.Verify(string! rootPath, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 static PandaBear.Repositories.RepositoryFeature.All.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RepositoryFeature!>!

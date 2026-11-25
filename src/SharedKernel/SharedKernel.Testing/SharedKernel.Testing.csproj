@@ -8,8 +8,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;traits;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>
-        <TestingSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">..\SharedKernel.Testing.SourceGenerator\bin\$(Configuration)\netstandard2.0\SharedKernel.Testing.SourceGenerator.dll</TestingSourceGeneratorPackageFile>
-        <TestingSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\SharedKernel.Testing.SourceGenerator\$(Configuration)\netstandard2.0\SharedKernel.Testing.SourceGenerator.dll</TestingSourceGeneratorPackageFile>
+        <PackCompilerOutputs>true</PackCompilerOutputs>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +18,7 @@
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Testing.SourceGenerator\SharedKernel.Testing.SourceGenerator.csproj"
             OutputItemType="Analyzer"
+            PackCompilerOutput="true"
             ReferenceOutputAssembly="false"
             PrivateAssets="all"
             IsAspireProjectResource="false" />
@@ -26,10 +26,6 @@
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
-        <None Include="$(TestingSourceGeneratorPackageFile)"
-            Pack="true"
-            PackagePath="analyzers/dotnet/cs"
-            Visible="false" />
     </ItemGroup>
 
 </Project>

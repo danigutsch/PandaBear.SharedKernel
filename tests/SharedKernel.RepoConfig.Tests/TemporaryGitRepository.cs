@@ -1,4 +1,5 @@
 using System.Text;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tests;
 
@@ -98,7 +99,7 @@ internal sealed class TemporaryGitRepository : IDisposable
             cancellationToken);
 
     /// <summary>
-    /// Runs the RepoConfig tool in process with the isolated Git environment plus any extra environment variables, defaulting the working directory to the repository root.
+    /// Runs the RepoConfig executable with the isolated Git environment and optional variables scoped to the child process.
     /// </summary>
     public async Task<CommandResult> RunCommand(
         IReadOnlyList<string> arguments,
@@ -106,39 +107,23 @@ internal sealed class TemporaryGitRepository : IDisposable
         string? workingDirectory = null,
         IReadOnlyDictionary<string, string?>? environment = null)
     {
-        List<EnvironmentVariableScope> environmentScopes = [];
-        foreach (var variable in _repository.GitEnvironment)
-        {
-            environmentScopes.Add(new EnvironmentVariableScope(variable.Key, variable.Value));
-        }
-
+        var commandEnvironment = new Dictionary<string, string?>(_repository.GitEnvironment, StringComparer.Ordinal);
         if (environment is not null)
         {
             foreach (var variable in environment)
             {
-                environmentScopes.Add(new EnvironmentVariableScope(variable.Key, variable.Value));
+                commandEnvironment[variable.Key] = variable.Value;
             }
         }
 
-        using var output = new InvariantStringWriter();
-        using var error = new InvariantStringWriter();
-        try
-        {
-            var exitCode = await RepoConfigToolRunner.Run(
-                arguments,
-                output,
-                error,
-                workingDirectory ?? RootPath,
-                cancellationToken);
-            return new CommandResult(exitCode, output.ToString(), error.ToString());
-        }
-        finally
-        {
-            foreach (var scope in environmentScopes.AsEnumerable().Reverse())
-            {
-                scope.Dispose();
-            }
-        }
+        var dotnet = PathExecutableResolver.Default.Find("dotnet")
+            ?? throw new FileNotFoundException("dotnet executable was not found.");
+        var tool = typeof(RepoConfigCommandLine).Assembly.Location;
+        var result = await TestProcess.Run(dotnet, workingDirectory ?? RootPath, [tool, .. arguments],
+            cancellationToken, commandEnvironment);
+        return new CommandResult(result.ExitCode,
+            result.StandardOutput.Replace("\r\n", "\n", StringComparison.Ordinal),
+            result.StandardError.Replace("\r\n", "\n", StringComparison.Ordinal));
     }
 
     /// <summary>
@@ -211,6 +196,11 @@ internal sealed class TemporaryGitRepository : IDisposable
             shimPath,
             $$"""
             #!/bin/sh
+            if [ -n "${TEXT_ENCODING_GIT_SHIM_HOME_LOG:-}" ]; then
+              printf '%s' "$HOME" > "$TEXT_ENCODING_GIT_SHIM_HOME_LOG"
+              : > "$TEXT_ENCODING_GIT_SHIM_READY"
+              while [ ! -f "$TEXT_ENCODING_GIT_SHIM_RELEASE" ]; do sleep 0.05; done
+            fi
             if [ -n "${TEXT_ENCODING_GIT_SHIM_ENVIRONMENT_LOG:-}" ]; then
               {
                 echo git-shim
@@ -252,6 +242,24 @@ internal sealed class TemporaryGitRepository : IDisposable
             shimPath,
             UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         return shimDirectory + Path.PathSeparator + Environment.GetEnvironmentVariable("PATH");
+    }
+
+    /// <summary>Reads the parent home while the Git shim waits, then releases the child even if the wait was canceled.</summary>
+    internal static async Task<string?> ReadParentHomeWhileGitWaits(Task command, string ready, string release, CancellationToken ct)
+    {
+        try
+        {
+            while (!File.Exists(ready) && !command.IsCompleted)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(10), ct);
+            }
+
+            return Environment.GetEnvironmentVariable("HOME");
+        }
+        finally
+        {
+            await File.WriteAllTextAsync(release, string.Empty, CancellationToken.None);
+        }
     }
 
     /// <summary>

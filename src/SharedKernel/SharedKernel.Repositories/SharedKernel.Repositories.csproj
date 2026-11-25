@@ -20,6 +20,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="NuGetMetadata/Resolver.cs.txt" LogicalName="NuGetMetadata.Resolver.cs" WithCulture="false" />
+        <EmbeddedResource Include="NuGetMetadata/Resolver.csproj.txt" LogicalName="NuGetMetadata.Resolver.csproj" WithCulture="false" />
+        <EmbeddedResource Include="NuGetVersionSources.cs;NuGetVersionRequestPackage.cs;NuGetVersionRequest.cs;NuGetVersionSet.cs;NuGetVersionResponse.cs"
+                          LogicalName="NuGetMetadata.%(Filename)%(Extension)" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 

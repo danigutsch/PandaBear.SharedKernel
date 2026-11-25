@@ -86,24 +86,25 @@ public sealed class TextEncodingProcessTests
         await repository.Initialize(TestContext.Current.CancellationToken);
         repository.WriteText("valid.txt", "valid\n");
         await repository.Stage("valid.txt", TestContext.Current.CancellationToken);
+        using var gitPath = new EnvironmentVariableScope("PATH", repository.CreateGitShim());
+        using var shimMode = new EnvironmentVariableScope("TEXT_ENCODING_GIT_SHIM_MODE", "hanging-blob");
+        using var globalConfig = new EnvironmentVariableScope("GIT_CONFIG_GLOBAL", TestGit.Environment["GIT_CONFIG_GLOBAL"]);
+        using var systemConfig = new EnvironmentVariableScope("GIT_CONFIG_NOSYSTEM", TestGit.Environment["GIT_CONFIG_NOSYSTEM"]);
+        using var systemAttrs = new EnvironmentVariableScope("GIT_ATTR_NOSYSTEM", TestGit.Environment["GIT_ATTR_NOSYSTEM"]);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         using var cancellation = new CancellationTokenSource(TimeSpan.FromMilliseconds(300));
-        Dictionary<string, string?> environment = new(StringComparer.Ordinal)
-        {
-            ["PATH"] = repository.CreateGitShim(),
-            ["TEXT_ENCODING_GIT_SHIM_MODE"] = "hanging-blob"
-        };
 
         // Act
-        var result = await repository.RunCommand(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["verify-text-encoding", "--root", repository.RootPath],
-            cancellation.Token,
-            environment: environment);
+            output, error, repository.RootPath, cancellation.Token);
 
         // Assert
-        result.ExitCode.ShouldBe(1);
+        exitCode.ShouldBe(1);
         cancellation.IsCancellationRequested.ShouldBeTrue();
-        result.StandardOutput.ShouldBe(string.Empty);
-        result.StandardError.ShouldBe(string.Empty);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe(string.Empty);
     }
 
     [Fact]

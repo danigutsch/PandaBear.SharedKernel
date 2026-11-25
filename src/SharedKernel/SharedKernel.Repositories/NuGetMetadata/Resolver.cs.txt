@@ -1,0 +1,144 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using NuGet.Common;
+using NuGet.Configuration;
+using NuGet.Credentials;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
+using NuGet.Versioning;
+using PandaBear.Repositories;
+
+await using var input = File.OpenRead(args[0]);
+var request = await JsonSerializer.DeserializeAsync(input, ResolverJsonContext.Default.NuGetVersionRequest).ConfigureAwait(false);
+if (request is not { SchemaVersion: 1 })
+{
+    return 1;
+}
+
+DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance, nonInteractive: true);
+using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(90));
+var packages = new List<NuGetVersionSet>();
+foreach (var package in request.Packages)
+{
+    packages.Add(await ReadVersions(package, request.VersionLimit, cancellation.Token).ConfigureAwait(false));
+}
+
+Console.WriteLine(JsonSerializer.Serialize(new NuGetVersionResponse(1, [.. packages]), ResolverJsonContext.Default.NuGetVersionResponse));
+return 0;
+
+static async Task<NuGetVersionSet> ReadVersions(NuGetVersionRequestPackage package, int limit, CancellationToken cancellationToken)
+{
+    var order = VersionComparer.VersionRelease;
+    var baseline = package.Current.Select(NuGetVersion.Parse).ToArray();
+    var includePrerelease = baseline.Any(version => version.IsPrerelease);
+    HashSet<NuGetVersion>? common = null;
+    foreach (var project in package.Projects.DistinctBy(project =>
+        string.Join('\0', project.ConfigFiles) + "\0\0" + string.Join('\0', project.Locations), StringComparer.Ordinal))
+    {
+        var allowed = AllowedSources(project, package.Package);
+        if (allowed.Length == 0)
+        {
+            return new(package.Package, "mappingUnavailable", []);
+        }
+
+        HashSet<NuGetVersion> available = new(order);
+        var completed = 0;
+        var overlaps = false;
+        foreach (var source in allowed)
+        {
+            try
+            {
+                if (source.IsLocal && !Directory.Exists(source.Source))
+                {
+                    continue;
+                }
+
+                using var feedDeadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                feedDeadline.CancelAfter(TimeSpan.FromSeconds(12));
+                using var cache = new SourceCacheContext { NoCache = true };
+                var repository = Repository.Factory.GetCoreV3(source);
+                var resource = await repository.GetResourceAsync<FindPackageByIdResource>(feedDeadline.Token).ConfigureAwait(false);
+                if (resource is null)
+                {
+                    continue;
+                }
+
+                var versions = await resource.GetAllVersionsAsync(package.Package, cache, NullLogger.Instance, feedDeadline.Token).ConfigureAwait(false);
+                foreach (var version in versions.Distinct<NuGetVersion>(order))
+                {
+                    if ((includePrerelease || !version.IsPrerelease) && baseline.All(current => order.Compare(version, current) > 0))
+                    {
+                        overlaps |= !available.Add(version);
+                        if (available.Count > limit)
+                        {
+                            return new(package.Package, "limitExceeded", []);
+                        }
+                    }
+                }
+
+                completed++;
+            }
+            catch (Exception exception) when (exception is NuGetProtocolException or IOException or InvalidOperationException
+                or UnauthorizedAccessException or OperationCanceledException or HttpRequestException)
+            {
+                // Other eligible feeds are still considered so a partial result is distinct from no source evidence.
+            }
+        }
+
+        if (completed != allowed.Length)
+        {
+            return new(package.Package, completed == 0 ? "feedUnavailable" : "partial", []);
+        }
+
+        if (overlaps)
+        {
+            return new(package.Package, "ambiguousSources", []);
+        }
+
+        if (common is null)
+        {
+            common = available;
+        }
+        else
+        {
+            common.IntersectWith(available);
+        }
+    }
+
+    return common is null
+        ? new(package.Package, "mappingUnavailable", [])
+        : new(package.Package, "complete", common.Order(order).Select(version => version.ToNormalizedString()).ToArray());
+}
+
+static PackageSource[] AllowedSources(NuGetVersionSources project, string package)
+{
+    if (project.ConfigFiles.Length == 0 || !project.ConfigFiles.All(File.Exists) || project.Locations.Length == 0)
+    {
+        return [];
+    }
+
+    try
+    {
+        var settings = Settings.LoadSettingsGivenConfigPaths(project.ConfigFiles);
+        var mapping = PackageSourceMapping.GetPackageSourceMapping(settings);
+        var effective = project.Locations.ToHashSet(StringComparer.Ordinal);
+        var enabled = new PackageSourceProvider(settings).LoadPackageSources()
+            .Where(source => source.IsEnabled && effective.Contains(source.Source)).ToArray();
+        if (!effective.SetEquals(enabled.Select(source => source.Source)))
+        {
+            return [];
+        }
+
+        var mapped = mapping.GetConfiguredPackageSources(package);
+        return enabled.Where(source => !mapping.IsEnabled || mapped.Contains(source.Name, StringComparer.OrdinalIgnoreCase)).ToArray();
+    }
+    catch (Exception exception) when (exception is NuGetConfigurationException or IOException or ArgumentException or UnauthorizedAccessException)
+    {
+        return [];
+    }
+}
+
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+[JsonSerializable(typeof(NuGetVersionRequest))]
+[JsonSerializable(typeof(NuGetVersionResponse))]
+internal sealed partial class ResolverJsonContext : JsonSerializerContext;
