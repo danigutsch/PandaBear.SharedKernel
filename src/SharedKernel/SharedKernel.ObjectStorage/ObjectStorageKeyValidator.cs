@@ -1,6 +1,6 @@
 using System.Text.Unicode;
 
-namespace SharedKernel.InputNormalization;
+namespace SharedKernel.ObjectStorage;
 
 /// <summary>
 /// Validates relative slash-delimited keys with well-formed Unicode and no control characters.

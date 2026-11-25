@@ -8,7 +8,7 @@ Reusable input normalization helpers for shared-kernel workflows.
 
 ## Usage
 
-Use `StringSanitizer` for trimming/normalization and key generation, `NumericSanitizer.SanitizePrice` for reusable numeric normalization, `ObjectStorageKeyValidator.IsValidRelativeKey` for relative storage keys, and `WebAssetUriSanitizer` for root-relative or HTTPS assets (surrounding white space is trimmed; control characters, inner white space, backslashes, lone surrogates, protocol-relative addresses and user information are refused). Use `ControlCharacters.Escape` before writing text from files, processes, or the network to a terminal or a CI log: it replaces control, format, line separator, and paragraph separator characters, and lone surrogates, with `\uXXXX` or `\UXXXXXXXX` escapes and keeps other text, including non-ASCII letters and emoji. `ControlCharacters.EscapeLines` splits multi-line text, such as an exception message that carries process output, and escapes each line, so a command writes it line by line without a line carrying a control character. Use `PrintableText.OneLine` instead
+Use `StringSanitizer` for trimming/normalization and key generation, `NumericSanitizer.SanitizePrice` for reusable numeric normalization, and `WebAssetUriSanitizer` for root-relative or HTTPS assets (surrounding white space is trimmed; control characters, inner white space, backslashes, lone surrogates, protocol-relative addresses and user information are refused). Use `ControlCharacters.Escape` before writing text from files, processes, or the network to a terminal or a CI log: it replaces control, format, line separator, and paragraph separator characters, and lone surrogates, with `\uXXXX` or `\UXXXXXXXX` escapes and keeps other text, including non-ASCII letters and emoji. `ControlCharacters.EscapeLines` splits multi-line text, such as an exception message that carries process output, and escapes each line, so a command writes it line by line without a line carrying a control character. Use `PrintableText.OneLine` instead
 when the text should read as it would display, such as a name in a report: line breaks and tabs become spaces, and every
 other control, format, or default-ignorable character, and each lone surrogate, becomes U+FFFD, so the text can neither break
 the line, carry a terminal escape sequence, nor reorder the text around it with a bidirectional mark. Joiners and tag
@@ -46,9 +46,6 @@ public static class Example
 {
     public static string NormalizeName(string name)
         => StringSanitizer.NormalizeKey(name);
-
-    public static bool IsSafeKey(string key)
-        => ObjectStorageKeyValidator.IsValidRelativeKey(key, maxLength: 200);
 }
 ```
 

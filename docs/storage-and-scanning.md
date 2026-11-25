@@ -10,7 +10,7 @@ SharedKernel only when it is host-agnostic and carries no application business r
 | Bounded seekable content for multi-pass intake | `SharedKernel.IO` | `SeekableContent` lease with memory threshold and spill-to-disk | Request admission, size policy, storage |
 | Image upload sanitizing | `SharedKernel.UploadSanitizing` | `ImageSanitizer`: JPEG, PNG and WebP recognized by content; Exif/GPS, XMP, IPTC, comments and text chunks removed without re-encoding; header dimensions; size and dimension limits; animation detection and optional refusal; opt-in AVIF (structure and size checked, metadata kept) | Which uploads are images, naming, storage, scanning, decoding |
 | Font upload validation | `SharedKernel.UploadSanitizing` | `FontSanitizer`: WOFF2 recognized by content; header, table directory (UIntBase128, transform versions) and data blocks checked; collections refused; size limit; bytes returned unchanged | Which uploads are fonts, naming, storage, scanning, decoding the font data |
-| Object-key validation | `SharedKernel.InputNormalization` | `ObjectStorageKeyValidator`: relative, slash-delimited keys without dot segments, bounded length | Key layout, variants, naming rules |
+| Object-key validation | `SharedKernel.ObjectStorage` | `ObjectStorageKeyValidator`: relative, slash-delimited keys without dot segments, bounded length | Key layout, variants, naming rules |
 | Object-store contract | `SharedKernel.ObjectStorage` | `IObjectStore`, write, read, list, delete, direct-upload tickets, checksum and metadata carriers | Provider behavior, key policy, publishing |
 | S3-compatible provider | `SharedKernel.ObjectStorage.S3` | `AddS3ObjectStore`, options validation, presigned PUT tickets, traces without bucket or key tags, `AddS3ObjectStoreHealthCheck` | Hosting a server, access policy, application metadata |
 | Object-store test double | `SharedKernel.Testing.ObjectStorage` | `InMemoryObjectStore`: the S3 provider's key, missing-object, listing and ticket contract in memory, call recording, failure injection, discarded writes | Application key layout, provider-specific behavior beyond that contract |
@@ -70,8 +70,7 @@ not depend on the provider package.
 ## Validation evidence
 
 - `tests/SharedKernel.ObjectStorage.S3.Tests` covers the store, upload tickets, options, telemetry, and the health check against
-  a fake S3 client.
+  a fake S3 client, and the object-key validator.
 - `tests/SharedKernel.MalwareScanning.ClamAv.Tests` covers verdicts, fail-closed behavior, configuration, and the health check
   against a loopback daemon double.
-- `tests/SharedKernel.InputNormalization.Tests` covers the object-key validator.
 - `tests/SharedKernel.Testing.ObjectStorage.Tests` covers the in-memory object store's contract, recording, and failure injection.

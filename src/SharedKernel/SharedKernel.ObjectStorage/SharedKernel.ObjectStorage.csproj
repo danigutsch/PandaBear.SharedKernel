@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
         <None Include="README.md" Pack="true" PackagePath="\" />
         <None Include="NOTICE.ViajantesTurismo.txt" Pack="true" PackagePath="\" />
     </ItemGroup>
