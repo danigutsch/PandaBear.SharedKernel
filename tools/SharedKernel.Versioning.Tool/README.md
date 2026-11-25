@@ -73,6 +73,7 @@ dotnet release pack-dev --feed <path> [--version <version>] [--repo-root <path>]
 dotnet release prepare-release --version <version> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes
 dotnet release create-candidate [--version <version>] [--baseline-version <version>]
 dotnet release compare-candidates --baseline <candidate.json> --candidate <candidate.json> --apicompat <path> --output <file>
+dotnet release compare-candidate-dependencies --baseline <candidate.json> --candidate <candidate.json> --output <file>
 dotnet release validate-candidate [--version <version>] [--baseline-version <version>] [--aot] [--framework <tfm>]...
 dotnet release consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot] [--framework <tfm>]...
 dotnet release consume-packages --feed <path> --version <version> [--aot]
@@ -304,6 +305,23 @@ status. A new package is listed as added. A common package without a baseline as
 runtime-specific `lib` is listed separately from checked packages. Verify tool commands, generator output, and consumer
 builds through their existing validation lanes.
 
+### Compare dependencies in archived candidates
+
+Use the candidate manifests and the exact archives beside each one to prepare release notes.
+The report records the verified identities and changed packages. For each changed package it shows
+the changed NuGet dependency groups, exact version or range values and asset qualifiers. It records
+changes in bundled tool runtime targets, libraries and dependency edges separately.
+
+```sh
+dotnet release compare-candidate-dependencies --baseline prior/candidate.json --candidate current/candidate.json --output current/dependency-comparison.json
+```
+
+A first-party pin to the candidate's own version is compared across the coordinated release, including
+an exact singleton range. Unexpected versions and ranges retain their original values. A dependency
+change returns exit 3 with a complete report. Matching dependency metadata returns exit 0.
+An invalid or changed archive returns exit 2 and leaves the report path absent. The command reads the
+two archive directories directly and writes a separate dependency report.
+
 ## Output and exit codes
 
 Results such as versions, JSON, and report or package paths go to standard output. Errors go to standard error, as
@@ -315,7 +333,7 @@ and `validate-candidate` run, and of the command that `verify-consumer` runs.
 | `0` | Success. |
 | `1` | Invalid command line, cancellation, or an unexpected internal error. |
 | `2` | The command failed: invalid input, a failed check, or a failed `git`, `dotnet`, or tool process. |
-| `3` | `has-breaking-change-marker` found no marker, or `compare-candidates` reported API differences. |
+| `3` | `has-breaking-change-marker` found no marker, or a candidate comparison reported differences. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
 Ctrl+C or SIGTERM stops the running `git`, `dotnet`, tool, or sample process tree. A process that fails after the tool

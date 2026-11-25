@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace SharedKernel.Repository.Tests;
 
-/// <summary>Finds CI tool command lines, from source or the installed ci tool, in workflows and the tool README.</summary>
+/// <summary>Finds source, assembled, and installed CI tool invocations in workflows and the tool README.</summary>
 internal static partial class RepositoryToolCallers
 {
     private const string ArrayExpansion = "${args[@]}";
@@ -52,7 +52,10 @@ internal static partial class RepositoryToolCallers
     private static string[] Split(string commandLine) =>
         [.. CommandLineParser.SplitCommandLine(commandLine).Select(static argument => Samples.GetValueOrDefault(argument, argument))];
 
-    [GeneratedRegex(@"(?:tools/SharedKernel\.CI\.Tool|dotnet tool run ci|dotnet ci)[^\n`]*? -- (?<arguments>[^\n`]*)", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(
+        """(?:(?:tools/SharedKernel\.CI\.Tool|dotnet tool run ci|dotnet ci)[^\n`]*? -- |"""
+        + """dotnet "[^"\n]*/SharedKernel\.CI\.Tool\.dll" )(?<arguments>[^\n`]*)""",
+        RegexOptions.CultureInvariant)]
     private static partial Regex Invocation();
 
     [GeneratedRegex(@"args\+=\((?<values>[^)\n]*)\)", RegexOptions.CultureInvariant)]

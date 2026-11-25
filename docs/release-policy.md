@@ -31,6 +31,11 @@ authorization.
 
 CI calculates only prerelease candidates, including on manual dispatch; there is no stable-preparation input. Do not create stable packages, tags, or releases now. Generic CLI stable-version capabilities remain available for future separately authorized work. A future stable identity needs its own artifacts and validation; never relabel a prerelease archive.
 
+When drafting prerelease notes, use
+[`dotnet release compare-candidate-dependencies`](../tools/SharedKernel.Versioning.Tool/README.md#compare-dependencies-in-archived-candidates)
+against the retained baseline and new candidate archives. It verifies both manifests and reports changes in NuGet
+dependency groups and bundled tool runtime libraries. Record material dependency changes in the release notes.
+
 ## Channels, promotion, and support
 
 The only release channel is the preview candidate: a prerelease version that signals an unstable API under [SemVer](https://semver.org/) and that NuGet resolves only when a consumer opts in. Stable packages form a second channel that does not exist yet.

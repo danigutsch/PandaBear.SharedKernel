@@ -21,7 +21,7 @@ public static class LocalFeed
     /// <summary>Maps validated package identifiers to their original archive paths.</summary>
     /// <exception cref="ArgumentNullException"><paramref name="packages"/> is null.</exception>
     /// <exception cref="ArgumentException">The package metadata or version is invalid.</exception>
-    internal static Dictionary<string, string> ReadPackagePaths(string[] packages, string version)
+    internal static Dictionary<string, string> ReadPackagePaths(string[] packages, string version, bool requireCoordinatedDependencies = true)
     {
         ArgumentNullException.ThrowIfNull(packages);
         ArgumentException.ThrowIfNullOrWhiteSpace(version);
@@ -30,14 +30,7 @@ public static class LocalFeed
         foreach (var package in packages)
         {
             using var archive = ZipFile.OpenRead(package);
-            var nuspecEntries = archive.Entries.Where(entry => entry.FullName.EndsWith(".nuspec", StringComparison.Ordinal)).ToArray();
-            if (nuspecEntries.Length != 1)
-            {
-                throw new ArgumentException($"{package}: expected one .nuspec, found {nuspecEntries.Length}");
-            }
-
-            using var stream = nuspecEntries[0].Open();
-            var document = XDocument.Load(stream);
+            var document = ReadNuspec(archive, package);
             var packageId = RequiredElement(document, "id", package);
             var packageVersion = RequiredElement(document, "version", package);
             if (packageVersion != version)
@@ -45,13 +38,16 @@ public static class LocalFeed
                 throw new ArgumentException($"{package}: expected version {version}, found {packageVersion}");
             }
 
-            foreach (var dependency in document.Descendants().Where(element => element.Name.LocalName == "dependency"))
+            if (requireCoordinatedDependencies)
             {
-                var dependencyId = dependency.Attribute("id")?.Value ?? string.Empty;
-                var dependencyVersion = dependency.Attribute("version")?.Value ?? string.Empty;
-                if (dependencyId.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal) && dependencyVersion != version)
+                foreach (var dependency in document.Descendants().Where(element => element.Name.LocalName == "dependency"))
                 {
-                    throw new ArgumentException($"{package}: expected {dependencyId} dependency version {version}, found {dependencyVersion}");
+                    var dependencyId = dependency.Attribute("id")?.Value ?? string.Empty;
+                    var dependencyVersion = dependency.Attribute("version")?.Value ?? string.Empty;
+                    if (dependencyId.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal) && dependencyVersion != version)
+                    {
+                        throw new ArgumentException($"{package}: expected {dependencyId} dependency version {version}, found {dependencyVersion}");
+                    }
                 }
             }
 
@@ -62,6 +58,20 @@ public static class LocalFeed
         }
 
         return packagePaths;
+    }
+
+    /// <summary>Reads the single nuspec entry in a package archive.</summary>
+    /// <exception cref="ArgumentException">The archive has no nuspec or has multiple nuspecs.</exception>
+    internal static XDocument ReadNuspec(ZipArchive archive, string package)
+    {
+        var entries = archive.Entries.Where(static entry => entry.FullName.EndsWith(".nuspec", StringComparison.Ordinal)).ToArray();
+        if (entries.Length != 1)
+        {
+            throw new ArgumentException($"{package}: expected one .nuspec, found {entries.Length}");
+        }
+
+        using var stream = entries[0].Open();
+        return XDocument.Load(stream);
     }
 
     /// <summary>

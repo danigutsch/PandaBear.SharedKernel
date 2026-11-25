@@ -72,6 +72,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyTargetFrameworksCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateRunIsolatedPodmanCommand(environment),
+            ResourceBudgetCommandLine.Create(),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
             CreateVerifyDevcontainerCommand(environment, root),

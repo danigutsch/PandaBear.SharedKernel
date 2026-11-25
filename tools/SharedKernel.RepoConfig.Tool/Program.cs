@@ -9,4 +9,10 @@ if (string.Equals(invocation.CommandResult.Command.Name, RepoConfigCommandLine.I
     return await invocation.InvokeAsync(configuration).ConfigureAwait(false);
 }
 
+if (string.Equals(invocation.CommandResult.Command.Name, ResourceBudgetCommandLine.Name, StringComparison.Ordinal))
+{
+    var configuration = new InvocationConfiguration { ProcessTerminationTimeout = TimeSpan.FromSeconds(10) };
+    return await invocation.InvokeAsync(configuration).ConfigureAwait(false);
+}
+
 return await invocation.InvokeAsync().ConfigureAwait(false);

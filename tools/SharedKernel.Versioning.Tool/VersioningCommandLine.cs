@@ -11,7 +11,7 @@ internal static class VersioningCommandLine
     private const int CommandFailed = 2;
 
     private const int NoBreakingChangeMarker = 3;
-    private const int ApiDifferencesFound = 3;
+    private const int ComparisonDifferencesFound = 3;
 
     private const string BaselineVersionDescription =
         "Published package version to compare APIs against. Requires PandaBear.SharedKernel.* mapped only to an existing local feed in NuGet.Config.";
@@ -51,6 +51,7 @@ internal static class VersioningCommandLine
             CreateVerifyLockCoverage(),
             CreateCreateCandidate(candidates),
             CreateCompareCandidates(candidates),
+            CreateCompareCandidateDependencies(),
             CreateValidateCandidate(candidates),
             CreateConsumeCandidate(candidates),
             CreateConsumePackages(packager),
@@ -475,7 +476,28 @@ internal static class VersioningCommandLine
                 parseResult.GetRequiredValue(apiCompat), destination, ct).ConfigureAwait(false);
             var summary = passed ? "Candidate API comparison passed." : "Candidate API comparison found differences.";
             await output.WriteLineAsync($"{summary} Report: {destination}".AsMemory(), ct).ConfigureAwait(false);
-            return passed ? 0 : ApiDifferencesFound;
+            return passed ? 0 : ComparisonDifferencesFound;
+        });
+        return command;
+    }
+
+    private static Command CreateCompareCandidateDependencies()
+    {
+        var baseline = new Option<string>("--baseline") { Description = "Baseline candidate.json.", HelpName = "path", Required = true };
+        var candidate = new Option<string>("--candidate") { Description = "Candidate.json to check against the baseline.", HelpName = "path", Required = true };
+        var report = new Option<string>("--output") { Description = "New JSON dependency comparison report path.", HelpName = "path", Required = true };
+        var command = new Command("compare-candidate-dependencies", "Compares declared and bundled dependencies in two hash-verified package candidates.")
+        {
+            baseline, candidate, report,
+        };
+        SetAction(command, async (parseResult, output, ct) =>
+        {
+            var destination = parseResult.GetRequiredValue(report);
+            var passed = await CandidateValidator.CompareDependencies(parseResult.GetRequiredValue(baseline),
+                parseResult.GetRequiredValue(candidate), destination, ct).ConfigureAwait(false);
+            var summary = passed ? "Candidate dependency comparison passed." : "Candidate dependency comparison found differences.";
+            await output.WriteLineAsync($"{summary} Report: {destination}".AsMemory(), ct).ConfigureAwait(false);
+            return passed ? 0 : ComparisonDifferencesFound;
         });
         return command;
     }

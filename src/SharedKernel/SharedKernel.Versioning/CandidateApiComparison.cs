@@ -2,7 +2,6 @@ using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Xml;
 using SharedKernel.IO;
 using SharedKernel.Processes;
 
@@ -39,8 +38,10 @@ internal static class CandidateApiComparison
         bool passed;
         try
         {
-            var baseline = await Snapshot(baselineManifest, Path.Combine(scratch, "baseline"), ct).ConfigureAwait(false);
-            var candidate = await Snapshot(candidateManifest, Path.Combine(scratch, "candidate"), ct).ConfigureAwait(false);
+            var baseline = await CandidateArchiveSnapshot.Create(baselineManifest, Path.Combine(scratch, "baseline"),
+                requireCoordinatedDependencies: true, ct).ConfigureAwait(false);
+            var candidate = await CandidateArchiveSnapshot.Create(candidateManifest, Path.Combine(scratch, "candidate"),
+                requireCoordinatedDependencies: true, ct).ConfigureAwait(false);
             var executable = Path.GetFullPath(apiCompatPath);
             var version = (await commands.Run(executable, ["--version"], scratch, ct).ConfigureAwait(false)).Trim();
             _ = SemanticVersion.Parse(version);
@@ -72,50 +73,9 @@ internal static class CandidateApiComparison
         return passed;
     }
 
-    private static async Task<Feed> Snapshot(string manifestPath, string snapshotDirectory, CancellationToken ct)
-    {
-        var source = Path.GetFullPath(manifestPath);
-        var sourceDirectory = Path.GetDirectoryName(source)!;
-        Directory.CreateDirectory(snapshotDirectory);
-        var snapshot = Path.Combine(snapshotDirectory, CandidateManifest.FileName);
-        try
-        {
-            File.Copy(source, snapshot);
-            var evidence = CandidateManifest.Load(snapshot, sourceDirectory).Evidence;
-            var version = RequiredProperty(evidence, "packageVersion");
-            _ = SemanticVersion.Parse(version);
-            var revision = RequiredProperty(evidence, "libraryRevision");
-            if (revision.Length is not (40 or 64) || !revision.All(char.IsAsciiHexDigit))
-            {
-                throw new ArgumentException("Candidate libraryRevision must be a full Git object ID.");
-            }
-
-            var hashes = evidence["packageSha256"]!.AsObject();
-            CandidateManifest.RequireListedPackagesOnly(sourceDirectory, hashes);
-            var paths = hashes.Select(entry => Path.Combine(snapshotDirectory, entry.Key)).ToArray();
-            var packages = new Dictionary<string, string>(LocalFeed.ReadPackagePaths(paths, version), StringComparer.OrdinalIgnoreCase);
-            var identity = new JsonObject
-            {
-                ["packageVersion"] = version,
-                ["libraryRevision"] = revision,
-                ["manifestSha256"] = await CandidateManifest.HashPackage(snapshot, ct).ConfigureAwait(false),
-                ["packageSha256"] = hashes.DeepClone(),
-            };
-            return new Feed(identity, packages);
-        }
-        catch (Exception exception) when (exception is JsonException or XmlException or InvalidDataException or UnauthorizedAccessException)
-        {
-            throw new ArgumentException($"Candidate evidence cannot be read from {source}: {exception.Message}", exception);
-        }
-    }
-
-    private static string RequiredProperty(JsonObject evidence, string property) =>
-        evidence[property] is JsonValue value && value.TryGetValue<string>(out var text) && !string.IsNullOrWhiteSpace(text)
-            ? text
-            : throw new ArgumentException($"Candidate manifest is missing a valid {property}.");
-
     private static async Task<JsonArray> ComparePackages(
-        ExternalCommands commands, string executable, string workingDirectory, Feed baseline, Feed candidate, CancellationToken ct)
+        ExternalCommands commands, string executable, string workingDirectory,
+        CandidateArchiveSnapshot baseline, CandidateArchiveSnapshot candidate, CancellationToken ct)
     {
         var report = new JsonArray();
         var ids = baseline.Packages.Keys.Union(candidate.Packages.Keys, StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal);
@@ -191,6 +151,4 @@ internal static class CandidateApiComparison
         return prefixLength > 0 && line.Length > prefixLength + 5 && line[prefixLength + 4] == ':' &&
             line.AsSpan(prefixLength, 4).IndexOfAnyExceptInRange('0', '9') < 0;
     }
-
-    private sealed record Feed(JsonObject Identity, Dictionary<string, string> Packages);
 }

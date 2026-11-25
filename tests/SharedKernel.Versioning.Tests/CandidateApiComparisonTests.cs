@@ -40,6 +40,32 @@ public static class CandidateApiComparisonTests
     }
 
     [Fact]
+    public static async Task API_comparison_still_rejects_noncoordinated_package_dependencies()
+    {
+        // Arrange
+        using var baseline = new CandidateComparisonTestFeed();
+        using var candidate = new CandidateComparisonTestFeed();
+        var ct = TestContext.Current.CancellationToken;
+        _ = NuGetPackageBuilder.WritePackage(baseline.DirectoryPath, Probe, BaselineVersion,
+            ("PandaBear.SharedKernel.Other", CandidateVersion));
+        var baselineManifest = await baseline.WriteManifest(BaselineVersion, BaselineRevision, ct);
+        var candidateManifest = await candidate.Write(CandidateVersion, CandidateRevision, ct, (Probe, false));
+        var runner = new RecordingProcessRunner();
+        var command = VersioningCommandLine.Create(TextReader.Null, TimeProvider.System, runner, runner);
+        var report = Path.Combine(candidate.DirectoryPath, "api-comparison.json");
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(command,
+            ["compare-candidates", "--baseline", baselineManifest, "--candidate", candidateManifest, "--apicompat", "apicompat", "--output", report], ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain($"expected PandaBear.SharedKernel.Other dependency version {BaselineVersion}", StringComparison.Ordinal);
+        runner.Processes.ShouldBeEmpty();
+        File.Exists(report).ShouldBeFalse();
+    }
+
+    [Fact]
     public static async Task An_additive_candidate_comparison_records_both_verified_identities_and_scope()
     {
         // Arrange
