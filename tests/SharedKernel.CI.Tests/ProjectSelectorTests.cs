@@ -71,6 +71,25 @@ public sealed class ProjectSelectorTests : IDisposable
     }
 
     [Fact]
+    public async Task A_source_in_overlapping_project_directories_selects_every_possible_compiler()
+    {
+        // Arrange
+        scope.AddProject("src/Core/Peer.csproj", """<Project Sdk="Microsoft.NET.Sdk" />""");
+        scope.AddProject("src/Core/Plugins/Plugin.csproj", """<Project Sdk="Microsoft.NET.Sdk" />""");
+        scope.WriteFile("src/Core/Plugins/Changed.cs", "namespace Core.Plugins;");
+
+        // Act
+        var selection = await scope.Select(["src/Core/Plugins/Changed.cs"]);
+
+        // Assert
+        selection.FullValidation.ShouldBeFalse();
+        selection.BuildProjects.ShouldBe([
+            "src/Core/Core.csproj", "src/Core/Peer.csproj", "src/Core/Plugins/Plugin.csproj", "src/Dependent/Dependent.csproj",
+        ]);
+        SliceTests.Of(selection, "library").ShouldBe([CoreTests]);
+    }
+
+    [Fact]
     public async Task A_source_change_selects_only_its_dependent_test_projects_inside_a_larger_slice()
     {
         // Arrange
@@ -415,6 +434,40 @@ public sealed class ProjectSelectorTests : IDisposable
             "tests/Config.Tests/Config.Tests.csproj",
             CoreTests]);
         selection.Slices[0].Tests.Where(static test => test.Project == ConfigTests).ShouldHaveSingleItem().SelectedBy.ShouldBe(["config/settings.json"]);
+    }
+
+    [Fact]
+    public async Task A_test_path_override_retains_the_owning_build_projects()
+    {
+        // Arrange
+        scope.AddTestProject(ConfigTests);
+        scope.Configure(
+            """[{ "name": "library", "projects": [] }]""",
+            testPaths: """[{ "paths": ["src/Core/Changed.cs"], "tests": ["tests/Config.Tests/Config.Tests.csproj"] }]""");
+
+        // Act
+        var selection = await scope.Select(["src/Core/Changed.cs"]);
+
+        // Assert
+        selection.FullValidation.ShouldBeFalse();
+        selection.BuildProjects.ShouldBe(["src/Core/Core.csproj", "src/Dependent/Dependent.csproj"]);
+        SliceTests.Of(selection, "library").ShouldBe([ConfigTests]);
+    }
+
+    [Fact]
+    public async Task A_test_path_override_falls_back_when_build_ownership_is_uncertain()
+    {
+        // Arrange
+        scope.ConfigureTestPaths();
+        scope.WriteFile("src/Core/Core.csproj", "<Project>");
+
+        // Act
+        var selection = await scope.Select(["config/settings.json"]);
+
+        // Assert
+        selection.FullValidation.ShouldBeTrue();
+        selection.Reasons.ShouldHaveSingleItem().ShouldContain("src/Core/Core.csproj cannot be read.", StringComparison.Ordinal);
+        SliceTests.Of(selection, "library").ShouldBe([ConfigTests, CoreTests]);
     }
 
     [Fact]

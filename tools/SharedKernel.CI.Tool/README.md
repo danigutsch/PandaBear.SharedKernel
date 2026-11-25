@@ -21,6 +21,7 @@ same operations.
 
 Git and the .NET SDK pinned in `global.json`. `select` reads `.config/sharedkernel-ci.json` and the solution it names in a
 Git checkout, and `run` reads the configuration and the plan that `select` wrote; `openapi` reads the configuration;
+`verify-format` reads the plan in the same checkout after its solution or affected filter has been restored;
 `local-check` reads the configuration in a Git work tree and runs `git`, `dotnet`, and the built test executables, and needs no socket;
 `coverage` reads the configuration in a Git checkout; `coverage verify` also needs the history of `--base`;
 `install-playwright`, and `run --install-playwright`, need PowerShell (`pwsh`);
@@ -55,6 +56,7 @@ without installing it:
 
 ```sh
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <object-id>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-format
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice <name>
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- openapi refresh --target <name>
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- install-playwright --project <test-project> --browser chromium --with-dependencies
@@ -70,11 +72,55 @@ availability on nuget.org.
 
 ## Usage
 
-`--help` lists the options of each command. `--root` sets the repository root (default: the current directory; a relative
-root resolves from the current directory, an empty value is a command-line error, and a root that is not an existing directory fails with `--root is not an existing directory: <path>`);
-the other relative paths of `select`, `run`, `install-playwright`, `coverage`, and `stage-candidate` resolve from it, and relative `--event` and
-`--file` paths resolve from the current directory. A command line that starts with `[diagram]` prints how it parses
-instead of running; an invalid command line exits 1.
+`--help` lists each command's options. `--root` defaults to the current directory, and a relative root resolves from
+that directory. An empty value is a command-line error. A missing directory fails with
+`--root is not an existing directory: <path>`.
+
+Relative paths in `select`, `verify-format`, `run`, `install-playwright`, `coverage`, `stage-candidate`, and
+`verify-workflows` resolve from the repository root. Relative `--event` and `--file` paths resolve from the current
+directory. A command line that starts with `[diagram]` prints how it parses. An invalid command line exits 1.
+
+### Verify formatting for a change
+
+Run `dotnet ci select --base <object-id>` from either forge checkout. A selective comparison writes
+`affected.build.slnf` with the affected non-test projects and selected test projects, plus `changed-paths.nul` with
+the changed paths. Restore the affected filter, then run `dotnet ci verify-format`. The command compares the plan
+revision and path list to the checkout, preserves filenames with spaces, and omits files that were deleted.
+When selection requests full validation, restore the full solution and the verifier formats against that solution.
+`dotnet ci verify-format --report TestResults/format` requests the formatter's JSON report when it runs.
+
+### Lint workflow changes
+
+Install an Actionlint binary at the version and SHA-256 digest reviewed by the consuming repository. With complete
+Git history and both pull request revisions available, pass those revisions as full object IDs:
+
+```sh
+dotnet ci verify-workflows --base "$BASE_SHA" --head "$HEAD_SHA" --report TestResults/workflow-lint.json
+```
+
+The command checks changed workflow files in the current checkout. Changes to a shared action or Actionlint
+configuration, an unavailable comparison or a run without revisions trigger full lint. By default the command
+invokes `actionlint` from `PATH`. Use `--actionlint` for another path. A failing run returns a nonzero exit code
+and writes the scope and outcome to the requested JSON file.
+
+Forgejo checkouts using Actions-compatible syntax can pass `--workflows .forgejo/workflows` to select that directory.
+Actionlint resolves local reusable-workflow references through its GitHub project discovery under `.github/workflows`.
+
+### Use the pinned tools on either forge
+
+Keep the reviewed `candidate.json` in the consumer repository and check out the SharedKernel revision it names
+with the same SDK. Use a previously verified `ci` tool to stage the exact release assets:
+
+```sh
+dotnet ci stage-candidate --pin .config/sharedkernel-candidate.json --library-root "$SHAREDKERNEL_CHECKOUT" --output .local/sharedkernel-feed --repository danigutsch/PandaBear.SharedKernel
+```
+
+To stage assets from Forgejo, pass its URL with `--forgejo` and the corresponding owner and repository with
+`--repository`. The staging command verifies the release manifest identity and every pinned SHA-256 digest.
+Install `PandaBear.SharedKernel.CI.Tool` and `PandaBear.SharedKernel.RepoConfig.Tool` at the manifest version
+from the staged feed, using the package source mapping above. Run the same `ci select`, `ci verify-format`,
+`ci verify-workflows`, and [`repo verify-json`](../SharedKernel.RepoConfig.Tool/README.md#usage) commands on
+either forge. Use `selection.json` to drive the jobs and the optional lint reports to consume diagnostics.
 
 ### Configuration
 

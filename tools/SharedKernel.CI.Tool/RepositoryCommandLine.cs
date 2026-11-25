@@ -34,6 +34,8 @@ internal static partial class RepositoryCommandLine
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, machine));
+        root.Subcommands.Add(CreateVerifyFormat(workingDirectory, machine));
+        root.Subcommands.Add(WorkflowLintCommand.Create(workingDirectory, machine));
         root.Subcommands.Add(CreateRun(workingDirectory, machine));
         root.Subcommands.Add(CreateLocalCheck(workingDirectory, machine));
         root.Subcommands.Add(CreateOpenApi(workingDirectory, machine));
@@ -74,12 +76,12 @@ internal static partial class RepositoryCommandLine
         };
         var githubOutputOption = PathOption(
             "--github-output",
-            "GitHub Actions output file that receives build_required, documentation_only, matrix, and <slice>_required. Relative to the root.",
+            "GitHub Actions output file that receives build_required, documentation_only, full_validation, matrix, and <slice>_required. Relative to the root.",
             "path");
         var rootOption = CreateRootOption(workingDirectory);
         var selectionOption = CreateSelectionOption();
         var command = new Command(
-            "select", "Select the test projects affected since a base revision, as .config/sharedkernel-ci.json configures, and write the validation plan.")
+            "select", "Select the build and test projects affected since a base revision, as .config/sharedkernel-ci.json configures, and write the validation plan.")
         {
             baseOption,
             githubOutputOption,
@@ -99,6 +101,29 @@ internal static partial class RepositoryCommandLine
                     output,
                     error,
                     ct);
+            },
+            ct));
+        return command;
+    }
+
+    private static Command CreateVerifyFormat(string workingDirectory, CiMachine machine)
+    {
+        var rootOption = CreateRootOption(workingDirectory);
+        var selectionOption = CreateSelectionOption();
+        var reportOption = PathOption("--report", "Directory for the formatter's JSON report. Relative to the root.", "directory");
+        var command = new Command("verify-format", "Verify formatting using the current checkout's validation plan.")
+        {
+            rootOption,
+            selectionOption,
+            reportOption,
+        };
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, _) =>
+            {
+                var root = rootOption.GetExistingDirectory(parseResult);
+                var selection = Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root);
+                return new FormatVerifier(machine).Run(root, selection, parseResult.GetValue(reportOption), output, ct);
             },
             ct));
         return command;

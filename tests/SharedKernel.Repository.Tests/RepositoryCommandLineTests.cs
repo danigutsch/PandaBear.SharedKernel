@@ -331,6 +331,8 @@ public sealed class RepositoryCommandLineTests
     [Theory]
     [InlineData("stage-candidate", "--pin", "pin.json", "--library-root", "sk", "--output", "feed", "--feed", "packages")]
     [InlineData("select")]
+    [InlineData("verify-format")]
+    [InlineData("verify-workflows")]
     [InlineData("coverage", "record-symbols")]
     [InlineData("run-mutation-tests")]
     public async Task An_empty_root_is_a_parse_error_instead_of_the_current_directory(params string[] command)
@@ -349,15 +351,18 @@ public sealed class RepositoryCommandLineTests
         Directory.Exists(Path.Combine(scope.Root, "feed")).ShouldBeFalse();
     }
 
-    [Fact]
-    public async Task A_root_that_is_not_a_directory_fails_before_any_process_starts()
+    [Theory]
+    [InlineData("select")]
+    [InlineData("verify-format")]
+    [InlineData("verify-workflows")]
+    public async Task A_root_that_is_not_a_directory_fails_before_any_process_starts(string command)
     {
         // Arrange
         using var scope = new RepositoryTestScope();
         var processes = new ProcessLog();
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["select", "--root", "missing"], processes.Run, TestContext.Current.CancellationToken);
+        var result = await RepositoryToolInvocation.Run(scope.Root, [command, "--root", "missing"], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(2);

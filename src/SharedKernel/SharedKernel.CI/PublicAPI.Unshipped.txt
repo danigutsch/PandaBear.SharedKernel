@@ -65,6 +65,9 @@ SharedKernel.CI.CiMachine.ProcessRunner.get -> SharedKernel.Processes.IProcessRu
 SharedKernel.CI.CiMachine.StartService.get -> System.Func<System.Diagnostics.ProcessStartInfo!, System.Diagnostics.Process!>!
 SharedKernel.CI.CiMachine.StartService.init -> void
 SharedKernel.CI.CiMachine.TimeProvider.get -> System.TimeProvider!
+SharedKernel.CI.FormatVerifier
+SharedKernel.CI.FormatVerifier.FormatVerifier(SharedKernel.CI.CiMachine! machine) -> void
+SharedKernel.CI.FormatVerifier.Run(string! root, string! selectionDirectory, string? reportDirectory, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 SharedKernel.CI.CommitMessageVerifier
 SharedKernel.CI.CoverageConfiguration
 SharedKernel.CI.CoverageConfiguration.<Clone>$() -> SharedKernel.CI.CoverageConfiguration!
@@ -437,3 +440,6 @@ SharedKernel.CI.KeyValueOutputFile.Write(System.Collections.Generic.IReadOnlyLis
 SharedKernel.CI.MarkdownSummaryFile
 SharedKernel.CI.MarkdownSummaryFile.Append(string! markdown, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 SharedKernel.CI.MarkdownSummaryFile.MarkdownSummaryFile(string! path) -> void
+SharedKernel.CI.WorkflowLint
+SharedKernel.CI.WorkflowLint.WorkflowLint(SharedKernel.CI.CiMachine! machine, string! workflowDirectory = ".github/workflows") -> void
+SharedKernel.CI.WorkflowLint.Run(string! root, string? baseRevision, string? headRevision, string! actionlint, string? reportPath, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!

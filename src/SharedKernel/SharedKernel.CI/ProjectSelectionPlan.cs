@@ -8,6 +8,12 @@ namespace SharedKernel.CI;
 /// <summary>Writes the validation plan for the test projects affected since a base revision.</summary>
 internal static class ProjectSelectionPlan
 {
+    /// <summary>The solution filter containing the affected build and selected test projects.</summary>
+    internal const string AffectedBuildFilterName = "affected.build.slnf";
+
+    /// <summary>The NUL-delimited paths of a known partial comparison.</summary>
+    internal const string ChangedPathsFileName = "changed-paths.nul";
+
     /// <summary>How long one Git command may run before selection gives up on the comparison.</summary>
     public static readonly TimeSpan GitTimeout = TimeSpan.FromSeconds(30);
 
@@ -130,12 +136,25 @@ internal static class ProjectSelectionPlan
                 .ConfigureAwait(false);
         }
 
+        var changedPaths = Path.Combine(directory, ChangedPathsFileName);
+        File.Delete(changedPaths);
+        if (changes is not null && selection.BuildRequired && !selection.FullValidation)
+        {
+            var affected = selection.BuildProjects.Concat(selection.Slices.SelectMany(static slice => slice.Tests)
+                .Select(static test => test.Project));
+            await SolutionFilter.Write(root, configuration.Solution, Path.Combine(directory, AffectedBuildFilterName), affected, ct)
+                .ConfigureAwait(false);
+            var paths = changes.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal);
+            await File.WriteAllTextAsync(changedPaths, string.Join('\0', paths) + '\0', ct).ConfigureAwait(false);
+        }
+
         if (outputs is not null)
         {
             List<KeyValuePair<string, string>> values =
             [
                 new("build_required", Bool(selection.BuildRequired)),
                 new("documentation_only", Bool(selection.DocumentationOnly)),
+                new("full_validation", Bool(selection.FullValidation)),
                 new("matrix", Matrix(selection.Slices)),
             ];
             foreach (var slice in selection.Slices)

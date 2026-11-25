@@ -23,10 +23,31 @@ public sealed class WorkflowContractTests
         quality.ShouldContain("needs: selection", StringComparison.Ordinal);
         quality.ShouldContain("if: needs.selection.outputs.build_required == 'true'\n        run: bash setup-dev.sh", StringComparison.Ordinal);
         quality.ShouldContain("if: needs.selection.outputs.build_required == 'true'\n        run: |\n          dotnet test", StringComparison.Ordinal);
-        quality.ShouldContain("if: needs.selection.outputs.build_required == 'true'\n        run: dotnet format", StringComparison.Ordinal);
+        quality.ShouldContain(
+            "if: needs.selection.outputs.build_required == 'true' && github.event_name != 'pull_request'\n        run: dotnet format",
+            StringComparison.Ordinal);
         quality.ShouldContain("if: needs.selection.outputs.build_required == 'false'\n        uses: ./.github/actions/setup-dotnet-tool", StringComparison.Ordinal);
         quality.ShouldContain("project: tools/SharedKernel.Documentation.Tool", StringComparison.Ordinal);
         quality.ShouldContain("-- verify --config docs/architecture/generated-diagrams.json\n", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Pull_request_formatting_uses_the_selection_artifact_and_rechecks_the_checkout()
+    {
+        // Arrange
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var quality = WorkflowJobs.Read(workflow, "repository-quality");
+
+        // Assert
+        quality.ShouldContain("          fetch-depth: 0\n", StringComparison.Ordinal);
+        quality.ShouldContain("          name: selection-and-reasons\n          path: TestResults/selection\n", StringComparison.Ordinal);
+        quality.ShouldContain(
+            "if: needs.selection.outputs.build_required == 'true' && github.event_name == 'pull_request'\n"
+                + "        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- verify-format",
+            StringComparison.Ordinal);
     }
 
     [Fact]
@@ -84,7 +105,11 @@ public sealed class WorkflowContractTests
         var validate = WorkflowJobs.Read(workflow, "validate");
 
         // Assert
-        selection.ShouldContain("      build_required: ${{ steps.selection.outputs.build_required }}\n      matrix: ${{ steps.selection.outputs.matrix }}\n", StringComparison.Ordinal);
+        selection.ShouldContain(
+            "      build_required: ${{ steps.selection.outputs.build_required }}\n"
+                + "      full_validation: ${{ steps.selection.outputs.full_validation }}\n"
+                + "      matrix: ${{ steps.selection.outputs.matrix }}\n",
+            StringComparison.Ordinal);
         validate.ShouldContain("    if: needs.selection.outputs.build_required == 'true' && needs.selection.outputs.matrix != '[]'\n", StringComparison.Ordinal);
         validate.ShouldContain("        slice: ${{ fromJSON(needs.selection.outputs.matrix) }}\n", StringComparison.Ordinal);
         validate.ShouldContain("          SLICE: ${{ matrix.slice }}\n", StringComparison.Ordinal);
@@ -105,6 +130,11 @@ public sealed class WorkflowContractTests
 
         // Assert
         gate.ShouldContain("    needs:\n      - selection\n      - validate\n    if: ${{ github.event_name == 'pull_request' && needs.validate.result == 'success' }}\n", StringComparison.Ordinal);
+        gate.ShouldContain("          name: selection-and-reasons\n          path: TestResults/selection\n", StringComparison.Ordinal);
+        gate.ShouldContain(
+            "SYMBOL_SOLUTION: ${{ needs.selection.outputs.full_validation == 'false' && 'TestResults/selection/affected.build.slnf' || 'SharedKernel.slnx' }}",
+            StringComparison.Ordinal);
+        gate.ShouldContain("          dotnet restore \"$SYMBOL_SOLUTION\" --locked-mode\n          dotnet build \"$SYMBOL_SOLUTION\" -c Release --no-restore", StringComparison.Ordinal);
         gate.ShouldContain("-- coverage record-symbols\n", StringComparison.Ordinal);
         gate.ShouldContain("-- coverage verify --report artifacts --base \"$BASE_SHA\" --symbols TestResults/symbol-evidence.json\n", StringComparison.Ordinal);
         gate.ShouldContain("          pattern: validation-*-evidence\n", StringComparison.Ordinal);
