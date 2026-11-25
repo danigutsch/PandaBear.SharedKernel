@@ -26,6 +26,12 @@ Date: 2026-11-08. Status: accepted.
 
 ## Generic by construction
 
+Shell and Nix choose profiles for existing baseline features. The optional `devcontainer` feature
+validates the caller's digest-pinned image and writes a seed owned by the consumer. The `check-runner`
+feature creates owner-editable lane configuration for `dotnet repo check-tracked`. The .NET-specific
+`sdk-bootstrap` feature supplies a pre-SDK script that verifies the installed version by default
+and checks the official URL and SHA-512 before an explicit installation.
+
 The catalog embeds neutral content. The caller supplies `LICENSE`, `SECURITY.md`, and `CODEOWNERS` through the
 optional `--license-source`, `--security-source`, and `--codeowners-source` flags. These sources may use
 `@@owner@@` and `@@copyrightHolder@@`, supplied with `--owner` and `--copyright-holder`, as well as the existing

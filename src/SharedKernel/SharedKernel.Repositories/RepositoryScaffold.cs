@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using SharedKernel.DevContainers;
 using SharedKernel.IO;
 using SharedKernel.InputNormalization;
 
@@ -32,6 +33,23 @@ public static class RepositoryScaffold
     /// <summary>Previews or creates a repository, including any explicitly supplied write-once policy files.</summary>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="featureIds"/>, <paramref name="output"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">A policy source is missing, invalid, too large, or references a missing value.</exception>
+    public static Task<int> Run(
+        string rootPath,
+        string? name,
+        string defaultBranch,
+        string language,
+        string? sdkVersion,
+        IReadOnlyList<string> featureIds,
+        RepositoryPolicySources? policySources,
+        bool force,
+        TextWriter output,
+        TextWriter error,
+        CancellationToken cancellationToken) =>
+        Run(rootPath, name, defaultBranch, language, sdkVersion, featureIds, policySources, null, force, output, error, cancellationToken);
+
+    /// <summary>Previews or creates a repository, including optional policy files and a digest-pinned Dev Container.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="featureIds"/>, <paramref name="output"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">A policy source is missing, invalid, too large, or references a missing value.</exception>
     public static async Task<int> Run(
         string rootPath,
         string? name,
@@ -40,6 +58,7 @@ public static class RepositoryScaffold
         string? sdkVersion,
         IReadOnlyList<string> featureIds,
         RepositoryPolicySources? policySources,
+        string? devcontainerImage,
         bool force,
         TextWriter output,
         TextWriter error,
@@ -95,7 +114,33 @@ public static class RepositoryScaffold
             return 1;
         }
 
+        if (features.Contains(RepositoryFeature.SdkBootstrap) && !features.Contains(RepositoryFeature.GlobalJson)
+            && !File.Exists(Path.Combine(root, "global.json")))
+        {
+            await error.WriteLineAsync("feature 'sdk-bootstrap' requires global.json. Select 'global-json' with --sdk-version or supply an existing SDK pin."
+                .AsMemory(), cancellationToken).ConfigureAwait(false);
+            return 1;
+        }
+
         var repositoryName = name ?? Path.GetFileName(root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+        var devcontainerSelected = features.Contains(RepositoryFeature.Devcontainer);
+        if (devcontainerSelected != (devcontainerImage is not null))
+        {
+            var reason = devcontainerSelected
+                ? "feature 'devcontainer' needs --devcontainer-image."
+                : "--devcontainer-image needs the devcontainer feature.";
+            await error.WriteLineAsync(reason.AsMemory(), cancellationToken).ConfigureAwait(false);
+            return 1;
+        }
+
+        string? devcontainerConfiguration = null;
+        if (devcontainerSelected && !DevcontainerImageConfiguration.TryCreate(repositoryName, devcontainerImage, out devcontainerConfiguration))
+        {
+            await error.WriteLineAsync("invalid --devcontainer-image; provide a digest-pinned image with @sha256: and 64 lowercase hexadecimal digits."
+                .AsMemory(), cancellationToken).ConfigureAwait(false);
+            return 1;
+        }
+
         var baseline = NewRepositoryCatalog.Build(repositoryName, defaultBranch, repoLanguage, features);
         if (baseline.FindError() is { } problem)
         {
@@ -142,12 +187,24 @@ public static class RepositoryScaffold
         }
 
         var policyFiles = await NewRepositoryPolicyFiles.Render(policySources, baseline, cancellationToken).ConfigureAwait(false);
-        foreach (var (seedPath, content) in NewRepositorySeeds.Render(repositoryName, features, sdk).Concat(policyFiles))
+        var seedFiles = NewRepositorySeeds.Render(repositoryName, features, sdk).Concat(policyFiles);
+        if (devcontainerConfiguration is not null)
+        {
+            seedFiles = seedFiles.Append((".devcontainer/devcontainer.json", devcontainerConfiguration));
+        }
+
+        foreach (var (seedPath, content) in seedFiles)
         {
             var fullPath = RepositoryPath.Parse(seedPath).ResolveUnder(root);
             if (File.Exists(fullPath) || Directory.Exists(fullPath))
             {
                 await error.WriteLineAsync($"conflict: {seedPath} exists; new writes it only when it is missing.".AsMemory(), cancellationToken).ConfigureAwait(false);
+                return 1;
+            }
+
+            if (File.Exists(Path.GetDirectoryName(fullPath)))
+            {
+                await error.WriteLineAsync($"conflict: {seedPath} needs a parent directory, but a file exists there.".AsMemory(), cancellationToken).ConfigureAwait(false);
                 return 1;
             }
 

@@ -17,6 +17,10 @@ internal static class NewTestOperations
     public static Task<(int ExitCode, string Output, string Error)> SeedDrift(TemporaryRepoConfigWorkspace workspace, params string[] options) =>
         RunCommand("seed-drift", workspace.RootPath, options);
 
+    /// <summary>Runs the tracked-check lanes against the workspace.</summary>
+    public static Task<(int ExitCode, string Output, string Error)> CheckTracked(TemporaryRepoConfigWorkspace workspace, params string[] options) =>
+        RunCommand("check-tracked", workspace.RootPath, options);
+
     private static async Task<(int ExitCode, string Output, string Error)> RunCommand(string command, string root, string[] options)
     {
         using var output = new InvariantStringWriter();

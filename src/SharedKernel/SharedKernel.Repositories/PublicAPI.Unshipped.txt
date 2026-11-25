@@ -467,3 +467,12 @@ static SharedKernel.Repositories.RepositoryScaffold.Run(string! rootPath, string
 static SharedKernel.Repositories.RepositorySeedDrift.Run(string! rootPath, string? name, string? sdkVersion, System.Collections.Generic.IReadOnlyList<string!>! featureIds, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 static readonly SharedKernel.Repositories.RepositoryFeature.CommitMessageHook -> SharedKernel.Repositories.RepositoryFeature!
 static readonly SharedKernel.Repositories.RepositoryFeature.PrePushHook -> SharedKernel.Repositories.RepositoryFeature!
+static SharedKernel.Repositories.RepositoryScaffold.Run(string! rootPath, string? name, string! defaultBranch, string! language, string? sdkVersion, System.Collections.Generic.IReadOnlyList<string!>! featureIds, SharedKernel.Repositories.RepositoryPolicySources? policySources, string? devcontainerImage, bool force, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static readonly SharedKernel.Repositories.RepositoryFeature.Devcontainer -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryLanguage.Nix -> SharedKernel.Repositories.RepositoryLanguage!
+static readonly SharedKernel.Repositories.RepositoryLanguage.Shell -> SharedKernel.Repositories.RepositoryLanguage!
+SharedKernel.Repositories.TrackedCheckRunner
+const SharedKernel.Repositories.TrackedCheckRunner.ConfigurationPath = ".config/sharedkernel-checks.json" -> string!
+static SharedKernel.Repositories.TrackedCheckRunner.Run(string! directory, string! configuration, bool strict, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+static readonly SharedKernel.Repositories.RepositoryFeature.CheckRunner -> SharedKernel.Repositories.RepositoryFeature!
+static readonly SharedKernel.Repositories.RepositoryFeature.SdkBootstrap -> SharedKernel.Repositories.RepositoryFeature!
