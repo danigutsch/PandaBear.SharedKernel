@@ -5,13 +5,11 @@ namespace SharedKernel.Blazor.Site;
 
 /// <summary>
 /// Contact data: an optional heading, and an <c>address</c> (only when there is something to show) with postal lines and <c>tel:</c>, <c>mailto:</c> and <c>https://wa.me/</c>
-/// links built from validated <see cref="PhoneNumber" /> and <see cref="EmailAddress" /> values. A value restored without
-/// validation is checked again, so only digits reach a <c>tel:</c> or WhatsApp link and no query reaches a <c>mailto:</c> link.
+/// links that <see cref="ContactLinks" /> builds from validated <see cref="PhoneNumber" /> and <see cref="EmailAddress" /> values. A
+/// value that <see cref="ContactLinks" /> cannot link, such as one restored without validation, throws <see cref="ArgumentException" />.
 /// </summary>
 public sealed partial class ContactCard
 {
-    private const string WhatsAppBase = "https://wa.me/";
-
     /// <summary>Gets or sets the heading text. Without it no heading is rendered.</summary>
     [Parameter]
     public string? Title { get; set; }
@@ -51,40 +49,26 @@ public sealed partial class ContactCard
 
     private bool HasChannels => Phone is not null || Email is not null || WhatsApp is not null;
 
-    private string? PhoneHref => Phone is null ? null : "tel:" + Phone.Value;
+    private string? PhoneHref { get; set; }
 
-    private string? EmailHref => Email is null ? null : "mailto:" + Email.Value;
+    private string? EmailHref { get; set; }
 
-    private string? WhatsAppHref => WhatsApp is null ? null : WhatsAppBase + WhatsApp.Value.TrimStart('+');
+    private string? WhatsAppHref { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
         Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
-        RequireDigits(Phone, nameof(Phone));
-        RequireDigits(WhatsApp, nameof(WhatsApp));
+        PhoneHref = Phone is null ? null : Require(ContactLinks.Phone(Phone), "The phone number is not a validated number of digits.", nameof(Phone));
+        WhatsAppHref = WhatsApp is null ? null : Require(ContactLinks.WhatsApp(WhatsApp), "The phone number is not a validated number of digits.", nameof(WhatsApp));
         if (PhoneText is not null && (Phone is null || PhoneNumber.Create(PhoneText) is not { IsSuccess: true } text || text.Value != Phone))
         {
             throw new ArgumentException("The phone text must show the same number as Phone.", nameof(PhoneText));
         }
 
-        if (Email is not null && !Email.Value.All(character => char.IsAsciiLetterOrDigit(character) || character is '.' or '@' or '_' or '+' or '-'))
-        {
-            throw new ArgumentException("The email address has characters that are not safe in a mailto link.", nameof(Email));
-        }
+        EmailHref = Email is null ? null : Require(ContactLinks.Email(Email), "The email address has characters that are not safe in a mailto link.", nameof(Email));
     }
 
-    private static void RequireDigits(PhoneNumber? number, string parameterName)
-    {
-        if (number is null)
-        {
-            return;
-        }
-
-        var digits = number.Value.StartsWith('+', StringComparison.Ordinal) ? number.Value[1..] : number.Value;
-        if (digits.Length is < PhoneNumber.MinDigits or > PhoneNumber.MaxDigits || !digits.All(char.IsAsciiDigit))
-        {
-            throw new ArgumentException("The phone number is not a validated number of digits.", parameterName);
-        }
-    }
+    private static string Require(LinkTarget? link, string message, string parameterName) =>
+        link?.Value ?? throw new ArgumentException(message, parameterName);
 }

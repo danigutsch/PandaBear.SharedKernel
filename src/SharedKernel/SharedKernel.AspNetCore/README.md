@@ -29,6 +29,17 @@ policy. Each consuming application owns those decisions.
   ```csharp
   app.UsePermanentRedirects(context => context.RequestServices.GetRequiredService<MovedPages>().Find(context.Request.Path, context.RequestAborted));
   ```
+- `PermanentRedirectPaths`: `Normalize(path, maxLength)` gives the canonical form of a moved path (trimmed, percent-decoded once,
+  Unicode NFC, lower case, no trailing `/`), so the path a redirect is stored under and the request path it is looked up by meet
+  whatever their spelling; a canonical path normalizes to itself. It answers `null` for the root, a relative or `//` path, an encoded
+  `/` (`%2F`), a double-encoded escape, broken UTF-8 or UTF-16 (lone surrogates, U+FFFD), control, format, separator and white-space
+  characters, `?`, `#`, `\`, empty, `.` and `..` segments, a canonical path over `maxLength`, and an input over nine times
+  `maxLength`. `Encode(path)` percent-encodes each segment of a canonical target into the plain local path `PermanentRedirect` needs.
+
+  ```csharp
+  var oldPath = PermanentRedirectPaths.Normalize(context.Request.Path.Value, MaxPathLength);
+  return oldPath is not null && moved.TryGetValue(oldPath, out var target) ? new PermanentRedirect(PermanentRedirectPaths.Encode(target)) : null;
+  ```
 - `MapImmutableFiles`: serves files whose content never changes under their name, such as uploads stored by content hash, from
   one folder at `{routePrefix}/{fileName}` (GET and HEAD). Only a plain file name (ASCII letters, digits, `.`, `-`, `_`, no
   leading dot) with an extension from the application's media type map, that the application's `isServed` callback approves
