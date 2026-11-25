@@ -26,6 +26,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Blazor.Analyzers/SharedKernel.Blazor.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Blazor.CodeFixes/SharedKernel.Blazor.CodeFixes.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Blazor.Site.Editing/SharedKernel.Blazor.Site.Editing.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj" />
@@ -129,6 +130,7 @@
   <Project Path="tests/SharedKernel.Blazor.Analyzers.Tests/SharedKernel.Blazor.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Blazor.CodeFixes.Tests/SharedKernel.Blazor.CodeFixes.Tests.csproj" />
   <Project Path="tests/SharedKernel.Blazor.Site.Tests/SharedKernel.Blazor.Site.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Blazor.Site.Editing.Tests.Unit/SharedKernel.Blazor.Site.Editing.Tests.Unit.csproj" />
   <Project Path="tests/SharedKernel.Branding.Tests/SharedKernel.Branding.Tests.csproj" />
   <Project Path="tests/SharedKernel.BuildingBlocks.Tests/SharedKernel.BuildingBlocks.Tests.csproj" />
   <Project Path="tests/SharedKernel.Caching.Tests/SharedKernel.Caching.Tests.csproj" />

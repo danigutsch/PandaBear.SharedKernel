@@ -399,3 +399,26 @@ SharedKernel.Blazor.FormActions.SubmitText.get -> string!
 SharedKernel.Blazor.FormActions.SubmitText.set -> void
 SharedKernel.Blazor.FormActions.Submission.get -> SharedKernel.Blazor.ServerFormSubmission?
 SharedKernel.Blazor.FormActions.Submission.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>
+SharedKernel.Blazor.NumberTextInput<TValue>.NumberTextInput() -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
+SharedKernel.Blazor.NumberTextInput<TValue>.AdditionalAttributes.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.Culture.get -> System.Globalization.CultureInfo?
+SharedKernel.Blazor.NumberTextInput<TValue>.Culture.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.DecimalsMessage.get -> string?
+SharedKernel.Blazor.NumberTextInput<TValue>.DecimalsMessage.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.Dispose() -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.Field.get -> Microsoft.AspNetCore.Components.Forms.FieldIdentifier?
+SharedKernel.Blazor.NumberTextInput<TValue>.Field.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.MaxDecimals.get -> int?
+SharedKernel.Blazor.NumberTextInput<TValue>.MaxDecimals.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.MayBeNegative.get -> bool
+SharedKernel.Blazor.NumberTextInput<TValue>.MayBeNegative.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.Message.get -> string!
+SharedKernel.Blazor.NumberTextInput<TValue>.Message.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.Value.get -> TValue
+SharedKernel.Blazor.NumberTextInput<TValue>.Value.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<TValue>
+SharedKernel.Blazor.NumberTextInput<TValue>.ValueChanged.set -> void
+SharedKernel.Blazor.NumberTextInput<TValue>.ValueExpression.get -> System.Linq.Expressions.Expression<System.Func<TValue>!>?
+SharedKernel.Blazor.NumberTextInput<TValue>.ValueExpression.set -> void

@@ -55,6 +55,9 @@ the value while keeping success or the failure.
 run every step, then return `errors.HasErrors ? errors.ToResult<TData>() : Result.Ok(data)`. A failure that is not `Invalid` throws
 `InvalidOperationException`, like `Add`.
 
+`ValidationErrors.Add(field, message)` records one message on a field (the message is also the detail), for a rule that has no
+result of its own, such as a cross-field check; a null or blank field or message throws.
+
 ## Error codes
 
 `ResultErrorCodes` holds the stable codes; `Result.FromError` derives the status from the code, and an unknown code is an `Error`.

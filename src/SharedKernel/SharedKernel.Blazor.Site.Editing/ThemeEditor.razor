@@ -1,0 +1,178 @@
+@namespace SharedKernel.Blazor.Site.Editing
+@using Microsoft.AspNetCore.Components.Web
+@using SharedKernel.Blazor
+@using SharedKernel.Blazor.Site.Theming
+
+<fieldset id="@Id(ThemeDocument.ColorsField)" tabindex="-1" class="theme-editor__colors">
+    <legend>@Texts.ColorsLegend</legend>
+    <p class="help">@Texts.ColorsHelp</p>
+    <NamedFormField Field="Field(ThemeDocument.ColorsField)" />
+    @foreach (var role in ColorRoles)
+    {
+        var fields = Model.Colors[role];
+        var path = ColorPath(role);
+        <fieldset id="@Id(path)" tabindex="-1" class="theme-color" @key="role">
+            <legend>@Texts.ColorLegend(role)</legend>
+            <NamedFormField Field="Field(path)" />
+            <div class="theme-fields">
+                <div>
+                    <NamedFormField Field="Field(path + LightSuffix)" Label="@Texts.Light" InputId="@Id(path + LightSuffix)">
+                        @Swatch(fields.Light)
+                        <input id="@Id(path + LightSuffix)" autocomplete="off" spellcheck="false" maxlength="7" @bind="fields.Light" @bind:event="oninput" @bind:after="Changed" @attributes="context" />
+                    </NamedFormField>
+                </div>
+                <div>
+                    <NamedFormField Field="Field(path + DarkSuffix)" Label="@Texts.Dark" InputId="@Id(path + DarkSuffix)">
+                        @Swatch(fields.Dark)
+                        <input id="@Id(path + DarkSuffix)" autocomplete="off" spellcheck="false" maxlength="7" @bind="fields.Dark" @bind:event="oninput" @bind:after="Changed" @attributes="context" />
+                    </NamedFormField>
+                </div>
+            </div>
+        </fieldset>
+    }
+</fieldset>
+
+<fieldset id="@Id(ThemeDocument.TypographyField)" tabindex="-1" class="theme-editor__typography">
+    <legend>@Texts.TypographyLegend</legend>
+    <p class="help">@Texts.TypographyHelp</p>
+    <NamedFormField Field="Field(ThemeDocument.TypographyField)" />
+    @foreach (var role in TypographyRoles)
+    {
+        var fields = Model.Typography[role];
+        var path = TypographyPath(role);
+        <fieldset class="theme-role" @key="role">
+            <legend>@Texts.TypographyName(role)</legend>
+            <div class="theme-fields">
+                <div>
+                    <NamedFormField Field="Field(path + FontKeySuffix)" Label="@Texts.Font" InputId="@Id(path + FontKeySuffix)">
+                        <select id="@Id(path + FontKeySuffix)" @bind:get="fields.FontKey" @bind:set="value => SetFontKey(fields, value)" @attributes="context">
+                            <option value="">@Texts.SystemFont</option>
+                            @foreach (var font in FontChoices(fields.FontKey))
+                            {
+                                <option value="@font.Key">@font.Family</option>
+                            }
+                        </select>
+                    </NamedFormField>
+                </div>
+                <div>
+                    <NamedFormField Field="Field(path + FallbackSuffix)" Label="@Texts.Fallback" InputId="@Id(path + FallbackSuffix)">
+                        <select id="@Id(path + FallbackSuffix)" @bind="fields.Fallback" @bind:after="Changed" @attributes="context">
+                            <option value="">@Texts.Default</option>
+                            @foreach (var family in Enum.GetValues<GenericFontFamily>())
+                            {
+                                <option value="@family">@Texts.FallbackName(family)</option>
+                            }
+                        </select>
+                    </NamedFormField>
+                </div>
+                <div>@Number(path + SizeSuffix, Texts.Size, value => fields.SizeMin = value)</div>
+                <div>@Number(path + SizeMaxSuffix, Texts.SizeMax, value => fields.SizeMax = value)</div>
+                <div>
+                    <NamedFormField Field="Field(path + WeightSuffix)" Label="@Texts.Weight" InputId="@Id(path + WeightSuffix)">
+                        <select id="@Id(path + WeightSuffix)" @bind="fields.Weight" @bind:after="Changed" @attributes="context">
+                            <option value="">@Texts.Default</option>
+                            @foreach (var weight in ThemeFont.Weights)
+                            {
+                                <option value="@weight">@weight</option>
+                            }
+                        </select>
+                    </NamedFormField>
+                </div>
+                <div>@Number(path + LineHeightSuffix, Texts.LineHeight, value => fields.LineHeight = value)</div>
+                <div>@Number(path + LetterSpacingSuffix, Texts.LetterSpacing, value => fields.LetterSpacing = value)</div>
+                <div>
+                    <NamedFormField Field="Field(path + TransformSuffix)" Label="@Texts.Transform" InputId="@Id(path + TransformSuffix)">
+                        <select id="@Id(path + TransformSuffix)" @bind="fields.Transform" @bind:after="Changed" @attributes="context">
+                            <option value="">@Texts.Default</option>
+                            @foreach (var transform in Enum.GetValues<ThemeTextTransform>())
+                            {
+                                <option value="@transform">@Texts.TransformName(transform)</option>
+                            }
+                        </select>
+                    </NamedFormField>
+                </div>
+                <div>
+                    <NamedFormField Field="Field(path + ItalicSuffix)" Label="@Texts.Style" InputId="@Id(path + ItalicSuffix)">
+                        <select id="@Id(path + ItalicSuffix)" value="@ItalicValue(fields.Italic)" @onchange="change => SetItalic(fields, change)" @attributes="context">
+                            <option value="">@Texts.Default</option>
+                            <option value="@NormalValue">@Texts.Normal</option>
+                            <option value="@ItalicOptionValue">@Texts.Italic</option>
+                        </select>
+                    </NamedFormField>
+                </div>
+                @if (TypographyStyle.TakesColor(role))
+                {
+                    <div>
+                        <NamedFormField Field="Field(path + ColorSuffix)" Label="@Texts.HeadingColor" InputId="@Id(path + ColorSuffix)">
+                            <select id="@Id(path + ColorSuffix)" @bind="fields.Color" @bind:after="Changed" @attributes="context">
+                                <option value="">@Texts.Default</option>
+                                @foreach (var color in TypographyStyle.Colors)
+                                {
+                                    <option value="@color">@Texts.ColorName(color)</option>
+                                }
+                            </select>
+                        </NamedFormField>
+                    </div>
+                }
+            </div>
+        </fieldset>
+    }
+    <NamedFormField Field="Field(AllowSmallTextField)" Label="@Texts.AllowSmallText" InputId="@Id(AllowSmallTextField)" Inline>
+        <input id="@Id(AllowSmallTextField)" type="checkbox" @bind="Model.AllowSmallText" @bind:after="Changed" @attributes="context" />
+    </NamedFormField>
+</fieldset>
+
+<fieldset class="theme-editor__header">
+    <legend>@Texts.HeaderLegend</legend>
+    @Number(BrandHeightField, Texts.BrandHeight, value => Model.BrandHeight = value, Texts.BrandHeightHelp)
+</fieldset>
+
+<fieldset class="theme-editor__shape">
+    <legend>@Texts.ShapeLegend</legend>
+    <p class="help">@Texts.ShapeHelp</p>
+    <div class="theme-fields">
+        <div>
+            <NamedFormField Field="Field(ControlShapeField)" Label="@Texts.ControlShape" InputId="@Id(ControlShapeField)">
+                <select id="@Id(ControlShapeField)" @bind="Model.ControlShape" @bind:after="Changed" @attributes="context">
+                    <option value="">@Texts.Default</option>
+                    @foreach (var shape in Enum.GetValues<ControlShape>())
+                    {
+                        <option value="@shape">@Texts.ControlShapeName(shape)</option>
+                    }
+                </select>
+            </NamedFormField>
+        </div>
+        <div>@Number(DividerWidthField, Texts.DividerWidth, value => Model.DividerWidth = value)</div>
+        <div>@Number(DividerThicknessField, Texts.DividerThickness, value => Model.DividerThickness = value)</div>
+        <div>
+            <NamedFormField Field="Field(DividerColorField)" Label="@Texts.DividerColor" InputId="@Id(DividerColorField)">
+                <select id="@Id(DividerColorField)" @bind="Model.DividerColor" @bind:after="Changed" @attributes="context">
+                    <option value="">@Texts.Default</option>
+                    @foreach (var color in SiteShape.DividerColors)
+                    {
+                        <option value="@color">@Texts.ColorName(color)</option>
+                    }
+                </select>
+            </NamedFormField>
+        </div>
+    </div>
+</fieldset>
+
+@code {
+    private RenderFragment Swatch(string? value) =>
+        @<svg class="theme-swatch" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            @if (CssColor.Create(value).TryGetValue(out var color))
+            {
+                <rect width="16" height="16" fill="@color.Value" />
+            }
+        </svg>;
+
+    private RenderFragment Number(string path, string label, Action<decimal?> set, string? help = null)
+    {
+        var number = _numbers[path];
+        return @<NamedFormField Field="Field(path)" Label="@label" InputId="@Id(path)" Help="@help">
+                    <input id="@Id(path)" inputmode="@number.InputMode" spellcheck="false" autocomplete="off" value="@number.State.Text"
+                           @onchange="change => ChangeNumber(number, set, change)" @attributes="context" />
+                </NamedFormField>;
+    }
+}

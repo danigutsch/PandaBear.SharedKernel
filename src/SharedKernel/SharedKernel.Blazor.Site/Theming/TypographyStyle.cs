@@ -44,6 +44,9 @@ public sealed class TypographyStyle : ValueObject
         Color = color;
     }
 
+    /// <summary>Gets the colours a role that takes one may have: the text, primary and muted colour, whose contrast the theme checks.</summary>
+    public static IReadOnlyList<ThemeColorRole> Colors { get; } = [ThemeColorRole.Text, ThemeColorRole.Primary, ThemeColorRole.Muted];
+
     /// <summary>Gets the style that sets nothing.</summary>
     public static TypographyStyle Inherit { get; } = new(null, null, null, null, null, null, null, null, null);
 
@@ -135,7 +138,7 @@ public sealed class TypographyStyle : ValueObject
             errors.Add("transform", "The text transform must be none, uppercase or capitalize.");
         }
 
-        if (color is { } role && role is not (ThemeColorRole.Text or ThemeColorRole.Primary or ThemeColorRole.Muted))
+        if (color is { } role && !Colors.Contains(role))
         {
             errors.Add("color", "The colour must be the text, primary or muted colour, whose contrast the theme checks.");
         }
@@ -144,6 +147,12 @@ public sealed class TypographyStyle : ValueObject
             ? errors.ToResult<TypographyStyle>("The typography style is invalid.")
             : Result.Ok(new TypographyStyle(fontKey, fallback, size, weight, lineHeight is null ? null : CssText.Round(lineHeight.Value), letterSpacing is null ? null : CssText.Round(letterSpacing.Value), transform, italic, color));
     }
+
+    /// <inheritdoc />
+    /// <summary>Gets a value indicating whether a role takes a colour: h1 to h6, the card title and the brand.</summary>
+    /// <param name="role">The role.</param>
+    /// <returns><see langword="true" /> when <see cref="Color" /> may be set on the role.</returns>
+    public static bool TakesColor(TypographyRole role) => ThemeNames.TakesColor(role);
 
     /// <inheritdoc />
     public override string ToString() => $"{FontKey ?? Fallback?.ToString() ?? "inherit"} {Size} {Weight}";

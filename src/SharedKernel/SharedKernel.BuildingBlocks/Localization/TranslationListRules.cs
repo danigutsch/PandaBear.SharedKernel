@@ -136,6 +136,23 @@ public sealed class TranslationListRules
             && replacement.All(item => current.Any(existing => culture(existing) == culture(item) && same(existing, item)));
     }
 
+    /// <summary>
+    /// Builds the field path of an error on one translation's field: the culture name, a dot and the field, such as <c>pt-BR.title</c>
+    /// or <c>en.steps[2].note</c>, so each language's errors land beside that language's inputs.
+    /// </summary>
+    /// <param name="culture">The culture of the translation.</param>
+    /// <param name="field">The field within the translation.</param>
+    /// <returns>The field path.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="culture"/> or <paramref name="field"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="field"/> is empty or blank.</exception>
+    public static string FieldOf(ContentCulture culture, string field)
+    {
+        ArgumentNullException.ThrowIfNull(culture);
+        ArgumentException.ThrowIfNullOrWhiteSpace(field);
+
+        return culture.Value + "." + field;
+    }
+
     private ContentCulture? Culture(ValidationErrors errors, string? value, HashSet<ContentCulture> seen)
     {
         if (!Cultures.TryGet(value, out var culture))

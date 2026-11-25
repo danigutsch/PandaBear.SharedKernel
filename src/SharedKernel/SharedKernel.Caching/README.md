@@ -21,7 +21,8 @@ number, so an edit saved by another host shows up without a message bus or cache
   first stored value is kept.
 
 Register one instance per value kind as a singleton and keep the values immutable: every caller gets the same instance. Who increments the
-revision, and in which transaction, stays with the application.
+revision, and in which transaction, stays with the application; with Entity Framework Core, `SaveChangesIncrementingRevision` of
+`SharedKernel.EntityFrameworkCore` increments a single revision row in the same transaction as every content change.
 
 ## Install and example
 

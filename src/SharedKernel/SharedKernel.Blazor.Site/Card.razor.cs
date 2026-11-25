@@ -109,8 +109,6 @@ public sealed partial class Card
     [Parameter]
     public SiteAlignment TextAlignment { get; set; }
 
-    private bool HasEyebrow => !string.IsNullOrWhiteSpace(Eyebrow);
-
     private bool HasMore => !string.IsNullOrWhiteSpace(MoreText);
 
     private string RootClass

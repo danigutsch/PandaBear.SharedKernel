@@ -16,6 +16,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.Sqlite.Core" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" />
     </ItemGroup>
 
     <ItemGroup>

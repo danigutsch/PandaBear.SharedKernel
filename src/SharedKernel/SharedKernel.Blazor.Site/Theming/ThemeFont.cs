@@ -1,3 +1,4 @@
+using System.Text;
 using SharedKernel.BuildingBlocks;
 using SharedKernel.Results;
 
@@ -16,11 +17,17 @@ public sealed class ThemeFont : ValueObject
     /// <summary>The longest accepted family name.</summary>
     public const int MaxFamilyLength = 64;
 
+    /// <summary>The message of a family name that gives no valid key, which <see cref="ForFamily" /> reports on <c>family</c>.</summary>
+    public const string FamilyKeyMessage = "The family name must start with a letter a to z and use only letters a to z, digits, spaces, hyphens and underscores, at most 32 characters.";
+
     /// <summary>The message of an invalid font key.</summary>
     internal const string KeyMessage = "A font key must start with a lower-case letter and contain only lower-case letters, digits and hyphens, at most 32 characters.";
 
     /// <summary>The message of an invalid weight.</summary>
     internal const string WeightMessage = "The weight must be a multiple of 100 from 100 to 900.";
+
+    /// <summary>Gets the weights a face or a typography role may have: 100 to 900 in steps of 100.</summary>
+    public static IReadOnlyList<int> Weights { get; } = [100, 200, 300, 400, 500, 600, 700, 800, 900];
 
     private ThemeFont(string key, string family, IReadOnlyList<ThemeFontFace> faces)
     {
@@ -44,38 +51,50 @@ public sealed class ThemeFont : ValueObject
     /// <param name="faces">At least one face, no two with the same weight and style.</param>
     /// <returns>The font, or validation errors on the fields <c>key</c>, <c>family</c> and <c>faces</c>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="faces" /> or one face is <see langword="null" />.</exception>
-    public static Result<ThemeFont> Create(string? key, string? family, IEnumerable<ThemeFontFace> faces)
+    public static Result<ThemeFont> Create(string? key, string? family, IEnumerable<ThemeFontFace> faces) => Build(key, family, faces, keyFromFamily: false);
+
+    /// <summary>
+    /// Creates the font of a family name an owner entered, such as for an uploaded font file, with the key derived from the name by
+    /// <see cref="KeyOf" />, so the owner never types a key and <c>Noto Sans</c> and <c>noto_sans</c> are the same font.
+    /// </summary>
+    /// <param name="family">The family name; leading and trailing white space is removed.</param>
+    /// <param name="faces">At least one face, no two with the same weight and style.</param>
+    /// <returns>
+    /// The font, or validation errors on <c>family</c> (an invalid name, or else <see cref="FamilyKeyMessage" /> when the name gives no
+    /// valid key) and <c>faces</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="faces" /> or one face is <see langword="null" />.</exception>
+    public static Result<ThemeFont> ForFamily(string? family, IEnumerable<ThemeFontFace> faces)
     {
-        ArgumentNullException.ThrowIfNull(faces);
-        var list = faces.ToArray();
-        if (list.Any(face => face is null))
+        var trimmed = family?.Trim();
+        return Build(KeyOf(trimmed), trimmed, faces, keyFromFamily: true);
+    }
+
+    /// <summary>
+    /// Derives the key of a family name: lower case, with each run of spaces, hyphens and underscores as one hyphen and none at either
+    /// end, so <c>Noto Sans</c> and <c>noto_sans</c> give <c>noto-sans</c>.
+    /// </summary>
+    /// <param name="family">The family name.</param>
+    /// <returns>The key, empty for a blank name; it can still be invalid, such as for a name that starts with a digit.</returns>
+    public static string KeyOf(string? family)
+    {
+        var key = new StringBuilder();
+        foreach (var character in (family ?? string.Empty).Trim())
         {
-            throw new ArgumentNullException(nameof(faces), "A font face must not be null.");
+            if (character is ' ' or '-' or '_')
+            {
+                if (key.Length > 0 && key[^1] != '-')
+                {
+                    key.Append('-');
+                }
+            }
+            else
+            {
+                key.Append(char.ToLowerInvariant(character));
+            }
         }
 
-        var errors = new ThemeErrors();
-        if (key is null || !IsKey(key))
-        {
-            errors.Add("key", KeyMessage);
-        }
-
-        if (!IsFamily(family))
-        {
-            errors.Add("family", $"A family name must be letters, digits, single spaces, hyphens or underscores, at most {MaxFamilyLength} characters.");
-        }
-
-        if (list.Length == 0)
-        {
-            errors.Add("faces", "A font needs at least one face.");
-        }
-        else if (list.DistinctBy(face => (face.Weight, face.Style)).Count() != list.Length)
-        {
-            errors.Add("faces", "Two faces of a font must not have the same weight and style.");
-        }
-
-        return errors.HasErrors
-            ? errors.ToResult<ThemeFont>("The font is invalid.")
-            : Result.Ok(new ThemeFont(key!, family!, list.OrderBy(face => face.Weight).ThenBy(face => face.Style).ToArray()));
+        return key.ToString().TrimEnd('-');
     }
 
     /// <inheritdoc />
@@ -103,6 +122,48 @@ public sealed class ThemeFont : ValueObject
         {
             yield return face;
         }
+    }
+
+    private static Result<ThemeFont> Build(string? key, string? family, IEnumerable<ThemeFontFace> faces, bool keyFromFamily)
+    {
+        ArgumentNullException.ThrowIfNull(faces);
+        var list = faces.ToArray();
+        if (list.Any(face => face is null))
+        {
+            throw new ArgumentNullException(nameof(faces), "A font face must not be null.");
+        }
+
+        var errors = new ThemeErrors();
+        var validFamily = IsFamily(family);
+        if (key is null || !IsKey(key))
+        {
+            if (!keyFromFamily)
+            {
+                errors.Add("key", KeyMessage);
+            }
+            else if (validFamily)
+            {
+                errors.Add("family", FamilyKeyMessage);
+            }
+        }
+
+        if (!validFamily)
+        {
+            errors.Add("family", $"A family name must be letters, digits, single spaces, hyphens or underscores, at most {MaxFamilyLength} characters.");
+        }
+
+        if (list.Length == 0)
+        {
+            errors.Add("faces", "A font needs at least one face.");
+        }
+        else if (list.DistinctBy(face => (face.Weight, face.Style)).Count() != list.Length)
+        {
+            errors.Add("faces", "Two faces of a font must not have the same weight and style.");
+        }
+
+        return errors.HasErrors
+            ? errors.ToResult<ThemeFont>("The font is invalid.")
+            : Result.Ok(new ThemeFont(key!, family!, list.OrderBy(face => face.Weight).ThenBy(face => face.Style).ToArray()));
     }
 
     private static bool IsFamily(string? family) =>
