@@ -1194,3 +1194,147 @@ static SharedKernel.Blazor.Site.PhotoCreditLabels.operator !=(SharedKernel.Blazo
 static SharedKernel.Blazor.Site.PhotoCreditLabels.operator ==(SharedKernel.Blazor.Site.PhotoCreditLabels? left, SharedKernel.Blazor.Site.PhotoCreditLabels? right) -> bool
 SharedKernel.Blazor.Site.RazorComponentMethodExtensions
 static SharedKernel.Blazor.Site.RazorComponentMethodExtensions.AllowOnlyGetAndHead(this Microsoft.AspNetCore.Builder.RazorComponentsEndpointConventionBuilder! builder, params System.Type![]! anyMethodComponents) -> Microsoft.AspNetCore.Builder.RazorComponentsEndpointConventionBuilder!
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument.<Clone>$() -> SharedKernel.Blazor.Site.Theming.ThemeColorDocument!
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument.Dark.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument.Dark.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument.Deconstruct(out string? Light, out string? Dark) -> void
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument.Equals(SharedKernel.Blazor.Site.Theming.ThemeColorDocument? other) -> bool
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument.Light.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument.Light.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeColorDocument.ThemeColorDocument(string? Light, string? Dark) -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument
+SharedKernel.Blazor.Site.Theming.ThemeDocument.<Clone>$() -> SharedKernel.Blazor.Site.Theming.ThemeDocument!
+SharedKernel.Blazor.Site.Theming.ThemeDocument.AllowSmallText.get -> bool
+SharedKernel.Blazor.Site.Theming.ThemeDocument.AllowSmallText.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Colors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, SharedKernel.Blazor.Site.Theming.ThemeColorDocument!>?
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Colors.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Deconstruct(out System.Collections.Generic.IReadOnlyDictionary<string!, SharedKernel.Blazor.Site.Theming.ThemeColorDocument!>? Colors, out System.Collections.Generic.IReadOnlyDictionary<string!, SharedKernel.Blazor.Site.Theming.TypographyDocument!>? Typography, out System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeFontDocument!>? Fonts, out bool AllowSmallText, out SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument? Header, out SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? Shape) -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Equals(SharedKernel.Blazor.Site.Theming.ThemeDocument? other) -> bool
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Fonts.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeFontDocument!>?
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Fonts.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Header.get -> SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument?
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Header.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Restore() -> SharedKernel.Blazor.Site.Theming.SiteTheme!
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Shape.get -> SharedKernel.Blazor.Site.Theming.ThemeShapeDocument?
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Shape.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument.ThemeDocument(System.Collections.Generic.IReadOnlyDictionary<string!, SharedKernel.Blazor.Site.Theming.ThemeColorDocument!>? Colors, System.Collections.Generic.IReadOnlyDictionary<string!, SharedKernel.Blazor.Site.Theming.TypographyDocument!>? Typography = null, System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeFontDocument!>? Fonts = null, bool AllowSmallText = false, SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument? Header = null, SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? Shape = null) -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument.ToEditorModel() -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.ThemeEditorModel!>
+SharedKernel.Blazor.Site.Theming.ThemeDocument.ToTheme(System.Func<SharedKernel.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> SharedKernel.Results.Result<SharedKernel.Blazor.Site.Theming.SiteTheme!>
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Typography.get -> System.Collections.Generic.IReadOnlyDictionary<string!, SharedKernel.Blazor.Site.Theming.TypographyDocument!>?
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Typography.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Version.get -> int
+SharedKernel.Blazor.Site.Theming.ThemeDocument.Version.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeDocumentJson
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.<Clone>$() -> SharedKernel.Blazor.Site.Theming.ThemeFontDocument!
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Deconstruct(out string? Key, out string? Family, out System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument!>? Faces) -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Equals(SharedKernel.Blazor.Site.Theming.ThemeFontDocument? other) -> bool
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Faces.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument!>?
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Faces.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Family.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Family.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Key.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Key.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontDocument.ThemeFontDocument(string? Key, string? Family, System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument!>? Faces) -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.<Clone>$() -> SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument!
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Deconstruct(out int? Weight, out SharedKernel.Blazor.Site.Theming.ThemeFontStyle Style, out string? Src) -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Equals(SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument? other) -> bool
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Src.get -> string?
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Src.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Style.get -> SharedKernel.Blazor.Site.Theming.ThemeFontStyle
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Style.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.ThemeFontFaceDocument(int? Weight, SharedKernel.Blazor.Site.Theming.ThemeFontStyle Style, string? Src) -> void
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Weight.get -> int?
+SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Weight.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument
+SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.<Clone>$() -> SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument!
+SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.BrandHeight.get -> decimal?
+SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.BrandHeight.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.Deconstruct(out decimal? BrandHeight) -> void
+SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.Equals(SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument? other) -> bool
+SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.ThemeHeaderDocument(decimal? BrandHeight) -> void
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.<Clone>$() -> SharedKernel.Blazor.Site.Theming.ThemeShapeDocument!
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.Control.get -> SharedKernel.Blazor.Site.Theming.ControlShape?
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.Control.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.Deconstruct(out SharedKernel.Blazor.Site.Theming.ControlShape? Control, out decimal? DividerWidth, out decimal? DividerThickness, out SharedKernel.Blazor.Site.Theming.ThemeColorRole? DividerColor) -> void
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.DividerColor.get -> SharedKernel.Blazor.Site.Theming.ThemeColorRole?
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.DividerColor.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.DividerThickness.get -> decimal?
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.DividerThickness.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.DividerWidth.get -> decimal?
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.DividerWidth.init -> void
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.Equals(SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? other) -> bool
+SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.ThemeShapeDocument(SharedKernel.Blazor.Site.Theming.ControlShape? Control = null, decimal? DividerWidth = null, decimal? DividerThickness = null, SharedKernel.Blazor.Site.Theming.ThemeColorRole? DividerColor = null) -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument
+SharedKernel.Blazor.Site.Theming.TypographyDocument.<Clone>$() -> SharedKernel.Blazor.Site.Theming.TypographyDocument!
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Color.get -> SharedKernel.Blazor.Site.Theming.ThemeColorRole?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Color.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Deconstruct(out string? FontKey, out SharedKernel.Blazor.Site.Theming.GenericFontFamily? Fallback, out decimal? SizeMin, out decimal? SizeMax, out int? Weight, out decimal? LineHeight, out decimal? LetterSpacing, out SharedKernel.Blazor.Site.Theming.ThemeTextTransform? Transform, out bool? Italic, out SharedKernel.Blazor.Site.Theming.ThemeColorRole? Color) -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Equals(SharedKernel.Blazor.Site.Theming.TypographyDocument? other) -> bool
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Fallback.get -> SharedKernel.Blazor.Site.Theming.GenericFontFamily?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Fallback.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.FontKey.get -> string?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.FontKey.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Italic.get -> bool?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Italic.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.LetterSpacing.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.LetterSpacing.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.LineHeight.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.LineHeight.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.SizeMax.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.SizeMax.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.SizeMin.get -> decimal?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.SizeMin.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Transform.get -> SharedKernel.Blazor.Site.Theming.ThemeTextTransform?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Transform.init -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.TypographyDocument(string? FontKey = null, SharedKernel.Blazor.Site.Theming.GenericFontFamily? Fallback = null, decimal? SizeMin = null, decimal? SizeMax = null, int? Weight = null, decimal? LineHeight = null, decimal? LetterSpacing = null, SharedKernel.Blazor.Site.Theming.ThemeTextTransform? Transform = null, bool? Italic = null, SharedKernel.Blazor.Site.Theming.ThemeColorRole? Color = null) -> void
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Weight.get -> int?
+SharedKernel.Blazor.Site.Theming.TypographyDocument.Weight.init -> void
+const SharedKernel.Blazor.Site.Theming.ThemeDocument.ColorsField = "colors" -> string!
+const SharedKernel.Blazor.Site.Theming.ThemeDocument.CurrentVersion = 1 -> int
+const SharedKernel.Blazor.Site.Theming.ThemeDocument.TypographyField = "typography" -> string!
+const SharedKernel.Blazor.Site.Theming.ThemeDocument.VersionField = "version" -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeColorDocument.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.ThemeColorDocument.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.ThemeColorDocument.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeDocument.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.ThemeDocument.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.ThemeDocument.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeFontDocument.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.ThemeFontDocument.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.ThemeFontDocument.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.ToString() -> string!
+override SharedKernel.Blazor.Site.Theming.TypographyDocument.Equals(object? obj) -> bool
+override SharedKernel.Blazor.Site.Theming.TypographyDocument.GetHashCode() -> int
+override SharedKernel.Blazor.Site.Theming.TypographyDocument.ToString() -> string!
+static SharedKernel.Blazor.Site.Theming.ThemeColorDocument.operator !=(SharedKernel.Blazor.Site.Theming.ThemeColorDocument? left, SharedKernel.Blazor.Site.Theming.ThemeColorDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeColorDocument.operator ==(SharedKernel.Blazor.Site.Theming.ThemeColorDocument? left, SharedKernel.Blazor.Site.Theming.ThemeColorDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeDocument.From(SharedKernel.Blazor.Site.Theming.SiteTheme! theme) -> SharedKernel.Blazor.Site.Theming.ThemeDocument!
+static SharedKernel.Blazor.Site.Theming.ThemeDocument.From(SharedKernel.Blazor.Site.Theming.ThemeEditorModel! model) -> SharedKernel.Blazor.Site.Theming.ThemeDocument!
+static SharedKernel.Blazor.Site.Theming.ThemeDocument.RoleName(SharedKernel.Blazor.Site.Theming.ThemeColorRole role) -> string!
+static SharedKernel.Blazor.Site.Theming.ThemeDocument.RoleName(SharedKernel.Blazor.Site.Theming.TypographyRole role) -> string!
+static SharedKernel.Blazor.Site.Theming.ThemeDocument.operator !=(SharedKernel.Blazor.Site.Theming.ThemeDocument? left, SharedKernel.Blazor.Site.Theming.ThemeDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeDocument.operator ==(SharedKernel.Blazor.Site.Theming.ThemeDocument? left, SharedKernel.Blazor.Site.Theming.ThemeDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeDocumentJson.Restore(string! json) -> SharedKernel.Blazor.Site.Theming.SiteTheme!
+static SharedKernel.Blazor.Site.Theming.ThemeDocumentJson.Serialize(SharedKernel.Blazor.Site.Theming.SiteTheme! theme) -> string!
+static SharedKernel.Blazor.Site.Theming.ThemeFontDocument.operator !=(SharedKernel.Blazor.Site.Theming.ThemeFontDocument? left, SharedKernel.Blazor.Site.Theming.ThemeFontDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeFontDocument.operator ==(SharedKernel.Blazor.Site.Theming.ThemeFontDocument? left, SharedKernel.Blazor.Site.Theming.ThemeFontDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.operator !=(SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument? left, SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument.operator ==(SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument? left, SharedKernel.Blazor.Site.Theming.ThemeFontFaceDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.operator !=(SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument? left, SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument.operator ==(SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument? left, SharedKernel.Blazor.Site.Theming.ThemeHeaderDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.operator !=(SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? left, SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.ThemeShapeDocument.operator ==(SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? left, SharedKernel.Blazor.Site.Theming.ThemeShapeDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.TypographyDocument.operator !=(SharedKernel.Blazor.Site.Theming.TypographyDocument? left, SharedKernel.Blazor.Site.Theming.TypographyDocument? right) -> bool
+static SharedKernel.Blazor.Site.Theming.TypographyDocument.operator ==(SharedKernel.Blazor.Site.Theming.TypographyDocument? left, SharedKernel.Blazor.Site.Theming.TypographyDocument? right) -> bool

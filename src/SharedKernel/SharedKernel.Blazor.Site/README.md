@@ -866,6 +866,31 @@ edited, and `Create` reports any pair that the brand colours break. `HeadingFont
 h1 to h6 and body; a system family (`system-ui`, `Arial`, `Verdana`, `Georgia`) maps to no key with the `SansSerif` or `Serif`
 fallback, and `Inter` maps to an uploaded `ThemeFont`. `BrandName` and `LogoUri` are not part of the theme.
 
+### Storage document
+
+`ThemeDocument` is a theme as plain, versioned data: the shape a host stores (one JSON column or file, read and written whole, never
+queried) or embeds in an import file. `ThemeDocumentJson.Serialize(theme)` writes it and `ThemeDocumentJson.Restore(json)` reads it back:
+
+```json
+{"version":1,"colors":{"primary":{"light":"#1d4ed8","dark":"#93c5fd"}},"typography":{"h1":{"fallback":"SansSerif","sizeMin":2.125,"sizeMax":3.5,"weight":700}},"fonts":[{"key":"noto-sans","family":"Noto Sans","faces":[{"weight":400,"style":"Normal","src":"/media/noto.woff2"}]}],"allowSmallText":false,"header":{"brandHeight":2.5},"shape":{"control":"Pill","dividerWidth":4,"dividerThickness":0.25,"dividerColor":"Accent"}}
+```
+
+- Members are camel case and read case-insensitively; colours and typography are keyed by the field-path role names
+  (`ThemeDocument.RoleName`: `surfaceAlt`, `cardTitle`); enums are written by member name and a number is refused; an empty value is
+  left out; a member the format does not define is ignored. A derived hover colour and an unset typography role are left out, so they
+  stay derived and default after a reload.
+- `version` comes first. `ThemeDocument.CurrentVersion` is 1, the first format, which ViajantesTurismo stored before the format had a
+  version: text without `version` reads as version 1, and the tests keep that stored text loadable byte for byte (a new save is the
+  same text with `"version":1,` in front). A document of another version is refused, by `ToEditorModel` and `ToTheme` on the field
+  `version` and by `Restore` with an `InvalidOperationException`; a future format change raises the version and keeps reading the
+  older ones.
+- `ThemeDocument.From(theme)` and `From(model)` describe a theme or an editor's fields as they are; `ToEditorModel()` fills a
+  `ThemeEditorModel` (an unknown role is an error on `colors` or `typography`); `ToTheme(colorLabel?)` enforces every rule, for a save or
+  an import; `Restore()` checks only what rendering needs (`ToDraft`), because a stored theme met the rules when it was saved and must
+  still load after a rule tightens.
+- A host can embed `ThemeDocument` in its own JSON (an import file's `theme` section) with its own serializer options; enable enums by
+  name there too.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Blazor.Site`. C# namespace: `SharedKernel.Blazor.Site`. Assembly/project identity: `SharedKernel.Blazor.Site`.
