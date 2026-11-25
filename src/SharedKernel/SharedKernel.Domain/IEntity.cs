@@ -1,5 +1,3 @@
-using SharedKernel.BuildingBlocks;
-
 namespace SharedKernel.Domain;
 
 /// <summary>

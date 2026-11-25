@@ -1,3 +1,5 @@
+using SharedKernel.Domain;
+
 namespace SharedKernel.BuildingBlocks.Tests;
 
 /// <summary>

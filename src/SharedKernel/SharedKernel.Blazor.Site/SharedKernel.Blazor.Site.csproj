@@ -16,6 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="../SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj" />
         <ProjectReference Include="../SharedKernel.ContentRights/SharedKernel.ContentRights.csproj" />
+        <ProjectReference Include="../SharedKernel.Domain/SharedKernel.Domain.csproj" />
         <ProjectReference Include="../SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj" />
     </ItemGroup>
 

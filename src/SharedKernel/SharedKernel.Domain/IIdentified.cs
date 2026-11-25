@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks;
+namespace SharedKernel.Domain;
 
 /// <summary>
 /// Exposes a stable identifier for a model.

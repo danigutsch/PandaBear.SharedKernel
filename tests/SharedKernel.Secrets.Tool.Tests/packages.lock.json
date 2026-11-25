@@ -161,13 +161,6 @@
           "xunit.v3.runner.common": "[4.0.3]"
         }
       },
-      "PandaBear.SharedKernel.BuildingBlocks": {
-        "type": "Project",
-        "dependencies": {
-          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
-        }
-      },
       "PandaBear.SharedKernel.CommandLine": {
         "type": "Project",
         "dependencies": {
@@ -181,6 +174,9 @@
         "dependencies": {
           "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )"
         }
+      },
+      "PandaBear.SharedKernel.Domain": {
+        "type": "Project"
       },
       "PandaBear.SharedKernel.Encodings": {
         "type": "Project"
@@ -206,8 +202,8 @@
       "PandaBear.SharedKernel.Secrets": {
         "type": "Project",
         "dependencies": {
-          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Domain": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Encodings": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",

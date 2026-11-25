@@ -1,6 +1,6 @@
 # ADR-022: Separate domain primitives and building blocks
 
-Status: accepted — 2026-06-21. Reviewed for the standalone library: 2026-10-20.
+Status: accepted — 2026-06-21. Reviewed for the standalone library: 2026-10-20. Amended 2026-11-25 (#491): `IIdentified<TId>` and `ValueObject` moved to `SharedKernel.Domain`.
 
 ## Context
 
@@ -8,7 +8,7 @@ Aggregate contracts, domain events, reusable identity interfaces, and value obje
 
 ## Decision
 
-`SharedKernel.Domain` owns aggregate-root contracts, `IDomainEvent`, and typed in-process domain-event dispatch. `SharedKernel.BuildingBlocks` owns reusable identity interfaces and value objects. Keep mechanical identity support opt-in; generators do not own business validation.
+`SharedKernel.Domain` owns aggregate-root contracts, `IDomainEvent`, typed in-process domain-event dispatch, and the base modeling contracts: the `IIdentified<TId>` identity interface beside `IEntity<TId>`, and the `ValueObject` base class. `SharedKernel.BuildingBlocks` owns the reusable value objects built on them and references `SharedKernel.Domain`; `SharedKernel.Domain` has no package dependency. Until the 2026-11-25 amendment both base contracts lived in `SharedKernel.BuildingBlocks`, which made Domain depend on BuildingBlocks for one interface. Keep mechanical identity support opt-in; generators do not own business validation.
 
 Keep package capabilities focused and provider-independent. Add a reusable primitive only when its boundary and current use are clear; a value object specific to one business belongs with its owner. Source namespaces and assembly/project identities use `SharedKernel.*`, and package IDs use `PandaBear.SharedKernel.*` as recorded in the [namespace decision](20261124-sharedkernel-namespaces.md).
 

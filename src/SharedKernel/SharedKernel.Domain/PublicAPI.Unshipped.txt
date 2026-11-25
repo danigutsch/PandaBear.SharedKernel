@@ -47,3 +47,13 @@ SharedKernel.Domain.IDomainEventDispatchHandler.Handle(SharedKernel.Domain.IDoma
 SharedKernel.Domain.IDomainEventDispatcher
 SharedKernel.Domain.IDomainEventDispatcher.Dispatch(SharedKernel.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.Domain.IDomainEventDispatcher.Dispatch<TDomainEvent>(TDomainEvent domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Domain.IIdentified<TId>
+SharedKernel.Domain.IIdentified<TId>.Id.get -> TId
+SharedKernel.Domain.ValueObject
+SharedKernel.Domain.ValueObject.Equals(SharedKernel.Domain.ValueObject? other) -> bool
+abstract SharedKernel.Domain.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!
+SharedKernel.Domain.ValueObject.ValueObject() -> void
+override SharedKernel.Domain.ValueObject.Equals(object? obj) -> bool
+override SharedKernel.Domain.ValueObject.GetHashCode() -> int
+static SharedKernel.Domain.ValueObject.operator !=(SharedKernel.Domain.ValueObject? left, SharedKernel.Domain.ValueObject? right) -> bool
+static SharedKernel.Domain.ValueObject.operator ==(SharedKernel.Domain.ValueObject? left, SharedKernel.Domain.ValueObject? right) -> bool

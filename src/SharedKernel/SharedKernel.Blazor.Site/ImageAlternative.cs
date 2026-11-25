@@ -1,4 +1,5 @@
 using SharedKernel.BuildingBlocks;
+using SharedKernel.Domain;
 
 namespace SharedKernel.Blazor.Site;
 

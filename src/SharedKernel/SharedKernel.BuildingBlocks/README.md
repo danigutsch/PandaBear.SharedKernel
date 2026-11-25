@@ -13,7 +13,7 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 | Folder | Contents |
 | --- | --- |
-| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `PublicationStatus`, `WebUrl`, `SanitizedText`, option-to-result helpers |
+| `Foundation` | `ReferenceCode`, `Slug`, `PublicationStatus`, `WebUrl`, `SanitizedText`, option-to-result helpers |
 | `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet`, `TranslationListRules` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
@@ -184,8 +184,8 @@ languageTags.TryGetCulture("pt-BR", out var key);   // true, key = pt
 
 ## Identity and optional lookups
 
-`IIdentified<TId>` exposes a stable identifier for any identified model. It is owned by this package;
-domain entities compose it through `SharedKernel.Domain.IEntity<TId>`.
+`IIdentified<TId>` and the `ValueObject` base class belong to `PandaBear.SharedKernel.Domain`, which this package references:
+the value objects here derive from `SharedKernel.Domain.ValueObject`.
 
 `Option<TEntity>.ToNotFoundResult(id, container)` maps an empty optional identified model to a
 `SharedKernel.Results.Result<TEntity>` with a standard not-found detail. `container` is optional and

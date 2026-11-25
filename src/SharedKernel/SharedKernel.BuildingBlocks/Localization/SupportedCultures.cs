@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using SharedKernel.Domain;
 using SharedKernel.Results;
 
 namespace SharedKernel.BuildingBlocks;

@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks;
+namespace SharedKernel.Domain;
 
 /// <summary>
 /// Base class for value objects compared by their equality components.
