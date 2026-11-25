@@ -128,7 +128,7 @@ public sealed class ThemeEditorTexts
     public Func<ThemeTextTransform, string> TransformName { get; init; } = DefaultTransformName;
 
     /// <summary>Gets the name of a corner shape.</summary>
-    public Func<Theming.ControlShape, string> ControlShapeName { get; init; } = DefaultControlShapeName;
+    public Func<ControlShape, string> ControlShapeName { get; init; } = DefaultControlShapeName;
 
     /// <summary>Gets the legend of a color role: its <see cref="ColorName" />, followed by its <see cref="ColorHint" /> in brackets.</summary>
     /// <param name="role">The role.</param>
@@ -192,7 +192,7 @@ public sealed class ThemeEditorTexts
         _ => "As written",
     };
 
-    private static string DefaultControlShapeName(Theming.ControlShape shape) => shape switch
+    private static string DefaultControlShapeName(ControlShape shape) => shape switch
     {
         Theming.ControlShape.Square => "Square",
         Theming.ControlShape.Pill => "Pill (round ends)",
