@@ -2,6 +2,7 @@
 SharedKernel.Processes.BoundedProcessRunner
 SharedKernel.Processes.BoundedProcessRunner.BoundedProcessRunner() -> void
 SharedKernel.Processes.BoundedProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Processes.ProcessOutput!>!
+SharedKernel.Processes.BoundedProcessRunner.RunToStreams(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.Stream! output, long maxOutputBytes, System.IO.Stream! error, long maxErrorBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 SharedKernel.Processes.IExecutableResolver
 SharedKernel.Processes.IExecutableResolver.Find(string! command) -> string?
 SharedKernel.Processes.IProcessRunner

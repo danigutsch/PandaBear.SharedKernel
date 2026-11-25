@@ -79,7 +79,8 @@ internal sealed class ExternalCommands
     /// </summary>
     /// <exception cref="InvalidOperationException">The process could not start or exited with a non-zero code.</exception>
     public async Task RunStreaming(
-        string fileName, IReadOnlyList<string> arguments, string workingDirectory, IReadOnlyDictionary<string, string?> environment, TextWriter sink, CancellationToken ct)
+        string fileName, IReadOnlyList<string> arguments, string workingDirectory, IReadOnlyDictionary<string, string?> environment,
+        TextWriter sink, CancellationToken ct, bool includeArgumentsInFailure = true)
     {
         ct.ThrowIfCancellationRequested();
         var startInfo = CreateStartInfo(fileName, [.. arguments], workingDirectory);
@@ -98,7 +99,8 @@ internal sealed class ExternalCommands
         var result = await _processRunner.Run(startInfo, sink, ct).ConfigureAwait(false);
         if (result.ExitCode != 0)
         {
-            throw new InvalidOperationException($"Command failed ({result.ExitCode}): {fileName} {string.Join(' ', arguments)}");
+            var command = includeArgumentsInFailure ? $"{fileName} {string.Join(' ', arguments)}" : fileName;
+            throw new InvalidOperationException($"Command failed ({result.ExitCode}): {command}");
         }
     }
 

@@ -691,20 +691,22 @@ Pass `--` before the child executable so the wrapper forwards the remaining argu
 The child runs in the current directory and has a default timeout of 1,800 seconds. Use
 `--timeout-seconds` to change the timeout. The wrapper captures bounded output and returns the child's exit code.
 
-For a verbose test run, redirect both streams inside the trusted child to a file in an existing ext4 directory
-outside the private Podman directories. The wrapper limits each captured stream to 8,388,608 characters and stops
-the child when it exceeds that limit. Redirecting the wrapper's own output still applies the capture limit.
+The default console mode captures up to 8,388,608 characters from each child stream. It stops the
+child if either stream exceeds the limit. Redirecting the wrapper's own output keeps this console limit.
+For verbose runs, supply an existing caller-owned absolute directory outside the private engine
+paths and choose a positive byte limit for each file.
 
-```bash
-test_log=$(mktemp /absolute/path/on/ext4/example-tests.log.XXXXXXXX)
-printf 'Test log: %s\n' "$test_log"
+```sh
 dotnet repo run-isolated-podman --image-store /absolute/path/to/overlay/store \
-    -- bash -c 'log=$1; shift; exec "$@" >"$log" 2>&1' bash "$test_log" \
-    dotnet test --project tests/Example.Tests
+    --log-directory /absolute/path/to/test-logs --max-log-bytes 67108864 \
+    -- dotnet test --project tests/Example.Tests
 ```
 
-The `exec` in this example keeps the test process under the wrapper's timeout and preserves its exit status.
-The log remains available after the wrapper cleans up its private Podman directories.
+The wrapper creates new `stdout.log` and `stderr.log` files and copies the child streams as bytes.
+Existing files are preserved and a collision fails before the engine starts. Engine diagnostics still
+go to the wrapper's standard error. Partial logs survive child failure, timeout, cancellation, or
+output overflow. A write failure or a stream that exceeds its byte limit stops the child and cleans
+up the verified engine. Reserve space for two files at the chosen limit.
 
 The wrapper verifies engine ownership and DNS before the child starts. After the child exits or is
 canceled, it verifies ownership again, removes resources in the private engine, and checks empty

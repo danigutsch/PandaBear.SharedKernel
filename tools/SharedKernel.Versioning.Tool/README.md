@@ -77,7 +77,7 @@ dotnet release validate-candidate [--version <version>] [--baseline-version <ver
 dotnet release consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot] [--framework <tfm>]...
 dotnet release consume-packages --feed <path> --version <version> [--aot]
 dotnet release merge-evidence --candidate <path> --evidence <path>... [--output <path>]
-dotnet release verify-consumer --candidate <file> [--solution <file>] [--output <file>] -- <command>...
+dotnet release verify-consumer --candidate <file> [--solution <file>] [--output <file>] (-- <command>... | --recipe <file> [--recipe-input <name=value>]...)
 ```
 
 Commands that operate on a checkout take `--repo-root <path>`, which defaults to the current directory.
@@ -244,8 +244,34 @@ candidate's package hashes, then:
 4. requires the clone's `NuGet.Config` to clear `packageSources` and `fallbackPackageFolders` and to map
    `PandaBear.SharedKernel.*` to exactly one source, a repository-relative folder that holds no package, and copies
    the candidate's packages there;
-5. runs the command after `--`, with the clone as its working directory and `NUGET_PACKAGES` and
-   `NUGET_HTTP_CACHE_PATH` in the scratch directory; the command's output streams to standard error.
+5. runs the command after `--` or the ordered commands from `--recipe`, with the clone as their working directory
+   and `NUGET_PACKAGES` and `NUGET_HTTP_CACHE_PATH` in the scratch directory. Command output streams to standard error.
+
+For multiple steps, commit a JSON recipe to the consumer repository and select it explicitly with
+`--recipe .config/consumer-validation.json`. The verifier reads the file from the detached clone and accepts up to
+1 MiB of JSON. Supply a nonempty array of commands, each an array whose first string is the executable and whose
+remaining entries are literal strings or named input references. The verifier runs all
+steps in order in the same clone and stops at the first launch or exit failure. The evidence's `reason` includes
+the failing step number, starting at one. The existing `-- <command>...` invocation continues to support a single command.
+
+```json
+[
+  ["dotnet", "tool", "restore"],
+  ["dotnet", "restore", "App.slnx", "--locked-mode"],
+  ["dotnet", "release", "verify-lock-coverage"],
+  ["dotnet", "test", "--solution", "App.slnx", "-c", "Release", "--no-restore"]
+]
+```
+
+For host-specific arguments, use an object with exactly one `input` property in an argument position.
+For example, `{"input":"reports"}` can supply the argument after `--results-directory`. Pass the value
+using `--recipe-input "reports=/path/to/retained reports"` and repeat the option for other inputs. Names
+start with a lowercase ASCII letter and can contain lowercase ASCII letters, digits, and hyphens.
+The verifier validates all references and rejects missing, duplicate, or unused bindings before executing
+a step. Each reference inserts the value after the first `=` as one argument, including spaces, `=` signs,
+leading dashes, and empty strings. Literal strings and the executable stay as written in the recipe.
+For a failed step with input references, the verifier reports the executable and exit code. The command
+continues to control its own output.
 
 Use a locked restore and the consumer's [lock coverage checks](../../docs/package-development.md#lock-files) in
 the verification command to confirm that retained locks cover the resolved packages of every exempt project.
