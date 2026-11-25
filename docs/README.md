@@ -52,3 +52,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Offerings and page sections](adr/20261122-offerings-and-page-sections.md)
 - [SharedKernel C# namespaces](adr/20261124-sharedkernel-namespaces.md)
 - [Site editing package](adr/20261125-site-editing-package.md)
+- [PostgreSQL rules package](adr/20261125-postgresql-package.md)

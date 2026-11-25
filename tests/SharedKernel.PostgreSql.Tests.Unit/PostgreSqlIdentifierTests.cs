@@ -1,9 +1,6 @@
-using SharedKernel.Testing;
-
-namespace SharedKernel.InputNormalization.Tests;
+namespace SharedKernel.PostgreSql.Tests;
 
 /// <summary>Tests the PostgreSQL unquoted identifier rule that storage options and SQL names share.</summary>
-[Trait(TestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
 public sealed class PostgreSqlIdentifierTests
 {
     [Theory]

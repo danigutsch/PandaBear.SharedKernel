@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using SharedKernel.EntityFrameworkCore;
 using SharedKernel.Idempotency;
 using SharedKernel.Idempotency.EntityFrameworkCore;
-using SharedKernel.InputNormalization;
+using SharedKernel.PostgreSql;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 

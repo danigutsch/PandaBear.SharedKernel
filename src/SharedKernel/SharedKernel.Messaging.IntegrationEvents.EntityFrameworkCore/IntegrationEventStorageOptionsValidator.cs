@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Options;
-using SharedKernel.InputNormalization;
+using SharedKernel.PostgreSql;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 

@@ -15,6 +15,7 @@
         <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
         <ProjectReference Include="..\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
         <ProjectReference Include="..\SharedKernel.Npgsql\SharedKernel.Npgsql.csproj" />
+        <ProjectReference Include="..\SharedKernel.PostgreSql\SharedKernel.PostgreSql.csproj" />
     </ItemGroup>
 
   <ItemGroup>

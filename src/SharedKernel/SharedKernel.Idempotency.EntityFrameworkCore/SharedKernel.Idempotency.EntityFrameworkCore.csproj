@@ -16,6 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
         <ProjectReference Include="..\SharedKernel.Idempotency.Abstractions\SharedKernel.Idempotency.Abstractions.csproj" />
+        <ProjectReference Include="..\SharedKernel.PostgreSql\SharedKernel.PostgreSql.csproj" />
     </ItemGroup>
 
     <ItemGroup>

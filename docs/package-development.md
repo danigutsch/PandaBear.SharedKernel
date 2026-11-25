@@ -95,7 +95,8 @@ Core package. `SharedKernel.InputNormalization` holds generic text and number no
 printable text. `SharedKernel.Domain` holds the base modeling contracts (`ValueObject`, `IIdentified<TId>`, `IEntity<TId>`), and
 `SharedKernel.BuildingBlocks` holds the reusable value objects built on them. Do not add a provider, such as Npgsql, or an ORM to a
 package that has none, only to give a type a home. When no existing package fits without such a dependency, leave the type where it
-is and record the options in an issue: a new package needs the owner's decision. Moving a public type changes its namespace, which
+is and record the options in an issue: a new package, such as `SharedKernel.PostgreSql` for provider-free PostgreSQL rules, needs the
+owner's decision. Moving a public type changes its namespace, which
 follows the project, so it is a breaking (`!`) change that lists the old and new type in the pull request.
 
 ### Package requirements

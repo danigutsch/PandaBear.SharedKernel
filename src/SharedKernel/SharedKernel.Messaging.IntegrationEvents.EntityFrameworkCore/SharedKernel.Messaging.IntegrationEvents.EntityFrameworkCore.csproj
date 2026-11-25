@@ -18,6 +18,7 @@
         <ProjectReference Include="..\SharedKernel.Idempotency.EntityFrameworkCore\SharedKernel.Idempotency.EntityFrameworkCore.csproj" />
         <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
         <ProjectReference Include="..\SharedKernel.Messaging.IntegrationEvents\SharedKernel.Messaging.IntegrationEvents.csproj" />
+        <ProjectReference Include="..\SharedKernel.PostgreSql\SharedKernel.PostgreSql.csproj" />
         <ProjectReference Include="..\SharedKernel.Scheduling\SharedKernel.Scheduling.csproj" />
     </ItemGroup>
 

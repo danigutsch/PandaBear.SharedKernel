@@ -10,7 +10,7 @@ This package owns reusable event-stream and projection-checkpoint persistence. B
 own composition, schema naming, migrations/initialization policy, and context-specific read models.
 
 The schema in `PostgreSqlEventSourcingOptions.Schema` must pass `PostgreSqlIdentifier.IsUnquoted` from
-`PandaBear.SharedKernel.InputNormalization`: ASCII letters, digits, and `_`, not starting with a digit, at most 63 bytes. A
+`PandaBear.SharedKernel.PostgreSql`: ASCII letters, digits, and `_`, not starting with a digit, at most 63 bytes. A
 longer name, which PostgreSQL would silently truncate, is refused with `ArgumentException` like any other invalid name.
 
 ## Package identity and availability

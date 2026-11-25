@@ -76,6 +76,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Observability/SharedKernel.Observability.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Observability.Npgsql/SharedKernel.Observability.Npgsql.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.PostgreSql/SharedKernel.PostgreSql.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj" />
@@ -183,6 +184,7 @@
   <Project Path="tests/SharedKernel.ObjectStorage.S3.Tests/SharedKernel.ObjectStorage.S3.Tests.csproj" />
   <Project Path="tests/SharedKernel.Observability.Tests/SharedKernel.Observability.Tests.csproj" />
   <Project Path="tests/SharedKernel.OpenApi.Tests/SharedKernel.OpenApi.Tests.csproj" />
+  <Project Path="tests/SharedKernel.PostgreSql.Tests.Unit/SharedKernel.PostgreSql.Tests.Unit.csproj" />
   <Project Path="tests/SharedKernel.PlaywrightMcp.Tests/SharedKernel.PlaywrightMcp.Tests.csproj" />
   <Project Path="tests/SharedKernel.PlaywrightMcp.Tool.Tests/SharedKernel.PlaywrightMcp.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Processes.Tests/SharedKernel.Processes.Tests.csproj" />

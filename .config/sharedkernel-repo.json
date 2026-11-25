@@ -99,6 +99,7 @@
     "src/SharedKernel/SharedKernel.PageSections.Blazor/SharedKernel.PageSections.Blazor.csproj",
     "src/SharedKernel/SharedKernel.PageSections/SharedKernel.PageSections.csproj",
     "src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj",
+    "src/SharedKernel/SharedKernel.PostgreSql/SharedKernel.PostgreSql.csproj",
     "src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj",
     "src/SharedKernel/SharedKernel.Repositories.Forgejo/SharedKernel.Repositories.Forgejo.csproj",
     "src/SharedKernel/SharedKernel.Repositories.GitHub/SharedKernel.Repositories.GitHub.csproj",
