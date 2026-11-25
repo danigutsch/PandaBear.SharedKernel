@@ -43,7 +43,7 @@ internal sealed record BaselineConfiguration(
     /// </summary>
     public string? FindError()
     {
-        if (RepositoryName.Length is 0 or > MaxNameLength || !RepositoryName.All(static c => char.IsAsciiLetterOrDigit(c) || c is '.' or '-' or '_'))
+        if (!IsValidRepositoryName(RepositoryName))
         {
             return "$.baseline.repositoryName must be 1 to 100 letters, digits, '.', '-', or '_'.";
         }
@@ -78,6 +78,10 @@ internal sealed record BaselineConfiguration(
 
         return FindGitConfigError() ?? FindHooksError(paths);
     }
+
+    /// <summary>Reports whether a repository name is valid for scaffold rendering.</summary>
+    internal static bool IsValidRepositoryName(string name) =>
+        name.Length is > 0 and <= MaxNameLength && name.All(static c => char.IsAsciiLetterOrDigit(c) || c is '.' or '-' or '_');
 
     private string? FindGitConfigError()
     {

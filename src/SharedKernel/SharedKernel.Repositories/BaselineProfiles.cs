@@ -138,6 +138,27 @@ internal static class BaselineProfiles
         exec git diff --cached --check
         """;
 
+    private const string HookPrePushDiffCheck = """
+        #!/bin/sh
+        set -eu
+
+        # Check pushed tips from the worktree with a clean Git environment.
+        for variable in $(env | sed -n 's/^\(GIT_[A-Za-z0-9_]*\)=.*/\1/p'); do
+            unset "$variable"
+        done
+
+        while read -r _local_ref local_oid _remote_ref _remote_oid; do
+            case "$local_oid" in
+                *[!0]*) git show --format= --check --end-of-options "$local_oid" -- ;;
+            esac
+        done
+        """;
+
+    private const string HookCommitMessage = """
+        #!/bin/sh
+        exec dotnet tool run ci -- verify-commit-message --file "$1"
+        """;
+
     private static readonly Dictionary<string, string> Content = new(StringComparer.Ordinal)
     {
         ["gitattributes"] = Gitattributes,
@@ -149,6 +170,8 @@ internal static class BaselineProfiles
         ["issue-form-bug"] = IssueFormBug,
         ["issue-form-feature"] = IssueFormFeature,
         ["pre-commit-diff-check"] = HookPreCommitDiffCheck,
+        ["pre-push-diff-check"] = HookPrePushDiffCheck,
+        ["commit-msg-conventional"] = HookCommitMessage,
     };
 
     /// <summary>Gets the profile IDs.</summary>

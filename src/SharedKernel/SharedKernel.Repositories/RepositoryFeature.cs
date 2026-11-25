@@ -23,6 +23,12 @@ public sealed record RepositoryFeature
     /// <summary>A tracked <c>pre-commit</c> hook, activated through <c>core.hooksPath</c>.</summary>
     public static readonly RepositoryFeature Hooks = new("hooks", selectedByDefault: true);
 
+    /// <summary>A tracked <c>pre-push</c> hook that checks the tip of each updated ref.</summary>
+    public static readonly RepositoryFeature PrePushHook = new("pre-push-hook", selectedByDefault: false);
+
+    /// <summary>A tracked <c>commit-msg</c> hook that invokes the Conventional Commit verifier.</summary>
+    public static readonly RepositoryFeature CommitMessageHook = new("commit-msg-hook", selectedByDefault: false);
+
     /// <summary>Neutral Git settings: default branch, fast-forward-only pulls, and pruning fetches.</summary>
     public static readonly RepositoryFeature GitConfig = new("git-config", selectedByDefault: true);
 
@@ -52,7 +58,8 @@ public sealed record RepositoryFeature
     }
 
     /// <summary>Gets every feature, in the order that files and settings are written and messages list them.</summary>
-    public static IReadOnlyList<RepositoryFeature> All { get; } = [Readme, Gitignore, Gitattributes, Editorconfig, Hooks, GitConfig, SignedCommits, Agents, GlobalJson, NugetConfig, BuildProps];
+    public static IReadOnlyList<RepositoryFeature> All { get; } =
+        [Readme, Gitignore, Gitattributes, Editorconfig, Hooks, GitConfig, SignedCommits, Agents, GlobalJson, NugetConfig, BuildProps, PrePushHook, CommitMessageHook];
 
     /// <summary>Gets the ID that the <c>--feature</c> option takes.</summary>
     public string Id { get; }

@@ -86,6 +86,10 @@ internal static class NewRepositorySeeds
         </Project>
         """;
 
+    /// <summary>Gets the write-once features in catalog order.</summary>
+    internal static IReadOnlyList<RepositoryFeature> Features { get; } =
+        [RepositoryFeature.Agents, RepositoryFeature.GlobalJson, RepositoryFeature.NugetConfig, RepositoryFeature.BuildProps];
+
     /// <summary>Renders the files of the selected seed features in catalog order, each with LF line endings and a final newline.</summary>
     /// <param name="repositoryName">The validated repository name.</param>
     /// <param name="features">The selected features; features that are not seeds are ignored.</param>
@@ -93,7 +97,7 @@ internal static class NewRepositorySeeds
     public static IReadOnlyList<(string Path, string Content)> Render(string repositoryName, IReadOnlyCollection<RepositoryFeature> features, SdkVersion? sdk)
     {
         List<(string, string)> files = [];
-        foreach (var feature in RepositoryFeature.All.Where(features.Contains))
+        foreach (var feature in Features.Where(features.Contains))
         {
             if (feature == RepositoryFeature.Agents)
             {

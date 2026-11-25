@@ -94,6 +94,7 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `baseline verify` | Fails when a managed baseline file is missing, outdated, edited by hand, or unmanaged; see [Repository baseline](#repository-baseline). |
 | `baseline apply` | Creates and updates the managed baseline files; previews unless `--force` is given. |
 | `new` | Starts a repository from a language and features: writes the baseline files and their configuration and initializes Git; previews unless `--force` is given. See [Starting a repository](#starting-a-repository). |
+| `seed-drift` | Compares selected write-once files with the current catalog. See [Comparing write-once files](#comparing-write-once-files). |
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request; see [Roadmap publication](#roadmap-publication). |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
@@ -440,8 +441,8 @@ content the configuration produces. The tool names no forge, owner, or host; the
 Embedded profiles, all generic: `gitattributes` (LF policy, CRLF for `.cmd` and `.bat`, binary extensions),
 `editorconfig` (UTF-8, LF, final newline, indentation), `gitignore` (environment files, logs, temporary files, OS
 and IDE folders), `readme` (skeleton using the two variables), `pull-request-template`, `issue-form-bug`,
-`issue-form-feature` (YAML issue forms that GitHub and Forgejo read), and `pre-commit-diff-check` (a hook that runs
-`git diff --cached --check`).
+`issue-form-feature` (YAML issue forms that GitHub and Forgejo read), `pre-commit-diff-check` (staged whitespace),
+`pre-push-diff-check` (pushed tip whitespace), and `commit-msg-conventional` (Conventional Commits).
 
 `gitConfig` is an array of `{key, value, overwriteExisting}` repository-local Git settings, set with
 `git config --local` and never by editing `.git/config`. Only these keys are accepted: `init.defaultBranch`,
@@ -479,7 +480,13 @@ chosen language and features, writes the files and the configuration in one roll
 | `--branch <name>` | Default branch. Defaults to `main`. |
 | `--language <id>` | `none` (default) or `dotnet`. A language selects the content of a feature, such as the .NET ignore rules; it adds no file itself. |
 | `--sdk-version <v>` | The .NET SDK version, such as `10.0.100`, that `global.json` pins and `Directory.Build.props` targets. Needed by the `global-json` and `build-props` features. |
-| `--feature <id>` | A feature to write; repeat the option to select several. Without it every feature except `signed-commits` is written, and the .NET features only with `--language dotnet`. |
+| `--feature <id>` | A feature in the exact selection. Repeat to select several. |
+| `--with <id>` | A feature to add to the language defaults. Repeat to add several. Use without `--feature`. |
+| `--license-source <path>` | Caller-owned template for `LICENSE`. |
+| `--security-source <path>` | Caller-owned template for `SECURITY.md`. |
+| `--codeowners-source <path>` | Caller-owned template for `CODEOWNERS`. |
+| `--owner <text>` | Value of `@@owner@@` in a policy source. |
+| `--copyright-holder <text>` | Value of `@@copyrightHolder@@` in a policy source. |
 | `--force` | Writes instead of previewing. |
 
 The features are `readme`, `gitignore`, `gitattributes`, `editorconfig`, `hooks` (a tracked `pre-commit` hook and
@@ -490,11 +497,35 @@ have no comment for the marker or are meant to be edited: `agents` (`AGENTS.md`)
 `nuget-config` makes nuget.org the only package source, with source mapping, and the only
 [audit source](https://learn.microsoft.com/nuget/concepts/auditing-packages#audit-sources), so the audit stays on
 nuget.org when a feed is added and NuGet reports `NU1905` when the source provides no vulnerability data.
-`signed-commits` is opt-in because signing needs a key that you
-provide, and commits fail without one. An unknown language or feature, an invalid name, an existing configuration
+The standard features for the language and `pre-commit` are selected by default. Use
+`--with signed-commits` to keep the defaults and enable signing. Supply a signing key before committing.
+Add `--with pre-push-hook` for a local whitespace check at each updated ref tip. It clears inherited Git environment
+variables and skips ref deletions. Hosted CI still performs the full verification. Add `--with commit-msg-hook` to run
+the Conventional Commit check using the repository's restored `ci` .NET tool. The scaffold installs
+selected hooks under the tracked `.githooks` directory and sets `core.hooksPath`.
+An unknown language or feature, an invalid name, an existing configuration
 file, or a conflict with an existing unmanaged file or different Git setting is reported on standard error and the
 command exits 1, in a preview too, with nothing written. The content is neutral: no owner, copyright holder, forge, or
 host is embedded.
+
+Each supplied policy source must be a UTF-8 file of at most 1 MiB. Relative source paths are resolved from the
+invocation directory. Alongside `@@repositoryName@@` and `@@defaultBranch@@`, sources can use `@@owner@@` and
+`@@copyrightHolder@@` with their corresponding options. Use `--owner=@your-team` for a handle with a leading `@`.
+A missing source or placeholder value aborts a preview or
+write before Git initialization. The generated policy files are written once at the repository root. Source paths and
+rendering values are used for the scaffold operation and remain outside the generated baseline configuration.
+
+### Comparing write-once files
+
+```bash
+dotnet repo seed-drift --root ./example --feature agents --feature global-json --sdk-version 10.0.100
+```
+
+Repeat `--feature` to choose from `agents`, `global-json`, `nuget-config`, and `build-props`. Pass the expected
+`--sdk-version` for `global-json` and `build-props`. Use `--name` when the name for `AGENTS.md` differs from the
+directory name. The check compares UTF-8 files up to 1 MiB, ignoring CRLF versus LF and a leading UTF-8 byte order mark.
+It reports `current`, `different`, or `missing` with each selected path and returns 1 for differences, missing files,
+or input errors. It reads the files without changing them.
 
 ## Roadmap publication
 

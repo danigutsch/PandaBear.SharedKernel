@@ -16,6 +16,22 @@ public static class RepositoryScaffold
     /// existing file or Git setting, writes nothing and returns 1, in a preview too.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="featureIds"/>, <paramref name="output"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
+    public static Task<int> Run(
+        string rootPath,
+        string? name,
+        string defaultBranch,
+        string language,
+        string? sdkVersion,
+        IReadOnlyList<string> featureIds,
+        bool force,
+        TextWriter output,
+        TextWriter error,
+        CancellationToken cancellationToken) =>
+        Run(rootPath, name, defaultBranch, language, sdkVersion, featureIds, null, force, output, error, cancellationToken);
+
+    /// <summary>Previews or creates a repository, including any explicitly supplied write-once policy files.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="featureIds"/>, <paramref name="output"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">A policy source is missing, invalid, too large, or references a missing value.</exception>
     public static async Task<int> Run(
         string rootPath,
         string? name,
@@ -23,6 +39,7 @@ public static class RepositoryScaffold
         string language,
         string? sdkVersion,
         IReadOnlyList<string> featureIds,
+        RepositoryPolicySources? policySources,
         bool force,
         TextWriter output,
         TextWriter error,
@@ -124,11 +141,11 @@ public static class RepositoryScaffold
             return 1;
         }
 
-        foreach (var (seedPath, content) in NewRepositorySeeds.Render(repositoryName, features, sdk))
+        var policyFiles = await NewRepositoryPolicyFiles.Render(policySources, baseline, cancellationToken).ConfigureAwait(false);
+        foreach (var (seedPath, content) in NewRepositorySeeds.Render(repositoryName, features, sdk).Concat(policyFiles))
         {
             var fullPath = RepositoryPath.Parse(seedPath).ResolveUnder(root);
-            var exists = File.Exists(fullPath);
-            if (exists)
+            if (File.Exists(fullPath) || Directory.Exists(fullPath))
             {
                 await error.WriteLineAsync($"conflict: {seedPath} exists; new writes it only when it is missing.".AsMemory(), cancellationToken).ConfigureAwait(false);
                 return 1;

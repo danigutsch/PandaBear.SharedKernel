@@ -8,7 +8,7 @@ internal static class NewRepositoryCatalog
     {
         List<BaselineFileConfiguration> files = [];
         List<BaselineGitConfigurationEntry> settings = [];
-        BaselineHooksConfiguration? hooks = null;
+        List<BaselineHookConfiguration> hooks = [];
         foreach (var feature in RepositoryFeature.All.Where(features.Contains))
         {
             if (feature == RepositoryFeature.Readme)
@@ -29,7 +29,15 @@ internal static class NewRepositoryCatalog
             }
             else if (feature == RepositoryFeature.Hooks)
             {
-                hooks = new BaselineHooksConfiguration([new BaselineHookConfiguration("pre-commit", Profile: "pre-commit-diff-check")]);
+                hooks.Add(new BaselineHookConfiguration("pre-commit", Profile: "pre-commit-diff-check"));
+            }
+            else if (feature == RepositoryFeature.PrePushHook)
+            {
+                hooks.Add(new BaselineHookConfiguration("pre-push", Profile: "pre-push-diff-check"));
+            }
+            else if (feature == RepositoryFeature.CommitMessageHook)
+            {
+                hooks.Add(new BaselineHookConfiguration("commit-msg", Profile: "commit-msg-conventional"));
             }
             else if (feature == RepositoryFeature.GitConfig)
             {
@@ -56,6 +64,6 @@ internal static class NewRepositoryCatalog
             files.Count == 0 ? null : files,
             defaultBranch,
             settings.Count == 0 ? null : settings,
-            hooks);
+            hooks.Count == 0 ? null : new BaselineHooksConfiguration(hooks));
     }
 }
