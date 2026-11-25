@@ -344,3 +344,10 @@ static SharedKernel.BuildingBlocks.TranslationListRules.Merge<T>(System.Collecti
 static SharedKernel.BuildingBlocks.TranslationListRules.Same<T>(System.Collections.Generic.IReadOnlyList<T>! current, System.Collections.Generic.IReadOnlyList<T>! replacement, System.Func<T, SharedKernel.BuildingBlocks.ContentCulture!>! culture, System.Func<T, T, bool>! same) -> bool
 static SharedKernel.BuildingBlocks.SanitizedText.Optional(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength, out bool entered) -> string?
 static SharedKernel.BuildingBlocks.SanitizedText.Paragraphs(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxParagraphs, int maxLength, out bool entered) -> System.Collections.Generic.IReadOnlyList<string!>!
+const SharedKernel.BuildingBlocks.ImageAltText.MaxLength = 500 -> int
+override SharedKernel.BuildingBlocks.ImageAltText.ToString() -> string!
+SharedKernel.BuildingBlocks.ImageAltText
+SharedKernel.BuildingBlocks.ImageAltText.IsDecorative.get -> bool
+SharedKernel.BuildingBlocks.ImageAltText.Text.get -> string!
+static SharedKernel.BuildingBlocks.ImageAltText.Create(string? text, bool decorative, string! field = "alt") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.ImageAltText!>
+static SharedKernel.BuildingBlocks.ImageAltText.Restore(string! text) -> SharedKernel.BuildingBlocks.ImageAltText!

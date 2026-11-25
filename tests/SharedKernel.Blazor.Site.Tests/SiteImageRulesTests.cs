@@ -1,3 +1,4 @@
+using SharedKernel.BuildingBlocks;
 using static SharedKernel.Blazor.Site.Tests.SiteFixtures;
 
 namespace SharedKernel.Blazor.Site.Tests;
@@ -41,6 +42,24 @@ public sealed class SiteImageRulesTests : BunitContext
         described.IsDecorative.ShouldBeFalse();
         described.Text.ShouldBe("A lake");
         described.ShouldBe(ImageAlternative.Describe("A lake"));
+    }
+
+    [Fact]
+    public void A_stored_alt_text_becomes_the_same_decision()
+    {
+        // Arrange
+        var stored = ImageAltText.Create(" A lake ", decorative: false).ShouldBeSuccess();
+        var decorativeStored = ImageAltText.Create(null, decorative: true).ShouldBeSuccess();
+
+        // Act
+        var described = ImageAlternative.From(stored);
+        var decorative = ImageAlternative.From(decorativeStored);
+        var missing = () => ImageAlternative.From(null!);
+
+        // Assert
+        described.ShouldBe(ImageAlternative.Describe("A lake"));
+        decorative.ShouldBe(ImageAlternative.Decorative());
+        missing.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("alt");
     }
 
     [Fact]

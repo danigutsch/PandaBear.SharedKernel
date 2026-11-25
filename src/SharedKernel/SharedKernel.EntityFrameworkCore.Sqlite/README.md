@@ -14,6 +14,25 @@ the table and columns, and an index name for expression indexes. Primary-key vio
 services.AddSqliteUniqueViolationParser();   // registers IUniqueViolationParser
 ```
 
+## Context configuration
+
+`SqliteDbContextConfiguration<TContext>` is the `IDbContextConfiguration<TContext>` of a SQLite context: `UseSqlite` on a connection
+string, optionally with its own migrations history table (`MigrationsHistoryTable`, needed when two contexts share one database file) and
+with the search fold registered on every connection the context opens (`UseSearchFold`). Register it once and call `ConfigureOptions`
+from the design-time factory too, so the application and `dotnet ef` agree. The search fold's model side (`HasSearchFoldFunction`, below)
+stays in the context's `OnModelCreating`.
+
+```csharp
+services.AddDbContextConfiguration(new SqliteDbContextConfiguration<SiteDbContext>(connectionString)
+{
+    MigrationsHistoryTable = "__SiteMigrationsHistory",
+    UseSearchFold = true,
+});
+```
+
+The package references `Microsoft.EntityFrameworkCore.Sqlite.Core`, not the native SQLite bundle: the application chooses it, for example
+through `Microsoft.EntityFrameworkCore.Sqlite`.
+
 ## Accent- and case-insensitive search
 
 SQLite's `LIKE`, `lower()` and `NOCASE` fold only ASCII letters, so `ESLOVÊNIA` does not find `Eslovênia`. `SearchFold` compares
