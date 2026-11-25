@@ -1,6 +1,6 @@
 using System.Text;
 using Microsoft.Data.Sqlite;
-using SharedKernel.BuildingBlocks;
+using SharedKernel.InputNormalization;
 
 namespace SharedKernel.EntityFrameworkCore.Sqlite;
 

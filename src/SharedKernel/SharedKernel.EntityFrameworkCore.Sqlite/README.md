@@ -39,7 +39,7 @@ SQLite's `LIKE`, `lower()` and `NOCASE` fold only ASCII letters, so `ESLOVÊNIA`
 search keys instead: `SearchFold.Of(text)` is the key, computed in SQL by the deterministic scalar function `sharedkernel_search_fold`
 (`SearchFold.FunctionName`), and `SearchFold.ContainsPattern(input)` turns the user's input into a `LIKE` pattern.
 
-The key is `SearchKey.Of` of `PandaBear.SharedKernel.BuildingBlocks`, a host-agnostic fold you can also use in memory: lone
+The key is `SearchKey.Of` of `PandaBear.SharedKernel.InputNormalization`, a host-agnostic fold you can also use in memory: lone
 surrogates become U+FFFD, the text is decomposed (NFD), nonspacing, spacing combining and enclosing marks are dropped, the rest is
 lowercased with the invariant culture, white-space runs become one space with none at either end, and the result is composed again
 (NFC). Every letter and digit of every script stays: `Eslovênia` → `eslovenia`, `  São   Paulo` → `sao paulo`, `Москва` → `москва`,

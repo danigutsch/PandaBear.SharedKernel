@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace SharedKernel.InputNormalization.Tests;
 
 /// <summary>Tests the accent- and case-insensitive search key of a text.</summary>
 [Trait(Testing.TestTraitNames.ScopeName, "unit")]

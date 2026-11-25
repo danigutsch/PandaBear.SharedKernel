@@ -259,11 +259,6 @@ static SharedKernel.BuildingBlocks.PageWindow.operator !=(SharedKernel.BuildingB
 static SharedKernel.BuildingBlocks.PageWindow.operator ==(SharedKernel.BuildingBlocks.PageWindow left, SharedKernel.BuildingBlocks.PageWindow right) -> bool
 ~override SharedKernel.BuildingBlocks.PageWindow.Equals(object obj) -> bool
 ~override SharedKernel.BuildingBlocks.PageWindow.ToString() -> string
-SharedKernel.BuildingBlocks.SearchKey
-static SharedKernel.BuildingBlocks.SearchKey.Of(string? text) -> string!
-SharedKernel.BuildingBlocks.SqlLikePattern
-const SharedKernel.BuildingBlocks.SqlLikePattern.EscapeCharacter = "\\" -> string!
-static SharedKernel.BuildingBlocks.SqlLikePattern.ContainsLiteral(string! text) -> string!
 SharedKernel.BuildingBlocks.PublicationStatus
 SharedKernel.BuildingBlocks.PublicationStatus.Draft = 0 -> SharedKernel.BuildingBlocks.PublicationStatus
 SharedKernel.BuildingBlocks.PublicationStatus.Published = 1 -> SharedKernel.BuildingBlocks.PublicationStatus

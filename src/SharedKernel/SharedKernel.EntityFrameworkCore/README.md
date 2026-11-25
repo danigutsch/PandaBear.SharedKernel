@@ -157,6 +157,14 @@ It is a save helper called from the override rather than a `SaveChangesIntercept
 in `SavingChanges` cannot guarantee to close it: a failure after `SavingChanges` but before the save starts (for example in another
 interceptor) reaches no `SaveChangesFailed`, and the context would keep the transaction open.
 
+## Literal LIKE patterns
+
+`SqlLikePattern.ContainsLiteral(text)` builds a parameter value for a literal SQL `LIKE` or `ILIKE` contains search: it wraps the
+text in `%` and escapes each literal `%`, `_` and `\` with a backslash. Pass the pattern and `SqlLikePattern.EscapeCharacter` (`\`)
+to the provider, for example `EF.Functions.Like(column, pattern, SqlLikePattern.EscapeCharacter)` or `EF.Functions.ILike(...)` on
+PostgreSQL. Apply `SearchKey.Of` of `PandaBear.SharedKernel.InputNormalization` first when your query compares search keys. The
+pattern preserves the supplied text and returns `%%` for an empty string; the caller decides how to handle blank input.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.EntityFrameworkCore`. C# namespace: `SharedKernel.EntityFrameworkCore`. Assembly/project identity: `SharedKernel.EntityFrameworkCore`.
