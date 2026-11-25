@@ -28,16 +28,22 @@ Date: 2026-11-08. Status: accepted.
 
 Shell and Nix choose profiles for existing baseline features. The optional `devcontainer` feature
 validates the caller's digest-pinned image and writes a seed owned by the consumer. The `check-runner`
-feature creates owner-editable lane configuration for `dotnet repo check-tracked`. The .NET-specific
+feature creates owner-editable lane configuration for `dotnet repo check-tracked`. The
+`publication-guard` feature seeds a staged policy and an ignore entry for private local patterns.
+The `dotnet repo verify-publication` command owns the check. The .NET-specific
 `sdk-bootstrap` feature supplies a pre-SDK script that verifies the installed version by default
 and checks the official URL and SHA-512 before an explicit installation.
+The opt-in `signature-verifier` feature seeds an owner-editable `.config/allowed_signers` file.
+The managed verifier uses the committed policy from the protected base and the actual submitted head.
 
 The catalog embeds neutral content. The caller supplies `LICENSE`, `SECURITY.md`, and `CODEOWNERS` through the
 optional `--license-source`, `--security-source`, and `--codeowners-source` flags. These sources may use
 `@@owner@@` and `@@copyrightHolder@@`, supplied with `--owner` and `--copyright-holder`, as well as the existing
 `@@repositoryName@@` and `@@defaultBranch@@`. The scaffold validates and renders every supplied source before writes,
 then creates the policy files once with the rest of the batch. The generated baseline configuration omits the source
-paths and caller values. Consumers supply CI workflows separately.
+paths and caller values. The optional forge selection adds the neutral pull request template and issue forms under
+the selected forge's paths. Consumers can supply workflows directly or seed a pull request workflow from an
+explicit policy containing the pinned actions, digest-pinned runner image and job timeout.
 
 ## Value objects
 
@@ -53,5 +59,5 @@ paths and statuses while keeping file contents private. Use `baseline verify` to
 ## Deferred
 
 - A failure of `git init` or of a Git setting after the file batch leaves the files in place; remove the directory and rerun, or run `git init` and `baseline apply` in it.
-- Per-forge files (pull request template path, issue forms, CI workflows) need a forge choice; this follows the deferred `forge` group.
+- Further forge-specific administration remains in the deferred `forge` group.
 - Further languages.

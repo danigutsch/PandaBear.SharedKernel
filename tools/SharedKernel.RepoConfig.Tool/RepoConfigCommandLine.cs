@@ -54,6 +54,8 @@ internal static class RepoConfigCommandLine
             CreateInitCommand(environment, root),
             CreateVerifyCommand(environment, root),
             CreateTrackedCheckCommand(root),
+            CreateCommitSignatureCommand(root),
+            CreatePublicationGuardCommand(root),
             CreateDiffCommand(environment, root),
             CreateSetCommand(environment, root),
             CreateGetCommand(environment, root),
@@ -114,11 +116,39 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
+    private static Command CreateCommitSignatureCommand(RootOption root)
+    {
+        Option<string> baseRef = new("--base")
+        {
+            Required = true,
+            Description = "Protected base commit ID or ref containing the authorized SSH signers.",
+            HelpName = "ref",
+        };
+        Option<string> headRef = new("--head")
+        {
+            Required = true,
+            Description = "Actual submitted head commit ID or ref from the forge event.",
+            HelpName = "ref",
+        };
+        Command command = new("verify-commit-signatures", "Verify the SSH signatures of a change against the protected base.") { baseRef, headRef, root };
+        SetGuardedAction(command, (parseResult, output, _, ct) => CommitSignatureVerifier.Run(
+            root.GetExistingDirectory(parseResult), parseResult.GetRequiredValue(baseRef), parseResult.GetRequiredValue(headRef), output, ct));
+        return command;
+    }
+
     private static Command CreateDiffCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Command command = new("diff", "Report drift between the roadmap files and the expected structure.") { root };
         SetGuardedAction(command, (parseResult, output, error, _) =>
             Task.FromResult(RepoConfigToolApplication.Diff(root.GetExistingDirectory(parseResult), output, error)));
+        return command;
+    }
+
+    private static Command CreatePublicationGuardCommand(RootOption root)
+    {
+        Command command = new("verify-publication", "Check a staged publication policy, paths and content.") { root };
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+            PublicationGuard.Run(root.GetExistingDirectory(parseResult), output, error, ct));
         return command;
     }
 
@@ -287,6 +317,15 @@ internal static class RepoConfigCommandLine
         {
             Description = "SHA-256 digest-pinned image for the opt-in devcontainer feature.",
         };
+        Option<string?> forge = new("--forge")
+        {
+            Description = "Place pull request and issue forms under github or forgejo paths."
+        };
+        forge.AcceptOnlyFromAmong("github", "forgejo");
+        Option<string?> ciPolicy = new("--ci-policy")
+        {
+            Description = "Path to the caller's JSON policy for the selected forge's CI workflow."
+        };
         Option<bool> force = new("--force")
         {
             Description = "Write the repository instead of previewing it. Never replaces an existing file or Git setting."
@@ -294,7 +333,7 @@ internal static class RepoConfigCommandLine
         Command command = new("new", "Start a repository: write the chosen baseline files and their consumer configuration, and initialize Git. Previews unless --force is given.")
         {
             name, branch, language, sdkVersion, feature, with, force, root,
-            licenseSource, securitySource, codeOwnersSource, owner, copyrightHolder, devcontainerImage
+            licenseSource, securitySource, codeOwnersSource, owner, copyrightHolder, devcontainerImage, forge, ciPolicy
         };
         command.Validators.Add(result =>
         {
@@ -325,7 +364,16 @@ internal static class RepoConfigCommandLine
                     ResolvePolicySource(parseResult.GetValue(securitySource), environment.WorkingDirectory),
                     ResolvePolicySource(parseResult.GetValue(codeOwnersSource), environment.WorkingDirectory),
                     parseResult.GetValue(owner),
-                    parseResult.GetValue(copyrightHolder)),
+                    parseResult.GetValue(copyrightHolder))
+                {
+                    Forge = parseResult.GetValue(forge) switch
+                    {
+                        "github" => ForgeKind.GitHub,
+                        "forgejo" => ForgeKind.Forgejo,
+                        _ => null
+                    },
+                    CiPolicySource = ResolvePolicySource(parseResult.GetValue(ciPolicy), environment.WorkingDirectory)
+                },
                 parseResult.GetValue(devcontainerImage),
                 parseResult.GetValue(force),
                 output,
@@ -350,7 +398,7 @@ internal static class RepoConfigCommandLine
         };
         Option<string[]> feature = new("--feature")
         {
-            Description = "Write-once feature to compare: agents, global-json, nuget-config, or build-props. Repeat to compare several."
+            Description = "Write-once scaffold feature to compare. Repeat to compare several."
         };
         Command command = new("seed-drift", "Compare selected write-once files to the current catalog without changing them.")
         {
