@@ -910,6 +910,14 @@ queried) or embeds in an import file. `ThemeDocumentJson.Serialize(theme)` write
 - A host can embed `ThemeDocument` in its own JSON (an import file's `theme` section) with its own serializer options; enable enums by
   name there too.
 
+### Editing the theme
+
+The accessible admin editor of the theme, `ThemeEditor`, is in `PandaBear.SharedKernel.Blazor.Site.Editing`
+([README](../SharedKernel.Blazor.Site.Editing/README.md)), so this package stays free of the form helpers and their HTTP dependencies. Its
+option lists come from this package's rules: `TypographyStyle.Colors` (the text, primary and muted colour a role may take),
+`TypographyStyle.TakesColor(role)` (h1 to h6, the card title and the brand), `SiteShape.DividerColors` (primary, accent, text, muted,
+border) and `ThemeFont.Weights` (100 to 900 in steps of 100).
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Blazor.Site`. C# namespace: `SharedKernel.Blazor.Site`. Assembly/project identity: `SharedKernel.Blazor.Site`.

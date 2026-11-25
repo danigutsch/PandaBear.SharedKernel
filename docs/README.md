@@ -51,3 +51,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Tool engines and thin wrappers](adr/20261115-tool-engines-and-thin-wrappers.md)
 - [Offerings and page sections](adr/20261122-offerings-and-page-sections.md)
 - [SharedKernel C# namespaces](adr/20261124-sharedkernel-namespaces.md)
+- [Site editing package](adr/20261125-site-editing-package.md)

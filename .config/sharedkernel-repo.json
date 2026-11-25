@@ -25,6 +25,7 @@
     "src/SharedKernel/SharedKernel.AuditTrail/SharedKernel.AuditTrail.csproj",
     "src/SharedKernel/SharedKernel.Blazor.Analyzers/SharedKernel.Blazor.Analyzers.csproj",
     "src/SharedKernel/SharedKernel.Blazor.CodeFixes/SharedKernel.Blazor.CodeFixes.csproj",
+    "src/SharedKernel/SharedKernel.Blazor.Site.Editing/SharedKernel.Blazor.Site.Editing.csproj",
     "src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj",
     "src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj",
     "src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj",

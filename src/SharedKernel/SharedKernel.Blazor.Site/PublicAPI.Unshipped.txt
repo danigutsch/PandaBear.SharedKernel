@@ -1360,3 +1360,7 @@ SharedKernel.Blazor.Site.ContactLinks
 static SharedKernel.Blazor.Site.ContactLinks.Email(SharedKernel.BuildingBlocks.EmailAddress! address) -> SharedKernel.Blazor.Site.LinkTarget?
 static SharedKernel.Blazor.Site.ContactLinks.Phone(SharedKernel.BuildingBlocks.PhoneNumber! number) -> SharedKernel.Blazor.Site.LinkTarget?
 static SharedKernel.Blazor.Site.ContactLinks.WhatsApp(SharedKernel.BuildingBlocks.PhoneNumber! number) -> SharedKernel.Blazor.Site.LinkTarget?
+static SharedKernel.Blazor.Site.Theming.SiteShape.DividerColors.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeColorRole>!
+static SharedKernel.Blazor.Site.Theming.ThemeFont.Weights.get -> System.Collections.Generic.IReadOnlyList<int>!
+static SharedKernel.Blazor.Site.Theming.TypographyStyle.Colors.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Blazor.Site.Theming.ThemeColorRole>!
+static SharedKernel.Blazor.Site.Theming.TypographyStyle.TakesColor(SharedKernel.Blazor.Site.Theming.TypographyRole role) -> bool
