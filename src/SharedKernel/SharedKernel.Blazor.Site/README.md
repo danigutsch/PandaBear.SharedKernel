@@ -720,6 +720,12 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   `LinkTarget` that is root-relative or https and names a `.woff2` file, without `" ' ( ) < >` or a fragment. The family name allows
   letters, digits, single inner spaces, hyphens and underscores (at most 64 characters); the key is a lower-case slug. A role's
   `fallback` (`SansSerif`, `Serif`, `Monospace`) is the system stack written after the uploaded family.
+- `ThemeFont.ForFamily(family, faces)` creates the font of a family name an owner entered, such as for an uploaded font file, so the
+  owner never types a key: the name is trimmed and `ThemeFont.KeyOf(family)` derives the key (lower case, each run of spaces, hyphens
+  and underscores as one hyphen, none at either end; `Noto Sans` and `noto_sans` both give `noto-sans`, so they are one font). Every
+  error is on `family` or `faces`: an invalid name gets the family message, and a valid name that gives no valid key (one that starts
+  with a digit, has a letter outside a to z, or is longer than 32 characters as a key) gets `ThemeFont.FamilyKeyMessage`. A font
+  library records the derived key with each file, so a theme can group the files of one family into one `ThemeFont`.
 - `SiteTheme.Create(colors, typography, fonts?, allowSmallText, brandHeight, colorLabel?, shape?)` enforces every rule;
   `SiteTheme.CreateDraft(...)` only requires unique font keys, existing font references and a positive brand height with at most four
   decimals, so a preview can show a theme that still breaks a rule. `brandHeight` defaults to `SiteTheme.DefaultBrandHeight` (2.5rem).
