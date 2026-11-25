@@ -1,10 +1,12 @@
 #nullable enable
 const PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes.SessionExpiresAt = "urn:sharedkernel:bff:session-expires-at" -> string!
 const PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes.SessionId = "urn:sharedkernel:bff:session-id" -> string!
+const PandaBear.AspNetCore.Authentication.Bff.BffTelemetry.Name = "SharedKernel.AspNetCore.Authentication.Bff" -> string!
 const PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementDefaults.IdentityProviderHttpClientName = "SharedKernel.AspNetCore.Authentication.Bff.IdentityProvider" -> string!
 override PandaBear.AspNetCore.Authentication.Bff.UserTokenResult.ToString() -> string!
 override PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.ToString() -> string!
 PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes
+PandaBear.AspNetCore.Authentication.Bff.BffTelemetry
 PandaBear.AspNetCore.Authentication.Bff.ICurrentUserAccessor
 PandaBear.AspNetCore.Authentication.Bff.ICurrentUserAccessor.GetCurrentUser(System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Security.Claims.ClaimsPrincipal!>
 PandaBear.AspNetCore.Authentication.Bff.IUserSessionLock

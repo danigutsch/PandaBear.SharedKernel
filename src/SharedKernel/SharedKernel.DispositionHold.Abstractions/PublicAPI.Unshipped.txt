@@ -58,3 +58,5 @@ static PandaBear.DispositionHold.DispositionScope.operator ==(PandaBear.Disposit
 ~override PandaBear.DispositionHold.DispositionHoldDecision.Equals(object obj) -> bool
 ~override PandaBear.DispositionHold.DispositionHoldDecision.ToString() -> string
 ~override PandaBear.DispositionHold.DispositionScope.Equals(object obj) -> bool
+PandaBear.DispositionHold.HoldQueryableExtensions
+static PandaBear.DispositionHold.HoldQueryableExtensions.WhereRestrainingAt(this System.Linq.IQueryable<PandaBear.DispositionHold.Hold!>! holds, System.DateTimeOffset at) -> System.Linq.IQueryable<PandaBear.DispositionHold.Hold!>!

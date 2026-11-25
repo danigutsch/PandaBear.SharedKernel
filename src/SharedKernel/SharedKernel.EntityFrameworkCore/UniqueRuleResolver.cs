@@ -12,25 +12,21 @@ internal static class UniqueRuleResolver
     /// <returns>The rule name, or <see langword="null"/> when no tagged index matches.</returns>
     internal static string? Resolve(IModel model, UniqueViolation violation)
     {
-        foreach (var entityType in model.GetEntityTypes())
+        foreach (var table in model.GetRelationalModel().Tables)
         {
-            var table = entityType.GetTableName();
-            if (table is null)
+            foreach (var index in table.Indexes)
             {
-                continue;
-            }
-
-            var store = StoreObjectIdentifier.Table(table, entityType.GetSchema());
-            foreach (var index in entityType.GetDeclaredIndexes())
-            {
-                if (!index.IsUnique || index.FindAnnotation(UniqueRuleIndexBuilderExtensions.AnnotationName)?.Value is not string rule)
+                if (!index.IsUnique || !Matches(index, violation))
                 {
                     continue;
                 }
 
-                if (Matches(index, table, store, violation))
+                foreach (var mappedIndex in index.MappedIndexes)
                 {
-                    return rule;
+                    if (mappedIndex.FindAnnotation(UniqueRuleIndexBuilderExtensions.AnnotationName)?.Value is string rule)
+                    {
+                        return rule;
+                    }
                 }
             }
         }
@@ -38,21 +34,20 @@ internal static class UniqueRuleResolver
         return null;
     }
 
-    private static bool Matches(IIndex index, string table, StoreObjectIdentifier store, UniqueViolation violation)
+    private static bool Matches(ITableIndex index, UniqueViolation violation)
     {
-        if (violation.ConstraintName is { } name && string.Equals(index.GetDatabaseName(store), name, StringComparison.OrdinalIgnoreCase))
+        if (violation.ConstraintName is { } name && string.Equals(index.Name, name, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
 
         if (violation.Table is not { } violationTable || violation.Columns.Count == 0
-            || !string.Equals(table, violationTable, StringComparison.OrdinalIgnoreCase))
+            || !string.Equals(index.Table.Name, violationTable, StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }
 
-        var columns = index.Properties.Select(property => property is IReadOnlyProperty scalar ? scalar.GetColumnName(store) : null).ToList();
-        return columns.Count == violation.Columns.Count
-            && columns.All(column => violation.Columns.Contains(column, StringComparer.OrdinalIgnoreCase));
+        return index.Columns.Count == violation.Columns.Count
+            && index.Columns.All(column => violation.Columns.Contains(column.Name, StringComparer.OrdinalIgnoreCase));
     }
 }

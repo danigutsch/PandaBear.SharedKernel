@@ -5,6 +5,7 @@ PandaBear.Scheduling.SchedulingTelemetry
 abstract PandaBear.Scheduling.PollingBackgroundService.ExecuteBatch(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.ValueTask<int>
 override PandaBear.Scheduling.PollingBackgroundService.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
 static PandaBear.Scheduling.SchedulingTelemetry.ActivityPollingCycle.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.MetricPollingBatchActiveDuration.get -> string!
 static PandaBear.Scheduling.SchedulingTelemetry.MetricPollingBatches.get -> string!
 static PandaBear.Scheduling.SchedulingTelemetry.MetricPollingCycleDuration.get -> string!
 static PandaBear.Scheduling.SchedulingTelemetry.MetricPollingFailures.get -> string!
@@ -17,3 +18,4 @@ static PandaBear.Scheduling.SchedulingTelemetry.TagItemCount.get -> string!
 static PandaBear.Scheduling.SchedulingTelemetry.TagOutcome.get -> string!
 static PandaBear.Scheduling.SchedulingTelemetry.TagErrorType.get -> string!
 static PandaBear.Scheduling.SchedulingTelemetry.TagServiceName.get -> string!
+virtual PandaBear.Scheduling.PollingBackgroundService.ExecuteDrainCycle(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.ValueTask

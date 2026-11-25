@@ -1,5 +1,6 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PandaBear.Aspire.Hosting.Tests;
 
@@ -9,13 +10,20 @@ public sealed class SeaweedFsResourceTests
     private const string DataFolder = "/data";
 
     [Fact]
-    public void AddSeaweedFs_adds_a_private_container_with_a_pinned_image_and_a_health_check()
+    public async Task AddSeaweedFs_adds_a_private_container_with_a_pinned_image_health_checks_and_a_safe_admin_port()
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);
 
         // Act
         var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
+        var configuration = await ExecutionConfigurationBuilder
+            .Create(seaweedFs.Resource)
+            .WithArgumentsConfig()
+            .BuildAsync(
+                new DistributedApplicationExecutionContext(DistributedApplicationOperation.Run),
+                NullLogger.Instance,
+                TestContext.Current.CancellationToken);
 
         // Assert
         var image = seaweedFs.Resource.Annotations.OfType<ContainerImageAnnotation>().ShouldHaveSingleItem();
@@ -31,6 +39,8 @@ public sealed class SeaweedFsResourceTests
             ["seaweed_master_/cluster/healthz_200_check", "seaweed_s3_/healthz_200_check"]);
         seaweedFs.Resource.Annotations.OfType<ContainerLifetimeAnnotation>().ShouldBeEmpty();
         seaweedFs.Resource.PrimaryEndpoint.EndpointName.ShouldBe(SeaweedFsResource.S3EndpointName);
+        configuration.ArgumentsWithUnprocessed.Select(argument => argument.Processed)
+            .ShouldContain("-admin.port=12646", "the internal admin worker gRPC port must stay below Linux's default ephemeral range");
     }
 
     [Fact]

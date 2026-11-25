@@ -45,10 +45,8 @@ internal sealed class EfDispositionHoldStore<TContext>(TContext dbContext) : IDi
             var keys = scopes.ToArray();
             var holdIds = await dbContext.Set<Hold>()
                 .AsNoTracking()
-                .Where(hold => keys.Contains(hold.Scope)
-                    && hold.ReleasedAt == null
-                    && hold.EffectiveFrom <= at
-                    && (hold.ExpiresAt == null || at < hold.ExpiresAt))
+                .Where(hold => keys.Contains(hold.Scope))
+                .WhereRestrainingAt(at)
                 .Select(hold => hold.Id)
                 .ToListAsync(ct)
                 .ConfigureAwait(false);

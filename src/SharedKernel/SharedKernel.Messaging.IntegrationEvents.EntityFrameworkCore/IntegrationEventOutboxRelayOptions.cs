@@ -21,6 +21,11 @@ public sealed class IntegrationEventOutboxRelayOptions
     public TimeSpan ClaimLeaseDuration { get; set; } = TimeSpan.FromMinutes(5);
 
     /// <summary>
+    /// Gets or sets whether the outbox relay persists only the publisher exception type. The default stores bounded exception text.
+    /// </summary>
+    public bool StorePublishExceptionTypeOnly { get; set; }
+
+    /// <summary>
     /// Gets or sets how many times a transport consumer attempts a message before it is poisoned; <see langword="null" />
     /// retries without limit. Outbox relays ignore this setting.
     /// </summary>

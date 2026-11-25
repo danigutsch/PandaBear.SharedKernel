@@ -175,6 +175,49 @@ public sealed class PostgreSqlDispositionHoldTests(PostgreSqlFixture fixture) : 
     }
 
     [Fact]
+    public async Task An_advisory_query_matches_domain_restraint_at_exact_boundaries()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var scope = DispositionScope.From("document", "doc-1");
+        var expiry = Placed.AddDays(10);
+        var expiring = DispositionHoldTestData.Place(scope, expiresAt: expiry);
+        var indefinite = DispositionHoldTestData.Place(scope);
+        var released = DispositionHoldTestData.Place(scope);
+        released.Release("actor-2", "claim-closed", Placed.AddDays(3));
+        var separate = DispositionHoldTestData.Place(DispositionScope.From("document", "doc-2"));
+        var holds = new[] { expiring, indefinite, released, separate };
+        await using (var placer = await Scenario.Open(beginTransaction: true, ct))
+        {
+            foreach (var hold in holds)
+            {
+                await placer.Store.Add(hold, ct);
+            }
+
+            await placer.Commit(ct);
+        }
+
+        await using var reader = await Scenario.Open(beginTransaction: false, ct);
+        var evaluationTimes = new[] { Placed, expiring.EffectiveFrom, expiry.AddMinutes(-1), expiry };
+
+        // Act
+        var actual = new List<IReadOnlyList<Guid>>();
+        foreach (var at in evaluationTimes)
+        {
+            actual.Add(await reader.ReadRestrainingHoldIds(scope, at, ct));
+        }
+
+        // Assert
+        for (var index = 0; index < evaluationTimes.Length; index++)
+        {
+            var at = evaluationTimes[index];
+            var expected = holds.Where(hold => hold.Scope == scope && hold.RestrainsAt(at))
+                .Select(hold => hold.Id).Order().ToArray();
+            actual[index].ShouldBe(expected);
+        }
+    }
+
+    [Fact]
     public async Task Add_waits_for_a_purge_that_is_already_checking_the_same_scope()
     {
         // Arrange

@@ -16,6 +16,15 @@ internal sealed class RecordingDistributedCache(TimeProvider? time = null) : IDi
     /// <summary>The options of the last write to each key.</summary>
     internal ConcurrentDictionary<string, DistributedCacheEntryOptions> Options { get; } = new(StringComparer.Ordinal);
 
+    /// <summary>An asynchronous read failure to return in tests.</summary>
+    internal Exception? GetFailure { get; set; }
+
+    /// <summary>An asynchronous write failure to return in tests.</summary>
+    internal Exception? SetFailure { get; set; }
+
+    /// <summary>A replacement removal operation for synchronous or asynchronous failure tests.</summary>
+    internal Func<Task>? RemoveOverride { get; set; }
+
     /// <inheritdoc />
     public byte[]? Get(string key)
     {
@@ -25,7 +34,7 @@ internal sealed class RecordingDistributedCache(TimeProvider? time = null) : IDi
     /// <inheritdoc />
     public Task<byte[]?> GetAsync(string key, CancellationToken token = default)
     {
-        return Task.FromResult(Get(key));
+        return GetFailure is { } failure ? Task.FromException<byte[]?>(failure) : Task.FromResult(Get(key));
     }
 
     /// <inheritdoc />
@@ -49,6 +58,11 @@ internal sealed class RecordingDistributedCache(TimeProvider? time = null) : IDi
     /// <inheritdoc />
     public Task RemoveAsync(string key, CancellationToken token = default)
     {
+        if (RemoveOverride is { } removal)
+        {
+            return removal();
+        }
+
         Remove(key);
         return Task.CompletedTask;
     }
@@ -68,6 +82,11 @@ internal sealed class RecordingDistributedCache(TimeProvider? time = null) : IDi
     /// <inheritdoc />
     public Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default)
     {
+        if (SetFailure is { } failure)
+        {
+            return Task.FromException(failure);
+        }
+
         Set(key, value, options);
         return Task.CompletedTask;
     }

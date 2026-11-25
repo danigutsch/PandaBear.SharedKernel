@@ -17,4 +17,8 @@ public sealed record EventEnvelope(
     Guid EventId,
     string EventType,
     object Data,
-    DateTimeOffset RecordedAt);
+    DateTimeOffset RecordedAt)
+{
+    /// <summary>Gets the exact event that caused this append, when recorded by the caller.</summary>
+    public Guid? CausationEventId { get; init; }
+}

@@ -19,6 +19,7 @@ Small raw-Npgsql primitives with a stable, provider-specific boundary.
   `IAsyncDisposable` lease.
 - `PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian` derives a signed 64-bit key from the first
   eight SHA-256 bytes of the exact UTF-8 identity, interpreted in big-endian order.
+- `PostgreSqlArtifactIntegrity` reports the integrity of one bounded page of separately stored PostgreSQL artifacts.
 - `ConfigureTracingWithoutFirstResponseEvent` keeps Npgsql tracing enabled while omitting the
   optional first-response event that can carry provider-owned payload data.
 - PostgreSQL releases the acquired lock when the caller's transaction commits, rolls back, or is
@@ -31,6 +32,66 @@ Small raw-Npgsql primitives with a stable, provider-specific boundary.
   callers. A 64-bit hash does not guarantee collision-free keys.
 - The package does not own database schemas, migrations, connection-string configuration,
   distributed-cache behavior, or application-specific authentication/token rules.
+
+## Scheduling observations
+
+`PostgreSqlScheduleRunStore` records run observations and reads up to 100 entries at a time for an
+exact configured job. The cursor orders by start timestamp and PostgreSQL UUID order. The returned
+record contains an opaque run identifier, dates, and status. The query projects only the columns it
+uses. A metadata view can expose the same columns to a separate read data source.
+Use `ReadActivePage` to list unfinished runs whose active observation is still fresh. It applies
+the freshness filter before paging, so newer completed or expired runs do not displace active
+observations. Reuse its cursor within the active list for the same job. Freshness is evaluated on
+each read, so an observation can expire or finish before the next page.
+
+The consumer owns migration and cleanup of the observation table. For example:
+
+```sql
+CREATE TABLE operations.schedule_runs (
+    job_name text COLLATE pg_catalog."C" NOT NULL,
+    run_id uuid PRIMARY KEY,
+    started_at timestamptz NOT NULL,
+    scheduled_for timestamptz,
+    observed_until timestamptz NOT NULL,
+    finished_at timestamptz,
+    outcome integer,
+    retry_at timestamptz,
+    CHECK (observed_until >= started_at),
+    CHECK (
+        (finished_at IS NULL AND outcome IS NULL AND retry_at IS NULL)
+        OR (finished_at >= started_at AND finished_at IS NOT NULL AND outcome IS NOT NULL
+            AND outcome BETWEEN 2 AND 6 AND ((outcome = 5) = (retry_at IS NOT NULL)))
+    )
+);
+
+CREATE INDEX schedule_runs_job_recent
+    ON operations.schedule_runs (job_name, started_at DESC, run_id DESC);
+```
+
+For frequent active-page reads on a table with retained completed history, an optional partial
+index lets PostgreSQL read unfinished observations in page order. Freshness is evaluated in the
+query using the database clock.
+
+```sql
+CREATE INDEX schedule_runs_unfinished_recent
+    ON operations.schedule_runs (job_name, started_at DESC, run_id DESC)
+    WHERE outcome IS NULL;
+```
+
+- Pass the registered job name and a stable UUID to `Start`. Reuse the UUID after an uncertain
+  write. Each independently observed run has its own UUID, including concurrent runs across hosts.
+- A fresh unfinished report appears as `Running`. Call `Refresh` after confirming that the run is
+  still active. An uncompleted report becomes `Unknown` at expiry, including after a process loss.
+  A report can remain fresh until expiry even if the worker has stopped. The provider derives times
+  and expiry from the PostgreSQL clock. Use existing execution locks and coordination separately.
+- `Complete` records the first known completion. `Failed` describes a failure with retry and
+  terminal state unspecified. Use `TerminalFailure` or `RetryScheduled` when the execution provider
+  confirms that outcome. A retry requires its confirmed time.
+- The host's observation policy controls where to record starts and completions, how to handle
+  persistence errors, and whether to use a separate bounded completion token during shutdown.
+  The fixed-delay polling service remains responsible for draining batches and waiting between
+  cycles. Its telemetry shows local activity and completed cycles. Supply an intended fire time
+  only when an execution provider knows it. The store reports observed runs across host restarts.
 
 ## Lock-key derivation
 
@@ -75,6 +136,21 @@ await locks.Acquire([new(1, $"disposition-hold:{scope}")], ct);
 - The type never begins, commits, rolls back or disposes the transaction, and it throws when the
   transaction is no longer open. Assign tiers by convention in the consuming repository, for example
   tier 0 for locks a command declares and tier 1 for guards taken later.
+
+## Binary artifact integrity
+
+Use `PostgreSqlArtifactIntegrity.ReadPage` for an operator report over revisions with a separate body relation.
+Provide each schema, relation, and column as an identifier in `PostgreSqlArtifactIntegrityMapping`. The metadata
+ID and body ID must be unique UUID keys. The metadata ID must be non-null. A populated eligibility column
+selects the metadata rows to check. Supply the columns holding the nullable recorded byte length and lowercase
+hexadecimal SHA-256 digest. The body content column uses PostgreSQL `bytea`.
+
+Each call opens a read-only transaction with a 30-second statement timeout. The page size ranges from 1 to 100.
+The query selects up to that many eligible metadata rows in PostgreSQL UUID order before looking up their bodies.
+Start with a null cursor, pass the last reported ID as the next exclusive cursor, and stop when a page is empty. Each row returns
+an opaque UUID and a typed status. PostgreSQL checks for missing body bytes, missing integrity metadata,
+a length mismatch, and a digest mismatch in that order. The digest comparison is case-sensitive and uses the
+stored bytes. Only the outcome and identifier are returned to the caller.
 
 ## Package identity and availability
 

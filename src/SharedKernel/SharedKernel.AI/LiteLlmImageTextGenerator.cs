@@ -10,11 +10,13 @@ namespace PandaBear.AI;
 /// </summary>
 public sealed class LiteLlmImageTextGenerator(HttpClient httpClient, LiteLlmImageTextGeneratorOptions options) : IImageTextGenerator
 {
+    private const string ResponseCostHeader = "x-litellm-response-cost";
+
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">The request is null.</exception>
     /// <exception cref="ArgumentException">The image, image content type, or language is missing or invalid.</exception>
     /// <exception cref="InvalidOperationException">Required LiteLLM configuration is missing or the image byte limit is not positive.</exception>
-    /// <exception cref="ImageTextGenerationException">The image exceeds the configured byte budget, the HTTP request fails, or generated content is unusable.</exception>
+    /// <exception cref="ImageTextGenerationException">The image exceeds the configured byte budget, the HTTP request fails or times out, or generated content is unusable.</exception>
     /// <exception cref="OperationCanceledException">The supplied cancellation token is canceled.</exception>
     public async ValueTask<ImageTextGenerationResult> GenerateImageText(ImageTextGenerationRequest request, CancellationToken ct)
     {
@@ -76,12 +78,47 @@ public sealed class LiteLlmImageTextGenerator(HttpClient httpClient, LiteLlmImag
                 throw new ImageTextGenerationException("LiteLLM generated content did not include alt text.");
             }
 
-            return new ImageTextGenerationResult(generated.AltText.Trim(), string.IsNullOrWhiteSpace(generated.Caption) ? null : generated.Caption.Trim());
+            return new ImageTextGenerationResult(generated.AltText.Trim(), string.IsNullOrWhiteSpace(generated.Caption) ? null : generated.Caption.Trim())
+            {
+                Usage = ReadUsage(completion.Usage, response.Headers)
+            };
         }
         catch (JsonException exception)
         {
             throw new ImageTextGenerationException("LiteLLM generated content was not valid JSON.", exception);
         }
+    }
+
+    private static ImageTextGenerationUsage? ReadUsage(JsonElement usage, HttpResponseHeaders headers)
+    {
+        var inputTokens = ReadTokenCount(usage, "prompt_tokens");
+        var outputTokens = ReadTokenCount(usage, "completion_tokens");
+        var cost = ReadCost(headers);
+        return inputTokens is null && outputTokens is null && cost is null
+            ? null : new ImageTextGenerationUsage(inputTokens, outputTokens, cost);
+    }
+
+    private static long? ReadTokenCount(JsonElement usage, string propertyName) =>
+        usage.ValueKind == JsonValueKind.Object
+        && usage.TryGetProperty(propertyName, out var value)
+        && value.ValueKind == JsonValueKind.Number
+        && value.TryGetInt64(out var count)
+        && count >= 0
+            ? count : null;
+
+    private static decimal? ReadCost(HttpResponseHeaders headers)
+    {
+        if (!headers.TryGetValues(ResponseCostHeader, out var values))
+        {
+            return null;
+        }
+
+        using var reported = values.GetEnumerator();
+        return reported.MoveNext()
+            && decimal.TryParse(reported.Current, NumberStyles.Float, CultureInfo.InvariantCulture, out var cost)
+            && cost >= 0
+            && !reported.MoveNext()
+                ? cost : null;
     }
 
     private async Task<HttpResponseMessage> Send(HttpRequestMessage request, CancellationToken ct)
@@ -91,6 +128,10 @@ public sealed class LiteLlmImageTextGenerator(HttpClient httpClient, LiteLlmImag
             var response = await httpClient.SendAsync(request, ct).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
+        }
+        catch (OperationCanceledException exception) when (!ct.IsCancellationRequested && exception.InnerException is TimeoutException)
+        {
+            throw new ImageTextGenerationException("LiteLLM request timed out.", exception);
         }
         catch (HttpRequestException exception)
         {

@@ -3,7 +3,7 @@ using PandaBear.EntityFrameworkCore;
 namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
-/// Configures the relational storage owned by one integration-event DbContext.
+/// Configures the relational storage mapped by one integration-event DbContext.
 /// </summary>
 public sealed class IntegrationEventStorageOptions
 {
@@ -26,6 +26,11 @@ public sealed class IntegrationEventStorageOptions
     /// Gets or sets the outbox table name.
     /// </summary>
     public string OutboxTableName { get; set; } = DefaultOutboxTableName;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the outbox table is mapped for runtime access but excluded from this context's migrations.
+    /// </summary>
+    public bool ExcludeOutboxFromMigrations { get; set; }
 
     /// <summary>
     /// Gets or sets the optional transport schema override. When null, <see cref="Schema" /> is used.

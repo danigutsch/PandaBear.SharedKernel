@@ -47,6 +47,15 @@ internal sealed class HoldTransaction : IAsyncDisposable
     public async ValueTask RunAnyQuery(CancellationToken ct) =>
         _ = await dbContext.Database.SqlQuery<int>($"SELECT 1 AS \"Value\"").ToListAsync(ct);
 
+    /// <summary>Reads restraining IDs for an advisory query against the caller's document scope.</summary>
+    public Task<List<Guid>> ReadRestrainingHoldIds(DispositionScope scope, DateTimeOffset at, CancellationToken ct) =>
+        dbContext.Set<Hold>().AsNoTracking()
+            .Where(hold => hold.Scope == scope)
+            .WhereRestrainingAt(at)
+            .Select(hold => hold.Id)
+            .OrderBy(id => id)
+            .ToListAsync(ct);
+
     /// <summary>Creates a savepoint in the open transaction.</summary>
     public async ValueTask CreateSavepoint(string name, CancellationToken ct) =>
         await dbContext.Database.CurrentTransaction!.CreateSavepointAsync(name, ct);

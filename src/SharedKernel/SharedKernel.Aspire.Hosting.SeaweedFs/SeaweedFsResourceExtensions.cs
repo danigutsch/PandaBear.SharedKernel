@@ -53,7 +53,8 @@ public static class SeaweedFsResourceExtensions
             .WithImage(SeaweedFsContainerImageTags.Image, SeaweedFsContainerImageTags.Tag)
             .WithImageRegistry(SeaweedFsContainerImageTags.Registry)
             .WithImageSHA256(SeaweedFsContainerImageTags.Digest)
-            .WithArgs("mini", "-dir=/data", "-webdav=false", "-admin.ui=false")
+            // SeaweedFS adds 10000 to the admin HTTP port for gRPC. Keep both below Linux's default ephemeral range.
+            .WithArgs("mini", "-dir=/data", "-webdav=false", "-admin.ui=false", "-admin.port=12646")
             .WithEnvironment(context =>
             {
                 context.EnvironmentVariables["AWS_ACCESS_KEY_ID"] = resource.AccessKeyParameter;

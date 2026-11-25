@@ -39,6 +39,7 @@ internal sealed class IntegrationEventOutboxDbContextConfiguration<TContext> : I
             ?? new IntegrationEventStorageOptions();
         modelBuilder.ApplyConfiguration(new IntegrationEventOutboxMessageConfiguration(
             options.EffectiveOutboxSchema,
-            options.OutboxTableName));
+            options.OutboxTableName,
+            options.ExcludeOutboxFromMigrations));
     }
 }

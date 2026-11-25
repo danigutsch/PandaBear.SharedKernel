@@ -89,16 +89,39 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
     }
 
     /// <summary>
-    /// Creates the provider schema and tables if they do not already exist.
+    /// Creates or upgrades the provider schema and tables.
     /// </summary>
     /// <param name="ct">The cancellation token.</param>
     public ValueTask Initialize(CancellationToken ct) => PostgreSqlEventSourcingSchema.Initialize(dataSource, options, ct);
 
     /// <inheritdoc />
-    public async ValueTask<IReadOnlyCollection<EventEnvelope>> Append(
+    public ValueTask<IReadOnlyCollection<EventEnvelope>> Append(
         StreamId streamId,
         ExpectedStreamRevision expectedRevision,
         IReadOnlyCollection<object> events,
+        CancellationToken ct) => AppendEvents(streamId, expectedRevision, events, causationEventId: null, ct);
+
+    /// <inheritdoc />
+    public ValueTask<IReadOnlyCollection<EventEnvelope>> Append(
+        StreamId streamId,
+        ExpectedStreamRevision expectedRevision,
+        IReadOnlyCollection<object> events,
+        Guid causationEventId,
+        CancellationToken ct)
+    {
+        if (causationEventId == Guid.Empty)
+        {
+            throw new ArgumentException("The causation event identifier must be nonempty.", nameof(causationEventId));
+        }
+
+        return AppendEvents(streamId, expectedRevision, events, causationEventId, ct);
+    }
+
+    private async ValueTask<IReadOnlyCollection<EventEnvelope>> AppendEvents(
+        StreamId streamId,
+        ExpectedStreamRevision expectedRevision,
+        IReadOnlyCollection<object> events,
+        Guid? causationEventId,
         CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(events);
@@ -144,6 +167,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
                     currentRevision.Value,
                     eventData,
                     recordedAt,
+                    causationEventId,
                     ct));
             }
 
@@ -193,7 +217,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         try
         {
             var sql = $"""
-                SELECT position, stream_revision, event_id, event_type, payload_json::text, recorded_at_utc
+                SELECT position, stream_revision, event_id, event_type, payload_json::text, recorded_at_utc, causation_event_id
                 FROM {schema}.events
                 WHERE stream_id = @streamId
                   AND (@afterRevision IS NULL OR stream_revision > @afterRevision)
@@ -217,7 +241,10 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
                 var recordedAt = await reader.GetFieldValueAsync<DateTimeOffset>(5, ct);
                 var eventData = serializer.Deserialize(eventType, payloadJson);
 
-                envelopes.Add(new EventEnvelope(streamId, position, revision, eventId, eventType, eventData, recordedAt));
+                envelopes.Add(new EventEnvelope(streamId, position, revision, eventId, eventType, eventData, recordedAt)
+                {
+                    CausationEventId = await reader.IsDBNullAsync(6, ct) ? null : reader.GetGuid(6),
+                });
             }
 
             CompleteLoadActivity(activity, envelopes.Count);
@@ -251,7 +278,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         try
         {
             var sql = $"""
-                SELECT position, stream_id, stream_revision, event_id, event_type, payload_json::text, recorded_at_utc
+                SELECT position, stream_id, stream_revision, event_id, event_type, payload_json::text, recorded_at_utc, causation_event_id
                 FROM {schema}.events
                 WHERE position > @position
                 ORDER BY position
@@ -275,7 +302,10 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
                 var recordedAt = await reader.GetFieldValueAsync<DateTimeOffset>(6, ct);
                 var eventData = serializer.Deserialize(eventType, payloadJson);
 
-                envelopes.Add(new EventEnvelope(streamId, eventPosition, revision, eventId, eventType, eventData, recordedAt));
+                envelopes.Add(new EventEnvelope(streamId, eventPosition, revision, eventId, eventType, eventData, recordedAt)
+                {
+                    CausationEventId = await reader.IsDBNullAsync(7, ct) ? null : reader.GetGuid(7),
+                });
             }
 
             CompleteLoadActivity(activity, envelopes.Count);
@@ -542,12 +572,13 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         long revision,
         object eventData,
         DateTimeOffset recordedAt,
+        Guid? causationEventId,
         CancellationToken ct)
     {
         var sql = $"""
-            INSERT INTO {schema}.events (event_id, stream_id, stream_revision, event_type, payload_json, recorded_at_utc)
-            VALUES (@eventId, @streamId, @streamRevision, @eventType, @payloadJson, @recordedAt)
-            RETURNING position, recorded_at_utc;
+            INSERT INTO {schema}.events (event_id, stream_id, stream_revision, event_type, payload_json, recorded_at_utc, causation_event_id)
+            VALUES (@eventId, @streamId, @streamRevision, @eventType, @payloadJson, @recordedAt, @causationEventId)
+            RETURNING position, recorded_at_utc, causation_event_id;
             """;
 
         var eventId = Guid.CreateVersion7();
@@ -559,6 +590,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         command.Parameters.AddWithValue("eventType", eventType);
         command.Parameters.AddWithValue("payloadJson", NpgsqlDbType.Jsonb, serializer.Serialize(eventData));
         command.Parameters.AddWithValue("recordedAt", recordedAt);
+        command.Parameters.AddWithValue("causationEventId", NpgsqlDbType.Uuid, causationEventId is { } cause ? cause : DBNull.Value);
         await using var reader = await command.ExecuteReaderAsync(ct);
         if (!await reader.ReadAsync(ct))
         {
@@ -575,7 +607,10 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
             eventId,
             eventType,
             eventData,
-            persistedRecordedAt);
+            persistedRecordedAt)
+        {
+            CausationEventId = await reader.IsDBNullAsync(2, ct) ? null : reader.GetGuid(2),
+        };
     }
 
     private static async ValueTask UpdateStreamRevision(

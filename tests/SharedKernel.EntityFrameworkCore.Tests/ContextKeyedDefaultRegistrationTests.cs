@@ -8,6 +8,24 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 public sealed class ContextKeyedDefaultRegistrationTests
 {
     [Fact]
+    public async Task Outbox_reader_maps_the_writer_table_without_claiming_migrations_or_a_writer()
+    {
+        // Arrange
+        var expectedWriter = typeof(FirstMessagingDbContext);
+
+        // Act
+        var storage = await ContextQualifiedMessagingScenario.InspectOutboxReader();
+
+        // Assert
+        storage.DefaultWriter.ShouldBe(expectedWriter);
+        storage.ReaderHasWriter.ShouldBeFalse();
+        storage.ReaderExcluded.ShouldBeTrue();
+        storage.WriterExcluded.ShouldBeFalse();
+        storage.ReaderSchema.ShouldBe(storage.WriterSchema);
+        storage.ReaderTable.ShouldBe(storage.WriterTable);
+    }
+
+    [Fact]
     public async Task The_unkeyed_outbox_requires_an_explicit_default_when_contexts_share_a_host()
     {
         // Arrange

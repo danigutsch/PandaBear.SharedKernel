@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
@@ -8,6 +9,18 @@ namespace PandaBear.Scheduling;
 /// </summary>
 public static class SchedulingTelemetry
 {
+    private static readonly ConcurrentDictionary<PollingBackgroundService, (string ServiceName, CancellationToken StoppingToken)> PollingServices =
+        new(ReferenceEqualityComparer.Instance);
+
+    static SchedulingTelemetry()
+    {
+        _ = Meter.CreateObservableGauge(
+            MetricPollingBatchActiveDuration,
+            ObservePollingBatchActiveDurations,
+            "s",
+            "Elapsed duration of the longest active batch for each running polling service.");
+    }
+
     /// <summary>
     /// Gets the shared activity source and meter name for scheduling operations.
     /// </summary>
@@ -22,6 +35,11 @@ public static class SchedulingTelemetry
     /// Gets the histogram name for polling cycle duration.
     /// </summary>
     public static string MetricPollingCycleDuration => "sharedkernel.scheduling.polling.cycle.duration";
+
+    /// <summary>
+    /// Gets the gauge name for elapsed time in a running polling service's current batch.
+    /// </summary>
+    public static string MetricPollingBatchActiveDuration => "sharedkernel.scheduling.polling.batch.active.duration";
 
     /// <summary>
     /// Gets the counter name for completed polling batches.
@@ -103,4 +121,20 @@ public static class SchedulingTelemetry
         MetricPollingFailures,
         "{failure}",
         "Non-fatal polling failures.");
+
+    /// <summary>Begins observing a worker whose background loop has started.</summary>
+    internal static void RegisterPollingService(PollingBackgroundService service, string serviceName, CancellationToken stoppingToken) =>
+        PollingServices.TryAdd(service, (serviceName, stoppingToken));
+
+    /// <summary>Stops observing a worker whose background loop has exited.</summary>
+    internal static void UnregisterPollingService(PollingBackgroundService service) =>
+        PollingServices.TryRemove(service, out _);
+
+    private static IEnumerable<Measurement<double>> ObservePollingBatchActiveDurations() =>
+        PollingServices
+            .Where(entry => !entry.Value.StoppingToken.IsCancellationRequested)
+            .GroupBy(entry => entry.Value.ServiceName, StringComparer.Ordinal)
+            .Select(group => new Measurement<double>(
+                group.Max(entry => entry.Key.GetActiveBatchDurationSeconds()),
+                new KeyValuePair<string, object?>(TagServiceName, group.Key)));
 }

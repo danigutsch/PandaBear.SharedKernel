@@ -57,6 +57,8 @@ controls depend on the telemetry fields emitted by each application.
 ## Telemetry privacy processors
 
 `ActivityPrivacyProcessor` and `LogRecordPrivacyProcessor` remove sensitive telemetry before export.
+`ActivityPrivacyProcessor` also removes PostgreSQL connection and object attributes from client
+spans and gives them bounded display names. Exception-event handling belongs to the export pipeline.
 Both accept an optional `Func<string, bool>` for additional application-sensitive attribute names.
 The shared baseline always applies; the callback cannot permit attributes rejected by the baseline.
 Application identifiers and business-specific redaction policy stay with the host.

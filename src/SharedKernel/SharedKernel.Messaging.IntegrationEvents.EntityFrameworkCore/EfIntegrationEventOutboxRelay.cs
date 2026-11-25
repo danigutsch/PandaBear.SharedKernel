@@ -30,9 +30,10 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
         var publisher = scope.ServiceProvider.GetKeyedService<IEventEnvelopePublisher>(typeof(TContext))
             ?? scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
         var claimStrategy = scope.ServiceProvider.GetRequiredService<IIntegrationEventOutboxClaimStrategy<TContext>>();
+        var relayOptions = options.Get(IntegrationEventOptionsNames.Relay<TContext>());
         var now = timeProvider.GetUtcNow();
         var claimedBy = Guid.CreateVersion7().ToString("N");
-        var claimedUntil = now.Add(options.Get(IntegrationEventOptionsNames.Relay<TContext>()).ClaimLeaseDuration);
+        var claimedUntil = now.Add(relayOptions.ClaimLeaseDuration);
         var messages = await claimStrategy.ClaimPending(dbContext, batchSize, now, claimedBy, claimedUntil, ct)
             .ConfigureAwait(false);
 
@@ -60,7 +61,7 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
                 message.MarkPublishFailed(
                     attemptedAt,
                     attemptedAt.Add(GetRetryDelay(message.PublishAttempts)),
-                    FormatPublishError(exception));
+                    FormatPublishError(exception, relayOptions.StorePublishExceptionTypeOnly));
             }
 
             await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
@@ -84,11 +85,13 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
             && (exception is not OperationCanceledException || !ct.IsCancellationRequested);
     }
 
-    private static string FormatPublishError(Exception exception)
+    private static string FormatPublishError(Exception exception, bool storeExceptionTypeOnly)
     {
-        var message = string.IsNullOrWhiteSpace(exception.Message)
-            ? exception.GetType().FullName ?? exception.GetType().Name
-            : exception.Message;
+        var message = storeExceptionTypeOnly ? null : exception.Message;
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            message = exception.GetType().FullName ?? exception.GetType().Name;
+        }
 
         return message.Length <= IntegrationEventOutboxMessage.LastPublishErrorMaxLength
             ? message

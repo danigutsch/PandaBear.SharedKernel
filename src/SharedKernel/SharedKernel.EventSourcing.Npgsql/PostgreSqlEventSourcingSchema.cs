@@ -8,7 +8,7 @@ namespace PandaBear.EventSourcing.Npgsql;
 public static class PostgreSqlEventSourcingSchema
 {
     /// <summary>
-    /// Creates the provider schema and tables if they do not already exist.
+    /// Creates or upgrades the provider schema and tables.
     /// </summary>
     /// <param name="dataSource">The PostgreSQL data source.</param>
     /// <param name="options">The provider options.</param>
@@ -40,8 +40,11 @@ public static class PostgreSqlEventSourcingSchema
                 event_type text NOT NULL,
                 payload_json jsonb NOT NULL,
                 recorded_at_utc timestamp with time zone NOT NULL,
+                causation_event_id uuid,
                 CONSTRAINT uq_events_stream_revision UNIQUE (stream_id, stream_revision)
             );
+
+            ALTER TABLE {schema}.events ADD COLUMN IF NOT EXISTS causation_event_id uuid;
 
             CREATE TABLE IF NOT EXISTS {schema}.projection_checkpoints (
                 projection_name text PRIMARY KEY,
