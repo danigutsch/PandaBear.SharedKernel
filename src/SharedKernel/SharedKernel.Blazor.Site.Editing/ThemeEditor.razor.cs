@@ -55,6 +55,7 @@ public sealed partial class ThemeEditor : IDisposable
 
     private readonly Dictionary<string, NumberInput> _numbers = new(StringComparer.Ordinal);
     private EditContext? _context;
+    private ThemeEditorModel? _model;
 
     /// <summary>The field path of the small-text switch.</summary>
     public const string AllowSmallTextField = "allowSmallText";
@@ -121,6 +122,7 @@ public sealed partial class ThemeEditor : IDisposable
 
         _numbers.Clear();
         _context = null;
+        _model = null;
     }
 
     /// <inheritdoc />
@@ -133,10 +135,11 @@ public sealed partial class ThemeEditor : IDisposable
         ArgumentNullException.ThrowIfNull(Model);
         ArgumentNullException.ThrowIfNull(Texts);
         ArgumentException.ThrowIfNullOrWhiteSpace(IdPrefix);
-        if (!ReferenceEquals(_context, context))
+        if (!ReferenceEquals(_context, context) || !ReferenceEquals(_model, Model))
         {
             Dispose();
             _context = context;
+            _model = Model;
             foreach (var role in TypographyRoles)
             {
                 var path = TypographyPath(role);

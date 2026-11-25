@@ -320,6 +320,25 @@ public sealed class ThemeEditorTests : BunitContext
     }
 
     [Fact]
+    public async Task A_new_model_replaces_refused_number_text_and_its_error_even_when_the_value_is_the_same()
+    {
+        // Arrange
+        var context = new EditContext(new object());
+        var cut = this.RenderEditor(context, DefaultModel());
+        await cut.Find(Selector("typography.h1.size")).ChangeAsync(new Microsoft.AspNetCore.Components.ChangeEventArgs { Value = "big" });
+        await cut.InvokeAsync(() => context.ValidateAsync(Xunit.TestContext.Current.CancellationToken));
+
+        // Act
+        await cut.InvokeAsync(() => cut.FindComponent<ThemeEditor>().Render(parameters => parameters.Add(item => item.Model, DefaultModel())));
+        var valid = await cut.InvokeAsync(() => context.ValidateAsync(Xunit.TestContext.Current.CancellationToken));
+
+        // Assert
+        cut.Find(Selector("typography.h1.size")).GetAttribute("value").ShouldBe("2.125");
+        context.GetValidationMessages(context.Field("typography.h1.size")).ShouldBeEmpty();
+        valid.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task Disposing_the_editor_removes_its_number_errors()
     {
         // Arrange
