@@ -1,7 +1,7 @@
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the validated package name and version.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class PackageValueObjectTests
 {
     [Theory]

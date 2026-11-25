@@ -3,9 +3,9 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Checks that Option.Bind obeys the monad left identity, right identity, and associativity laws.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
-[Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MonadLawsTheory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.MonadLawsTheory)]
 public sealed class OptionMonadLawTests
 {
     [Fact]

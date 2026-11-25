@@ -3,8 +3,8 @@ using static PandaBear.PageSections.Tests.PageSectionFixtures;
 namespace PandaBear.PageSections.Tests;
 
 /// <summary>Tests the parts of one page section and their rules, ported from ViajantesTurismo V2.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "PageSections")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "PageSections")]
 public sealed class PageSectionTests
 {
     private const string Field = "pt.sections[0]";

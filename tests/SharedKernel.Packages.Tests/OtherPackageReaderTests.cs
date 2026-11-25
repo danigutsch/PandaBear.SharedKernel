@@ -1,7 +1,7 @@
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the cargo, npm, and Flatpak readers against canned tool output.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class OtherPackageReaderTests
 {
     private const string Cargo = "/home/user/.cargo/bin/cargo";

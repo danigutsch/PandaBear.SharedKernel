@@ -5,7 +5,7 @@ using PandaBear.Testing;
 namespace PandaBear.Mediator.PackageConsumptionTests;
 
 /// <summary>Verifies the compiler assemblies embedded by NuGet pack.</summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
+[Trait(TestTraitNames.CategoryName, "PackageConsumption")]
 public sealed class CompilerPackageOutputTests
 {
     [Theory]

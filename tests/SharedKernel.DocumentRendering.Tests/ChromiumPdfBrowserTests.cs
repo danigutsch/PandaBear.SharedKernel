@@ -5,7 +5,7 @@ using PandaBear.Testing.Playwright;
 namespace PandaBear.DocumentRendering.Tests;
 
 /// <summary>Exercises the renderer's failure boundaries using the shared test browser.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class ChromiumPdfBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     private readonly string _unavailableQpdf = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"), "qpdf");

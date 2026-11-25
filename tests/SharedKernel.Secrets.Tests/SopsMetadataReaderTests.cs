@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests reading the key holders from SOPS metadata, including files it must refuse.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class SopsMetadataReaderTests
 {
     private static readonly string[] Both = [TestRecipients.First, TestRecipients.Second];

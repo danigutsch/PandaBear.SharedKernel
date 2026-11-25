@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests that every request is sent in its own service scope.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ScopedSenderTests
 {
     [Fact]

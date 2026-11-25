@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the status badge.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class StatusBadgeTests : BunitContext
 {
     [Fact]

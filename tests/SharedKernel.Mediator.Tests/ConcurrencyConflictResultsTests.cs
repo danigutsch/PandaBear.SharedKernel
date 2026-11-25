@@ -3,7 +3,6 @@ using PandaBear.Results;
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests the stale-data conflict results a handler returns when the loaded version is outdated.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ConcurrencyConflictResultsTests
 {
     [Fact]

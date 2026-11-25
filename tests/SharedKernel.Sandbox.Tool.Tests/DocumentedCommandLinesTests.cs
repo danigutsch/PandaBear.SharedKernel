@@ -3,7 +3,7 @@ using System.CommandLine.Help;
 namespace PandaBear.Sandbox.Tool.Tests;
 
 /// <summary>Tests that the tool README documents only command lines that the tool accepts.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 public sealed class DocumentedCommandLinesTests
 {
     [Fact]

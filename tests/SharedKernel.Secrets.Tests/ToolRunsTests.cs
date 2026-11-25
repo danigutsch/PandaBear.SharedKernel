@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests the run helper that every provider uses.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class ToolRunsTests
 {
     private static readonly ToolRequest Request = new(Environment.ProcessPath!, []);

@@ -12,7 +12,7 @@ namespace PandaBear.HttpClients.Tests;
 /// <summary>
 /// Unit tests for HttpOutcomeMapper.Send mapping of HTTP responses, timeouts, cancellation, and transport failures to bounded HttpOutcome values.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class HttpOutcomeMapperTests
 {
     private static readonly HttpOutcomeMapperTestsJsonContext Json = HttpOutcomeMapperTestsJsonContext.Default;

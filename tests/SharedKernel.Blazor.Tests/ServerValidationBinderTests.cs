@@ -4,7 +4,7 @@ using static PandaBear.Blazor.Tests.ServerValidationFixtures;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests applying server validation errors to an <see cref="EditContext" />.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ServerValidationBinderTests
 {
     [Fact]

@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>Verifies that localized credits remain visible and operable in Chromium.</summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class PhotoCreditBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

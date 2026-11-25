@@ -6,7 +6,7 @@ namespace PandaBear.Branding.Tests;
 /// <summary>
 /// Tests that BrandingApiClient requests and deserializes the public branding settings.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ApiClientCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.ApiClientCapability)]
 public sealed class BrandingApiClientTests
 {
     private const string PublicSettingsPath = $"/api/v1/{BrandingRoutes.PublicSettingsPath}";

@@ -12,7 +12,7 @@ namespace PandaBear.AspNetCore.Tests;
 
 /// <summary>Tests the default request-binding behavior that <c>AddTestRequestBindingDefaults</c> configures for test hosts.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.EndpointCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[TestScope(TestScope.Unit)]
 public sealed class TestRequestBindingDefaultsTests
 {
     [Theory]

@@ -7,7 +7,7 @@ namespace PandaBear.Secrets.Age.Tests;
 /// Runs the adapter against the real age and age-keygen programs with throwaway keys in temporary directories.
 /// They skip when a program is not installed.
 /// </summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class RealAgeTests
 {
     private const string AgeSkip = "age and age-keygen are not installed.";

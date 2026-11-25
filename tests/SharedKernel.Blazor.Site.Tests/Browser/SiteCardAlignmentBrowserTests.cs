@@ -4,6 +4,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// Tests in Chromium, on a phone (375px) and a desktop (1280px) viewport, that a card does not inherit the centred text of the band
 /// around it and is centred only by its own alignment; they skip when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteCardAlignmentBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     private const double Padding = 16;

@@ -5,7 +5,7 @@ namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
 /// <summary>Tests parsing, help, version, and cancellation handling of the Playwright MCP command line.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class PlaywrightMcpCommandLineTests
 {
     [Fact]

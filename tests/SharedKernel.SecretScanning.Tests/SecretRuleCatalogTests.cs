@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace PandaBear.SecretScanning.Tests;
 
 /// <summary>Tests the shape of the rule catalog: every rule has a sample, a source, and keywords, and every pattern a one-second timeout.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.SecretScanningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.SecretScanningCapability)]
 public sealed class SecretRuleCatalogTests
 {
     [Fact]

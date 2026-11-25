@@ -4,7 +4,7 @@ using System.Reflection;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests privacy-safe reporting of handled UI failures.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class UiFailureReporterTests
 {
     [Fact]

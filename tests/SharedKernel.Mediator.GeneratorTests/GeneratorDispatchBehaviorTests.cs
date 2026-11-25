@@ -5,7 +5,7 @@ using PandaBear.Testing;
 namespace PandaBear.Mediator.GeneratorTests;
 
 /// <summary>Tests the runtime behavior of the generated mediator for requests, streams and notifications, usually against a reference dispatcher.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorDispatchBehaviorTests
 {
     [Fact]

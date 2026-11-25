@@ -8,7 +8,7 @@ namespace PandaBear.Blazor.Tests;
 /// find button on the interactive page, at most a bounded number of options at a time, announces in one status region, and keeps focus
 /// usable.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ImagePickerTests : BunitContext
 {
     private readonly PickerLibrary _library = new(40);

@@ -6,8 +6,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// PostgreSQL tests of the idempotency store under concurrent starts.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
 public sealed class PostgreSqlIdempotencyStoreTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {
     private PostgreSqlIdempotencyStoreScenario? scenario;

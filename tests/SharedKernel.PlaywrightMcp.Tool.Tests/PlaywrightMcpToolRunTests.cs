@@ -5,7 +5,7 @@ namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
 /// <summary>Tests how the tool runs, cleans up, and reports on the container engine through the command line, with fake process runners.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class PlaywrightMcpToolRunTests
 {
     [Fact]

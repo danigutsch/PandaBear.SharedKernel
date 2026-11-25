@@ -1,8 +1,8 @@
 namespace PandaBear.ContentRights.Tests;
 
 /// <summary>Exercises the official tool identification and declaration boundaries.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ContentRights")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ContentRights")]
 public sealed class ContentLicenseTests
 {
     [Theory]

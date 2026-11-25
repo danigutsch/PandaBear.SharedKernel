@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests the optional scope initializer of <see cref="ScopedSender"/>.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ScopedSenderInitializerTests
 {
     [Fact]

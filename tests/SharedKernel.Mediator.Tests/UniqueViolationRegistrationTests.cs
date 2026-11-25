@@ -4,7 +4,6 @@ using PandaBear.Results;
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests the registration helpers of the unique violation behavior.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class UniqueViolationRegistrationTests
 {
     [Fact]

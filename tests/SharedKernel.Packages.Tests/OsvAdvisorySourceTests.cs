@@ -6,7 +6,7 @@ using static PandaBear.Packages.Tests.PackageFactory;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the OSV adapter against fake HTTP answers; nothing reaches the network.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class OsvAdvisorySourceTests
 {
     private static readonly CancellationToken Cancel = TestContext.Current.CancellationToken;

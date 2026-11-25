@@ -4,7 +4,6 @@ using PandaBear.Results;
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests the registration helper of the concurrency conflict behavior.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ConcurrencyConflictRegistrationTests
 {
     [Fact]

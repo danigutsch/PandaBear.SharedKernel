@@ -4,7 +4,7 @@ using System.Text;
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests the real process runner with small Unix tools.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class SystemToolRunnerTests
 {
     private const string SkipReason = "The Unix tools are not available.";

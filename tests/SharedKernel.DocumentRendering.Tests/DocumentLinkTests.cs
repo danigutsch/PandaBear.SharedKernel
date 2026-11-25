@@ -3,7 +3,7 @@ using PandaBear.Testing;
 namespace PandaBear.DocumentRendering.Tests;
 
 /// <summary>Tests structured links in rendered document sections.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class DocumentLinkTests
 {
     [Fact]

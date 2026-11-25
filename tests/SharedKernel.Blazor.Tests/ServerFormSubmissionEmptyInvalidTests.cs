@@ -7,7 +7,7 @@ namespace PandaBear.Blazor.Tests;
 /// Tests that a failed save never ends with nothing shown. The Results library cannot build an invalid result without field
 /// messages, so these tests drive the decision with the status and the applied server errors that such a result would produce.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ServerFormSubmissionEmptyInvalidTests
 {
     private const string FailureMessage = "We could not save. Try again later.";

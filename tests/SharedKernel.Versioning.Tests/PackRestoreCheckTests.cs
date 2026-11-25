@@ -5,7 +5,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests the restore check of pack, which restores the packed packages and installs the packed tools from the new folder.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class PackRestoreCheckTests
 {
     private static readonly ExecutableMap UsrBin = new(static command => "/usr/bin/" + command);

@@ -5,7 +5,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests reading the central package versions that a packed consumer of one target framework uses.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class CentralPackageVersionsTests
 {
     private const string Central = """

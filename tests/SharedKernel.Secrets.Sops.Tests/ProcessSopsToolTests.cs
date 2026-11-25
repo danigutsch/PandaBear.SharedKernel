@@ -3,7 +3,7 @@ using System.Text;
 namespace PandaBear.Secrets.Sops.Tests;
 
 /// <summary>Tests the sops adapter with a fake process runner.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class ProcessSopsToolTests
 {
     private const string Sops = "/usr/local/bin/sops";

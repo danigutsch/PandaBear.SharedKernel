@@ -8,6 +8,7 @@ namespace PandaBear.PageSections.Blazor.Tests;
 /// region only when it has a heading, a subsection's heading one level down, nothing for a section with nothing left to show, and the
 /// language of the text kept.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class PageSectionsViewTests : BunitContext
 {
     [Fact]

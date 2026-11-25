@@ -666,6 +666,46 @@ public sealed class TestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Trait_constant_advice_uses_the_neutral_capability_key()
+    {
+        // Arrange
+        const string source = """
+            namespace PandaBear.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string CapabilityName = "Capability";
+                }
+
+                public static class SharedKernelTestTraitNames
+                {
+                    public const string CapabilityName = "TestCapability";
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait("Capability", "Search")]
+                    [Trait("TestCapability", "LegacySearch")]
+                    public void Finds_a_tour()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetDiagnosticsById(XunitTraitConstantUsageDiagnosticId, source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem();
+        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CapabilityName");
+    }
+
+    [Fact]
     public async Task Trait_value_literal_reports_SKTEST009_when_local_constant_exists()
     {
         // Arrange

@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests that a file's recipients must equal the rule's recipient set exactly.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class RecipientVerificationTests
 {
     private static readonly SopsCreationRule Rule = TestRecipients.Rule("x", 2, TestRecipients.First, TestRecipients.Second);

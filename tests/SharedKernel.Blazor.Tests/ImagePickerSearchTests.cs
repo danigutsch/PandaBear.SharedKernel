@@ -9,7 +9,7 @@ namespace PandaBear.Blazor.Tests;
 /// the latest search of an open panel, never one that a newer search or a close replaced. The debounce waits on a manual clock, so
 /// whether typing falls within it never depends on how fast the test runs.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ImagePickerSearchTests : BunitContext
 {
     private static readonly TimeSpan Millisecond = TimeSpan.FromMilliseconds(1);

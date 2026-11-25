@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Forms;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the label, control and validation message of one form field.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class FormFieldTests : BunitContext
 {
     private readonly ServerValidationModel _model = new();

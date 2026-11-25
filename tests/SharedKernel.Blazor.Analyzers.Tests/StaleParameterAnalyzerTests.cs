@@ -1,7 +1,7 @@
 namespace PandaBear.Blazor.Analyzers.Tests;
 
 /// <summary>Tests that the analyzer reports route parameters read in OnInitialized (SKBLZ004) only where intended.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
 public sealed class StaleParameterAnalyzerTests
 {
     private const string IdParameter = "[Parameter] public Guid? Id { get; set; }";

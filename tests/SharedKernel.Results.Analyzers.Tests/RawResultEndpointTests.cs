@@ -1,7 +1,7 @@
 namespace PandaBear.Results.Analyzers.Tests;
 
 /// <summary>Tests that the analyzer reports minimal API delegates returning a raw Result (SKRES001) only where intended.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.EndpointResultCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.EndpointResultCapability)]
 public sealed class RawResultEndpointTests
 {
     [Fact]

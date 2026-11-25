@@ -4,7 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the state a form keeps while it submits to a server and shows the outcome.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ServerFormSubmissionTests : IDisposable
 {
     private const string FailureMessage = "We could not save. Try again later.";

@@ -2,7 +2,7 @@ namespace PandaBear.Processes.Tests;
 
 /// <summary>Tests the byte capture of the bounded runner with real child processes.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class BoundedProcessRunnerCaptureTests
 {
     private static readonly TimeSpan StopLimit = TimeSpan.FromSeconds(10);

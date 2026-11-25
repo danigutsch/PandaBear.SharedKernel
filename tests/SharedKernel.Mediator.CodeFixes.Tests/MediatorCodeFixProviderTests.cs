@@ -7,8 +7,8 @@ namespace PandaBear.Mediator.CodeFixes.Tests;
 /// <summary>
 /// Verifies safe fixes for the currently implemented mediator diagnostics.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
-[Trait(SharedKernelTestTraitNames.ComponentName, "SharedKernel.Mediator.CodeFixes")]
+[Trait(TestTraitNames.ScopeName, "unit")]
+[Trait(TestTraitNames.AreaName, "SharedKernel.Mediator.CodeFixes")]
 public sealed class MediatorCodeFixProviderTests
 {
     [Theory]

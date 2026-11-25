@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the scheme allow list and the shape rules of link targets.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class LinkTargetTests
 {
     [Theory]

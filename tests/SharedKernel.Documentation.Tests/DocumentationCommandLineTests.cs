@@ -1,8 +1,8 @@
 namespace PandaBear.Documentation.Tests;
 
 /// <summary>Tests the documentation tool's command line: command tree, help and version output, option parsing, and the exit codes and messages of generate, verify and check.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.CommandLineCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.CommandLineCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class DocumentationCommandLineTests
 {
     private const string GeneratorConfigPath = "docs/architecture/generated-diagrams.json";

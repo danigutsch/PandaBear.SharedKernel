@@ -4,7 +4,7 @@ using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
 namespace PandaBear.Secrets.Tool.Tests;
 
 /// <summary>Runs the whole tool against the real age, age-keygen, and sops with throwaway keys. Skips when a program is missing.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class RealProgramsCommandLineTests
 {
     private static readonly string[] KeyNames = ["x.txt", "a.txt", "b.txt"];

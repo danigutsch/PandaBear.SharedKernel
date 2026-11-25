@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the native disclosure.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class DisclosureTests : BunitContext
 {
     [Fact]

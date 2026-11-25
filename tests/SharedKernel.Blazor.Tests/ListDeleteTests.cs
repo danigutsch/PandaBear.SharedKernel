@@ -3,7 +3,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the delete flow of a list page.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ListDeleteTests
 {
     private const string FailureMessage = "We could not delete the customer. It may already be gone.";

@@ -4,7 +4,7 @@ using static PandaBear.Blazor.Tests.UploadStatusRendering;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the parameters that let a consumer reproduce its own accessible names, classes, and live region content.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class UploadStatusAdoptionTests : BunitContext
 {
     [Fact]

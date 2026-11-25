@@ -5,7 +5,7 @@ using static PandaBear.Blazor.Tests.UploadStatusRendering;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the accessible upload status component.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class UploadStatusTests : BunitContext
 {
     [Fact]

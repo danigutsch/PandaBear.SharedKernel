@@ -3,7 +3,7 @@ using PandaBear.Processes;
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Tests how the release history reads versions and breaking-change markers from Git.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class ReleaseHistoryTests
 {
     private static readonly ExecutableMap UsrBin = new(static command => "/usr/bin/" + command);

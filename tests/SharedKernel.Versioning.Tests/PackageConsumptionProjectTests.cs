@@ -3,7 +3,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests the consumer projects that package consumption generates from the samples to restore, build, and run the packages.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class PackageConsumptionProjectTests
 {
     [Fact]

@@ -1,7 +1,6 @@
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests the validation of <see cref="UniqueRuleMap"/>.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class UniqueRuleMapTests
 {
     [Fact]

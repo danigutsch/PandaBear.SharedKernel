@@ -5,7 +5,7 @@ using PandaBear.Testing;
 namespace PandaBear.DocumentRendering.Tests;
 
 /// <summary>Verifies error precedence and the bounded browser protocol shape.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class ChromiumPdfBoundaryTests
 {
     [Fact]

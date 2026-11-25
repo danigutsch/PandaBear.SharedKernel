@@ -3,6 +3,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the link to a video on another site.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class VideoLinkTests : BunitContext
 {
     [Fact]

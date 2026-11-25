@@ -3,8 +3,8 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Tests creating options with Some, None, and FromNullable.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public static class OptionCoreTests
 {
     [Fact]

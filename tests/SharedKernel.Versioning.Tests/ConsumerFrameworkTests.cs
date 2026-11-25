@@ -5,7 +5,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests the <c>--framework</c> option of the commands that build packed consumers, and the per-framework consumer runs and evidence.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class ConsumerFrameworkTests
 {
     [Theory]

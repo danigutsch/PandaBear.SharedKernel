@@ -3,6 +3,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the generated theme stylesheet: font faces, colour and per-role custom properties, determinism and escaping.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteThemeStylesheetTests
 {
     [Fact]

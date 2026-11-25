@@ -4,7 +4,7 @@ using PandaBear.Processes;
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Tests how the engine runs external programs through the process runner abstraction.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class ExternalCommandsTests
 {
     private static readonly ExecutableMap UsrBin = new(static command => "/usr/bin/" + command);

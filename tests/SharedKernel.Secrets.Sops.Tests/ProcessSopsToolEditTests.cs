@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Sops.Tests;
 
 /// <summary>Tests <c>sops edit</c> through the adapter with a fake process runner.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class ProcessSopsToolEditTests
 {
     private const string Sops = "/usr/local/bin/sops";

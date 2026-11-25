@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>Tests the offering display atoms in Chromium at 1280px; they skip when the browser is not installed.</summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     /// <summary>Gets every place a badge is shown with every tone.</summary>

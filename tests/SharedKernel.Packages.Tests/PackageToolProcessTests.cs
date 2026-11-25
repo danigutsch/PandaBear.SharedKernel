@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests how the readers run a package tool: through the bounded runner, from the start information they build.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class PackageToolProcessTests
 {
     [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = "The Unix tools are not available.")]

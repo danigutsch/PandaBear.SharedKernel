@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests the order semantics of the <see cref="ScopedSender"/> registration helpers.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ScopedSenderRegistrationOrderTests
 {
     [Fact]

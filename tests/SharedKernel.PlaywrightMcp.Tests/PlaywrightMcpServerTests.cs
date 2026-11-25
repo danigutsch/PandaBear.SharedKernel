@@ -2,7 +2,7 @@ namespace PandaBear.PlaywrightMcp.Tests;
 
 /// <summary>Tests the server through its process runner and executable resolver, without starting a container engine.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class PlaywrightMcpServerTests
 {
     private const string LocalDockerEndpoint = "unix:///var/run/docker.sock";

@@ -3,8 +3,8 @@ using Microsoft.Extensions.Time.Testing;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the time provider that reports a business time zone as local time.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Time")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Time")]
 public sealed class BusinessTimeProviderTests
 {
     private static readonly DateTimeOffset Instant = new(2026, 11, 6, 1, 0, 0, TimeSpan.Zero);

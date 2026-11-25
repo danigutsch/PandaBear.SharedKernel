@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the section with its heading, intro and divider.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SectionTests : BunitContext
 {
     private const string MarkupWithoutEyebrow =

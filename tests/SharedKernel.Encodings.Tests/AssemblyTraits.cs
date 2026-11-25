@@ -1,1 +1,1 @@
-[assembly: Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[assembly: Trait(TestTraitNames.ScopeName, "unit")]

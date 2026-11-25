@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the text screening used before text reaches a user-facing surface.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class BoundedTextTests
 {
     [Fact]

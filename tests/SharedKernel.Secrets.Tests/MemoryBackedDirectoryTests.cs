@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests the private directory in which edit lets sops and the editor keep plaintext.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class MemoryBackedDirectoryTests
 {
     [Fact(SkipType = typeof(MemoryFileSystem), SkipUnless = nameof(MemoryFileSystem.SharedMemoryAvailable), Skip = "/dev/shm is not a tmpfs here.")]

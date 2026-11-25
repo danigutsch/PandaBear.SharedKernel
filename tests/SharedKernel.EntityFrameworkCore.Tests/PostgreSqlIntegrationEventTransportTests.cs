@@ -7,8 +7,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// PostgreSQL tests of integration event transport claiming, duplicate rejection, consuming, retries and poison handling.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {
     private PostgreSqlIntegrationEventTransportScenario? scenario;

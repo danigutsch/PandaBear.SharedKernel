@@ -4,6 +4,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// Tests the layout of the header navigation, the card grid and the gutter container in Chromium on a phone (375px) and a desktop
 /// (1280px) viewport; they skip when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteLayoutBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

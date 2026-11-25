@@ -12,8 +12,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// PostgreSQL tests of ResultTransactionBehavior: commit and rollback by result, declared locks, retries, hooks and isolation.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultTransactionBehaviorCapability)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.ResultTransactionBehaviorCapability)]
 [SuppressMessage(
     "Usage",
     "CA2213:Disposable fields should be disposed",

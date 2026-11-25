@@ -3,7 +3,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests parsing, help output, dispatch, and error handling of the versioning command line, and that documented command lines still parse.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersioningCommandLineTests
 {
     private static readonly string[] CommandNames =

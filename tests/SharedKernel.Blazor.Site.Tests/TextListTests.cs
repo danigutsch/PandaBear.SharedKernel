@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the plain list of lines.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class TextListTests : BunitContext
 {
     [Fact]

@@ -1,7 +1,7 @@
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Tests the lock coverage guard that fails when a lock-free source project resolves a package that no committed lock file resolves.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VerifyLockCoverageTests
 {
     [Fact]

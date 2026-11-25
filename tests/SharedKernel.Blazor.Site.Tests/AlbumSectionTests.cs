@@ -4,6 +4,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the album section: a named section with one page of photos and the pager.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class AlbumSectionTests : BunitContext
 {
     [Fact]

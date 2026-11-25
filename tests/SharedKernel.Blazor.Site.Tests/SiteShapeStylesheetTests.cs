@@ -3,6 +3,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests how the stylesheet applies the theme's shape: control and surface radii, the computed button padding and the dividers.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteShapeStylesheetTests
 {
     [Theory]

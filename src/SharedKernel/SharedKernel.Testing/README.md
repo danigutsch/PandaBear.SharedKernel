@@ -8,12 +8,11 @@ Reusable test traits, environment and culture scopes, temporary-directory lifeti
 
 ## Trait taxonomy
 
-- `TestTraitNames` owns cross-project trait names such as `Scope`, `Area`, `Category`, `Host`, and
+- `TestTraitNames` owns cross-project trait names such as `Scope`, `Area`, `Capability`, `Category`, `Host`, and
   `Surface`.
 - `TestTraitValues` owns cross-project values reused by multiple bounded-context test projects. Scope and host
   traits come from `TestScope` and `TestHost` (the `[TestScope]` and `[TestHost]` attributes, also valid on an assembly);
   test projects keep only their own component and capability values in a local `TestTraits`.
-- `SharedKernelTestTraitNames` owns SharedKernel package-test names and the neutral `Unit` scope.
 - Existing filters keep their keys when adopting `TestTraitValues`. For example, `Category=contract`
   and `Scope=contract` select different traits. `IntegrationEventTransport` can label either a
   category or a capability without requiring a reference to hosted test infrastructure.
@@ -21,10 +20,25 @@ Reusable test traits, environment and culture scopes, temporary-directory lifeti
   `Integration`, `System`, `Architecture`) and `ToTraitValue()` maps each to its `Scope` trait value.
   `TestHost`, `TestFocus` and `TestPriority` do the same for `Host`, `Focus` and `Priority`.
   `SharedKernel.Testing.Xunit` provides the matching attributes.
+- Use `[TestCapability(...)]` to expose a named behavior as a `Capability` trait. Define its value in the owning test project.
 - Project-specific values belong in the owning test project's `TestTraits` type.
 
 Use constants in `Trait` attributes whenever they exist. `SharedKernel.Testing.Analyzers` reports
 hardcoded trait literals through `SKTEST009` when a single safe replacement can be identified.
+
+### Migrating filters from the previous preview
+
+`TestTraitNames` is the shared owner of trait keys. Select a test's actual seam through
+the `Scope` key, such as `Scope=unit` or `Scope=system`. Use the following
+keys for existing labels.
+
+| Previous key | Current key |
+| --- | --- |
+| `TestScope` | `Scope` with a lower-case seam, such as `unit` |
+| `TestComponent` | `Area` |
+| `TestCapability` | `Capability` |
+| `TestCategory` | `Category` |
+| `TestTheory` | `Category`, which also carries named law and semantics labels |
 
 ## Serial test justification
 

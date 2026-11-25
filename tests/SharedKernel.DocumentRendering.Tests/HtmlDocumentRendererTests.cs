@@ -6,7 +6,7 @@ namespace PandaBear.DocumentRendering.Tests;
 /// <summary>
 /// Tests the HTML output of HtmlDocumentRenderer, including escaping, branding and unsafe-value handling.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class HtmlDocumentRendererTests
 {
     [Fact]

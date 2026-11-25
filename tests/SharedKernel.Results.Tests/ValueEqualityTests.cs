@@ -3,7 +3,7 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Tests that Option and Result compare by value through operators, object equality, and hash codes.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
 public sealed class ValueEqualityTests
 {
     [Fact]

@@ -3,7 +3,7 @@ using PandaBear.Testing;
 namespace PandaBear.InputNormalization.Tests;
 
 /// <summary>Unit tests for ObjectStorageKeyValidator.IsValidRelativeKey.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
 public sealed class ObjectStorageKeyValidatorTests
 {
     [Theory]

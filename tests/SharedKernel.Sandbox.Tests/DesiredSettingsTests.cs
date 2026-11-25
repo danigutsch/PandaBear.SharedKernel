@@ -1,7 +1,7 @@
 namespace PandaBear.Sandbox.Tests;
 
 /// <summary>Tests how the configuration, the dotnet profile, and the risk flags become the desired entries.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 public sealed class DesiredSettingsTests
 {
     private static readonly SettingsRiskFlags NoFlags = new(false, false, false);

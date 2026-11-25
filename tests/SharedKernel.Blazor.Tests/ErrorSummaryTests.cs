@@ -4,7 +4,7 @@ using static PandaBear.Blazor.Tests.ComponentFixtures;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the accessible error summary component.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ErrorSummaryTests : BunitContext
 {
     [Fact]

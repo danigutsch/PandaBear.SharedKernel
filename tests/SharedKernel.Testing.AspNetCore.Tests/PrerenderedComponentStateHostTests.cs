@@ -2,7 +2,7 @@ namespace PandaBear.Testing.AspNetCore.Tests;
 
 /// <summary>Tests the prerendered state check against a real Blazor Web App page with an Interactive Server component.</summary>
 [Trait(TestTraitNames.ScopeName, "Integration")]
-[Trait("Capability", "PrerenderedComponentState")]
+[Trait(TestTraitNames.CapabilityName, "PrerenderedComponentState")]
 public sealed class PrerenderedComponentStateHostTests
 {
     [Fact]

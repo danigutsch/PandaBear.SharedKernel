@@ -1,8 +1,8 @@
 namespace PandaBear.Documentation.Tests;
 
 /// <summary>Tests generated Markdown contents and heading-range validation.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class MarkdownTableOfContentsTests
 {
     private const string ConfigurationPath = "docs/architecture/generated-diagrams.json";

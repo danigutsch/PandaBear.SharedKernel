@@ -5,8 +5,8 @@ namespace PandaBear.Offerings.Tests;
 /// per-translation publication, a plain-text against a structured itinerary, four required prices against an optional list with labels,
 /// and en-US/pt-BR against pt/en.
 /// </summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Offerings")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Offerings")]
 public sealed class ApplicationMappingTests
 {
     private static readonly ContentCulture AmericanEnglish = ContentCulture.Restore("en-US");

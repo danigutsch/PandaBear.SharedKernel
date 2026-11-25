@@ -3,7 +3,7 @@ using PandaBear.Processes;
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Tests how the dev pack turns its options into pack invocations.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class DevPackTests
 {
     private const string Version = "0.1.0-dev.local";

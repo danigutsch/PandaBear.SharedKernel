@@ -5,7 +5,7 @@ namespace PandaBear.DocumentRendering.Tests;
 /// <summary>
 /// Tests the ordered and unordered lists of a document section.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class DocumentListTests
 {
     [Fact]

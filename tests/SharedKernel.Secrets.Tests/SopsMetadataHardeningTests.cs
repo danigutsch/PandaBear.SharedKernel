@@ -3,7 +3,7 @@ using System.Text;
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests the inputs of a security review: files that hide the real metadata, forge labels, or leave data in clear must not read as exact.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class SopsMetadataHardeningTests
 {
     private static readonly string[] Both = [TestRecipients.First, TestRecipients.Second];

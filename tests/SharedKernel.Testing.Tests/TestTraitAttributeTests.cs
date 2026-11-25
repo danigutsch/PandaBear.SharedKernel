@@ -6,6 +6,8 @@ namespace PandaBear.Testing.Tests;
 [TestScope(TestScope.Unit)]
 public sealed class TestTraitAttributeTests
 {
+    private const string TraitEmissionCapability = "trait-emission";
+
     /// <summary>Every attribute instance with the trait it must emit.</summary>
     public static TheoryData<ITraitAttribute, string, string> Attributes => new()
     {
@@ -24,6 +26,8 @@ public sealed class TestTraitAttributeTests
         { new TestPriorityAttribute(TestPriority.Critical), "Priority", "critical" },
         { new TestAreaAttribute("catalog"), "Area", "catalog" },
         { new TestSurfaceAttribute("openapi"), "Surface", "openapi" },
+        { new TestCapabilityAttribute("event-transport"), "Capability", "event-transport" },
+        { new TestCapabilityAttribute("HTTP"), "Capability", "HTTP" },
     };
 
     [Fact]
@@ -37,6 +41,7 @@ public sealed class TestTraitAttributeTests
 
     [Theory]
     [MemberData(nameof(Attributes))]
+    [TestCapability(TraitEmissionCapability)]
     public static void Attribute_emits_its_trait(ITraitAttribute attribute, string name, string value)
     {
         // Arrange
@@ -73,10 +78,12 @@ public sealed class TestTraitAttributeTests
         // Arrange
         var area = () => new TestAreaAttribute(value);
         var surface = () => new TestSurfaceAttribute(value);
+        var capability = () => new TestCapabilityAttribute(value);
 
         // Act, Assert
         area.ShouldThrow<ArgumentException>();
         surface.ShouldThrow<ArgumentException>();
+        capability.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -85,10 +92,11 @@ public sealed class TestTraitAttributeTests
         // Act, Assert
         TestTraitNames.FocusName.ShouldBe("Focus");
         TestTraitNames.PriorityName.ShouldBe("Priority");
+        TestTraitNames.CapabilityName.ShouldBe("Capability");
     }
 
     [Fact]
-    public static void Legacy_filters_keep_their_keys_and_values()
+    public static void Canonical_filters_keep_their_keys_and_values()
     {
         // Act, Assert
         TestTraitNames.CategoryName.ShouldBe("Category");
@@ -97,11 +105,8 @@ public sealed class TestTraitAttributeTests
         TestTraitValues.SnapshotCategory.ShouldBe("snapshot");
         TestTraitNames.SurfaceName.ShouldBe("Surface");
         TestTraitValues.OpenApiSurface.ShouldBe("openapi");
-        SharedKernelTestTraitNames.CapabilityName.ShouldBe("TestCapability");
         TestTraitValues.IntegrationEventTransport.ShouldBe("integration-event-transport");
         TestTraitNames.ScopeName.ShouldBe("Scope");
         TestScope.Unit.ToTraitValue().ShouldBe("unit");
-        SharedKernelTestTraitNames.ScopeName.ShouldBe("TestScope");
-        SharedKernelTestTraitNames.UnitScope.ShouldBe("Unit");
     }
 }

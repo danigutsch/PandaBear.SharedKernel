@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the card and its grid.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class CardTests : BunitContext
 {
     [Fact]

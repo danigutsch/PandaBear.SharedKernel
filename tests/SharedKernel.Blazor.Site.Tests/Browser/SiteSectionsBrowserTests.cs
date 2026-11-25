@@ -4,6 +4,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// Tests in Chromium the measure of section text, centred sections and bands, nested sections and the video link's poster; they skip
 /// when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

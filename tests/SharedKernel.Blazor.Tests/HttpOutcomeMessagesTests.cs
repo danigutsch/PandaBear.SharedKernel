@@ -1,7 +1,7 @@
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the caller-supplied copy mapping for HTTP outcomes.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class HttpOutcomeMessagesTests
 {
     [Fact]

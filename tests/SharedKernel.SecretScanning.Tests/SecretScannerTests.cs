@@ -1,7 +1,7 @@
 namespace PandaBear.SecretScanning.Tests;
 
 /// <summary>Tests what the scanner reports, what it hands to a projection, and how the context steers it.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.SecretScanningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.SecretScanningCapability)]
 public sealed class SecretScannerTests
 {
     [Fact]

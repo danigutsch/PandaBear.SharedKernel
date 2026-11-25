@@ -3,6 +3,7 @@ using PandaBear.BuildingBlocks;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the pager, which follows the GOV.UK Design System pagination component.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class PagerTests : BunitContext
 {
     [Theory]

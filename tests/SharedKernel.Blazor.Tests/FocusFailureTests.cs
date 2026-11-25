@@ -3,7 +3,7 @@ using static PandaBear.Blazor.Tests.ComponentFixtures;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests that a focus call failing because the circuit is gone never fails a component.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class FocusFailureTests : BunitContext
 {
     private const string FocusIdentifier = "Blazor._internal.domWrapper.focus";

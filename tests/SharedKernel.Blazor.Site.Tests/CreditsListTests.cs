@@ -3,6 +3,7 @@ using PandaBear.BuildingBlocks;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the list of image credits.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class CreditsListTests : BunitContext
 {
     private static readonly CreditItem Full = new("Ana Lima", "CC BY-SA 4.0")

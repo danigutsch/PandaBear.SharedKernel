@@ -1,8 +1,8 @@
 namespace PandaBear.Documentation.Tests;
 
 /// <summary>Checks the verification rules against a fictional venue operations dashboard.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class GrafanaVerificationTests
 {
     [Fact]

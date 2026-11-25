@@ -7,7 +7,7 @@ namespace PandaBear.Mediator.PackageConsumptionTests;
 /// </summary>
 /// <param name="packageFeed">The shared local package feed the consumer workspaces restore from.</param>
 [Collection(MediatorPackageFeedSharing.Name)]
-[Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
+[Trait(TestTraitNames.CategoryName, "PackageConsumption")]
 public sealed class GeneratorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
 {
     [Fact]

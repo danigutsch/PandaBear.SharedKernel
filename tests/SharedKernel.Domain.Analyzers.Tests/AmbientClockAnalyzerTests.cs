@@ -3,7 +3,7 @@ using System.Globalization;
 namespace PandaBear.Domain.Analyzers.Tests;
 
 /// <summary>Tests that the domain analyzer reports reads of the ambient clock (SKDOM003) only where intended.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DomainEncapsulationCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DomainEncapsulationCapability)]
 public sealed class AmbientClockAnalyzerTests
 {
     [Theory]

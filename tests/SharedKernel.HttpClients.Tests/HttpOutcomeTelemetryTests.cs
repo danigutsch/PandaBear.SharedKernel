@@ -3,7 +3,7 @@ using PandaBear.Testing;
 namespace PandaBear.HttpClients.Tests;
 
 /// <summary>Tests that the outcome span reports each <see cref="HttpOutcomeKind"/> as a lowercase snake_case attribute value.</summary>
-[Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class HttpOutcomeTelemetryTests
 {
     [Theory]

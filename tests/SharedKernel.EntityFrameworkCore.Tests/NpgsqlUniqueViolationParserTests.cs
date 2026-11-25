@@ -9,7 +9,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests the PostgreSQL unique-violation parser without a database: it reads SQLSTATE 23505 with its constraint and table, wherever the
 /// <see cref="PostgresException"/> sits in the inner-exception chain, and ignores every other failure.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class NpgsqlUniqueViolationParserTests
 {
     private readonly NpgsqlUniqueViolationParser parser = new();

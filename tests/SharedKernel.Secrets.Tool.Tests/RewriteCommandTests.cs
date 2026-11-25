@@ -3,7 +3,7 @@ using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
 namespace PandaBear.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>recipients update</c> and <c>rotate</c> with a fake sops: previews by default, and with <c>--force</c> a checked, atomic replacement.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class RewriteCommandTests
 {
     private const string File = "secrets/app.sops.yaml";

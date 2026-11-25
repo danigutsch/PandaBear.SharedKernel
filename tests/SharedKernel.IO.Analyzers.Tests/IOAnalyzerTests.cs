@@ -3,7 +3,7 @@ namespace PandaBear.IO.Analyzers.Tests;
 /// <summary>
 /// Tests that IOAnalyzer reports unbounded stream buffering and hand-rolled copy loops, and accepts explicitly bounded code.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.StreamBufferingCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.StreamBufferingCapability)]
 public sealed class IOAnalyzerTests
 {
     [Fact]

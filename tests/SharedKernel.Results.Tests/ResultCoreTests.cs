@@ -3,8 +3,8 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Tests creating results, reading their value and error, and validating the inputs of the Error and Invalid factories.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class ResultCoreTests
 {
     [Fact]

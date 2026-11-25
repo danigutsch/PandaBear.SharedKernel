@@ -1,7 +1,7 @@
 namespace PandaBear.Sandbox.Tests;
 
 /// <summary>Tests the doctor against a scripted environment.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 public sealed class SandboxDoctorTests
 {
     [Fact]

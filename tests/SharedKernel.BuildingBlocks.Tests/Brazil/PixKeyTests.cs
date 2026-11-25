@@ -5,8 +5,8 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// <summary>
 /// Tests creation and validation of PixKey values.
 /// </summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "PaymentIdentifiers")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "PaymentIdentifiers")]
 public sealed class PixKeyTests
 {
     [Theory]

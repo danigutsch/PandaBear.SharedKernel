@@ -4,7 +4,7 @@ using PandaBear.Testing;
 namespace PandaBear.DocumentRendering.Tests;
 
 /// <summary>Qualifies the optional renderer with the caller-provisioned Chromium and qpdf runtimes.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class QualifiedChromiumPdfTests
 {
     [Theory(Explicit = true)]

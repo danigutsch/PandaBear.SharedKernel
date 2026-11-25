@@ -1,7 +1,7 @@
 namespace PandaBear.Sandbox.Tool.Tests;
 
 /// <summary>Tests the real probes in a separate tool process with a chosen temporary folder.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 [Collection(EnvironmentCollection.Name)]
 public sealed class DoctorProcessTests
 {

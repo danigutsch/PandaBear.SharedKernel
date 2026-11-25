@@ -3,7 +3,7 @@ using System.Reflection;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Keeps the Playwright test-support package decoupled from this library while its selector copy cannot drift.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class PlaywrightHelperContractTests
 {
     [Fact]

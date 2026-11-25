@@ -1,7 +1,6 @@
 namespace PandaBear.Results.Tests;
 
 /// <summary>Tests reading validation errors from results and dropping result values.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ResultValidationExtensionsTests
 {
     [Fact]

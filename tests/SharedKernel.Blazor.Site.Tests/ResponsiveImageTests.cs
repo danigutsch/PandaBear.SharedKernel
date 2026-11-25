@@ -3,6 +3,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests responsive images: <c>srcset</c>, <c>sizes</c> and <c>picture</c> sources, and their validation.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ResponsiveImageTests : BunitContext
 {
     [Fact]

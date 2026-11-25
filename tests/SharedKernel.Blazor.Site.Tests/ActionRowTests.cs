@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the row of actions.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ActionRowTests : BunitContext
 {
     [Fact]

@@ -5,7 +5,7 @@ using TestContext = Xunit.TestContext;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests retaining edited text while participating in Blazor form validation.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ParsedTextInputStateTests
 {
     [Fact]

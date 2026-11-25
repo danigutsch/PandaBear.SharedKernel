@@ -5,7 +5,7 @@ namespace PandaBear.InputNormalization.Tests;
 /// <summary>
 /// Unit tests for WebAssetUriSanitizer.NormalizeRootRelativeOrHttps, which accepts only root-relative and HTTPS asset URIs.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
 public sealed class WebAssetUriSanitizerTests
 {
     [Theory]

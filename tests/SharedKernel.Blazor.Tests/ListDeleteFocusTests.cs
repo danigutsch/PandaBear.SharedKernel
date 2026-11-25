@@ -3,7 +3,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests where focus goes after a list deletion and what the deletion announces.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ListDeleteFocusTests : BunitContext
 {
     private const string Deleted = "Ana Souza was deleted.";

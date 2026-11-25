@@ -4,6 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests self-hosted font families and their faces.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ThemeFontTests
 {
     [Theory]

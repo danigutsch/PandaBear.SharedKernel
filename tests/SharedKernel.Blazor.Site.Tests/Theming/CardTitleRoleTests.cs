@@ -3,6 +3,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the card title typography role, which card headings take instead of the section heading roles.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class CardTitleRoleTests
 {
     [Fact]

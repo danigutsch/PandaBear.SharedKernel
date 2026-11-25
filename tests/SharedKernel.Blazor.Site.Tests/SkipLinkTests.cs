@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the skip link.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SkipLinkTests : BunitContext
 {
     [Fact]

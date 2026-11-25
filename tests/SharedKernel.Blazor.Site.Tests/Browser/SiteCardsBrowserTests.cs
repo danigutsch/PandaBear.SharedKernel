@@ -4,6 +4,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// Tests cards in Chromium, on a phone (375px) and a desktop (1280px) viewport: the more look beside a button link, actions at the bottom
 /// across a row, a long word in a title, and clicks through the more look; they skip when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     private const double TapTarget = 44;

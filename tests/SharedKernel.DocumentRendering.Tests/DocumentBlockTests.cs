@@ -5,7 +5,7 @@ namespace PandaBear.DocumentRendering.Tests;
 /// <summary>
 /// Tests the ordered blocks of a document section, which keep a paragraph that follows a list after it.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class DocumentBlockTests
 {
     [Fact]

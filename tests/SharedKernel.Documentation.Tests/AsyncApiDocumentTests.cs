@@ -4,8 +4,8 @@ using System.Text.Json.Nodes;
 namespace PandaBear.Documentation.Tests;
 
 /// <summary>Verifies deterministic AsyncAPI rendering and artifact checks.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class AsyncApiDocumentTests
 {
     [Fact]

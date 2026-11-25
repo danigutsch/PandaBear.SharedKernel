@@ -4,7 +4,6 @@ using PandaBear.Testing.Mediator;
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests that the unique violation behavior turns only a unique violation into a failed result.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class UniqueViolationBehaviorTests
 {
     private const string ExpectedConflict = "A value that must be unique is already in use.";

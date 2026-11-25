@@ -1,7 +1,7 @@
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests reading installed packages from <c>dpkg-query</c> output.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class AptPackageReaderTests
 {
     private const string DpkgQuery = "/usr/bin/dpkg-query";

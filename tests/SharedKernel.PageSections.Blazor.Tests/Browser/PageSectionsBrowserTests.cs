@@ -7,6 +7,7 @@ namespace PandaBear.PageSections.Blazor.Tests.Browser;
 /// Tests rendered sections in Chromium on a phone (375px) and a desktop (1280px) viewport: what assistive technology is told, where the
 /// images beside the text lie, and the centred alignment. They skip when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class PageSectionsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

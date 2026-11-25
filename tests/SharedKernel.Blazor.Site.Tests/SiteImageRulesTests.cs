@@ -3,6 +3,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the image accessibility decision and the safety and layout rules every image source must meet.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteImageRulesTests : BunitContext
 {
     [Fact]

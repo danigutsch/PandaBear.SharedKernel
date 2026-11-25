@@ -5,7 +5,7 @@ namespace PandaBear.Testing.AspNetCore.Tests;
 
 /// <summary>Tests that an application's real entry point is reachable over a real socket.</summary>
 [Trait(TestTraitNames.ScopeName, "Integration")]
-[Trait("Capability", "KestrelTestHost")]
+[Trait(TestTraitNames.CapabilityName, "KestrelTestHost")]
 public sealed class KestrelTestHostTests
 {
     [Fact]

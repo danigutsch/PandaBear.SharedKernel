@@ -3,6 +3,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>Tests the hero and the header brand in Chromium; they skip when the browser is not installed.</summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

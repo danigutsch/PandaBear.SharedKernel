@@ -1,7 +1,7 @@
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests reading and validating <c>.config/sharedkernel-packages.json</c>.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class PackagesConfigurationTests
 {
     private static readonly CancellationToken Cancel = TestContext.Current.CancellationToken;

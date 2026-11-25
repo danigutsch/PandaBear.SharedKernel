@@ -16,11 +16,11 @@ Unit tests for `SharedKernel.Mediator.SourceGenerator`.
 
 ## Current Traits
 
-- `TestScope=Unit`
-- `TestComponent=SharedKernel.Mediator.SourceGenerator`
-- `TestCapability=Discovery`
-- `TestCapability=DependencyInjection`
-- `TestCapability=Dispatch`
+- `Scope=unit`
+- `Area=SharedKernel.Mediator.SourceGenerator`
+- `Capability=Discovery`
+- `Capability=DependencyInjection`
+- `Capability=Dispatch`
 
 ## Dependencies
 

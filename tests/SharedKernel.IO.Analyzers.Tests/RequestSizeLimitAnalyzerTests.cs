@@ -3,7 +3,7 @@ namespace PandaBear.IO.Analyzers.Tests;
 /// <summary>
 /// Tests that SKIO003 reports upload and raw-body endpoints without an endpoint-level request size limit.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.StreamBufferingCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.StreamBufferingCapability)]
 public sealed class RequestSizeLimitAnalyzerTests
 {
     private const string Usings = """

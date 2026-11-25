@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the testimonial quote.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class QuoteTests : BunitContext
 {
     [Fact]

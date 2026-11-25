@@ -1,7 +1,7 @@
 namespace PandaBear.Results.Analyzers.Tests;
 
 /// <summary>Tests that the analyzer reports discarded Result values (SKRES002) only where intended.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DiscardedResultCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DiscardedResultCapability)]
 public sealed class DiscardedResultTests
 {
     [Theory]

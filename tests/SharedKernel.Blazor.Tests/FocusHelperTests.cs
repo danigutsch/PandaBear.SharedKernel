@@ -4,7 +4,7 @@ using static PandaBear.Blazor.Tests.ComponentFixtures;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the public focus helper that pages call after a render.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class FocusHelperTests : BunitContext
 {
     private const string FocusIdentifier = "Blazor._internal.domWrapper.focus";

@@ -3,9 +3,9 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Tests Match, Map, and Bind on options, including empty options and projections to value types.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
-[Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MatchSemanticsTheory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.MatchSemanticsTheory)]
 public static class OptionCompositionTests
 {
     [Fact]

@@ -4,7 +4,7 @@ using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
 namespace PandaBear.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>decrypt</c> with a fake sops: standard output only unless <c>--output</c> and <c>--force</c>.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class DecryptCommandTests
 {
     private static readonly string Config = TestRecipients.Config(1, TestRecipients.First);
