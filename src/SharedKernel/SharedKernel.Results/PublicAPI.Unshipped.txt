@@ -50,6 +50,7 @@ static SharedKernel.Results.Result<T>.FromError(SharedKernel.Results.ResultError
 SharedKernel.Results.ResultValidationExtensions
 static SharedKernel.Results.ResultValidationExtensions.ValidationErrors(this SharedKernel.Results.Result result) -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
 static SharedKernel.Results.ResultValidationExtensions.WithoutValue<T>(this SharedKernel.Results.Result<T> result) -> SharedKernel.Results.Result
+SharedKernel.Results.ValidationErrors.Add(string! field, string! message) -> void
 SharedKernel.Results.ValidationErrors.AddIfFailed(SharedKernel.Results.Result result) -> void
 SharedKernel.Results.ValidationErrors.AddIfFailed<T>(SharedKernel.Results.Result<T> result) -> void
 const SharedKernel.Results.ResultErrorCodes.ConcurrencyConflict = "concurrency_conflict" -> string!
