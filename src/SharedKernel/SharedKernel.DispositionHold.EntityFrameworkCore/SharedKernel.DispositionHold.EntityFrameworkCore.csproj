@@ -18,6 +18,7 @@
         <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
         <ProjectReference Include="..\SharedKernel.Npgsql\SharedKernel.Npgsql.csproj" />
         <ProjectReference Include="..\SharedKernel.DispositionHold.Abstractions\SharedKernel.DispositionHold.Abstractions.csproj" />
+        <ProjectReference Include="..\SharedKernel.PostgreSql\SharedKernel.PostgreSql.csproj" />
     </ItemGroup>
 
     <ItemGroup>

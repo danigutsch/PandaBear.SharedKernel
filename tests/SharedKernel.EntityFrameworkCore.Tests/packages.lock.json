@@ -778,7 +778,8 @@
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.DispositionHold.Abstractions": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Npgsql": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Npgsql": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.PostgreSql": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.DocumentRendering": {
@@ -838,7 +839,8 @@
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.15, )",
           "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Idempotency.Abstractions": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Idempotency.Abstractions": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.PostgreSql": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.InputNormalization": {
@@ -896,6 +898,7 @@
           "PandaBear.SharedKernel.Idempotency.EntityFrameworkCore": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.PostgreSql": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Scheduling": "[0.1.0-alpha.0, )"
         }
       },
@@ -913,6 +916,9 @@
           "PandaBear.SharedKernel.IntegrationTesting": "[0.1.0-alpha.0, )",
           "xunit.v3.extensibility.core": "[4.0.3, )"
         }
+      },
+      "PandaBear.SharedKernel.PostgreSql": {
+        "type": "Project"
       },
       "PandaBear.SharedKernel.Processes": {
         "type": "Project"

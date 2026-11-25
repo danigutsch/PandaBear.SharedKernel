@@ -1,4 +1,4 @@
-namespace SharedKernel.InputNormalization;
+namespace SharedKernel.PostgreSql;
 
 /// <summary>
 /// Checks names that are written into SQL text as PostgreSQL identifiers, such as a configured schema or table name.

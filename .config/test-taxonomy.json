@@ -103,6 +103,7 @@
     {"path":"src/SharedKernel/SharedKernel.PageSections.Blazor/SharedKernel.PageSections.Blazor.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["System","Unit"]},
     {"path":"src/SharedKernel/SharedKernel.PageSections/SharedKernel.PageSections.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.PostgreSql/SharedKernel.PostgreSql.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Repositories.Forgejo/SharedKernel.Repositories.Forgejo.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.Repositories.GitHub/SharedKernel.Repositories.GitHub.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
@@ -846,6 +847,13 @@
       "migrationException": "The existing test executable retains its current name during the taxonomy migration.",
       "seams": [
         {"sut":"tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["PlaywrightMcpCommandLine","PlaywrightMcpTermination"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.PostgreSql.Tests.Unit/SharedKernel.PostgreSql.Tests.Unit.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.PostgreSql/SharedKernel.PostgreSql.csproj","type":"Unit","dependency":"in-process","capabilities":["PostgreSqlIdentifier"],"lane":"library"}
       ]
     },
     {

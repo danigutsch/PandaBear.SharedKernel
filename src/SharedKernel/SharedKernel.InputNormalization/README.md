@@ -26,11 +26,6 @@ paragraph separator (U+2029), so text pasted from a word processor splits the sa
 sanitized like `Sanitize` (its line breaks become single spaces), empty ones are dropped, and malformed text returns `false`. Joining the
 paragraphs with a blank line gives the same paragraphs again, so a stored list round-trips through an editor's text box.
 
-`PostgreSqlIdentifier.IsUnquoted` checks a name that a library writes into SQL text, such as a configured schema or table name:
-an ASCII letter or `_`, then ASCII letters, digits, or `_`, at most 63 bytes. PostgreSQL silently truncates a longer name to
-NAMEDATALEN-1 (63) bytes, so two long names could select the same object. Only ASCII is accepted, so the character count is the
-byte count. The idempotency, integration event, and disposition hold storage options and the event-sourcing schema use it.
-
 ## Search keys
 
 `SearchKey.Of(text)` is the accent- and case-insensitive key of a text for comparing search input with stored text: `ESLOVÊNIA`

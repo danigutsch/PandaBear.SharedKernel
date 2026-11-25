@@ -1,5 +1,5 @@
 using Npgsql;
-using SharedKernel.InputNormalization;
+using SharedKernel.PostgreSql;
 
 namespace SharedKernel.EventSourcing.Npgsql;
 

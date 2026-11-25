@@ -1,0 +1,3 @@
+#nullable enable
+SharedKernel.PostgreSql.PostgreSqlIdentifier
+static SharedKernel.PostgreSql.PostgreSqlIdentifier.IsUnquoted(string? value) -> bool

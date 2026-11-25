@@ -705,7 +705,8 @@
           "Npgsql": "[10.0.3, )",
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.EventSourcing": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Npgsql": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Npgsql": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.PostgreSql": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.InputNormalization": {
@@ -732,6 +733,9 @@
           "PandaBear.SharedKernel.IntegrationTesting": "[0.1.0-alpha.0, )",
           "xunit.v3.extensibility.core": "[4.0.3, )"
         }
+      },
+      "PandaBear.SharedKernel.PostgreSql": {
+        "type": "Project"
       },
       "PandaBear.SharedKernel.Processes": {
         "type": "Project"
