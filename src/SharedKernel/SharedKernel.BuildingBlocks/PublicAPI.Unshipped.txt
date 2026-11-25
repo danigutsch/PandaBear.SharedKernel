@@ -344,6 +344,14 @@ static SharedKernel.BuildingBlocks.TranslationListRules.Merge<T>(System.Collecti
 static SharedKernel.BuildingBlocks.TranslationListRules.Same<T>(System.Collections.Generic.IReadOnlyList<T>! current, System.Collections.Generic.IReadOnlyList<T>! replacement, System.Func<T, SharedKernel.BuildingBlocks.ContentCulture!>! culture, System.Func<T, T, bool>! same) -> bool
 static SharedKernel.BuildingBlocks.SanitizedText.Optional(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength, out bool entered) -> string?
 static SharedKernel.BuildingBlocks.SanitizedText.Paragraphs(SharedKernel.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxParagraphs, int maxLength, out bool entered) -> System.Collections.Generic.IReadOnlyList<string!>!
+const SharedKernel.BuildingBlocks.Nif.Length = 9 -> int
+override SharedKernel.BuildingBlocks.Nif.ToString() -> string!
+SharedKernel.BuildingBlocks.Nif
+SharedKernel.BuildingBlocks.Nif.Formatted.get -> string!
+SharedKernel.BuildingBlocks.Nif.Value.get -> string!
+static SharedKernel.BuildingBlocks.Nif.Create(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Nif!>
+static SharedKernel.BuildingBlocks.Nif.CreateFromInput(string? value) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.Nif!>
+static SharedKernel.BuildingBlocks.Nif.Restore(string! value) -> SharedKernel.BuildingBlocks.Nif!
 const SharedKernel.BuildingBlocks.ImageAltText.MaxLength = 500 -> int
 override SharedKernel.BuildingBlocks.ImageAltText.ToString() -> string!
 SharedKernel.BuildingBlocks.ImageAltText
