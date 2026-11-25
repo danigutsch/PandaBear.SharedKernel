@@ -70,3 +70,6 @@ SharedKernel.AspNetCore.ErrorPageKind.NotFound = 0 -> SharedKernel.AspNetCore.Er
 SharedKernel.AspNetCore.ErrorPageKind.RequestError = 1 -> SharedKernel.AspNetCore.ErrorPageKind
 SharedKernel.AspNetCore.ErrorPageKinds
 static SharedKernel.AspNetCore.ErrorPageKinds.Of(int statusCode) -> SharedKernel.AspNetCore.ErrorPageKind
+SharedKernel.AspNetCore.PermanentRedirectPaths
+static SharedKernel.AspNetCore.PermanentRedirectPaths.Encode(string! path) -> string!
+static SharedKernel.AspNetCore.PermanentRedirectPaths.Normalize(string? path, int maxLength) -> string?
