@@ -230,6 +230,8 @@ PandaBear.Blazor.Site.GalleryImage.Caption.init -> void
 PandaBear.Blazor.Site.GalleryImage.GalleryImage(PandaBear.Blazor.Site.ResponsiveImage! Image, string? Caption = null) -> void
 PandaBear.Blazor.Site.GalleryImage.Image.get -> PandaBear.Blazor.Site.ResponsiveImage!
 PandaBear.Blazor.Site.GalleryImage.Image.init -> void
+PandaBear.Blazor.Site.GalleryImage.TextLanguage.get -> string?
+PandaBear.Blazor.Site.GalleryImage.TextLanguage.init -> void
 PandaBear.Blazor.Site.Hero
 PandaBear.Blazor.Site.Hero.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
 PandaBear.Blazor.Site.Hero.Actions.set -> void
@@ -1113,3 +1115,80 @@ static PandaBear.Blazor.Site.EnumParameter.RequireDefined<TEnum>(TEnum value, st
 static PandaBear.Blazor.Site.EnumParameter.RequireDefined<TEnum>(TEnum? value, string! parameterName, string! message) -> void
 static PandaBear.Blazor.Site.ElementId.Require(string? id, string! parameterName) -> void
 static PandaBear.Blazor.Site.PositionFormat.Require(string? format, string! parameterName, System.Globalization.CultureInfo! culture) -> string!
+PandaBear.Blazor.Site.PhotoCredit
+PandaBear.Blazor.Site.PhotoCredit.Compact.get -> bool
+PandaBear.Blazor.Site.PhotoCredit.Compact.set -> void
+PandaBear.Blazor.Site.PhotoCredit.Item.get -> PandaBear.Blazor.Site.PhotoCreditItem!
+PandaBear.Blazor.Site.PhotoCredit.Item.set -> void
+PandaBear.Blazor.Site.PhotoCredit.Labels.get -> PandaBear.Blazor.Site.PhotoCreditLabels!
+PandaBear.Blazor.Site.PhotoCredit.Labels.set -> void
+PandaBear.Blazor.Site.PhotoCredit.PhotoCredit() -> void
+PandaBear.Blazor.Site.PhotoCreditItem
+PandaBear.Blazor.Site.PhotoCreditItem.<Clone>$() -> PandaBear.Blazor.Site.PhotoCreditItem!
+PandaBear.Blazor.Site.PhotoCreditItem.Credit.get -> PandaBear.ContentRights.PublicContentCredit!
+PandaBear.Blazor.Site.PhotoCreditItem.Credit.init -> void
+PandaBear.Blazor.Site.PhotoCreditItem.Deconstruct(out string! Id, out string! Title, out PandaBear.ContentRights.PublicContentCredit! Credit) -> void
+PandaBear.Blazor.Site.PhotoCreditItem.DetailsHref.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.PhotoCreditItem.DetailsHref.init -> void
+PandaBear.Blazor.Site.PhotoCreditItem.Equals(PandaBear.Blazor.Site.PhotoCreditItem? other) -> bool
+PandaBear.Blazor.Site.PhotoCreditItem.Id.get -> string!
+PandaBear.Blazor.Site.PhotoCreditItem.Id.init -> void
+PandaBear.Blazor.Site.PhotoCreditItem.PhotoCreditItem(string! Id, string! Title, PandaBear.ContentRights.PublicContentCredit! Credit) -> void
+PandaBear.Blazor.Site.PhotoCreditItem.TermsLabel.get -> string?
+PandaBear.Blazor.Site.PhotoCreditItem.TermsLabel.init -> void
+PandaBear.Blazor.Site.PhotoCreditItem.Title.get -> string!
+PandaBear.Blazor.Site.PhotoCreditItem.Title.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels
+PandaBear.Blazor.Site.PhotoCreditLabels.<Clone>$() -> PandaBear.Blazor.Site.PhotoCreditLabels!
+PandaBear.Blazor.Site.PhotoCreditLabels.CopyrightOwner.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.CopyrightOwner.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.Creator.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.Creator.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.Deconstruct(out string! Creator, out string! CopyrightOwner, out string! Licensor, out string! Designated, out string! Source, out string! Terms, out string! Details, out string! Modification, out string! PreviousModifications) -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.Designated.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.Designated.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.Details.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.Details.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.Equals(PandaBear.Blazor.Site.PhotoCreditLabels? other) -> bool
+PandaBear.Blazor.Site.PhotoCreditLabels.Licensor.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.Licensor.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.Modification.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.Modification.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.PhotoCreditLabels(string! Creator, string! CopyrightOwner, string! Licensor, string! Designated, string! Source, string! Terms, string! Details, string! Modification, string! PreviousModifications) -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.PreviousModifications.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.PreviousModifications.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.Source.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.Source.init -> void
+PandaBear.Blazor.Site.PhotoCreditLabels.Terms.get -> string!
+PandaBear.Blazor.Site.PhotoCreditLabels.Terms.init -> void
+PandaBear.Blazor.Site.PhotoCreditsPage
+PandaBear.Blazor.Site.PhotoCreditsPage.HeadingId.get -> string?
+PandaBear.Blazor.Site.PhotoCreditsPage.HeadingId.set -> void
+PandaBear.Blazor.Site.PhotoCreditsPage.Intro.get -> string?
+PandaBear.Blazor.Site.PhotoCreditsPage.Intro.set -> void
+PandaBear.Blazor.Site.PhotoCreditsPage.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.PhotoCreditItem!>!
+PandaBear.Blazor.Site.PhotoCreditsPage.Items.set -> void
+PandaBear.Blazor.Site.PhotoCreditsPage.Labels.get -> PandaBear.Blazor.Site.PhotoCreditLabels!
+PandaBear.Blazor.Site.PhotoCreditsPage.Labels.set -> void
+PandaBear.Blazor.Site.PhotoCreditsPage.Level.get -> int
+PandaBear.Blazor.Site.PhotoCreditsPage.Level.set -> void
+PandaBear.Blazor.Site.PhotoCreditsPage.PhotoCreditsPage() -> void
+PandaBear.Blazor.Site.PhotoCreditsPage.Title.get -> string!
+PandaBear.Blazor.Site.PhotoCreditsPage.Title.set -> void
+const PandaBear.Blazor.Site.PhotoCreditsPage.MaxItems = 100 -> int
+PandaBear.Blazor.Site.AlbumSection.CreditLabels.get -> PandaBear.Blazor.Site.PhotoCreditLabels?
+PandaBear.Blazor.Site.AlbumSection.CreditLabels.set -> void
+PandaBear.Blazor.Site.GalleryImage.ReviewedCredit.get -> PandaBear.Blazor.Site.PhotoCreditItem?
+PandaBear.Blazor.Site.GalleryImage.ReviewedCredit.init -> void
+PandaBear.Blazor.Site.ImageGrid.CreditLabels.get -> PandaBear.Blazor.Site.PhotoCreditLabels?
+PandaBear.Blazor.Site.ImageGrid.CreditLabels.set -> void
+override PandaBear.Blazor.Site.PhotoCreditItem.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.PhotoCreditItem.GetHashCode() -> int
+override PandaBear.Blazor.Site.PhotoCreditItem.ToString() -> string!
+override PandaBear.Blazor.Site.PhotoCreditLabels.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.PhotoCreditLabels.GetHashCode() -> int
+override PandaBear.Blazor.Site.PhotoCreditLabels.ToString() -> string!
+static PandaBear.Blazor.Site.PhotoCreditItem.operator !=(PandaBear.Blazor.Site.PhotoCreditItem? left, PandaBear.Blazor.Site.PhotoCreditItem? right) -> bool
+static PandaBear.Blazor.Site.PhotoCreditItem.operator ==(PandaBear.Blazor.Site.PhotoCreditItem? left, PandaBear.Blazor.Site.PhotoCreditItem? right) -> bool
+static PandaBear.Blazor.Site.PhotoCreditLabels.operator !=(PandaBear.Blazor.Site.PhotoCreditLabels? left, PandaBear.Blazor.Site.PhotoCreditLabels? right) -> bool
+static PandaBear.Blazor.Site.PhotoCreditLabels.operator ==(PandaBear.Blazor.Site.PhotoCreditLabels? left, PandaBear.Blazor.Site.PhotoCreditLabels? right) -> bool

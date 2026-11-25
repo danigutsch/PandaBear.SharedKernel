@@ -129,6 +129,10 @@ public sealed partial class AlbumSection
     [Parameter]
     public string? Sizes { get; set; }
 
+    /// <summary>Gets or sets the caller-localized labels for optional per-photo credits.</summary>
+    [Parameter]
+    public PhotoCreditLabels? CreditLabels { get; set; }
+
     /// <summary>Gets or sets optional content after the photos and before the pager, such as a link to the related tour.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }

@@ -31,6 +31,7 @@
     "src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj",
     "src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj",
     "src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj",
+    "src/SharedKernel/SharedKernel.ContentRights/SharedKernel.ContentRights.csproj",
     "src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj",
     "src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj",
     "src/SharedKernel/SharedKernel.DispositionHold.EntityFrameworkCore/SharedKernel.DispositionHold.EntityFrameworkCore.csproj",

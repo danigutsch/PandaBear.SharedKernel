@@ -4,7 +4,8 @@
     {
         var image = Images[index];
         var priority = PrioritizeFirstImage && index == 0;
-        var picture = ResponsiveImageMarkup.Render(image.Image, eager: priority || index < EagerCount, highPriority: priority, sizes: EffectiveSizes);
+        var picture = ResponsiveImageMarkup.Render(image.Image, eager: priority || index < EagerCount, highPriority: priority, sizes: EffectiveSizes, language: image.TextLanguage);
+        var reviewed = image.ReviewedCredit is { } attribution && PhotoCredit.HasCompactCredit(attribution) ? attribution : null;
         <figure class="site-image-grid__item">
             @if (image.Href is null)
             {
@@ -12,11 +13,22 @@
             }
             else
             {
-                <a class="site-image-grid__link" href="@image.Href.Value">@picture</a>
+                <a class="site-image-grid__link" href="@image.Href.Value" lang="@image.TextLanguage">@picture</a>
             }
-            @if (!string.IsNullOrWhiteSpace(image.Caption) || image.Credit is not null)
+            @if (!string.IsNullOrWhiteSpace(image.Caption) || image.Credit is not null || reviewed is not null)
             {
-                <figcaption>@image.Caption@if (image.Credit is { } credit)
+                <figcaption>@if (image.TextLanguage is { } language && !string.IsNullOrWhiteSpace(image.Caption))
+                    {
+                        <span lang="@language">@image.Caption</span>
+                    }
+                    else
+                    {
+                        @image.Caption
+                    }@if (reviewed is not null)
+                    {
+                        <PhotoCredit Item="reviewed" Labels="@(CreditLabels!)" Compact />
+                    }
+                    else if (image.Credit is { } credit)
                     {
                         <ImageCreditCaption Credit="credit" />
                     }</figcaption>

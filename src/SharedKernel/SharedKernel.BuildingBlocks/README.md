@@ -89,6 +89,10 @@ input. `Restore` rebuilds a stored credit without rules. All copy is the applica
   format when there is a title (`“{2}”, de {0}, licença {1}`), else the untitled one (`Foto de {0}, licença {1}`), then the change
   note, whose `{0}` is the text so far (`{0} (adaptada)`). Linking the source and the licence is the display's job.
 
+For reviewed credits that record exact terms, credit roles, notices and source, use
+`PandaBear.SharedKernel.ContentRights`. Its `ContentAttribution.FromImageCredit` adapter carries forward a stored credit with the
+rights facts supplied by the caller. [Reviewed credit guide](../SharedKernel.ContentRights/README.md)
+
 
 `PageWindow.Create(requestedPage, pageSize, total)` computes the page a request shows from the page number in the URL, as Microsoft's
 Blazor guidance recommends for the current page of a paged list

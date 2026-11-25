@@ -23,6 +23,9 @@ dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release --no-build --
 Stage new files first so the Git index includes them. The [command reference](../tools/SharedKernel.RepoConfig.Tool/README.md#test-taxonomy)
 describes the schema and strict validation mode.
 
+`SharedKernel.ContentRights.Tests.Unit` verifies licence declarations, attribution validation and conversion of
+reviewed image credits in process. The SEO and Blazor Site suites exercise their metadata and UI projections.
+
 ## Shared test services
 
 `SharedKernel.Npgsql.Tests`, `SharedKernel.EventSourcing.Npgsql.Tests` and `SharedKernel.EntityFrameworkCore.Tests` need PostgreSQL;

@@ -17,7 +17,7 @@ internal static class LanguageTag
     {
         if (tag is not null && (tag.Length != tag.AsSpan().Trim().Length || ContentCulture.Create(tag).IsFailure))
         {
-            throw new ArgumentException("A title language must be a BCP 47 language tag such as pt-BR.", parameterName);
+            throw new ArgumentException("A language must be a BCP 47 language tag such as pt-BR.", parameterName);
         }
     }
 }

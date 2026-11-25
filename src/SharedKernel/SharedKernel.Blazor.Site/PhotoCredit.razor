@@ -1,0 +1,108 @@
+@inherits SiteComponent
+@if (Compact ? HasCompactCredit(Item) : HasFullCredit(Item))
+{
+    <div class="@CssClass("site-photo-credit")" @attributes="AdditionalAttributes">
+        @if (Compact)
+        {
+            <div class="site-photo-credit__summary">
+                @if (CreatorSummary is { } creator)
+                {
+                    <span>@creator</span>
+                }
+                @if (TermsHref is { } terms)
+                {
+                    <a href="@terms.Value">@WithPhotoTitle(TermsLabel ?? Labels.Terms)</a>
+                }
+                else if (TermsLabel is { } label)
+                {
+                    <span>@label</span>
+                }
+                @if (Item.DetailsHref is { } details)
+                {
+                    <a href="@details.Value">@WithPhotoTitle(Labels.Details)</a>
+                }
+            </div>
+            @if (Item.DetailsHref is null && HasFullCredit(Item))
+            {
+                <details class="site-photo-credit__disclosure">
+                    <summary>@WithPhotoTitle(Labels.Details)</summary>
+                    @FullCredit
+                </details>
+            }
+        }
+        else
+        {
+            @FullCredit
+        }
+    </div>
+}
+
+@code {
+    private RenderFragment WithPhotoTitle(string label) =>
+        @<text>@label<span class="site-visually-hidden">@(" " + Item.Title)</span></text>;
+
+    private RenderFragment FullCredit => @<text>
+        @if (Credit.Title is { } title)
+        {
+            <p class="site-photo-credit__notice"><cite>@title</cite></p>
+        }
+        @if (Credit.CreditLine is { } creditLine)
+        {
+            <p class="site-photo-credit__notice">@creditLine</p>
+        }
+        @if (Credit.CopyrightNotice is { } notice)
+        {
+            <p class="site-photo-credit__notice">@notice</p>
+        }
+        @if (HasCreditProperties)
+        {
+            <dl class="site-photo-credit__properties">
+                @foreach (var partyGroup in Credit.Parties.GroupBy(party => party.Role))
+                {
+                    <dt>@RoleLabel(partyGroup.Key)</dt>
+                    <dd>@string.Join(", ", partyGroup.Select(party => party.Name))</dd>
+                }
+                @if (Credit.OriginalSourceUrl is { } source)
+                {
+                    <dt>@Labels.Source</dt>
+                    <dd><a href="@source.Value">@WithPhotoTitle(Labels.Source)</a></dd>
+                }
+                @if (HasTerms)
+                {
+                    <dt>@Labels.Terms</dt>
+                    <dd>
+                        @if (TermsHref is { } terms)
+                        {
+                            <a href="@terms.Value">@WithPhotoTitle(TermsLabel ?? Labels.Terms)</a>
+                        }
+                        else if (TermsLabel is { } label)
+                        {
+                            <span>@label</span>
+                        }
+                        @if (Credit.License.DeclaredTerms is { } declared && !string.Equals(declared, TermsLabel, StringComparison.Ordinal))
+                        {
+                            <span>@declared</span>
+                        }
+                    </dd>
+                }
+                @if (Credit.ModificationNotice is { } modification)
+                {
+                    <dt>@Labels.Modification</dt>
+                    <dd>@modification</dd>
+                }
+                @if (Credit.PreviousModificationNotices.Count > 0)
+                {
+                    <dt>@Labels.PreviousModifications</dt>
+                    <dd>
+                        <ul>
+                            @foreach (var previous in Credit.PreviousModificationNotices)
+                            {
+                                <li>@previous</li>
+                            }
+                        </ul>
+                    </dd>
+                }
+            </dl>
+        }
+    </text>;
+}

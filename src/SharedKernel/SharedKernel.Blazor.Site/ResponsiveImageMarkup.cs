@@ -10,8 +10,9 @@ internal static class ResponsiveImageMarkup
     /// <param name="eager">Whether the image loads eagerly instead of lazily.</param>
     /// <param name="highPriority">Whether the image is fetched with high priority, for the largest image above the fold.</param>
     /// <param name="sizes">The <c>sizes</c> written instead of the image's own where width descriptors need one, or <see langword="null" />.</param>
+    /// <param name="language">The optional language of the image's alternative text.</param>
     /// <returns>The fragment.</returns>
-    public static RenderFragment Render(ResponsiveImage image, bool eager, bool highPriority, string? sizes = null) => builder =>
+    public static RenderFragment Render(ResponsiveImage image, bool eager, bool highPriority, string? sizes = null, string? language = null) => builder =>
     {
         var effectiveSizes = sizes ?? image.Sizes;
         if (image.UsesPicture)
@@ -37,6 +38,7 @@ internal static class ResponsiveImageMarkup
         builder.AddAttribute(11, "height", image.Height);
         builder.AddAttribute(12, "loading", eager ? "eager" : "lazy");
         builder.AddAttribute(13, "fetchpriority", highPriority ? "high" : null);
+        builder.AddAttribute(14, "lang", language);
         builder.CloseElement();
 
         if (image.UsesPicture)

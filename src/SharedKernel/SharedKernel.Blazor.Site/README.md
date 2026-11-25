@@ -223,8 +223,11 @@ both fit: choosing renditions and media routes stays with the application, and s
   (`"1 foto"`, `"12 fotos"`). `HeadingLevel` defaults to 3 under a section's `h2`.
 - When an album's title fell back to another language than the page's, give that language's BCP 47 tag in `TitleLanguage` (on
   `AlbumSummary` and on `AlbumSection`). Only the title is in that language, so only the heading carries `lang`; the count, the cover's
-  and photos' text, the pager and your own content keep the page's language (WCAG 3.1.2, language of parts). The tag is yours to choose:
+  text, the pager and your own content keep the page's language (WCAG 3.1.2, language of parts). The tag is yours to choose:
   a content culture such as `pt` may declare `pt-BR` (`CultureLanguageTags.LanguageTagOf` in BuildingBlocks maps one to the other).
+- Set `GalleryImage.TextLanguage` when a photo's alternative and caption use a different language from the page. The image, any
+  named photo link, and the caption text get that tag. Other photos, credit text and pager labels keep the surrounding language.
+  Leave the property unset for photos whose text uses the page language. [W3C guidance](https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html)
 - `AlbumSection` renders one page of one album: a `Section` named by its heading, whose id is `album-` plus the slug, the same on every
   page and render, so `#album-patagonia` can be linked to; the page's photos in an `ImageGrid`; optional `ChildContent`, such as a link
   to the related tour; then the `Pager` (see [Pager](#pager)) with your `PagerLabel`, `PreviousText`, `NextText`, `PageLabelFormat` and `SurroundingPages`.
@@ -418,6 +421,69 @@ application words every credit and chooses the links:
 }])" />
 <CreditsList Items="_credits" />
 ```
+
+### Reviewed photo credits
+
+Use [ContentRights](../SharedKernel.ContentRights/README.md) for the reviewed attribution of each work. Use
+`PhotoCreditItem` to supply a stable fragment id, a photo-specific title for headings and link names, and its
+`PublicContentCredit`. Each photo can have its own terminology or rights. Supply localized field and link labels
+through `PhotoCreditLabels`.
+Existing BuildingBlocks image credits use the same projection through
+[`ContentAttribution.FromImageCredit`](../SharedKernel.ContentRights/README.md#existing-image-credits).
+
+`PhotoCredit` renders the full credit by default. With `Compact` it shows the supplied creator or credit line
+and the applicable terms near the photo. Set `DetailsHref` to the same photo's entry on a credits page, for
+example `LinkTarget.FromString("/credits#waterfall")`. Without the link, a native disclosure provides the complete
+credit next to the photo. The full credit retains the reviewed original work title when supplied. The caller's
+photo label names the credits entry and its links. An empty credit renders no markup. A record marked unknown can
+show the supplied rights statement as text.
+
+`PhotoCreditsPage` renders a section wherever the application places it. The application owns the route,
+page title, coverage statement, localization and publication permission. Supply at most
+`PhotoCreditsPage.MaxItems` credits in one result, and paginate the source for larger lists. Use the exact
+item id in each gallery link. A page heading uses level 1 by default, and its photo headings use the next level.
+
+```razor
+<PhotoCreditsPage Title="@Texts.PhotoCredits" HeadingId="photo-credits"
+                  Intro="@Texts.AlbumPhotoCreditScope" Items="@ApprovedCreditsOnPage" Labels="@CreditLabels" />
+```
+
+On a mixed-license gallery, give each reviewed credit its own terms label and address. The credit appears in
+the same figure caption as the photo's caption. The image's alternative text and any full-image link continue
+to describe the photo. Supply the caller-localized labels through `ImageGrid.CreditLabels` or
+`AlbumSection.CreditLabels`.
+
+```csharp
+var waterfall = new PhotoCreditItem("waterfall", "Rainforest waterfall", reviewedWaterfallCredit)
+{
+    TermsLabel = "CC BY 4.0",
+    DetailsHref = LinkTarget.FromString("/credits#waterfall"),
+};
+var ridge = new PhotoCreditItem("ridge", "Mountain ridge", reviewedArchiveCredit)
+{
+    TermsLabel = texts.ArchivePermission,
+    DetailsHref = LinkTarget.FromString("/credits#ridge"),
+};
+GalleryImage[] photos =
+[
+    new GalleryImage(waterfallImage, texts.WaterfallCaption) { ReviewedCredit = waterfall },
+    new GalleryImage(ridgeImage, texts.RidgeCaption) { ReviewedCredit = ridge },
+];
+PhotoCreditItem[] approvedCredits = [waterfall, ridge];
+```
+
+```razor
+<ImageGrid Images="@photos" CreditLabels="@CreditLabels" />
+```
+
+Pass `approvedCredits` to the credits page. For a large catalogue, link each photo to the page of results
+that contains its entry.
+
+A scope introduction can say “These credits cover the photos shown in the Waterfalls album. Other photos and
+site material may have separate terms.” Keep each creator, source, exact terms and change notice with the
+corresponding photo. Review the supplied terms and any requested placement before choosing a compact credit,
+a nearby full credit or a linked entry. Keep the image description and caption available for the image and
+preserve any source credit requirements. [Creative Commons attribution guidance](https://wiki.creativecommons.org/wiki/Recommended_practices_for_attribution)
 
 ### Bands and photos
 
