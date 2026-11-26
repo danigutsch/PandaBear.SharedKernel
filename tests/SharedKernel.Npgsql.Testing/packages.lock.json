@@ -541,6 +541,9 @@
           "PandaBear.SharedKernel.Testing.Xunit": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.IO": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Processes": {
         "type": "Project"
       },

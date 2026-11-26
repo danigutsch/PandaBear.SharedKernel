@@ -8,6 +8,7 @@ namespace SharedKernel.RepoConfig.Tool;
 /// <summary>Runs the literal command and observes its Linux process tree when stopped.</summary>
 internal static class ResourceBudgetProcess
 {
+    private const int NoSuchProcess = 3;
     private const int ObservationLimit = 4096;
     private static readonly TimeSpan ExitTimeout = TimeSpan.FromSeconds(2);
 
@@ -162,7 +163,11 @@ internal static class ResourceBudgetProcess
         return new ProcessIdentity(id, startTicks);
     }
 
-    private static string? ReadProc(string file, out bool readable)
+    /// <summary>Reads a procfs entry and distinguishes absence from an observation failure.</summary>
+    /// <param name="file">An absolute path to a procfs entry.</param>
+    /// <param name="readable">Whether the read established the entry contents or its absence.</param>
+    /// <returns>The entry contents, or <see langword="null"/> if unavailable.</returns>
+    internal static string? ReadProc(string file, out bool readable)
     {
         readable = true;
         try
@@ -171,6 +176,11 @@ internal static class ResourceBudgetProcess
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {
+            return null;
+        }
+        catch (IOException exception) when (exception.HResult == NoSuchProcess)
+        {
+            // Linux procfs returns ESRCH when the process exits after the file opens.
             return null;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)

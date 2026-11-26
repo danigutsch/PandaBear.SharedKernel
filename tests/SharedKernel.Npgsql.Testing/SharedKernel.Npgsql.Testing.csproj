@@ -17,6 +17,8 @@
 
     <ItemGroup>
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj" />
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj" />
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj" />
         <InternalsVisibleTo Include="SharedKernel.Npgsql.Tests" />
         <InternalsVisibleTo Include="SharedKernel.EventSourcing.Npgsql.Tests" />
         <InternalsVisibleTo Include="SharedKernel.EntityFrameworkCore.Tests" />
