@@ -29,6 +29,7 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
     /// <param name="payloadEncoding">The payload encoding.</param>
     /// <param name="extensionAttributesJson">The optional serialized extension attribute object.</param>
     /// <param name="enqueuedAt">The time at which the message was enqueued.</param>
+    /// <param name="workflowCorrelationId">The optional application-supplied workflow identity.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="id" /> is empty.</exception>
     public IntegrationEventOutboxMessage(
         Guid id,
@@ -45,7 +46,8 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
         string? payload,
         EventPayloadEncoding payloadEncoding,
         string? extensionAttributesJson,
-        DateTimeOffset enqueuedAt)
+        DateTimeOffset enqueuedAt,
+        Guid? workflowCorrelationId = null)
         : base(
             envelopeSpec,
             envelopeSpecVersion,
@@ -68,6 +70,7 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
 
         Id = id;
         EnqueuedAt = enqueuedAt;
+        WorkflowCorrelationId = workflowCorrelationId;
     }
 
     /// <summary>
@@ -82,6 +85,9 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
 
     /// <inheritdoc />
     public DateTimeOffset EnqueuedAt { get; private set; }
+
+    /// <summary>The workflow correlation identifier supplied at enqueue, when available.</summary>
+    public Guid? WorkflowCorrelationId { get; private set; }
 
     /// <inheritdoc />
     public DateTimeOffset? PublishedAt { get; private set; }

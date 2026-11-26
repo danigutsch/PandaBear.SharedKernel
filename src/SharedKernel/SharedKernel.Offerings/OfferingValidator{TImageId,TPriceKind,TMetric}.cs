@@ -32,7 +32,7 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
         ArgumentNullException.ThrowIfNull(definition.Schedule, nameof(definition));
 
         var dated = definition.Schedule.StartDate is not null || definition.Schedule.EndDate is not null;
-        var schedule = Schedule(definition.Schedule, dated);
+        var schedule = OfferingSchedules.Validate(definition.Schedule, _rules.MinYear, _rules.MaxYear, _rules.MaxDurationDays, _errors);
         var signUpLink = SignUpLink(definition.SignUpLink);
         var prices = definition.Prices ?? [];
         var groupGiven = definition.GroupCondition is { } group
@@ -70,119 +70,6 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
             Translations = translations,
             PriceKinds = _rules.PriceKinds,
         });
-    }
-
-    private OfferingSchedule? Schedule(OfferingScheduleDefinition definition, bool dated)
-    {
-        var availability = definition.Availability;
-        var defined = availability != OfferingAvailability.Unspecified && Enum.IsDefined(availability);
-        if (!defined)
-        {
-            Add(OfferingFields.Availability, availability == OfferingAvailability.Unspecified ? "Availability is required." : "The availability is not supported.");
-        }
-
-        var dates = Dates(definition);
-        if (defined)
-        {
-            AvailabilityRules(availability, dated, definition.Year);
-        }
-
-        if (dated && definition.Year is not null)
-        {
-            Add(OfferingFields.Year, "The year comes from the dates; leave it empty.");
-        }
-        else if (!dated && availability != OfferingAvailability.OnRequest && definition.Year is { } year && !InYears(year))
-        {
-            Add(OfferingFields.Year, Invariant($"Year must be between {_rules.MinYear} and {_rules.MaxYear}."));
-        }
-
-        Duration(definition.DurationDays, dates);
-
-        return !_errors.HasErrors && definition.DurationDays is { } days
-            ? new OfferingSchedule(availability, dates, dates?.StartDate.Year ?? definition.Year, days)
-            : null;
-    }
-
-    private DateOnlyRange? Dates(OfferingScheduleDefinition definition)
-    {
-        if (definition.StartDate is { } start && definition.EndDate is { } end)
-        {
-            var range = DateOnlyRange.Create(start, end);
-            if (range.IsFailure)
-            {
-                _errors.Add(range);
-                return null;
-            }
-
-            if (!InYears(start.Year) || !InYears(end.Year))
-            {
-                Add(OfferingFields.StartDate, Invariant($"The dates must be between {_rules.MinYear} and {_rules.MaxYear}."));
-            }
-
-            return range.Value;
-        }
-
-        if (definition.StartDate is not null)
-        {
-            Add(OfferingFields.EndDate, "End date is required when a start date is given.");
-        }
-        else if (definition.EndDate is not null)
-        {
-            Add(OfferingFields.StartDate, "Start date is required when an end date is given.");
-        }
-
-        return null;
-    }
-
-    private void AvailabilityRules(OfferingAvailability availability, bool dated, int? year)
-    {
-        switch (availability)
-        {
-            case OfferingAvailability.Scheduled or OfferingAvailability.SoldOut:
-                if (!dated)
-                {
-                    Add(OfferingFields.StartDate, "A scheduled or sold-out offering needs its dates.");
-                }
-
-                break;
-            case OfferingAvailability.OnRequest:
-                if (dated)
-                {
-                    Add(OfferingFields.StartDate, "An offering on request has no dates.");
-                }
-
-                if (year is not null)
-                {
-                    Add(OfferingFields.Year, "An offering on request has no year.");
-                }
-
-                break;
-            case OfferingAvailability.DatesToBeConfirmed:
-                if (!dated && year is null)
-                {
-                    Add(OfferingFields.Year, "An offering whose dates are to be confirmed needs a year until it has dates.");
-                }
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(availability), availability, "Only a valid availability has date rules.");
-        }
-    }
-
-    private void Duration(int? durationDays, DateOnlyRange? dates)
-    {
-        if (durationDays is not { } days)
-        {
-            Add(OfferingFields.DurationDays, "Duration is required.");
-        }
-        else if (days < 1 || days > _rules.MaxDurationDays)
-        {
-            Add(OfferingFields.DurationDays, Invariant($"Duration must be between 1 and {_rules.MaxDurationDays} days."));
-        }
-        else if (dates is not null && days != dates.Days)
-        {
-            Add(OfferingFields.DurationDays, "Duration must equal the number of days from the start to the end date, both included.");
-        }
     }
 
     private WebUrl? SignUpLink(string? value)
@@ -519,8 +406,6 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
 
         return new ReadOnlyCollection<OfferingTranslation>([.. translations]);
     }
-
-    private bool InYears(int year) => year >= _rules.MinYear && year <= _rules.MaxYear;
 
     private bool Add(string field, string message)
     {

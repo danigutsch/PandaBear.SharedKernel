@@ -55,6 +55,7 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
             ? consumerName
             : consumerName[..ConsumerNameMaxLength];
         ReceivedAt = receivedAt;
+        WorkflowCorrelationId = WorkflowCorrelationExtension.Read(ExtensionAttributesJson);
     }
 
     private IntegrationEventTransportMessage()
@@ -69,6 +70,9 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
 
     /// <summary>When the message was received.</summary>
     public DateTimeOffset ReceivedAt { get; private set; }
+
+    /// <summary>The workflow correlation identifier carried by the envelope, when available.</summary>
+    public Guid? WorkflowCorrelationId { get; private set; }
 
     /// <summary>When the consumer finished processing the message, or null while it is unprocessed.</summary>
     public DateTimeOffset? ProcessedAt { get; private set; }

@@ -47,6 +47,49 @@ public sealed class IntegrationEventTransportMessageTests
     }
 
     [Fact]
+    public void Workflow_correlation_stays_on_the_envelope_after_a_consume_failure()
+    {
+        // Arrange
+        var workflowId = Guid.CreateVersion7();
+        var extensions = $$"""{"workflowid":"{{workflowId:D}}","traceparent":"trace-context"}""";
+        var envelope = TransportEnvelopeFactory.Create("workflow-retry", extensions);
+        var receivedAt = new DateTimeOffset(2026, 7, 6, 12, 0, 0, TimeSpan.Zero);
+        var message = new IntegrationEventTransportMessage(Guid.CreateVersion7(), "catalog", envelope, receivedAt);
+
+        // Act
+        message.MarkConsumeFailed(receivedAt.AddSeconds(1), receivedAt.AddSeconds(3), "handler type");
+
+        // Assert
+        message.WorkflowCorrelationId.ShouldBe(workflowId);
+        message.ExtensionAttributesJson.ShouldBe(extensions);
+        message.Payload.ShouldBe(envelope.Payload);
+        message.ConsumeAttempts.ShouldBe(1);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("[]")]
+    [InlineData("{")]
+    [InlineData("""{"traceparent":"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00"}""")]
+    [InlineData("""{"workflowid":42}""")]
+    [InlineData("""{"workflowid":"invalid"}""")]
+    [InlineData("""{"workflowid":"00000000-0000-0000-0000-000000000000"}""")]
+    [InlineData("""{"workflowid":"fa5a7401-b741-48eb-986d-64cc66e80890","workflowid":"fa5a7401-b741-48eb-986d-64cc66e80890"}""")]
+    public void Transport_leaves_unrecognized_or_ambiguous_workflow_metadata_absent(string? extensions)
+    {
+        // Arrange
+        var envelope = TransportEnvelopeFactory.Create("workflow-unknown", extensions);
+        var receivedAt = new DateTimeOffset(2026, 7, 6, 12, 0, 0, TimeSpan.Zero);
+
+        // Act
+        var message = new IntegrationEventTransportMessage(Guid.CreateVersion7(), "catalog", envelope, receivedAt);
+
+        // Assert
+        message.WorkflowCorrelationId.ShouldBeNull();
+        message.ExtensionAttributesJson.ShouldBe(extensions);
+    }
+
+    [Fact]
     public void MarkConsumeFailed_records_retry_state_and_truncates_error()
     {
         // Arrange

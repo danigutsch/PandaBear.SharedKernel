@@ -1,3 +1,5 @@
+using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+
 namespace SharedKernel.EntityFrameworkCore.Tests;
 
 /// <summary>
@@ -144,6 +146,59 @@ public sealed class ContextQualifiedMessagingRegistrationTests
         transportedEventIds.First.ShouldBe(publishedEventIds.First.ToString("D"));
         transportedEventIds.Second.ShouldBe(publishedEventIds.Second.ToString("D"));
         scenario.GetApplicationPublishedCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Workflow_correlation_matches_the_same_event_before_and_after_relay()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var workflowCorrelationId = Guid.CreateVersion7();
+        await using var scenario = ContextQualifiedMessagingScenario.Create();
+        var eventId = await scenario.EnqueueInFirstContext(workflowCorrelationId, ct);
+        var legacyEventId = await scenario.EnqueueInFirstContext(workflowCorrelationId: null, ct);
+        var workflowFilter = new IntegrationEventDeliveryFilter(null, null, null)
+        {
+            WorkflowCorrelationId = workflowCorrelationId
+        };
+        var legacyFilter = new IntegrationEventDeliveryFilter(legacyEventId.ToString("D"), null, null);
+
+        // Act
+        var pending = await scenario.ReadFirstOutbox(workflowFilter, ct);
+        var firstPublished = await scenario.PublishFirstRelay(ct);
+        var secondPublished = await scenario.PublishFirstRelay(ct);
+        var transported = await scenario.ReadFirstTransport("first-consumer", workflowFilter, ct);
+        var otherConsumer = await scenario.ReadFirstTransport("second-consumer", workflowFilter, ct);
+        var legacy = await scenario.ReadFirstTransport("first-consumer", legacyFilter, ct);
+
+        // Assert
+        firstPublished.ShouldBe(1);
+        secondPublished.ShouldBe(1);
+        var pendingEntry = pending.Entries.ShouldHaveSingleItem();
+        pendingEntry.EventId.ShouldBe(eventId.ToString("D"));
+        pendingEntry.WorkflowCorrelationId.ShouldBe(workflowCorrelationId);
+        var transportedEntry = transported.Entries.ShouldHaveSingleItem();
+        transportedEntry.EventId.ShouldBe(pendingEntry.EventId);
+        transportedEntry.WorkflowCorrelationId.ShouldBe(pendingEntry.WorkflowCorrelationId);
+        otherConsumer.Entries.ShouldBeEmpty();
+        legacy.Entries.ShouldHaveSingleItem().WorkflowCorrelationId.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Explicit_empty_workflow_correlation_is_rejected_without_staging_an_event()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        await using var scenario = ContextQualifiedMessagingScenario.Create();
+        Func<Task> enqueue = () => scenario.EnqueueInFirstContext(Guid.Empty, ct).AsTask();
+
+        // Act
+        var error = await enqueue.ShouldThrow<ArgumentException>();
+
+        // Assert
+        error.ParamName.ShouldBe("workflowCorrelationId");
+        var counts = await scenario.CountOutboxMessages(ct);
+        counts.First.ShouldBe(0);
     }
 
     [Fact]

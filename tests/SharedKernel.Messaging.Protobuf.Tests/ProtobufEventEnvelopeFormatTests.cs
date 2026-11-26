@@ -13,7 +13,10 @@ public sealed class ProtobufEventEnvelopeFormatTests
     public void EncodeDecode_withjsonpayload_roundtripstheenvelope()
     {
         // Arrange
-        var envelope = ProtobufTestEnvelopes.Create("""{"name":"Alps"}""", EventPayloadEncoding.Json, "application/json", """{"traceparent":"00-abc-def-01"}""");
+        var workflowId = Guid.CreateVersion7();
+        const string TraceParent = "00-abc-def-01";
+        var attributes = $$"""{"traceparent":"{{TraceParent}}","workflowid":"{{workflowId:D}}"}""";
+        var envelope = ProtobufTestEnvelopes.Create("""{"name":"Alps"}""", EventPayloadEncoding.Json, "application/json", attributes);
 
         // Act
         var result = ProtobufEventEnvelopeFormat.Decode(ProtobufEventEnvelopeFormat.Encode(envelope));
@@ -31,7 +34,9 @@ public sealed class ProtobufEventEnvelopeFormatTests
         result.DataSchema.ShouldBe(envelope.DataSchema);
         result.Payload.ShouldBe("""{"name":"Alps"}""");
         result.PayloadEncoding.ShouldBe(EventPayloadEncoding.Json);
-        result.ExtensionAttributesJson.ShouldBe("""{"traceparent":"00-abc-def-01"}""");
+        using var extensions = JsonDocument.Parse(result.ExtensionAttributesJson.ShouldNotBeNull());
+        extensions.RootElement.GetProperty("traceparent").GetString().ShouldBe(TraceParent);
+        extensions.RootElement.GetProperty("workflowid").GetGuid().ShouldBe(workflowId);
     }
 
     [Fact]

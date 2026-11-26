@@ -58,6 +58,8 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
         builder.Property(message => message.EnvelopeSpecVersion).HasMaxLength(20).IsRequired();
         builder.Property(message => message.EventId).HasMaxLength(200).IsRequired();
         builder.HasIndex(message => message.EventId).IsUnique();
+        builder.HasIndex(message => new { message.WorkflowCorrelationId, message.EnqueuedAt, message.Id })
+            .IsDescending(false, true, true);
         builder.Property(message => message.Source).HasConversion(static uri => uri.ToString(), static value => new Uri(value)).HasMaxLength(2048).IsRequired();
         builder.Property(message => message.EventType).HasMaxLength(EventEnvelope.EventTypeMaxLength).IsRequired();
         builder.Property(message => message.Subject).HasMaxLength(500);

@@ -56,9 +56,10 @@ public sealed class AppDbContext : DbContext;
 Use `IntegrationEventDeliveryInspection.ReadOutbox` with the outbox storage mapping and
 `ReadTransport` with the transport storage mapping and an exact consumer name. The queries
 return pending rows and include inbound terminal failures. You can filter by exact event ID,
-event type, or an inclusive UTC storage-time cutoff. Pages hold up to 100 rows and are ordered
-by timestamp and storage identifier. Pass the returned cursor with the same scope and filters
-to continue. The storage can change between queries as normal delivery completes.
+event type, workflow correlation ID, or an inclusive UTC storage-time cutoff. Pages hold up to
+100 rows and are ordered by timestamp and storage identifier. Pass the returned cursor with
+the same scope and filters to continue. The storage can change between queries as normal
+delivery completes.
 
 Use `ReadMatchingOutbox` or `ReadMatchingTransport` to restrict a page to event identifiers
 from a durable application relationship. Supply a query from the same EF Core context that
@@ -70,11 +71,30 @@ application metadata as well as the delivery metadata.
 Use `IntegrationEventDeliveryInspection.ReadRetainedOutbox` with the same outbox mapping for
 an exact event ID lookup, including after successful publication. The result includes the
 publication time, failed attempt count and retry timestamps. An absent or purged row returns
-no result. The lookup uses the existing unique event ID index and requires no storage migration.
+no result. The lookup uses the existing unique event ID index.
 
 Pages contain delivery metadata only. Keep raw payloads, extension attributes and error details
 outside the operator projection. The application controls access to event identifiers and any
 workflow that claims, replays, exports or removes a message.
+
+### Workflow correlation
+
+Use the `IIntegrationEventOutbox.Enqueue(integrationEvent, workflowCorrelationId, ct)`
+overload to associate a nonempty application-chosen GUID with an event. The EF outbox writes the
+ID independently of payload serialization. The relay carries it in the `workflowid` envelope
+extension as a GUID string in D format. The PostgreSQL transport records the typed ID with
+the received envelope. Missing, malformed or repeated reserved values leave the typed ID
+absent. The original enqueue overload leaves the ID absent.
+
+Set `IntegrationEventDeliveryFilter.WorkflowCorrelationId` to read matching pending rows
+through the same bounded inspection API. Its existing delivery and consumer predicates apply.
+Choose and authorize workflow identities in the application independently of event identity,
+causation and tracing. A received ID alone establishes no domain ownership.
+
+Apply the owning contexts' migrations for the nullable column and index on each affected
+outbox and transport table before deploying updated readers or publishers. Existing rows start
+with no workflow ID. Enable correlated enqueue after the participating transports can store
+the typed ID. Older transports can preserve the extension without populating the query column.
 
 ## Completed inbox duplicates
 

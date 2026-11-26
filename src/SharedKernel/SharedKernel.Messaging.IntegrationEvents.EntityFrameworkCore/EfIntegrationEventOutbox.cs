@@ -36,6 +36,24 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
 
     /// <inheritdoc />
     public ValueTask Enqueue<TIntegrationEvent>(TIntegrationEvent integrationEvent, CancellationToken ct)
+        where TIntegrationEvent : IIntegrationEvent =>
+        Enqueue(integrationEvent, workflowCorrelationId: null, ct);
+
+    /// <inheritdoc />
+    public ValueTask Enqueue<TIntegrationEvent>(
+        TIntegrationEvent integrationEvent, Guid workflowCorrelationId, CancellationToken ct)
+        where TIntegrationEvent : IIntegrationEvent
+    {
+        if (workflowCorrelationId == Guid.Empty)
+        {
+            throw new ArgumentException("Workflow correlation ID must not be empty.", nameof(workflowCorrelationId));
+        }
+
+        return Enqueue(integrationEvent, (Guid?)workflowCorrelationId, ct);
+    }
+
+    private ValueTask Enqueue<TIntegrationEvent>(
+        TIntegrationEvent integrationEvent, Guid? workflowCorrelationId, CancellationToken ct)
         where TIntegrationEvent : IIntegrationEvent
     {
         ArgumentNullException.ThrowIfNull(integrationEvent);
@@ -44,7 +62,8 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
         dbContext.Set<IntegrationEventOutboxMessage>().Add(IntegrationEventOutboxMessageFactory.Create(
             integrationEvent,
             serializer,
-            timeProvider.GetUtcNow()));
+            timeProvider.GetUtcNow(),
+            workflowCorrelationId));
 
         return ValueTask.CompletedTask;
     }

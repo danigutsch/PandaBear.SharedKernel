@@ -125,6 +125,8 @@ SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDel
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.StorageId.init -> void
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.TerminalAt.get -> System.DateTimeOffset?
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.TerminalAt.init -> void
+SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.WorkflowCorrelationId.get -> System.Guid?
+SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.WorkflowCorrelationId.init -> void
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.Deconstruct(out string? EventId, out string? EventType, out System.DateTimeOffset? RecordedSince) -> void
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.Equals(SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter other) -> bool
@@ -136,6 +138,8 @@ SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDel
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.IntegrationEventDeliveryFilter(string? EventId, string? EventType, System.DateTimeOffset? RecordedSince) -> void
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.RecordedSince.get -> System.DateTimeOffset?
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.RecordedSince.init -> void
+SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.WorkflowCorrelationId.get -> System.Guid?
+SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.WorkflowCorrelationId.init -> void
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryInspection
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage
 SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.<Clone>$() -> SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage!

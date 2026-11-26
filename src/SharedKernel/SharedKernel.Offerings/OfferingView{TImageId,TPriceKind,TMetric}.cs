@@ -28,9 +28,7 @@ public sealed class OfferingView<TImageId, TPriceKind, TMetric>
         Prices = PricesOf(data, translation);
         Steps = [.. data.Steps.Zip(translation.StepTexts, (step, text) => (step, text))
             .Select((pair, index) => new ProgramStepView<TImageId, TMetric>(index + 1, pair.step, pair.text))];
-        CallToAction = data.Schedule.Availability == OfferingAvailability.Scheduled && data.SignUpLink is not null
-            ? OfferingCallToAction.SignUp
-            : OfferingCallToAction.Contact;
+        CallToAction = OfferingCallToActions.For(data.Schedule.Availability, data.SignUpLink is not null);
     }
 
     /// <summary>Gets the culture of the text, which differs from the requested one when the view fell back; mark the text with its <c>lang</c>.</summary>

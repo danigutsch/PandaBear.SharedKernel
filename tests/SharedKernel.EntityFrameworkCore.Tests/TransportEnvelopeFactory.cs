@@ -8,8 +8,9 @@ internal static class TransportEnvelopeFactory
 {
     /// <summary>Creates a JSON CloudEvents envelope for the <c>admin.tour.created</c> event with the given identifier and the current UTC time.</summary>
     /// <param name="eventId">The identifier assigned to the envelope.</param>
+    /// <param name="extensionAttributesJson">The optional serialized extension attributes.</param>
     /// <returns>The envelope with an empty JSON object payload.</returns>
-    public static EventEnvelope Create(string eventId) => new(
+    public static EventEnvelope Create(string eventId, string? extensionAttributesJson = null) => new(
         CloudEventConstants.Spec,
         CloudEventConstants.SpecVersion,
         eventId,
@@ -22,5 +23,5 @@ internal static class TransportEnvelopeFactory
         null,
         "{}",
         EventPayloadEncoding.Json,
-        null);
+        extensionAttributesJson);
 }
