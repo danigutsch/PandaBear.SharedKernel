@@ -59,7 +59,7 @@ public sealed class PhotoCreditsSample : ComponentBase
             builder.CloseComponent();
         }
         builder.OpenComponent<PhotoCreditsPage>(5);
-        builder.AddComponentParameter(6, nameof(PhotoCreditsPage.Title), "Créditos");
+        builder.AddComponentParameter(6, nameof(PhotoCreditsPage.Heading), "Créditos");
         builder.AddComponentParameter(7, nameof(PhotoCreditsPage.Intro), "Créditos para as fotos da Serra Azul.");
         builder.AddComponentParameter(8, nameof(PhotoCreditsPage.Items), new[] { item });
         builder.AddComponentParameter(9, nameof(PhotoCreditsPage.Labels), Labels);

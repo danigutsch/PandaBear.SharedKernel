@@ -18,7 +18,7 @@ public sealed partial class VideoLink
     /// <summary>Gets or sets the title of the video, shown under the poster and the start of the link's name.</summary>
     [Parameter]
     [EditorRequired]
-    public string Title { get; set; } = string.Empty;
+    public string Heading { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the hint read after the title that says where the link goes, for example "(opens YouTube)". Caller-supplied so it
@@ -36,11 +36,15 @@ public sealed partial class VideoLink
     [EditorRequired]
     public ResponsiveImage? Poster { get; set; }
 
+    /// <summary>Gets or sets the optional short credit for <see cref="Poster" />, displayed outside the video link.</summary>
+    [Parameter]
+    public ImageCreditLine? PosterCredit { get; set; }
+
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Href);
-        ArgumentException.ThrowIfNullOrWhiteSpace(Title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(Heading);
         ArgumentException.ThrowIfNullOrWhiteSpace(SiteHint);
         ArgumentNullException.ThrowIfNull(Poster);
         if (!WebUrl.CreateHttps(Href.Value).IsSuccess)

@@ -5,7 +5,7 @@
         @for (var index = 0; index < Albums.Count; index++)
         {
             var album = Albums[index];
-            <Card @key="album.Href.Value" Title="@album.Title" Href="@album.Href" Image="@album.Cover" EagerImage="@(index < EagerCount)" HeadingLevel="@HeadingLevel" TitleLanguage="@album.TitleLanguage"
+            <Card @key="album.Href.Value" Heading="@album.Title" Href="@album.Href" Image="@album.Cover" ImageCredit="@album.CoverCredit" EagerImage="@(index < EagerCount)" HeadingLevel="@HeadingLevel" TitleLanguage="@album.TitleLanguage"
                   CardStyle="@CardStyle" ImageAspect="@ImageAspect" ImageShadow="@ImageShadow" TextAlignment="@TextAlignment" MoreText="@MoreText" MoreVariant="@MoreVariant" MoreSize="@MoreSize">
                 @if (!string.IsNullOrWhiteSpace(album.PhotoCountText))
                 {

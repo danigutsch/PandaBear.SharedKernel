@@ -112,23 +112,46 @@ public sealed class PageSectionsViewTests : BunitContext
     }
 
     [Fact]
-    public void The_background_the_photo_and_the_decorative_poster_stay_without_a_caption_or_credit()
+    public void A_caption_resolver_captions_only_the_mosaic_and_missing_credit_keeps_all_images_credit_free()
     {
         // Arrange & Act
         var cut = this.RenderSections([Rich()], parameters => parameters
-            .Add(view => view.ImageCaption, Caption)
-            .Add(view => view.ImageCredit, Credit));
+            .Add(view => view.ImageCaption, Caption));
 
         // Assert
         var main = Html(cut);
         main.Split("Legenda 1", StringSplitOptions.None).Length.ShouldBe(2);
-        main.Split("Foto: Autor 1", StringSplitOptions.None).Length.ShouldBe(2);
-        Compact(cut.Find(".site-split__media figcaption").InnerHtml).ShouldBe(CaptionMarkup(Photo));
+        cut.Find(".site-split__media figcaption").TextContent.Trim().ShouldBe("Legenda 1");
         cut.Find(".site-video-link").TextContent.ShouldNotContain("Legenda", StringComparison.Ordinal);
         cut.Find(".site-video-link img").GetAttribute("alt").ShouldBe(string.Empty);
-        cut.FindAll(".site-band__media figcaption, .site-band__media .site-image-credit").ShouldBeEmpty();
         cut.Find(".site-byline").TextContent.ShouldNotContain("Legenda", StringComparison.Ordinal);
-        cut.FindAll(".site-byline .site-image-credit").ShouldBeEmpty();
+        cut.FindAll(".site-image-credit").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void The_image_credit_resolver_reaches_the_background_person_video_and_mosaic_images()
+    {
+        // Arrange
+        var section = Plain(new()
+        {
+            Heading = "Explore a China",
+            Tone = SectionTone.Image,
+            BackgroundImageId = 2,
+            Person = new PagePersonDefinition<int>(3, "Ana Exemplo", "Fundadora"),
+            Video = new PageVideoDefinition<int>("https://www.youtube.com/watch?v=abc123", 4, "Nossa viagem"),
+            ImageIds = [Photo],
+        });
+
+        // Act
+        var cut = this.RenderSections([section], parameters => parameters.Add(view => view.ImageCredit, Credit));
+
+        // Assert
+        var captions = cut.FindAll("small.site-image-credit");
+        captions.Select(caption => caption.TextContent.Trim()).Order(StringComparer.Ordinal).ToArray()
+            .ShouldBe(["Foto: Autor 1 CC BY 4.0", "Foto: Autor 2 CC BY 4.0",
+                "Foto: Autor 3 CC BY 4.0", "Foto: Autor 4 CC BY 4.0"]);
+        cut.FindAll(".site-image-credit a[rel='license']").Count.ShouldBe(4);
+        cut.FindAll(".site-video-link .site-image-credit").ShouldBeEmpty();
     }
 
     [Fact]

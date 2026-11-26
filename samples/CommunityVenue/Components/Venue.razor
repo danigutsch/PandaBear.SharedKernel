@@ -15,9 +15,9 @@
     </SiteHeader>
     <main id="main-content" tabindex="-1">
         <Band Tone="BandTone.Muted">
-            <Section Level="1" Title="@venuePage.Title" Intro="@venuePage.Intro" />
+            <Section Level="1" Heading="@venuePage.Title" Intro="@venuePage.Intro" />
         </Band>
-        <Section Title="@venuePage.Heading" HeadingId="welcome">
+        <Section Heading="@venuePage.Heading" HeadingId="welcome">
             <Split MediaSide="SplitMediaSide.Start">
                 <ChildContent><p>@venuePage.Body</p></ChildContent>
                 <Media>
@@ -27,7 +27,7 @@
             </Split>
         </Section>
         <Band Tone="BandTone.Muted">
-            <Section Title="@(Portuguese ? "Informações práticas" : "At a glance")" HeadingId="practical">
+            <Section Heading="@(Portuguese ? "Informações práticas" : "At a glance")" HeadingId="practical">
                 <FactGrid Cards="Facts" />
                 <ActionRow>
                     <ButtonLink Href="@LinkTarget.FromString(PeerPage)">@(venuePage.Key == "visit"

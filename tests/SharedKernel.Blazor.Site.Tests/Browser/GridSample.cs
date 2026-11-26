@@ -45,7 +45,7 @@ public sealed class GridSample : ComponentBase
             foreach (var index in Enumerable.Range(1, 8))
             {
                 grid.OpenComponent<Card>(0);
-                grid.AddComponentParameter(1, nameof(Card.Title), "Tour " + index);
+                grid.AddComponentParameter(1, nameof(Card.Heading), "Tour " + index);
                 grid.CloseComponent();
             }
         }));

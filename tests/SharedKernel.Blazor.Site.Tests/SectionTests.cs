@@ -15,7 +15,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.Intro, "Pick one.")
             .AddChildContent("<p id=\"body\">Body</p>"));
 
@@ -32,8 +32,8 @@ public sealed class SectionTests : BunitContext
     public void Section_markup_is_the_same_on_every_render_so_prerendering_and_the_circuit_agree()
     {
         // Arrange & Act
-        var first = Render<Section>(parameters => parameters.Add(component => component.Title, "Tours"));
-        var second = Render<Section>(parameters => parameters.Add(component => component.Title, "Tours"));
+        var first = Render<Section>(parameters => parameters.Add(component => component.Heading, "Tours"));
+        var second = Render<Section>(parameters => parameters.Add(component => component.Heading, "Tours"));
 
         // Assert
         second.Markup.ShouldBe(first.Markup);
@@ -44,7 +44,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.HeadingId, "tours-heading")
             .Add(component => component.Intro, "Pick one.")
             .AddChildContent("<p>Body</p>"));
@@ -63,7 +63,7 @@ public sealed class SectionTests : BunitContext
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
             .Add(component => component.Eyebrow, eyebrow)
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.HeadingId, "tours-heading")
             .Add(component => component.Intro, "Pick one.")
             .AddChildContent("<p>Body</p>"));
@@ -82,7 +82,7 @@ public sealed class SectionTests : BunitContext
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
             .Add(component => component.Eyebrow, "Adventure")
-            .Add(component => component.Title, "By Vespa through Italy")
+            .Add(component => component.Heading, "By Vespa through Italy")
             .Add(component => component.HeadingId, "italy-heading")
             .Add(component => component.Level, level)
             .Add(component => component.Intro, "Ten days."));
@@ -107,7 +107,7 @@ public sealed class SectionTests : BunitContext
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
             .Add(component => component.Eyebrow, "<b>New</b> & safe")
-            .Add(component => component.Title, "Tours"));
+            .Add(component => component.Heading, "Tours"));
 
         // Assert
         cut.FindAll("b").ShouldBeEmpty();
@@ -119,7 +119,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.HeadingId, "tours-heading"));
 
         // Assert
@@ -137,7 +137,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.HeadingId, id));
 
         // Assert
@@ -152,7 +152,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.Level, level));
 
         // Assert
@@ -166,7 +166,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.Level, level));
 
         // Assert
@@ -177,9 +177,9 @@ public sealed class SectionTests : BunitContext
     public void Divider_is_decorative_and_can_be_switched_off()
     {
         // Arrange & Act
-        var with = Render<Section>(parameters => parameters.Add(component => component.Title, "Tours"));
+        var with = Render<Section>(parameters => parameters.Add(component => component.Heading, "Tours"));
         var without = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.Divider, false));
 
         // Assert
@@ -192,7 +192,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.Class, "extra")
             .AddUnmatched("id", "tours"));
 
@@ -207,7 +207,7 @@ public sealed class SectionTests : BunitContext
     public void A_section_without_media_keeps_its_header_and_body_as_children()
     {
         // Arrange & Act
-        var cut = Render<Section>(parameters => parameters.Add(component => component.Title, "Trips"));
+        var cut = Render<Section>(parameters => parameters.Add(component => component.Heading, "Trips"));
 
         // Assert
         var section = cut.Find("section");
@@ -220,7 +220,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Past trips")
+            .Add(component => component.Heading, "Past trips")
             .Add(component => component.Media, "<img id=\"photo\" src=\"/p.jpg\" alt=\"\">")
             .AddChildContent("<a id=\"more\" href=\"/trips\">More</a>"));
 
@@ -242,7 +242,7 @@ public sealed class SectionTests : BunitContext
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
             .Add(component => component.Eyebrow, "Journal")
-            .Add(component => component.Title, "Past trips")
+            .Add(component => component.Heading, "Past trips")
             .Add(component => component.Media, "<img id=\"photo\" src=\"/p.jpg\" alt=\"\">"));
 
         // Assert
@@ -262,7 +262,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.TextAlignment, alignment)
             .Add(component => component.Class, "extra"));
 
@@ -275,7 +275,7 @@ public sealed class SectionTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.TextAlignment, (SiteAlignment)5));
 
         // Assert

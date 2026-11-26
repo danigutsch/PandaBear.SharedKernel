@@ -43,7 +43,7 @@ public sealed class LayoutSample : ComponentBase
         builder.CloseComponent();
         builder.OpenElement(5, "main");
         builder.OpenComponent<Section>(6);
-        builder.AddComponentParameter(7, nameof(Section.Title), "Trips");
+        builder.AddComponentParameter(7, nameof(Section.Heading), "Trips");
         builder.AddComponentParameter(8, nameof(Section.ChildContent), (RenderFragment)Grid);
         builder.CloseComponent();
         builder.OpenElement(9, "div");
@@ -73,7 +73,7 @@ public sealed class LayoutSample : ComponentBase
             for (var index = 0; index < Cards; index++)
             {
                 cards.OpenComponent<Card>(0);
-                cards.AddComponentParameter(1, nameof(Card.Title), $"Trip {index + 1}");
+                cards.AddComponentParameter(1, nameof(Card.Heading), $"Trip {index + 1}");
                 cards.AddComponentParameter(2, nameof(Card.Image), ResponsiveImage.Create(LinkTarget.FromString("/trip.jpg"), 800, 600, ImageAlternative.Decorative()));
                 cards.CloseComponent();
             }

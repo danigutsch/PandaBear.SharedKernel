@@ -9,7 +9,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Subtitle, "Small groups")
             .Add(component => component.Actions, "<a id=\"cta\" href=\"/tours\">Tours</a>"));
 
@@ -19,6 +19,32 @@ public sealed class HeroTests : BunitContext
         cut.Find(".site-hero__subtitle").TextContent.ShouldBe("Small groups");
         cut.Find(".site-hero__actions #cta").ShouldNotBeNull();
         cut.FindAll("img").ShouldBeEmpty();
+        cut.FindAll(".site-image-credit").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(HeroLayout.Split)]
+    [InlineData(HeroLayout.Cover)]
+    public void A_hero_image_credit_links_to_its_attribution_and_license(HeroLayout layout)
+    {
+        // Arrange
+        var credit = new ImageCreditLine("Photo: Ana Lima", "CC BY 4.0",
+            SiteFixtures.Link("https://creativecommons.org/licenses/by/4.0/"), SiteFixtures.Link("/credits#hero"));
+
+        // Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Heading, "Discover")
+            .Add(component => component.Layout, layout)
+            .Add(component => component.Image, SiteFixtures.PictureImage())
+            .Add(component => component.ImageCredit, credit));
+
+        // Assert
+        cut.Find(".site-hero__media img").GetAttribute("fetchpriority").ShouldBe("high");
+        var caption = cut.Find("small.site-image-credit");
+        caption.QuerySelector("a[href='/credits#hero']").ShouldNotBeNull().TextContent.ShouldBe("Photo: Ana Lima");
+        caption.QuerySelector("a[rel='license']").ShouldNotBeNull().GetAttribute("href")
+            .ShouldBe("https://creativecommons.org/licenses/by/4.0/");
+        cut.FindAll(".site-hero--cover .site-hero__media .site-image-credit").ShouldBeEmpty();
     }
 
     [Theory]
@@ -28,7 +54,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Subtitle, subtitle)
             .Add(component => component.Actions, "<a href=\"/tours\">Tours</a>"));
 
@@ -44,7 +70,7 @@ public sealed class HeroTests : BunitContext
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
             .Add(component => component.Eyebrow, "Since 2004")
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Subtitle, "Small groups"));
 
         // Assert
@@ -65,7 +91,7 @@ public sealed class HeroTests : BunitContext
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
             .Add(component => component.Eyebrow, "Since 2004")
-            .Add(component => component.Title, "Discover"));
+            .Add(component => component.Heading, "Discover"));
 
         // Assert
         var heading = cut.Find("hgroup.site-hero__heading");
@@ -78,7 +104,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Subtitle, "Small groups"));
 
         // Assert
@@ -96,7 +122,7 @@ public sealed class HeroTests : BunitContext
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
             .Add(component => component.Eyebrow, eyebrow)
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Subtitle, subtitle));
 
         // Assert
@@ -111,7 +137,7 @@ public sealed class HeroTests : BunitContext
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
             .Add(component => component.Eyebrow, "<b>New</b> & safe")
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Subtitle, "<i>Small</i> groups"));
 
         // Assert
@@ -126,7 +152,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Image, ResponsiveImage.Create(LinkTarget.FromString("/hero.jpg"), 1600, 900, ImageAlternative.Describe("A lake"))));
 
         // Assert
@@ -137,6 +163,7 @@ public sealed class HeroTests : BunitContext
         image.GetAttribute("height").ShouldBe("900");
         image.GetAttribute("loading").ShouldBe("eager");
         image.GetAttribute("fetchpriority").ShouldBe("high");
+        cut.FindAll(".site-image-credit").ShouldBeEmpty();
     }
 
     [Fact]
@@ -144,7 +171,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Class, "extra")
             .AddUnmatched("data-test", "x"));
 
@@ -158,7 +185,7 @@ public sealed class HeroTests : BunitContext
     public void The_default_layout_is_split_and_adds_no_layout_class()
     {
         // Arrange & Act
-        var cut = Render<Hero>(parameters => parameters.Add(component => component.Title, "Discover"));
+        var cut = Render<Hero>(parameters => parameters.Add(component => component.Heading, "Discover"));
 
         // Assert
         cut.Find(".site-hero").ClassName.ShouldBe("site-hero");
@@ -169,7 +196,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Layout, HeroLayout.Cover)
             .Add(component => component.Image, ResponsiveImage.Create(LinkTarget.FromString("/hero.jpg"), 1600, 900, ImageAlternative.Decorative())));
 
@@ -187,7 +214,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Layout, HeroLayout.Cover));
 
         // Assert
@@ -200,7 +227,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Layout, (HeroLayout)7));
 
         // Assert
@@ -212,10 +239,10 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var page = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.Layout, HeroLayout.Cover));
         var landing = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Travel with feeling")
+            .Add(component => component.Heading, "Travel with feeling")
             .Add(component => component.Layout, HeroLayout.Cover)
             .Add(component => component.CoverHeight, CoverHeight.Landing));
 
@@ -229,7 +256,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.CoverHeight, CoverHeight.Landing));
 
         // Assert
@@ -241,7 +268,7 @@ public sealed class HeroTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .Add(component => component.Layout, HeroLayout.Cover)
             .Add(component => component.CoverHeight, (CoverHeight)4));
 

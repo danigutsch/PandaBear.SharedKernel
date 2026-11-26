@@ -58,7 +58,7 @@ public sealed partial class StepList
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Steps);
-        Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
+        HeadingMarkup.RequireLevel(HeadingLevel, nameof(HeadingLevel));
         ArgumentOutOfRangeException.ThrowIfNegative(EagerCount);
         PositionFormat.Require(NumberFormat, nameof(NumberFormat), CultureInfo.CurrentCulture);
         if (HeadingIdFormat is not null)

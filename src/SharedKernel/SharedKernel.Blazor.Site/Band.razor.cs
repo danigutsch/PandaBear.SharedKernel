@@ -19,6 +19,10 @@ public sealed partial class Band
     [Parameter]
     public ResponsiveImage? Image { get; set; }
 
+    /// <summary>Gets or sets the optional short credit for the band background <see cref="Image" />.</summary>
+    [Parameter]
+    public ImageCreditLine? ImageCredit { get; set; }
+
     /// <summary>Gets or sets the content.</summary>
     [Parameter]
     [EditorRequired]

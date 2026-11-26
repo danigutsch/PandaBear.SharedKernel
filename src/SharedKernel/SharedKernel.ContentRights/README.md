@@ -133,3 +133,10 @@ The projection uses the terms address already on the image credit. Supply the pu
 a recorded modification. Supply the creator kind only when the review established it. Use
 `ContentAttributionDefinition` directly when the source supplies other parties, notices or earlier
 changes.
+
+`ContentAttribution.FromImageCreditWithKnownTerms` can resolve a recorded
+standard code to its official terms address. It prefers a supplied official
+address when the family and version match, including a supported jurisdiction.
+`DeclaredTermsUrl` preserves the original evidence. Unknown and conflicting
+declarations retain their wording and address with an unresolved kind. The
+application reviews publication and the source evidence for the exact image.

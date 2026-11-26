@@ -20,7 +20,7 @@ public sealed partial class Hero
     /// <summary>Gets or sets the level-1 heading.</summary>
     [Parameter]
     [EditorRequired]
-    public string Title { get; set; } = string.Empty;
+    public string Heading { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the line under the heading. It is a <c>p</c>, not a heading; null or blank renders nothing.</summary>
     [Parameter]
@@ -32,6 +32,10 @@ public sealed partial class Hero
     /// </summary>
     [Parameter]
     public ResponsiveImage? Image { get; set; }
+
+    /// <summary>Gets or sets the optional short credit shown with <see cref="Image" />.</summary>
+    [Parameter]
+    public ImageCreditLine? ImageCredit { get; set; }
 
     /// <summary>Gets or sets how the text and the image are placed. The default is <see cref="HeroLayout.Split" />.</summary>
     [Parameter]
@@ -78,7 +82,7 @@ public sealed partial class Hero
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(Title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(Heading);
         EnumParameter.RequireDefined(Layout, nameof(Layout), "The hero layout is not defined.");
         EnumParameter.RequireDefined(TitleScale, nameof(TitleScale), "The hero title scale is not defined.");
         EnumParameter.RequireDefined(CoverHeight, nameof(CoverHeight), "The cover height is not defined.");

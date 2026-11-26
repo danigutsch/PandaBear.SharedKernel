@@ -114,7 +114,7 @@ public sealed class AlbumSectionTests : BunitContext
     {
         // Arrange
         var noSlug = () => Render<AlbumSection>(parameters => parameters
-            .Add(album => album.Title, "Patagônia")
+            .Add(album => album.Heading, "Patagônia")
             .Add(album => album.Photos, Images(1))
             .Add(album => album.Window, PageWindow.Create(1, 6, 1))
             .Add(album => album.PageHref, _ => Link("/a"))

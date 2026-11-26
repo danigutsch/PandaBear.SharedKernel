@@ -56,11 +56,10 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
     public Func<TImageId, string?>? ImageCaption { get; set; }
 
     /// <summary>
-    /// Gets or sets the short credit of an image of a section, such as its author and licence, shown as <see cref="ImageGrid" /> shows a
-    /// <see cref="GalleryImage.Credit" />: an <see cref="ImageCreditCaption" /> in the image's <c>figcaption</c>, after the caption.
-    /// <see langword="null" /> shows none. Only a section's images take a credit, as with <see cref="ImageCaption" />.
-    /// <see langword="null" />, the default, shows no credits. A credit with a blank text, or with a licence address and no licence text,
-    /// throws <see cref="ArgumentException" /> when the section renders, as <see cref="ImageGrid" /> refuses it.
+    /// Gets or sets the short credit of a rendered image, including the section background, the person's photo, the video poster
+    /// and each mosaic image. A mosaic credit follows the caption within its <c>figcaption</c>. A missing image or a
+    /// <see langword="null" /> credit shows no credit. A blank credit or a licence address without licence text throws
+    /// <see cref="ArgumentException" /> when rendered.
     /// </summary>
     [Parameter]
     public Func<TImageId, ImageCreditLine?>? ImageCredit { get; set; }
@@ -206,8 +205,11 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
             return null;
         }
 
-        return new VideoView(address, video.Title, Decorative(poster), VideoHint(uri));
+        return new VideoView(address, video.Title, Decorative(poster), VideoHint(uri), ImageCredit?.Invoke(video.PosterImageId));
     }
+
+    private (ResponsiveImage? Image, ImageCreditLine? Credit) ResolveImage(TImageId? id) =>
+        id is { } imageId && Image(imageId) is { } image ? (image, ImageCredit?.Invoke(imageId)) : default;
 
     private SectionView View(PageSection<TImageId, TLink, TExtra> section)
     {
@@ -220,10 +222,9 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
             }
         }
 
-        var background = section.Tone == SectionTone.Image && section.BackgroundImageId is { } backgroundId ? Image(backgroundId) : null;
         var video = ResolveVideo(section.Video);
         var button = section.Link is { } link ? Link(link.Target) : null;
-        var photo = section.Person?.ImageId is { } photoId ? Image(photoId) : null;
+        var (photo, photoCredit) = ResolveImage(section.Person?.ImageId);
         var extra = Extra is not null && !section.Extra.Equals(default);
         var hasParts = section.Paragraphs.Count > 0
             || section.Questions.Count > 0
@@ -232,7 +233,9 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
             || extra
             || video is not null
             || button is not null;
-        return new SectionView(images, background, video, button, photo, extra, hasParts);
+        var backgroundId = section.Tone == SectionTone.Image && (hasParts || images.Count > 0) ? section.BackgroundImageId : null;
+        var (background, backgroundCredit) = ResolveImage(backgroundId);
+        return new SectionView(images, background, backgroundCredit, video, button, photo, photoCredit, extra, hasParts);
     }
 
     private static BandTone Tone(PageSection<TImageId, TLink, TExtra> section, SectionView view) => section.Tone switch
@@ -252,17 +255,21 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
     /// <summary>The parts of a section that the application resolved.</summary>
     /// <param name="Images">The images that resolved, in order.</param>
     /// <param name="Background">The background of an image band, or <see langword="null" />.</param>
+    /// <param name="BackgroundCredit">The optional short credit for that background.</param>
     /// <param name="Video">The video, or <see langword="null" /> when its address or poster does not resolve.</param>
     /// <param name="Button">The button's address, or <see langword="null" /> when the button is left out.</param>
     /// <param name="Photo">The person's photo, or <see langword="null" />.</param>
+    /// <param name="PhotoCredit">The optional short credit for that photo.</param>
     /// <param name="ShowsExtra">Whether the extension renders.</param>
     /// <param name="HasParts">Whether any part beside the images is shown.</param>
     private sealed record SectionView(
         IReadOnlyList<GalleryImage> Images,
         ResponsiveImage? Background,
+        ImageCreditLine? BackgroundCredit,
         VideoView? Video,
         LinkTarget? Button,
         ResponsiveImage? Photo,
+        ImageCreditLine? PhotoCredit,
         bool ShowsExtra,
         bool HasParts)
     {
@@ -275,5 +282,6 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
     /// <param name="Title">The title, which names the link.</param>
     /// <param name="Poster">The decorative poster.</param>
     /// <param name="Hint">The visually hidden hint that names the video's site.</param>
-    private sealed record VideoView(LinkTarget Address, string Title, ResponsiveImage Poster, string Hint);
+    /// <param name="PosterCredit">The optional short credit for the poster.</param>
+    private sealed record VideoView(LinkTarget Address, string Title, ResponsiveImage Poster, string Hint, ImageCreditLine? PosterCredit);
 }

@@ -67,7 +67,7 @@ public sealed class SiteImageRulesTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Title")
+            .Add(component => component.Heading, "Title")
             .Add(component => component.Image, Image("/a.jpg", ImageAlternative.Decorative())));
 
         // Assert
@@ -90,8 +90,8 @@ public sealed class SiteImageRulesTests : BunitContext
     public void Components_without_an_image_render_none()
     {
         // Arrange & Act
-        var card = Render<Card>(parameters => parameters.Add(component => component.Title, "Title"));
-        var hero = Render<Hero>(parameters => parameters.Add(component => component.Title, "Title"));
+        var card = Render<Card>(parameters => parameters.Add(component => component.Heading, "Title"));
+        var hero = Render<Hero>(parameters => parameters.Add(component => component.Heading, "Title"));
 
         // Assert
         card.FindAll("img").ShouldBeEmpty();

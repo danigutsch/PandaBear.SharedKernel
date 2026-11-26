@@ -12,7 +12,7 @@ public sealed partial class ContactCard
 {
     /// <summary>Gets or sets the heading text. Without it no heading is rendered.</summary>
     [Parameter]
-    public string? Title { get; set; }
+    public string? Heading { get; set; }
 
     /// <summary>Gets or sets the heading level, from 1 to 6. The default is 3.</summary>
     [Parameter]
@@ -58,7 +58,7 @@ public sealed partial class ContactCard
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
+        HeadingMarkup.RequireLevel(HeadingLevel, nameof(HeadingLevel));
         PhoneHref = Phone is null ? null : Require(ContactLinks.Phone(Phone), "The phone number is not a validated number of digits.", nameof(Phone));
         WhatsAppHref = WhatsApp is null ? null : Require(ContactLinks.WhatsApp(WhatsApp), "The phone number is not a validated number of digits.", nameof(WhatsApp));
         if (PhoneText is not null && (Phone is null || PhoneNumber.Create(PhoneText) is not { IsSuccess: true } text || text.Value != Phone))

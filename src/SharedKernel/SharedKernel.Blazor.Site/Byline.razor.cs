@@ -20,6 +20,10 @@ public sealed partial class Byline
     [Parameter]
     public ResponsiveImage? Photo { get; set; }
 
+    /// <summary>Gets or sets the optional short credit shown with <see cref="Photo" />.</summary>
+    [Parameter]
+    public ImageCreditLine? PhotoCredit { get; set; }
+
     /// <inheritdoc />
     protected override void OnParametersSet() => ArgumentException.ThrowIfNullOrWhiteSpace(Name);
 }

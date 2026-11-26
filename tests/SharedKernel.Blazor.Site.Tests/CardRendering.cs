@@ -11,7 +11,7 @@ internal static class CardRendering
         context.Render<Card>(parameters =>
         {
             parameters
-                .Add(component => component.Title, "Atacama")
+                .Add(component => component.Heading, "Atacama")
                 .Add(component => component.Href, SiteFixtures.Link("/tours/atacama"))
                 .Add(component => component.Image, SiteFixtures.Image("/atacama.jpg"));
             configure?.Invoke(parameters);

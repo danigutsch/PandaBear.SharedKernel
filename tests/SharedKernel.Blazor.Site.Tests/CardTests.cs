@@ -9,7 +9,7 @@ public sealed class CardTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Atacama")
+            .Add(component => component.Heading, "Atacama")
             .Add(component => component.Href, LinkTarget.FromString("/tours/atacama"))
             .Add(component => component.Image, ResponsiveImage.Create(LinkTarget.FromString("/atacama.jpg"), 800, 600, ImageAlternative.Describe("Salt flats")))
             .Add(component => component.Actions, "<a id=\"more\" href=\"/x\">More</a>")
@@ -26,6 +26,25 @@ public sealed class CardTests : BunitContext
         image.GetAttribute("width").ShouldBe("800");
         cut.Find(".site-card__body #text").ShouldNotBeNull();
         cut.Find(".site-card__actions #more").ShouldNotBeNull();
+        cut.FindAll(".site-image-credit").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void A_card_cover_can_show_its_credit_next_to_the_existing_title_link()
+    {
+        // Arrange
+        var credit = new ImageCreditLine("Photo: Ana Lima", CreditsHref: SiteFixtures.Link("/credits#atacama"));
+
+        // Act
+        var cut = Render<Card>(parameters => parameters
+            .Add(component => component.Heading, "Atacama")
+            .Add(component => component.Href, SiteFixtures.Link("/tours/atacama"))
+            .Add(component => component.Image, SiteFixtures.Image("/atacama.jpg", ImageAlternative.Decorative()))
+            .Add(component => component.ImageCredit, credit));
+
+        // Assert
+        cut.Find("article h3 a").GetAttribute("href").ShouldBe("/tours/atacama");
+        cut.Find("article small.site-image-credit a").GetAttribute("href").ShouldBe("/credits#atacama");
     }
 
     [Fact]
@@ -33,7 +52,7 @@ public sealed class CardTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Atacama")
+            .Add(component => component.Heading, "Atacama")
             .Add(component => component.HeadingLevel, 4));
 
         // Assert
@@ -47,7 +66,7 @@ public sealed class CardTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Atacama")
+            .Add(component => component.Heading, "Atacama")
             .Add(component => component.Class, "extra")
             .AddUnmatched("data-test", "x"));
 
@@ -56,6 +75,24 @@ public sealed class CardTests : BunitContext
         BunitElementAssertions.HasClass(article.ClassList, "site-card");
         BunitElementAssertions.HasClass(article.ClassList, "extra");
         article.GetAttribute("data-test").ShouldBe("x");
+    }
+
+    [Fact]
+    public void The_HTML_title_reaches_the_article_independently_of_the_heading()
+    {
+        // Arrange
+        const string heading = "Atacama";
+        const string title = "Tour information";
+
+        // Act
+        var cut = Render<Card>(parameters => parameters
+            .AddUnmatched("heading", heading)
+            .AddUnmatched("title", title));
+
+        // Assert
+        var article = cut.Find("article");
+        article.GetAttribute("title").ShouldBe(title);
+        cut.Find("h3").TextContent.ShouldBe(heading);
     }
 
     [Fact]

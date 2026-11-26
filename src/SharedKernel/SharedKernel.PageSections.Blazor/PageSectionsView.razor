@@ -16,7 +16,7 @@
             continue;
         }
 
-        <Band @key="index" Tone="@Tone(section, view)" Image="@view.Background" TextAlignment="@TextAlignment">
+        <Band @key="index" Tone="@Tone(section, view)" Image="@view.Background" ImageCredit="@view.BackgroundCredit" TextAlignment="@TextAlignment">
             @if (string.IsNullOrWhiteSpace(section.Heading) && Beside(section, view) && view.HasParts)
             {
                 <Split Media="@Mosaic(view)" Alignment="@SplitAlignment">@Parts(section, view)</Split>
@@ -28,12 +28,12 @@
             }
             else if (Beside(section, view))
             {
-                <Section Title="@section.Heading" Eyebrow="@section.Eyebrow" HeadingId="@HeadingId(index)" Level="@Level(section)"
+                <Section Heading="@section.Heading" Eyebrow="@section.Eyebrow" HeadingId="@HeadingId(index)" Level="@Level(section)"
                          Divider="@(section.Level != SectionLevel.Subsection)" Media="@Mosaic(view)">@Parts(section, view)</Section>
             }
             else
             {
-                <Section Title="@section.Heading" Eyebrow="@section.Eyebrow" HeadingId="@HeadingId(index)" Level="@Level(section)"
+                <Section Heading="@section.Heading" Eyebrow="@section.Eyebrow" HeadingId="@HeadingId(index)" Level="@Level(section)"
                          Divider="@(section.Level != SectionLevel.Subsection)">
                     @Parts(section, view)
                     @Mosaic(view)
@@ -60,7 +60,7 @@
         }
         @if (section.Person is { } person)
         {
-            <Byline Name="@person.Name" JobTitle="@person.Role" Photo="@view.Photo" />
+            <Byline Name="@person.Name" JobTitle="@person.Role" Photo="@view.Photo" PhotoCredit="@view.PhotoCredit" />
         }
         @foreach (var (number, quote) in section.Quotes.Index())
         {
@@ -72,7 +72,7 @@
         }
         @if (view.Video is { } video)
         {
-            <VideoLink Href="@video.Address" Title="@video.Title" Poster="@video.Poster" SiteHint="@video.Hint" />
+            <VideoLink Href="@video.Address" Heading="@video.Title" Poster="@video.Poster" PosterCredit="@video.PosterCredit" SiteHint="@video.Hint" />
         }
         @if (section.Link is { } link && view.Button is { } button)
         {

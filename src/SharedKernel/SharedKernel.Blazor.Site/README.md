@@ -11,6 +11,16 @@ upper-case letter, names a removed parameter in any case (`ImageSrc`, `ImageAlt`
 holds a character an HTML attribute name cannot hold throws `InvalidOperationException` naming it, so a misspelled or removed
 parameter fails instead of silently becoming an attribute. Write pass-through HTML attributes in lower case.
 
+## Migrate heading parameters
+
+Use `Heading` in place of `Title` on `Card`, `Hero`, `Section`, `AlbumSection`, `ContactCard`, `PhotoCreditsPage`, and
+`VideoLink`. Update Razor attributes and typed parameter bindings, then rebuild callers against the new package. The
+`Title` accessors on these seven components were renamed. `PageHead.Title` still sets the document title.
+
+Blazor matches parameter names without regard to case. The visible heading and the root HTML `title` can now be set
+separately, for example `<Card Heading="Atacama" title="Tour information" />`. An `@attributes` dictionary can also
+carry `title` to the root element.
+
 ## Usage
 
 Reference the stylesheet from the host page, then your own stylesheet that overrides the tokens. The host also sets
@@ -34,13 +44,13 @@ Reference the stylesheet from the host page, then your own stylesheet that overr
     <Actions><LanguageSwitcher Label="Language" Languages="_languages" /></Actions>
 </SiteHeader>
 <main id="main-content" tabindex="-1">
-    <Hero Eyebrow="Since 2004" Title="Small-group tours" Subtitle="Eight countries, one guide."
+    <Hero Eyebrow="Since 2004" Heading="Small-group tours" Subtitle="Eight countries, one guide."
           Image="@ResponsiveImage.Create(LinkTarget.FromString("/img/hero.jpg"), 1600, 900, ImageAlternative.Describe("A lake below snowy peaks"))">
         <Actions><ButtonLink Href="@LinkTarget.FromString("/tours")">See the tours</ButtonLink></Actions>
     </Hero>
-    <Section Title="Tours" HeadingId="tours-heading" Intro="Pick your next trip.">
+    <Section Heading="Tours" HeadingId="tours-heading" Intro="Pick your next trip.">
         <CardGrid>
-            <Card Title="Atacama" Href="@LinkTarget.FromString("/tours/atacama")"
+            <Card Heading="Atacama" Href="@LinkTarget.FromString("/tours/atacama")"
                   Image="@ResponsiveImage.Create(LinkTarget.FromString("/img/atacama.jpg"), 800, 600, ImageAlternative.Decorative())">
                 <p>Eight days in the desert.</p>
             </Card>
@@ -75,7 +85,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `Split` | Text (`ChildContent`) beside media (`Media`, required: `ArgumentNullException` without it), without a heading of its own: a plain `div`, never a landmark, so a heading-less band can put text and photos side by side. The text is in `site-split__main` and the media in `site-split__media`, two equal columns from the `48rem` breakpoint on and the media after the text below it, so reading order matches visual order; the media fills its column. `MediaSide` `End` (the default) puts the media column on the inline-end side; `Start` (`site-split--media-start`) puts it on the inline-start side from the breakpoint on, by grid order only, so the text stays first in reading and focus order and below the breakpoint the media still follows the text; alternate it to zigzag a day-by-day itinerary. `Alignment` `Start` (the default) starts both columns at the top, so a photo stays beside the heading and first paragraph it illustrates instead of floating halfway down a long text; `Center` (`site-split--align-center`) centres the columns on each other, for a short tagline beside a photo. Start is the default because the usual split is text-heavy: a tour description or an itinerary day beside one or a few photos. An undefined side or alignment throws `ArgumentOutOfRangeException`. `Section.Media` uses it with the default alignment, so both are one layout. |
 | `Band` | A full-width `div` (never a landmark) around content of the content width: a `Section`, or content without a heading such as a tagline and a `Byline`. `Tone` is `Default`, `Muted` (surface-alt), `Primary` (primary background, on-primary text) or `Image` (a lazy photo darkened by the normal-text scrim, on-primary text), which requires `Image`; an `Image` on another tone throws `ArgumentException`. A section inside a band loses its own vertical padding and keeps its semantics. `TextAlignment` (`null` inherits, `Center` adds `site-band--text-center`, `Start` adds `site-band--text-start`) aligns the band's text and a section in it that sets none, as `Section.TextAlignment` does; paragraphs directly in the band keep the `--site-text-width` measure. |
 | `Byline` | A person: a lazy round photo (`Photo`, usually decorative), the `Name` and the `JobTitle`, each a `p`. |
-| `VideoLink` | A link to a video on its own site instead of an embedded player: a lazy, decorative and self-hosted `Poster` (a described or remote poster throws `ArgumentException`), a play mark on the normal-text scrim, the visible `Title`, and a visually hidden `SiteHint` such as "(opens YouTube)"; the link's name is the title then the hint. `Href` must be an address that `WebUrl.CreateHttps` accepts (absolute `https`); the link carries `rel="noreferrer"`. No frame, no script, and no request to the video's site before the visitor's click. The poster is cropped to 16:9 (`object-fit: cover`), which cuts away the black bars of a 4:3 video thumbnail, and the link is at most `--site-video-width` (40rem) wide, so a 480 by 360 thumbnail is not blown up to the content width; in a centred section it is centred. |
+| `VideoLink` | A link to a video on its own site instead of an embedded player: a lazy, decorative and self-hosted `Poster` (a described or remote poster throws `ArgumentException`), a play mark on the normal-text scrim, the visible `Heading`, and a visually hidden `SiteHint` such as "(opens YouTube)"; the link's name is the title then the hint. `Href` must be an address that `WebUrl.CreateHttps` accepts (absolute `https`); the link carries `rel="noreferrer"`. No frame, no script, and no request to the video's site before the visitor's click. The poster is cropped to 16:9 (`object-fit: cover`), which cuts away the black bars of a 4:3 video thumbnail, and the link is at most `--site-video-width` (40rem) wide, so a 480 by 360 thumbnail is not blown up to the content width; in a centred section it is centred. |
 | `FloatingLink` | A round link fixed in the bottom corner, such as a chat link: the icon in `ChildContent` is hidden from assistive technology and the required `Label` names the link in visually hidden text. While it is on the page, focused elements scroll clear of it (`scroll-padding`) and the footer, or the body without a footer, ends with room for it, so it never covers the end of the page. Its hover grows it with a transition that `prefers-reduced-motion` turns off. Below the `48rem` breakpoint, where it lies over the text, it is `--site-floating-link-size-narrow` (3rem, still above a 44px tap target) at `--site-space-2` from the corner, so it reaches 40px into the text column instead of 56px; no side gutter is reserved, because a gutter would narrow every line of a phone page for a button that covers a line at a time while the visitor scrolls. |
 | `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`), `Size` `Regular` (the default) or `Compact` (`site-button--compact`); see [Shape](#shape) for its computed padding. `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint` after a space, so the link's name reads "Partner (opens in a new tab)" and not "Partner(opens in a new tab)". |
 | `ActionRow` | A plain `div` (`site-action-row`, never a landmark) around actions such as `ButtonLink`s and links, in reading order, with a gap. `Justification` places them from the `48rem` breakpoint on in one wrapping row: `Start` (the default) together where reading starts, in line with the text above, so they read as one group, and in the middle inside a section or band with centred text; `Center` (`site-action-row--center`) together in the middle; `End` (`site-action-row--end`) together at the end; `Between` (`site-action-row--between`) spread across the width, for two actions on opposite sides such as previous and next. Below the breakpoint they are stacked at the start (in the middle under centred text), in the middle (`Center` and `Between`) or at the end. An undefined justification throws `ArgumentOutOfRangeException`. A plain link in it keeps the link style in the primary colour. |
@@ -157,7 +167,7 @@ Content-Security-Policy holds.
 
 ```razor
 <CardGrid MinColumnWidth="CardColumnWidth.Medium" MaxColumnWidth="CardColumnWidth.Wide" ItemAlignment="SiteAlignment.Center" Gap="SiteSpace.Space6">
-    <Card Title="Alentejo" Href="@LinkTarget.FromString("/tours/alentejo")" Image="_cover" CardStyle="CardStyle.Plain"
+    <Card Heading="Alentejo" Href="@LinkTarget.FromString("/tours/alentejo")" Image="_cover" CardStyle="CardStyle.Plain"
           ImageAspect="CardImageAspect.SixteenByNine" ImageShadow="CardImageShadow.Offset" TextAlignment="SiteAlignment.Center"
           MoreText="Learn more">
         <p>Eight days by bike.</p>
@@ -261,7 +271,7 @@ links ([GOV.UK pagination](https://design-system.service.gov.uk/components/pagin
 Give each page its own `PageHead.CanonicalUrl`, and answer a page past the end (`Window.IsOutOfRange`) with 404 Not Found.
 
 ```razor
-<AlbumSection Title="@view.Title" Slug="@view.Slug" Level="1"
+<AlbumSection Heading="@view.Title" Slug="@view.Slug" Level="1"
               TitleLanguage="@(view.Culture == PageCulture ? null : Tags.LanguageTagOf(view.Culture).Value)"
               Photos="@Renditions.Gallery(page.PhotoIds)" Window="@page.Window"
               PageHref="@(p => LinkTarget.FromString(p == 1 ? $"/pt/galeria/{view.Slug}" : $"/pt/galeria/{view.Slug}?pagina={p}"))"
@@ -320,7 +330,7 @@ are plain text. A format without exactly one `{0}`, with the placeholder escaped
 `AmountText` throws `ArgumentException`.
 
 ```razor
-<Section Title="Valores" HeadingId="valores">
+<Section Heading="Valores" HeadingId="valores">
     <PriceList HeadingId="valores" Items="_prices">
         <Conditions><p>Reserva com sinal de 30%.</p></Conditions>
     </PriceList>
@@ -362,7 +372,7 @@ the class `site-text-list`, one `li` per line and the browser's bullets or numbe
 throws `ArgumentException`.
 
 ```razor
-<Section Title="Roteiro" HeadingId="roteiro">
+<Section Heading="Roteiro" HeadingId="roteiro">
     <StepList Steps="_days" NumberFormat="Dia {0}" HeadingIdFormat="dia-{0}" EagerCount="1" />
 </Section>
 <Disclosure Summary="Incluído"><TextList Items="_included" /></Disclosure>
@@ -397,6 +407,10 @@ application words every credit and chooses the links:
 - The record checks itself where a component receives it, so the caption and the grid refuse the same lines: a blank `Text`, or a
   `LicenseHref` without `LicenseText`, throws `ArgumentException` naming the caller's parameter (`Credit` on the caption, `Images` on
   the grid); a missing `Credit` throws `ArgumentNullException`.
+- Pass an `ImageCreditLine` to `Hero.ImageCredit`, `Band.ImageCredit`, `Byline.PhotoCredit`, `VideoLink.PosterCredit`, or
+  `Card.ImageCredit` to show a short credit when that image is present. `AlbumSummary.CoverCredit` forwards the cover's credit to its
+  own card in `AlbumIndex`. Credits over a background sit in front of the image layer. Credit links in a video poster or linked card
+  remain independently interactive.
 - `ImageCreditLine.FromCredit(credit, format, provider, creditsHref)` builds the line of a shared `ImageCredit`
   (`PandaBear.SharedKernel.BuildingBlocks`; see its README): the text from your format with the placeholders of
   `ImageCredit.ToShortText` (`{0}` the author, as in "Foto: {0}"; leave the licence out, because it follows), then the licence's
@@ -444,7 +458,7 @@ page title, coverage statement, localization and publication permission. Supply 
 item id in each gallery link. A page heading uses level 1 by default, and its photo headings use the next level.
 
 ```razor
-<PhotoCreditsPage Title="@Texts.PhotoCredits" HeadingId="photo-credits"
+<PhotoCreditsPage Heading="@Texts.PhotoCredits" HeadingId="photo-credits"
                   Intro="@Texts.AlbumPhotoCreditScope" Items="@ApprovedCreditsOnPage" Labels="@CreditLabels" />
 ```
 

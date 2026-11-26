@@ -39,7 +39,7 @@ optional ones for the captions and credits of the sections' images:
 | `Sections` | The sections, in page order. Required. |
 | `Image` | `Func<TImageId, ResponsiveImage?>`: an image id as an image. `null` leaves that image out. Required. |
 | `ImageCaption` | `Func<TImageId, string?>`: the caption of a section's image, in its `figcaption` (`GalleryImage.Caption`) in the mosaic and beside the text. `null` or blank shows none; unset shows no captions. |
-| `ImageCredit` | `Func<TImageId, ImageCreditLine?>`: the short credit of a section's image, an `ImageCreditCaption` in its `figcaption` after the caption (`GalleryImage.Credit`). `null` shows none; unset shows no credits. A credit that `ImageGrid` refuses (blank text, or a licence address without its text) throws `ArgumentException`. |
+| `ImageCredit` | `Func<TImageId, ImageCreditLine?>`: the short credit of a rendered section background, portrait, video poster or mosaic image. Mosaic credits follow the caption in the `figcaption`. A missing image or credit shows no credit. Blank credit text or a licence address without its text throws `ArgumentException`. |
 | `Link` | `Func<TLink, LinkTarget?>`: a validated link target as an address, such as a page's path in the current language. `null` leaves the button out. Required. |
 | `Extra` | `RenderFragment<TExtra>`: the application's part, for a section whose `Extra` is not `default`. Without it, extensions render nothing and do not count as content. |
 | `IsShown` | `Func<PageSection<…>, bool>`: which sections are shown, for example by a display condition in the extension. Unset shows every section. |

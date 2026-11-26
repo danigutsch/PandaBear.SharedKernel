@@ -76,4 +76,23 @@ public sealed class ContentLicense
             ? errors.ToResult<ContentLicense>()
             : Result.Ok(new ContentLicense(kind, wording, termsUrl, terms, canonical, version, jurisdiction));
     }
+
+    /// <summary>Validates a recorded image declaration and resolves its known standard terms.</summary>
+    internal static Result<ContentLicense> FromImageLicense(ImageLicense imageLicense) =>
+        Create(ContentLicenseKind.Unknown, imageLicense.Code, imageLicense.Url?.Value)
+            .Map(static license => license.ResolveKnownImageTerms());
+
+    private ContentLicense ResolveKnownImageTerms()
+    {
+        if (!CreativeCommonsTerms.TryIdentifyImageCode(DeclaredTerms, out var kind, out var knownTerms, out var knownVersion))
+        {
+            return this;
+        }
+
+        var terms = TermsUrl ?? knownTerms;
+        return CreativeCommonsTerms.TryIdentify(kind, terms, out var canonical, out var version, out var jurisdiction)
+            && string.Equals(version, knownVersion, StringComparison.Ordinal)
+            ? new ContentLicense(kind, DeclaredTerms, DeclaredTermsUrl, terms, canonical, version, jurisdiction)
+            : this;
+    }
 }

@@ -42,7 +42,7 @@ public sealed class GallerySample : ComponentBase
         ArgumentNullException.ThrowIfNull(builder);
         builder.OpenElement(0, "main");
         builder.OpenComponent<Section>(1);
-        builder.AddComponentParameter(2, nameof(Section.Title), "Gallery");
+        builder.AddComponentParameter(2, nameof(Section.Heading), "Gallery");
         builder.AddComponentParameter(26, nameof(Section.TextAlignment), TextAlignment);
         if (InMedia)
         {

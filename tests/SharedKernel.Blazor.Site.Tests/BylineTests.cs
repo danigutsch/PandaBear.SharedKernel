@@ -26,6 +26,24 @@ public sealed class BylineTests : BunitContext
         lines.Select(line => line.ClassName).ShouldBe(["site-byline__name", "site-byline__job-title"]);
         lines[0].TextContent.ShouldBe("Carla Giurizatto");
         lines[1].TextContent.ShouldBe("Founder and Emotional Travel Designer");
+        cut.FindAll(".site-image-credit").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void A_byline_photo_can_show_a_short_credit()
+    {
+        // Arrange
+        var credit = new ImageCreditLine("Photo: Ana Lima");
+
+        // Act
+        var cut = Render<Byline>(parameters => parameters
+            .Add(component => component.Name, "Carla")
+            .Add(component => component.Photo, Image("/carla.jpg", ImageAlternative.Describe("Carla smiling")))
+            .Add(component => component.PhotoCredit, credit));
+
+        // Assert
+        cut.Find(".site-byline__photo img").GetAttribute("alt").ShouldBe("Carla smiling");
+        cut.Find(".site-byline small.site-image-credit").TextContent.ShouldBe("Photo: Ana Lima");
     }
 
     [Fact]

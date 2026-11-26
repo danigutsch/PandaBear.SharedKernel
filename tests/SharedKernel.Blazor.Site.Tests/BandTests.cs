@@ -55,6 +55,26 @@ public sealed class BandTests : BunitContext
         image.GetAttribute("src").ShouldBe("/band.jpg");
         image.GetAttribute("alt").ShouldBe(string.Empty);
         image.GetAttribute("loading").ShouldBe("lazy");
+        cut.FindAll(".site-image-credit").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void An_image_band_shows_a_credit_outside_the_background_layer()
+    {
+        // Arrange
+        var credit = new ImageCreditLine("Photo: Ana Lima", CreditsHref: Link("/credits#band"));
+
+        // Act
+        var cut = Render<Band>(parameters => parameters
+            .Add(component => component.Tone, BandTone.Image)
+            .Add(component => component.Image, Image("/band.jpg", ImageAlternative.Decorative()))
+            .Add(component => component.ImageCredit, credit)
+            .AddChildContent("<h2>Explore</h2>"));
+
+        // Assert
+        cut.Find(".site-band__media img").GetAttribute("alt").ShouldBe(string.Empty);
+        cut.Find(".site-band small.site-image-credit a").GetAttribute("href").ShouldBe("/credits#band");
+        cut.FindAll(".site-band__media .site-image-credit").ShouldBeEmpty();
     }
 
     [Fact]
@@ -99,7 +119,7 @@ public sealed class BandTests : BunitContext
         var cut = Render<Band>(parameters => parameters
             .Add(component => component.Tone, BandTone.Muted)
             .AddChildContent<Section>(section => section
-                .Add(component => component.Title, "Past trips")
+                .Add(component => component.Heading, "Past trips")
                 .Add(component => component.HeadingId, "past-trips")));
 
         // Assert

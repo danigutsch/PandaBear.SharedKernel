@@ -169,7 +169,7 @@ public sealed class CardOptionsTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Atacama")
+            .Add(component => component.Heading, "Atacama")
             .Add(component => component.MoreText, "Learn more"));
 
         // Assert

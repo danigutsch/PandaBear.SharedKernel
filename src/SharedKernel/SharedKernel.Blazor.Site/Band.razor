@@ -1,6 +1,12 @@
 @inherits SiteComponent
 <div class="@CssClass(RootClass)" @attributes="AdditionalAttributes">
-    <div class="site-band__inner">@ChildContent</div>
+    <div class="site-band__inner">
+        @ChildContent
+        @if (Image is not null && ImageCredit is not null)
+        {
+            <ImageCreditCaption Credit="@ImageCredit" />
+        }
+    </div>
     @if (Image is not null)
     {
         <div class="site-band__media">@ResponsiveImageMarkup.Render(Image, eager: false, highPriority: false)</div>

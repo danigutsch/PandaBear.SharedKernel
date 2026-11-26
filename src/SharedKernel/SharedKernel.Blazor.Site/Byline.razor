@@ -10,5 +10,9 @@
         {
             <p class="site-byline__job-title">@JobTitle</p>
         }
+        @if (Photo is not null && PhotoCredit is not null)
+        {
+            <ImageCreditCaption Credit="@PhotoCredit" />
+        }
     </div>
 </div>

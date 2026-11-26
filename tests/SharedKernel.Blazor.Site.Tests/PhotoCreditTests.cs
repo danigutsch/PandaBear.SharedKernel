@@ -159,7 +159,7 @@ public sealed class PhotoCreditTests : BunitContext
 
         // Act
         var cut = Render<PhotoCreditsPage>(parameters => parameters
-            .Add(component => component.Title, "Créditos das fotos")
+            .Add(component => component.Heading, "Créditos das fotos")
             .Add(component => component.Intro, "Estes créditos cobrem somente as fotos desta página.")
             .Add(component => component.HeadingId, "creditos")
             .Add(component => component.Items, [first, second])
@@ -178,6 +178,45 @@ public sealed class PhotoCreditTests : BunitContext
     }
 
     [Fact]
+    public void A_credits_page_links_opted_in_known_terms_and_keeps_reviewed_controls_unlinked()
+    {
+        // Arrange
+        const string originalSource = "https://archive.example.org/photos/serra";
+        const string canonicalTerms = "https://creativecommons.org/licenses/by/4.0/";
+        const string modification = "Cores ajustadas";
+        const string localizedTerms = "Licença CC BY 4.0";
+        var recorded = ImageCredit.Create("Ana Silva", "Serra Azul", originalSource, "cc  bY  4.0", null, modified: true).ShouldBeSuccess();
+        var unresolved = ImageCredit.Create("Arquivo", null, null, "CC BY 4.0", canonicalTerms, modified: false).ShouldBeSuccess();
+        var recognized = ContentAttribution.FromImageCreditWithKnownTerms(recorded, modification).ShouldBeSuccess().ToPublicCredit();
+        var withoutAddress = ContentAttribution.FromImageCredit(recorded, ContentLicenseKind.CcBy, modification).ShouldBeSuccess().ToPublicCredit();
+        var unknown = ContentAttribution.FromImageCredit(unresolved, ContentLicenseKind.Unknown).ShouldBeSuccess().ToPublicCredit();
+        PhotoCreditItem[] items =
+        [
+            new("recognized", "Serra Azul", recognized) { TermsLabel = localizedTerms },
+            new("without-address", "Sem endereço", withoutAddress),
+            new("unknown", "Sem revisão", unknown),
+        ];
+
+        // Act
+        var cut = Render<PhotoCreditsPage>(parameters => parameters
+            .Add(component => component.Heading, "Créditos das fotos")
+            .Add(component => component.Items, items)
+            .Add(component => component.Labels, Labels));
+
+        // Assert
+        var termsLink = cut.Find($"#recognized a[href='{canonicalTerms}']");
+        termsLink.TextContent.Trim().ShouldBe("Licença CC BY 4.0 Serra Azul");
+        cut.Find($"#recognized a[href='{originalSource}']").TextContent.Trim().ShouldBe("Fonte original Serra Azul");
+        cut.Find("#recognized").TextContent.ShouldContain(modification, StringComparison.Ordinal);
+        var withoutAddressLinks = cut.FindAll("#without-address a");
+        withoutAddressLinks.Count.ShouldBe(1);
+        withoutAddressLinks[0].GetAttribute("href").ShouldBe(originalSource);
+        cut.Find("#without-address").TextContent.ShouldContain(recorded.License.Code, StringComparison.Ordinal);
+        cut.FindAll("#unknown a").Count.ShouldBe(0);
+        cut.Find("#unknown").TextContent.ShouldContain(unresolved.License.Code, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Repeated_anchors_are_rejected_before_rendering()
     {
         // Arrange
@@ -185,7 +224,7 @@ public sealed class PhotoCreditTests : BunitContext
 
         // Act
         var render = () => Render<PhotoCreditsPage>(parameters => parameters
-            .Add(component => component.Title, "Photo credits")
+            .Add(component => component.Heading, "Photo credits")
             .Add(component => component.Items, [item, item])
             .Add(component => component.Labels, Labels));
 
@@ -202,7 +241,7 @@ public sealed class PhotoCreditTests : BunitContext
 
         // Act
         var render = () => Render<PhotoCreditsPage>(parameters => parameters
-            .Add(component => component.Title, "Photo credits")
+            .Add(component => component.Heading, "Photo credits")
             .Add(component => component.Items, items)
             .Add(component => component.Labels, Labels));
 

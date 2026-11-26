@@ -11,8 +11,8 @@ public sealed class AlbumLoadingTests : BunitContext
     public void A_card_loads_its_image_eagerly_only_when_asked()
     {
         // Arrange & Act
-        var lazy = Render<Card>(parameters => parameters.Add(card => card.Title, "A").Add(card => card.Image, Image("/a.jpg")));
-        var eager = Render<Card>(parameters => parameters.Add(card => card.Title, "A").Add(card => card.Image, Image("/a.jpg")).Add(card => card.EagerImage, true));
+        var lazy = Render<Card>(parameters => parameters.Add(card => card.Heading, "A").Add(card => card.Image, Image("/a.jpg")));
+        var eager = Render<Card>(parameters => parameters.Add(card => card.Heading, "A").Add(card => card.Image, Image("/a.jpg")).Add(card => card.EagerImage, true));
 
         // Assert
         lazy.Find("img").GetAttribute("loading").ShouldBe("lazy");

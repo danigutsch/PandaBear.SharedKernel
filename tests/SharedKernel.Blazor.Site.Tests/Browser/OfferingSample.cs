@@ -36,7 +36,7 @@ public sealed class OfferingSample : ComponentBase
         builder.OpenElement(0, "main");
         builder.OpenComponent<Hero>(1);
         builder.AddComponentParameter(2, nameof(Hero.Layout), HeroLayout.Cover);
-        builder.AddComponentParameter(3, nameof(Hero.Title), "Atacama");
+        builder.AddComponentParameter(3, nameof(Hero.Heading), "Atacama");
         builder.AddComponentParameter(4, nameof(Hero.Actions), Badges("hero"));
         builder.CloseComponent();
         builder.OpenElement(5, "div");
@@ -130,7 +130,7 @@ public sealed class OfferingSample : ComponentBase
                 grid.OpenComponent<Card>(0);
                 grid.SetKey(index);
                 grid.AddComponentParameter(1, "id", index == 0 ? "tour" : $"tour-{index}");
-                grid.AddComponentParameter(2, nameof(Card.Title), "Atacama");
+                grid.AddComponentParameter(2, nameof(Card.Heading), "Atacama");
                 grid.AddComponentParameter(3, nameof(Card.Href), LinkTarget.FromString("/tours/atacama"));
                 grid.AddComponentParameter(4, nameof(Card.ChildContent), (RenderFragment)(body =>
                 {
@@ -153,7 +153,7 @@ public sealed class OfferingSample : ComponentBase
     private static void PriceSection(RenderTreeBuilder builder)
     {
         builder.OpenComponent<Section>(0);
-        builder.AddComponentParameter(1, nameof(Section.Title), "Prices");
+        builder.AddComponentParameter(1, nameof(Section.Heading), "Prices");
         builder.AddComponentParameter(2, nameof(Section.HeadingId), "prices");
         builder.AddComponentParameter(3, nameof(Section.ChildContent), Prices("price-list"));
         builder.CloseComponent();

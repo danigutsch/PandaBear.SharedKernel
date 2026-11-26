@@ -64,6 +64,87 @@ public sealed class ImageCreditAttributionTests
     }
 
     [Theory]
+    [InlineData("CC BY 4.0", ContentLicenseKind.CcBy, "https://creativecommons.org/licenses/by/4.0/")]
+    [InlineData("CC BY-SA 3.0", ContentLicenseKind.CcBySa, "https://creativecommons.org/licenses/by-sa/3.0/")]
+    [InlineData("CC BY-ND 2.5", ContentLicenseKind.CcByNd, "https://creativecommons.org/licenses/by-nd/2.5/")]
+    [InlineData("CC BY-NC 2.0", ContentLicenseKind.CcByNc, "https://creativecommons.org/licenses/by-nc/2.0/")]
+    [InlineData("CC BY-NC-SA 4.0", ContentLicenseKind.CcByNcSa, "https://creativecommons.org/licenses/by-nc-sa/4.0/")]
+    [InlineData("CC BY-NC-ND 4.0", ContentLicenseKind.CcByNcNd, "https://creativecommons.org/licenses/by-nc-nd/4.0/")]
+    [InlineData("CC0 1.0", ContentLicenseKind.Cc0, "https://creativecommons.org/publicdomain/zero/1.0/")]
+    [InlineData("Public Domain Mark 1.0", ContentLicenseKind.PublicDomainMark, "https://creativecommons.org/publicdomain/mark/1.0/")]
+    [InlineData("PDM 1.0", ContentLicenseKind.PublicDomainMark, "https://creativecommons.org/publicdomain/mark/1.0/")]
+    public void Opt_in_resolves_the_official_terms_for_known_image_codes(
+        string code, ContentLicenseKind kind, string terms)
+    {
+        // Arrange
+        var legacy = ImageCredit.Create("Archive account", "Serra Azul", null, code, null, modified: false).ShouldBeSuccess();
+
+        // Act
+        var credit = ContentAttribution.FromImageCreditWithKnownTerms(legacy).ShouldBeSuccess().ToPublicCredit();
+
+        // Assert
+        credit.License.Kind.ShouldBe(kind);
+        credit.License.DeclaredTerms.ShouldBe(code);
+        credit.License.DeclaredTermsUrl.ShouldBeNull();
+        credit.License.TermsUrl.ShouldNotBeNull().Value.ShouldBe(terms);
+        credit.License.CanonicalTermsUrl.ShouldNotBeNull().Value.ShouldBe(terms);
+    }
+
+    [Fact]
+    public void Opt_in_preserves_the_supplied_deed_of_a_matching_port()
+    {
+        // Arrange
+        const string source = "https://archive.example.org/photos/serra";
+        const string terms = "https://creativecommons.org/licenses/by-sa/3.0/br/deed.pt";
+        const string change = "Cropped for the gallery";
+        var legacy = ImageCredit.Create("Archive account", "Serra Azul", source, "CC BY-SA 3.0", terms, modified: true).ShouldBeSuccess();
+
+        // Act
+        var credit = ContentAttribution.FromImageCreditWithKnownTerms(legacy, change).ShouldBeSuccess().ToPublicCredit();
+
+        // Assert
+        credit.OriginalSourceUrl.ShouldNotBeNull().Value.ShouldBe(source);
+        credit.ModificationNotice.ShouldBe(change);
+        credit.License.Kind.ShouldBe(ContentLicenseKind.CcBySa);
+        credit.License.TermsUrl.ShouldNotBeNull().Value.ShouldBe(terms);
+        credit.License.CanonicalTermsUrl.ShouldNotBeNull().Value.ShouldBe("https://creativecommons.org/licenses/by-sa/3.0/br/");
+        credit.License.Jurisdiction.ShouldBe("br");
+    }
+
+    [Theory]
+    [InlineData("Archive terms", "https://archive.example.org/reuse")]
+    [InlineData("CC BY 9.0", null)]
+    [InlineData("CC BY 4.0", "https://creativecommons.org/licenses/by-sa/4.0/")]
+    [InlineData("CC BY 4.0", "https://creativecommons.org/licenses/by/3.0/")]
+    public void Opt_in_preserves_unknown_or_conflicting_terms_as_unresolved(string code, string? terms)
+    {
+        // Arrange
+        var legacy = ImageCredit.Create("Archive account", null, null, code, terms, modified: false).ShouldBeSuccess();
+
+        // Act
+        var credit = ContentAttribution.FromImageCreditWithKnownTerms(legacy).ShouldBeSuccess().ToPublicCredit();
+
+        // Assert
+        credit.License.Kind.ShouldBe(ContentLicenseKind.Unknown);
+        credit.License.DeclaredTerms.ShouldBe(code);
+        credit.License.DeclaredTermsUrl.ShouldBe(terms);
+        credit.License.CanonicalTermsUrl.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Opt_in_revalidates_a_restored_image_terms_URL()
+    {
+        // Arrange
+        var legacy = ImageCredit.Restore("Archive account", null, null, ImageLicense.Restore("CC BY 4.0", "x"), modified: false);
+
+        // Act
+        var result = ContentAttribution.FromImageCreditWithKnownTerms(legacy);
+
+        // Assert
+        result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull().ContainsKey("termsUrl").ShouldBeTrue();
+    }
+
+    [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]

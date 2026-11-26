@@ -23,13 +23,13 @@ public sealed class SectionsSample : ComponentBase
         builder.OpenElement(0, "main");
         builder.OpenComponent<Section>(1);
         builder.AddAttribute(2, "id", "plain");
-        builder.AddComponentParameter(3, nameof(Section.Title), "About the tour");
+        builder.AddComponentParameter(3, nameof(Section.Heading), "About the tour");
         builder.AddComponentParameter(4, nameof(Section.Intro), LongText);
         builder.AddComponentParameter(5, nameof(Section.ChildContent), (RenderFragment)(body => body.AddMarkupContent(0, $"<p id=\"plain-text\">{LongText}</p>")));
         builder.CloseComponent();
         builder.OpenComponent<Section>(6);
         builder.AddAttribute(7, "id", "centred");
-        builder.AddComponentParameter(8, nameof(Section.Title), "Upcoming tours");
+        builder.AddComponentParameter(8, nameof(Section.Heading), "Upcoming tours");
         builder.AddComponentParameter(9, nameof(Section.TextAlignment), SiteAlignment.Center);
         builder.AddComponentParameter(10, nameof(Section.ChildContent), (RenderFragment)CentredBody);
         builder.CloseComponent();
@@ -41,7 +41,7 @@ public sealed class SectionsSample : ComponentBase
         builder.CloseComponent();
         builder.OpenComponent<Section>(16);
         builder.AddAttribute(17, "id", "itinerary");
-        builder.AddComponentParameter(18, nameof(Section.Title), "Itinerary");
+        builder.AddComponentParameter(18, nameof(Section.Heading), "Itinerary");
         builder.AddComponentParameter(19, nameof(Section.ChildContent), (RenderFragment)Days);
         builder.CloseComponent();
         builder.OpenComponent<Band>(20);
@@ -65,7 +65,7 @@ public sealed class SectionsSample : ComponentBase
     {
         builder.OpenComponent<Section>(0);
         builder.AddAttribute(1, "id", id);
-        builder.AddComponentParameter(2, nameof(Section.Title), id);
+        builder.AddComponentParameter(2, nameof(Section.Heading), id);
         builder.AddComponentParameter(3, nameof(Section.TextAlignment), alignment);
         builder.AddComponentParameter(4, nameof(Section.ChildContent), (RenderFragment)(body =>
         {
@@ -90,7 +90,7 @@ public sealed class SectionsSample : ComponentBase
         builder.CloseComponent();
         builder.OpenComponent<VideoLink>(4);
         builder.AddComponentParameter(5, nameof(VideoLink.Href), LinkTarget.FromString("https://www.youtube.com/watch?v=abc123"));
-        builder.AddComponentParameter(6, nameof(VideoLink.Title), "Patagonia in winter");
+        builder.AddComponentParameter(6, nameof(VideoLink.Heading), "Patagonia in winter");
         builder.AddComponentParameter(7, nameof(VideoLink.SiteHint), "(opens YouTube)");
         builder.AddComponentParameter(8, nameof(VideoLink.Poster), ResponsiveImage.Create(LinkTarget.FromString(BandsSample.WhitePhoto), 480, 360, ImageAlternative.Decorative()));
         builder.CloseComponent();
@@ -111,7 +111,7 @@ public sealed class SectionsSample : ComponentBase
         {
             builder.OpenComponent<Section>(0);
             builder.AddAttribute(1, "id", $"day-{day}");
-            builder.AddComponentParameter(2, nameof(Section.Title), $"Day {day}");
+            builder.AddComponentParameter(2, nameof(Section.Heading), $"Day {day}");
             builder.AddComponentParameter(3, nameof(Section.Level), 3);
             builder.AddComponentParameter(4, nameof(Section.Divider), false);
             builder.AddComponentParameter(5, nameof(Section.ChildContent), (RenderFragment)(body => body.AddMarkupContent(0, "<p>Arrival and a short ride.</p>")));

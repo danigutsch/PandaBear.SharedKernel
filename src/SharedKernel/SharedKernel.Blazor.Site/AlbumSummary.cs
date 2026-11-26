@@ -14,4 +14,8 @@ public sealed record AlbumSummary(
     LinkTarget Href,
     ResponsiveImage? Cover = null,
     string? PhotoCountText = null,
-    string? TitleLanguage = null);
+    string? TitleLanguage = null)
+{
+    /// <summary>Gets the optional short credit shown with <see cref="Cover" />.</summary>
+    public ImageCreditLine? CoverCredit { get; init; }
+}

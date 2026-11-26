@@ -4,7 +4,13 @@
     {
         <div class="site-card__media">@ResponsiveImageMarkup.Render(Image, eager: EagerImage, highPriority: false)</div>
     }
-    <div class="site-card__body">@TitleGroup@ChildContent</div>
+    <div class="site-card__body">
+        @if (Image is not null && ImageCredit is not null)
+        {
+            <ImageCreditCaption Credit="@ImageCredit" />
+        }
+        @TitleGroup@ChildContent
+    </div>
     @if (HasMore || Actions is not null)
     {
         <ActionRow Class="site-card__actions" Justification="@(TextAlignment == SiteAlignment.Center ? ActionRowJustification.Center : ActionRowJustification.Start)">
@@ -18,7 +24,7 @@
 </article>
 
 @code {
-    private RenderFragment TitleGroup => HeadingGroup.Render(HeadingGroupClasses.Card, Eyebrow, Heading.Render(HeadingLevel, "site-card__title", null, TitleContent, TitleLanguage));
+    private RenderFragment TitleGroup => HeadingGroup.Render(HeadingGroupClasses.Card, Eyebrow, HeadingMarkup.Render(HeadingLevel, "site-card__title", null, TitleContent, TitleLanguage));
 
-    private RenderFragment TitleContent => Href is null ? @<text>@Title</text> : @<a href="@Href.Value">@Title</a>;
+    private RenderFragment TitleContent => Href is null ? @<text>@Heading</text> : @<a href="@Href.Value">@Heading</a>;
 }
