@@ -685,9 +685,15 @@ a {
     justify-content: center;
 }
 
-/* Normal-size text without a filled background gets the boost behind it, so it reaches 4.5:1 over the large-text scrim. */
-.site-hero--cover .site-hero__actions :is(.site-button--outline, a:not(.site-button)) {
+/* Normal-size text on the cover gets a boost behind it to reach 4.5:1 over the large-text scrim. */
+.site-hero--cover .site-hero__actions :is(.site-button--outline, a:not(.site-button)),
+.site-hero--cover > .site-hero__credit {
     background: color-mix(in srgb, var(--site-color-text) var(--site-scrim-boost), transparent);
+}
+
+.site-hero__credit {
+    padding: var(--site-space-1) var(--site-space-2);
+    border-radius: var(--site-radius);
 }
 
 .site-band {

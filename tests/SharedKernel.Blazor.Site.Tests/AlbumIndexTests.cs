@@ -41,6 +41,27 @@ public sealed class AlbumIndexTests : BunitContext
         cover.GetAttribute("height").ShouldBe("300");
         cut.FindAll("img").Count.ShouldBe(2);
         cut.FindAll(".site-album-index__count").Select(count => count.TextContent).ShouldBe(["12 fotos", "1 foto"]);
+        cut.FindAll(".site-image-credit").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void A_cover_credit_stays_with_its_album_card()
+    {
+        // Arrange
+        var album = new AlbumSummary("Patagônia", Link("/pt/galeria/patagonia"), Image("/c1.jpg"))
+        {
+            CoverCredit = new ImageCreditLine("Photo: Ana Lima", CreditsHref: Link("/credits#patagonia")),
+        };
+
+        // Act
+        var cut = Render<AlbumIndex>(parameters => parameters.Add(index => index.Albums, [album, Albums[1]]));
+
+        // Assert
+        var cards = cut.FindAll("article.site-card");
+        cards.Count.ShouldBe(2);
+        cards[0].QuerySelector("small.site-image-credit a").ShouldNotBeNull().GetAttribute("href")
+            .ShouldBe("/credits#patagonia");
+        cards[1].QuerySelector("small.site-image-credit").ShouldBeNull();
     }
 
     [Fact]

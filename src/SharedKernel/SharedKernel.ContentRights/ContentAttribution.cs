@@ -67,7 +67,23 @@ public sealed class ContentAttribution
         ImageCredit imageCredit,
         ContentLicenseKind reviewedKind,
         string? modificationNotice = null,
-        ContentCreditEntityKind creatorKind = ContentCreditEntityKind.Unknown)
+        ContentCreditEntityKind creatorKind = ContentCreditEntityKind.Unknown) =>
+        FromImageCreditCore(imageCredit, reviewedKind, modificationNotice, creatorKind);
+
+    /// <summary>Creates an attribution and recognizes supported standard terms from the recorded image license code.</summary>
+    /// <param name="imageCredit">The existing recorded image credit.</param>
+    /// <param name="modificationNotice">The public wording for known changes. Required when the image credit records a modification.</param>
+    /// <param name="creatorKind">The author's entity kind, when established by the caller.</param>
+    /// <returns>The converted attribution or field validation errors. The caller reviews publication separately.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="imageCredit"/> is <see langword="null"/>.</exception>
+    public static Result<ContentAttribution> FromImageCreditWithKnownTerms(
+        ImageCredit imageCredit,
+        string? modificationNotice = null,
+        ContentCreditEntityKind creatorKind = ContentCreditEntityKind.Unknown) =>
+        FromImageCreditCore(imageCredit, reviewedKind: null, modificationNotice, creatorKind);
+
+    private static Result<ContentAttribution> FromImageCreditCore(
+        ImageCredit imageCredit, ContentLicenseKind? reviewedKind, string? modificationNotice, ContentCreditEntityKind creatorKind)
     {
         ArgumentNullException.ThrowIfNull(imageCredit);
 
@@ -77,15 +93,17 @@ public sealed class ContentAttribution
             return Result.Invalid<ContentAttribution>(detail: message, field: "modificationNotice", message: message);
         }
 
-        return ContentLicense.Create(reviewedKind, imageCredit.License.Code, imageCredit.License.Url?.Value)
-            .Bind(license => Create(new ContentAttributionDefinition
-            {
-                Title = imageCredit.Title,
-                Parties = [new ContentCreditParty(imageCredit.Author, ContentCreditRole.Creator, creatorKind)],
-                OriginalSourceUrl = imageCredit.SourceUrl?.Value,
-                ModificationNotice = modificationNotice,
-                License = license,
-            }));
+        var terms = reviewedKind is { } kind
+            ? ContentLicense.Create(kind, imageCredit.License.Code, imageCredit.License.Url?.Value)
+            : ContentLicense.FromImageLicense(imageCredit.License);
+        return terms.Bind(license => Create(new ContentAttributionDefinition
+        {
+            Title = imageCredit.Title,
+            Parties = [new ContentCreditParty(imageCredit.Author, ContentCreditRole.Creator, creatorKind)],
+            OriginalSourceUrl = imageCredit.SourceUrl?.Value,
+            ModificationNotice = modificationNotice,
+            License = license,
+        }));
     }
 
     /// <summary>Returns the public display fields for a caller to publish after review.</summary>

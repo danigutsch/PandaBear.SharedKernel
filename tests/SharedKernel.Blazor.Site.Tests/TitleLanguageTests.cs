@@ -14,7 +14,7 @@ public sealed class TitleLanguageTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
-            .Add(card => card.Title, "Patagonia")
+            .Add(card => card.Heading, "Patagonia")
             .Add(card => card.TitleLanguage, "en")
             .Add(card => card.Image, Image("/c.jpg", ImageAlternative.Describe("Um lago")))
             .AddChildContent("<p class=\"count\">12 fotos</p>"));
@@ -29,7 +29,7 @@ public sealed class TitleLanguageTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(section => section.Title, "Patagonia")
+            .Add(section => section.Heading, "Patagonia")
             .Add(section => section.TitleLanguage, "en")
             .Add(section => section.Intro, "Oito dias.")
             .AddChildContent("<p>Texto</p>"));
@@ -43,8 +43,8 @@ public sealed class TitleLanguageTests : BunitContext
     public void Without_a_title_language_no_lang_is_written()
     {
         // Arrange & Act
-        var card = Render<Card>(parameters => parameters.Add(component => component.Title, "Patagônia"));
-        var section = Render<Section>(parameters => parameters.Add(component => component.Title, "Patagônia"));
+        var card = Render<Card>(parameters => parameters.Add(component => component.Heading, "Patagônia"));
+        var section = Render<Section>(parameters => parameters.Add(component => component.Heading, "Patagônia"));
 
         // Assert
         card.FindAll("[lang]").ShouldBeEmpty();
@@ -66,8 +66,8 @@ public sealed class TitleLanguageTests : BunitContext
     public void A_title_language_that_is_not_a_language_tag_is_rejected(string tag)
     {
         // Arrange
-        var card = () => Render<Card>(parameters => parameters.Add(component => component.Title, "A").Add(component => component.TitleLanguage, tag));
-        var section = () => Render<Section>(parameters => parameters.Add(component => component.Title, "A").Add(component => component.TitleLanguage, tag));
+        var card = () => Render<Card>(parameters => parameters.Add(component => component.Heading, "A").Add(component => component.TitleLanguage, tag));
+        var section = () => Render<Section>(parameters => parameters.Add(component => component.Heading, "A").Add(component => component.TitleLanguage, tag));
 
         // Act & Assert
         card.ShouldThrow<ArgumentException>();
@@ -82,7 +82,7 @@ public sealed class TitleLanguageTests : BunitContext
     public void Common_language_tags_are_accepted(string tag)
     {
         // Arrange & Act
-        var cut = Render<Card>(parameters => parameters.Add(component => component.Title, "A").Add(component => component.TitleLanguage, tag));
+        var cut = Render<Card>(parameters => parameters.Add(component => component.Heading, "A").Add(component => component.TitleLanguage, tag));
 
         // Assert
         cut.Find("h3").GetAttribute("lang").ShouldBe(tag);

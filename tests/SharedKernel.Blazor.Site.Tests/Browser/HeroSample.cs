@@ -28,7 +28,7 @@ public sealed class HeroSample : ComponentBase
         builder.OpenElement(2, "main");
         builder.OpenComponent<Hero>(3);
         builder.AddComponentParameter(4, nameof(Hero.Layout), Layout);
-        builder.AddComponentParameter(5, nameof(Hero.Title), "Travel with feeling");
+        builder.AddComponentParameter(5, nameof(Hero.Heading), "Travel with feeling");
         builder.AddComponentParameter(6, nameof(Hero.Subtitle), Subtitle ? "Small groups, one guide" : null);
         builder.AddComponentParameter(7, nameof(Hero.Actions), (RenderFragment)(actions =>
         {

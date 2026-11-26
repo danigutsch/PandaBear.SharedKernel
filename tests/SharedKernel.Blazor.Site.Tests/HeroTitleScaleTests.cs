@@ -8,7 +8,7 @@ public sealed class HeroTitleScaleTests : BunitContext
     public void A_hero_title_has_the_regular_scale_and_no_scale_class_by_default()
     {
         // Arrange & Act
-        var cut = Render<Hero>(parameters => parameters.Add(component => component.Title, "Discover"));
+        var cut = Render<Hero>(parameters => parameters.Add(component => component.Heading, "Discover"));
 
         // Assert
         cut.Find("section").ClassName.ShouldBe("site-hero");
@@ -21,7 +21,7 @@ public sealed class HeroTitleScaleTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Layout, layout)
             .Add(component => component.CoverHeight, height)
             .Add(component => component.TitleScale, HeroTitleScale.Large));
@@ -36,7 +36,7 @@ public sealed class HeroTitleScaleTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.TitleScale, (HeroTitleScale)9));
 
         // Assert

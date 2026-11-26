@@ -1,7 +1,7 @@
 @inherits SiteComponent
 <section class="@CssClass(RootClass + DividerClass + TitleScaleClass)" @attributes="AdditionalAttributes">
     <div class="site-hero__text">
-        @HeadingGroup.Render(HeadingGroupClasses.Hero, Eyebrow, @<h1 class="site-hero__title">@Title</h1>, Subtitle)
+        @HeadingGroup.Render(HeadingGroupClasses.Hero, Eyebrow, @<h1 class="site-hero__title">@Heading</h1>, Subtitle)
         @if (Actions is not null)
         {
             <div class="site-hero__actions">@Actions</div>
@@ -9,6 +9,16 @@
     </div>
     @if (Image is not null)
     {
-        <div class="site-hero__media">@ResponsiveImageMarkup.Render(Image, eager: true, highPriority: true)</div>
+        <div class="site-hero__media">
+            @ResponsiveImageMarkup.Render(Image, eager: true, highPriority: true)
+            @if (Layout == HeroLayout.Split && ImageCredit is not null)
+            {
+                <ImageCreditCaption Credit="@ImageCredit" />
+            }
+        </div>
+        @if (Layout == HeroLayout.Cover && ImageCredit is not null)
+        {
+            <ImageCreditCaption Class="site-hero__credit" Credit="@ImageCredit" />
+        }
     }
 </section>

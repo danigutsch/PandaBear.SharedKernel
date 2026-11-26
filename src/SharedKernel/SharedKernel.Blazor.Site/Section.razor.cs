@@ -21,7 +21,7 @@ public sealed partial class Section
     /// <summary>Gets or sets the heading text.</summary>
     [Parameter]
     [EditorRequired]
-    public string Title { get; set; } = string.Empty;
+    public string Heading { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the id of the heading, unique on the page and without white space. When set, the section is labelled by its heading.
@@ -81,8 +81,8 @@ public sealed partial class Section
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(Title);
-        Heading.RequireLevel(Level, nameof(Level));
+        ArgumentException.ThrowIfNullOrWhiteSpace(Heading);
+        HeadingMarkup.RequireLevel(Level, nameof(Level));
         LanguageTag.Require(TitleLanguage, nameof(TitleLanguage));
         EnumParameter.RequireDefined(TextAlignment, nameof(TextAlignment), "The text alignment is not defined.");
 

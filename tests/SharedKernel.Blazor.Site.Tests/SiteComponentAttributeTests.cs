@@ -14,7 +14,7 @@ public sealed class SiteComponentAttributeTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .AddUnmatched(name, "/img/hero.jpg"));
 
         // Assert
@@ -32,7 +32,7 @@ public sealed class SiteComponentAttributeTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Atacama")
+            .Add(component => component.Heading, "Atacama")
             .Add(component => component.Href, LinkTarget.FromString("/tours/atacama"))
             .AddUnmatched(name, "x"));
 
@@ -47,15 +47,17 @@ public sealed class SiteComponentAttributeTests : BunitContext
     [InlineData("dir")]
     [InlineData("lang")]
     [InlineData("tabindex")]
+    [InlineData("title")]
     public void HTML_attributes_still_pass_through_to_the_root_element(string name)
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .AddUnmatched(name, "value"));
 
         // Assert
         cut.Find("section").GetAttribute(name).ShouldBe("value");
+        cut.Find("h2").TextContent.ShouldBe("Tours");
     }
 
     [Theory]
@@ -67,7 +69,7 @@ public sealed class SiteComponentAttributeTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<Section>(parameters => parameters
-            .Add(component => component.Title, "Tours")
+            .Add(component => component.Heading, "Tours")
             .AddUnmatched(name, "x"));
 
         // Assert

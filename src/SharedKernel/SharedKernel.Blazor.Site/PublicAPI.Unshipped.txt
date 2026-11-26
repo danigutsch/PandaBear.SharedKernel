@@ -182,8 +182,10 @@ SharedKernel.Blazor.Site.Card.Href.get -> SharedKernel.Blazor.Site.LinkTarget?
 SharedKernel.Blazor.Site.Card.Href.set -> void
 SharedKernel.Blazor.Site.Card.Image.get -> SharedKernel.Blazor.Site.ResponsiveImage?
 SharedKernel.Blazor.Site.Card.Image.set -> void
-SharedKernel.Blazor.Site.Card.Title.get -> string!
-SharedKernel.Blazor.Site.Card.Title.set -> void
+SharedKernel.Blazor.Site.Card.ImageCredit.get -> SharedKernel.Blazor.Site.ImageCreditLine?
+SharedKernel.Blazor.Site.Card.ImageCredit.set -> void
+SharedKernel.Blazor.Site.Card.Heading.get -> string!
+SharedKernel.Blazor.Site.Card.Heading.set -> void
 SharedKernel.Blazor.Site.CardGrid
 SharedKernel.Blazor.Site.CardGrid.CardGrid() -> void
 SharedKernel.Blazor.Site.CardGrid.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
@@ -198,8 +200,8 @@ SharedKernel.Blazor.Site.ContactCard.HeadingLevel.get -> int
 SharedKernel.Blazor.Site.ContactCard.HeadingLevel.set -> void
 SharedKernel.Blazor.Site.ContactCard.Phone.get -> SharedKernel.BuildingBlocks.PhoneNumber?
 SharedKernel.Blazor.Site.ContactCard.Phone.set -> void
-SharedKernel.Blazor.Site.ContactCard.Title.get -> string?
-SharedKernel.Blazor.Site.ContactCard.Title.set -> void
+SharedKernel.Blazor.Site.ContactCard.Heading.get -> string?
+SharedKernel.Blazor.Site.ContactCard.Heading.set -> void
 SharedKernel.Blazor.Site.ContactCard.WhatsApp.get -> SharedKernel.BuildingBlocks.PhoneNumber?
 SharedKernel.Blazor.Site.ContactCard.WhatsApp.set -> void
 SharedKernel.Blazor.Site.ContactCard.WhatsAppLabel.get -> string!
@@ -240,10 +242,12 @@ SharedKernel.Blazor.Site.Hero.Eyebrow.set -> void
 SharedKernel.Blazor.Site.Hero.Hero() -> void
 SharedKernel.Blazor.Site.Hero.Image.get -> SharedKernel.Blazor.Site.ResponsiveImage?
 SharedKernel.Blazor.Site.Hero.Image.set -> void
+SharedKernel.Blazor.Site.Hero.ImageCredit.get -> SharedKernel.Blazor.Site.ImageCreditLine?
+SharedKernel.Blazor.Site.Hero.ImageCredit.set -> void
 SharedKernel.Blazor.Site.Hero.Subtitle.get -> string?
 SharedKernel.Blazor.Site.Hero.Subtitle.set -> void
-SharedKernel.Blazor.Site.Hero.Title.get -> string!
-SharedKernel.Blazor.Site.Hero.Title.set -> void
+SharedKernel.Blazor.Site.Hero.Heading.get -> string!
+SharedKernel.Blazor.Site.Hero.Heading.set -> void
 SharedKernel.Blazor.Site.ImageAlternative
 SharedKernel.Blazor.Site.ImageAlternative.IsDecorative.get -> bool
 SharedKernel.Blazor.Site.ImageAlternative.Text.get -> string!
@@ -327,8 +331,8 @@ SharedKernel.Blazor.Site.Section.Intro.set -> void
 SharedKernel.Blazor.Site.Section.Level.get -> int
 SharedKernel.Blazor.Site.Section.Level.set -> void
 SharedKernel.Blazor.Site.Section.Section() -> void
-SharedKernel.Blazor.Site.Section.Title.get -> string!
-SharedKernel.Blazor.Site.Section.Title.set -> void
+SharedKernel.Blazor.Site.Section.Heading.get -> string!
+SharedKernel.Blazor.Site.Section.Heading.set -> void
 SharedKernel.Blazor.Site.SiteComponent
 SharedKernel.Blazor.Site.SiteComponent.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
 SharedKernel.Blazor.Site.SiteComponent.AdditionalAttributes.set -> void
@@ -722,6 +726,8 @@ SharedKernel.Blazor.Site.Band.ChildContent.get -> Microsoft.AspNetCore.Component
 SharedKernel.Blazor.Site.Band.ChildContent.set -> void
 SharedKernel.Blazor.Site.Band.Image.get -> SharedKernel.Blazor.Site.ResponsiveImage?
 SharedKernel.Blazor.Site.Band.Image.set -> void
+SharedKernel.Blazor.Site.Band.ImageCredit.get -> SharedKernel.Blazor.Site.ImageCreditLine?
+SharedKernel.Blazor.Site.Band.ImageCredit.set -> void
 SharedKernel.Blazor.Site.Band.Tone.get -> SharedKernel.Blazor.Site.BandTone
 SharedKernel.Blazor.Site.Band.Tone.set -> void
 SharedKernel.Blazor.Site.BandTone
@@ -737,6 +743,8 @@ SharedKernel.Blazor.Site.Byline.Name.get -> string!
 SharedKernel.Blazor.Site.Byline.Name.set -> void
 SharedKernel.Blazor.Site.Byline.Photo.get -> SharedKernel.Blazor.Site.ResponsiveImage?
 SharedKernel.Blazor.Site.Byline.Photo.set -> void
+SharedKernel.Blazor.Site.Byline.PhotoCredit.get -> SharedKernel.Blazor.Site.ImageCreditLine?
+SharedKernel.Blazor.Site.Byline.PhotoCredit.set -> void
 SharedKernel.Blazor.Site.FloatingLink
 SharedKernel.Blazor.Site.FloatingLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
 SharedKernel.Blazor.Site.FloatingLink.ChildContent.set -> void
@@ -769,10 +777,12 @@ SharedKernel.Blazor.Site.VideoLink.Href.get -> SharedKernel.Blazor.Site.LinkTarg
 SharedKernel.Blazor.Site.VideoLink.Href.set -> void
 SharedKernel.Blazor.Site.VideoLink.Poster.get -> SharedKernel.Blazor.Site.ResponsiveImage?
 SharedKernel.Blazor.Site.VideoLink.Poster.set -> void
+SharedKernel.Blazor.Site.VideoLink.PosterCredit.get -> SharedKernel.Blazor.Site.ImageCreditLine?
+SharedKernel.Blazor.Site.VideoLink.PosterCredit.set -> void
 SharedKernel.Blazor.Site.VideoLink.SiteHint.get -> string!
 SharedKernel.Blazor.Site.VideoLink.SiteHint.set -> void
-SharedKernel.Blazor.Site.VideoLink.Title.get -> string!
-SharedKernel.Blazor.Site.VideoLink.Title.set -> void
+SharedKernel.Blazor.Site.VideoLink.Heading.get -> string!
+SharedKernel.Blazor.Site.VideoLink.Heading.set -> void
 SharedKernel.Blazor.Site.VideoLink.VideoLink() -> void
 SharedKernel.Blazor.Site.CoverHeight
 SharedKernel.Blazor.Site.CoverHeight.Landing = 1 -> SharedKernel.Blazor.Site.CoverHeight
@@ -886,14 +896,16 @@ SharedKernel.Blazor.Site.AlbumSection.PreviousText.get -> string!
 SharedKernel.Blazor.Site.AlbumSection.PreviousText.set -> void
 SharedKernel.Blazor.Site.AlbumSection.Slug.get -> SharedKernel.BuildingBlocks.Slug?
 SharedKernel.Blazor.Site.AlbumSection.Slug.set -> void
-SharedKernel.Blazor.Site.AlbumSection.Title.get -> string!
-SharedKernel.Blazor.Site.AlbumSection.Title.set -> void
+SharedKernel.Blazor.Site.AlbumSection.Heading.get -> string!
+SharedKernel.Blazor.Site.AlbumSection.Heading.set -> void
 SharedKernel.Blazor.Site.AlbumSection.Window.get -> SharedKernel.BuildingBlocks.PageWindow
 SharedKernel.Blazor.Site.AlbumSection.Window.set -> void
 SharedKernel.Blazor.Site.AlbumSummary
 SharedKernel.Blazor.Site.AlbumSummary.<Clone>$() -> SharedKernel.Blazor.Site.AlbumSummary!
 SharedKernel.Blazor.Site.AlbumSummary.Cover.get -> SharedKernel.Blazor.Site.ResponsiveImage?
 SharedKernel.Blazor.Site.AlbumSummary.Cover.init -> void
+SharedKernel.Blazor.Site.AlbumSummary.CoverCredit.get -> SharedKernel.Blazor.Site.ImageCreditLine?
+SharedKernel.Blazor.Site.AlbumSummary.CoverCredit.init -> void
 SharedKernel.Blazor.Site.AlbumSummary.Equals(SharedKernel.Blazor.Site.AlbumSummary? other) -> bool
 SharedKernel.Blazor.Site.AlbumSummary.Href.get -> SharedKernel.Blazor.Site.LinkTarget!
 SharedKernel.Blazor.Site.AlbumSummary.Href.init -> void
@@ -1173,8 +1185,8 @@ SharedKernel.Blazor.Site.PhotoCreditsPage.Labels.set -> void
 SharedKernel.Blazor.Site.PhotoCreditsPage.Level.get -> int
 SharedKernel.Blazor.Site.PhotoCreditsPage.Level.set -> void
 SharedKernel.Blazor.Site.PhotoCreditsPage.PhotoCreditsPage() -> void
-SharedKernel.Blazor.Site.PhotoCreditsPage.Title.get -> string!
-SharedKernel.Blazor.Site.PhotoCreditsPage.Title.set -> void
+SharedKernel.Blazor.Site.PhotoCreditsPage.Heading.get -> string!
+SharedKernel.Blazor.Site.PhotoCreditsPage.Heading.set -> void
 const SharedKernel.Blazor.Site.PhotoCreditsPage.MaxItems = 100 -> int
 SharedKernel.Blazor.Site.AlbumSection.CreditLabels.get -> SharedKernel.Blazor.Site.PhotoCreditLabels?
 SharedKernel.Blazor.Site.AlbumSection.CreditLabels.set -> void

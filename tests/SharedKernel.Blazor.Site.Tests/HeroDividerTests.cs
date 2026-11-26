@@ -10,7 +10,7 @@ public sealed class HeroDividerTests : BunitContext
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
             .Add(component => component.Eyebrow, "Since 2004")
-            .Add(component => component.Title, "Discover")
+            .Add(component => component.Heading, "Discover")
             .Add(component => component.Subtitle, "Small groups")
             .Add(component => component.Layout, HeroLayout.Cover)
             .Add(component => component.Divider, true)
@@ -28,7 +28,7 @@ public sealed class HeroDividerTests : BunitContext
     public void A_hero_has_no_rule_by_default()
     {
         // Arrange & Act
-        var cut = Render<Hero>(parameters => parameters.Add(component => component.Title, "Discover"));
+        var cut = Render<Hero>(parameters => parameters.Add(component => component.Heading, "Discover"));
 
         // Assert
         cut.Find("section").ClassList.ShouldNotContain("site-hero--divided");

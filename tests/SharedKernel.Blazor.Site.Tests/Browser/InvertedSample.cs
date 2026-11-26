@@ -109,7 +109,7 @@ public sealed class InvertedSample : ComponentBase
     {
         builder.OpenComponent<Card>(0);
         builder.AddComponentParameter(1, "id", id);
-        builder.AddComponentParameter(2, nameof(Card.Title), "Alentejo");
+        builder.AddComponentParameter(2, nameof(Card.Heading), "Alentejo");
         builder.AddComponentParameter(3, nameof(Card.Href), LinkTarget.FromString("/tours/" + id));
         builder.AddComponentParameter(4, nameof(Card.CardStyle), style);
         builder.AddComponentParameter(5, nameof(Card.MoreText), "More");

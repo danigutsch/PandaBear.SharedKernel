@@ -38,7 +38,7 @@ public sealed partial class AlbumSection
     /// <summary>Gets or sets the album title, the section's heading.</summary>
     [Parameter]
     [EditorRequired]
-    public string Title { get; set; } = string.Empty;
+    public string Heading { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the album's slug, which gives the heading its id <c>album-{slug}</c>.</summary>
     [Parameter]
@@ -149,7 +149,7 @@ public sealed partial class AlbumSection
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(Title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(Heading);
         ArgumentNullException.ThrowIfNull(Slug);
         ArgumentNullException.ThrowIfNull(Photos);
         if (EagerCount is { } eagerCount)

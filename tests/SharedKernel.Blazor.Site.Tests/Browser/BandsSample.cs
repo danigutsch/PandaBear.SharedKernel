@@ -51,7 +51,7 @@ public sealed class BandsSample : ComponentBase
         builder.OpenComponent<Hero>(10);
         builder.AddComponentParameter(11, nameof(Hero.Layout), HeroLayout.Cover);
         builder.AddComponentParameter(12, nameof(Hero.Eyebrow), "Since 2004");
-        builder.AddComponentParameter(13, nameof(Hero.Title), "Travel with feeling");
+        builder.AddComponentParameter(13, nameof(Hero.Heading), "Travel with feeling");
         builder.AddComponentParameter(14, nameof(Hero.Subtitle), "Small groups, one guide");
         if (HeroImage)
         {
@@ -93,7 +93,7 @@ public sealed class BandsSample : ComponentBase
         {
             section.OpenComponent<Section>(0);
             section.AddComponentParameter(1, nameof(Section.Eyebrow), "Travellers");
-            section.AddComponentParameter(2, nameof(Section.Title), "In their words");
+            section.AddComponentParameter(2, nameof(Section.Heading), "In their words");
             section.AddComponentParameter(3, nameof(Section.ChildContent), (RenderFragment)(quote =>
             {
                 quote.OpenComponent<Quote>(0);
@@ -120,7 +120,7 @@ public sealed class BandsSample : ComponentBase
         builder.CloseComponent();
         builder.OpenComponent<VideoLink>(14);
         builder.AddComponentParameter(15, nameof(VideoLink.Href), LinkTarget.FromString("https://www.youtube.com/watch?v=abc123"));
-        builder.AddComponentParameter(16, nameof(VideoLink.Title), "Patagonia in winter");
+        builder.AddComponentParameter(16, nameof(VideoLink.Heading), "Patagonia in winter");
         builder.AddComponentParameter(17, nameof(VideoLink.SiteHint), "(opens YouTube)");
         builder.AddComponentParameter(18, nameof(VideoLink.Poster), Photo(1600, 900));
         builder.CloseComponent();
@@ -130,7 +130,7 @@ public sealed class BandsSample : ComponentBase
     {
         builder.OpenComponent<Section>(0);
         builder.AddComponentParameter(1, nameof(Section.Eyebrow), "Journal");
-        builder.AddComponentParameter(2, nameof(Section.Title), "Past trips");
+        builder.AddComponentParameter(2, nameof(Section.Heading), "Past trips");
         builder.AddComponentParameter(3, nameof(Section.ChildContent), (RenderFragment)(text => text.AddMarkupContent(0, "<p>Where we have been.</p>")));
         builder.AddComponentParameter(4, nameof(Section.Media), (RenderFragment)(media =>
         {

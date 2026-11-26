@@ -29,7 +29,7 @@
 
 @code {
     private RenderFragment StepText(StepItem step, int position) => @<text>
-        @HeadingGroup.Render(HeadingGroupClasses.Step, NumberText(position), Heading.Render(HeadingLevel, "site-step-list__title", HeadingId(position), TitleText(step.Title)))
+        @HeadingGroup.Render(HeadingGroupClasses.Step, NumberText(position), HeadingMarkup.Render(HeadingLevel, "site-step-list__title", HeadingId(position), TitleText(step.Title)))
         @if (step.Facts.Count > 0)
         {
             <FactGrid Cards="step.Facts" Layout="FactGridLayout.Inline" Class="site-step-list__facts" />

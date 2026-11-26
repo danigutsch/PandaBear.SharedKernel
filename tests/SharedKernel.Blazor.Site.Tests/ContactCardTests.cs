@@ -12,7 +12,7 @@ public sealed class ContactCardTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<ContactCard>(parameters => parameters
-            .Add(component => component.Title, "Contact")
+            .Add(component => component.Heading, "Contact")
             .Add(component => component.AddressLines, ["Rua A, 1", "Sao Paulo"])
             .Add(component => component.Phone, Phone("+55 (11) 99999-0000"))
             .Add(component => component.Email, Email("Hello@Example.org"))
@@ -61,7 +61,7 @@ public sealed class ContactCardTests : BunitContext
     public void Without_lines_and_channels_no_address_is_rendered()
     {
         // Arrange & Act
-        var titleOnly = Render<ContactCard>(parameters => parameters.Add(component => component.Title, "Contact"));
+        var titleOnly = Render<ContactCard>(parameters => parameters.Add(component => component.Heading, "Contact"));
         var emptyLines = Render<ContactCard>(parameters => parameters.Add(component => component.AddressLines, []));
 
         // Assert

@@ -17,7 +17,7 @@ internal static class AlbumRendering
         context.Render<AlbumSection>(parameters =>
         {
             parameters
-                .Add(album => album.Title, "Patagônia")
+                .Add(album => album.Heading, "Patagônia")
                 .Add(album => album.Slug, Slug.Restore("patagonia"))
                 .Add(album => album.Photos, photos)
                 .Add(album => album.Window, window)

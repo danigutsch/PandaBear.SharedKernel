@@ -36,6 +36,34 @@ internal static class CreativeCommonsTerms
     public static bool IsStandardTool(ContentLicenseKind kind) =>
         kind is >= ContentLicenseKind.CcBy and <= ContentLicenseKind.PublicDomainMark;
 
+    /// <summary>Identifies the standard terms addressed by a known image license code.</summary>
+    /// <param name="code">The recorded image license code.</param>
+    /// <param name="kind">The supported family or tool.</param>
+    /// <param name="address">The official terms address for the code.</param>
+    /// <param name="version">The version identified by the code.</param>
+    /// <returns>Whether the code identifies a supported standard tool.</returns>
+    public static bool TryIdentifyImageCode(
+        string? code, out ContentLicenseKind kind, [NotNullWhen(true)] out WebUrl? address, [NotNullWhen(true)] out string? version)
+    {
+        if (ImageLicense.KnownUrl(code) is { } knownAddress)
+        {
+            for (var candidate = ContentLicenseKind.CcBy; IsStandardTool(candidate); candidate++)
+            {
+                if (TryIdentify(candidate, knownAddress, out _, out version, out _))
+                {
+                    kind = candidate;
+                    address = knownAddress;
+                    return true;
+                }
+            }
+        }
+
+        kind = ContentLicenseKind.Unknown;
+        address = null;
+        version = null;
+        return false;
+    }
+
     /// <summary>Resolves the exact tool, version and jurisdiction addressed by the supplied official URL.</summary>
     /// <param name="kind">The explicitly declared family or tool.</param>
     /// <param name="terms">The validated address supplied with the declaration.</param>

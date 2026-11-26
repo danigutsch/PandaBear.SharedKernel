@@ -11,11 +11,11 @@
 </section>
 
 @code {
-    private RenderFragment TitleText => builder => builder.AddContent(0, Title);
+    private RenderFragment TitleText => builder => builder.AddContent(0, Heading);
 
     private RenderFragment Text => @<text>
         <div class="site-section__header">
-            @HeadingGroup.Render(HeadingGroupClasses.Section, Eyebrow, Heading.Render(Level, "site-section__title", HeadingId, TitleText, TitleLanguage))
+            @HeadingGroup.Render(HeadingGroupClasses.Section, Eyebrow, HeadingMarkup.Render(Level, "site-section__title", HeadingId, TitleText, TitleLanguage))
             @if (Divider)
             {
                 <div class="site-divider" aria-hidden="true"></div>

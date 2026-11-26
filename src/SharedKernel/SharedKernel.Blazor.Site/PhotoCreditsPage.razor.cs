@@ -11,7 +11,7 @@ public sealed partial class PhotoCreditsPage
     /// <summary>Gets or sets the localized section heading.</summary>
     [Parameter]
     [EditorRequired]
-    public string Title { get; set; } = string.Empty;
+    public string Heading { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the localized introduction explaining which assets and terms the page covers.</summary>
     [Parameter]

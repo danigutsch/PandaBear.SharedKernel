@@ -11,7 +11,7 @@ public sealed class ResponsiveImageTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Title")
+            .Add(component => component.Heading, "Title")
             .Add(component => component.Image, Image("/a.jpg")));
 
         // Assert
@@ -36,7 +36,7 @@ public sealed class ResponsiveImageTests : BunitContext
 
         // Act
         var cut = Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Title")
+            .Add(component => component.Heading, "Title")
             .Add(component => component.Image, image));
 
         // Assert
@@ -61,7 +61,7 @@ public sealed class ResponsiveImageTests : BunitContext
 
         // Act
         var cut = Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Title")
+            .Add(component => component.Heading, "Title")
             .Add(component => component.Image, image));
 
         // Assert
@@ -75,7 +75,7 @@ public sealed class ResponsiveImageTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
-            .Add(component => component.Title, "Title")
+            .Add(component => component.Heading, "Title")
             .Add(component => component.Image, PictureImage()));
 
         // Assert
@@ -101,7 +101,7 @@ public sealed class ResponsiveImageTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Title")
+            .Add(component => component.Heading, "Title")
             .Add(component => component.Image, PictureImage()));
 
         // Assert

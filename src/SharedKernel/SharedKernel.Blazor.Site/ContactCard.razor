@@ -1,8 +1,8 @@
 @inherits SiteComponent
 <section class="@CssClass("site-contact-card")" @attributes="AdditionalAttributes">
-    @if (!string.IsNullOrWhiteSpace(Title))
+    @if (!string.IsNullOrWhiteSpace(Heading))
     {
-        @Heading.Render(HeadingLevel, "site-contact-card__title", null, @<text>@Title</text>)
+        @HeadingMarkup.Render(HeadingLevel, "site-contact-card__title", null, @<text>@Heading</text>)
     }
     @if (HasLines || HasChannels)
     {

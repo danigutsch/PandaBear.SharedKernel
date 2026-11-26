@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 namespace SharedKernel.Blazor.Site;
 
 /// <summary>Renders an <c>h1</c> to <c>h6</c> element for a level the caller configures.</summary>
-internal static class Heading
+internal static class HeadingMarkup
 {
     /// <summary>Checks a heading level.</summary>
     /// <param name="level">The level.</param>

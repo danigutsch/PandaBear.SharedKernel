@@ -1,2 +1,6 @@
 @inherits SiteComponent
-<a @attributes="AdditionalAttributes" href="@Href?.Value" class="@CssClass("site-video-link")" rel="noreferrer"><span class="site-video-link__poster">@ResponsiveImageMarkup.Render(Poster!, eager: false, highPriority: false)</span><span class="site-video-link__play" aria-hidden="true"></span><span class="site-video-link__title">@Title</span><span class="site-visually-hidden">@(" " + SiteHint)</span></a>
+<a @attributes="AdditionalAttributes" href="@Href?.Value" class="@CssClass("site-video-link")" rel="noreferrer"><span class="site-video-link__poster">@ResponsiveImageMarkup.Render(Poster!, eager: false, highPriority: false)</span><span class="site-video-link__play" aria-hidden="true"></span><span class="site-video-link__title">@Heading</span><span class="site-visually-hidden">@(" " + SiteHint)</span></a>
+@if (PosterCredit is not null)
+{
+    <ImageCreditCaption Credit="@PosterCredit" />
+}

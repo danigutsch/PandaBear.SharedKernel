@@ -142,7 +142,7 @@ public sealed class CardBrowserTests(ChromiumFixture chromium) : IClassFixture<C
     public async Task Card_is_one_column_on_a_phone()
     {
         // Arrange
-        var html = await ComponentHtml.Render<Card>(new Dictionary<string, object?> { [nameof(Card.Title)] = "Tour" });
+        var html = await ComponentHtml.Render<Card>(new Dictionary<string, object?> { [nameof(Card.Heading)] = "Tour" });
         var page = await chromium.Browser.NewPageAsync();
         // ... set the content, act and assert ...
     }

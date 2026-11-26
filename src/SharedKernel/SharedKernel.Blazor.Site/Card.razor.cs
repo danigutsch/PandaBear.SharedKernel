@@ -12,7 +12,7 @@ public sealed partial class Card
     /// <summary>Gets or sets the heading text.</summary>
     [Parameter]
     [EditorRequired]
-    public string Title { get; set; } = string.Empty;
+    public string Heading { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the address the heading links to. Without it the heading is plain text.</summary>
     [Parameter]
@@ -36,6 +36,10 @@ public sealed partial class Card
     /// </summary>
     [Parameter]
     public ResponsiveImage? Image { get; set; }
+
+    /// <summary>Gets or sets the optional short credit shown with <see cref="Image" />.</summary>
+    [Parameter]
+    public ImageCreditLine? ImageCredit { get; set; }
 
     /// <summary>
     /// Gets or sets whether the image loads eagerly, for a card on the first screen; by default it loads lazily. The default is
@@ -133,8 +137,8 @@ public sealed partial class Card
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(Title);
-        Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
+        ArgumentException.ThrowIfNullOrWhiteSpace(Heading);
+        HeadingMarkup.RequireLevel(HeadingLevel, nameof(HeadingLevel));
         LanguageTag.Require(TitleLanguage, nameof(TitleLanguage));
         EnumParameter.RequireDefined(CardStyle, nameof(CardStyle), "The value is not defined.");
         EnumParameter.RequireDefined(ImageAspect, nameof(ImageAspect), "The value is not defined.");

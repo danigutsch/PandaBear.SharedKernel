@@ -26,6 +26,27 @@ public sealed class VideoLinkTests : BunitContext
         poster.GetAttribute("loading").ShouldBe("lazy");
         cut.FindAll("iframe").ShouldBeEmpty();
         cut.FindAll("script").ShouldBeEmpty();
+        cut.FindAll(".site-image-credit").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void A_poster_credit_has_its_own_link_without_changing_the_video_link_name()
+    {
+        // Arrange
+        var credit = new ImageCreditLine("Photo: Ana Lima", CreditsHref: Link("/credits#poster"));
+
+        // Act
+        var cut = Render<VideoLink>(parameters => parameters
+            .Add(component => component.Href, Link("https://www.youtube.com/watch?v=abc123"))
+            .Add(component => component.Heading, "Patagonia in winter")
+            .Add(component => component.SiteHint, "(opens YouTube)")
+            .Add(component => component.Poster, Image("/poster.jpg", ImageAlternative.Decorative()))
+            .Add(component => component.PosterCredit, credit));
+
+        // Assert
+        cut.Find("a.site-video-link").TextContent.ShouldBe("Patagonia in winter (opens YouTube)");
+        cut.Find("small.site-image-credit a").GetAttribute("href").ShouldBe("/credits#poster");
+        cut.FindAll(".site-video-link .site-image-credit").ShouldBeEmpty();
     }
 
     [Fact]
@@ -104,7 +125,7 @@ public sealed class VideoLinkTests : BunitContext
         // Arrange & Act
         var cut = Render<VideoLink>(parameters => parameters
             .Add(component => component.Href, Link("https://vimeo.com/1"))
-            .Add(component => component.Title, "Atacama")
+            .Add(component => component.Heading, "Atacama")
             .Add(component => component.SiteHint, "(opens Vimeo)")
             .Add(component => component.Poster, Image("/poster.jpg", ImageAlternative.Decorative()))
             .Add(component => component.Class, "extra")

@@ -99,7 +99,7 @@ internal static class SiteFixtures
         string hint = "(opens YouTube)",
         ResponsiveImage? poster = null) => context.Render<VideoLink>(parameters => parameters
         .Add(component => component.Href, Link(href))
-        .Add(component => component.Title, title)
+        .Add(component => component.Heading, title)
         .Add(component => component.SiteHint, hint)
         .Add(component => component.Poster, poster ?? Image("/poster.jpg", ImageAlternative.Decorative())));
 
