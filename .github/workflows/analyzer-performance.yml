@@ -84,17 +84,20 @@ jobs:
           DOTNET_TieredCompilation: '1'
           DOTNET_ROLL_FORWARD: Disable
         run: |
-          output="$BENCHMARK_DIRECTORY/bin/Release/net11.0"
-          assembly="$output/SharedKernel.Mediator.Benchmarks.dll"
+          project="$BENCHMARK_DIRECTORY/SharedKernel.Mediator.Benchmarks.csproj"
+          assembly=$(dotnet msbuild "$project" -nologo -p:Configuration=Release -getProperty:TargetPath | tail -n 1)
+          output=$(dirname -- "$assembly")
           runtime_config="${assembly%.dll}.runtimeconfig.json"
           cp "$runtime_config" "$REPORT_DIRECTORY/runtimeconfig.json"
           sha256sum "$assembly" "$output/Microsoft.CodeAnalysis.dll" "$output/Microsoft.CodeAnalysis.CSharp.dll" \
             > "$REPORT_DIRECTORY/benchmark.sha256"
           printf 'DOTNET_PROCESSOR_COUNT=%s\nDOTNET_TieredCompilation=%s\nDOTNET_ROLL_FORWARD=%s\n' \
             "$DOTNET_PROCESSOR_COUNT" "$DOTNET_TieredCompilation" "$DOTNET_ROLL_FORWARD" > "$REPORT_DIRECTORY/runtime-mode.log"
-          jq -e '(.runtimeOptions.frameworks | sort_by(.name)) == [
-            {"name": "Microsoft.AspNetCore.App", "version": "11.0.0"},
-            {"name": "Microsoft.NETCore.App", "version": "11.0.0"}
+          runtime_version=$(jq -er '.Runtime | strings | select(startswith(".NET ")) |
+            ltrimstr(".NET ") | select(length > 0)' "$BENCHMARK_DIRECTORY/analyzer-baseline.json")
+          jq -e --arg version "$runtime_version" '(.runtimeOptions.frameworks | sort_by(.name)) == [
+            {"name": "Microsoft.AspNetCore.App", "version": $version},
+            {"name": "Microsoft.NETCore.App", "version": $version}
           ]' "$runtime_config" > /dev/null
           status=0
           env -u COMPlus_TieredCompilation timeout --kill-after=10s 4m dotnet "$assembly" \

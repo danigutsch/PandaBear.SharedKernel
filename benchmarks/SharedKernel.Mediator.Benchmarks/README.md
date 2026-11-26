@@ -145,9 +145,13 @@ DOTNET_TieredCompilation=1 dotnet run -c Release --no-build \
 
 Create the output directory before collecting. The baseline covers 30 suites.
 It was collected on November 26, 2026 with SDK `11.0.100` and .NET `11.0.0`
-on Ubuntu `26.04.1 LTS` x64 with an AMD Ryzen AI 9 HX 370. The process used
-`DOTNET_PROCESSOR_COUNT=1` and `DOTNET_TieredCompilation=1`.
+on GitHub Actions Ubuntu `26.04.1 LTS` x64 with an Intel Xeon Platinum 8573C.
+Both hosted jobs used `DOTNET_PROCESSOR_COUNT=1` and `DOTNET_TieredCompilation=1`.
+The second job's retained measurements matched all 30 diagnostic counts and
+stayed within both tolerance bands when compared with the first job's measurements.
 [Analyzer baseline](analyzer-baseline.json)
+[Baseline collection](https://github.com/danigutsch/PandaBear.SharedKernel/actions/runs/45900312806/job/140184193939)
+[Independent sample](https://github.com/danigutsch/PandaBear.SharedKernel/actions/runs/45900312806/job/140186640076)
 
 `check` exits 1 for a diagnostic-count change, paired overhead above 150%, or
 allocation above 120% of a suite's baseline. It exits 2 when the runtime, OS,
