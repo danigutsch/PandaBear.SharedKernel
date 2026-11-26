@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
@@ -66,6 +67,107 @@ public sealed class ModelIdentityGeneratorTests
         generatedSource.ShouldContain(">.Default.Equals(Id, default!)", StringComparison.Ordinal);
         generatedSource.ShouldContain("return base.GetHashCode();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("ArgumentNullException.ThrowIfNull", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("[GenerateModelSupport(Identity = true)]", "")]
+    [InlineData("", "[assembly: GenerateModelSupportDefaults(Identity = true)]")]
+    public void Reports_identity_equality_collision_without_emitting_duplicate_members(
+        string modelAttribute,
+        string assemblyAttribute)
+    {
+        // Arrange
+        var source = $$"""
+            #nullable enable
+            {{assemblyAttribute}}
+
+            namespace Demo;
+
+            {{modelAttribute}}
+            public sealed partial class Customer : IIdentified<int>
+            {
+                public int Id { get; private init; }
+
+                public override bool Equals(object? obj) => obj is Customer other && Id == other.Id;
+
+                public override int GetHashCode() => Id;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var outputCompilation = GeneratorTestHarness.RunGeneratorAndUpdateCompilation(compilation, out var runResult);
+
+        // Assert
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+        diagnostic.Id.ShouldBe("SKMDL022");
+        diagnostic.GetMessage(CultureInfo.InvariantCulture).ShouldContain("Customer", StringComparison.Ordinal);
+        runResult.Results.Single().GeneratedSources.ShouldBeEmpty();
+        outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+            .ShouldNotContain(diagnostic => diagnostic.Id == "CS0111");
+    }
+
+    [Fact]
+    public void Retains_explicit_identity_equality_when_a_model_disables_assembly_default()
+    {
+        // Arrange
+        const string source = """
+            #nullable enable
+            [assembly: GenerateModelSupportDefaults(Identity = true)]
+
+            namespace Demo;
+
+            [GenerateModelSupport(Identity = false)]
+            public sealed partial class Customer : IIdentified<int>
+            {
+                public int Id { get; private init; }
+
+                public override bool Equals(object? obj) => obj is Customer other && Id == other.Id;
+
+                public override int GetHashCode() => Id;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var outputCompilation = GeneratorTestHarness.RunGeneratorAndUpdateCompilation(compilation, out var runResult);
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        runResult.Results.Single().GeneratedSources.ShouldBeEmpty();
+        outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+            .ShouldNotContain(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void Generates_identity_equality_alongside_noncolliding_equality_overloads()
+    {
+        // Arrange
+        const string source = """
+            #nullable enable
+
+            namespace Demo;
+
+            [GenerateModelSupport(Identity = true)]
+            public sealed partial class Customer : IIdentified<int>
+            {
+                public int Id { get; private init; }
+
+                public bool Equals(Customer other) => Id == other.Id;
+
+                public int GetHashCode(int seed) => Id ^ seed;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var outputCompilation = GeneratorTestHarness.RunGeneratorAndUpdateCompilation(compilation, out var runResult);
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        runResult.Results.Single().GeneratedSources.ShouldHaveSingleItem();
+        outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+            .ShouldNotContain(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
     }
 
     [Fact]
