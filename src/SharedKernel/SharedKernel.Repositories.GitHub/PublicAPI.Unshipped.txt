@@ -68,6 +68,7 @@ SharedKernel.Repositories.GitHub.GitHubLabelStore.GitHubLabelStore(string! repos
 SharedKernel.Repositories.GitHub.GitHubLabelStore.List(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RepositoryLabel!>!>!
 SharedKernel.Repositories.GitHub.GitHubLabelStore.Repository.get -> string!
 SharedKernel.Repositories.GitHub.GitHubLabelStore.Update(string! currentName, SharedKernel.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+SharedKernel.Repositories.GitHub.GitHubProjectTaxonomyVerifier
 SharedKernel.Repositories.GitHub.GitHubRoadmapIntake
 SharedKernel.Repositories.GitHub.GitHubRoadmapIntake.Apply(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
 SharedKernel.Repositories.GitHub.GitHubRoadmapIntake.GitHubRoadmapIntake(SharedKernel.Repositories.RoadmapProject! project, SharedKernel.Repositories.GitHub.GitHubConnection! connection) -> void
@@ -204,6 +205,7 @@ static SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue.operator !=(
 static SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue.operator ==(SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue? left, SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue? right) -> bool
 static SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileRelation.operator !=(SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileRelation? left, SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileRelation? right) -> bool
 static SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileRelation.operator ==(SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileRelation? left, SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileRelation? right) -> bool
+static SharedKernel.Repositories.GitHub.GitHubProjectTaxonomyVerifier.Verify(string! rootPath, SharedKernel.Repositories.GitHub.GitHubConnection! connection, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!>!
 static SharedKernel.Repositories.GitHub.GitHubSubissueLinker.Run(string! repository, int parent, int child, bool force, SharedKernel.Repositories.GitHub.GitHubConnection! connection, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 static SharedKernel.Repositories.GitHub.GitHubSyncResult.operator !=(SharedKernel.Repositories.GitHub.GitHubSyncResult? left, SharedKernel.Repositories.GitHub.GitHubSyncResult? right) -> bool
 static SharedKernel.Repositories.GitHub.GitHubSyncResult.operator ==(SharedKernel.Repositories.GitHub.GitHubSyncResult? left, SharedKernel.Repositories.GitHub.GitHubSyncResult? right) -> bool

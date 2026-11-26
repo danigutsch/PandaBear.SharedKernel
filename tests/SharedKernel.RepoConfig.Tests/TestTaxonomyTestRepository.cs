@@ -3,6 +3,8 @@ namespace SharedKernel.RepoConfig.Tests;
 /// <summary>Builds a small repository for testing taxonomy declarations against tracked files.</summary>
 internal static class TestTaxonomyTestRepository
 {
+    private const string ProjectPolicyPath = ".config/test-taxonomy-project.json";
+
     /// <summary>A suite with an explicit SUT and test type.</summary>
     public const string CanonicalSuite = """
         {
@@ -19,6 +21,22 @@ internal static class TestTaxonomyTestRepository
           ]
         }
         """;
+
+    /// <summary>Stages the optional policy used by the Project-aware check.</summary>
+    public static Task StageProjectPolicy(TemporaryGitRepository repository, string policy, CancellationToken ct)
+    {
+        repository.WriteText(ProjectPolicyPath, policy);
+        return repository.Stage(ProjectPolicyPath, ct);
+    }
+
+    /// <summary>Adds the supplied repository's issue 27 to the synthetic Project command policy.</summary>
+    public static string PolicyWithAdditionalIssue(string policy, string repository) =>
+        policy.Replace(
+            "\"number\": 27 }]",
+            $$"""
+            "number": 27 }, { "repository": "{{repository}}", "number": 27 }]
+            """,
+            StringComparison.Ordinal);
 
     /// <summary>Creates a repository and stages its production project, test project and seam register.</summary>
     public static async Task<TemporaryGitRepository> Create(

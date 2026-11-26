@@ -427,17 +427,36 @@ internal static class RepoConfigToolApplication
     }
 
     /// <summary>Checks the test taxonomy, with optional advisory reporting during project migration.</summary>
-    public static async Task<int> VerifyTestTaxonomy(string rootPath, bool report, TextWriter output, TextWriter error, CancellationToken ct)
+    public static async Task<int> VerifyTestTaxonomy(
+        string rootPath, bool report, bool githubProject, HttpClient? httpClient, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var issues = await TestTaxonomyVerifier.Verify(rootPath, ct).ConfigureAwait(false);
         if (issues.Count == 0)
         {
             await output.WriteLineAsync("Test taxonomy is valid.".AsMemory(), ct).ConfigureAwait(false);
-            return 0;
+        }
+        else
+        {
+            WriteIssues(error, "Test taxonomy findings:", issues);
         }
 
-        WriteIssues(error, "Test taxonomy findings:", issues);
-        return report ? 0 : 1;
+        if (!githubProject)
+        {
+            return report || issues.Count == 0 ? 0 : 1;
+        }
+
+        using var connection = GitHubConnections.FromEnvironment(httpClient, "Project taxonomy verification");
+        var projectIssues = await GitHubProjectTaxonomyVerifier.Verify(rootPath, connection, ct).ConfigureAwait(false);
+        if (projectIssues.Count == 0)
+        {
+            await output.WriteLineAsync("GitHub Project taxonomy is valid.".AsMemory(), ct).ConfigureAwait(false);
+        }
+        else
+        {
+            WriteIssues(error, "GitHub Project taxonomy findings:", projectIssues);
+        }
+
+        return report || (issues.Count == 0 && projectIssues.Count == 0) ? 0 : 1;
     }
 
     /// <summary>

@@ -10,6 +10,59 @@ public sealed class PostgreSqlJobSchedulerTests(PostgreSqlTestServerFixture fixt
     private const string JobName = "draft-retention";
     private static readonly TimeSpan LeaseDuration = TimeSpan.FromMinutes(5);
 
+    [Theory]
+    [InlineData("", "scheduler_executions", "job_name", "started_at IS NOT NULL AND outcome IS NULL")]
+    [InlineData("UNIQUE ", "scheduler_executions", "run_id", "started_at IS NOT NULL AND outcome IS NULL")]
+    [InlineData("UNIQUE ", "scheduler_executions", "job_name", "started_at IS NOT NULL")]
+    [InlineData("UNIQUE ", "other_executions", "job_name", "started_at IS NOT NULL AND outcome IS NULL")]
+    public async Task Schema_initialization_rejects_an_incompatible_running_job_index(
+        string uniqueness, string table, string key, string predicate)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var scheduler = await CreateScheduler(DataSource, ct);
+        await using var replaceIndex = DataSource.CreateCommand(
+            $"""
+            CREATE TABLE "Job Scheduling".other_executions (LIKE "Job Scheduling".scheduler_executions);
+            DROP INDEX "Job Scheduling".scheduler_executions_running_job;
+            DROP INDEX "Job Scheduling".scheduler_executions_history;
+            CREATE {uniqueness}INDEX scheduler_executions_running_job
+                ON "Job Scheduling".{table} ({key}) WHERE {predicate};
+            """);
+        await replaceIndex.ExecuteNonQueryAsync(ct);
+        await using var readHistoryIndex = DataSource.CreateCommand(
+            """SELECT pg_catalog.to_regclass('"Job Scheduling".scheduler_executions_history') IS NULL""");
+        Func<Task> initialize = () => scheduler.InitializeSchema(ct);
+
+        // Act
+        var failure = await initialize.ShouldThrow<InvalidOperationException>();
+        var historyIndexStillMissing = await readHistoryIndex.ExecuteScalarAsync(ct) is true;
+
+        // Assert
+        failure.Message.ShouldContain("scheduler_executions_running_job", StringComparison.Ordinal,
+            "The diagnostic should identify the deployed index that needs correction.");
+        historyIndexStillMissing.ShouldBeTrue("Initialization should roll back other DDL after it rejects a drifted index.");
+    }
+
+    [Fact]
+    public async Task Repeated_schema_initialization_preserves_the_existing_running_job_index()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var scheduler = await CreateScheduler(DataSource, ct);
+        await using var readIndex = DataSource.CreateCommand(
+            """SELECT pg_catalog.to_regclass('"Job Scheduling".scheduler_executions_running_job')::pg_catalog.oid""");
+        var original = await readIndex.ExecuteScalarAsync(ct);
+
+        // Act
+        await scheduler.InitializeSchema(ct);
+        var current = await readIndex.ExecuteScalarAsync(ct);
+
+        // Assert
+        original.ShouldBeOfType<uint>();
+        current.ShouldBe(original, "An already matching index should keep its database identity.");
+    }
+
     [Fact]
     public async Task Competing_hosts_acquire_a_due_job_only_once()
     {

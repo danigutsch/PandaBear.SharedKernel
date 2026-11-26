@@ -478,6 +478,7 @@ public sealed class HttpOutcomeMapperTests
             BaseAddress = new Uri("https://catalog.example.test"),
             Timeout = TimeSpan.FromMinutes(1)
         };
+        var validations = 0;
         // Act
         Func<Task> action = async () => await HttpOutcomeMapper.Send(
                 client,
@@ -485,6 +486,11 @@ public sealed class HttpOutcomeMapperTests
                 HttpStatusCode.OK,
                 Json.HttpOutcomeMapperTestPayload,
                 Json.ContractValidationProblemDto,
+                validateValue: _ =>
+                {
+                    validations++;
+                    return true;
+                },
                 cts.Token)
             .ConfigureAwait(false);
         var exception = await action
@@ -494,6 +500,7 @@ public sealed class HttpOutcomeMapperTests
         responseBody.ReadStarted.IsCompletedSuccessfully.ShouldBeTrue();
         exception.CancellationToken.ShouldBe(cts.Token);
         responseBody.IsDisposed.ShouldBeTrue();
+        validations.ShouldBe(0);
     }
 
     [Fact]
@@ -689,9 +696,99 @@ public sealed class HttpOutcomeMapperTests
         responseContent.IsDisposed.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData(HttpStatusCode.NotFound, """{"name":"Fixture"}""", "application/json", HttpOutcomeKind.NotFound)]
+    [InlineData(HttpStatusCode.BadRequest, """{"errors":{"name":["Name is required."]}}""", "application/problem+json", HttpOutcomeKind.ValidationProblem)]
+    [InlineData(HttpStatusCode.OK, " ", "application/json", HttpOutcomeKind.EmptyBody)]
+    [InlineData(HttpStatusCode.OK, "null", "application/json", HttpOutcomeKind.MalformedBody)]
+    [InlineData(HttpStatusCode.OK, "{", "application/json", HttpOutcomeKind.MalformedBody)]
+    [InlineData(HttpStatusCode.OK, """{"name":"Fixture"}""", "text/plain", HttpOutcomeKind.UnsupportedContentType)]
+    public async Task Send_does_not_validate_a_value_for_unsuccessful_or_unmaterialized_responses(
+        HttpStatusCode statusCode, string content, string mediaType, HttpOutcomeKind expected)
+    {
+        // Arrange
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.Json(statusCode, content, mediaType)));
+        using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
+        var validations = 0;
+
+        // Act
+        var outcome = await HttpOutcomeMapper.Send(
+            client,
+            new HttpRequestMessage(HttpMethod.Get, "/content"),
+            HttpStatusCode.OK,
+            Json.HttpOutcomeMapperTestPayload,
+            Json.ContractValidationProblemDto,
+            validateValue: _ =>
+            {
+                validations++;
+                return false;
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        outcome.Kind.ShouldBe(expected);
+        outcome.StatusCode.ShouldBe(statusCode);
+        outcome.Value.ShouldBeNull();
+        validations.ShouldBe(0);
+    }
+
     [Fact]
+    public async Task Send_preserves_exceptions_thrown_by_the_value_predicate()
+    {
+        // Arrange
+        var responseContent = new TrackingStringContent("""{"name":"Fixture"}""", "application/json");
+        var requestContent = new TrackingStringContent("request", "application/json");
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            new HttpResponseMessage(HttpStatusCode.OK) { Content = responseContent }));
+        using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/content") { Content = requestContent };
+        var failure = new HttpRequestException("Synthetic caller validation failure.");
+
+        // Act
+        Func<Task> send = async () => await HttpOutcomeMapper.Send(
+                client,
+                request,
+                HttpStatusCode.OK,
+                Json.HttpOutcomeMapperTestPayload,
+                Json.ContractValidationProblemDto,
+                validateValue: _ => throw failure,
+                TestContext.Current.CancellationToken)
+            .ConfigureAwait(false);
+        var result = await send.ShouldThrow<HttpRequestException>();
+
+        // Assert
+        result.ShouldBe(failure);
+        requestContent.IsDisposed.ShouldBeTrue();
+        responseContent.IsDisposed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Send_rejects_a_null_value_predicate_before_taking_request_ownership()
+    {
+        // Arrange
+        using var requestContent = new TrackingStringContent("request", "application/json");
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://catalog.example.test/content") { Content = requestContent };
+        using var client = new HttpClient();
+
+        // Act
+        Func<Task> send = async () => await HttpOutcomeMapper.Send(client, request, HttpStatusCode.OK,
+                Json.HttpOutcomeMapperTestPayload, Json.ContractValidationProblemDto, validateValue: null!, TestContext.Current.CancellationToken)
+            .ConfigureAwait(false);
+        var failure = await send.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        failure.ParamName.ShouldBe("validateValue");
+        requestContent.IsDisposed.ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(null, HttpOutcomeKind.Succeeded, "succeeded")]
+    [InlineData(true, HttpOutcomeKind.Succeeded, "succeeded")]
+    [InlineData(false, HttpOutcomeKind.MalformedBody, "malformed_body")]
     [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-    public async Task Send_telemetry_contains_only_method_status_and_outcome_kind()
+    public async Task Send_records_bounded_telemetry_for_valid_and_rejected_values(
+        bool? acceptValue, HttpOutcomeKind expected, string expectedTelemetry)
     {
         // Arrange
         var stoppedActivities = new ConcurrentQueue<Activity>();
@@ -708,23 +805,50 @@ public sealed class HttpOutcomeMapperTests
         using var parent = parentSource.StartActivity("test-parent");
         parent.ShouldNotBeNull();
 
+        var location = new Uri("https://catalog.example.test/item/42");
+        var responseContent = new TrackingStringContent("""{"name":"alice@example.test"}""", "application/json");
+        var requestContent = new TrackingStringContent("request", "application/json");
         using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
-            HttpOutcomeMapperTestResponses.Json(HttpStatusCode.OK, "{\"name\":\"Lisbon\"}")));
+            new HttpResponseMessage(HttpStatusCode.Created)
+            {
+                Content = responseContent,
+                Headers = { Location = location, ETag = new EntityTagHeaderValue("\"v1\"") }
+            }));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
-        var request = new HttpRequestMessage(HttpMethod.Get, "/content?token=secret-token");
+        var request = new HttpRequestMessage(HttpMethod.Post, "/content?token=secret-token") { Content = requestContent };
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "secret-token");
+        var validations = 0;
 
         // Act
-        var outcome = await HttpOutcomeMapper.Send(
-            client,
-            request,
-            HttpStatusCode.OK,
-            Json.HttpOutcomeMapperTestPayload,
-            Json.ContractValidationProblemDto,
-            TestContext.Current.CancellationToken);
+        var outcome = acceptValue is { } accept
+            ? await HttpOutcomeMapper.Send(client, request, HttpStatusCode.Created, Json.HttpOutcomeMapperTestPayload, Json.ContractValidationProblemDto,
+                validateValue: value =>
+                {
+                    validations++;
+                    return accept && value.Name == "alice@example.test";
+                }, TestContext.Current.CancellationToken)
+            : await HttpOutcomeMapper.Send(client, request, HttpStatusCode.Created, Json.HttpOutcomeMapperTestPayload, Json.ContractValidationProblemDto,
+                TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(HttpOutcomeKind.Succeeded);
+        outcome.Kind.ShouldBe(expected);
+        outcome.StatusCode.ShouldBe(HttpStatusCode.Created);
+        validations.ShouldBe(acceptValue.HasValue ? 1 : 0);
+        requestContent.IsDisposed.ShouldBeTrue();
+        responseContent.IsDisposed.ShouldBeTrue();
+        if (expected == HttpOutcomeKind.Succeeded)
+        {
+            outcome.Value.ShouldNotBeNull().Name.ShouldBe("alice@example.test");
+            outcome.Location.ShouldBe(location);
+            outcome.ETag.ShouldBe("\"v1\"");
+        }
+        else
+        {
+            outcome.Value.ShouldBeNull();
+            outcome.Location.ShouldBeNull();
+            outcome.ETag.ShouldBeNull();
+            outcome.Message.ShouldBe("HTTP response body was malformed.");
+        }
         handler.ObservedAuthorizationScheme.ShouldBe("Bearer");
         var activity = stoppedActivities
             .Where(candidate => candidate.Source.Name == HttpOutcomeMapper.ActivitySourceName
@@ -737,9 +861,9 @@ public sealed class HttpOutcomeMapperTests
             "http.request.method",
             "http.response.status_code",
             "sharedkernel.http_client.outcome");
-        tags.ShouldHaveSingleItem(tag => tag.Key == "http.request.method").Value.ShouldBe("GET");
-        tags.ShouldHaveSingleItem(tag => tag.Key == "http.response.status_code").Value.ShouldBe(200);
-        tags.ShouldHaveSingleItem(tag => tag.Key == "sharedkernel.http_client.outcome").Value.ShouldBe("succeeded");
+        tags.ShouldHaveSingleItem(tag => tag.Key == "http.request.method").Value.ShouldBe("POST");
+        tags.ShouldHaveSingleItem(tag => tag.Key == "http.response.status_code").Value.ShouldBe(201);
+        tags.ShouldHaveSingleItem(tag => tag.Key == "sharedkernel.http_client.outcome").Value.ShouldBe(expectedTelemetry);
         var telemetryText = string.Join('|', tags.Select(tag => $"{tag.Key}={tag.Value}"));
         telemetryText.ShouldNotContain("secret-token", StringComparison.Ordinal);
         telemetryText.ShouldNotContain("alice@example.test", StringComparison.Ordinal);

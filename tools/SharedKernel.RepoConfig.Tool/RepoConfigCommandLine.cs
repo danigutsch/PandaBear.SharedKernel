@@ -601,9 +601,14 @@ internal static class RepoConfigCommandLine
     private static Command CreateVerifyTestTaxonomyCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
         Option<bool> report = new("--report") { Description = "Report taxonomy findings without failing the command." };
-        Command command = new("verify-test-taxonomy", "Verify the declared SUTs, test types, names, and seam registers of tracked projects.") { report, root };
+        Option<bool> githubProject = new("--github-project") { Description = "Include read-only GitHub Project metadata verification." };
+        Command command = new("verify-test-taxonomy", "Verify the declared SUTs, test types, names, and seam registers of tracked projects.")
+        {
+            report, githubProject, root
+        };
         SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyTestTaxonomy(
-            root.GetExistingDirectory(parseResult), parseResult.GetValue(report), output, error, ct));
+            root.GetExistingDirectory(parseResult), parseResult.GetValue(report), parseResult.GetValue(githubProject),
+            environment.HttpClient, output, error, ct));
         return command;
     }
 

@@ -159,12 +159,59 @@ public static class HttpOutcomeMapper
     /// <param name="validationProblemJson">The source-generated validation problem JSON metadata.</param>
     /// <param name="ct">The token used while sending the request and reading its response body.</param>
     /// <returns>The materialized HTTP outcome.</returns>
-    public static async Task<HttpOutcome<TValue>> Send<TValue>(
+    public static Task<HttpOutcome<TValue>> Send<TValue>(
         HttpClient httpClient,
         HttpRequestMessage request,
         HttpStatusCode successStatusCode,
         JsonTypeInfo<TValue> valueJson,
         JsonTypeInfo<ContractValidationProblemDto> validationProblemJson,
+        CancellationToken ct) =>
+        SendCore(httpClient, request, successStatusCode, valueJson, validationProblemJson, validateValue: null, ct);
+
+    /// <summary>
+    /// Sends an HTTP request and validates a materialized success value before recording the outcome.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">
+    /// The client, request, either JSON metadata argument, or <paramref name="validateValue"/> is null.
+    /// </exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="ct"/> is canceled while the request is in flight.</exception>
+    /// <remarks>
+    /// After argument validation, the mapper owns and disposes <paramref name="request"/> and the received response.
+    /// The client remains caller-owned. The same bounded JSON and transport rules apply as for the overload without
+    /// a predicate. The predicate runs only for a successfully materialized value. Exceptions from it propagate
+    /// to the caller.
+    /// </remarks>
+    /// <typeparam name="TValue">The materialized response contract type.</typeparam>
+    /// <param name="httpClient">The HTTP client.</param>
+    /// <param name="request">The request whose ownership is transferred to this method.</param>
+    /// <param name="successStatusCode">The status code that represents success for this operation.</param>
+    /// <param name="valueJson">The source-generated response JSON metadata.</param>
+    /// <param name="validationProblemJson">The source-generated validation problem JSON metadata.</param>
+    /// <param name="validateValue">The predicate that accepts values satisfying the caller's response contract.</param>
+    /// <param name="ct">The token used while sending the request and reading its response body.</param>
+    /// <returns>
+    /// The materialized HTTP outcome. A rejected value produces a malformed-body outcome with the original status.
+    /// </returns>
+    public static Task<HttpOutcome<TValue>> Send<TValue>(
+        HttpClient httpClient,
+        HttpRequestMessage request,
+        HttpStatusCode successStatusCode,
+        JsonTypeInfo<TValue> valueJson,
+        JsonTypeInfo<ContractValidationProblemDto> validationProblemJson,
+        Func<TValue, bool> validateValue,
+        CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(validateValue);
+        return SendCore(httpClient, request, successStatusCode, valueJson, validationProblemJson, validateValue, ct);
+    }
+
+    private static async Task<HttpOutcome<TValue>> SendCore<TValue>(
+        HttpClient httpClient,
+        HttpRequestMessage request,
+        HttpStatusCode successStatusCode,
+        JsonTypeInfo<TValue> valueJson,
+        JsonTypeInfo<ContractValidationProblemDto> validationProblemJson,
+        Func<TValue, bool>? validateValue,
         CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
@@ -200,6 +247,12 @@ public static class HttpOutcomeMapper
             catch (Exception exception) when (IsTransportFailure(exception))
             {
                 outcome = Failure<TValue>(HttpOutcomeKind.TransportFailure, TransportFailureMessage);
+            }
+
+            if (validateValue is not null && outcome is { Kind: HttpOutcomeKind.Succeeded, Value: { } value }
+                && !validateValue(value))
+            {
+                outcome = Status<TValue>(HttpOutcomeKind.MalformedBody, successStatusCode, MalformedBodyMessage);
             }
 
             RecordOutcome(activity, outcome.Kind, outcome.StatusCode);

@@ -8,6 +8,9 @@ namespace SharedKernel.Repositories.GitHub;
 /// <param name="httpClient">Authenticated GitHub client.</param>
 internal sealed class GitHubProjectClient(HttpClient httpClient)
 {
+    // At 100 per page, 50,000 items take 500 full pages. Allow for partially filled pages.
+    private const int MaxItemPages = 1_000;
+
     // One client serves one sync run, so field definitions and item membership are read once per target and reused.
     private string? _cachedProjectId;
     private IReadOnlyList<GitHubProjectResponse.ProjectField>? _fields;
@@ -89,6 +92,8 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
     {
         const string Query = "query($id:ID!,$after:String){node(id:$id){... on ProjectV2{items(first:100,after:$after){nodes{id content{... on Issue{id}}}pageInfo{hasNextPage endCursor}}}}}";
         Dictionary<string, string> itemIds = new(StringComparer.Ordinal);
+        Dictionary<string, string> issueIds = new(StringComparer.Ordinal);
+        HashSet<string> cursors = new(StringComparer.Ordinal);
         string? cursor = null;
         GitHubProjectResponse.ProjectItemConnection items;
         do
@@ -109,13 +114,32 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
                 ?? throw new InvalidOperationException("GitHub Project items could not be read.");
             foreach (var item in items.Nodes ?? [])
             {
-                if (!string.IsNullOrWhiteSpace(item.Id) && !string.IsNullOrWhiteSpace(item.Content?.Id))
+                if (string.IsNullOrWhiteSpace(item.Id) || string.IsNullOrWhiteSpace(item.Content?.Id))
                 {
-                    itemIds.TryAdd(item.Content.Id, item.Id);
+                    continue;
+                }
+
+                var itemConflicts = !itemIds.TryAdd(item.Content.Id, item.Id)
+                    && !string.Equals(itemIds[item.Content.Id], item.Id, StringComparison.Ordinal);
+                var issueConflicts = !issueIds.TryAdd(item.Id, item.Content.Id)
+                    && !string.Equals(issueIds[item.Id], item.Content.Id, StringComparison.Ordinal);
+                if (itemConflicts || issueConflicts)
+                {
+                    throw new InvalidOperationException("GitHub Project returned conflicting issue and item identities.");
                 }
             }
 
             cursor = items.PageInfo?.EndCursor;
+            if (items.PageInfo?.HasNextPage == true
+                && (string.IsNullOrWhiteSpace(cursor) || !cursors.Add(cursor)))
+            {
+                throw new InvalidOperationException("GitHub Project item pagination did not advance.");
+            }
+
+            if (cursors.Count >= MaxItemPages)
+            {
+                throw new InvalidOperationException("GitHub Project item pagination exceeded the page limit.");
+            }
         }
         while (items.PageInfo?.HasNextPage == true);
 
@@ -254,7 +278,8 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
         var errors = getErrors(result);
         if (errors?.Count > 0)
         {
-            var errorType = errors.Select(error => error.Type).FirstOrDefault(type => !string.IsNullOrWhiteSpace(type));
+            var errorType = errors.Select(error => error?.Type)
+                .FirstOrDefault(type => type is "FORBIDDEN" or "INSUFFICIENT_SCOPES" or "NOT_FOUND" or "RATE_LIMITED" or "UNAUTHORIZED");
             throw new InvalidOperationException(string.IsNullOrWhiteSpace(errorType)
                 ? "GitHub Project request failed."
                 : $"GitHub Project request failed ({errorType}).");
