@@ -8,14 +8,16 @@ namespace SharedKernel.DocumentRendering.Pdf.Chromium;
 internal static class ChromiumPdfTransfer
 {
     private const int ChunkLimit = 8_192;
+    private const double PageNumberMarginInches = 20d / 25.4d;
     private const string InvalidStream = "Chromium did not return an exclusive PDF stream.";
     private const string InvalidChunk = "Chromium returned an invalid bounded PDF chunk.";
 
     /// <summary>Prints a document in an owned context and reads at most one byte beyond its limit.</summary>
     /// <exception cref="InvalidDataException">Chromium returns an unsupported stream shape or exceeds the limit.</exception>
-    internal static async Task<ReadOnlyMemory<byte>> Print(ICDPSession session, int limit, CancellationToken ct)
+    internal static async Task<ReadOnlyMemory<byte>> Print(
+        ICDPSession session, int limit, CancellationToken ct, bool includePageNumbers = false)
     {
-        var reply = RequireResult(await session.SendAsync("Page.printToPDF", new Dictionary<string, object>
+        var options = new Dictionary<string, object>
         {
             ["transferMode"] = "ReturnAsStream",
             ["generateTaggedPDF"] = true,
@@ -27,7 +29,13 @@ internal static class ChromiumPdfTransfer
             ["marginRight"] = 0,
             ["marginBottom"] = 0,
             ["marginLeft"] = 0,
-        }).WaitAsync(ct).ConfigureAwait(false), InvalidStream);
+        };
+        if (includePageNumbers)
+        {
+            options["marginBottom"] = PageNumberMarginInches;
+        }
+
+        var reply = RequireResult(await session.SendAsync("Page.printToPDF", options).WaitAsync(ct).ConfigureAwait(false), InvalidStream);
         if (!reply.TryGetProperty("stream", out var handle) || handle.ValueKind != JsonValueKind.String ||
             handle.GetString() is not { Length: > 0 } stream ||
             (reply.TryGetProperty("data", out var data) &&

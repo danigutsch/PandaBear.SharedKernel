@@ -1,11 +1,16 @@
 #nullable enable
 SharedKernel.Testing.Assertions.EntityIdentityShouldAssertionExtensions
+SharedKernel.Testing.Assertions.PathAssertionExtensions
 SharedKernel.Testing.Assertions.ResultShouldAssertionExtensions
 SharedKernel.Testing.Assertions.ShouldAssertionExtensions
 static SharedKernel.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldBeUuidV7(this System.Guid id) -> void
 static SharedKernel.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldBeUuidV7(this System.Guid id, string! userMessage) -> void
 static SharedKernel.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldHaveGeneratedIdentitySemantics<T>(this T! first, T! second, T! different) -> void
 static SharedKernel.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldHaveGeneratedIdentitySemantics<T>(this T! first, T! second, T! different, string! userMessage) -> void
+static SharedKernel.Testing.Assertions.PathAssertionExtensions.ShouldExistAsDirectory(this string! path, string? userMessage = null) -> void
+static SharedKernel.Testing.Assertions.PathAssertionExtensions.ShouldExistAsFile(this string! path, string? userMessage = null) -> void
+static SharedKernel.Testing.Assertions.PathAssertionExtensions.ShouldNotExistAsDirectory(this string! path, string? userMessage = null) -> void
+static SharedKernel.Testing.Assertions.PathAssertionExtensions.ShouldNotExistAsFile(this string! path, string? userMessage = null) -> void
 static SharedKernel.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeFailure(this SharedKernel.Results.Result actual, SharedKernel.Results.ResultStatus expectedStatus, string! expectedCode) -> SharedKernel.Results.ResultError!
 static SharedKernel.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeFailure(this SharedKernel.Results.Result actual, SharedKernel.Results.ResultStatus expectedStatus, string! expectedCode, string! userMessage) -> SharedKernel.Results.ResultError!
 static SharedKernel.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeFailure<T>(this SharedKernel.Results.Result<T> actual, SharedKernel.Results.ResultStatus expectedStatus, string! expectedCode) -> SharedKernel.Results.ResultError!

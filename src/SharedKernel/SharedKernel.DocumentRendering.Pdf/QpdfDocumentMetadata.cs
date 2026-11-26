@@ -11,7 +11,7 @@ internal static class QpdfDocumentMetadata
     /// <exception cref="InvalidDataException">The trailer or its qpdf JSON envelope is unsupported.</exception>
     public static (string Info, string Catalog) References(ReadOnlyMemory<byte> json)
     {
-        var (_, objects) = Read(json);
+        var (_, _, objects) = Read(json);
         var trailer = Dictionary(objects, "trailer");
         if (trailer.ContainsKey("/Encrypt") || trailer.ContainsKey("/ID"))
         {
@@ -28,7 +28,14 @@ internal static class QpdfDocumentMetadata
     /// <exception cref="InvalidDataException">The qpdf JSON does not describe the qualified Chromium metadata.</exception>
     public static string UpdateDates(ReadOnlyMemory<byte> json, string infoReference, string catalogReference, DateTimeOffset documentDate)
     {
-        var (header, objects) = Read(json);
+        var (_, header, objects) = Read(json);
+        return SerializeUpdate(header, DateUpdates(objects, infoReference, catalogReference, documentDate));
+    }
+
+    /// <summary>Creates the updated Info entry for use in a selective object update.</summary>
+    /// <exception cref="InvalidDataException">The dictionaries do not describe the qualified Chromium metadata.</exception>
+    public static JsonObject DateUpdates(JsonObject objects, string infoReference, string catalogReference, DateTimeOffset documentDate)
+    {
         var infoKey = $"obj:{infoReference}";
         var info = Dictionary(objects, infoKey);
         var catalog = Dictionary(objects, $"obj:{catalogReference}");
@@ -50,13 +57,19 @@ internal static class QpdfDocumentMetadata
         var date = $"u:D:{documentDate.UtcDateTime.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture)}+00'00'";
         info["/CreationDate"] = date;
         info["/ModDate"] = date;
-        return new JsonObject
-        {
-            ["qpdf"] = new JsonArray(header.DeepClone(), new JsonObject { [infoKey] = objects[infoKey]!.DeepClone() }),
-        }.ToJsonString();
+        return new JsonObject { [infoKey] = objects[infoKey]!.DeepClone() };
     }
 
-    private static (JsonObject Header, JsonObject Objects) Read(ReadOnlyMemory<byte> json)
+    /// <summary>Serializes the selected object updates with the original qpdf header.</summary>
+    public static string SerializeUpdate(JsonObject header, JsonObject updates) =>
+        new JsonObject
+        {
+            ["qpdf"] = new JsonArray(header.DeepClone(), updates),
+        }.ToJsonString();
+
+    /// <summary>Reads the bounded qpdf v2 response and its object dictionaries.</summary>
+    /// <exception cref="InvalidDataException">The response is not a supported qpdf v2 envelope.</exception>
+    public static (JsonObject Root, JsonObject Header, JsonObject Objects) Read(ReadOnlyMemory<byte> json)
     {
         try
         {
@@ -64,7 +77,7 @@ internal static class QpdfDocumentMetadata
                 && root["qpdf"] is JsonArray envelope && envelope is [JsonObject header, JsonObject objects]
                 && header["jsonversion"] is JsonValue version && version.TryGetValue<int>(out var number) && number == 2)
             {
-                return (header, objects);
+                return (root, header, objects);
             }
         }
         catch (JsonException)
@@ -80,7 +93,9 @@ internal static class QpdfDocumentMetadata
             ? dictionary
             : throw UnsupportedMetadata();
 
-    private static string Reference(JsonNode? node)
+    /// <summary>Validates an indirect object reference before it is used as a selector or object key.</summary>
+    /// <exception cref="InvalidDataException">The value is not a supported object reference.</exception>
+    public static string Reference(JsonNode? node)
     {
         var reference = ReadString(node);
         if (reference?.Split(' ') is [var objectId, var generation, "R"]
@@ -96,7 +111,8 @@ internal static class QpdfDocumentMetadata
     private static bool HasString(JsonNode? node, string prefix) =>
         ReadString(node) is { } value && value.Length > prefix.Length && value.StartsWith(prefix, StringComparison.Ordinal);
 
-    private static string? ReadString(JsonNode? node) =>
+    /// <summary>Reads the string representation of a qpdf JSON value when present.</summary>
+    public static string? ReadString(JsonNode? node) =>
         node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
 
     private static InvalidDataException UnsupportedMetadata() =>

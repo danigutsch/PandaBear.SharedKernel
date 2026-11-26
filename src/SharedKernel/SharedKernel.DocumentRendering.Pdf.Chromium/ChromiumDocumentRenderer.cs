@@ -48,7 +48,24 @@ public sealed class ChromiumDocumentRenderer
     /// <exception cref="IOException">The private normalization files could not be written or cleaned up.</exception>
     /// <exception cref="TimeoutException">The rendering or cleanup deadline elapsed.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="ct"/> was canceled.</exception>
-    public async Task<ReadOnlyMemory<byte>> Render(DocumentRenderRequest request, DateTimeOffset documentDate, CancellationToken ct)
+    public Task<ReadOnlyMemory<byte>> Render(DocumentRenderRequest request, DateTimeOffset documentDate, CancellationToken ct) =>
+        Render(request, documentDate, includePageNumbers: false, ct);
+
+    /// <summary>Renders a structured PDF with optional centered page numbers marked as pagination artifacts.</summary>
+    /// <param name="request">The trusted structured input, with any logo embedded as a bounded raster data URI.</param>
+    /// <param name="documentDate">The caller's immutable document date.</param>
+    /// <param name="includePageNumbers">Whether to reserve a bottom margin and add one visible number per page.</param>
+    /// <param name="ct">Cancels the render and closes its private browser context.</param>
+    /// <returns>The bounded normalized PDF bytes.</returns>
+    /// <exception cref="ArgumentNullException">The request or a required member is null.</exception>
+    /// <exception cref="InvalidDataException">The document exceeds a bound, requests an external asset, or has an unsupported PDF shape.</exception>
+    /// <exception cref="InvalidOperationException">A structured field is unclassified or the qpdf process cannot run within its capture limits.</exception>
+    /// <exception cref="PlaywrightException">Chromium is unavailable or rejects the browser operation.</exception>
+    /// <exception cref="IOException">The private normalization files could not be written or cleaned up.</exception>
+    /// <exception cref="TimeoutException">The rendering or cleanup deadline elapsed.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was canceled.</exception>
+    public async Task<ReadOnlyMemory<byte>> Render(
+        DocumentRenderRequest request, DateTimeOffset documentDate, bool includePageNumbers, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
         ct.ThrowIfCancellationRequested();
@@ -63,8 +80,11 @@ public sealed class ChromiumDocumentRenderer
             }
 
             var html = HtmlDocumentRenderer.Render(request, _maxHtmlBytes, operation.Token);
-            var raw = await Print(request.Language, Encoding.UTF8.GetString(html), logo is not null, operation.Token).ConfigureAwait(false);
-            return await _normalizer.Normalize(raw, documentDate, operation.Token).ConfigureAwait(false);
+            var raw = await Print(request.Language, Encoding.UTF8.GetString(html), logo is not null, includePageNumbers,
+                operation.Token).ConfigureAwait(false);
+            return includePageNumbers
+                ? await _normalizer.NormalizeNumbered(raw, documentDate, operation.Token).ConfigureAwait(false)
+                : await _normalizer.Normalize(raw, documentDate, operation.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (!ct.IsCancellationRequested && deadline.IsCancellationRequested)
         {
@@ -72,10 +92,11 @@ public sealed class ChromiumDocumentRenderer
         }
     }
 
-    private async Task<ReadOnlyMemory<byte>> Print(string locale, string html, bool hasLogo, CancellationToken ct)
+    private async Task<ReadOnlyMemory<byte>> Print(
+        string locale, string html, bool hasLogo, bool includePageNumbers, CancellationToken ct)
     {
         var context = await OpenContext(locale, ct).ConfigureAwait(false);
-        return await PrintAndClose(() => PrintInContext(context, html, hasLogo, ct), () => CloseContext(context))
+        return await PrintAndClose(() => PrintInContext(context, html, hasLogo, includePageNumbers, ct), () => CloseContext(context))
             .ConfigureAwait(false);
     }
 
@@ -105,7 +126,8 @@ public sealed class ChromiumDocumentRenderer
         return pdf;
     }
 
-    private async Task<ReadOnlyMemory<byte>> PrintInContext(IBrowserContext context, string html, bool hasLogo, CancellationToken ct)
+    private async Task<ReadOnlyMemory<byte>> PrintInContext(
+        IBrowserContext context, string html, bool hasLogo, bool includePageNumbers, CancellationToken ct)
     {
         var attemptedRequest = 0;
         await context.RouteAsync("**/*", async route =>
@@ -129,7 +151,7 @@ public sealed class ChromiumDocumentRenderer
         }
 
         var session = await context.NewCDPSessionAsync(page).WaitAsync(ct).ConfigureAwait(false);
-        var pdf = await ChromiumPdfTransfer.Print(session, _maxPdfBytes, ct).ConfigureAwait(false);
+        var pdf = await ChromiumPdfTransfer.Print(session, _maxPdfBytes, ct, includePageNumbers).ConfigureAwait(false);
         RequireOffline(Volatile.Read(ref attemptedRequest));
         return pdf;
     }

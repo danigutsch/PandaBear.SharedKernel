@@ -1,77 +1,106 @@
 # Assertion helper audit
 
-This audit lists multi-statement assertion patterns that repeat across the SharedKernel test projects and could be expressed in one call by a `Should*` helper in `SharedKernel.Testing.Assertions` or its Http, Web, Data, Mediator and Logging siblings. It proposes helpers only. Nothing here is implemented, and no helper has been accepted yet.
+This audit ranks repeated test assertions and records which ones justify a
+shared helper. It covers the base assertion package and the HTTP, Web, Data,
+Mediator and Logging capabilities.
 
 ## Method
 
-Counts come from `grep -rE` over `tests/**/*.cs`, excluding `obj` and `bin`, at the commit this audit was written against. "Lines" is the number of matching lines and "files" is the number of distinct files. Counts are approximate where a pattern can match unrelated code, and each entry says so when that applies. The `catch` blocks that appear in `SharedKernel.Style.Analyzers.Tests` are analyzer input strings, not assertions, and are excluded.
+The inventory is anchored to commit `026d45d98912760e5f8545c05cc7689ff86138a7`.
+Use `git grep -E -c '<pattern>' <revision> -- 'tests/**/*.cs'` to reproduce
+its lexical counts. The numbers are matching lines and distinct tracked
+files. A multiline chain can be missed, and a string literal or unrelated
+operation can match. The call sites cited below were read in the source.
 
-The existing surface was checked first so that the list does not propose what already exists. `ShouldThrow`, `ShouldThrowAssignableTo`, `ShouldThrowInner`, `ShouldHaveCount`, `ShouldHaveSingleItem`, `ShouldAllSatisfy`, `ShouldBeSuccess`, `ShouldBeFailure`, `ShouldBeProblem` and the string and collection assertions all exist today.
+Existing assertion coverage includes `ShouldThrow`,
+`ShouldThrowAssignableTo`, `ShouldThrowInner`, `ShouldHaveCount`,
+`ShouldHaveSingleItem`, `ShouldAllSatisfy`, `ShouldBeSuccess`,
+`ShouldBeFailure` and `ShouldBeProblem`. Preserve useful failure messages
+and return values when considering a wrapper.
 
 ## Ranked candidates
 
-Ranking weighs duplicate count first, then how many lines each call site saves, then how much failure-message quality improves over the current form.
+### 1. Path existence
 
-### 1. Exception message and parameter name
+`File.Exists…ShouldBeTrue/False` matches 152 lines across 72 files.
+`Directory.Exists…ShouldBeTrue/False` matches 111 lines across 38 files.
+Accept a batch of four type-specific path assertions. A Boolean failure
+today omits the path and expected entry type. The APIs improve diagnostics
+while preserving the predicates for valid paths.
 
-Tests capture an exception with `ShouldThrow<T>()` and then assert on `Message` or `ParamName` in separate statements.
+### 2. Exceptions
 
-- `Message.Should*`: 390 lines in 97 files. Examples: `SharedKernel.ImageProcessing.Tests/MagickImageProcessorTests.cs:201`, `SharedKernel.Domain.Tests/CompositeDomainEventDispatcherTests.cs:79`.
-- `ParamName.ShouldBe`: 111 lines in 41 files. Examples: `SharedKernel.EventSourcing.Npgsql.Tests/PostgreSqlTestDatabaseLeaseTests.cs:21`, `SharedKernel.EventSourcing.Npgsql.Tests/PostgreSqlProjectionCheckpointStoreTests.cs:66`.
+`.Message.ShouldBe/Contain/Start` matches 707 lines across 216 files.
+`.ParamName.ShouldBe(` matches 365 lines across 137 files.
+Defer. Retain the returned exception. Message expectations vary by exact
+value, substring and prefix. A dedicated argument helper needs a consistent
+name, overloads and async usage.
 
-Candidate: overloads such as `ShouldThrow<T>(messageContains)` and `ShouldThrowArgument<T>(paramName)` that assert the type and the detail in one call and report all three values on failure. This is the largest group, and the `ParamName` half is the most uniform. The `Message` half varies between exact match, `Contains` and `StartsWith`, so a single overload may not cover it. Risk: an overload that hides the exception makes tests that inspect further members, such as `InnerException`, still need the captured value, so the helper must keep returning it.
+### 3. JSON properties
 
-### 2. Filesystem existence
+Typed JSON property getters followed by `ShouldBe` match 186 lines across
+37 files. Defer. Missing-property diagnostics could improve, but typed
+reads, nullability and array checks need distinct semantics. Keep the
+current repository fixture calls while judging cross-package need.
 
-Tests assert `File.Exists(path)` or `Directory.Exists(path)` through `ShouldBeTrue` or `ShouldBeFalse`.
+### 4. Dictionary keys
 
-- 144 lines in 50 files. Of those, 47 wrap `Path.Combine` inside `File.Exists`. Examples: `SharedKernel.Aspire.Hosting.K6.Tests/K6ScenarioResourceExtensionsTests.cs:60`, `SharedKernel.Repository.Tests/SliceServiceTests.cs:134`, `SharedKernel.Style.Analyzers.Tests/GovernedLiteralRepositoryTests.cs:33`.
-- Related reads: `File.ReadAllText`, `ReadAllLines` or `ReadAllBytes` followed by a string assertion, 20 lines in 9 files (`K6ScenarioResourceExtensionsTests.cs:103`).
+`ContainsKey` plus a Boolean assertion matches 112 lines across 31 files.
+Defer. A wrapper needs to account for the dictionary's comparer and
+separate presence assertions from returning a stored value.
 
-Candidate: `ShouldExistAsFile`, `ShouldExistAsDirectory` and a negative form, plus optionally `ShouldHaveFileContent`. The current form fails with "Expected True, got False" and does not name the path, so the gain is mostly in failure messages. These would live in `SharedKernel.Testing.Assertions` and need no new dependency.
+### 5. Metric tags
 
-### 3. JSON property reads
-
-Tests parse a response or manifest and assert on `RootElement.GetProperty("x").GetString()` style chains.
-
-- Typed getter followed by `ShouldBe`: 101 lines in 21 files. All `GetProperty` chains: 182 lines in 26 files. Examples: `SharedKernel.AspNetCore.Tests/UnhandledExceptionHandlerTests.cs:29`, `SharedKernel.Repository.Tests/SliceServiceTests.cs:313`, `SharedKernel.Repository.Tests/RepositoryValidationTests.cs:190`.
-
-Candidate: `JsonElement` extensions such as `ShouldHaveString(name, expected)`, `ShouldHaveInt32(name, expected)` and `ShouldHaveProperty(name)` returning the element. A missing property currently throws `KeyNotFoundException` from inside the chain with no assertion context. Most of the volume is in `SharedKernel.Repository.Tests`, so this may fit that project's local helpers better than a shared package; check whether other projects would adopt it before promoting it.
-
-### 4. Metric measurement tags
-
-Telemetry tests read `measurement.Tags[...]` repeatedly for one measurement.
-
-- 31 `Tags[...].ShouldBe` lines in 4 files: `SecurityEventPipelineTests.cs` (8), `SecurityEventTelemetryTests.cs` (10), `UnhandledExceptionHandlerTests.cs` (8) and `UiFailureReporterTests.cs` (5). Example: `SharedKernel.AspNetCore.Authentication.Tests/SecurityEventTelemetryTests.cs:42` (moved from `SharedKernel.AspNetCore.Tests` when the package was split).
-
-Candidate: a tag-set assertion such as `ShouldHaveTags(("event", "authentication_failed"), ("reason", reason))` on the measurement type. The count is modest and the helper would need to depend on whichever measurement type these tests share, so confirm that type is public before proposing it for a package.
-
-### 5. Dictionary key presence
-
-- `ContainsKey(...).ShouldBeTrue/False`: 75 lines in 12 files (54 negative, 21 positive). Examples: `SharedKernel.Aspire.Hosting.K6.Tests/K6ScenarioResourceExtensionsTests.cs:324`, `SharedKernel.Repository.Tests/ServiceHostTests.cs:43`.
-
-Candidate: `ShouldContainKey` and `ShouldNotContainKey`, optionally returning the value. The existing `ShouldContain` overloads are for sequences and strings and do not cover dictionaries.
+A metric tag indexer followed by `ShouldBe` matches 42 lines across eight
+files. Defer. Keep the metric carrier owner and decide whether a tag helper
+checks a subset, duplicate keys or the full captured set.
 
 ### 6. Stream length and position
 
-- `Length.ShouldBe` and `Position.ShouldBe`: 113 lines in 53 files, but many are `FileInfo.Length`, byte arrays or checkpoint positions that are not streams. A stream-only count was not isolated. Example: `SharedKernel.AI.Tests/ImageInputLimitTests.cs:90`.
+`Length` or `Position` followed by `ShouldBe` matches 159 lines across 86
+files. Defer. This upper-bound count includes arrays, files and checkpoint
+positions. Stream-specific assertions require a separate count and a
+concrete contract.
 
-Candidate: low priority. A stream assertion would only pay off in the IO-related projects, and a precise count is needed before accepting it.
+For exception examples, see `CandidateManifestTests` in Versioning.Tests
+and `PostgreSqlProjectionCheckpointStoreTests` in EventSourcing.Npgsql.Tests.
+`CoverageGateTests` in Repository.Tests contains example JSON calls.
+`K6ScenarioResourceExtensionsTests` inspects dictionary keys, and
+`SecurityEventTelemetryTests` checks values on individual metric tags.
 
-## Migration to existing helpers
+## Accepted filesystem batch
 
-These are not new helpers. They are existing helpers that tests have not adopted yet, and replacing them needs no API change.
+Use `ShouldExistAsFile`, `ShouldNotExistAsFile`, `ShouldExistAsDirectory`
+and `ShouldNotExistAsDirectory` from `SharedKernel.Testing.Assertions`.
+The two absence assertions answer whether their requested entry type is
+present. Either accepts a missing path, and each accepts an entry of the
+opposite type. Well-formed paths use the platform predicate, including its
+treatment of inaccessible paths and symbolic links. Empty and whitespace
+paths give a parameter error. Failures include the original path and the
+expected entry type, with a caller reason first when supplied.
 
-- `Count.ShouldBe` and `Length.ShouldBe` on collections: 105 and 72 lines. `ShouldHaveCount` is used 26 times. Part of the `Length` count is `FileInfo.Length` or arrays used for something other than size, so the real migration count is lower. `ShouldHaveCount` takes `IEnumerable<T>`, so arrays and lists are covered.
-- Manual `IsSuccess` and `IsFailure` assertions: 64 lines in 8 files, concentrated in `SharedKernel.Results.Tests`. `ShouldBeSuccess` and `ShouldBeFailure` exist. These tests may assert on the `Result` type itself rather than on a consumer, so the manual form can be intentional there.
-- `foreach` loops that assert in the body: the raw `foreach` count is 142 lines in 68 files, but most are not assertion loops. `ShouldAllSatisfy` exists and is used; a targeted review would be needed to count real candidates.
+`CodeFixRunEngineTests.Cancellation_during_membership_evaluation_removes_the_staged_helper`
+is the representative adoption. It checks that the staged helper appears
+during evaluation and disappears after cancellation. Dedicated controls
+also exercise real directories, missing paths and failing assertions.
 
-## Not proposed
+## Keep the existing assertions
 
-- Try and catch blocks asserting exceptions. Real instances in test classes are rare once analyzer input strings are excluded, and `ShouldThrow` already covers the pattern.
-- Log record checks. Only 22 lines in 10 files touch the recorded log surface, and `RecordedLog` already exposes the data directly.
-- HTTP status code checks. `StatusCode.ShouldBe` appears 31 times in 11 files, and the 400 and problem-response cases are already covered by `ShouldBeProblem`. The remaining plain status checks are one line each and do not justify a helper.
+- `IsSuccess` and `IsFailure` followed by a Boolean assertion match 212
+  lines across 49 files. Consumer tests can use `ShouldBeSuccess` and
+  `ShouldBeFailure` where applicable. Tests of the result type itself
+  can keep assertions on those properties as part of its contract.
+- `StatusCode.ShouldBe` matches 138 lines across 35 files. The status
+  comparisons remain concise. Use `ShouldBeProblem` for problem responses.
+- Use `ShouldAllSatisfy` for loops consisting solely of assertions.
+  Ordinary test loops also arrange and act, so their count is outside
+  this lexical survey.
+- Use `ShouldThrow` for manual exception capture where the assertion
+  preserves the intended exception type and outcome. Analyzer fixture
+  snippets contain `try` and `catch` tokens and make a lexical count
+  unreliable.
+- Recorded logs already expose the rendered message, captured state and
+  exception independently. Preserve those distinctions in assertions.
 
-## Next steps
-
-Each accepted candidate should become its own issue or a batch under one pull request, with its own tests and with failure-message quality at least equal to the form it replaces. Candidates 1 and 2 are the strongest. Candidate 3 needs a decision about whether it belongs in a shared package or in `SharedKernel.Repository.Tests`.
+This completes the ranked audit and records the first chosen batch for
+[issue 255](https://github.com/danigutsch/PandaBear.SharedKernel/issues/255).

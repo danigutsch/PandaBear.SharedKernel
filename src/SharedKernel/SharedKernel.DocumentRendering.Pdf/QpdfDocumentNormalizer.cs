@@ -61,7 +61,24 @@ public sealed class QpdfDocumentNormalizer
     /// <exception cref="IOException">The private temporary files could not be written or cleaned up.</exception>
     /// <exception cref="TimeoutException">The time limit elapsed.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="ct"/> was canceled.</exception>
-    public async Task<ReadOnlyMemory<byte>> Normalize(ReadOnlyMemory<byte> generatedPdf, DateTimeOffset documentDate, CancellationToken ct)
+    public Task<ReadOnlyMemory<byte>> Normalize(ReadOnlyMemory<byte> generatedPdf, DateTimeOffset documentDate, CancellationToken ct) =>
+        NormalizeCore(generatedPdf, documentDate, numberPages: false, ct);
+
+    /// <summary>Normalizes tagged Chromium A4 output and adds page numbers to its reserved bottom margin.</summary>
+    /// <remarks>The caller reserves 20 mm for the artifact before Chromium prints the PDF.</remarks>
+    /// <exception cref="InvalidDataException">The numbered document or its metadata is outside the qualified shape.</exception>
+    /// <exception cref="InvalidOperationException">The process could not run or exceeded a capture limit.</exception>
+    /// <exception cref="IOException">The private temporary files could not be written or cleaned up.</exception>
+    /// <exception cref="TimeoutException">The time limit elapsed.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was canceled.</exception>
+    internal Task<ReadOnlyMemory<byte>> NormalizeNumbered(ReadOnlyMemory<byte> generatedPdf, DateTimeOffset documentDate, CancellationToken ct) =>
+        NormalizeCore(generatedPdf, documentDate, numberPages: true, ct);
+
+    private async Task<ReadOnlyMemory<byte>> NormalizeCore(
+        ReadOnlyMemory<byte> generatedPdf,
+        DateTimeOffset documentDate,
+        bool numberPages,
+        CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
         if (generatedPdf.Length > _maxPdfBytes || !generatedPdf.Span.StartsWith("%PDF-"u8))
@@ -76,13 +93,18 @@ public sealed class QpdfDocumentNormalizer
         {
             var input = Path.Combine(scratch.FullName, "input.pdf");
             await File.WriteAllBytesAsync(input, generatedPdf, execution.Token).ConfigureAwait(false);
-            var trailer = await Inspect(scratch.FullName, input, ["--json-object=trailer"], execution.Token).ConfigureAwait(false);
+            var trailer = await Inspect(scratch.FullName, input,
+                numberPages ? ["--json-key=pages", "--json-object=trailer"] : ["--json-object=trailer"],
+                execution.Token).ConfigureAwait(false);
             var (infoReference, catalogReference) = QpdfDocumentMetadata.References(trailer);
+            var pages = numberPages ? QpdfPageNumbering.Read(trailer) : null;
             var metadata = await Inspect(scratch.FullName, input,
-                [QpdfDocumentMetadata.SelectObject(infoReference), QpdfDocumentMetadata.SelectObject(catalogReference)],
+                [QpdfDocumentMetadata.SelectObject(infoReference), QpdfDocumentMetadata.SelectObject(catalogReference), .. (pages?.Selectors() ?? [])],
                 execution.Token).ConfigureAwait(false);
             var update = Path.Combine(scratch.FullName, "dates.json");
-            var json = QpdfDocumentMetadata.UpdateDates(metadata, infoReference, catalogReference, documentDate);
+            var json = pages is null
+                ? QpdfDocumentMetadata.UpdateDates(metadata, infoReference, catalogReference, documentDate)
+                : await pages.WriteUpdate(scratch.FullName, metadata, infoReference, catalogReference, documentDate, execution.Token).ConfigureAwait(false);
             await File.WriteAllTextAsync(update, json, execution.Token).ConfigureAwait(false);
             var output = await Run(scratch.FullName,
                 ["--suppress-recovery", "--stream-data=preserve", "--object-streams=preserve", "--deterministic-id",

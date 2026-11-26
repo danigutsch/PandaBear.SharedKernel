@@ -8,6 +8,9 @@ internal sealed class ChromiumProtocolReplyStub(params string[] replies) : ICDPS
 {
     private int _next;
 
+    /// <summary>Gets the parameters of the print command.</summary>
+    internal IReadOnlyDictionary<string, object>? PrintOptions { get; private set; }
+
     /// <inheritdoc />
     public event EventHandler<ICDPSession> Close
     {
@@ -31,6 +34,11 @@ internal sealed class ChromiumProtocolReplyStub(params string[] replies) : ICDPS
     /// <inheritdoc />
     public Task<JsonElement?> SendAsync(string method, Dictionary<string, object>? args = null)
     {
+        if (method == "Page.printToPDF")
+        {
+            PrintOptions = args;
+        }
+
         using var reply = JsonDocument.Parse(replies[_next++]);
         return Task.FromResult<JsonElement?>(reply.RootElement.Clone());
     }

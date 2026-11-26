@@ -28,7 +28,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         // Act
         Func<Task> apply = () => CodeFixFileChanges.Apply(before, after, async (_, path, _, token) =>
         {
-            File.Exists(path).ShouldBeTrue();
+            path.ShouldExistAsFile();
             await cancellation.CancelAsync();
             token.ThrowIfCancellationRequested();
             return null;
@@ -39,7 +39,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
 
         // Assert
         exception.CancellationToken.ShouldBe(cancellation.Token);
-        File.Exists(Path.Combine(projectDirectory.Path, "SampleTestsHelpers.cs")).ShouldBeFalse();
+        Path.Combine(projectDirectory.Path, "SampleTestsHelpers.cs").ShouldNotExistAsFile();
         projectAfterCancellation.ShouldBe(CodeFixRunnerTestProject.ProjectFile);
         sourceAfterCancellation.ShouldBe(CodeFixRunnerTestProject.HelperSourceFile);
     }

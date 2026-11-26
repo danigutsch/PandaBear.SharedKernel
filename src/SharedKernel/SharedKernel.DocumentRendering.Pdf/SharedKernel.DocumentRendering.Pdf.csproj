@@ -8,6 +8,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+        <InternalsVisibleTo Include="SharedKernel.DocumentRendering.Pdf.Chromium" />
         <InternalsVisibleTo Include="SharedKernel.DocumentRendering.Tests" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
