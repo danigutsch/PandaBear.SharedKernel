@@ -344,7 +344,116 @@ public sealed class IsolatedPodmanCommandTests
         context.Operations.ShouldContain("pod rm --all --force --time 0");
     }
 
+    [Fact]
+    public async Task Deadline_remains_primary_while_verified_cleanup_retries_a_transient_container_removal()
+    {
+        // Arrange
+        const string removal = "rm --all --force --time 0";
+        using var context = new IsolatedPodmanTestContext { FailOperation = removal };
+        using var runtimeParent = new TemporaryDirectory();
+        using var error = new InvariantStringWriter();
+        var timeout = new TimeoutException("The fixture child exceeded its deadline.");
+        var runner = ScriptedProcessRunner.Throwing(timeout);
+        List<CancellationToken> removalTokens = [];
+        var host = context.Host with
+        {
+            RunProcess = async (startInfo, ct) =>
+            {
+                if (string.Equals(startInfo.ArgumentList[1], "rm", StringComparison.Ordinal))
+                {
+                    removalTokens.Add(ct);
+                }
+
+                var result = await context.Host.RunProcess(startInfo, ct);
+                if (result.ExitCode != 0)
+                {
+                    context.FailOperation = null;
+                }
+
+                return result;
+            },
+        };
+        var child = new ProcessStartInfo(context.Executable);
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        // Act
+        Func<Task> run = async () => _ = await IsolatedPodman.Run(host, context.ImageStore, "pasta", runtimeParent.Path,
+            child, runner, TextWriter.Null, error, cancellationToken);
+        var failure = await run.ShouldThrow<TimeoutException>();
+
+        // Assert
+        ReferenceEquals(failure, timeout).ShouldBeTrue();
+        removalTokens.Count.ShouldBe(2, "A transient failure should get one retry.");
+        removalTokens.Distinct().ShouldHaveSingleItem().CanBeCanceled.ShouldBeTrue();
+        var firstRemoval = context.Operations.IndexOf(removal);
+        var retry = context.Operations.LastIndexOf(removal);
+        var verifiedAgain = context.Operations.Skip(firstRemoval + 1).Take(retry - firstRemoval - 1)
+            .Any(operation => operation.StartsWith("info --format {{.Host.ServiceIsRemote}}\n", StringComparison.Ordinal));
+        verifiedAgain.ShouldBeTrue("Reverify the exact private engine identity before retrying cleanup.");
+        Directory.Exists(context.Roots.ShouldHaveSingleItem()).ShouldBeFalse();
+        Directory.Exists(Path.GetDirectoryName(context.RunRoots.ShouldHaveSingleItem())).ShouldBeFalse();
+        Directory.Exists(runtimeParent.Path).ShouldBeTrue();
+        error.ToString().ShouldNotContain("raw engine output", StringComparison.Ordinal);
+    }
+
     [Theory]
+    [InlineData("nonzero", false, 2, "could not complete the 'rm' operation")]
+    [InlineData("nonzero", true, 1, "did not report the expected local rootless engine")]
+    [InlineData("overrun", false, 1, "could not complete the 'rm' operation")]
+    [InlineData("denied", false, 1, "Private removal was denied.")]
+    public async Task The_deadline_stays_primary_when_cleanup_cannot_safely_finish(
+        string failureKind, bool changedIdentity, int expectedRemovals, string diagnostic)
+    {
+        // Arrange
+        const string removal = "rm --all --force --time 0";
+        using var context = new IsolatedPodmanTestContext { FailOperation = removal };
+        using var runtimeParent = new TemporaryDirectory();
+        using var error = new InvariantStringWriter();
+        var timeout = new TimeoutException("The fixture child exceeded its deadline.");
+        var runner = ScriptedProcessRunner.Throwing(timeout);
+        var host = context.Host with
+        {
+            RunProcess = async (startInfo, ct) =>
+            {
+                var result = await context.Host.RunProcess(startInfo, ct);
+                if (result.ExitCode == 0)
+                {
+                    return result;
+                }
+
+                context.InvalidScope = changedIdentity;
+                return failureKind switch
+                {
+                    "overrun" => result with { StandardError = new string('x', 1_048_577) },
+                    "denied" => throw new UnauthorizedAccessException("Private removal was denied."),
+                    _ => result,
+                };
+            },
+        };
+        var child = new ProcessStartInfo(context.Executable);
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        // Act
+        Func<Task> run = async () => _ = await IsolatedPodman.Run(host, context.ImageStore, "pasta", runtimeParent.Path,
+            child, runner, TextWriter.Null, error, cancellationToken);
+        var thrown = await run.ShouldThrow<TimeoutException>();
+
+        // Assert
+        ReferenceEquals(thrown, timeout).ShouldBeTrue();
+        var removals = context.Operations.Count(operation => operation == removal);
+        removals.ShouldBe(expectedRemovals);
+        context.Operations.ShouldNotContain("network prune --force");
+        Directory.Exists(context.Roots.ShouldHaveSingleItem()).ShouldBeTrue();
+        Directory.Exists(Path.GetDirectoryName(context.RunRoots.ShouldHaveSingleItem())).ShouldBeTrue();
+        var errorText = error.ToString();
+        errorText.ShouldContain(diagnostic, StringComparison.Ordinal);
+        errorText.ShouldContain("retained private engine files", StringComparison.Ordinal);
+        errorText.ShouldContain("retained private runtime files", StringComparison.Ordinal);
+        errorText.ShouldNotContain("raw engine output", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("rm --all --force --time 0", 0, 1)]
     [InlineData("network prune --force", 0, 1)]
     [InlineData("network prune --force", 17, 17)]
     [InlineData("image rm --all", 0, 1)]

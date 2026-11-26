@@ -98,6 +98,7 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
                 await StagePackages(clone, options.Candidate, evidence["packageSha256"]!.AsObject(), ct).ConfigureAwait(false);
                 var environment = new Dictionary<string, string?>(StringComparer.Ordinal)
                 {
+                    ["DOTNET_CLI_HOME"] = Path.Combine(scratch, "dotnet-home"),
                     ["NUGET_PACKAGES"] = Path.Combine(scratch, "packages"),
                     ["NUGET_HTTP_CACHE_PATH"] = Path.Combine(scratch, "http-cache"),
                     ["NUGET_FALLBACK_PACKAGES"] = null,

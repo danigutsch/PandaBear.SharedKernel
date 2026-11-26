@@ -166,7 +166,7 @@ internal sealed class PostgreSqlMessagingHealthScenario(
         foreach (var eventId in eventIds)
         {
             var uuid = Guid.Parse(eventId);
-            await context.Database.ExecuteSqlInterpolatedAsync($"""
+            await context.Database.ExecuteSqlAsync($"""
                 INSERT INTO public.delivery_correlation ("CorrelationId", "EventId")
                 VALUES ({correlationId}, {uuid})
                 """, ct);
