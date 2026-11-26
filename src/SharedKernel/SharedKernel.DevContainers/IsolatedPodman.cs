@@ -62,11 +62,46 @@ public static class IsolatedPodman
     /// <exception cref="IOException">The private configuration could not be created or read.</exception>
     /// <exception cref="UnauthorizedAccessException">The private configuration could not be created or read.</exception>
     /// <exception cref="OperationCanceledException">The caller canceled the test.</exception>
+    public static Task<int> Run(
+        PodmanDnsHost host,
+        string imageStore,
+        string networkHelper,
+        string? runtimeParent,
+        ProcessStartInfo command,
+        IProcessRunner runner,
+        TextWriter output,
+        TextWriter error,
+        CancellationToken cancellationToken) =>
+        Run(host, imageStore, networkHelper, runtimeParent, null, command, runner, output, error, cancellationToken);
+
+    /// <summary>Runs a command with an isolated engine and optionally verifies a caller-owned user systemd slice.</summary>
+    /// <param name="host">Host details and bounded runner for local probes and cleanup.</param>
+    /// <param name="imageStore">Absolute path of the existing additional read-only image store.</param>
+    /// <param name="networkHelper">Installed rootless network helper.</param>
+    /// <param name="runtimeParent">Optional existing parent for the generated engine runtime directory.</param>
+    /// <param name="cgroupParentSlice">
+    /// An active, capped user systemd slice containing the launcher, or <see langword="null"/> for existing behavior.
+    /// A cooperative child supplies the same parent to Podman when creating its containers. Verification samples
+    /// observed live payload and conmon processes and cannot account for processes that finish between observations.
+    /// </param>
+    /// <param name="command">The trusted local executable and its arguments and environment.</param>
+    /// <param name="runner">Process runner for the test command.</param>
+    /// <param name="output">Receives the child standard output.</param>
+    /// <param name="error">Receives the child standard error and verification or cleanup diagnostics.</param>
+    /// <param name="cancellationToken">Cancels the test and starts bounded cleanup.</param>
+    /// <returns>The child exit code, or 1 when engine preflight or cleanup fails and the child had no failure.</returns>
+    /// <exception cref="ArgumentNullException">A required host, command, runner or writer is null.</exception>
+    /// <exception cref="ArgumentException">An engine path, network helper, slice name or child execution setting is invalid.</exception>
+    /// <exception cref="InvalidOperationException">The private engine, selected budget or live placement could not be verified.</exception>
+    /// <exception cref="IOException">The private configuration could not be created or read.</exception>
+    /// <exception cref="UnauthorizedAccessException">The private configuration could not be created or read.</exception>
+    /// <exception cref="OperationCanceledException">The caller canceled the test.</exception>
     public static async Task<int> Run(
         PodmanDnsHost host,
         string imageStore,
         string networkHelper,
         string? runtimeParent,
+        string? cgroupParentSlice,
         ProcessStartInfo command,
         IProcessRunner runner,
         TextWriter output,
@@ -111,6 +146,8 @@ public static class IsolatedPodman
         }
 
         cancellationToken.ThrowIfCancellationRequested();
+        var budget = cgroupParentSlice is null ? null
+            : await IsolatedPodmanCgroupBudget.Resolve(host, cgroupParentSlice, cancellationToken).ConfigureAwait(false);
         var child = CopyCommand(command);
         var workspace = new Workspace(Path.GetFullPath(imageStore), networkHelper, runtimeParent);
         var privateHost = host with
@@ -136,7 +173,10 @@ public static class IsolatedPodman
                 ProcessOutput result;
                 try
                 {
-                    result = await runner.Run(child, forward: null, cancellationToken).ConfigureAwait(false);
+                    result = budget is null
+                        ? await runner.Run(child, forward: null, cancellationToken).ConfigureAwait(false)
+                        : await budget.Run(child, runner, workspace.VerifyFiles, (arguments, ct) => RunBoundedQuery(privateHost, arguments, ct),
+                            error, cancellationToken).ConfigureAwait(false);
                 }
                 catch (TimeoutException)
                 {

@@ -111,29 +111,55 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
 
 ## Repository analyzer regression baselines
 
-The existing benchmark executable also measures all four repository analyzer packages (Mediator, Style,
-Testing and Aspire) without adding dependencies. Each suite analyzes a valid representative compilation of
-100 declarations/operations that produces diagnostics. Compilation and semantic warmup are excluded. Ten
-warmups precede nine samples of five fresh analyzer-driver runs with concurrent analysis disabled. Results record median elapsed and process CPU
-milliseconds and median process-wide allocated bytes, plus a stable diagnostic count. Ordinary unit tests have
-no timing assertions.
+The benchmark measures ten shipped diagnostic-analyzer assemblies across small
+(10), medium (100) and large (500) synthetic workloads. The corpus covers ASP.NET
+Core endpoint binding, Aspire image tags, Blazor component injection, Domain
+clock usage, EF Core unique indexes, IO buffering, Mediator dispatch, ignored
+Results, Style rules and Testing conventions. Inputs produce diagnostics and
+use real compiler references with a source fixture for the EF Core index
+symbols. Timing starts after compilation setup. Ten warmups precede nine
+samples of five fresh analyzer-driver runs with concurrent analysis disabled.
+Results record median elapsed, process CPU and Roslyn execution times,
+allocated bytes and a stable diagnostic count.
 
-Run on an otherwise idle machine, using the pinned SDK and Release configuration:
+Each workload also runs five paired compiler samples after two untimed warmup
+compilations. Both arms create a fresh compilation from the same parsed trees,
+metadata references and options, then emit the assembly to a discarded
+output. The treatment arm runs the analyzer on that compilation. The first arm
+alternates between pairs. The report includes both elapsed medians and the
+median of the individual elapsed-time ratios. The gate uses the paired ratio
+to compare overhead against the compiler-only workload. Raw elapsed, CPU and
+Roslyn analyzer timing remain available for diagnosis.
+
+Run on an idle machine using the pinned SDK, Release configuration and
+matching tiering settings. The examples pin normal .NET tiering.
 
 ```sh
-dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks -c Release -- --analyzer-regression collect benchmarks/SharedKernel.Mediator.Benchmarks/analyzer-baseline.json
-dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks -c Release --no-build -- --analyzer-regression check benchmarks/SharedKernel.Mediator.Benchmarks/analyzer-baseline.json
+DOTNET_TieredCompilation=1 dotnet run \
+  --project benchmarks/SharedKernel.Mediator.Benchmarks -c Release -- \
+  --analyzer-regression collect artifacts/analyzer-baseline.json
+DOTNET_TieredCompilation=1 dotnet run -c Release --no-build \
+  --project benchmarks/SharedKernel.Mediator.Benchmarks -- \
+  --analyzer-regression check artifacts/analyzer-baseline.json
 ```
 
-`check` exits 1 for a diagnostic-count change, process CPU time above 150%, or allocation above 120% of a suite's
-baseline. It exits 2 for incomparable runtime, OS, architecture, schema, corpus size, sample count or limits.
-Analyzer failures, invalid source and zero/unstable diagnostic counts fail collection. Wall time is recorded for context; shared-host scheduling noise does not gate the result. Allocation measurement
-includes analyzer-driver scheduling and runtime work in this isolated process; compare repeated idle runs.
-This is a dedicated performance validation path, not a noisy ordinary CI unit-test gate. CI performance reviews
-must compare matching environments; a different runner must collect its own reviewed baseline first.
+Create the output directory before collecting. The baseline covers 30 suites.
+It was collected on November 26, 2026 with SDK `11.0.100` and .NET `11.0.0`
+on Ubuntu `26.04.1 LTS` x64 with an AMD Ryzen AI 9 HX 370. The process used
+`DOTNET_PROCESSOR_COUNT=1` and `DOTNET_TieredCompilation=1`.
+[Analyzer baseline](analyzer-baseline.json)
 
-Refresh the versioned baseline only after reviewing corpus/rule changes or measured intentional cost, recording
-the reason and before/after results in the PR. Repeat threshold breaches before attributing them to code; do not
-raise limits or refresh a baseline just to silence a regression. This baseline measures representative package
-cost, not exhaustive rule coverage or consumer compilation latency. Existing BenchmarkDotNet mediator scenarios
-remain available for deeper profiling.
+`check` exits 1 for a diagnostic-count change, paired overhead above 150%, or
+allocation above 120% of a suite's baseline. It exits 2 when the runtime, OS,
+architecture, configured tiering, schema, workload settings, limits or suite
+count differ. The baseline records both `DOTNET_TieredCompilation` and
+`COMPlus_TieredCompilation`. Analyzer failures, invalid source and zero or
+unstable diagnostic counts fail collection. Allocation measurement includes
+analyzer-driver scheduling and runtime work in the isolated process.
+
+Compare repeated idle runs in matching environments. Refresh the versioned
+baseline after reviewing workload or rule changes or a measured intentional
+cost. Record the reason and the before-and-after results in the PR. Repeat
+threshold breaches before attributing them to code. The corpus measures
+representative package cost. BenchmarkDotNet mediator scenarios provide
+deeper profiling of those workloads.

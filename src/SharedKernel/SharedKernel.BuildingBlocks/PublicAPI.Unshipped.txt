@@ -344,3 +344,15 @@ SharedKernel.BuildingBlocks.ImageAltText.IsDecorative.get -> bool
 SharedKernel.BuildingBlocks.ImageAltText.Text.get -> string!
 static SharedKernel.BuildingBlocks.ImageAltText.Create(string? text, bool decorative, string! field = "alt") -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.ImageAltText!>
 static SharedKernel.BuildingBlocks.ImageAltText.Restore(string! text) -> SharedKernel.BuildingBlocks.ImageAltText!
+SharedKernel.BuildingBlocks.RedactedDisplayRecord
+SharedKernel.BuildingBlocks.RedactedDisplayRecord.RedactedDisplayRecord() -> void
+SharedKernel.BuildingBlocks.RedactedDisplayRecord.RedactedDisplayRecord(SharedKernel.BuildingBlocks.RedactedDisplayRecord! original) -> void
+abstract SharedKernel.BuildingBlocks.RedactedDisplayRecord.<Clone>$() -> SharedKernel.BuildingBlocks.RedactedDisplayRecord!
+override SharedKernel.BuildingBlocks.RedactedDisplayRecord.Equals(object? obj) -> bool
+override SharedKernel.BuildingBlocks.RedactedDisplayRecord.GetHashCode() -> int
+override sealed SharedKernel.BuildingBlocks.RedactedDisplayRecord.ToString() -> string!
+static SharedKernel.BuildingBlocks.RedactedDisplayRecord.operator !=(SharedKernel.BuildingBlocks.RedactedDisplayRecord? left, SharedKernel.BuildingBlocks.RedactedDisplayRecord? right) -> bool
+static SharedKernel.BuildingBlocks.RedactedDisplayRecord.operator ==(SharedKernel.BuildingBlocks.RedactedDisplayRecord? left, SharedKernel.BuildingBlocks.RedactedDisplayRecord? right) -> bool
+virtual SharedKernel.BuildingBlocks.RedactedDisplayRecord.EqualityContract.get -> System.Type!
+virtual SharedKernel.BuildingBlocks.RedactedDisplayRecord.Equals(SharedKernel.BuildingBlocks.RedactedDisplayRecord? other) -> bool
+virtual SharedKernel.BuildingBlocks.RedactedDisplayRecord.PrintMembers(System.Text.StringBuilder! builder) -> bool

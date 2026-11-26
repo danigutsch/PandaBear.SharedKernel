@@ -685,20 +685,7 @@ public static class PodmanDnsPreflight
     private static ulong ReadProcessStartTime(string processDirectory)
     {
         var statPath = Path.Combine(processDirectory, "stat");
-        var stat = File.ReadAllText(statPath).TrimEnd('\r', '\n');
-        var commandEnd = stat.LastIndexOf(')', StringComparison.Ordinal);
-        if (commandEnd < 0 || commandEnd + 2 >= stat.Length)
-        {
-            throw new InvalidOperationException($"{statPath} has an invalid process stat record");
-        }
-
-        var fields = stat[(commandEnd + 2)..].Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (fields.Length <= 19 || !ulong.TryParse(fields[19], NumberStyles.None, CultureInfo.InvariantCulture, out var startTime))
-        {
-            throw new InvalidOperationException($"{statPath} has an invalid process start time");
-        }
-
-        return startTime;
+        return LinuxProcessStat.ReadStartTime(statPath, File.ReadAllText(statPath));
     }
 
     private static List<string> ParseCommandLine(byte[] value)

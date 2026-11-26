@@ -22,6 +22,7 @@ public sealed class IsolatedPodmanCommandTests
         // Assert
         exitCode.ShouldBe(0);
         output.ToString().ShouldContain("--image-store", StringComparison.Ordinal);
+        output.ToString().ShouldContain("--cgroup-parent-slice", StringComparison.Ordinal);
         error.ToString().ShouldBe(string.Empty);
     }
 
@@ -52,6 +53,8 @@ public sealed class IsolatedPodmanCommandTests
     [InlineData("--timeout-seconds", "0", "--timeout-seconds must be between 1 and 4294967")]
     [InlineData("--timeout-seconds", "4294968", "--timeout-seconds must be between 1 and 4294967")]
     [InlineData("--network-helper", "other", "Argument 'other' not recognized")]
+    [InlineData("--cgroup-parent-slice", "example.scope", "--cgroup-parent-slice must name a user systemd slice")]
+    [InlineData("--cgroup-parent-slice", "../example.slice", "--cgroup-parent-slice must name a user systemd slice")]
     public async Task Invalid_cli_options_fail_before_probing_the_engine(string option, string value, string diagnostic)
     {
         // Arrange
@@ -71,6 +74,84 @@ public sealed class IsolatedPodmanCommandTests
         context.Operations.Count.ShouldBe(0);
     }
 
+    [Fact]
+    public async Task Explicit_budget_selection_without_a_slice_cannot_start_an_unbounded_run()
+    {
+        // Arrange
+        using var context = new IsolatedPodmanTestContext();
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty));
+        var ct = TestContext.Current.CancellationToken;
+
+        // Act
+        var result = await context.RunCommand(["--cgroup-parent-slice"], [context.Executable], ct, runner);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Error.ShouldContain("--cgroup-parent-slice", StringComparison.Ordinal);
+        runner.Runs.ShouldBeEmpty();
+        context.Operations.ShouldBeEmpty();
+        context.Roots.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task A_named_slice_that_cannot_be_verified_refuses_the_run_in_both_logging_modes(bool fileLogs)
+    {
+        // Arrange
+        const string slice = "fixture-budget.slice";
+        using var context = new IsolatedPodmanTestContext();
+        using var logs = new TemporaryDirectory();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
+        List<string[]> unitQueries = [];
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty));
+        var environment = new RepoConfigToolEnvironment(context.ImageStore)
+        {
+            IsolatedPodmanCommandRunner = runner,
+            PodmanHost = context.Host with
+            {
+                RunProcess = (startInfo, ct) =>
+                {
+                    if (string.Equals(Path.GetFileName(startInfo.FileName), "systemctl", StringComparison.Ordinal))
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        unitQueries.Add([.. startInfo.ArgumentList]);
+                        return Task.FromResult(new PodmanCommandResult(1, string.Empty, "synthetic user manager error"));
+                    }
+
+                    return context.Host.RunProcess(startInfo, ct);
+                }
+            }
+        };
+        string[] logging = fileLogs ? ["--log-directory", logs.Path, "--max-log-bytes", "64"] : [];
+        string[] command = ["run-isolated-podman", "--image-store", context.ImageStore, "--cgroup-parent-slice", slice,
+            .. logging, "--", context.Executable];
+        var stdout = Path.Combine(logs.Path, "stdout.log");
+        var stderr = Path.Combine(logs.Path, "stderr.log");
+        string[] expectedLogPaths = fileLogs ? [stderr, stdout] : [];
+        var ct = TestContext.Current.CancellationToken;
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(command, output, error, environment, ct);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBeEmpty();
+        error.ToString().ShouldContain(
+            "The caller-owned user systemd slice and its finite memory and swap limits could not be verified.",
+            StringComparison.Ordinal);
+        error.ToString().ShouldNotContain("synthetic user manager error", StringComparison.Ordinal);
+        runner.Runs.ShouldBeEmpty();
+        context.Operations.ShouldBeEmpty();
+        context.Roots.ShouldBeEmpty();
+        unitQueries.Count.ShouldBeLessThanOrEqualTo(1);
+        unitQueries.ShouldAllSatisfy(query => query.ShouldBe(["--user", "show", "--property=Id,LoadState,ActiveState,ControlGroup", "--", slice]));
+        var actualLogPaths = Directory.GetFiles(logs.Path).Order(StringComparer.Ordinal).ToArray();
+        actualLogPaths.ShouldBe(expectedLogPaths);
+        actualLogPaths.ShouldAllSatisfy(path => new FileInfo(path).Length.ShouldBe(0L));
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(17)]
@@ -81,7 +162,7 @@ public sealed class IsolatedPodmanCommandTests
         var runner = ScriptedProcessRunner.Returning(new ProcessOutput(childExitCode, "child output\n", "child error\n"));
 
         // Act
-        var result = await context.RunCommand(runner, ["--image-store", "literal value", "", "--", "@literal"]);
+        var result = await context.RunCommand(runner, ["--image-store", "literal value", "--cgroup-parent-slice", "literal.slice", "", "--", "@literal"]);
 
         // Assert
         result.ExitCode.ShouldBe(childExitCode);
@@ -90,7 +171,7 @@ public sealed class IsolatedPodmanCommandTests
         var run = runner.Runs.ShouldHaveSingleItem();
         run.StartInfo.FileName.ShouldBe(context.Executable);
         run.StartInfo.WorkingDirectory.ShouldBe(context.ImageStore);
-        run.StartInfo.ArgumentList.ShouldBe(["--image-store", "literal value", "", "--", "@literal"]);
+        run.StartInfo.ArgumentList.ShouldBe(["--image-store", "literal value", "--cgroup-parent-slice", "literal.slice", "", "--", "@literal"]);
         Directory.Exists(context.Roots.ShouldHaveSingleItem()).ShouldBeFalse();
         context.Operations.ShouldContain("pod rm --all --force --time 0");
         context.Operations.ShouldContain("ps --all --quiet");
