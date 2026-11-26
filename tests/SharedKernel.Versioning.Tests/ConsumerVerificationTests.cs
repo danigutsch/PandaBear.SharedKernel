@@ -14,7 +14,7 @@ public sealed class ConsumerVerificationTests
         var manifest = await File.ReadAllTextAsync(scope.Manifest, ct);
 
         // Act
-        var result = await scope.Verify(ConsumerVerificationScope.Probe(), ct);
+        var result = await scope.Verify(ConsumerVerificationScope.Probe("; echo \"cli=$DOTNET_CLI_HOME\""), ct);
 
         // Assert
         result.ExitCode.ShouldBe(0, result.Error);
@@ -25,6 +25,7 @@ public sealed class ConsumerVerificationTests
         result.Error.ShouldContain("/consumer", StringComparison.Ordinal);
         result.Error.ShouldMatch("packages=.*" + Path.GetFileName(scratch) + ".packages");
         result.Error.ShouldMatch("http=.*" + Path.GetFileName(scratch) + ".http-cache");
+        result.Error.ShouldMatch("(?m)^cli=.*" + Path.GetFileName(scratch) + """[\\/]dotnet-home\r?$""");
         Directory.Exists(scratch).ShouldBeFalse();
         Directory.Exists(Path.Combine(scope.Root, ".local")).ShouldBeFalse();
         var evidence = scope.Evidence;

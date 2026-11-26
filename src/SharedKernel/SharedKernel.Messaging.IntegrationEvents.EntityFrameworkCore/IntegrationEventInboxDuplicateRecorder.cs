@@ -53,6 +53,6 @@ public sealed class IntegrationEventInboxDuplicateRecorder<TContext>
         var command = FormattableStringFactory.Create(
             sql, scope, eventId.ToString("N"), consumerName, eventId, observedAt.ToUniversalTime(),
             nameof(IdempotencyEntryState.Completed), int.MaxValue);
-        return await context.Database.ExecuteSqlInterpolatedAsync(command, ct).ConfigureAwait(false) == 1;
+        return await context.Database.ExecuteSqlAsync(command, ct).ConfigureAwait(false) == 1;
     }
 }

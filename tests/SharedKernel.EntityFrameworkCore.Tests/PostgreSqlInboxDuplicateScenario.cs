@@ -206,7 +206,7 @@ internal sealed class PostgreSqlInboxDuplicateScenario(
     {
         await using var scope = provider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<ConsumerTransportDbContext>();
-        await context.Database.ExecuteSqlInterpolatedAsync($"""
+        await context.Database.ExecuteSqlAsync($"""
             UPDATE custom_inbox.observations SET "DuplicateCount" = {int.MaxValue} WHERE "EventId" = {eventId}
             """, ct);
     }

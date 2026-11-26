@@ -123,6 +123,7 @@ public static class IsolatedPodman
         };
         var verified = false;
         var cleaned = false;
+        var childTimedOut = false;
         var exitCode = 1;
         try
         {
@@ -132,7 +133,16 @@ public static class IsolatedPodman
             if (await PodmanDnsPreflight.Run(privateHost, quiet: true, output, error, cancellationToken).ConfigureAwait(false) == 0)
             {
                 workspace.SetEnvironment(child);
-                var result = await runner.Run(child, forward: null, cancellationToken).ConfigureAwait(false);
+                ProcessOutput result;
+                try
+                {
+                    result = await runner.Run(child, forward: null, cancellationToken).ConfigureAwait(false);
+                }
+                catch (TimeoutException)
+                {
+                    childTimedOut = true;
+                    throw;
+                }
                 await output.WriteAsync(result.StandardOutput.AsMemory(), cancellationToken).ConfigureAwait(false);
                 await error.WriteAsync(result.StandardError.AsMemory(), cancellationToken).ConfigureAwait(false);
                 exitCode = result.ExitCode;
@@ -142,7 +152,7 @@ public static class IsolatedPodman
         {
             if (verified)
             {
-                cleaned = await TryCleanup(workspace, privateHost, output, error).ConfigureAwait(false);
+                cleaned = await TryCleanup(workspace, privateHost, output, error, childTimedOut).ConfigureAwait(false);
             }
             if (!cleaned)
             {
@@ -184,14 +194,15 @@ public static class IsolatedPodman
         return copy;
     }
 
-    private static async Task<bool> TryCleanup(Workspace workspace, PodmanDnsHost host, TextWriter output, TextWriter error)
+    private static async Task<bool> TryCleanup(
+        Workspace workspace, PodmanDnsHost host, TextWriter output, TextWriter error, bool childTimedOut)
     {
         using var deadline = new CancellationTokenSource(CleanupTimeout);
         try
         {
             await workspace.Verify(host, deadline.Token).ConfigureAwait(false);
             await Query(host, ["pod", "rm", "--all", "--force", "--time", "0"], deadline.Token).ConfigureAwait(false);
-            await Query(host, ["rm", "--all", "--force", "--time", "0"], deadline.Token).ConfigureAwait(false);
+            await RemoveContainers(workspace, host, childTimedOut, deadline.Token).ConfigureAwait(false);
             await Query(host, ["network", "prune", "--force"], deadline.Token).ConfigureAwait(false);
             await Query(host, ["volume", "rm", "--all", "--force"], deadline.Token).ConfigureAwait(false);
 
@@ -220,8 +231,36 @@ public static class IsolatedPodman
         }
     }
 
+    private static async Task RemoveContainers(
+        Workspace workspace, PodmanDnsHost host, bool childTimedOut, CancellationToken cancellationToken)
+    {
+        string[] arguments = ["rm", "--all", "--force", "--time", "0"];
+        var result = await RunBoundedQuery(host, arguments, cancellationToken).ConfigureAwait(false);
+        if (childTimedOut && result.ExitCode != 0)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await workspace.Verify(host, cancellationToken).ConfigureAwait(false);
+            workspace.VerifyFiles();
+            await Query(host, arguments, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        if (result.ExitCode != 0)
+        {
+            throw QueryFailure(arguments[0]);
+        }
+    }
+
     private static async Task<string> Query(PodmanDnsHost host, string[] arguments, CancellationToken cancellationToken)
     {
+        var result = await RunBoundedQuery(host, arguments, cancellationToken).ConfigureAwait(false);
+        return result.ExitCode == 0 ? result.StandardOutput.TrimEnd('\r', '\n') : throw QueryFailure(arguments[0]);
+    }
+
+    private static async Task<PodmanCommandResult> RunBoundedQuery(
+        PodmanDnsHost host, string[] arguments, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         var startInfo = new ProcessStartInfo(host.PodmanExecutable!)
         {
             UseShellExecute = false,
@@ -234,13 +273,16 @@ public static class IsolatedPodman
             startInfo.ArgumentList.Add(argument);
         }
         var result = await host.RunProcess(startInfo, cancellationToken).ConfigureAwait(false);
-        if (result.ExitCode != 0 || result.StandardOutput.Length > 1_048_576 || result.StandardError.Length > 1_048_576)
+        if (result.StandardOutput.Length > 1_048_576 || result.StandardError.Length > 1_048_576)
         {
-            throw new InvalidOperationException($"Local Podman could not complete the '{arguments[0]}' operation for the private engine.");
+            throw QueryFailure(arguments[0]);
         }
 
-        return result.StandardOutput.TrimEnd('\r', '\n');
+        return result;
     }
+
+    private static InvalidOperationException QueryFailure(string operation) =>
+        new($"Local Podman could not complete the '{operation}' operation for the private engine.");
 
     private sealed class Workspace
     {
