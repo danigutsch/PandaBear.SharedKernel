@@ -88,3 +88,21 @@ Several test processes cannot share one container through `WithContainerName` an
 The package uses the existing Npgsql, Aspire PostgreSQL, Aspire testing and xUnit core dependencies.
 Application authentication, browser setup, resource images, reset policy and business assertions remain
 consumer-owned. No custom runner or discovery framework is required.
+
+## Logical archive rehearsals
+
+`PostgreSqlTestArchiveClient` exports a logical PostgreSQL archive from a caller-owned lease into a private
+`TestWorkspace`. Choose a small archive cap for the synthetic fixture. The client streams the dump to the
+file and only buffers the bounded, digest-verified bytes needed by the native listing and restore commands.
+Keep the workspace alive through the restore and any artifact comparisons.
+
+Supply pinned `pg_dump` and `pg_restore`, either directly or through your fixture's existing container command.
+The command factory receives the tool name and relevant lease, and returns a fresh absolute executable
+with any prefix in `ProcessStartInfo.ArgumentList`. Put authentication in the caller's approved environment
+mechanism and avoid passwords in arguments. The client supplies the leased database name and required archive
+options. A container-based client must accept binary standard input for listing and restoring.
+
+Restore into a distinct, prepared lease. The caller provisions the effective owner, any required roles and
+extensions, and database-level privileges. The caller also verifies its data, owners, and grants afterward.
+The helper preserves native atomic restore, returns the bounded table of contents, and reports exit codes
+without echoing child diagnostics. Do not use production credentials or production backups in a test fixture.

@@ -719,6 +719,9 @@
           "PandaBear.SharedKernel.Testing.Xunit": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.IO": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Npgsql": {
         "type": "Project",
         "dependencies": {
@@ -730,7 +733,9 @@
         "dependencies": {
           "Aspire.Hosting.PostgreSQL": "[13.6.5, )",
           "Npgsql": "[10.0.3, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.IntegrationTesting": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "xunit.v3.extensibility.core": "[4.0.3, )"
         }
       },

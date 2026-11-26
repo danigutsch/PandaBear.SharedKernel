@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using SharedKernel.Processes;
 using static SharedKernel.RepoConfig.Tool.ResourceBudgetGuard;
 
 namespace SharedKernel.RepoConfig.Tests;
@@ -7,6 +8,36 @@ namespace SharedKernel.RepoConfig.Tests;
 internal static class ResourceBudgetProcessFixture
 {
     private const string DescendantCommand = """/bin/sleep 30 & printf '%s\n' "$!" > "$1"; wait""";
+    private static readonly TimeSpan ExitTimeout = TimeSpan.FromSeconds(2);
+
+    /// <summary>Opens an owned child's stat entry, reaps the child, and transfers the retained descriptor.</summary>
+    /// <returns>The open descriptor, which the caller disposes.</returns>
+    internal static async Task<FileStream> OpenReapedStat()
+    {
+        using var child = ProcessTree.Start(new ProcessStartInfo("/bin/sleep")
+        {
+            ArgumentList = { "30" },
+            UseShellExecute = false,
+        });
+        FileStream? stat = null;
+        try
+        {
+            stat = File.OpenRead(FormattableString.Invariant($"/proc/{child.Id}/stat"));
+            await ProcessTree.Terminate(child, ExitTimeout);
+            child.HasExited.ShouldBeTrue("The child must be reaped while its stat descriptor stays open.");
+            return stat;
+        }
+        catch
+        {
+            await ProcessTree.Terminate(child, ExitTimeout);
+            if (stat is not null)
+            {
+                await stat.DisposeAsync();
+            }
+
+            throw;
+        }
+    }
 
     /// <summary>Stops the command after its marker confirms the descendant was launched.</summary>
     internal static Task<ChildResult> RunUntilDescendantStarts(string directory, CancellationToken ct) =>

@@ -32,7 +32,8 @@ internal sealed class ChromiumProtocolReplyStub(params string[] replies) : ICDPS
     public ICDPSessionEvent Event(string eventName) => throw new NotSupportedException();
 
     /// <inheritdoc />
-    public Task<JsonElement?> SendAsync(string method, Dictionary<string, object>? args = null)
+    public Task<JsonElement?> SendAsync(
+        string method, Dictionary<string, object>? args = null, CDPSessionSendOptions? options = null)
     {
         if (method == "Page.printToPDF")
         {
