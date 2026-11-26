@@ -40,6 +40,17 @@ public sealed class CandidateValidator
     public Task<bool> CompareApi(string baselineManifest, string candidateManifest, string apiCompatPath, string outputPath, CancellationToken ct) =>
         CandidateApiComparison.Run(_commands, baselineManifest, candidateManifest, apiCompatPath, outputPath, ct);
 
+    /// <summary>Compares NuGet dependencies and bundled tool runtime graphs from exact candidate archives.</summary>
+    /// <param name="baselineManifest">The baseline manifest path.</param>
+    /// <param name="candidateManifest">The candidate manifest path.</param>
+    /// <param name="outputPath">A new JSON report path.</param>
+    /// <param name="ct">Cancels archive comparison and report writing.</param>
+    /// <returns>Whether no dependency differences were found.</returns>
+    /// <exception cref="ArgumentException">Candidate evidence, archive metadata, or a path is invalid.</exception>
+    /// <exception cref="IOException">Input cannot be read or the report cannot be created.</exception>
+    public static Task<bool> CompareDependencies(string baselineManifest, string candidateManifest, string outputPath, CancellationToken ct) =>
+        CandidateDependencyComparison.Run(baselineManifest, candidateManifest, outputPath, ct);
+
     /// <summary>Creates the candidate, then consumes its packages on this platform and records the result in its manifest.</summary>
     /// <param name="options">The checkout, versions, and NativeAOT choice.</param>
     /// <param name="output">Receives the result lines.</param>

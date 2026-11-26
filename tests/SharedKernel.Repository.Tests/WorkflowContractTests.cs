@@ -115,7 +115,10 @@ public sealed class WorkflowContractTests
         validate.ShouldContain("    if: needs.selection.outputs.build_required == 'true' && needs.selection.outputs.matrix != '[]'\n", StringComparison.Ordinal);
         validate.ShouldContain("        slice: ${{ fromJSON(needs.selection.outputs.matrix) }}\n", StringComparison.Ordinal);
         validate.ShouldContain("          SLICE: ${{ matrix.slice }}\n", StringComparison.Ordinal);
-        validate.ShouldContain("-- run --slice \"$SLICE\" --coverage --install-playwright --playwright-dependencies --github-summary \"$GITHUB_STEP_SUMMARY\"\n", StringComparison.Ordinal);
+        validate.ShouldContain(
+            "dotnet \"$RUNNER_TEMP/sharedkernel-ci-tool/SharedKernel.CI.Tool.dll\" run --slice \"$SLICE\" --coverage"
+                + " --install-playwright --playwright-dependencies --github-summary \"$GITHUB_STEP_SUMMARY\"\n",
+            StringComparison.Ordinal);
         validate.ShouldContain("          name: validation-${{ matrix.slice }}-evidence\n          path: TestResults/selection/execution-${{ matrix.slice }}/**\n", StringComparison.Ordinal);
     }
 
@@ -137,8 +140,11 @@ public sealed class WorkflowContractTests
             "SYMBOL_SOLUTION: ${{ needs.selection.outputs.full_validation == 'false' && 'TestResults/selection/affected.build.slnf' || 'SharedKernel.slnx' }}",
             StringComparison.Ordinal);
         gate.ShouldContain("          dotnet restore \"$SYMBOL_SOLUTION\" --locked-mode\n          dotnet build \"$SYMBOL_SOLUTION\" -c Release --no-restore", StringComparison.Ordinal);
-        gate.ShouldContain("-- coverage record-symbols\n", StringComparison.Ordinal);
-        gate.ShouldContain("-- coverage verify --report artifacts --base \"$BASE_SHA\" --symbols TestResults/symbol-evidence.json\n", StringComparison.Ordinal);
+        gate.ShouldContain("dotnet \"$RUNNER_TEMP/sharedkernel-ci-tool/SharedKernel.CI.Tool.dll\" coverage record-symbols\n", StringComparison.Ordinal);
+        gate.ShouldContain(
+            "dotnet \"$RUNNER_TEMP/sharedkernel-ci-tool/SharedKernel.CI.Tool.dll\" coverage verify --report artifacts"
+                + " --base \"$BASE_SHA\" --symbols TestResults/symbol-evidence.json\n",
+            StringComparison.Ordinal);
         gate.ShouldContain("          pattern: validation-*-evidence\n", StringComparison.Ordinal);
         summary.ShouldContain("          COVERAGE_RESULT: ${{ needs.coverage-gate.result }}\n", StringComparison.Ordinal);
         summary.ShouldContain(
@@ -229,7 +235,6 @@ public sealed class WorkflowContractTests
 
     [Theory]
     [InlineData("tools/SharedKernel.CI.Tool", "select")]
-    [InlineData("tools/SharedKernel.CI.Tool", "run")]
     [InlineData("tools/SharedKernel.CI.Tool", "stage-candidate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "calculate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "create-candidate")]

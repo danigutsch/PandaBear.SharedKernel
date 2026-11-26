@@ -31,6 +31,7 @@ jobs:
       full_validation: ${{ steps.selection.outputs.full_validation }}
       matrix: ${{ steps.selection.outputs.matrix }}
       candidate_required: ${{ steps.selection.outputs.candidate_required }}
+      ci_tool_artifact_id: ${{ steps.ci-tool-artifact.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -50,6 +51,30 @@ jobs:
           name: selection-and-reasons
           path: TestResults/selection/*
           if-no-files-found: error
+      - name: Stage the compiled CI tool and its checkout identity
+        if: steps.selection.outputs.build_required == 'true' && steps.selection.outputs.matrix != '[]'
+        shell: bash
+        run: |
+          shopt -s nullglob
+          tools=(tools/SharedKernel.CI.Tool/bin/Release/*/SharedKernel.CI.Tool.dll)
+          test "${#tools[@]}" -eq 1
+          directory="$RUNNER_TEMP/sharedkernel-ci-tool"
+          mkdir "$directory"
+          cp -R "$(dirname "${tools[0]}")"/. "$directory/"
+          git rev-parse HEAD > "$directory/revision"
+          (
+            cd "$directory"
+            find . -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum
+          ) > "$RUNNER_TEMP/sharedkernel-ci-tool.sha256"
+          mv "$RUNNER_TEMP/sharedkernel-ci-tool.sha256" "$directory/checksums.sha256"
+      - name: Upload the selection CI tool
+        id: ci-tool-artifact
+        if: steps.selection.outputs.build_required == 'true' && steps.selection.outputs.matrix != '[]'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: selection-ci-tool-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sharedkernel-ci-tool
+          if-no-files-found: error
 
   validate:
     needs: selection
@@ -66,8 +91,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: ./.github/actions/setup-dotnet-tool
+      - uses: ./.github/actions/download-selection-tool
         with:
-          project: tools/SharedKernel.CI.Tool
+          artifact-id: ${{ needs.selection.outputs.ci_tool_artifact_id }}
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: selection-and-reasons
@@ -77,7 +103,7 @@ jobs:
           DOTNET_CLI_CONTEXT_VERBOSE: 'true'
           SLICE: ${{ matrix.slice }}
           REQUIRE_BROWSER_TESTS: 'true'
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- run --slice "$SLICE" --coverage --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
+        run: dotnet "$RUNNER_TEMP/sharedkernel-ci-tool/SharedKernel.CI.Tool.dll" run --slice "$SLICE" --coverage --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Retain validation evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -99,8 +125,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: ./.github/actions/setup-dotnet-tool
+      - uses: ./.github/actions/download-selection-tool
         with:
-          project: tools/SharedKernel.CI.Tool
+          artifact-id: ${{ needs.selection.outputs.ci_tool_artifact_id }}
       - name: Download the affected build filter
         if: needs.selection.outputs.full_validation == 'false'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -114,7 +141,7 @@ jobs:
           dotnet restore "$SYMBOL_SOLUTION" --locked-mode
           dotnet build "$SYMBOL_SOLUTION" -c Release --no-restore
       - name: Record revision and symbol hashes
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- coverage record-symbols
+        run: dotnet "$RUNNER_TEMP/sharedkernel-ci-tool/SharedKernel.CI.Tool.dll" coverage record-symbols
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: validation-*-evidence
@@ -122,7 +149,7 @@ jobs:
       - name: Enforce changed-code coverage
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- coverage verify --report artifacts --base "$BASE_SHA" --symbols TestResults/symbol-evidence.json
+        run: dotnet "$RUNNER_TEMP/sharedkernel-ci-tool/SharedKernel.CI.Tool.dll" coverage verify --report artifacts --base "$BASE_SHA" --symbols TestResults/symbol-evidence.json
       - name: Retain coverage evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -153,6 +180,8 @@ jobs:
       - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
           global-json-file: source-build/global.json
+          cache: true
+          cache-dependency-path: source-build/tools/${{ matrix.tool }}/packages.lock.json
       - name: Build the tool from its checkout
         working-directory: source-build
         shell: bash

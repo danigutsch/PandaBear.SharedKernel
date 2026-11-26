@@ -94,6 +94,8 @@ public sealed class RepositoryToolCallerTests
     [Theory]
     [InlineData(".github/workflows/ci.yml", "select")]
     [InlineData(".github/workflows/ci.yml", "run")]
+    [InlineData(".github/workflows/ci.yml", "record-symbols")]
+    [InlineData(".github/workflows/ci.yml", "verify")]
     [InlineData(".github/workflows/ci.yml", "stage-candidate")]
     [InlineData(".github/workflows/pr-metadata-reusable.yml", "verify-commit-message")]
     [InlineData(".github/workflows/prune-prereleases.yml", "prune-prereleases")]

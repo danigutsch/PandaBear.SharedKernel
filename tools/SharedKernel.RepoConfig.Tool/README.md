@@ -102,6 +102,7 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
 | `run-isolated-podman` | Runs a trusted test command with private local rootless Podman storage and networking. |
+| `run-with-budget` | Runs one trusted Linux command while its caller-supplied resource floors hold. |
 | `verify-json` | Fails when the working-tree content of a `*.json` file in the Git index is missing, not UTF-8, or not JSON. Comments, trailing commas, and a UTF-8 byte order mark are allowed. Each failure names the path, line, and byte. |
 | `verify-line-endings` | Fails when a file in the Git index has CRLF or mixed line endings, staged or in the working tree, while its attributes set `eol=lf`, or LF or mixed line endings in the working tree while they set `eol=crlf`. |
 | `verify-links [<path>...]` | Fails on a broken local link or Markdown anchor, a link that leaves the repository, or an issue or pull request reference in documentation files; see [Documentation links](#documentation-links). |
@@ -121,8 +122,8 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 `github` commands, `baseline apply`, `automation publish-result`, and `dependency submit` preview their changes unless
 `--force` is given. Lines that describe previewed changes start with `preview:`. The `publish-result`
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
-the snapshot, its size, and the endpoint. Every command except `verify-podman-dns`, `run-isolated-podman`, and
-`github link-subissue` takes `--root <path>`,
+the snapshot, its size, and the endpoint. Every command except `verify-podman-dns`, `run-isolated-podman`,
+`run-with-budget`, and `github link-subissue` takes `--root <path>`,
 which defaults to the current directory. A relative root resolves from the current directory, an empty value is a command-line error, and a root that is not an existing directory fails with `--root is not an existing directory: <path>`;
 only `init` and `new` accept a root that does not exist yet, which they create. Relative `--snapshot`, `--github-output`, `--log-directory`,
 `--devcontainer-cli`, and `verify-links` paths resolve against it. Run `dotnet repo <command> --help` for the
@@ -804,6 +805,47 @@ read-only. If the second ownership check or teardown fails, the wrapper
 reports the retained private directories and returns a failure. It only removes resources from the
 verified private engine. The wrapper allows up to two minutes for cleanup and up to three minutes to
 shut down after Ctrl+C or SIGTERM. Tests using a Docker API socket need a separate setup.
+
+## Command resource budgets
+
+`run-with-budget` checks the caller's Linux host memory and scratch filesystem before the command starts and
+periodically while it runs. Supply existing absolute working and scratch directories and the absolute path for
+a new report file. Put `--` before the trusted executable and its literal arguments. The child inherits the
+invoking environment and console, with `TMPDIR` set to the selected scratch directory. Tools that ignore
+`TMPDIR` need their own scratch configuration. These example floor values belong to the caller.
+
+```sh
+scratch=/absolute/path/to/scratch
+report=/absolute/path/to/new-budget.json
+dotnet repo run-with-budget --working-directory "$PWD" --scratch "$scratch" --report "$report" --minimum-host-memory-mib 8192 --minimum-scratch-mib 16384 --sample-seconds 10 -- dotnet test
+```
+
+The required floors use Linux `MemAvailable` and available bytes on the filesystem containing the scratch
+directory. The initial and latest samples also report host `Shmem`, scratch filesystem type, and cgroup-v2
+headroom where measurable. Opt into `--reject-memory-filesystem` to require a recognized type and reject
+`tmpfs` or `ramfs`. A supplied `--minimum-cgroup-headroom-mib` is an independent floor and requires a finite,
+readable cap in the current inherited cgroup hierarchy. It uses the smallest remaining `memory.max` minus
+`memory.current` among visible finite limits on the standard unified mount. Current usage includes charged
+page cache. Without this option, cgroup measurements are diagnostic. The wrapper leaves limits and cgroup placement
+to the caller. [Linux cgroup v2 memory controller](https://www.kernel.org/doc/html/v6.10/admin-guide/cgroup-v2.html)
+
+`--maximum-memory-pressure-percent` opts into stopping when host memory PSI `some avg10` is above the chosen
+percentage for consecutive observed samples, including preflight. `--pressure-samples` defaults to two. A sample
+at or below the pressure limit resets the streak. A required measurement becoming unavailable, a floor crossing,
+or caller cancellation stops the owned command. [Linux pressure stall information](https://docs.kernel.org/accounting/psi.html)
+
+The bounded JSON report contains the supplied floors, initial and latest measurements, sample count, child
+exit status or guard reason, and cleanup findings. It omits command arguments, environment values, path names,
+and child output. A natural exit returns the child's status. A guard refusal, stop, or launch failure returns
+125, and observed caller cancellation returns 130. The report distinguishes these outcomes even if a child
+uses the same exit code.
+
+After a guard stop, the tool requests termination of the owned process tree and checks the process identities
+it could observe. The report records incomplete observation or remaining observed processes. Polling can miss a
+resource spike between samples. An inherited cgroup cap applies only while processes stay in that hierarchy, and
+the process tree check cannot account for work that detached or was reparented before observation. Configure
+separately scoped engine services and containers under their owning lifecycle. To include them in a cgroup
+budget, their owner must set the engine's cgroup parent accordingly and retain the host floor.
 
 ## Limits
 

@@ -21,6 +21,7 @@ public static class VersioningCommandLineTests
         "verify-lock-coverage",
         "create-candidate",
         "compare-candidates",
+        "compare-candidate-dependencies",
         "validate-candidate",
         "consume-candidate",
         "consume-packages",
@@ -58,6 +59,7 @@ public static class VersioningCommandLineTests
     [InlineData("verify-lock-coverage", "--repo-root <path>")]
     [InlineData("create-candidate", "--version <version>", "--baseline-version <version>", "--repo-root <path>")]
     [InlineData("compare-candidates", "--baseline <path> (REQUIRED)", "--candidate <path> (REQUIRED)", "--apicompat <path> (REQUIRED)", "--output <path> (REQUIRED)")]
+    [InlineData("compare-candidate-dependencies", "--baseline <path> (REQUIRED)", "--candidate <path> (REQUIRED)", "--output <path> (REQUIRED)")]
     [InlineData("validate-candidate", "--version <version>", "--baseline-version <version>", "--aot", "--repo-root <path>")]
     [InlineData("consume-candidate", "--candidate <path>", "--candidate-directory <path>", "--output <path>", "--aot", "--repo-root <path>")]
     [InlineData("consume-packages", "--feed <path> (REQUIRED)", "--version <version> (REQUIRED)", "--aot", "--repo-root <path>")]
