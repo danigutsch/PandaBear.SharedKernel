@@ -71,8 +71,10 @@ public sealed class ChromiumPdfBrowserTests(ChromiumFixture chromium) : IClassFi
         chromium.Browser.Contexts.ShouldBeEmpty();
     }
 
-    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
-    public async Task Closes_the_private_context_before_reporting_an_unavailable_normalizer()
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Closes_the_private_context_before_reporting_an_unavailable_normalizer(bool includePageNumbers)
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -80,7 +82,7 @@ public sealed class ChromiumPdfBrowserTests(ChromiumFixture chromium) : IClassFi
         var renderer = ChromiumPdfTestRuntime.Renderer(chromium.Browser, _unavailableQpdf);
 
         // Act
-        Func<Task> render = () => renderer.Render(document, ChromiumPdfTestRuntime.DocumentDate, ct);
+        Func<Task> render = () => renderer.Render(document, ChromiumPdfTestRuntime.DocumentDate, includePageNumbers, ct);
         var failure = await render.ShouldThrow<InvalidOperationException>();
 
         // Assert

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Playwright;
 using SharedKernel.DocumentRendering.Pdf.Chromium;
 using SharedKernel.Testing;
@@ -8,6 +9,28 @@ namespace SharedKernel.DocumentRendering.Tests;
 [Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class ChromiumPdfBoundaryTests
 {
+    [Theory]
+    [InlineData(false, 0d)]
+    [InlineData(true, 20d / 25.4d)]
+    public async Task Reserves_the_bottom_margin_only_for_numbered_pages(bool includePageNumbers, double expectedMargin)
+    {
+        // Arrange
+        await using var session = new ChromiumProtocolReplyStub(
+            """{"stream":"fixture"}""",
+            """{"data":"YQ==","eof":true,"base64Encoded":true}""",
+            "{}");
+        var ct = TestContext.Current.CancellationToken;
+
+        // Act
+        var pdf = await ChromiumPdfTransfer.Print(session, 8, ct, includePageNumbers);
+
+        // Assert
+        pdf.Span.SequenceEqual("a"u8).ShouldBeTrue();
+        var options = session.PrintOptions.ShouldNotBeNull();
+        var bottomMargin = Convert.ToDouble(options["marginBottom"], CultureInfo.InvariantCulture);
+        bottomMargin.ShouldBe(expectedMargin);
+    }
+
     [Fact]
     public async Task A_context_close_failure_preserves_caller_cancellation()
     {

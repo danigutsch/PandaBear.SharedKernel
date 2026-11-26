@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using Microsoft.Playwright;
 using SharedKernel.DocumentRendering.Pdf.Chromium;
+using SharedKernel.Processes;
 
 namespace SharedKernel.DocumentRendering.Tests;
 
@@ -44,12 +46,43 @@ internal static class ChromiumPdfTestRuntime
             ],
             logo is null ? null : new DocumentBrandingSnapshot("1", "Fixture brand", logo));
 
-    /// <summary>Writes a fixture result to the caller's artifact directory.</summary>
-    internal static Task Save(string language, ReadOnlyMemory<byte> artifact, CancellationToken ct)
+    /// <summary>Creates the same sealed typed content for default and numbered multipage qualification.</summary>
+    internal static DocumentRenderRequest MultipageDocument()
+    {
+        var fixture = Document("pt-BR", "A visita ao café está incluída.", EmbeddedLogo);
+        var section = fixture.Sections.ShouldHaveSingleItem();
+        return fixture with
+        {
+            Title = "Contrato de viagem",
+            Sections = [.. Enumerable.Range('A', 24).Select(code => section with { Heading = $"Etapa {(char)code}" })],
+        };
+    }
+
+    /// <summary>Writes a fixture result to the caller's artifact directory and returns its path.</summary>
+    internal static async Task<string> Save(string name, ReadOnlyMemory<byte> artifact, CancellationToken ct)
     {
         var destination = GetEnvironment("PANDABEAR_TEST_CHROMIUM_ARTIFACTS");
         Directory.CreateDirectory(destination);
-        return File.WriteAllBytesAsync(Path.Combine(destination, language + ".pdf"), artifact, ct);
+        var path = Path.GetFullPath(Path.Combine(destination, name + ".pdf"));
+        await File.WriteAllBytesAsync(path, artifact, ct);
+        return path;
+    }
+
+    /// <summary>Inspects a saved fixture with the caller-provisioned qpdf executable.</summary>
+    internal static async Task<ReadOnlyMemory<byte>> Inspect(string path, string[] arguments, CancellationToken ct)
+    {
+        var command = new ProcessStartInfo(GetEnvironment("PANDABEAR_TEST_QPDF"));
+        command.ArgumentList.Add("--suppress-recovery");
+        foreach (var argument in arguments)
+        {
+            command.ArgumentList.Add(argument);
+        }
+
+        command.ArgumentList.Add(path);
+        var runner = new BoundedProcessRunner(TimeSpan.FromSeconds(15));
+        var result = await runner.Capture(command, ReadOnlyMemory<byte>.Empty, 65_536, 8_192, ct);
+        result.ExitCode.ShouldBe(0);
+        return result.StandardOutput;
     }
 
     private static string GetEnvironment(string name) =>

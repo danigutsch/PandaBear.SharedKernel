@@ -12,9 +12,16 @@ var renderer = new ChromiumDocumentRenderer(chromium, qpdfPath,
 var pdf = await renderer.Render(request, immutableDocumentDate, cancellationToken);
 ```
 
+To show running page numbers, call the overload with `includePageNumbers: true`.
+It reserves a 20 mm bottom margin, centers each page number and marks it as
+a pagination artifact. The number marker uses vector strokes within that
+margin. The same document, date and qualified runtime produce deterministic
+numbered output.
+
 Use trusted, application-bounded structured templates. The HTML size limit
-applies during HTML emission, before browser transfer. PDF transport is limited before accumulating
-the result, and the qpdf rewrite has the same byte budget and deadline.
+applies during HTML emission, before browser transfer. PDF transport is limited
+before accumulating the result, and the qpdf rewrite has the same byte budget
+and deadline.
 Chromium still owns its internal rendering resources. Set process and memory
 limits appropriate to the consuming workload.
 

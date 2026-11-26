@@ -1,4 +1,5 @@
 #nullable enable
 SharedKernel.DocumentRendering.Pdf.Chromium.ChromiumDocumentRenderer
 SharedKernel.DocumentRendering.Pdf.Chromium.ChromiumDocumentRenderer.ChromiumDocumentRenderer(Microsoft.Playwright.IBrowser! browser, string! qpdfExecutablePath, int maxHtmlBytes, int maxPdfBytes, System.TimeSpan timeout) -> void
+SharedKernel.DocumentRendering.Pdf.Chromium.ChromiumDocumentRenderer.Render(SharedKernel.DocumentRendering.DocumentRenderRequest! request, System.DateTimeOffset documentDate, bool includePageNumbers, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.ReadOnlyMemory<byte>>!
 SharedKernel.DocumentRendering.Pdf.Chromium.ChromiumDocumentRenderer.Render(SharedKernel.DocumentRendering.DocumentRenderRequest! request, System.DateTimeOffset documentDate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.ReadOnlyMemory<byte>>!
