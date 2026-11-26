@@ -54,16 +54,20 @@ public sealed class ValueObjectGeneratorTests
             }
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
+        compilation = compilation.WithOptions(compilation.Options
+            .WithNullableContextOptions(NullableContextOptions.Enable)
+            .WithGeneralDiagnosticOption(ReportDiagnostic.Error));
 
         // Act
         var outputCompilation = GeneratorTestHarness.RunValueObjectGeneratorAndUpdateCompilation(compilation, out var runResult);
-        var errors = outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+        var errorIds = outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
+            .Select(static diagnostic => diagnostic.Id)
             .ToArray();
 
         // Assert
         runResult.Diagnostics.ShouldBeEmpty();
-        errors.ShouldBeEmpty();
+        errorIds.ShouldBeEmpty("The authored string validation hook must compile with nullable warnings treated as errors.");
     }
 
     [Fact]

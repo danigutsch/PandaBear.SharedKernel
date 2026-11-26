@@ -892,7 +892,19 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             .Append("    static partial void ValidateValue(").Append(model.UnderlyingTypeName).AppendLine(" value, ref bool isValid);")
             .AppendLine()
             .Append("    private static bool IsValid(").Append(model.UnderlyingTypeName).AppendLine(ValueParameterSuffix)
-            .AppendLine(OpenBlock4)
+            .AppendLine(OpenBlock4);
+
+        if (model.UnderlyingKind == UnderlyingKind.String)
+        {
+            builder
+                .AppendLine("        if (value is null)")
+                .AppendLine(OpenBlock8)
+                .AppendLine(ReturnFalse12)
+                .AppendLine(CloseBlock8)
+                .AppendLine();
+        }
+
+        builder
             .Append("        var isValid = ").Append(GetValidationExpression(model)).AppendLine(";")
             .AppendLine("        if (isValid)")
             .AppendLine(OpenBlock8)
@@ -921,7 +933,6 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             ValueObjectTemplate.StronglyTypedId when model.UnderlyingKind == UnderlyingKind.Guid => "value != global::System.Guid.Empty",
             ValueObjectTemplate.StronglyTypedId => "value > 0",
             ValueObjectTemplate.IsoCode => "IsIsoCode(value)",
-            _ when model.UnderlyingKind == UnderlyingKind.String => "value is not null",
             _ => "true",
         };
     }
