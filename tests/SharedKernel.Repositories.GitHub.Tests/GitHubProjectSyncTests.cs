@@ -126,6 +126,46 @@ public sealed class GitHubProjectSyncTests
     }
 
     [Fact]
+    public async Task Project_membership_allows_items_after_five_hundred_pages()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        GitHubProjectMembershipTestResponses.EnqueuePages(handler, 500);
+        handler.EnqueueJson(HttpStatusCode.OK, """
+            {"data":{"node":{"items":{"nodes":[{"id":"item-id","content":{"id":"issue-id"}}],"pageInfo":{"hasNextPage":false}}}}}
+            """);
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubProjectClient(httpClient);
+        var target = new GitHubProjectTarget("project-id", "owner", 1);
+
+        // Act
+        var itemId = await client.FindItemId(target, "issue-id", TestContext.Current.CancellationToken);
+
+        // Assert
+        itemId.ShouldBe("item-id");
+        handler.Requests.Count.ShouldBe(501);
+    }
+
+    [Fact]
+    public async Task Project_membership_stops_at_the_page_limit_with_unique_cursors()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        GitHubProjectMembershipTestResponses.EnqueuePages(handler, 1_000);
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubProjectClient(httpClient);
+        var target = new GitHubProjectTarget("project-id", "owner", 1);
+
+        // Act
+        Func<Task> find = async () => _ = await client.FindItemId(target, "issue-id", TestContext.Current.CancellationToken);
+        var exception = await find.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("GitHub Project item pagination exceeded the page limit.");
+        handler.Requests.Count.ShouldBe(1_000);
+    }
+
+    [Fact]
     public async Task GitHub_project_client_reads_field_definitions_once_per_target()
     {
         // Arrange

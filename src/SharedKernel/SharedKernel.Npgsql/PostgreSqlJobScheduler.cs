@@ -11,6 +11,7 @@ public sealed partial class PostgreSqlJobScheduler
 {
     private const string JobTable = "scheduler_jobs";
     private const string ExecutionTable = "scheduler_executions";
+    private const string RunningJobIndex = "scheduler_executions_running_job";
     private const int CommandTimeoutSeconds = 30;
     private const int MaximumJobNameLength = 128;
     private readonly NpgsqlDataSource dataSource;
@@ -43,18 +44,57 @@ public sealed partial class PostgreSqlJobScheduler
             """;
     }
 
-    /// <summary>Creates the scheduler tables and indexes inside the configured schema.</summary>
+    /// <summary>Creates the scheduler tables and indexes and verifies the running-job index.</summary>
     /// <param name="ct">The token that cancels schema creation.</param>
     /// <remarks>Run this explicitly through the schema-owner migration path before using the scheduler.</remarks>
+    /// <exception cref="InvalidOperationException">The installed running-job index has an incompatible definition.</exception>
     public async Task InitializeSchema(CancellationToken ct)
     {
-        await using var command = CreateCommand(CreateSchemaSql(jobs, executions));
+        await using var connection = await dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct).ConfigureAwait(false);
+        await using var command = CreateCommand(CreateSchemaSql(jobs, executions), transaction);
         await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
+        await VerifyRunningJobIndex(transaction, ct).ConfigureAwait(false);
+        await transaction.CommitAsync(ct).ConfigureAwait(false);
+    }
+
+    private async Task VerifyRunningJobIndex(NpgsqlTransaction transaction, CancellationToken ct)
+    {
+        // Match PostgreSQL's non-pretty deparse of the partial predicate defined by CreateSchemaSql.
+        await using var command = CreateCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM pg_catalog.pg_index AS definition
+                JOIN pg_catalog.pg_class AS index_relation
+                    ON index_relation.oid = definition.indexrelid
+                JOIN pg_catalog.pg_attribute AS key_column
+                    ON key_column.attrelid = definition.indrelid
+                    AND key_column.attnum = definition.indkey[0]
+                WHERE definition.indrelid = pg_catalog.to_regclass(@executions)
+                    AND index_relation.relname = @index_name
+                    AND definition.indnkeyatts = 1
+                    AND definition.indisunique
+                    AND definition.indimmediate
+                    AND definition.indisvalid
+                    AND definition.indisready
+                    AND definition.indislive
+                    AND key_column.attname = 'job_name'
+                    AND pg_catalog.pg_get_expr(definition.indpred, definition.indrelid, false) =
+                        '((started_at IS NOT NULL) AND (outcome IS NULL))'
+            )
+            """, transaction);
+        command.Parameters.AddWithValue("executions", NpgsqlDbType.Text, executions);
+        command.Parameters.AddWithValue("index_name", NpgsqlDbType.Text, RunningJobIndex);
+        if (await command.ExecuteScalarAsync(ct).ConfigureAwait(false) is not true)
+        {
+            throw new InvalidOperationException($"The installed {RunningJobIndex} index has an incompatible definition.");
+        }
     }
 
     /// <summary>Returns the scheduler DDL for a governed migration in an existing schema.</summary>
     /// <param name="schema">The target PostgreSQL schema identifier.</param>
-    /// <returns>The same migration SQL that <see cref="InitializeSchema"/> executes.</returns>
+    /// <returns>The DDL that <see cref="InitializeSchema"/> executes before verifying the running-job index.</returns>
     /// <exception cref="ArgumentNullException">The schema is null.</exception>
     /// <exception cref="ArgumentException">The schema is empty, contains NUL, or exceeds 63 UTF-8 bytes.</exception>
     public static string CreateSchemaSql(string schema)
@@ -93,7 +133,7 @@ public sealed partial class PostgreSqlJobScheduler
                 CHECK (finished_at IS NULL OR started_at IS NOT NULL),
                 CHECK (COALESCE(outcome = 5, false) = (retry_at IS NOT NULL))
             );
-            CREATE UNIQUE INDEX IF NOT EXISTS scheduler_executions_running_job
+            CREATE UNIQUE INDEX IF NOT EXISTS {RunningJobIndex}
                 ON {executions}(job_name) WHERE started_at IS NOT NULL AND outcome IS NULL;
             CREATE INDEX IF NOT EXISTS scheduler_executions_ready
                 ON {executions}(job_name, (started_at IS NOT NULL) DESC, available_at, run_id) WHERE outcome IS NULL;

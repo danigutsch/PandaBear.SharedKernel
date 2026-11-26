@@ -314,6 +314,34 @@ The command checks the Git index against the declared project paths, using the w
 Stage new files before verification. Run with `--report` for advisory diagnostics during migration. Invalid or
 unreadable inventory files and Git failures still return an error.
 
+To include live GitHub Project metadata, pass `--github-project`. This mode reads
+`.config/test-taxonomy-project.json` under the same repository root. Supply the
+exact Project node ID, owner login and Project number, the required field names and
+types, and the explicit repository-qualified issues to verify.
+
+```json
+{
+  "version": 1,
+  "target": { "id": "project-node-id", "owner": "example-owner", "number": 1 },
+  "fields": [{ "name": "Coverage owner", "type": "TEXT" }],
+  "issues": [{ "repository": "example-owner/example-repository", "number": 27 }]
+}
+```
+
+The supported types are `TEXT`, `NUMBER`, and `SINGLE_SELECT`. A required issue must
+be a Project member and have exactly one value of each required type. Text must
+be non-blank. A selection must refer to a current field option. The repository
+owns the applicable issues, field choices, and any further value or exception policy.
+
+Use an authorized GitHub credential with Project and issue read access. The
+command reads `GH_TOKEN`, then `GITHUB_TOKEN`. A local authenticated gh session
+can supply it through `GH_TOKEN="$(gh auth token)" dotnet repo verify-test-taxonomy --github-project`.
+The Project check sends only GraphQL queries. Findings remain advisory with
+`--report`. Invalid policy, inaccessible metadata, and unusable membership
+pagination still return an error. Membership reads stop at 1,000 pages, leaving
+room for partially filled pages within GitHub's 50,000-item Project limit.
+[GitHub Project limits](https://docs.github.com/en/issues/planning-and-tracking-with-projects/managing-items-in-your-project/adding-items-to-your-project).
+
 ### Target frameworks
 
 `verify-target-frameworks` audits the target frameworks of the tracked `*.csproj`, `*.fsproj`, and `*.vbproj` files
