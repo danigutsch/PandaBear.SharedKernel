@@ -70,13 +70,17 @@ public sealed class ModelIdentityGeneratorTests
     }
 
     [Theory]
-    [InlineData("[GenerateModelSupport(Identity = true)]", "")]
-    [InlineData("", "[assembly: GenerateModelSupportDefaults(Identity = true)]")]
+    [InlineData("[GenerateModelSupport(Identity = true)]", "", true, nameof(Equals))]
+    [InlineData("", "[assembly: GenerateModelSupportDefaults(Identity = true)]", true, nameof(Equals))]
+    [InlineData("[GenerateModelSupport(Identity = true)]", "", false, nameof(GetHashCode))]
     public void Reports_identity_equality_collision_without_emitting_duplicate_members(
         string modelAttribute,
-        string assemblyAttribute)
+        string assemblyAttribute,
+        bool declaresEquals,
+        string conflictingMember)
     {
         // Arrange
+        var equalsMember = declaresEquals ? "public override bool Equals(object? obj) => obj is Customer other && Id == other.Id;" : "";
         var source = $$"""
             #nullable enable
             {{assemblyAttribute}}
@@ -88,7 +92,7 @@ public sealed class ModelIdentityGeneratorTests
             {
                 public int Id { get; private init; }
 
-                public override bool Equals(object? obj) => obj is Customer other && Id == other.Id;
+                {{equalsMember}}
 
                 public override int GetHashCode() => Id;
             }
@@ -102,7 +106,8 @@ public sealed class ModelIdentityGeneratorTests
         var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("SKMDL022");
         diagnostic.GetMessage(CultureInfo.InvariantCulture).ShouldContain("Customer", StringComparison.Ordinal);
-        runResult.Results.Single().GeneratedSources.ShouldBeEmpty();
+        diagnostic.GetMessage(CultureInfo.InvariantCulture).ShouldContain($"already declares '{conflictingMember}'", StringComparison.Ordinal);
+        runResult.Results.ShouldHaveSingleItem().GeneratedSources.ShouldBeEmpty();
         outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .ShouldNotContain(diagnostic => diagnostic.Id == "CS0111");
     }
@@ -155,6 +160,8 @@ public sealed class ModelIdentityGeneratorTests
 
                 public bool Equals(Customer other) => Id == other.Id;
 
+                public bool Equals<T>(object? other) => other is T;
+
                 public int GetHashCode(int seed) => Id ^ seed;
             }
             """;
@@ -162,10 +169,12 @@ public sealed class ModelIdentityGeneratorTests
 
         // Act
         var outputCompilation = GeneratorTestHarness.RunGeneratorAndUpdateCompilation(compilation, out var runResult);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.Customer.ModelSupport.g.cs");
 
         // Assert
         runResult.Diagnostics.ShouldBeEmpty();
-        runResult.Results.Single().GeneratedSources.ShouldHaveSingleItem();
+        runResult.Results.ShouldHaveSingleItem().GeneratedSources.ShouldHaveSingleItem();
+        generatedSource.ShouldContain("public override bool Equals(object? obj)", StringComparison.Ordinal);
         outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .ShouldNotContain(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
     }

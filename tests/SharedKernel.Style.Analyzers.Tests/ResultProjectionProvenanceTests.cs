@@ -125,4 +125,79 @@ public sealed class ResultProjectionProvenanceTests
         // Assert
         diagnostics.ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task Unrelated_failure_property_without_a_results_reference_keeps_the_guard()
+    {
+        // Arrange
+        const string source = """
+            public sealed class Candidate
+            {
+                public bool IsFailure => false;
+                public int Value => 1;
+            }
+
+            public static class Example
+            {
+                public static int Build()
+                {
+                    var input = new Candidate();
+                    if (input.IsFailure)
+                        return -1;
+                    return input.Value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await ResultProjectionAnalyzerScenario.Analyze(source, withResults: false);
+
+        // Assert
+        diagnostics.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("using")]
+    [InlineData("await using")]
+    public async Task Alias_that_owns_sync_or_async_disposal_keeps_the_guard(string lifetime)
+    {
+        // Arrange
+        var source = $$"""
+            using System;
+            using System.Threading.Tasks;
+            using SharedKernel.Results;
+
+            public sealed class Resource : IDisposable, IAsyncDisposable
+            {
+                public int DisposalCount { get; private set; }
+
+                public void Dispose() => DisposalCount++;
+
+                public ValueTask DisposeAsync()
+                {
+                    Dispose();
+                    return ValueTask.CompletedTask;
+                }
+            }
+
+            public static class Example
+            {
+                public static async Task<Result<Resource>> Build(bool accepted)
+                {
+                    await Task.Yield();
+                    var input = accepted ? Result.Ok(new Resource()) : Result.Conflict<Resource>("source");
+                    if (input.IsFailure)
+                        return input.ConvertError<Resource, Resource>();
+                    {{lifetime}} var value = input.Value;
+                    return Result.Ok(value);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await ResultProjectionAnalyzerScenario.Analyze(source);
+
+        // Assert
+        diagnostics.ShouldBeEmpty();
+    }
 }

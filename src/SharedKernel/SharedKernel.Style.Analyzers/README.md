@@ -345,7 +345,8 @@ dotnet_diagnostic.SKSTYLE018.severity = warning
 An initialized `Result<T>` can use `Map` when a nearby guard only
 propagates `IsFailure` through the typed `ConvertError`, and the
 success path wraps a pure projection in `Result.Ok`. A direct value
-read or a single intermediate Value alias is supported. The rule
+read or a single ordinary `var` alias is supported. Resource declarations
+with `using` or `await using` keep their explicit disposal. The rule
 checks the canonical Results symbols and requires the same synchronous
 Map result type before offering the fix.
 

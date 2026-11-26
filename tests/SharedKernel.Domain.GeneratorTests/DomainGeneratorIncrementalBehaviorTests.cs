@@ -97,4 +97,45 @@ public sealed class DomainGeneratorIncrementalBehaviorTests
             [IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged],
             "The generator can reuse identical output after a comment edit."));
     }
+
+    [Fact]
+    [Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
+    public void A_value_object_edit_removes_and_restores_output_when_validity_changes()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(int))]
+            public readonly partial record struct ChangingCode;
+            """;
+        const string stableSource = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct StableCode;
+            """;
+        var invalidSource = source.Replace("readonly partial record", "readonly record", StringComparison.Ordinal);
+        var generator = new ValueObjectGenerator();
+
+        // Act
+        var runs = DomainGeneratorIncrementalBehaviorTestSupport.RunAcrossEdits(generator, source, [invalidSource, source], stableSource);
+        var (before, invalid, restored) = (runs[0], runs[1], runs[2]);
+
+        // Assert
+        const string changingHint = "Demo.ChangingCode.ValueObject.g.cs";
+        const string stableHint = "Demo.StableCode.ValueObject.g.cs";
+        before.Diagnostics.ShouldBeEmpty("The original declaration is supported.");
+        invalid.Diagnostics.ShouldHaveSingleItem().Id.ShouldBe("SKMDL012", userMessage: "Removing partial makes the declaration invalid.");
+        invalid.Results.ShouldHaveSingleItem().GeneratedSources.ShouldHaveSingleItem().HintName
+            .ShouldBe(stableHint, userMessage: "The invalid declaration stops emitting source while the untouched peer remains.");
+        restored.Diagnostics.ShouldBeEmpty("Restoring partial clears the diagnostic.");
+        GeneratorTestHarness.GetGeneratedSource(restored, changingHint).ShouldBe(
+            GeneratorTestHarness.GetGeneratedSource(before, changingHint), userMessage: "Restoring the declaration restores its generated source.");
+        var stableOutput = GeneratorTestHarness.GetGeneratedSource(before, stableHint);
+        GeneratorTestHarness.GetGeneratedSource(invalid, stableHint)
+            .ShouldBe(stableOutput, userMessage: "The peer's generated source survives the invalid edit.");
+        GeneratorTestHarness.GetGeneratedSource(restored, stableHint)
+            .ShouldBe(stableOutput, userMessage: "The peer's generated source survives the repair.");
+    }
 }

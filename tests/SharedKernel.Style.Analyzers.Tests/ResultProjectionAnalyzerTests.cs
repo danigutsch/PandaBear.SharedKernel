@@ -146,9 +146,12 @@ public sealed class ResultProjectionAnalyzerTests
     [InlineData("long", "(long)input.Value - offset", true)]
     [InlineData("long", "input.Value + (offset - 1)", true)]
     [InlineData("(int, object)", "(input.Value, (object)text)", true)]
+    [InlineData("int", "(int)input.Value", true)]
+    [InlineData("(int, object)", "(input.Value, (object)3)", false)]
     [InlineData("int", "2", false)]
     [InlineData("int", "input.Value << 1", false)]
     [InlineData("int", "input.Value + Calculate()", false)]
+    [InlineData("int", "Calculate() + input.Value", false)]
     [InlineData("int", "input.Value + custom", false)]
     public async Task Built_in_value_projection_excludes_opaque_calls_and_user_arithmetic(
         string targetType,

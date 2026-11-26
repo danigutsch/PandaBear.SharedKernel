@@ -21,9 +21,25 @@ internal static class DomainGeneratorIncrementalBehaviorTestSupport
         string updatedSource,
         string? stableSource = null)
     {
+        var runs = RunAcrossEdits(generator, originalSource, [updatedSource], stableSource);
+        return (runs[0], runs[1]);
+    }
+
+    /// <summary>Runs the same generator driver through consecutive replacements of one syntax tree.</summary>
+    /// <param name="generator">The generator under test.</param>
+    /// <param name="originalSource">The first source of the tree to edit.</param>
+    /// <param name="updatedSources">The successive replacements for the edited tree.</param>
+    /// <param name="stableSource">The optional source of a separate unchanged tree.</param>
+    /// <returns>The initial and successive tracked results in order.</returns>
+    internal static IReadOnlyList<GeneratorDriverRunResult> RunAcrossEdits(
+        IIncrementalGenerator generator,
+        string originalSource,
+        IReadOnlyList<string> updatedSources,
+        string? stableSource = null)
+    {
         var compilation = GeneratorTestHarness.CreateCompilation(originalSource);
-        var originalTree = compilation.SyntaxTrees.ShouldHaveSingleItem();
-        var options = (CSharpParseOptions)originalTree.Options;
+        var changingTree = compilation.SyntaxTrees.ShouldHaveSingleItem();
+        var options = (CSharpParseOptions)changingTree.Options;
         var ct = TestContext.Current.CancellationToken;
         if (stableSource is not null)
         {
@@ -31,11 +47,19 @@ internal static class DomainGeneratorIncrementalBehaviorTestSupport
                 CSharpSyntaxTree.ParseText(DomainUsing + stableSource, options, "StableModel.cs", cancellationToken: ct));
         }
 
-        var updatedTree = CSharpSyntaxTree.ParseText(DomainUsing + updatedSource, options, originalTree.FilePath, cancellationToken: ct);
-        var updated = compilation.ReplaceSyntaxTree(originalTree, updatedTree);
         var driver = SharedHarness.CreateDriver([generator], options, trackIncrementalGeneratorSteps: true)
             .RunGenerators(compilation, ct);
-        return (driver.GetRunResult(), driver.RunGenerators(updated, ct).GetRunResult());
+        List<GeneratorDriverRunResult> runs = [driver.GetRunResult()];
+        foreach (var updatedSource in updatedSources)
+        {
+            var updatedTree = CSharpSyntaxTree.ParseText(DomainUsing + updatedSource, options, changingTree.FilePath, cancellationToken: ct);
+            compilation = compilation.ReplaceSyntaxTree(changingTree, updatedTree);
+            changingTree = updatedTree;
+            driver = driver.RunGenerators(compilation, ct);
+            runs.Add(driver.GetRunResult());
+        }
+
+        return runs;
     }
 
     /// <summary>Asserts that only the edited model requires new source output.</summary>

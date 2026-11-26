@@ -15,6 +15,7 @@ public sealed class ResultProjectionTailTests
     [InlineData("if (input.IsFailure) return input.ConvertError<int, int>();", "return Result.Ok(/* keep */ input.Value);")]
     [InlineData("if (input.IsFailure) return input.ConvertError<int, int>();", "var value = /* keep */ input.Value; return Result.Ok(value);")]
     [InlineData("if (input.IsFailure) return input.ConvertError<int, int>();", "long value = input.Value; return Result.Ok((int)value);")]
+    [InlineData("if (input.IsFailure) return input.ConvertError<int, int>();", "int first = input.Value, second = input.Value; return Result.Ok(first + second);")]
     [InlineData("if (input.IsFailure) return input.ConvertError<int, int>();", "var value = other.Value; return Result.Ok(value);")]
     [InlineData("if (input.IsFailure) return input.ConvertError<int, int>();", "var value = input.Value + 1; return Result.Ok(value);")]
     [InlineData("if (input.IsFailure) return input.ConvertError<int, int>();", "var value = input.Value; _ = value; return Result.Ok(value);")]

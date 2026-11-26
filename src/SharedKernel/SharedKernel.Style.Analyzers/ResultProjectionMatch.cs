@@ -72,7 +72,7 @@ internal sealed class ResultProjectionMatch(
         var extensions = runtime.GetTypeByMetadataName("SharedKernel.Results.ResultExtensions");
         var index = block.Statements.IndexOf(guard);
         var tailLength = block.Statements.Count - index;
-        if (factory is null || extensions is null || index < 1 || tailLength is not (2 or 3)
+        if (index < 1 || tailLength is not (2 or 3)
             || block.Statements[index - 1] is not LocalDeclarationStatementSyntax { Declaration.Variables.Count: 1 } declaration
             || declaration.Declaration.Variables[0] is not { Initializer.Value: { } initializer } variable
             || !Same(model.GetDeclaredSymbol(variable, ct), source)
@@ -108,7 +108,7 @@ internal sealed class ResultProjectionMatch(
             {
                 Expression: InvocationExpressionSyntax { ArgumentList.Arguments.Count: 1 } ok,
             } success
-            || model.GetSymbolInfo(ok, ct).Symbol is not IMethodSymbol { IsStatic: true, Name: "Ok", Arity: 1 } okMethod
+            || model.GetSymbolInfo(ok, ct).Symbol is not IMethodSymbol { Name: "Ok" } okMethod
             || !Same(okMethod.ContainingType, factory)
             || !model.Compilation.ClassifyCommonConversion(okMethod.ReturnType, conversionMethod.ReturnType).IsIdentity
             || HasCommentsOrDirectives(guard)
@@ -132,6 +132,7 @@ internal sealed class ResultProjectionMatch(
     private static ILocalSymbol? FindAlias(
         StatementSyntax statement, SemanticModel model, ILocalSymbol source, INamedTypeSymbol result, CancellationToken ct) =>
         statement is LocalDeclarationStatementSyntax { Declaration.Variables.Count: 1, Declaration.Type.IsVar: true } declaration
+        && declaration.UsingKeyword.IsKind(SyntaxKind.None)
         && declaration.Declaration.Variables[0] is { Initializer.Value: { } value } variable
         && !HasCommentsOrDirectives(declaration)
         && IsValue(model.GetOperation(value, ct), source, result)
@@ -139,13 +140,13 @@ internal sealed class ResultProjectionMatch(
             ? local
             : null;
 
-    private static bool IsInitialized(IOperation? operation, INamedTypeSymbol factory, ITypeSymbol result) => operation switch
+    private static bool IsInitialized(IOperation? operation, INamedTypeSymbol? factory, ITypeSymbol result) => operation switch
     {
         IConversionOperation { IsImplicit: true, Conversion.IsIdentity: true } conversion =>
             IsInitialized(conversion.Operand, factory, result),
         IConditionalOperation conditional =>
             IsInitialized(conditional.WhenTrue, factory, result) && IsInitialized(conditional.WhenFalse, factory, result),
-        IInvocationOperation { TargetMethod: { IsStatic: true, Arity: 1 } method } =>
+        IInvocationOperation { TargetMethod: var method } =>
             Same(method.ContainingType, factory) && Same(method.ReturnType, result) && FactoryNames.Contains(method.Name),
         _ => false,
     };
