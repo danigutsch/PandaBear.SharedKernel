@@ -109,6 +109,19 @@ internal sealed class RepositoryTestScope : IDisposable
             StringComparison.Ordinal));
     }
 
+    /// <summary>Configures partial quality builds for <c>Fixture.</c> packages and <paramref name="project"/>.</summary>
+    public void ConfigureQualityBuild(string project) =>
+        WriteFile(".config/sharedkernel-ci.json", DefaultConfiguration.Replace(
+            "\"version\": 1,",
+            $$"""
+            "version": 1,
+              "qualityBuild": {
+                "governedPackageIdPrefix": "Fixture.",
+                "projects": ["{{project}}"]
+              },
+            """,
+            StringComparison.Ordinal));
+
     /// <summary>Reads the configuration and the solution, and selects for <paramref name="changes"/>.</summary>
     public async Task<SelectionPlan> Select(string[]? changes, string? nonInertBuildFile = null)
     {

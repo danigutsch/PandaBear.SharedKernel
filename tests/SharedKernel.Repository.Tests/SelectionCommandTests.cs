@@ -105,6 +105,98 @@ public static class SelectionCommandTests
         result.Output.ShouldContain("src/Core/Changed.cs: owned by src/Core/Core.csproj.", StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("benchmarks/Speed/Changed.cs", true)]
+    [InlineData("src/Core/Changed.cs", false)]
+    public static async Task Quality_filter_includes_governed_projects_required_checks_and_the_affected_build(string path, bool benchmark)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var repository = new RepositoryTestScope();
+        repository.WriteFile("src/Core/Core.csproj", """
+            <Project><PropertyGroup><PackageId>Fixture.Core</PackageId></PropertyGroup></Project>
+            """);
+        repository.AddProject("benchmarks/Speed/Speed.csproj", """
+            <Project><PropertyGroup><IsPackable>false</IsPackable></PropertyGroup></Project>
+            """);
+        repository.AddProject("src/Packaged/Packaged.csproj", """
+            <Project><PropertyGroup><PackageId>Fixture.Packaged</PackageId></PropertyGroup></Project>
+            """);
+        repository.AddProject("src/OptedIn/OptedIn.csproj", """
+            <Project><PropertyGroup><GovernedLiteralProject>true</GovernedLiteralProject><IsPackable>false</IsPackable></PropertyGroup></Project>
+            """);
+        repository.AddProject("src/OptedOut/OptedOut.csproj", """
+            <Project><PropertyGroup><PackageId>Fixture.OptedOut</PackageId><IsPackable>false</IsPackable></PropertyGroup></Project>
+            """);
+        repository.AddProject("src/Other/Other.csproj", """
+            <Project><PropertyGroup><PackageId>Other.Unrelated</PackageId></PropertyGroup></Project>
+            """);
+        repository.AddTestProject("tests/Quality.Tests/Quality.Tests.csproj");
+        repository.AddTestProject("tests/Unrelated.Tests/Unrelated.Tests.csproj");
+        repository.ConfigureQualityBuild("tests/Quality.Tests/Quality.Tests.csproj");
+        var processes = new ProcessLog(SelectionTestFiles.Git(diff: path + "\0"));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(repository.Root, ["select", "--base", BaseRevision], processes.Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        var selection = Path.Combine(repository.Root, "TestResults", "selection");
+        var affected = benchmark
+            ? new[] { "benchmarks/Speed/Speed.csproj" }
+            : ["src/Core/Core.csproj", "src/Dependent/Dependent.csproj", "tests/Core.Tests/Core.Tests.csproj"];
+        var affectedProjects = await SelectionTestFiles.Projects(selection, "affected.build", ct);
+        affectedProjects.ShouldBe(affected);
+        string[] quality =
+        [
+            .. affected,
+            "src/Core/Core.csproj",
+            "src/OptedIn/OptedIn.csproj",
+            "src/Packaged/Packaged.csproj",
+            "tests/Quality.Tests/Quality.Tests.csproj",
+        ];
+        var qualityProjects = await SelectionTestFiles.Projects(selection, "quality.build", ct);
+        qualityProjects.ShouldBe([.. quality.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)]);
+    }
+
+    [Fact]
+    public static async Task Full_validation_discards_an_old_quality_filter()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var repository = new RepositoryTestScope();
+        repository.ConfigureQualityBuild("tests/Core.Tests/Core.Tests.csproj");
+        const string filter = "TestResults/selection/quality.build.slnf";
+        repository.WriteFile(filter, "{}");
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(repository.Root, ["select"], new ProcessLog().Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        var selection = Path.Combine(repository.Root, "TestResults", "selection");
+        (await SelectionTestFiles.ReadPlan(selection, ct)).FullValidation.ShouldBeTrue();
+        File.Exists(Path.Combine(repository.Root, filter)).ShouldBeFalse();
+    }
+
+    [Fact]
+    public static async Task A_quality_filter_project_must_belong_to_the_solution()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var repository = new RepositoryTestScope();
+        repository.ConfigureQualityBuild("tests/Missing.Tests/Missing.Tests.csproj");
+        var processes = new ProcessLog(SelectionTestFiles.Git("src/Core/Changed.cs\0"));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(repository.Root, ["select", "--base", BaseRevision], processes.Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("$.qualityBuild.projects", StringComparison.Ordinal);
+        result.Error.ShouldContain("is not a project", StringComparison.Ordinal);
+    }
+
     [Fact]
     public static async Task A_slice_service_changes_neither_the_plan_nor_the_filters_nor_the_outputs()
     {

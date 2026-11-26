@@ -1,6 +1,14 @@
 {
   "version": 1,
   "solution": "SharedKernel.slnx",
+  "qualityBuild": {
+    "governedPackageIdPrefix": "PandaBear.SharedKernel.",
+    "projects": [
+      "tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj",
+      "tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj",
+      "tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj"
+    ]
+  },
   "selection": {
     "fullValidation": [
       ".config/*",
@@ -13,6 +21,10 @@
       ".gitattributes",
       "global.json",
       "NuGet.Config",
+      "src/SharedKernel/SharedKernel.Style.Analyzers/*",
+      "src/SharedKernel/SharedKernel.Style.CodeFixes/*",
+      "src/SharedKernel/SharedKernel.Testing.Analyzers/*",
+      "src/SharedKernel/SharedKernel.Testing.CodeFixes/*",
       "tests/SharedKernel.Style.Analyzers.Tests/*",
       "tests/testconfig.json",
       "tests/xunit.runner.json"

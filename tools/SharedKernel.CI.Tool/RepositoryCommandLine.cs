@@ -78,6 +78,11 @@ internal static partial class RepositoryCommandLine
             "--github-output",
             "GitHub Actions output file that receives build_required, documentation_only, full_validation, matrix, and <slice>_required. Relative to the root.",
             "path");
+        var candidateExclusionOption = new Option<string>("--candidate-excluded-source")
+        {
+            Description = "Verified package source exclusion. The supported benchmarks/**/*.cs value allows candidate_required=false for existing benchmark source edits.",
+            HelpName = "pattern",
+        };
         var rootOption = CreateRootOption(workingDirectory);
         var selectionOption = CreateSelectionOption();
         var command = new Command(
@@ -85,6 +90,7 @@ internal static partial class RepositoryCommandLine
         {
             baseOption,
             githubOutputOption,
+            candidateExclusionOption,
             rootOption,
             selectionOption,
         };
@@ -97,6 +103,7 @@ internal static partial class RepositoryCommandLine
                     root,
                     Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
                     parseResult.GetValue(baseOption),
+                    parseResult.GetValue(candidateExclusionOption),
                     parseResult.GetValue(githubOutputOption) is { } githubOutput ? new GitHubActionsOutputs(Path.GetFullPath(githubOutput, root)) : null,
                     output,
                     error,

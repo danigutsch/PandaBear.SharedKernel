@@ -11,6 +11,9 @@ internal static class ProjectSelectionPlan
     /// <summary>The solution filter containing the affected build and selected test projects.</summary>
     internal const string AffectedBuildFilterName = "affected.build.slnf";
 
+    /// <summary>The solution filter containing affected projects and the repository quality build roots.</summary>
+    internal const string QualityBuildFilterName = "quality.build.slnf";
+
     /// <summary>The NUL-delimited paths of a known partial comparison.</summary>
     internal const string ChangedPathsFileName = "changed-paths.nul";
 
@@ -22,6 +25,7 @@ internal static class ProjectSelectionPlan
     /// With <c>includeWorkingTree</c>, the changed paths also include the uncommitted changes of the working tree and its untracked,
     /// not ignored files, as a local check needs them; a failed listing selects every test project. The method returns the plan it wrote.
     /// </remarks>
+    /// <exception cref="InvalidOperationException">The configuration or solution is invalid, or a test slice conflicts with the additional candidate output.</exception>
     public static async Task<SelectionPlan> Write(
         string root,
         string directory,
@@ -32,12 +36,17 @@ internal static class ProjectSelectionPlan
         TextWriter error,
         CancellationToken ct,
         TimeProvider? timeProvider = null,
-        bool includeWorkingTree = false)
+        bool includeWorkingTree = false,
+        string? candidateExcludedSource = null)
     {
         var time = timeProvider ?? TimeProvider.System;
         var configuration = await CiConfigurationFile.Read(root, ct).ConfigureAwait(false);
-        var graph = SolutionGraph.Load(root, configuration.Solution);
+        var graph = SolutionGraph.Load(root, configuration.Solution, configuration.QualityBuild?.GovernedPackageIdPrefix);
         ProjectSelector.Validate(configuration, graph);
+        if (outputs is not null && candidateExcludedSource is not null && configuration.Slices.Any(static slice => slice.Name == "candidate"))
+        {
+            throw CiConfigurationFile.Invalid("candidate_required is already used by the candidate test slice.");
+        }
 
         string[]? changes = null;
         string? fullReason = null;
@@ -115,6 +124,8 @@ internal static class ProjectSelectionPlan
             Revision = revision,
             ComparisonBase = baseRevision
         };
+        var candidateRequired = outputs is null || candidateExcludedSource is null || includeWorkingTree
+            || await CandidateApplicability.RequiresCandidate(root, candidateExcludedSource, selection, changes, Git, ct).ConfigureAwait(false);
         Directory.CreateDirectory(directory);
 
         // A filter left by an earlier plan in the same directory must not look selected.
@@ -144,6 +155,12 @@ internal static class ProjectSelectionPlan
                 .Select(static test => test.Project));
             await SolutionFilter.Write(root, configuration.Solution, Path.Combine(directory, AffectedBuildFilterName), affected, ct)
                 .ConfigureAwait(false);
+            if (configuration.QualityBuild is { } qualityBuild)
+            {
+                await SolutionFilter.Write(root, configuration.Solution, Path.Combine(directory, QualityBuildFilterName),
+                    affected.Concat(graph.GovernedProjects).Concat(qualityBuild.Projects).Distinct(StringComparer.Ordinal), ct).ConfigureAwait(false);
+            }
+
             var paths = changes.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal);
             await File.WriteAllTextAsync(changedPaths, string.Join('\0', paths) + '\0', ct).ConfigureAwait(false);
         }
@@ -160,6 +177,11 @@ internal static class ProjectSelectionPlan
             foreach (var slice in selection.Slices)
             {
                 values.Add(new(slice.Name + "_required", Bool(slice.Required)));
+            }
+
+            if (candidateExcludedSource is not null)
+            {
+                values.Add(new("candidate_required", Bool(candidateRequired)));
             }
 
             await outputs.Write(values, ct).ConfigureAwait(false);

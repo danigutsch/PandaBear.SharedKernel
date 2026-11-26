@@ -188,6 +188,8 @@ the file and the JSON path of the problem.
 | --- | --- |
 | `version` | `1`. |
 | `solution` | The `.slnx` whose projects are selected, relative to the root. |
+| `qualityBuild.governedPackageIdPrefix` | Optional quality build configuration. Include packable projects with this explicit package ID prefix and projects with `GovernedLiteralProject=true`. |
+| `qualityBuild.projects` | Solution project paths required for repository quality checks on every partial build. |
 | `selection.fullValidation` | Path patterns whose change selects every test project. |
 | `selection.documentation` | Path patterns whose change selects nothing while every tracked build file is inert. |
 | `selection.alwaysSelected` | Test projects that run whenever a change selects any project. |
@@ -270,6 +272,12 @@ The plan directory receives:
   For full validation, it lists every test project of the slice.
 - `build.slnf` when a non-test project is selected: a solution filter of the selected non-test projects; for full
   validation, of every solution project.
+- `quality.build.slnf` for a partial build when `qualityBuild` is configured. It includes the affected build and selected
+  test projects, the governed literal projects, and the configured projects for repository quality checks.
+
+SharedKernel pull requests with a partial selection build the quality filter after restoring the whole solution in
+locked mode. The full restore supplies assets for lock coverage checks, and the filtered build supplies compiler inputs
+for the governed literal check. Full validation continues to build the whole solution.
 
 A filter names the solution relative to the filter and lists projects relative to the solution, in ordinal order, with
 `/` separators. `dotnet restore`, `dotnet build`, and `dotnet test --solution` accept a filter in place of the solution

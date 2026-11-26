@@ -92,7 +92,6 @@ The repository-wide build badge links to the [main validation workflow](https://
 
 Document stable caller-visible guards, cancellation, and deliberate adapter failures using the [exception documentation policy](EXCEPTION_DOCUMENTATION.md). Review diagnostic enforcement and scoped exceptions using the [warning policy](ci/warning-policy.md). Review upstream Action SHAs and hosting/tool image digests using the [pin-update workflow](ci/pin-update-review.md).
 
-
 ## NativeAOT and reflection policy
 
 Prefer NativeAOT and trimming compatibility where practical. Use explicit typed APIs, existing source generators, and supplied JSON metadata instead of runtime type discovery or reflection-based serialization when they meet the current use case. Do not add speculative generators or abstractions merely to avoid a small, justified use of reflection.
@@ -113,12 +112,12 @@ and candidate manifest discovery belong to the C# commands, with regression test
 A test pass does not imply line coverage of shell syntax; actual clean-checkout bootstrap and packed
 candidate jobs provide integration evidence.
 
-
 ## CI throughput and squash merging
 
-PR validation is advisory because main has no branch protection. Use squash merging with a
-Conventional Commit PR title of at most 100 characters, preserve breaking-change notes in the PR
-body, and start a fresh branch after merging. Registry publication is deferred.
+The main ruleset requires `SharedKernel Validation` and `PR Metadata / Validate squash header`
+from GitHub Actions. Use squash merging with a Conventional Commit PR title of at most
+100 characters, preserve breaking-change notes in the PR body, and start a fresh branch
+after merging. Registry publication is deferred.
 
 The PR metadata workflow checks the title and breaking-change footers with the CI tool's
 `verify-commit-message --event`. Its `--file` option checks a local commit message against the
@@ -134,21 +133,29 @@ configures, then overlaps one `validate` job per test slice with selected test p
 --slice <name>`, source builds of the CI and RepoConfig tools from a `src` and `tools` cone checkout on Linux and Windows, and candidate
 creation. A change to a project selects the test projects that depend on it; a change to a repository-wide build input
 (`.config`, `.github`, `*.props`, `*.targets`, `*.slnx`, analyzer configuration, `global.json`, `NuGet.Config`, the
-style analyzer tests, or the shared test configuration) selects every test project. Any project change runs the
-candidate job, which packs and consumes every package, and repository quality, which builds the whole solution and runs
+style analyzer tests, or the shared test configuration) selects every test project. A project change normally runs candidate
+packaging and consumption on both operating systems. A PR that changes only existing tracked benchmark C# files without
+changing their modes can skip these three jobs when selection proves the comparison and selects no test slices. The benchmark,
+source builds, and repository quality checks still run. Each candidate build uses a complete checkout. Repository quality runs
 the governed literal check (`--explicit only`) against every library. The test projects that borrow a shared service share the
 `services` slice, which runs one instance of every shared test service for all of them (see [Shared test services](#shared-test-services));
 the `library` slice runs every other selected test project. Linux and Windows consume the same candidate bytes
-in parallel. Repository quality runs on every validation. Standalone repository documentation skips candidates, tests,
-and full-solution bootstrap/formatting while every tracked build file is inert; repository quality then builds only the
-documentation tool and checks generated-document drift. Package READMEs, scripts, and uncertain inputs are not
-documentation-only and select validation. Main pushes compare their before/after revisions; nightly runs and manual
-runs without `candidate_version` select full validation. Invalid comparison history falls back to full validation.
+in parallel. Repository quality runs on every validation. A documentation-only PR skips candidates, tests,
+and full-solution bootstrap and formatting while every tracked build file is inert. Repository quality then builds only the
+documentation tool and checks generated-document drift. Package READMEs, scripts, and uncertain inputs select
+validation. Pull requests compare against their current base revision. Main pushes, nightly runs, and manual runs
+without `candidate_version` select full validation. An unavailable or invalid PR comparison also selects full validation.
+
+Keep the validation workflow eligible to run for every PR. Conditional jobs report their applicability to the aggregate,
+which evaluates all job results even when a dependency fails or is skipped.
+[GitHub required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)
 
 The repository allows only squash merging, uses the PR title and body as the default squash commit
 message, deletes merged branches automatically, and defines the `ci:rerun` label.
 
 Elapsed workflow times include queueing and postprocessing. Before claiming a CI speedup, compare
 several runs of the same change class, such as documentation-only changes, and their per-phase
-timings; one run is not evidence of a general speedup. CI uses standard GitHub-hosted runners
-without a merge queue, and the repository belongs to a personal account.
+timings; one run is not evidence of a general speedup. CI uses standard GitHub-hosted runners.
+The repository currently merges directly through the ruleset. A merge queue would require both
+required check names to report successfully for the queue's separate `merge_group` event.
+[GitHub merge queue guidance](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue)
