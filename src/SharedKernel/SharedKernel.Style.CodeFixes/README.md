@@ -20,6 +20,7 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
 - `SKSTYLE003` can remove safe `CancellationToken` default values.
 - `SKSTYLE005` can rename generic types that repeat generic arity in the type name.
 - `SKSTYLE016` can rename the file to `Type.cs`, or `Type{T}.cs` for a generic type when `Type.cs` is taken. It is not offered when both names exist in the project. Fix All is not offered.
+- `SKSTYLE019` replaces a verified failure guard and success projection with `Result.Map`.
 - `SKSTYLE006` can replace broad cancellation filters with `ShouldHandleAsFailure(ct)` when the
   operation token is available.
 - `SKSTYLE008` can append the `DomainEvent` suffix to domain event types when the target name is
@@ -32,7 +33,7 @@ cannot be inferred from a whole-read invocation. Async conversion does not bound
 truncating input or choosing an arbitrary limit changes behavior. Regression tests protect the
 absence of individual and bulk actions. See the analyzer README's IO policy for manual remediation.
 
-Fix All is limited to `SKSTYLE001`.
+Fix All is available for `SKSTYLE001` and `SKSTYLE019`.
 
 ## Suppression policy
 

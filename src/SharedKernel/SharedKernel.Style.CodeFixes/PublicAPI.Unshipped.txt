@@ -23,3 +23,4 @@ const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.FileNameMismatch = "SKSTYLE016" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.UndocumentedMember = "SKSTYLE017" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.UndocumentedThrownException = "SKSTYLE018" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.GuardedResultProjection = "SKSTYLE019" -> string!

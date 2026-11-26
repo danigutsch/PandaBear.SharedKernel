@@ -12,7 +12,10 @@ namespace SharedKernel.Style.CodeFixes;
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StyleCodeFixProvider))]
 public sealed class StyleCodeFixProvider : CodeFixProvider
 {
-    private static readonly AllowListedFixAll FixAll = new([StyleDiagnosticIds.AsyncSuffix]);
+    private static readonly AllowListedFixAll FixAll = new([
+        StyleDiagnosticIds.AsyncSuffix,
+        StyleDiagnosticIds.GuardedResultProjection,
+    ]);
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
@@ -26,7 +29,8 @@ public sealed class StyleCodeFixProvider : CodeFixProvider
             StyleDiagnosticIds.SuccessOnlyResultMethod,
             StyleDiagnosticIds.DirectCurrentTime,
             StyleDiagnosticIds.CaseInsensitiveJsonContext,
-            StyleDiagnosticIds.FileNameMismatch
+            StyleDiagnosticIds.FileNameMismatch,
+            StyleDiagnosticIds.GuardedResultProjection
         ];
 
     /// <inheritdoc />
@@ -88,6 +92,11 @@ public sealed class StyleCodeFixProvider : CodeFixProvider
             if (diagnostic.Id == StyleDiagnosticIds.SuccessOnlyResultMethod)
             {
                 await SuccessOnlyResultMethodCodeFix.Register(context, diagnostic).ConfigureAwait(false);
+            }
+
+            if (diagnostic.Id == StyleDiagnosticIds.GuardedResultProjection)
+            {
+                await GuardedResultProjectionCodeFix.Register(context, diagnostic).ConfigureAwait(false);
             }
         }
     }

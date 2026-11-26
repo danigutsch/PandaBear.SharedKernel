@@ -34,6 +34,7 @@ public sealed class StyleAnalyzerTests
             StyleDiagnosticIds.FileNameMismatch,
             StyleDiagnosticIds.UndocumentedMember,
             StyleDiagnosticIds.UndocumentedThrownException,
+            StyleDiagnosticIds.GuardedResultProjection,
         ];
 
         // Act

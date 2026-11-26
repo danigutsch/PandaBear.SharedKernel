@@ -33,6 +33,7 @@ the default .NET analyzer set.
 | `SKSTYLE016` | Warning | Name a file after its single top-level type; a generic type may use `Name{T}.cs`. |
 | `SKSTYLE017` | Warning | Document internal types and members, which `CS1591` does not cover. |
 | `SKSTYLE018` | Warning | List every exception a documented, non-private method, constructor, or operator throws in an `<exception>` tag. |
+| `SKSTYLE019` | Disabled by default | Use `Result.Map` for a proven guarded success projection. |
 
 ## Configuration
 
@@ -337,4 +338,32 @@ accessors, members documented with `<inheritdoc />`, and generated code. Members
 ```ini
 [*.cs]
 dotnet_diagnostic.SKSTYLE018.severity = warning
+```
+
+## SKSTYLE019
+
+An initialized `Result<T>` can use `Map` when a nearby guard only
+propagates `IsFailure` through the typed `ConvertError`, and the
+success path wraps a pure projection in `Result.Ok`. A direct value
+read or a single intermediate Value alias is supported. The rule
+checks the canonical Results symbols and requires the same synchronous
+Map result type before offering the fix.
+
+The initializer must use a known Results factory, directly or on both
+branches of a conditional. Ok, Created and Accepted all map to Ok,
+matching the original terminal factory. Valid failures preserve their
+status and error. Leave an opaque or default source explicit.
+`default(Result<T>)` can reach the old Value read and throw.
+
+The fix leaves surrounding code and evaluation order in place.
+It declines projections containing arbitrary calls, property access,
+side effects, by-ref captures or await. Built-in arithmetic must use
+numeric operands and a numeric result. Comments and directives on the
+statements need manual review. Enable it where the smaller chain
+clarifies the success step. The code fix supports Fix All for disjoint
+verified guards.
+
+```ini
+[*.cs]
+dotnet_diagnostic.SKSTYLE019.severity = suggestion
 ```
