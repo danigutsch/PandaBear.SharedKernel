@@ -10,11 +10,12 @@ internal static class IntegrationEventOutboxMessageFactory
     private const string TraceParentExtensionAttribute = "traceparent";
     private const string TraceStateExtensionAttribute = "tracestate";
 
-    /// <summary>Serializes the event into a CloudEvents-style outbox message and carries the current trace context so the relay can continue the trace.</summary>
+    /// <summary>Serializes the event into an outbox message with optional workflow and trace metadata.</summary>
     public static IntegrationEventOutboxMessage Create<TIntegrationEvent>(
         TIntegrationEvent integrationEvent,
         IIntegrationEventSerializer serializer,
-        DateTimeOffset enqueuedAt)
+        DateTimeOffset enqueuedAt,
+        Guid? workflowCorrelationId = null)
         where TIntegrationEvent : IIntegrationEvent
     {
         var payload = serializer.SerializePayload(integrationEvent);
@@ -32,8 +33,21 @@ internal static class IntegrationEventOutboxMessageFactory
             null,
             payload.Payload,
             payload.Encoding,
-            CreateTraceExtensionAttributesJson(),
-            enqueuedAt);
+            CreateExtensionAttributesJson(workflowCorrelationId),
+            enqueuedAt,
+            workflowCorrelationId);
+    }
+
+    private static string? CreateExtensionAttributesJson(Guid? workflowCorrelationId)
+    {
+        var traceAttributes = CreateTraceExtensionAttributesJson();
+        if (workflowCorrelationId is not { } id)
+        {
+            return traceAttributes;
+        }
+
+        var workflowAttribute = $"\"{WorkflowCorrelationExtension.AttributeName}\":\"{id:D}\"";
+        return traceAttributes is null ? $"{{{workflowAttribute}}}" : $"{traceAttributes[..^1]},{workflowAttribute}}}";
     }
 
     private static string? CreateTraceExtensionAttributesJson()

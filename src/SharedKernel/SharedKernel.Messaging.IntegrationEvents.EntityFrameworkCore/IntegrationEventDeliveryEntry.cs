@@ -12,6 +12,9 @@ public sealed class IntegrationEventDeliveryEntry
     /// <summary>Gets the envelope's stable event type.</summary>
     public required string EventType { get; init; }
 
+    /// <summary>Gets the optional workflow correlation identifier.</summary>
+    public Guid? WorkflowCorrelationId { get; init; }
+
     /// <summary>Gets when the row was recorded in the outbox or transport.</summary>
     public required DateTimeOffset RecordedAt { get; init; }
 

@@ -27,8 +27,8 @@
       },
       "Magick.NET.Core": {
         "type": "Transitive",
-        "resolved": "15.1.0",
-        "contentHash": "WIaemRN4tJvw5BNUfsO8/V3LojV5FOCojQ/sQ4ruXme1o2frRYfcvHPhKV5E6TbYoEdVEvtGX+8Wbut0F2lJHg=="
+        "resolved": "15.1.1",
+        "contentHash": "Jb8ph4BtzabDb9PRjXy1bWJVVZIelcOA1WicWzYgHhHeyzaKXbRgYdEq3DBQmFQgT/tw65oiyVTDee+SN1hX4Q=="
       },
       "Microsoft.ApplicationInsights": {
         "type": "Transitive",
@@ -169,7 +169,7 @@
       "PandaBear.SharedKernel.ImageProcessing": {
         "type": "Project",
         "dependencies": {
-          "Magick.NET-Q8-AnyCPU": "[15.1.0, )"
+          "Magick.NET-Q8-AnyCPU": "[15.1.1, )"
         }
       },
       "PandaBear.SharedKernel.Processes": {
@@ -193,11 +193,11 @@
       },
       "Magick.NET-Q8-AnyCPU": {
         "type": "CentralTransitive",
-        "requested": "[15.1.0, )",
-        "resolved": "15.1.0",
-        "contentHash": "nHJpUfEkhiDu5XJAymHWQBCinVQJABTK2j6haHqs650UPUP9iEMqN73VNu8m+YyoyEp5gGwO65hqivhgzzpfnQ==",
+        "requested": "[15.1.1, )",
+        "resolved": "15.1.1",
+        "contentHash": "rR5IddjNrgQKqYTQagVWPiXhqE1QbQRpMbOmfk8vnzWGEUGIw25cBFabKv1miPrY07bbU8NCFZmNtXkJ/+70ow==",
         "dependencies": {
-          "Magick.NET.Core": "15.1.0"
+          "Magick.NET.Core": "15.1.1"
         }
       },
       "Microsoft.Extensions.DependencyInjection": {

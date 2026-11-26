@@ -467,13 +467,48 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
     /// </summary>
     public async ValueTask EnqueueInFirstContext(CancellationToken ct)
     {
+        _ = await EnqueueInFirstContext(workflowCorrelationId: null, ct);
+    }
+
+    /// <summary>
+    /// Enqueues one event with optional workflow correlation in the first context, saves it, and returns its event ID.
+    /// </summary>
+    public async ValueTask<Guid> EnqueueInFirstContext(Guid? workflowCorrelationId, CancellationToken ct)
+    {
         await using var scope = provider.CreateAsyncScope();
         var outbox = scope.ServiceProvider.GetRequiredKeyedService<IIntegrationEventOutbox>(typeof(FirstMessagingDbContext));
-        await outbox.Enqueue(new ComposedMessagingTestIntegrationEvent(
+        var integrationEvent = new ComposedMessagingTestIntegrationEvent(
             Guid.CreateVersion7(),
-            new DateTimeOffset(2026, 7, 24, 12, 0, 0, TimeSpan.Zero)), ct);
+            new DateTimeOffset(2026, 7, 24, 12, 0, 0, TimeSpan.Zero));
+        if (workflowCorrelationId is { } id)
+        {
+            await outbox.Enqueue(integrationEvent, id, ct);
+        }
+        else
+        {
+            await outbox.Enqueue(integrationEvent, ct);
+        }
+
         var dbContext = scope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
         _ = await dbContext.SaveChangesAsync(ct);
+        return integrationEvent.EventId;
+    }
+
+    /// <summary>Reads one bounded page of pending delivery metadata from the first context's outbox.</summary>
+    public async ValueTask<IntegrationEventDeliveryPage> ReadFirstOutbox(IntegrationEventDeliveryFilter filter, CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
+        return await IntegrationEventDeliveryInspection.ReadOutbox(dbContext, filter, limit: 10, cursor: null, ct);
+    }
+
+    /// <summary>Reads one bounded page of first-context transport metadata for the requested consumer.</summary>
+    public async ValueTask<IntegrationEventDeliveryPage> ReadFirstTransport(
+        string consumerName, IntegrationEventDeliveryFilter filter, CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
+        return await IntegrationEventDeliveryInspection.ReadTransport(dbContext, consumerName, filter, limit: 10, cursor: null, ct);
     }
 
     /// <summary>

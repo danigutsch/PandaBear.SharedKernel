@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.Extensions.Time.Testing;
 using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 namespace SharedKernel.EntityFrameworkCore.Tests;
@@ -9,6 +11,153 @@ public sealed class PostgreSqlMessagingDeliveryInspectionTests(PostgreSqlFixture
 {
     private static readonly DateTimeOffset Cutoff = new(2026, 11, 22, 8, 0, 0, TimeSpan.Zero);
     private const string Consumer = "delivery-inspection-consumer";
+
+    [Fact]
+    public async Task Workflow_correlation_survives_failed_publication_atomic_retry_and_retained_delivery()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var clock = new FakeTimeProvider(Cutoff);
+        var workflowId = Guid.CreateVersion7();
+        var probe = new RecordingEventEnvelopePublisher
+        {
+            Failure = new InvalidOperationException(new string('x', IntegrationEventOutboxMessage.LastPublishErrorMaxLength + 1)),
+            FailOnce = true,
+        };
+        await using var scenario = await ContextQualifiedMessagingPostgreSqlScenario.Create(fixture, ct, clock, probe);
+        var eventId = await scenario.EnqueueFirstOutbox(workflowId, ct);
+
+        // Act
+        var claimedForFailure = await scenario.PublishFirstOutbox(ct);
+        var failedQueues = await scenario.InspectFirstDeliveryQueues(workflowId, ct);
+        var failed = await scenario.InspectFirstRetainedOutbox(eventId, ct);
+        var claimedBeforeDue = await scenario.PublishFirstOutbox(ct);
+        clock.Advance(TimeSpan.FromSeconds(1));
+        var claimedForRecovery = await scenario.PublishFirstOutbox(ct);
+        var recoveredQueues = await scenario.InspectFirstDeliveryQueues(workflowId, ct);
+        var recovered = await scenario.InspectFirstRetainedOutbox(eventId, ct);
+
+        // Assert
+        claimedForFailure.ShouldBe(1);
+        claimedBeforeDue.ShouldBe(0);
+        claimedForRecovery.ShouldBe(1);
+        probe.Attempts.ShouldBe(2);
+        var attempted = failedQueues.Outbox.Entries.ShouldHaveSingleItem();
+        attempted.EventId.ShouldBe(eventId);
+        attempted.WorkflowCorrelationId.ShouldBe(workflowId);
+        attempted.Attempts.ShouldBe(1);
+        attempted.LastAttemptAt.ShouldBe(Cutoff);
+        attempted.NextAttemptAt.ShouldBe(Cutoff.AddSeconds(1));
+        failedQueues.Transport.Entries.ShouldBeEmpty();
+        failed.Retained.PublishedAt.ShouldBeNull();
+        failed.StoredWorkflowId.ShouldBe(workflowId);
+        failed.StoredErrorLength.ShouldBe(IntegrationEventOutboxMessage.LastPublishErrorMaxLength);
+        recoveredQueues.Outbox.Entries.ShouldBeEmpty();
+        var transported = recoveredQueues.Transport.Entries.ShouldHaveSingleItem();
+        transported.EventId.ShouldBe(eventId);
+        transported.WorkflowCorrelationId.ShouldBe(workflowId);
+        recovered.Retained.EventId.ShouldBe(eventId);
+        recovered.Retained.PublishedAt.ShouldBe(clock.GetUtcNow());
+        recovered.Retained.FailedAttempts.ShouldBe(1);
+        recovered.Retained.NextAttemptAt.ShouldBeNull();
+        recovered.StoredWorkflowId.ShouldBe(workflowId);
+        recovered.StoredErrorLength.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Workflow_correlation_expansion_keeps_legacy_rows_and_old_column_writes_compatible()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        await using var scenario = await PostgreSqlMessagingHealthScenario.Create(fixture, ct, initializeLegacy: true);
+        var workflowId = Guid.CreateVersion7();
+        var historicalId = await scenario.SeedLegacyDelivery(Consumer, Cutoff, workflowId, ct);
+        var filter = new IntegrationEventDeliveryFilter(null, null, Cutoff) { WorkflowCorrelationId = workflowId };
+
+        // Act
+        var migration = await scenario.ExpandWorkflowCorrelation(ct);
+        var oldWriterId = await scenario.SeedLegacyDelivery(Consumer, Cutoff.AddMinutes(1), extensionWorkflowId: null, ct);
+        var current = await scenario.SeedOutbox(Cutoff.AddMinutes(2), ct, workflowCorrelationId: workflowId);
+        await scenario.SeedTransport(Consumer, Cutoff.AddMinutes(2), ct,
+            eventId: current.EventId, extensionAttributesJson: current.ExtensionAttributesJson);
+        var allOutbox = await scenario.InspectOutbox(default, 10, null, ct);
+        var allTransport = await scenario.InspectTransport(Consumer, default, 10, null, ct);
+        var correlatedOutbox = await scenario.InspectOutbox(filter, 10, null, ct);
+        var correlatedTransport = await scenario.InspectTransport(Consumer, filter, 10, null, ct);
+
+        // Assert
+        migration.Count.ShouldBe(4);
+        var columns = migration.OfType<AddColumnOperation>().ToArray();
+        columns.Length.ShouldBe(2);
+        columns.All(column => column.Name == "WorkflowCorrelationId" && column.ColumnType == "uuid"
+            && column.IsNullable && column.DefaultValue == null && column.DefaultValueSql == null).ShouldBeTrue();
+        var indexes = migration.OfType<CreateIndexOperation>().ToArray();
+        indexes.ShouldHaveSingleItem(index => index.Table == "operations_outbox").Columns
+            .ShouldBe(["WorkflowCorrelationId", "EnqueuedAt", "Id"]);
+        indexes.ShouldHaveSingleItem(index => index.Table == "operations_transport").Columns
+            .ShouldBe(["ConsumerName", "WorkflowCorrelationId", "ReceivedAt", "Id"]);
+        allOutbox.Entries.Count.ShouldBe(3);
+        allTransport.Entries.Count.ShouldBe(3);
+        allOutbox.Entries.ShouldHaveSingleItem(row => row.EventId == historicalId).WorkflowCorrelationId.ShouldBeNull();
+        allOutbox.Entries.ShouldHaveSingleItem(row => row.EventId == oldWriterId).WorkflowCorrelationId.ShouldBeNull();
+        allTransport.Entries.ShouldHaveSingleItem(row => row.EventId == historicalId).WorkflowCorrelationId.ShouldBeNull();
+        allTransport.Entries.ShouldHaveSingleItem(row => row.EventId == oldWriterId).WorkflowCorrelationId.ShouldBeNull();
+        correlatedOutbox.Entries.ShouldHaveSingleItem().EventId.ShouldBe(current.EventId);
+        correlatedTransport.Entries.ShouldHaveSingleItem().EventId.ShouldBe(current.EventId);
+    }
+
+    [Fact]
+    public async Task Workflow_correlation_filters_durable_rows_before_pagination()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        await using var scenario = await PostgreSqlMessagingHealthScenario.Create(fixture, ct);
+        var workflowId = Guid.CreateVersion7();
+        var older = await scenario.SeedOutbox(Cutoff, ct, workflowCorrelationId: workflowId);
+        var newer = await scenario.SeedOutbox(Cutoff.AddMinutes(1), ct, workflowCorrelationId: workflowId);
+        await scenario.SeedOutbox(Cutoff.AddMinutes(2), ct,
+            row => row.MarkPublished(Cutoff.AddMinutes(3)), workflowId);
+        await scenario.SeedOutbox(Cutoff.AddMinutes(4), ct);
+        await scenario.SeedOutbox(Cutoff.AddMinutes(5), ct, workflowCorrelationId: Guid.CreateVersion7());
+        await scenario.SeedTransport(Consumer, Cutoff, ct, eventId: older.EventId, extensionAttributesJson: older.ExtensionAttributesJson);
+        await scenario.SeedTransport(Consumer, Cutoff.AddMinutes(1), ct,
+            eventId: newer.EventId, extensionAttributesJson: newer.ExtensionAttributesJson);
+        await scenario.SeedTransport("different-consumer", Cutoff.AddMinutes(2), ct,
+            eventId: newer.EventId, extensionAttributesJson: newer.ExtensionAttributesJson);
+        await scenario.SeedTransport(Consumer, Cutoff.AddMinutes(3), ct);
+        var filter = new IntegrationEventDeliveryFilter(null, null, Cutoff) { WorkflowCorrelationId = workflowId };
+
+        // Act
+        var outboxFirst = await scenario.InspectOutbox(filter, 1, null, ct);
+        var outboxCommand = scenario.ReadCommands.ShouldHaveSingleItem();
+        var outboxSecond = await scenario.InspectOutbox(filter, 1, outboxFirst.NextCursor, ct);
+        var transportFirst = await scenario.InspectTransport(Consumer, filter, 1, null, ct);
+        var transportCommand = scenario.ReadCommands.ShouldHaveSingleItem();
+        var transportSecond = await scenario.InspectTransport(Consumer, filter, 1, transportFirst.NextCursor, ct);
+
+        // Assert
+        var firstOutbox = outboxFirst.Entries.ShouldHaveSingleItem();
+        firstOutbox.EventId.ShouldBe(newer.EventId);
+        firstOutbox.WorkflowCorrelationId.ShouldBe(workflowId);
+        outboxFirst.NextCursor.ShouldNotBeNull();
+        outboxSecond.Entries.ShouldHaveSingleItem().EventId.ShouldBe(older.EventId);
+        outboxSecond.NextCursor.ShouldBeNull();
+        var firstTransport = transportFirst.Entries.ShouldHaveSingleItem();
+        firstTransport.EventId.ShouldBe(newer.EventId);
+        firstTransport.WorkflowCorrelationId.ShouldBe(workflowId);
+        transportFirst.NextCursor.ShouldNotBeNull();
+        transportSecond.Entries.ShouldHaveSingleItem().EventId.ShouldBe(older.EventId);
+        transportSecond.NextCursor.ShouldBeNull();
+        outboxCommand.ShouldContain("\"WorkflowCorrelationId\" =", StringComparison.Ordinal);
+        outboxCommand.ShouldContain("LIMIT", StringComparison.OrdinalIgnoreCase);
+        outboxCommand.ShouldNotContain("Payload", StringComparison.Ordinal);
+        outboxCommand.ShouldNotContain("ExtensionAttributesJson", StringComparison.Ordinal);
+        transportCommand.ShouldContain("\"WorkflowCorrelationId\" =", StringComparison.Ordinal);
+        transportCommand.ShouldContain("ConsumerName", StringComparison.Ordinal);
+        transportCommand.ShouldContain("LIMIT", StringComparison.OrdinalIgnoreCase);
+        transportCommand.ShouldNotContain("Payload", StringComparison.Ordinal);
+        transportCommand.ShouldNotContain("ExtensionAttributesJson", StringComparison.Ordinal);
+    }
 
     [Fact]
     public async Task Outbox_membership_limits_the_database_page_before_cursor_and_limit()

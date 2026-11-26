@@ -115,6 +115,12 @@ error and never means `Scheduled`.
 The duration is required even without dates, 1 to `MaxDurationDays`, and equals the dates' day count, both days included, when dated. A
 sign-up link on an offering that is not scheduled is kept and hidden.
 
+An application with its own aggregate can validate just the schedule with
+`OfferingSchedules.Create(definition, minYear, maxYear, maxDurationDays)`. It returns the same field messages as the aggregate,
+without requiring prices, images or translations. Before calling it, a consumer that derives a dated duration in its editor can
+supply the inclusive day count and leave the dated year empty. `OfferingCallToActions.For(availability, hasSignUpLink)` applies
+the public view's call-to-action rule to a listing that owns its own data.
+
 ### Rules
 
 All errors are returned at once, with English messages that never echo the input:

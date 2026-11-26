@@ -1,6 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
@@ -23,7 +27,7 @@ internal sealed class PostgreSqlMessagingHealthScenario(
 
     /// <summary>Creates and initializes a fresh, isolated database.</summary>
     internal static async Task<PostgreSqlMessagingHealthScenario> Create(
-        PostgreSqlFixture fixture, CancellationToken ct, bool useDefaultOutbox = false)
+        PostgreSqlFixture fixture, CancellationToken ct, bool useDefaultOutbox = false, bool initializeLegacy = false)
     {
         var database = await fixture.CreateIsolatedDatabase(ct);
         NpgsqlDataSource? dataSource = null;
@@ -32,7 +36,7 @@ internal sealed class PostgreSqlMessagingHealthScenario(
         {
             dataSource = database.CreateDataSource(nameof(PostgreSqlMessagingHealthScenario));
             var services = new ServiceCollection();
-            services.AddIntegrationEventOutbox<ConsumerTransportDbContext>(options =>
+            void ConfigureStorage(IntegrationEventStorageOptions options)
             {
                 if (!useDefaultOutbox)
                 {
@@ -41,7 +45,9 @@ internal sealed class PostgreSqlMessagingHealthScenario(
                 }
                 options.TransportSchema = "health_transport";
                 options.TransportTableName = "operations_transport";
-            });
+            }
+
+            services.AddIntegrationEventOutbox<ConsumerTransportDbContext>(ConfigureStorage);
             services.AddIntegrationEventTransportStorage<ConsumerTransportDbContext>();
             services.AddIntegrationEventOutboxStorage<OutboxHealthReadDbContext>();
             services.ConfigureIntegrationEventStorage<OutboxHealthReadDbContext>(options =>
@@ -60,9 +66,20 @@ internal sealed class PostgreSqlMessagingHealthScenario(
             services.AddDbContext<OutboxHealthReadDbContext>(options => options.UseNpgsql(dataSource)
                 .EnableServiceProviderCaching(false)
                 .LogTo(commands.Add, [RelationalEventId.CommandExecuted]));
+            if (initializeLegacy)
+            {
+                services.AddIntegrationEventOutbox<LegacyMessagingHealthDbContext>(ConfigureStorage);
+                services.AddIntegrationEventTransportStorage<LegacyMessagingHealthDbContext>();
+                services.UseDefaultIntegrationEventOutbox<ConsumerTransportDbContext>();
+                services.AddDbContext<LegacyMessagingHealthDbContext>(options => options.UseNpgsql(dataSource)
+                    .EnableServiceProviderCaching(false));
+            }
+
             provider = services.BuildServiceProvider();
             await using var scope = provider.CreateAsyncScope();
-            var context = scope.ServiceProvider.GetRequiredService<ConsumerTransportDbContext>();
+            DbContext context = initializeLegacy
+                ? scope.ServiceProvider.GetRequiredService<LegacyMessagingHealthDbContext>()
+                : scope.ServiceProvider.GetRequiredService<ConsumerTransportDbContext>();
             await context.Database.EnsureCreatedAsync(ct);
             return new PostgreSqlMessagingHealthScenario(database, dataSource, provider, commands);
         }
@@ -73,15 +90,52 @@ internal sealed class PostgreSqlMessagingHealthScenario(
         }
     }
 
+    /// <summary>Writes both delivery rows using the storage model that omits workflow correlation columns.</summary>
+    internal async Task<string> SeedLegacyDelivery(
+        string consumer, DateTimeOffset recordedAt, Guid? extensionWorkflowId, CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<LegacyMessagingHealthDbContext>();
+        var integrationEvent = new ComposedMessagingTestIntegrationEvent(Guid.CreateVersion7(), recordedAt);
+        var outbox = IntegrationEventOutboxMessageFactory.Create(
+            integrationEvent, new ComposedMessagingTestIntegrationEventSerializer(), recordedAt);
+        var extensions = extensionWorkflowId is { } id ? $$"""{"workflowid":"{{id:D}}"}""" : null;
+        var envelope = TransportEnvelopeFactory.Create(outbox.EventId, extensions);
+        var transport = new IntegrationEventTransportMessage(Guid.CreateVersion7(), consumer, envelope, recordedAt);
+        context.Set<IntegrationEventOutboxMessage>().Add(outbox);
+        context.Set<IntegrationEventTransportMessage>().Add(transport);
+        await context.SaveChangesAsync(ct);
+        return outbox.EventId;
+    }
+
+    /// <summary>Applies the mapped legacy-to-current migration SQL in the disposable database.</summary>
+    internal async Task<IReadOnlyList<MigrationOperation>> ExpandWorkflowCorrelation(CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var legacy = scope.ServiceProvider.GetRequiredService<LegacyMessagingHealthDbContext>();
+        var current = scope.ServiceProvider.GetRequiredService<ConsumerTransportDbContext>();
+        var source = legacy.GetService<IDesignTimeModel>().Model;
+        var target = current.GetService<IDesignTimeModel>().Model;
+        var changes = current.GetService<IMigrationsModelDiffer>()
+            .GetDifferences(source.GetRelationalModel(), target.GetRelationalModel());
+        var migration = current.GetService<IMigrationsSqlGenerator>().Generate(changes, target);
+        foreach (var command in migration)
+        {
+            await current.Database.ExecuteSqlRawAsync(command.CommandText, ct);
+        }
+
+        return changes;
+    }
+
     /// <summary>Stores a new outbox message after applying any requested test transition.</summary>
     internal async Task<IntegrationEventOutboxMessage> SeedOutbox(DateTimeOffset enqueuedAt, CancellationToken ct,
-        Action<IntegrationEventOutboxMessage>? transition = null)
+        Action<IntegrationEventOutboxMessage>? transition = null, Guid? workflowCorrelationId = null)
     {
         await using var scope = provider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<ConsumerTransportDbContext>();
         var integrationEvent = new ComposedMessagingTestIntegrationEvent(Guid.CreateVersion7(), enqueuedAt);
         var message = IntegrationEventOutboxMessageFactory.Create(
-            integrationEvent, new ComposedMessagingTestIntegrationEventSerializer(), enqueuedAt);
+            integrationEvent, new ComposedMessagingTestIntegrationEventSerializer(), enqueuedAt, workflowCorrelationId);
         transition?.Invoke(message);
         context.Set<IntegrationEventOutboxMessage>().Add(message);
         await context.SaveChangesAsync(ct);
@@ -108,12 +162,12 @@ internal sealed class PostgreSqlMessagingHealthScenario(
 
     /// <summary>Stores a consumer's transport message after applying any requested test transition.</summary>
     internal async Task SeedTransport(string consumer, DateTimeOffset receivedAt, CancellationToken ct,
-        Action<IntegrationEventTransportMessage>? transition = null, string? eventId = null)
+        Action<IntegrationEventTransportMessage>? transition = null, string? eventId = null, string? extensionAttributesJson = null)
     {
         await using var scope = provider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<ConsumerTransportDbContext>();
         var id = Guid.CreateVersion7();
-        var envelope = TransportEnvelopeFactory.Create(eventId ?? id.ToString("D"));
+        var envelope = TransportEnvelopeFactory.Create(eventId ?? id.ToString("D"), extensionAttributesJson);
         var message = new IntegrationEventTransportMessage(id, consumer, envelope, receivedAt);
         transition?.Invoke(message);
         context.Set<IntegrationEventTransportMessage>().Add(message);

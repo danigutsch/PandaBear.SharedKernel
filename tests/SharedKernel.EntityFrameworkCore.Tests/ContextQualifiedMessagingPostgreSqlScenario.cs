@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using SharedKernel.Messaging;
 using SharedKernel.Messaging.IntegrationEvents;
 using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
@@ -47,9 +48,15 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
     /// <summary>
     /// Creates an isolated PostgreSQL database, builds the two-context provider, creates both contexts' tables and returns the scenario, cleaning up everything if creation fails.
     /// </summary>
+    /// <param name="fixture">The fixture that leases the isolated database.</param>
+    /// <param name="ct">The cancellation token.</param>
+    /// <param name="timeProvider">The optional clock for the outbox and relay.</param>
+    /// <param name="firstPublisherProbe">The optional probe run before the first producer publishes.</param>
     public static async ValueTask<ContextQualifiedMessagingPostgreSqlScenario> Create(
         PostgreSqlFixture fixture,
-        CancellationToken ct)
+        CancellationToken ct,
+        TimeProvider? timeProvider = null,
+        RecordingEventEnvelopePublisher? firstPublisherProbe = null)
     {
         var database = await fixture.CreateIsolatedDatabase(ct);
         NpgsqlDataSource? dataSource = null;
@@ -60,6 +67,7 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
             dataSource = database.CreateDataSource(nameof(ContextQualifiedMessagingPostgreSqlScenario));
             var services = new ServiceCollection();
             services.AddLogging();
+            services.AddSingleton(timeProvider ?? TimeProvider.System);
             services.AddSingleton<IIntegrationEventSerializer, ComposedMessagingTestIntegrationEventSerializer>();
             services.AddIntegrationEvents<FirstMessagingDbContext>().WithOutbox(options =>
             {
@@ -75,6 +83,17 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
             }).WithOutboxRelay().WithPostgreSqlAtomicClaims().WithPostgreSqlTransportConsumer(SecondConsumerName);
             services.AddDbContext<FirstMessagingDbContext>(options => options.UseNpgsql(dataSource));
             services.AddDbContext<SecondMessagingDbContext>(options => options.UseNpgsql(dataSource));
+            if (firstPublisherProbe is not null)
+            {
+                var registration = services.Single(descriptor =>
+                    descriptor.ServiceType == typeof(IEventEnvelopePublisher)
+                    && Equals(descriptor.ServiceKey, typeof(FirstMessagingDbContext)));
+                var factory = registration.KeyedImplementationFactory.ShouldNotBeNull();
+                services.Remove(registration);
+                services.AddKeyedScoped<IEventEnvelopePublisher>(typeof(FirstMessagingDbContext), (scope, key) =>
+                    new ProbedTransportPublisher(firstPublisherProbe, (IEventEnvelopePublisher)factory(scope, key)));
+            }
+
             provider = services.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,
@@ -181,23 +200,68 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
     }
 
     /// <summary>
+    /// Enqueues one event through the first context and returns its persisted envelope ID.
+    /// </summary>
+    public async ValueTask<string> EnqueueFirstOutbox(Guid? workflowCorrelationId, CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
+        var outbox = scope.ServiceProvider.GetRequiredKeyedService<IIntegrationEventOutbox>(typeof(FirstMessagingDbContext));
+        var integrationEvent = new ComposedMessagingTestIntegrationEvent(
+            Guid.CreateVersion7(), new DateTimeOffset(2026, 7, 24, 12, 2, 30, TimeSpan.Zero));
+        if (workflowCorrelationId is { } id)
+        {
+            await outbox.Enqueue(integrationEvent, id, ct);
+        }
+        else
+        {
+            await outbox.Enqueue(integrationEvent, ct);
+        }
+
+        _ = await dbContext.SaveChangesAsync(ct);
+        return integrationEvent.EventId.ToString("D");
+    }
+
+    /// <summary>Runs the first outbox's atomic claim and relay for one message.</summary>
+    public ValueTask<int> PublishFirstOutbox(CancellationToken ct)
+    {
+        var relay = provider.GetRequiredService<EfIntegrationEventOutboxRelay<FirstMessagingDbContext>>();
+        return relay.PublishPending(1, ct);
+    }
+
+    /// <summary>Reads pending outbox and transport pages for the same workflow in a new scope.</summary>
+    public async Task<(IntegrationEventDeliveryPage Outbox, IntegrationEventDeliveryPage Transport)> InspectFirstDeliveryQueues(
+        Guid workflowCorrelationId, CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
+        var filter = new IntegrationEventDeliveryFilter(null, null, null) { WorkflowCorrelationId = workflowCorrelationId };
+        var outbox = await IntegrationEventDeliveryInspection.ReadOutbox(dbContext, filter, 10, null, ct);
+        var transport = await IntegrationEventDeliveryInspection.ReadTransport(dbContext, FirstConsumerName, filter, 10, null, ct);
+        return (outbox, transport);
+    }
+
+    /// <summary>Reads the retained outbox view and checks the same row's persisted workflow value and error bound separately.</summary>
+    public async Task<(IntegrationEventOutboxDelivery Retained, Guid? StoredWorkflowId, int? StoredErrorLength)> InspectFirstRetainedOutbox(
+        string eventId, CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
+        var retained = await IntegrationEventDeliveryInspection.ReadRetainedOutbox(dbContext, eventId, ct);
+        var stored = await dbContext.Set<IntegrationEventOutboxMessage>()
+            .Where(message => message.EventId == eventId)
+            .Select(message => new { message.WorkflowCorrelationId, message.LastPublishError })
+            .SingleAsync(ct);
+        return (retained.ShouldNotBeNull(), stored.WorkflowCorrelationId, stored.LastPublishError?.Length);
+    }
+
+    /// <summary>
     /// Enqueues an event through the first context, publishes it with the relay and returns the message's PublishedAt and the number of transport messages written.
     /// </summary>
     public async ValueTask<(DateTimeOffset? PublishedAt, int TransportCount)> PublishFirstOutboxThroughItsProducer(CancellationToken ct)
     {
-        await using (var enqueueScope = provider.CreateAsyncScope())
-        {
-            var dbContext = enqueueScope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
-            var outbox = enqueueScope.ServiceProvider.GetRequiredKeyedService<IIntegrationEventOutbox>(typeof(FirstMessagingDbContext));
-            await outbox.Enqueue(new ComposedMessagingTestIntegrationEvent(
-                Guid.CreateVersion7(),
-                new DateTimeOffset(2026, 7, 24, 12, 2, 30, TimeSpan.Zero)), ct);
-            _ = await dbContext.SaveChangesAsync(ct);
-        }
-
-        var relay = provider.GetRequiredService<EfIntegrationEventOutboxRelay<FirstMessagingDbContext>>();
-        _ = await relay.PublishPending(1, ct);
-
+        _ = await EnqueueFirstOutbox(workflowCorrelationId: null, ct);
+        _ = await PublishFirstOutbox(ct);
         await using var stateScope = provider.CreateAsyncScope();
         var stateDbContext = stateScope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
         var publishedAt = await stateDbContext.Set<IntegrationEventOutboxMessage>()

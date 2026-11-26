@@ -98,6 +98,7 @@ SharedKernel.Offerings.OfferingAvailability.OnRequest = 4 -> SharedKernel.Offeri
 SharedKernel.Offerings.OfferingAvailability.Scheduled = 1 -> SharedKernel.Offerings.OfferingAvailability
 SharedKernel.Offerings.OfferingAvailability.SoldOut = 2 -> SharedKernel.Offerings.OfferingAvailability
 SharedKernel.Offerings.OfferingCallToAction
+SharedKernel.Offerings.OfferingCallToActions
 SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>
 SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.<Clone>$() -> SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>!
 SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.CoverId.get -> TImageId?
@@ -217,6 +218,7 @@ SharedKernel.Offerings.OfferingScheduleDefinition.StartDate.get -> System.DateOn
 SharedKernel.Offerings.OfferingScheduleDefinition.StartDate.init -> void
 SharedKernel.Offerings.OfferingScheduleDefinition.Year.get -> int?
 SharedKernel.Offerings.OfferingScheduleDefinition.Year.init -> void
+SharedKernel.Offerings.OfferingSchedules
 SharedKernel.Offerings.OfferingStepCount
 SharedKernel.Offerings.OfferingStepCount.Free = 0 -> SharedKernel.Offerings.OfferingStepCount
 SharedKernel.Offerings.OfferingStepCount.MatchesDuration = 1 -> SharedKernel.Offerings.OfferingStepCount
@@ -578,6 +580,7 @@ static SharedKernel.Offerings.MetricRule<TMetric>.operator !=(SharedKernel.Offer
 static SharedKernel.Offerings.MetricRule<TMetric>.operator ==(SharedKernel.Offerings.MetricRule<TMetric>? left, SharedKernel.Offerings.MetricRule<TMetric>? right) -> bool
 static SharedKernel.Offerings.Offering.Create<TImageId, TPriceKind, TMetric>(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>! definition, SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>! rules, SharedKernel.BuildingBlocks.IImageEligibility<TImageId>! images) -> SharedKernel.Results.Result<SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>!>
 static SharedKernel.Offerings.Offering.Restore<TImageId, TPriceKind, TMetric>(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>! definition, SharedKernel.Offerings.OfferingRules<TPriceKind, TMetric>! rules) -> SharedKernel.Offerings.Offering<TImageId, TPriceKind, TMetric>!
+static SharedKernel.Offerings.OfferingCallToActions.For(SharedKernel.Offerings.OfferingAvailability availability, bool hasSignUpLink) -> SharedKernel.Offerings.OfferingCallToAction
 static SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.operator !=(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? left, SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? right) -> bool
 static SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.operator ==(SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? left, SharedKernel.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>? right) -> bool
 static SharedKernel.Offerings.OfferingFields.Metric<TMetric>(TMetric kind) -> string!
@@ -601,6 +604,7 @@ static SharedKernel.Offerings.OfferingSchedule.operator !=(SharedKernel.Offering
 static SharedKernel.Offerings.OfferingSchedule.operator ==(SharedKernel.Offerings.OfferingSchedule? left, SharedKernel.Offerings.OfferingSchedule? right) -> bool
 static SharedKernel.Offerings.OfferingScheduleDefinition.operator !=(SharedKernel.Offerings.OfferingScheduleDefinition? left, SharedKernel.Offerings.OfferingScheduleDefinition? right) -> bool
 static SharedKernel.Offerings.OfferingScheduleDefinition.operator ==(SharedKernel.Offerings.OfferingScheduleDefinition? left, SharedKernel.Offerings.OfferingScheduleDefinition? right) -> bool
+static SharedKernel.Offerings.OfferingSchedules.Create(SharedKernel.Offerings.OfferingScheduleDefinition! definition, int minYear, int maxYear, int maxDurationDays) -> SharedKernel.Results.Result<SharedKernel.Offerings.OfferingSchedule!>
 static SharedKernel.Offerings.OfferingStructuredData.Build<TImageId, TPriceKind, TMetric>(SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>! view, SharedKernel.Offerings.OfferingStructuredDataOptions<TPriceKind>! options) -> System.Text.Json.Nodes.JsonObject!
 static SharedKernel.Offerings.OfferingText.DateLine(SharedKernel.Offerings.OfferingSchedule! schedule, string? dateNote, SharedKernel.BuildingBlocks.DateRangePatterns! patterns, string! toBeConfirmedFormat, System.IFormatProvider! provider) -> string?
 static SharedKernel.Offerings.OfferingText.DateLine<TImageId, TPriceKind, TMetric>(SharedKernel.Offerings.OfferingView<TImageId, TPriceKind, TMetric>! view, SharedKernel.BuildingBlocks.DateRangePatterns! patterns, string! toBeConfirmedFormat, System.IFormatProvider! provider) -> string?

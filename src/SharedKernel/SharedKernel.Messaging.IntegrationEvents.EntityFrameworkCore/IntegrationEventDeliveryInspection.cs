@@ -84,6 +84,7 @@ public static class IntegrationEventDeliveryInspection
                 StorageId = message.Id,
                 EventId = message.EventId,
                 EventType = message.EventType,
+                WorkflowCorrelationId = message.WorkflowCorrelationId,
                 RecordedAt = message.EnqueuedAt,
                 Attempts = message.PublishAttempts,
                 LastAttemptAt = message.LastPublishAttemptAt,
@@ -142,6 +143,7 @@ public static class IntegrationEventDeliveryInspection
                 StorageId = message.Id,
                 EventId = message.EventId,
                 EventType = message.EventType,
+                WorkflowCorrelationId = message.WorkflowCorrelationId,
                 RecordedAt = message.ReceivedAt,
                 Attempts = message.ConsumeAttempts,
                 LastAttemptAt = message.LastConsumeAttemptAt,
@@ -171,6 +173,11 @@ public static class IntegrationEventDeliveryInspection
         if (filter.EventType is { } eventType)
         {
             query = query.Where(entry => entry.EventType == eventType);
+        }
+
+        if (filter.WorkflowCorrelationId is { } workflowCorrelationId)
+        {
+            query = query.Where(entry => entry.WorkflowCorrelationId == workflowCorrelationId);
         }
 
         if (filter.RecordedSince is { } recordedSince)
