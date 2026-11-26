@@ -4,6 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     <MediatorRoslynAnalyzersVersion>5.12.0</MediatorRoslynAnalyzersVersion>
     <MediatorRoslynVersion>5.12.0</MediatorRoslynVersion>
+    <CodeFixStringToolsVersion>18.12.2</CodeFixStringToolsVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- Aspire packages -->
@@ -75,10 +76,6 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.12.0" />
     <!-- Aspire's transitive build assemblies retain their existing runtime graph. -->
     <PackageVersion Include="Microsoft.NET.StringTools" Version="18.9.6" />
-    <PackageVersion Update="Microsoft.NET.StringTools" Version="18.12.2"
-                    Condition="'$(MSBuildProjectName)' == 'SharedKernel.CodeFixes.MSBuild'
-                               Or '$(MSBuildProjectName)' == 'SharedKernel.Testing.CodeFixRunner'
-                               Or '$(MSBuildProjectName)' == 'SharedKernel.Testing.CodeFixRunner.Tests'" />
     <!-- Tool and utility packages -->
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
