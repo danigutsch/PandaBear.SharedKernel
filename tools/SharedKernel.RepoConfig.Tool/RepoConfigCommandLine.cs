@@ -243,8 +243,22 @@ internal static class RepoConfigCommandLine
 
         return new Command("github", "Preview or write GitHub projection, reconciliation, import, issue links, and labels.")
         {
-            sync, reconcile, import, CreateLinkSubissueCommand(environment), CreateSyncLabelsCommand(environment, root)
+            sync, reconcile, import, CreateLinkSubissueCommand(environment), CreateSyncLabelsCommand(environment, root),
+            CreateVerifyEnvironmentProtectionCommand(environment)
         };
+    }
+
+    private static Command CreateVerifyEnvironmentProtectionCommand(RepoConfigToolEnvironment environment)
+    {
+        RepositoryOption repository = new("GitHub repository containing the environment, as owner/name.") { Required = true };
+        Option<string> name = new("--environment") { Required = true, Description = "Exact GitHub environment name." };
+        Command command = new("verify-environment-protection", "Verify that a GitHub environment requires reviewers and disables administrator bypass.")
+        {
+            repository, name
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.VerifyEnvironmentProtection(
+            parseResult.GetRequiredValue(repository), parseResult.GetRequiredValue(name), environment.HttpClient, output, ct));
+        return command;
     }
 
     private static Command CreateBaselineCommand(RepoConfigToolEnvironment environment, RootOption root)

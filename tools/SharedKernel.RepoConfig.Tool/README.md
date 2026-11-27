@@ -52,6 +52,7 @@ dotnet repo github reconcile
 dotnet repo github reconcile --force
 dotnet repo github link-subissue --repository owner/repository --parent 10 --child 20
 dotnet repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
+dotnet repo github verify-environment-protection --repository owner/repository --environment production
 dotnet repo github sync-labels --repository owner/repository
 dotnet repo github sync-labels --repository owner/repository --force
 dotnet repo github sync-labels --repository owner/repository --forgejo https://codeberg.org --force
@@ -90,6 +91,7 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `github reconcile` | Reconciles the GitHub snapshot and resolves transferred issue identities. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
 | `github link-subissue` | Previews or creates a native GitHub parent/subissue link between existing issues in the same repository. |
+| `github verify-environment-protection` | Reads the exact environment and verifies that it requires a reviewer and disables administrator bypass. |
 | `github sync-labels` | Creates the configured labels that are missing and updates those that differ, on GitHub or, with `--forgejo <url>`, on a Forgejo instance; see [Repository labels](#repository-labels). |
 | `baseline verify` | Fails when a managed baseline file is missing, outdated, edited by hand, or unmanaged; see [Repository baseline](#repository-baseline). |
 | `baseline apply` | Creates and updates the managed baseline files; previews unless `--force` is given. |

@@ -59,6 +59,7 @@ SharedKernel.Repositories.GitHub.GitHubConnection
 SharedKernel.Repositories.GitHub.GitHubConnection.Dispose() -> void
 SharedKernel.Repositories.GitHub.GitHubConnection.GitHubConnection(System.Net.Http.HttpClient! client) -> void
 SharedKernel.Repositories.GitHub.GitHubConnection.GitHubConnection(System.Net.Http.HttpMessageHandler! handler, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token, string! missingTokenMessage) -> void
+SharedKernel.Repositories.GitHub.GitHubEnvironmentProtectionVerifier
 SharedKernel.Repositories.GitHub.GitHubDependencySnapshot
 SharedKernel.Repositories.GitHub.GitHubDependencySubmission
 SharedKernel.Repositories.GitHub.GitHubIssueSnapshotDigest
@@ -199,6 +200,7 @@ static SharedKernel.Repositories.GitHub.DependencySubmitOptions.operator !=(Shar
 static SharedKernel.Repositories.GitHub.DependencySubmitOptions.operator ==(SharedKernel.Repositories.GitHub.DependencySubmitOptions? left, SharedKernel.Repositories.GitHub.DependencySubmitOptions? right) -> bool
 static SharedKernel.Repositories.GitHub.GitHubDependencySnapshot.TryWrite(SharedKernel.Repositories.GitHub.DependencySnapshotOptions! options, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
 static SharedKernel.Repositories.GitHub.GitHubDependencySubmission.Run(SharedKernel.Repositories.GitHub.DependencySubmitOptions! options, SharedKernel.Repositories.GitHub.GitHubConnection! connection, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+static SharedKernel.Repositories.GitHub.GitHubEnvironmentProtectionVerifier.Verify(System.Net.Http.HttpClient! client, string! repository, string! environment, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 static SharedKernel.Repositories.GitHub.GitHubIssueSnapshotDigest.Compute(System.Collections.Generic.IEnumerable<SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue!>! issues) -> string!
 static SharedKernel.Repositories.GitHub.GitHubIssueSnapshotDigest.ComputeForOpenAndRequiredIssues(System.Collections.Generic.IEnumerable<SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue!>! issues, System.Collections.Generic.IEnumerable<int>! requiredIssueNumbers, string! repository) -> string!
 static SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue.operator !=(SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue? left, SharedKernel.Repositories.GitHub.GitHubRoadmapReconcileIssue? right) -> bool
