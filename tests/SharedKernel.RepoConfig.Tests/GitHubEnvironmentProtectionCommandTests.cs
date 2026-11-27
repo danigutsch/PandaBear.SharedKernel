@@ -168,7 +168,7 @@ public sealed class GitHubEnvironmentProtectionCommandTests
     }
 
     [Fact]
-    public void Owned_read_client_uses_the_configured_GitHub_token()
+    public void Owned_read_client_sets_the_configured_bearer_token()
     {
         // Arrange
         using var ghToken = new EnvironmentVariableScope("GH_TOKEN", "fixture-token");
@@ -192,7 +192,7 @@ public sealed class GitHubEnvironmentProtectionCommandTests
         using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var verify = () => GitHubEnvironmentProtectionVerifier.Verify(client, "owner/repository", "roadmap-maintenance", cancellation.Token);
+        var verify = async () => await GitHubEnvironmentProtectionVerifier.Verify(client, "owner/repository", "roadmap-maintenance", cancellation.Token);
 
         // Assert
         var error = await verify.ShouldThrow<OperationCanceledException>();
