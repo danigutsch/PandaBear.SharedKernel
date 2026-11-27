@@ -1,0 +1,115 @@
+name: Analyzer performance
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - .github/workflows/analyzer-performance.yml
+      - .github/actions/setup-dotnet-tool/**
+      - .editorconfig
+      - Directory.Build.props
+      - Directory.Build.targets
+      - Directory.Packages.props
+      - NuGet.Config
+      - global.json
+      - src/Directory.Build.props
+      - src/Directory.Build.targets
+      - benchmarks/SharedKernel.Mediator.Benchmarks/**
+      - src/SharedKernel/SharedKernel.*.Analyzers/**
+      - src/SharedKernel/SharedKernel.Style.CodeFixes/**
+      - src/SharedKernel/SharedKernel.BuildingBlocks/**
+      - src/SharedKernel/SharedKernel.Domain/**
+      - src/SharedKernel/SharedKernel.InputNormalization/**
+      - src/SharedKernel/SharedKernel.Mediator/**
+      - src/SharedKernel/SharedKernel.Mediator.Abstractions/**
+      - src/SharedKernel/SharedKernel.Mediator.SourceGenerator/**
+      - src/SharedKernel/SharedKernel.Observability/DurationBuckets.cs
+      - src/SharedKernel/SharedKernel.Results/**
+      - src/SharedKernel/SharedKernel.Results.SourceGenerator/**
+  schedule:
+    - cron: '37 3 * * 2'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: analyzer-performance-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+defaults:
+  run:
+    shell: bash
+jobs:
+  check:
+    name: Compare analyzer performance
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BENCHMARK_DIRECTORY: benchmarks/SharedKernel.Mediator.Benchmarks
+      REPORT_DIRECTORY: TestResults/analyzer-performance
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Check the runner identity
+        run: |
+          mkdir -p "$REPORT_DIRECTORY"
+          {
+            git rev-parse HEAD
+            printf 'runner_os=%s\nrunner_arch=%s\nimage_os=%s\nimage_version=%s\n' \
+              "$RUNNER_OS" "$RUNNER_ARCH" "${ImageOS:-}" "${ImageVersion:-}"
+            cat /etc/os-release
+            lscpu
+          } > "$REPORT_DIRECTORY/runner.log"
+          baseline="$BENCHMARK_DIRECTORY/analyzer-baseline.json"
+          sha256sum "$baseline" > "$REPORT_DIRECTORY/baseline.sha256"
+          expected_os=$(jq -er '.OperatingSystem | strings | select(length > 0)' "$baseline")
+          os_description=$(sed -n 's/^PRETTY_NAME="\(.*\)"$/\1/p' /etc/os-release)
+          if [[ "$RUNNER_ARCH" != X64 || -z "$os_description" || "$os_description" != "$expected_os" ]]; then
+            printf '%s\n' 'Runner OS or architecture differs from the reviewed analyzer baseline.' >&2
+            exit 1
+          fi
+      - uses: ./.github/actions/setup-dotnet-tool
+      - name: Restore and build the benchmark
+        run: |
+          project="$BENCHMARK_DIRECTORY/SharedKernel.Mediator.Benchmarks.csproj"
+          {
+            dotnet --info
+            dotnet --list-runtimes
+          } > "$REPORT_DIRECTORY/dotnet.log"
+          timeout --kill-after=10s 5m dotnet restore "$project" --locked-mode --disable-parallel -m:1 \
+            -p:NuGetAudit=true -p:NuGetAuditMode=all -p:NuGetAuditLevel=low 2>&1 | tee "$REPORT_DIRECTORY/restore.log"
+          timeout --kill-after=10s 5m dotnet build "$project" -c Release --no-restore --disable-build-servers \
+            -m:1 -nr:false -p:UseSharedCompilation=false 2>&1 | tee "$REPORT_DIRECTORY/build.log"
+      - name: Check the reviewed analyzer baseline
+        env:
+          DOTNET_PROCESSOR_COUNT: '1'
+          DOTNET_TieredCompilation: '1'
+          DOTNET_ROLL_FORWARD: Disable
+        run: |
+          project="$BENCHMARK_DIRECTORY/SharedKernel.Mediator.Benchmarks.csproj"
+          assembly=$(dotnet msbuild "$project" -nologo -p:Configuration=Release -getProperty:TargetPath | tail -n 1)
+          output=$(dirname -- "$assembly")
+          runtime_config="${assembly%.dll}.runtimeconfig.json"
+          cp "$runtime_config" "$REPORT_DIRECTORY/runtimeconfig.json"
+          sha256sum "$assembly" "$output/Microsoft.CodeAnalysis.dll" "$output/Microsoft.CodeAnalysis.CSharp.dll" \
+            > "$REPORT_DIRECTORY/benchmark.sha256"
+          printf 'DOTNET_PROCESSOR_COUNT=%s\nDOTNET_TieredCompilation=%s\nDOTNET_ROLL_FORWARD=%s\n' \
+            "$DOTNET_PROCESSOR_COUNT" "$DOTNET_TieredCompilation" "$DOTNET_ROLL_FORWARD" > "$REPORT_DIRECTORY/runtime-mode.log"
+          runtime_version=$(jq -er '.Runtime | strings | select(startswith(".NET ")) |
+            ltrimstr(".NET ") | select(length > 0)' "$BENCHMARK_DIRECTORY/analyzer-baseline.json")
+          jq -e --arg version "$runtime_version" '(.runtimeOptions.frameworks | sort_by(.name)) == [
+            {"name": "Microsoft.AspNetCore.App", "version": $version},
+            {"name": "Microsoft.NETCore.App", "version": $version}
+          ]' "$runtime_config" > /dev/null
+          status=0
+          env -u COMPlus_TieredCompilation timeout --kill-after=10s 4m dotnet "$assembly" \
+            --analyzer-regression check "$BENCHMARK_DIRECTORY/analyzer-baseline.json" \
+            > "$REPORT_DIRECTORY/measurements.jsonl" 2> "$REPORT_DIRECTORY/check.stderr" || status=$?
+          cat "$REPORT_DIRECTORY/check.stderr" >&2
+          exit "$status"
+      - name: Retain analyzer performance evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: analyzer-performance-${{ github.run_attempt }}
+          path: ${{ env.REPORT_DIRECTORY }}/
+          retention-days: 14
+          if-no-files-found: error

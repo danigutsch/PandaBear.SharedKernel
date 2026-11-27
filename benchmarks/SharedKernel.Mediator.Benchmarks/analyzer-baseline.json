@@ -1,41 +1,409 @@
 {
-  "SchemaVersion": 1,
-  "Runtime": ".NET 10.0.13",
+  "SchemaVersion": 4,
+  "Runtime": ".NET 11.0.0",
   "OperatingSystem": "Ubuntu 26.04.1 LTS",
   "Architecture": "X64",
-  "SourceCount": 100,
+  "DotnetTieredCompilation": "1",
+  "ComPlusTieredCompilation": null,
+  "SourceCounts": [
+    10,
+    100,
+    500
+  ],
   "Samples": 9,
   "Iterations": 5,
-  "MaximumTimeRatio": 1.5,
+  "MaximumCompilerOverheadRatio": 1.5,
   "MaximumAllocationRatio": 1.2,
   "Measurements": [
     {
-      "Suite": "MediatorAnalyzer",
-      "Milliseconds": 110.92295999999999,
-      "CpuMilliseconds": 382.5004,
-      "AllocatedBytes": 11159772,
-      "Diagnostics": 200
+      "Suite": "RuntimeEndpointBindingAnalyzer/10",
+      "Milliseconds": 6.39582,
+      "CpuMilliseconds": 10.2618,
+      "AnalyzerMilliseconds": 0.88516,
+      "AllocatedBytes": 252236,
+      "Diagnostics": 10,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 8.6494,
+        "CompilerAndAnalyzerMilliseconds": 15.2266,
+        "MedianPairedElapsedRatio": 1.747953760145102
+      }
     },
     {
-      "Suite": "StyleAnalyzer",
-      "Milliseconds": 44.91674,
-      "CpuMilliseconds": 45.413799999999995,
-      "AllocatedBytes": 1574761,
-      "Diagnostics": 201
+      "Suite": "AspireAnalyzer/10",
+      "Milliseconds": 2.51926,
+      "CpuMilliseconds": 2.527,
+      "AnalyzerMilliseconds": 0.18568,
+      "AllocatedBytes": 128777,
+      "Diagnostics": 10,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 5.376,
+        "CompilerAndAnalyzerMilliseconds": 8.1035,
+        "MedianPairedElapsedRatio": 1.4876854826372956
+      }
     },
     {
-      "Suite": "TestingAnalyzer",
-      "Milliseconds": 50.158280000000005,
-      "CpuMilliseconds": 63.5874,
-      "AllocatedBytes": 2178060,
-      "Diagnostics": 100
+      "Suite": "BlazorAnalyzer/10",
+      "Milliseconds": 8.21412,
+      "CpuMilliseconds": 8.220600000000001,
+      "AnalyzerMilliseconds": 1.46102,
+      "AllocatedBytes": 401988,
+      "Diagnostics": 10,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 10.1479,
+        "CompilerAndAnalyzerMilliseconds": 18.4989,
+        "MedianPairedElapsedRatio": 1.812177889021374
+      }
     },
     {
-      "Suite": "AspireAnalyzer",
-      "Milliseconds": 6.89958,
-      "CpuMilliseconds": 9.2072,
-      "AllocatedBytes": 270041,
-      "Diagnostics": 100
+      "Suite": "DomainAnalyzer/10",
+      "Milliseconds": 3.4726999999999997,
+      "CpuMilliseconds": 3.4854,
+      "AnalyzerMilliseconds": 0.27518000000000004,
+      "AllocatedBytes": 221449,
+      "Diagnostics": 10,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 6.0982,
+        "CompilerAndAnalyzerMilliseconds": 9.8052,
+        "MedianPairedElapsedRatio": 1.6151945441966198
+      }
+    },
+    {
+      "Suite": "EntityFrameworkCoreAnalyzer/10",
+      "Milliseconds": 9.73472,
+      "CpuMilliseconds": 13.038599999999999,
+      "AnalyzerMilliseconds": 2.60576,
+      "AllocatedBytes": 409838,
+      "Diagnostics": 10,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 11.5658,
+        "CompilerAndAnalyzerMilliseconds": 19.7329,
+        "MedianPairedElapsedRatio": 1.6769959708796627
+      }
+    },
+    {
+      "Suite": "IOAnalyzer/10",
+      "Milliseconds": 6.6391800000000005,
+      "CpuMilliseconds": 9.0192,
+      "AnalyzerMilliseconds": 2.57684,
+      "AllocatedBytes": 273307,
+      "Diagnostics": 10,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 7.0046,
+        "CompilerAndAnalyzerMilliseconds": 13.734,
+        "MedianPairedElapsedRatio": 1.969605687690946
+      }
+    },
+    {
+      "Suite": "MediatorAnalyzer/10",
+      "Milliseconds": 26.12336,
+      "CpuMilliseconds": 35.0636,
+      "AnalyzerMilliseconds": 2.8152,
+      "AllocatedBytes": 1220585,
+      "Diagnostics": 20,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 54.1627,
+        "CompilerAndAnalyzerMilliseconds": 83.1705,
+        "MedianPairedElapsedRatio": 1.563284634835199
+      }
+    },
+    {
+      "Suite": "ResultsAnalyzer/10",
+      "Milliseconds": 6.0807400000000005,
+      "CpuMilliseconds": 6.1052,
+      "AnalyzerMilliseconds": 0.8949400000000001,
+      "AllocatedBytes": 296113,
+      "Diagnostics": 10,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 7.7805,
+        "CompilerAndAnalyzerMilliseconds": 13.7553,
+        "MedianPairedElapsedRatio": 1.7757481087500968
+      }
+    },
+    {
+      "Suite": "StyleAnalyzer/10",
+      "Milliseconds": 4.89584,
+      "CpuMilliseconds": 7.6282,
+      "AnalyzerMilliseconds": 1.51214,
+      "AllocatedBytes": 254833,
+      "Diagnostics": 21,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 6.1039,
+        "CompilerAndAnalyzerMilliseconds": 11.1617,
+        "MedianPairedElapsedRatio": 1.8204756002087683
+      }
+    },
+    {
+      "Suite": "TestingAnalyzer/10",
+      "Milliseconds": 7.75144,
+      "CpuMilliseconds": 10.621599999999999,
+      "AnalyzerMilliseconds": 1.9323599999999999,
+      "AllocatedBytes": 352339,
+      "Diagnostics": 20,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 7.8939,
+        "CompilerAndAnalyzerMilliseconds": 15.5764,
+        "MedianPairedElapsedRatio": 1.9627641304209549
+      }
+    },
+    {
+      "Suite": "RuntimeEndpointBindingAnalyzer/100",
+      "Milliseconds": 33.41032,
+      "CpuMilliseconds": 62.899800000000006,
+      "AnalyzerMilliseconds": 5.06798,
+      "AllocatedBytes": 1621980,
+      "Diagnostics": 100,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 51.2971,
+        "CompilerAndAnalyzerMilliseconds": 98.5064,
+        "MedianPairedElapsedRatio": 2.2003141661294117
+      }
+    },
+    {
+      "Suite": "AspireAnalyzer/100",
+      "Milliseconds": 10.71064,
+      "CpuMilliseconds": 11.3036,
+      "AnalyzerMilliseconds": 1.45416,
+      "AllocatedBytes": 280566,
+      "Diagnostics": 100,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 10.6801,
+        "CompilerAndAnalyzerMilliseconds": 21.2615,
+        "MedianPairedElapsedRatio": 1.9857398338966863
+      }
+    },
+    {
+      "Suite": "BlazorAnalyzer/100",
+      "Milliseconds": 57.83936,
+      "CpuMilliseconds": 95.41900000000001,
+      "AnalyzerMilliseconds": 3.6605399999999997,
+      "AllocatedBytes": 3101723,
+      "Diagnostics": 100,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 63.3619,
+        "CompilerAndAnalyzerMilliseconds": 125.1094,
+        "MedianPairedElapsedRatio": 1.96585485160905
+      }
+    },
+    {
+      "Suite": "DomainAnalyzer/100",
+      "Milliseconds": 27.52352,
+      "CpuMilliseconds": 33.0844,
+      "AnalyzerMilliseconds": 2.48358,
+      "AllocatedBytes": 1471996,
+      "Diagnostics": 100,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 27.858,
+        "CompilerAndAnalyzerMilliseconds": 50.8488,
+        "MedianPairedElapsedRatio": 1.8510589417761505
+      }
+    },
+    {
+      "Suite": "EntityFrameworkCoreAnalyzer/100",
+      "Milliseconds": 35.90952,
+      "CpuMilliseconds": 64.0898,
+      "AnalyzerMilliseconds": 14.26458,
+      "AllocatedBytes": 2740724,
+      "Diagnostics": 100,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 42.7302,
+        "CompilerAndAnalyzerMilliseconds": 77.7677,
+        "MedianPairedElapsedRatio": 1.8199704190478865
+      }
+    },
+    {
+      "Suite": "IOAnalyzer/100",
+      "Milliseconds": 15.838220000000002,
+      "CpuMilliseconds": 15.8398,
+      "AnalyzerMilliseconds": 2.3111799999999993,
+      "AllocatedBytes": 1823017,
+      "Diagnostics": 100,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 24.5151,
+        "CompilerAndAnalyzerMilliseconds": 40.2687,
+        "MedianPairedElapsedRatio": 1.6475303231067169
+      }
+    },
+    {
+      "Suite": "MediatorAnalyzer/100",
+      "Milliseconds": 161.09846,
+      "CpuMilliseconds": 185.86079999999998,
+      "AnalyzerMilliseconds": 7.820780000000001,
+      "AllocatedBytes": 11009726,
+      "Diagnostics": 200,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 407.0246,
+        "CompilerAndAnalyzerMilliseconds": 583.6364,
+        "MedianPairedElapsedRatio": 1.433909400070659
+      }
+    },
+    {
+      "Suite": "ResultsAnalyzer/100",
+      "Milliseconds": 11.92216,
+      "CpuMilliseconds": 16.1124,
+      "AnalyzerMilliseconds": 1.3642400000000001,
+      "AllocatedBytes": 2212937,
+      "Diagnostics": 100,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 22.7188,
+        "CompilerAndAnalyzerMilliseconds": 34.2878,
+        "MedianPairedElapsedRatio": 1.50821676783672
+      }
+    },
+    {
+      "Suite": "StyleAnalyzer/100",
+      "Milliseconds": 8.59014,
+      "CpuMilliseconds": 11.0212,
+      "AnalyzerMilliseconds": 2.49022,
+      "AllocatedBytes": 1670385,
+      "Diagnostics": 201,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 14.5292,
+        "CompilerAndAnalyzerMilliseconds": 23.356,
+        "MedianPairedElapsedRatio": 1.5648565859092174
+      }
+    },
+    {
+      "Suite": "TestingAnalyzer/100",
+      "Milliseconds": 20.15456,
+      "CpuMilliseconds": 24.893,
+      "AnalyzerMilliseconds": 5.7171400000000006,
+      "AllocatedBytes": 2475724,
+      "Diagnostics": 200,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 15.91,
+        "CompilerAndAnalyzerMilliseconds": 33.9321,
+        "MedianPairedElapsedRatio": 2.183560920989974
+      }
+    },
+    {
+      "Suite": "RuntimeEndpointBindingAnalyzer/500",
+      "Milliseconds": 64.52204,
+      "CpuMilliseconds": 101.1788,
+      "AnalyzerMilliseconds": 5.25628,
+      "AllocatedBytes": 7171846,
+      "Diagnostics": 500,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 68.2133,
+        "CompilerAndAnalyzerMilliseconds": 131.7266,
+        "MedianPairedElapsedRatio": 2.028255023969302
+      }
+    },
+    {
+      "Suite": "AspireAnalyzer/500",
+      "Milliseconds": 5.83014,
+      "CpuMilliseconds": 5.8724,
+      "AnalyzerMilliseconds": 1.0896,
+      "AllocatedBytes": 825865,
+      "Diagnostics": 500,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 5.8952,
+        "CompilerAndAnalyzerMilliseconds": 11.7013,
+        "MedianPairedElapsedRatio": 2.004670722669378
+      }
+    },
+    {
+      "Suite": "BlazorAnalyzer/500",
+      "Milliseconds": 60.638999999999996,
+      "CpuMilliseconds": 102.194,
+      "AnalyzerMilliseconds": 2.34796,
+      "AllocatedBytes": 14992083,
+      "Diagnostics": 500,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 63.3667,
+        "CompilerAndAnalyzerMilliseconds": 148.4719,
+        "MedianPairedElapsedRatio": 2.478824163843723
+      }
+    },
+    {
+      "Suite": "DomainAnalyzer/500",
+      "Milliseconds": 18.35068,
+      "CpuMilliseconds": 19.037200000000002,
+      "AnalyzerMilliseconds": 1.3350199999999999,
+      "AllocatedBytes": 6873158,
+      "Diagnostics": 500,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 17.7126,
+        "CompilerAndAnalyzerMilliseconds": 36.546,
+        "MedianPairedElapsedRatio": 2.0365107324729292
+      }
+    },
+    {
+      "Suite": "EntityFrameworkCoreAnalyzer/500",
+      "Milliseconds": 61.7161,
+      "CpuMilliseconds": 122.9426,
+      "AnalyzerMilliseconds": 13.796439999999999,
+      "AllocatedBytes": 12981836,
+      "Diagnostics": 500,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 52.4606,
+        "CompilerAndAnalyzerMilliseconds": 139.587,
+        "MedianPairedElapsedRatio": 2.6219281983083604
+      }
+    },
+    {
+      "Suite": "IOAnalyzer/500",
+      "Milliseconds": 24.99192,
+      "CpuMilliseconds": 25.0042,
+      "AnalyzerMilliseconds": 3.06476,
+      "AllocatedBytes": 8629545,
+      "Diagnostics": 500,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 24.1581,
+        "CompilerAndAnalyzerMilliseconds": 53.9473,
+        "MedianPairedElapsedRatio": 2.185995153695915
+      }
+    },
+    {
+      "Suite": "MediatorAnalyzer/500",
+      "Milliseconds": 270.7154,
+      "CpuMilliseconds": 286.25079999999997,
+      "AnalyzerMilliseconds": 8.83198,
+      "AllocatedBytes": 54167377,
+      "Diagnostics": 1000,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 579.2303,
+        "CompilerAndAnalyzerMilliseconds": 911.3218,
+        "MedianPairedElapsedRatio": 1.4580941908677223
+      }
+    },
+    {
+      "Suite": "ResultsAnalyzer/500",
+      "Milliseconds": 28.59998,
+      "CpuMilliseconds": 51.964200000000005,
+      "AnalyzerMilliseconds": 1.7432200000000002,
+      "AllocatedBytes": 11024326,
+      "Diagnostics": 500,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 21.2344,
+        "CompilerAndAnalyzerMilliseconds": 47.2246,
+        "MedianPairedElapsedRatio": 2.246308839757982
+      }
+    },
+    {
+      "Suite": "StyleAnalyzer/500",
+      "Milliseconds": 18.382179999999998,
+      "CpuMilliseconds": 33.7842,
+      "AnalyzerMilliseconds": 3.45814,
+      "AllocatedBytes": 7781944,
+      "Diagnostics": 1001,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 13.4719,
+        "CompilerAndAnalyzerMilliseconds": 35.9338,
+        "MedianPairedElapsedRatio": 2.667314929594192
+      }
+    },
+    {
+      "Suite": "TestingAnalyzer/500",
+      "Milliseconds": 30.56096,
+      "CpuMilliseconds": 30.7438,
+      "AnalyzerMilliseconds": 6.10076,
+      "AllocatedBytes": 11942529,
+      "Diagnostics": 1000,
+      "CompilerComparison": {
+        "CompilerOnlyMilliseconds": 20.2609,
+        "CompilerAndAnalyzerMilliseconds": 50.0903,
+        "MedianPairedElapsedRatio": 2.5491290126837067
+      }
     }
   ]
 }

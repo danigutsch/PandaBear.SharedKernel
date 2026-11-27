@@ -808,6 +808,22 @@ Pass `--` before the child executable so the wrapper forwards the remaining argu
 The child runs in the current directory and has a default timeout of 1,800 seconds. Use
 `--timeout-seconds` to change the timeout. The wrapper captures bounded output and returns the child's exit code.
 
+For an aggregate memory budget with rootless systemd Podman on Linux cgroup v2,
+create a caller-owned user slice with finite `memory.max` and `memory.swap.max`.
+Launch the wrapper in a scope below that slice and pass the slice name to
+`--cgroup-parent-slice`. The child must pass the same name to `--cgroup-parent`
+when creating each Podman container. The wrapper verifies the active slice and
+the effective limits and ancestry of live private payload and conmon processes
+it observes. A run that cannot establish placement fails. Keep one or more
+owned containers running long enough to be observed. The caller manages the
+slice and supplies its runtime arguments. The `run-with-budget` host and
+scratch checks can run alongside placement verification.
+[Podman cgroup parent][repo-podman-cgroup-parent] ·
+[systemd resource control][repo-systemd-resource-control]
+
+[repo-podman-cgroup-parent]: https://docs.podman.io/en/v5.7.0/markdown/podman-run.1.html#cgroup-parent-path
+[repo-systemd-resource-control]: https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html
+
 The default console mode captures up to 8,388,608 characters from each child stream. It stops the
 child if either stream exceeds the limit. Redirecting the wrapper's own output keeps this console limit.
 For verbose runs, supply an existing caller-owned absolute directory outside the private engine

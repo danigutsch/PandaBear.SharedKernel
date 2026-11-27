@@ -688,6 +688,19 @@ internal static class RepoConfigCommandLine
             Description = "Existing absolute directory for private transient engine state. The graph and volumes stay under TMPDIR.",
             HelpName = "directory",
         };
+        Option<string?> cgroupParentSlice = new("--cgroup-parent-slice")
+        {
+            Description = "Active user systemd slice that contains the launcher and the private Podman workloads it observes.",
+            HelpName = "slice",
+        };
+        cgroupParentSlice.Validators.Add(result =>
+        {
+            var slice = result.GetValueOrDefault<string?>();
+            if (slice is not null && (!slice.EndsWith(".slice", StringComparison.Ordinal) || slice.AsSpan().IndexOfAny('/', '\\') >= 0))
+            {
+                result.AddError("--cgroup-parent-slice must name a user systemd slice.");
+            }
+        });
         Option<string?> logDirectory = new("--log-directory")
         {
             Description = "Existing absolute directory for new stdout.log and stderr.log files.",
@@ -711,7 +724,7 @@ internal static class RepoConfigCommandLine
         };
         Command command = new(IsolatedPodmanCommandName, "Run a test command with its own local rootless Podman engine.")
         {
-            imageStore, timeout, networkHelper, runtimeParent, logDirectory, maxLogBytes, child
+            imageStore, timeout, networkHelper, runtimeParent, cgroupParentSlice, logDirectory, maxLogBytes, child
         };
         command.Validators.Add(result =>
         {
@@ -746,6 +759,7 @@ internal static class RepoConfigCommandLine
                 parseResult.GetRequiredValue(imageStore),
                 parseResult.GetRequiredValue(networkHelper),
                 parseResult.GetValue(runtimeParent),
+                parseResult.GetValue(cgroupParentSlice),
                 startInfo,
                 runner,
                 output,

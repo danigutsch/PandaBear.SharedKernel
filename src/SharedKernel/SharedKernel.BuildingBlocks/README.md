@@ -29,6 +29,13 @@ Source files are grouped by topic. The folders are organization only: every publ
 The test project mirrors these folders; shared test helpers live next to the types they exercise, and
 `RestoreTests` (which spans several types) stays at the root.
 
+## Redacted record display
+
+Derive a record from `RedactedDisplayRecord` to display the concrete type
+name followed by ` [redacted]`. The sealed `ToString()` can display the
+record even when its fields contain sensitive or default values. For
+structured logging, select only the scalar metadata your application allows.
+
 ## Slugs and content cultures
 
 `Slug.Create` turns free text into a canonical URL slug (lowercase ASCII letters and digits joined by single hyphens,
