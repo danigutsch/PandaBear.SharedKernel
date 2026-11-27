@@ -5,6 +5,7 @@ namespace SharedKernel.RepoConfig.Tests;
 
 /// <summary>Tests the read-only GitHub environment protection command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
+[Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class GitHubEnvironmentProtectionCommandTests
 {
     [Theory]
@@ -50,6 +51,7 @@ public sealed class GitHubEnvironmentProtectionCommandTests
     [InlineData("""{"name":"roadmap-maintenance","can_admins_bypass":"false","protection_rules":[]}""", "administrator bypass")]
     [InlineData("""{"name":"roadmap-maintenance","can_admins_bypass":false}""", "protection rules")]
     [InlineData("""{"name":"roadmap-maintenance","can_admins_bypass":false,"protection_rules":{}}""", "protection rules")]
+    [InlineData("""{"name":"roadmap-maintenance","can_admins_bypass":false,"protection_rules":[{}]}""", "protection rules")]
     [InlineData("""{"name":"roadmap-maintenance","can_admins_bypass":false,"protection_rules":[]}""", "required reviewer")]
     [InlineData("""{"name":"roadmap-maintenance","can_admins_bypass":false,"protection_rules":[{"type":"required_reviewers"}]}""", "required reviewer")]
     [InlineData("""{"name":"roadmap-maintenance","can_admins_bypass":false,"protection_rules":[{"type":"required_reviewers","reviewers":[]}]}""", "required reviewer")]
@@ -147,5 +149,53 @@ public sealed class GitHubEnvironmentProtectionCommandTests
         exitCode.ShouldBe(1);
         output.ShouldNotContain("GitHub environment protection verified", StringComparison.Ordinal);
         handler.Requests.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Verify_reports_invalid_environment_when_the_tool_owns_its_anonymous_client()
+    {
+        // Arrange
+        using var ghToken = new EnvironmentVariableScope("GH_TOKEN", null);
+        using var githubToken = new EnvironmentVariableScope("GITHUB_TOKEN", null);
+
+        // Act
+        var (exitCode, output, error) = await Run(handler: null, environment: "..");
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ShouldBe(string.Empty);
+        error.ShouldContain("environment name is invalid", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Owned_read_client_uses_the_configured_GitHub_token()
+    {
+        // Arrange
+        using var ghToken = new EnvironmentVariableScope("GH_TOKEN", "fixture-token");
+        using var githubToken = new EnvironmentVariableScope("GITHUB_TOKEN", null);
+
+        // Act
+        using var client = GitHubConnections.CreateReadClient();
+        var authorization = client.DefaultRequestHeaders.Authorization;
+
+        // Assert
+        authorization.ShouldNotBeNull().Scheme.ShouldBe("Bearer");
+        authorization.Parameter.ShouldBe("fixture-token");
+    }
+
+    [Fact]
+    public async Task Verify_propagates_the_caller_token_when_a_pending_request_is_canceled()
+    {
+        // Arrange
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        using var handler = new BeforeResponseHttpMessageHandler(() => HttpResponseFactory.Json("{}"), cancellation.Cancel);
+        using var client = new HttpClient(handler, disposeHandler: false);
+
+        // Act
+        var verify = () => GitHubEnvironmentProtectionVerifier.Verify(client, "owner/repository", "roadmap-maintenance", cancellation.Token);
+
+        // Assert
+        var error = await verify.ShouldThrow<OperationCanceledException>();
+        error.CancellationToken.ShouldBe(cancellation.Token);
     }
 }

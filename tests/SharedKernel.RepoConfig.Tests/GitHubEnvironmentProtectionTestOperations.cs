@@ -5,11 +5,11 @@ internal static class GitHubEnvironmentProtectionTestOperations
 {
     /// <summary>Runs the command and captures both output streams.</summary>
     public static async Task<(int ExitCode, string Output, string Error)> Run(
-        HttpMessageHandler handler,
+        HttpMessageHandler? handler,
         string repository = "owner/repository",
         string environment = "roadmap-maintenance")
     {
-        using var client = new HttpClient(handler, disposeHandler: false);
+        using var client = handler is null ? null : new HttpClient(handler, disposeHandler: false);
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
         var exitCode = await RepoConfigToolRunner.Run(
