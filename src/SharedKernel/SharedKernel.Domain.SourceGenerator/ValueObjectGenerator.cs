@@ -150,52 +150,54 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
                 static (attributeContext, cancellationToken) => BuildModel(attributeContext, cancellationToken))
             .Where(static model => model.TypeName is not null || model.Diagnostic is not null)
             .Collect()
+            .SelectMany(static (models, cancellationToken) => SelectCanonicalOutputs(models, cancellationToken))
+            .WithComparer(ValueObjectOutputComparer.Instance)
             .WithTrackingName("ValueObjectGenerationModels");
 
-        context.RegisterSourceOutput(
-            models,
-            static (productionContext, models) => EmitValueObjectSources(productionContext, models));
+        context.RegisterSourceOutput(models, static (productionContext, model) => EmitValueObjectSources(productionContext, model));
     }
 
-    private static void EmitValueObjectSources(SourceProductionContext productionContext, IEnumerable<ValueObjectModel> models)
+    private static IEnumerable<ValueObjectModel> SelectCanonicalOutputs(
+        IEnumerable<ValueObjectModel> models,
+        CancellationToken cancellationToken)
     {
         var generatedModels = new Dictionary<string, ValueObjectModel>(StringComparer.Ordinal);
 
         foreach (var model in models)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (model.Diagnostic is not null)
             {
-                productionContext.ReportDiagnostic(model.Diagnostic);
+                yield return model;
                 continue;
             }
 
             var hintName = model.CoreHintName!;
             if (generatedModels.TryGetValue(hintName, out var existingModel))
             {
-                ReportConflictingOptions(productionContext, existingModel, model);
+                if (!HasSameGenerationOptions(existingModel, model))
+                {
+                    yield return DiagnosticOnly(Diagnostic.Create(ConflictingValueObjectConfiguration, model.Location, model.TypeName));
+                }
+
                 continue;
             }
 
             generatedModels.Add(hintName, model);
-            productionContext.AddSource(hintName, SourceText.From(EmitValueObject(model), Encoding.UTF8));
-            AddOptionalSources(productionContext, model);
+            yield return model;
         }
     }
 
-    private static void ReportConflictingOptions(
-        SourceProductionContext productionContext,
-        ValueObjectModel existingModel,
-        ValueObjectModel model)
+    private static void EmitValueObjectSources(SourceProductionContext productionContext, ValueObjectModel model)
     {
-        if (HasSameGenerationOptions(existingModel, model))
+        if (model.Diagnostic is not null)
         {
+            productionContext.ReportDiagnostic(model.Diagnostic);
             return;
         }
 
-        productionContext.ReportDiagnostic(Diagnostic.Create(
-            ConflictingValueObjectConfiguration,
-            model.Location,
-            model.TypeName));
+        productionContext.AddSource(model.CoreHintName!, SourceText.From(EmitValueObject(model), Encoding.UTF8));
+        AddOptionalSources(productionContext, model);
     }
 
     private static void AddOptionalSources(SourceProductionContext productionContext, ValueObjectModel model)
@@ -890,7 +892,19 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             .Append("    static partial void ValidateValue(").Append(model.UnderlyingTypeName).AppendLine(" value, ref bool isValid);")
             .AppendLine()
             .Append("    private static bool IsValid(").Append(model.UnderlyingTypeName).AppendLine(ValueParameterSuffix)
-            .AppendLine(OpenBlock4)
+            .AppendLine(OpenBlock4);
+
+        if (model.UnderlyingKind == UnderlyingKind.String)
+        {
+            builder
+                .AppendLine("        if (value is null)")
+                .AppendLine(OpenBlock8)
+                .AppendLine(ReturnFalse12)
+                .AppendLine(CloseBlock8)
+                .AppendLine();
+        }
+
+        builder
             .Append("        var isValid = ").Append(GetValidationExpression(model)).AppendLine(";")
             .AppendLine("        if (isValid)")
             .AppendLine(OpenBlock8)
@@ -919,7 +933,6 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             ValueObjectTemplate.StronglyTypedId when model.UnderlyingKind == UnderlyingKind.Guid => "value != global::System.Guid.Empty",
             ValueObjectTemplate.StronglyTypedId => "value > 0",
             ValueObjectTemplate.IsoCode => "IsIsoCode(value)",
-            _ when model.UnderlyingKind == UnderlyingKind.String => "value is not null",
             _ => "true",
         };
     }
@@ -1315,6 +1328,37 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         public Diagnostic? Diagnostic { get; set; }
 
         public Location? Location { get; set; }
+    }
+
+    private sealed class ValueObjectOutputComparer : IEqualityComparer<ValueObjectModel>
+    {
+        public static ValueObjectOutputComparer Instance { get; } = new();
+
+        public bool Equals(ValueObjectModel? left, ValueObjectModel? right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (left is null || right is null || left.Diagnostic is not null || right.Diagnostic is not null)
+            {
+                return false;
+            }
+
+            return SourceKey(left).Equals(SourceKey(right));
+        }
+
+        public int GetHashCode(ValueObjectModel model) => model.Diagnostic?.GetHashCode() ?? SourceKey(model).GetHashCode();
+
+        // Resolve conflicts before dropping declaration locations from the comparison.
+        private static (
+            string? NamespaceName, string? TypeName, string? Accessibility, string? UnderlyingTypeName,
+            UnderlyingKind UnderlyingKind, bool Parsing, bool Json, bool EfCore, ValueObjectTemplate Template,
+            string? CoreHintName, string? JsonHintName, string? EfCoreHintName, string? EfCoreExtensionsTypeName) SourceKey(ValueObjectModel model) =>
+            (model.NamespaceName, model.TypeName, model.Accessibility, model.UnderlyingTypeName,
+                model.UnderlyingKind, model.Parsing, model.Json, model.EfCore, model.Template,
+                model.CoreHintName, model.JsonHintName, model.EfCoreHintName, model.EfCoreExtensionsTypeName);
     }
 
     private readonly struct ModelSupportDefaults(

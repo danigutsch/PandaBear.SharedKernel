@@ -1581,7 +1581,8 @@ public sealed class StyleCodeFixProviderTests
                 Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod,
                 Analyzers.StyleDiagnosticIds.DirectCurrentTime,
                 Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext,
-                Analyzers.StyleDiagnosticIds.FileNameMismatch
+                Analyzers.StyleDiagnosticIds.FileNameMismatch,
+                Analyzers.StyleDiagnosticIds.GuardedResultProjection
             ]);
     }
 
@@ -1775,7 +1776,8 @@ public sealed class StyleCodeFixProviderTests
 
         // Assert
         supportedDiagnosticIds.ShouldBe([
-                Analyzers.StyleDiagnosticIds.AsyncSuffix
+                Analyzers.StyleDiagnosticIds.AsyncSuffix,
+                Analyzers.StyleDiagnosticIds.GuardedResultProjection
             ]);
     }
 

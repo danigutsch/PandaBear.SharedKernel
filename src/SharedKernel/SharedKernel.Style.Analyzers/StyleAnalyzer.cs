@@ -139,6 +139,7 @@ public sealed partial class StyleAnalyzer : DiagnosticAnalyzer
             FileNameRule,
             MemberDocumentationRule,
             ExceptionDocumentationRule,
+            GuardedResultProjectionRule,
             GovernedLiteralAnalysis.LiteralRule,
             GovernedLiteralAnalysis.CatalogRule);
 
@@ -224,6 +225,7 @@ public sealed partial class StyleAnalyzer : DiagnosticAnalyzer
         if (resultType is not null && genericResultType is not null)
         {
             context.RegisterOperationBlockAction(operationContext => AnalyzeOptionalResultMethod(operationContext, resultType, genericResultType));
+            context.RegisterSyntaxNodeAction(AnalyzeGuardedResultProjection, SyntaxKind.IfStatement);
         }
 
         if (cancellationTokenType is null)

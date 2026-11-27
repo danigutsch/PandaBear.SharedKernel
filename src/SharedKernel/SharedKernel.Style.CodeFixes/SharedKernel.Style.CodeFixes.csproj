@@ -24,6 +24,7 @@
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Style.Analyzers\SharedKernel.Style.Analyzers.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" PackCompilerOutput="true" />
         <Compile Include="..\SharedKernel.Style.Analyzers\StyleDiagnosticIds.cs" Link="StyleDiagnosticIds.cs" />
+        <Compile Include="..\SharedKernel.Style.Analyzers\ResultProjectionMatch.cs" Link="ResultProjectionMatch.cs" />
     </ItemGroup>
 
     <ItemGroup>

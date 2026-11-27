@@ -94,6 +94,14 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor AuthoredEqualityCollision = new(
+        "SKMDL022",
+        "Identity generation conflicts with a declared equality member",
+        "Type '{0}' already declares '{1}'. Set Identity = false to keep the declared equality implementation.",
+        DiagnosticCategory,
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -121,33 +129,36 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
 
         var models = attributedModels
             .Combine(defaultModels)
-            .Select(static (source, _) => source.Left.AddRange(source.Right))
+            .SelectMany(static (source, cancellationToken) => SelectUniqueOutputs(source.Left.AddRange(source.Right), cancellationToken))
             .WithTrackingName("ModelIdentityGenerationModels");
 
         context.RegisterSourceOutput(
             models,
-            static (productionContext, models) =>
+            static (productionContext, model) =>
             {
-                var generatedHintNames = new HashSet<string>(StringComparer.Ordinal);
-
-                foreach (var model in models)
+                if (model.Diagnostic is not null)
                 {
-                    if (model.Diagnostic is not null)
-                    {
-                        productionContext.ReportDiagnostic(model.Diagnostic);
-                        continue;
-                    }
-
-                    if (!generatedHintNames.Add(model.HintName!))
-                    {
-                        continue;
-                    }
-
-                    productionContext.AddSource(
-                        model.HintName!,
-                        SourceText.From(EmitModelSupport(model), Encoding.UTF8));
+                    productionContext.ReportDiagnostic(model.Diagnostic);
+                    return;
                 }
+
+                productionContext.AddSource(model.HintName!, SourceText.From(EmitModelSupport(model), Encoding.UTF8));
             });
+    }
+
+    private static IEnumerable<(string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic)> SelectUniqueOutputs(
+        ImmutableArray<(string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic)> models,
+        CancellationToken cancellationToken)
+    {
+        var generatedHintNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var model in models)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (model.Diagnostic is not null || generatedHintNames.Add(model.HintName!))
+            {
+                yield return model;
+            }
+        }
     }
 
     private static ImmutableArray<(string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic)> BuildDefaultModels(
@@ -255,20 +266,43 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
         var idType = identifiedInterface.TypeArguments[0];
         var namespaceName = type.ContainingNamespace.IsGlobalNamespace ? null : type.ContainingNamespace.ToDisplayString();
 
-        return !SymbolEqualityComparer.Default.Equals(idProperty.Type, idType)
-            ? DiagnosticOnly(Diagnostic.Create(
+        if (!SymbolEqualityComparer.Default.Equals(idProperty.Type, idType))
+        {
+            return DiagnosticOnly(Diagnostic.Create(
                 MismatchedId,
                 location,
                 type.Name,
                 idProperty.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                idType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)))
-            : (
-                namespaceName,
+                idType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+        }
+
+        var collision = FindAuthoredEqualityCollision(type);
+        if (collision is not null)
+        {
+            return DiagnosticOnly(Diagnostic.Create(
+                AuthoredEqualityCollision,
+                collision.Locations.FirstOrDefault(static memberLocation => memberLocation.IsInSource) ?? location,
                 type.Name,
-                GetAccessibility(type.DeclaredAccessibility),
-                idType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                GetHintName(type),
-                null);
+                collision.Name));
+        }
+
+        return (
+            namespaceName,
+            type.Name,
+            GetAccessibility(type.DeclaredAccessibility),
+            idType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            GetHintName(type),
+            null);
+    }
+
+    private static IMethodSymbol? FindAuthoredEqualityCollision(INamedTypeSymbol type)
+    {
+        return type.GetMembers().OfType<IMethodSymbol>().FirstOrDefault(static method =>
+            !method.IsImplicitlyDeclared &&
+            method.Arity == 0 &&
+            (method.Name == nameof(Equals) && method.Parameters.Length == 1 &&
+                method.Parameters[0] is { RefKind: RefKind.None, Type.SpecialType: SpecialType.System_Object } ||
+             method.Name == nameof(GetHashCode) && method.Parameters.IsEmpty));
     }
 
     private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) DiagnosticOnly(Diagnostic diagnostic)

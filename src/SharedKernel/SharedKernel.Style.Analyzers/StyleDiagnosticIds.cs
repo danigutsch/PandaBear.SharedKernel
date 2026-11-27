@@ -80,4 +80,7 @@ public static class StyleDiagnosticIds
 
     /// <summary>Diagnostic emitted when a documented member throws an exception that its XML documentation does not list.</summary>
     public const string UndocumentedThrownException = "SKSTYLE018";
+
+    /// <summary>Diagnostic emitted for a result guard that can use a safe success projection.</summary>
+    public const string GuardedResultProjection = "SKSTYLE019";
 }
