@@ -33,7 +33,11 @@ internal static class ResourceBudgetGuard
     /// <param name="ObservationComplete">Whether the process walk and checks encountered no observation failures.</param>
     /// <param name="ObservedProcesses">Number of captured identities, including the direct child.</param>
     /// <param name="RemainingObservedProcesses">Number of observed identities that were still alive at the last check.</param>
-    internal sealed record Cleanup(bool ObservationComplete, int ObservedProcesses, int RemainingObservedProcesses);
+    internal sealed record Cleanup(bool ObservationComplete, int ObservedProcesses, int RemainingObservedProcesses)
+    {
+        /// <summary>Gets the separately observed outcome of the opted-in private Podman cleanup.</summary>
+        internal ResourceBudgetPodmanAbort.Outcome? PodmanTeardown { get; init; }
+    }
 
     /// <summary>Natural child result or observed cancellation cleanup.</summary>
     /// <param name="ExitCode">The child's natural exit status, when observed.</param>

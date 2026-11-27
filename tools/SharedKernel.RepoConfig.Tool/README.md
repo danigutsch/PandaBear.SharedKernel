@@ -891,6 +891,21 @@ the process tree check cannot account for work that detached or was reparented b
 separately scoped engine services and containers under their owning lifecycle. To include them in a cgroup
 budget, their owner must set the engine's cgroup parent accordingly and retain the host floor.
 
+Use `--cooperative-podman-cleanup` when the guarded command runs `run-isolated-podman` directly or through
+a trusted recipe. Both wrappers need to support the option's cleanup protocol. The guard creates an owner-only
+rendezvous in the writable scratch directory and passes it down with the command environment. Keep that
+environment in the intermediaries that launch the isolated wrapper. At a guard stop, active private engines
+have five seconds to acknowledge a cancellation request, then up to 140 seconds to complete their verified
+teardown. A later isolated step sees that the guard has stopped before opening a workspace. The guard applies
+its existing owned process-tree fallback if these windows elapse or no engine has enrolled.
+
+The JSON report keeps the original stop reason and exit status. The additional
+`cleanup.isolatedPodmanTeardown` field distinguishes `Completed`, `NoActiveEngine`, `Retained`,
+`Unacknowledged`, `TimedOut` and `Unavailable` from the process observation. Check the isolated wrapper's error output
+for retained workspace diagnostics. Keep the caller-owned scope and its hard memory and swap caps in place
+through cleanup. The caller retires the scope, slice and scratch only after verifying the owned processes and
+private runtime paths. An incomplete or unverified engine teardown retains the rendezvous for diagnosis.
+
 ## Limits
 
 - `verify-podman-dns` inspects only local rootless Podman on Linux and fails closed for remote services.

@@ -754,16 +754,19 @@ internal static class RepoConfigCommandLine
             using var stderr = PodmanFileLogRunner.OpenLog(Path.Combine(logPath, "stderr.log"));
             return await Run(new PodmanFileLogRunner(duration, stdout, stderr, parseResult.GetRequiredValue(maxLogBytes))).ConfigureAwait(false);
 
-            Task<int> Run(IProcessRunner runner) => IsolatedPodman.Run(
-                environment.PodmanHost ?? PodmanDnsHost.Current(),
-                parseResult.GetRequiredValue(imageStore),
-                parseResult.GetRequiredValue(networkHelper),
-                parseResult.GetValue(runtimeParent),
-                parseResult.GetValue(cgroupParentSlice),
-                startInfo,
-                runner,
-                output,
-                error,
+            Task<int> Run(IProcessRunner runner) => ResourceBudgetPodmanAbort.RunParticipant(
+                (token, reportTeardown) => IsolatedPodman.Run(
+                    environment.PodmanHost ?? PodmanDnsHost.Current(),
+                    parseResult.GetRequiredValue(imageStore),
+                    parseResult.GetRequiredValue(networkHelper),
+                    parseResult.GetValue(runtimeParent),
+                    parseResult.GetValue(cgroupParentSlice),
+                    startInfo,
+                    runner,
+                    output,
+                    error,
+                    reportTeardown,
+                    token),
                 ct);
         });
         return command;

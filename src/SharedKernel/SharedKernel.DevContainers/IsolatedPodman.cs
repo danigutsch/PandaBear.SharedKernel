@@ -96,7 +96,7 @@ public static class IsolatedPodman
     /// <exception cref="IOException">The private configuration could not be created or read.</exception>
     /// <exception cref="UnauthorizedAccessException">The private configuration could not be created or read.</exception>
     /// <exception cref="OperationCanceledException">The caller canceled the test.</exception>
-    public static async Task<int> Run(
+    public static Task<int> Run(
         PodmanDnsHost host,
         string imageStore,
         string networkHelper,
@@ -106,6 +106,24 @@ public static class IsolatedPodman
         IProcessRunner runner,
         TextWriter output,
         TextWriter error,
+        CancellationToken cancellationToken) =>
+        Run(host, imageStore, networkHelper, runtimeParent, cgroupParentSlice, command, runner, output, error, null, cancellationToken);
+
+    /// <summary>Reports the verified engine teardown independently of the child's outcome or cancellation.</summary>
+    /// <exception cref="ArgumentNullException">A required host, command, runner, or writer is null.</exception>
+    /// <exception cref="ArgumentException">An engine path, network helper, slice name, or child execution setting is invalid.</exception>
+    /// <exception cref="InvalidOperationException">The private engine, selected budget, or live placement could not be verified.</exception>
+    internal static async Task<int> Run(
+        PodmanDnsHost host,
+        string imageStore,
+        string networkHelper,
+        string? runtimeParent,
+        string? cgroupParentSlice,
+        ProcessStartInfo command,
+        IProcessRunner runner,
+        TextWriter output,
+        TextWriter error,
+        Action<bool>? reportTeardown,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(host);
@@ -194,6 +212,7 @@ public static class IsolatedPodman
             {
                 cleaned = await TryCleanup(workspace, privateHost, output, error, childTimedOut).ConfigureAwait(false);
             }
+            reportTeardown?.Invoke(cleaned);
             if (!cleaned)
             {
                 var message = $"run-isolated-podman: retained private engine files at {ControlCharacters.Escape(workspace.Root)}.";
