@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Time.Testing;
 
 namespace SharedKernel.Repositories.GitHub.Tests;
@@ -36,6 +37,33 @@ public sealed class GitHubRoadmapReconcileClientTests
         var lastBatch = handler.Requests[2].Body.ShouldNotBeNull();
         lastBatch.ShouldContain("supplemental0:issueOrPullRequest(number:17)", StringComparison.Ordinal);
         lastBatch.ShouldNotContain("number:18", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Snapshot_rejects_an_omitted_parent_field()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        var issue = GitHubRoadmapSnapshotTestOperations.Issue(18, "Open work", "OPEN");
+        using var response = GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse([issue]);
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
+        var payload = JsonNode.Parse(content).ShouldNotBeNull();
+        var issueNode = payload["data"]?["repository"]?["issues"]?["nodes"]?[0];
+        var parentRemoved = issueNode.ShouldNotBeNull().AsObject().Remove("parent");
+        handler.EnqueueJson(HttpStatusCode.OK, payload.ToJsonString());
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateRepositoryCommitResponse());
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubRoadmapReconcileClient(httpClient);
+
+        // Act
+        Func<Task> readSnapshot = async () => _ = await client.ReadSnapshot("owner/repository", [], cancellationToken);
+        var exception = await readSnapshot.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        parentRemoved.ShouldBeTrue();
+        exception.Message.ShouldContain("parent", StringComparison.Ordinal);
+        handler.Requests.Count.ShouldBe(1);
     }
 
     [Theory]

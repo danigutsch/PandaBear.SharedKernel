@@ -452,6 +452,49 @@ its ID, so an update goes to the ID that the listing read for the label. Colors 
 API documents, and compared without the `#`. The limits, redirects, timeouts, and error reporting are those of GitHub.
 The other `github` commands work only with GitHub and have no `--forgejo` option.
 
+## Forge-backed roadmap queries
+
+Use `--repository owner/name` to read issue state from GitHub or add `--forgejo` to choose a Forgejo instance.
+GitHub reads use `GH_TOKEN` or `GITHUB_TOKEN` with issue read access. Forgejo reads use `FORGEJO_TOKEN` when set.
+
+```sh
+sharedkernel-repo verify --repository owner/name
+sharedkernel-repo get next-work --repository owner/name
+sharedkernel-repo get next-priority --repository owner/name --forgejo https://forge.example
+sharedkernel-repo get blockers-of 'owner/name#42' --repository owner/name
+```
+
+Create `roadmap/priorities.json` in the query root. Keys are stable issue references, including the repository
+for transferred work. The values hold a positive `order`, optional RICE `scoring`, and an optional `parent`
+reference used by forges without native parent links.
+
+```json
+{
+  "owner/name#42": {
+    "order": 1,
+    "scoring": { "reach": 30, "impact": 2, "confidence": 0.8, "effort": 4 },
+    "parent": "owner/name#10"
+  }
+}
+```
+
+A triaged open issue requires an order. Mark open issues awaiting triage with the `untriaged` label.
+Verification reports inaccessible references and incomplete forge reads. The supported forge queries are
+`next-work`, `next-priority`, `next-unblocked`, and `blockers-of`. They read the forge and use repository-owned
+priorities. Omit `--repository` for the file-backed workflow and its `--type` query filter.
+
+Before switching a repository, preview the migration against its current forge data.
+
+```sh
+sharedkernel-repo migrate-roadmap --repository owner/name
+```
+
+The command reads the existing order and RICE inputs, writes candidate JSON to standard output, and
+reports differences to standard error. Redirect standard output to a candidate file to save it outside the
+active roadmap. The preview uses the same read-only forge connection as `verify`.
+It exits 1 on missing data or when parent links, blocker links, or ranked queries differ. Review the
+diagnostics and candidate before placing the candidate at `roadmap/priorities.json`.
+
 ## Repository baseline
 
 `baseline verify` and `baseline apply` read the `baseline` section and keep a set of repository files at the

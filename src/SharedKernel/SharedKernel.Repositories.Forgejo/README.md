@@ -48,3 +48,13 @@ category.
 Package ID: `PandaBear.SharedKernel.Repositories.Forgejo`. C# namespace: `SharedKernel.Repositories.Forgejo`. Assembly/project identity: `SharedKernel.Repositories.Forgejo`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Read-only issue queries
+
+`ForgejoIssueReader` implements the `IForgeIssueReader` port using the Forgejo
+issue and dependency REST endpoints. It reads open and closed state, labels, and
+blockers. The caller supplies the instance and, for private repositories, issue
+read credentials. Dependency support must be enabled in the repository, and the
+credential needs access to any linked blocker repositories. Missing, hidden, and
+incomplete dependency data produces a diagnostic exception with the queried issue.
+[Forgejo API usage](https://forgejo.org/docs/latest/user/api/usage/)

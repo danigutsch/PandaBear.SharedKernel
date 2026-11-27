@@ -51,3 +51,13 @@ await RepositoryLabelSync.Run(rootPath, store, force: false, Console.Out, cancel
 Package ID: `PandaBear.SharedKernel.Repositories.GitHub`. C# namespace: `SharedKernel.Repositories.GitHub`. Assembly/project identity: `SharedKernel.Repositories.GitHub`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Read-only issue queries
+
+`GitHubForgeIssueReader` implements the `IForgeIssueReader` port for roadmap issue reads.
+Supply an authenticated GitHub HTTP client with issue read access. It lists open issues
+or fetches a specific open or closed issue using GraphQL queries. Each issue carries labels,
+an optional state reason, its parent and its blockers. Relationship references preserve
+the repository and issue number, including across repositories. An inaccessible issue or
+incomplete response produces a diagnostic exception with the queried repository or issue.
+[GitHub GraphQL issue reference](https://docs.github.com/en/graphql/reference/issues)

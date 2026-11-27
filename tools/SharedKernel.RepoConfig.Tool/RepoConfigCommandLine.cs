@@ -59,6 +59,7 @@ internal static class RepoConfigCommandLine
             CreateDiffCommand(environment, root),
             CreateSetCommand(environment, root),
             CreateGetCommand(environment, root),
+            CreateMigrateRoadmapCommand(environment, root),
             CreateGitHubCommand(environment, root),
             CreateAutomationCommand(environment, root),
             CreateVerifyTextEncodingCommand(environment, root),
@@ -96,9 +97,17 @@ internal static class RepoConfigCommandLine
 
     private static Command CreateVerifyCommand(RepoConfigToolEnvironment environment, RootOption root)
     {
-        Command command = new("verify", "Verify the roadmap structure, configuration, and items.") { root };
-        SetGuardedAction(command, (parseResult, output, error, _) =>
-            Task.FromResult(RepoConfigToolApplication.Verify(root.GetExistingDirectory(parseResult), output, error)));
+        var repository = RoadmapRepositoryOption();
+        var forgejo = RoadmapForgejoOption();
+        Command command = new("verify", "Verify local roadmap files or the forge-backed priorities and references.") { repository, forgejo, root };
+        command.Validators.Add(result => RequireRoadmapRepository(result, repository, forgejo));
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+        {
+            var rootPath = root.GetExistingDirectory(parseResult);
+            return parseResult.GetValue(repository) is { } name
+                ? ForgeRoadmapCommand.Run(rootPath, name, parseResult.GetValue(forgejo), environment, output, error, ct)
+                : Task.FromResult(RepoConfigToolApplication.Verify(rootPath, output, error));
+        });
         return command;
     }
 
@@ -198,16 +207,55 @@ internal static class RepoConfigCommandLine
             DefaultValueFactory = _ => DefaultLimit,
             CustomParser = ParseLimit,
         };
-        Command command = new("get", "List open roadmap items or roadmap metadata.") { query, value, type, limit, root };
+        var repository = RoadmapRepositoryOption();
+        var forgejo = RoadmapForgejoOption();
+        Command command = new("get", "List open roadmap items or roadmap metadata.") { query, value, type, limit, repository, forgejo, root };
         command.Validators.Add(result => ValidateQueryValue(result, query, value));
-        SetGuardedAction(command, (parseResult, output, _, _) => Task.FromResult(RepoConfigToolApplication.Get(
-            root.GetExistingDirectory(parseResult),
-            parseResult.GetRequiredValue(query),
-            parseResult.GetValue(value),
-            parseResult.GetValue(type),
-            parseResult.GetValue(limit),
-            output)));
+        command.Validators.Add(result => RequireRoadmapRepository(result, repository, forgejo));
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+        {
+            var rootPath = root.GetExistingDirectory(parseResult);
+            var queryName = parseResult.GetRequiredValue(query);
+            var queryValue = parseResult.GetValue(value);
+            var queryType = parseResult.GetValue(type);
+            var queryLimit = parseResult.GetValue(limit);
+            return parseResult.GetValue(repository) is { } name
+                ? ForgeRoadmapCommand.Run(rootPath, name, parseResult.GetValue(forgejo), environment,
+                    output, error, ct, queryName, queryValue, queryType, queryLimit)
+                : Task.FromResult(RepoConfigToolApplication.Get(rootPath, queryName, queryValue, queryType, queryLimit, output));
+        });
         return command;
+    }
+
+    private static Option<string> RoadmapRepositoryOption() => new("--repository")
+    {
+        Description = "Read forge-backed roadmap data for an owner/name repository. Defaults to the local file-backed roadmap.",
+    };
+
+    private static Command CreateMigrateRoadmapCommand(RepoConfigToolEnvironment environment, RootOption root)
+    {
+        var repository = RoadmapRepositoryOption();
+        repository.Required = true;
+        var forgejo = RoadmapForgejoOption();
+        Command command = new("migrate-roadmap", "Preview candidate priorities and differences from the file-backed roadmap.")
+        {
+            repository, forgejo, root,
+        };
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+            ForgeRoadmapCommand.PreviewMigration(root.GetExistingDirectory(parseResult),
+                parseResult.GetRequiredValue(repository), parseResult.GetValue(forgejo), environment, output, error, ct));
+        return command;
+    }
+
+    private static ForgejoOption RoadmapForgejoOption() =>
+        new("Read the roadmap from this Forgejo instance instead of GitHub. Uses FORGEJO_TOKEN when set.");
+
+    private static void RequireRoadmapRepository(CommandResult result, Option<string> repository, ForgejoOption forgejo)
+    {
+        if (result.GetResult(forgejo) is not null && result.GetResult(repository) is null)
+        {
+            result.AddError("--forgejo requires --repository.");
+        }
     }
 
     private static Command CreateGitHubCommand(RepoConfigToolEnvironment environment, RootOption root)

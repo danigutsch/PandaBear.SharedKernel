@@ -6,3 +6,9 @@ SharedKernel.Repositories.Forgejo.ForgejoLabelStore.ForgejoLabelStore(System.Net
 SharedKernel.Repositories.Forgejo.ForgejoLabelStore.List(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RepositoryLabel!>!>!
 SharedKernel.Repositories.Forgejo.ForgejoLabelStore.Repository.get -> string!
 SharedKernel.Repositories.Forgejo.ForgejoLabelStore.Update(string! currentName, SharedKernel.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+SharedKernel.Repositories.Forgejo.ForgejoIssueReader
+SharedKernel.Repositories.Forgejo.ForgejoIssueReader.Capabilities.get -> SharedKernel.Repositories.ForgeIssueCapabilities
+SharedKernel.Repositories.Forgejo.ForgejoIssueReader.Dispose() -> void
+SharedKernel.Repositories.Forgejo.ForgejoIssueReader.ForgejoIssueReader(System.Net.Http.HttpMessageHandler! handler, System.Uri! server, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> void
+SharedKernel.Repositories.Forgejo.ForgejoIssueReader.ReadIssue(SharedKernel.Repositories.ForgeIssueReference! reference, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Repositories.ForgeIssue!>!
+SharedKernel.Repositories.Forgejo.ForgejoIssueReader.ReadOpenIssues(string! repository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.ForgeIssue!>!>!

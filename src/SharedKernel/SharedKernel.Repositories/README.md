@@ -38,6 +38,8 @@ foreach (var issue in links.Issues)
   `RoadmapInitializer` creates the missing files from `RoadmapTemplates`, and `RoadmapConfigSetter` sets a value.
   `RollbackFileWriteBatch` and `AtomicFileWrite` write several files atomically under a lock, and
   `RoadmapGitRepository` reads Git state through bounded, time-limited processes that never receive a forge token.
+- **Forge roadmap queries:** `ForgeRoadmapReader.Load` joins an `IForgeIssueReader` with local priorities and returns
+  verification diagnostics and stable read-only queries.
 - **Git:** every Git call of the package (the baseline's `git config`, the tracked-file listings of the verifiers,
   `RoadmapGitRepository`, and `TextEncodingVerifier`) starts Git from `GitStartInfo` of
   `PandaBear.SharedKernel.Processes` and runs it through `BoundedProcessRunner.Capture`: no prompt, no askpass program,

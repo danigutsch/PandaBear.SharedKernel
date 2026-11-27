@@ -668,7 +668,8 @@ internal static class RepoConfigToolApplication
         }
     }
 
-    private static void WriteIssues(TextWriter error, string heading, IReadOnlyCollection<VerificationIssue> issues)
+    /// <summary>Prints repository diagnostics and their source paths.</summary>
+    internal static void WriteIssues(TextWriter error, string heading, IReadOnlyCollection<VerificationIssue> issues)
     {
         error.WriteLine(heading);
         foreach (var issue in issues)
@@ -677,7 +678,8 @@ internal static class RepoConfigToolApplication
         }
     }
 
-    private static void WriteItems(TextWriter output, IEnumerable<RoadmapItemSnapshot> items)
+    /// <summary>Prints a roadmap query result.</summary>
+    internal static void WriteItems(TextWriter output, IEnumerable<RoadmapItemSnapshot> items)
     {
         var count = 0;
         foreach (var item in items)

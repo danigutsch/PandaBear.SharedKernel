@@ -127,6 +127,31 @@ internal sealed class GitHubRoadmapReconcileClient
         }
     }
 
+    /// <summary>Reads the open issues directly, including their paged roadmap metadata.</summary>
+    /// <exception cref="InvalidOperationException">GitHub returned inconsistent open issue metadata.</exception>
+    internal async Task<IReadOnlyList<GitHubRoadmapReconcileIssue>> ReadOpenRepositoryIssues(string repository, CancellationToken cancellationToken)
+    {
+        var (owner, name) = SplitRepository(repository);
+        var (_, issues) = await ReadOpenIssues(owner, name, cancellationToken).ConfigureAwait(false);
+        if (issues.Values.Any(static issue => !string.Equals(issue.State, "OPEN", StringComparison.Ordinal)))
+        {
+            throw new InvalidOperationException("GitHub reported a closed issue in the open issue list.");
+        }
+
+        return [.. issues.Values.OrderBy(static issue => issue.Number)];
+    }
+
+    /// <summary>Reads one issue directly, with its paged roadmap metadata.</summary>
+    /// <exception cref="InvalidOperationException">GitHub returned a different issue number.</exception>
+    internal async Task<GitHubRoadmapReconcileIssue> ReadRepositoryIssue(string repository, int number, CancellationToken cancellationToken)
+    {
+        var (owner, name) = SplitRepository(repository);
+        var issue = await ReadIssueByNumber(owner, name, number, cancellationToken).ConfigureAwait(false);
+        return issue.Number == number
+            ? issue
+            : throw new InvalidOperationException("GitHub returned a different issue number.");
+    }
+
     private async Task<GitHubRoadmapReconcileSnapshot> ReadSnapshotCore(
         string repository,
         int[] requiredIssueNumbers,
@@ -643,12 +668,12 @@ internal sealed class GitHubRoadmapReconcileClient
 
     private static GitHubRoadmapReconcileRelation? ReadNullableRelation(JsonElement root, string propertyName)
     {
-        if (!root.TryGetProperty(propertyName, out var relation) || relation.ValueKind == JsonValueKind.Null)
+        if (!root.TryGetProperty(propertyName, out var relation))
         {
-            return null;
+            throw new InvalidOperationException($"GitHub reconciliation response is missing {propertyName} metadata.");
         }
 
-        return ReadRelation(relation);
+        return relation.ValueKind == JsonValueKind.Null ? null : ReadRelation(relation);
     }
 
     private async Task<GitHubRoadmapReconcileRelation[]> ReadAllRelations(

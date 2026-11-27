@@ -224,3 +224,9 @@ static SharedKernel.Repositories.GitHub.RoadmapGitHubPublication.operator !=(Sha
 static SharedKernel.Repositories.GitHub.RoadmapGitHubPublication.operator ==(SharedKernel.Repositories.GitHub.RoadmapGitHubPublication? left, SharedKernel.Repositories.GitHub.RoadmapGitHubPublication? right) -> bool
 static SharedKernel.Repositories.GitHub.RoadmapGitHubPublicationPreview.operator !=(SharedKernel.Repositories.GitHub.RoadmapGitHubPublicationPreview? left, SharedKernel.Repositories.GitHub.RoadmapGitHubPublicationPreview? right) -> bool
 static SharedKernel.Repositories.GitHub.RoadmapGitHubPublicationPreview.operator ==(SharedKernel.Repositories.GitHub.RoadmapGitHubPublicationPreview? left, SharedKernel.Repositories.GitHub.RoadmapGitHubPublicationPreview? right) -> bool
+SharedKernel.Repositories.GitHub.GitHubForgeIssueReader
+SharedKernel.Repositories.GitHub.GitHubForgeIssueReader.Capabilities.get -> SharedKernel.Repositories.ForgeIssueCapabilities
+SharedKernel.Repositories.GitHub.GitHubForgeIssueReader.GitHubForgeIssueReader(System.Net.Http.HttpClient! httpClient) -> void
+SharedKernel.Repositories.GitHub.GitHubForgeIssueReader.ReadIssue(SharedKernel.Repositories.ForgeIssueReference! reference, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Repositories.ForgeIssue!>!
+SharedKernel.Repositories.GitHub.GitHubForgeIssueReader.ReadOpenIssues(string! repository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.ForgeIssue!>!>!
+SharedKernel.Repositories.GitHub.GitHubForgeIssueReader.GitHubForgeIssueReader(SharedKernel.Repositories.GitHub.GitHubConnection! connection) -> void

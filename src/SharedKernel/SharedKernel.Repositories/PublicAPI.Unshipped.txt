@@ -489,3 +489,74 @@ SharedKernel.Repositories.RepositoryPolicySources.CiPolicySource.get -> string?
 SharedKernel.Repositories.RepositoryPolicySources.CiPolicySource.init -> void
 SharedKernel.Repositories.RepositoryPolicySources.Forge.get -> SharedKernel.Repositories.ForgeKind?
 SharedKernel.Repositories.RepositoryPolicySources.Forge.init -> void
+SharedKernel.Repositories.ForgeIssue
+SharedKernel.Repositories.ForgeIssue.<Clone>$() -> SharedKernel.Repositories.ForgeIssue!
+SharedKernel.Repositories.ForgeIssue.BlockedBy.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.ForgeIssueLink!>!
+SharedKernel.Repositories.ForgeIssue.BlockedBy.init -> void
+SharedKernel.Repositories.ForgeIssue.Deconstruct(out SharedKernel.Repositories.ForgeIssueReference! Reference, out string! Title, out bool IsOpen, out string? StateReason, out System.Collections.Generic.IReadOnlyList<string!>! Labels, out SharedKernel.Repositories.ForgeIssueLink? Parent, out System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.ForgeIssueLink!>! BlockedBy) -> void
+SharedKernel.Repositories.ForgeIssue.Equals(SharedKernel.Repositories.ForgeIssue? other) -> bool
+SharedKernel.Repositories.ForgeIssue.ForgeIssue(SharedKernel.Repositories.ForgeIssueReference! Reference, string! Title, bool IsOpen, string? StateReason, System.Collections.Generic.IReadOnlyList<string!>! Labels, SharedKernel.Repositories.ForgeIssueLink? Parent, System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.ForgeIssueLink!>! BlockedBy) -> void
+SharedKernel.Repositories.ForgeIssue.IsOpen.get -> bool
+SharedKernel.Repositories.ForgeIssue.IsOpen.init -> void
+SharedKernel.Repositories.ForgeIssue.Labels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Repositories.ForgeIssue.Labels.init -> void
+SharedKernel.Repositories.ForgeIssue.Parent.get -> SharedKernel.Repositories.ForgeIssueLink?
+SharedKernel.Repositories.ForgeIssue.Parent.init -> void
+SharedKernel.Repositories.ForgeIssue.Reference.get -> SharedKernel.Repositories.ForgeIssueReference!
+SharedKernel.Repositories.ForgeIssue.Reference.init -> void
+SharedKernel.Repositories.ForgeIssue.StateReason.get -> string?
+SharedKernel.Repositories.ForgeIssue.StateReason.init -> void
+SharedKernel.Repositories.ForgeIssue.Title.get -> string!
+SharedKernel.Repositories.ForgeIssue.Title.init -> void
+SharedKernel.Repositories.ForgeIssueCapabilities
+SharedKernel.Repositories.ForgeIssueCapabilities.Blockers = 4 -> SharedKernel.Repositories.ForgeIssueCapabilities
+SharedKernel.Repositories.ForgeIssueCapabilities.None = 0 -> SharedKernel.Repositories.ForgeIssueCapabilities
+SharedKernel.Repositories.ForgeIssueCapabilities.Parent = 2 -> SharedKernel.Repositories.ForgeIssueCapabilities
+SharedKernel.Repositories.ForgeIssueCapabilities.StateReason = 1 -> SharedKernel.Repositories.ForgeIssueCapabilities
+SharedKernel.Repositories.ForgeIssueLink
+SharedKernel.Repositories.ForgeIssueLink.<Clone>$() -> SharedKernel.Repositories.ForgeIssueLink!
+SharedKernel.Repositories.ForgeIssueLink.Deconstruct(out SharedKernel.Repositories.ForgeIssueReference! Reference, out bool IsOpen) -> void
+SharedKernel.Repositories.ForgeIssueLink.Equals(SharedKernel.Repositories.ForgeIssueLink? other) -> bool
+SharedKernel.Repositories.ForgeIssueLink.ForgeIssueLink(SharedKernel.Repositories.ForgeIssueReference! Reference, bool IsOpen) -> void
+SharedKernel.Repositories.ForgeIssueLink.IsOpen.get -> bool
+SharedKernel.Repositories.ForgeIssueLink.IsOpen.init -> void
+SharedKernel.Repositories.ForgeIssueLink.Reference.get -> SharedKernel.Repositories.ForgeIssueReference!
+SharedKernel.Repositories.ForgeIssueLink.Reference.init -> void
+SharedKernel.Repositories.ForgeIssueReference
+SharedKernel.Repositories.ForgeIssueReference.<Clone>$() -> SharedKernel.Repositories.ForgeIssueReference!
+SharedKernel.Repositories.ForgeIssueReference.Deconstruct(out string! Repository, out long Number) -> void
+SharedKernel.Repositories.ForgeIssueReference.Equals(SharedKernel.Repositories.ForgeIssueReference? other) -> bool
+SharedKernel.Repositories.ForgeIssueReference.ForgeIssueReference(string! Repository, long Number) -> void
+SharedKernel.Repositories.ForgeIssueReference.Number.get -> long
+SharedKernel.Repositories.ForgeIssueReference.Number.init -> void
+SharedKernel.Repositories.ForgeIssueReference.Repository.get -> string!
+SharedKernel.Repositories.ForgeIssueReference.Repository.init -> void
+SharedKernel.Repositories.IForgeIssueReader
+SharedKernel.Repositories.IForgeIssueReader.Capabilities.get -> SharedKernel.Repositories.ForgeIssueCapabilities
+SharedKernel.Repositories.IForgeIssueReader.ReadIssue(SharedKernel.Repositories.ForgeIssueReference! reference, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Repositories.ForgeIssue!>!
+SharedKernel.Repositories.IForgeIssueReader.ReadOpenIssues(string! repository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.ForgeIssue!>!>!
+override SharedKernel.Repositories.ForgeIssue.Equals(object? obj) -> bool
+override SharedKernel.Repositories.ForgeIssue.GetHashCode() -> int
+override SharedKernel.Repositories.ForgeIssue.ToString() -> string!
+override SharedKernel.Repositories.ForgeIssueLink.Equals(object? obj) -> bool
+override SharedKernel.Repositories.ForgeIssueLink.GetHashCode() -> int
+override SharedKernel.Repositories.ForgeIssueLink.ToString() -> string!
+override SharedKernel.Repositories.ForgeIssueReference.Equals(object? obj) -> bool
+override SharedKernel.Repositories.ForgeIssueReference.GetHashCode() -> int
+override SharedKernel.Repositories.ForgeIssueReference.ToString() -> string!
+static SharedKernel.Repositories.ForgeIssue.operator !=(SharedKernel.Repositories.ForgeIssue? left, SharedKernel.Repositories.ForgeIssue? right) -> bool
+static SharedKernel.Repositories.ForgeIssue.operator ==(SharedKernel.Repositories.ForgeIssue? left, SharedKernel.Repositories.ForgeIssue? right) -> bool
+static SharedKernel.Repositories.ForgeIssueLink.operator !=(SharedKernel.Repositories.ForgeIssueLink? left, SharedKernel.Repositories.ForgeIssueLink? right) -> bool
+static SharedKernel.Repositories.ForgeIssueLink.operator ==(SharedKernel.Repositories.ForgeIssueLink? left, SharedKernel.Repositories.ForgeIssueLink? right) -> bool
+static SharedKernel.Repositories.ForgeIssueReference.operator !=(SharedKernel.Repositories.ForgeIssueReference? left, SharedKernel.Repositories.ForgeIssueReference? right) -> bool
+static SharedKernel.Repositories.ForgeIssueReference.operator ==(SharedKernel.Repositories.ForgeIssueReference? left, SharedKernel.Repositories.ForgeIssueReference? right) -> bool
+SharedKernel.Repositories.ForgeRoadmapReader
+SharedKernel.Repositories.ForgeRoadmapSnapshot
+SharedKernel.Repositories.ForgeRoadmapSnapshot.BlockersOf(string! id) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RoadmapItemSnapshot!>!
+SharedKernel.Repositories.ForgeRoadmapSnapshot.Issues.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>!
+SharedKernel.Repositories.ForgeRoadmapSnapshot.OpenItems(bool unblockedOnly = false) -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RoadmapItemSnapshot!>!
+static SharedKernel.Repositories.ForgeRoadmapReader.Load(string! rootPath, string! repository, SharedKernel.Repositories.IForgeIssueReader! reader, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Repositories.ForgeRoadmapSnapshot!>!
+static SharedKernel.Repositories.ForgeRoadmapReader.Load(string! rootPath, string! repository, SharedKernel.Repositories.IForgeIssueReader! reader, string? issueKey, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Repositories.ForgeRoadmapSnapshot!>!
+SharedKernel.Repositories.ForgeRoadmapSnapshot.NextWork() -> System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.RoadmapItemSnapshot!>!
+SharedKernel.Repositories.ForgeRoadmapMigration
+static SharedKernel.Repositories.ForgeRoadmapMigration.Preview(string! rootPath, string! repository, SharedKernel.Repositories.IForgeIssueReader! reader, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<(string! PrioritiesJson, System.Collections.Generic.IReadOnlyList<SharedKernel.Repositories.VerificationIssue!>! Issues)>!
