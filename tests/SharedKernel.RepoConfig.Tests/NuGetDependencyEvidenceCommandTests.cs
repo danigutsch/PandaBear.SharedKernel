@@ -52,7 +52,7 @@ public sealed class NuGetDependencyEvidenceCommandTests
         var result = await TestProcess.Run("dotnet", fixture.Root,
             [typeof(RepoConfigCommandLine).Assembly.Location, "dependency", "inspect-pin", "--root", fixture.Root, "--package", NuGetTrialRepository.Core],
             TestContext.Current.CancellationToken,
-            new Dictionary<string, string?> { ["DOTNET_CLI_CONTEXT_VERBOSE"] = "true" });
+            new Dictionary<string, string?>(NuGetTrialRepository.PackageCacheEnvironment) { ["DOTNET_CLI_CONTEXT_VERBOSE"] = "true" });
 
         // Assert
         result.ExitCode.ShouldBe(0, result.StandardError);
