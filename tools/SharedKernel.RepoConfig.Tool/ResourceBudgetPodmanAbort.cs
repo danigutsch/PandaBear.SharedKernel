@@ -64,7 +64,10 @@ internal sealed class ResourceBudgetPodmanAbort : IDisposable
     }
 
     /// <summary>Requests owned engine teardown before the existing forceful process-tree fallback.</summary>
-    internal async Task<Outcome> RequestStop(Process child)
+    internal Task<Outcome> RequestStop(Process child) => RequestStop(child, TimeProvider.System);
+
+    /// <summary>Requests teardown using the supplied clock for polling and both deadlines.</summary>
+    internal async Task<Outcome> RequestStop(Process child, TimeProvider timeProvider)
     {
         try
         {
@@ -76,13 +79,13 @@ internal sealed class ResourceBudgetPodmanAbort : IDisposable
                 return Outcome.NoActiveEngine;
             }
 
-            if (!await WaitFor(participants, Acknowledged, AcknowledgementPeriod).ConfigureAwait(false))
+            if (!await WaitFor(participants, Acknowledged, AcknowledgementPeriod, timeProvider).ConfigureAwait(false))
             {
                 _retainControl = true;
                 return Outcome.Unacknowledged;
             }
 
-            if (!await WaitFor(participants, HasFinished, GracePeriod).ConfigureAwait(false))
+            if (!await WaitFor(participants, HasFinished, GracePeriod, timeProvider).ConfigureAwait(false))
             {
                 _retainControl = true;
                 return Outcome.TimedOut;
@@ -90,7 +93,7 @@ internal sealed class ResourceBudgetPodmanAbort : IDisposable
 
             var outcome = ReadOutcome(participants);
             _retainControl = outcome is Outcome.Retained or Outcome.Unavailable;
-            await AllowRelayExit(child).ConfigureAwait(false);
+            await AllowRelayExit(child, timeProvider).ConfigureAwait(false);
             return outcome;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
@@ -263,14 +266,15 @@ internal sealed class ResourceBudgetPodmanAbort : IDisposable
         }
     }
 
-    private static async Task<bool> WaitFor(string[] participants, Func<string, bool> ready, TimeSpan timeout)
+    private static async Task<bool> WaitFor(
+        string[] participants, Func<string, bool> ready, TimeSpan timeout, TimeProvider timeProvider)
     {
-        using var deadline = new CancellationTokenSource(timeout);
+        using var deadline = new CancellationTokenSource(timeout, timeProvider);
         try
         {
             while (!participants.All(ready))
             {
-                await Task.Delay(Interval, deadline.Token).ConfigureAwait(false);
+                await Task.Delay(Interval, timeProvider, deadline.Token).ConfigureAwait(false);
             }
 
             return true;
@@ -281,9 +285,9 @@ internal sealed class ResourceBudgetPodmanAbort : IDisposable
         }
     }
 
-    private static async Task AllowRelayExit(Process child)
+    private static async Task AllowRelayExit(Process child, TimeProvider timeProvider)
     {
-        using var deadline = new CancellationTokenSource(RelayExitGrace);
+        using var deadline = new CancellationTokenSource(RelayExitGrace, timeProvider);
         try
         {
             await child.WaitForExitAsync(deadline.Token).ConfigureAwait(false);
