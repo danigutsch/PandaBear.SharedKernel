@@ -9,9 +9,9 @@ namespace SharedKernel.Packages;
 /// </summary>
 public sealed class DeclaredPackages : ValueObject
 {
-    private readonly (PackageManagerKind Manager, PackageRequirement[] Requirements)[] _groups;
+    private readonly (PackageManagerKind Manager, PackageSet Packages)[] _groups;
 
-    private DeclaredPackages((PackageManagerKind, PackageRequirement[])[] groups) => _groups = groups;
+    private DeclaredPackages((PackageManagerKind, PackageSet)[] groups) => _groups = groups;
 
     /// <summary>Gets the managers that have at least one declared package, in enum order.</summary>
     public IReadOnlyList<PackageManagerKind> Managers => [.. _groups.Select(static g => g.Manager)];
@@ -19,29 +19,26 @@ public sealed class DeclaredPackages : ValueObject
     /// <summary>Gets the requirements declared for <paramref name="manager"/>, ordered by name; empty when there are none.</summary>
     /// <param name="manager">The package manager.</param>
     public IReadOnlyList<PackageRequirement> For(PackageManagerKind manager) =>
-        _groups.FirstOrDefault(g => g.Manager == manager).Requirements ?? [];
+        SetFor(manager).Requirements;
+
+    /// <summary>Gets the immutable package set for <paramref name="manager"/>.</summary>
+    /// <param name="manager">The package manager.</param>
+    public PackageSet SetFor(PackageManagerKind manager) =>
+        _groups.FirstOrDefault(group => group.Manager == manager).Packages ?? PackageSet.Empty;
 
     /// <summary>Creates the declaration, or fails with one error for every package that has more than one owner or a tap-qualified Homebrew name.</summary>
     /// <param name="declared">The requirements per manager. A manager with none is allowed and ignored.</param>
     /// <param name="field">The field name used in validation errors.</param>
     /// <returns>The declaration or a validation error that names each offending package and the managers involved.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="declared"/> or one of its lists is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="declared"/>, one of its lists, or a requirement is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException">A key is not a defined <see cref="PackageManagerKind"/>.</exception>
     public static Result<DeclaredPackages> Create(IReadOnlyDictionary<PackageManagerKind, IReadOnlyList<PackageRequirement>> declared, string field = "packages")
     {
         ArgumentNullException.ThrowIfNull(declared);
 
         var errors = new ValidationErrors();
-        foreach (var requirement in declared.TryGetValue(PackageManagerKind.Brew, out var brew) ? brew : [])
-        {
-            if (requirement.Name.Value.Contains('/', StringComparison.Ordinal))
-            {
-                var message = $"{requirement.Name} is a tap-qualified Homebrew name; brew list prints only the short name, so declare it without the tap.";
-                errors.Add(Result.Invalid(detail: message, field: field, message: message));
-            }
-        }
-
         Dictionary<PackageName, List<PackageManagerKind>> owners = [];
+        List<(PackageManagerKind Manager, PackageRequirement[] Requirements)> groups = [];
         foreach (var (manager, requirements) in declared.OrderBy(static pair => pair.Key))
         {
             ArgumentNullException.ThrowIfNull(requirements);
@@ -50,8 +47,21 @@ public sealed class DeclaredPackages : ValueObject
                 throw new ArgumentOutOfRangeException(nameof(declared), "A package manager is not a defined value.");
             }
 
-            foreach (var requirement in requirements)
+            var snapshot = requirements.ToArray();
+            if (snapshot.Length > 0)
             {
+                groups.Add((manager, snapshot));
+            }
+
+            foreach (var requirement in snapshot)
+            {
+                ArgumentNullException.ThrowIfNull(requirement, nameof(declared));
+                if (manager == PackageManagerKind.Brew && requirement.Name.Value.Contains('/', StringComparison.Ordinal))
+                {
+                    var message = $"{requirement.Name} is a tap-qualified Homebrew name; brew list prints only the short name, so declare it without the tap.";
+                    errors.Add(Result.Invalid(detail: message, field: field, message: message));
+                }
+
                 if (!owners.TryGetValue(requirement.Name, out var list))
                 {
                     owners[requirement.Name] = list = [];
@@ -74,24 +84,16 @@ public sealed class DeclaredPackages : ValueObject
             return errors.ToResult<DeclaredPackages>();
         }
 
-        var groups = declared
-            .Where(static pair => pair.Value.Count > 0)
-            .OrderBy(static pair => pair.Key)
-            .Select(static pair => (pair.Key, pair.Value.OrderBy(static r => r.Name.Value, StringComparer.Ordinal).ToArray()))
-            .ToArray();
-        return Result.Ok(new DeclaredPackages(groups));
+        return Result.Ok(new DeclaredPackages([.. groups.Select(group => (group.Manager, PackageSet.Create(group.Requirements, field).Value))]));
     }
 
     /// <inheritdoc />
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        foreach (var (manager, requirements) in _groups)
+        foreach (var (manager, packages) in _groups)
         {
             yield return manager;
-            foreach (var requirement in requirements)
-            {
-                yield return requirement;
-            }
+            yield return packages;
         }
     }
 }

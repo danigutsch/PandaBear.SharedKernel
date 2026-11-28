@@ -26,6 +26,11 @@ internal static class PackageFactory
     public static Advisory AdvisoryFor(string package, string id, params string[] affected) =>
         Advisory.Create(id, Name(package), AdvisorySeverity.High, affected.Select(Version)).Value;
 
+    /// <summary>Creates a SemVer advisory with a known introduced and fixed version.</summary>
+    public static Advisory AdvisoryFixFor(string package, string id, string introduced, string fixedVersion) =>
+        Advisory.CreateWithRanges(id, Name(package), AdvisorySeverity.High, [],
+            [AdvisoryVersionRange.Create(Version(introduced), Version(fixedVersion)).Value]).Value;
+
     /// <summary>Builds a declaration input; an entry is a name or <c>name=version</c>.</summary>
     public static Dictionary<PackageManagerKind, IReadOnlyList<PackageRequirement>> Declare(params (PackageManagerKind Manager, string[] Entries)[] groups) =>
         groups.ToDictionary(static g => g.Manager, static g => (IReadOnlyList<PackageRequirement>)[.. g.Entries.Select(Entry)]);

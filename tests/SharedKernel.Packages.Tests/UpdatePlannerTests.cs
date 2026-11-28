@@ -12,6 +12,46 @@ public sealed class UpdatePlannerTests
 
     private static Result<IReadOnlyList<Advisory>> None => Result.Ok<IReadOnlyList<Advisory>>([]);
 
+    [Theory]
+    [InlineData(PackageManagerKind.Npm, "2.0.0", "1.9.0")]
+    [InlineData(PackageManagerKind.Cargo, "1.0.0+first", "1.0.0+second")]
+    [InlineData(PackageManagerKind.Npm, "1.0.0", "1.invalid")]
+    [InlineData(PackageManagerKind.Apt, "1.0.0", "2.0.0")]
+    public async Task Plan_holds_when_a_release_is_not_known_to_be_newer(
+        PackageManagerKind manager, string installed, string candidate)
+    {
+        // Arrange
+        var registry = new FakeRegistrySource([], new() { ["widget"] = Now.AddDays(-30) });
+        var planner = PlannerFake.Planner(new FakeAdvisorySource(None), registry);
+        var update = new PackageUpdate(Name("widget"), Version(installed), Version(candidate));
+
+        // Act
+        var result = await planner.Plan(manager, [update], Age(7), NetworkAccess.Allowed, Cancel);
+
+        // Assert
+        var decision = result.ShouldBeSuccess().ShouldHaveSingleItem();
+        decision.Kind.ShouldBe(UpdateDecisionKind.Hold);
+        decision.Reason.ShouldContain("newer", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task An_exact_installed_advisory_without_fix_evidence_does_not_waive_the_age()
+    {
+        // Arrange
+        var advisories = new FakeAdvisorySource(Result.Ok<IReadOnlyList<Advisory>>([AdvisoryFor("widget", "TEST-1", "1.0.0")]));
+        var registry = new FakeRegistrySource([], new() { ["widget"] = Now.AddDays(-1) });
+        var planner = PlannerFake.Planner(advisories, registry);
+        var update = new PackageUpdate(Name("widget"), Version("1.0.0"), Version("1.1.0"));
+
+        // Act
+        var result = await planner.Plan(PackageManagerKind.Npm, [update], Age(7), NetworkAccess.Allowed, Cancel);
+
+        // Assert
+        var decision = result.ShouldBeSuccess().ShouldHaveSingleItem();
+        decision.Kind.ShouldBe(UpdateDecisionKind.Hold);
+        decision.Reason.ShouldContain("too new", StringComparison.Ordinal);
+    }
+
     [Fact]
     public async Task Find_updates_lists_only_packages_whose_latest_version_differs_ordered_by_name()
     {
@@ -85,14 +125,14 @@ public sealed class UpdatePlannerTests
     public async Task Plan_decides_with_the_policy_using_advisories_for_both_versions_and_the_release_date()
     {
         // Arrange
-        var advisories = new FakeAdvisorySource(Result.Ok<IReadOnlyList<Advisory>>([AdvisoryFor("bat", "GHSA-1", "0.24.0")]));
+        var advisories = new FakeAdvisorySource(Result.Ok<IReadOnlyList<Advisory>>([AdvisoryFixFor("bat", "GHSA-1", "0.24.0", "0.26.1")]));
         var registry = new FakeRegistrySource([], new()
         {
             ["bat"] = Now.AddDays(-1),
             ["fd"] = Now.AddDays(-30)
         });
         var planner = PlannerFake.Planner(advisories, registry);
-        PackageUpdate[] updates = [new(Name("fd"), Version("9"), Version("10")), new(Name("bat"), Version("0.24.0"), Version("0.26.1"))];
+        PackageUpdate[] updates = [new(Name("fd"), Version("9.0.0"), Version("10.0.0")), new(Name("bat"), Version("0.24.0"), Version("0.26.1"))];
 
         // Act
         var result = await planner.Plan(PackageManagerKind.Cargo, updates, Age(7), NetworkAccess.Allowed, Cancel);
@@ -100,7 +140,7 @@ public sealed class UpdatePlannerTests
         // Assert
         var decisions = result.ShouldBeSuccess();
         decisions.Select(static d => $"{d.Candidate.Package}:{d.Kind}").ShouldBe(["bat:Urgent", "fd:Allow"]);
-        advisories.Asked!.Select(static p => p.ToString()).ShouldBe(["bat=0.24.0", "bat=0.26.1", "fd=9", "fd=10"]);
+        advisories.Asked!.Select(static p => p.ToString()).ShouldBe(["bat=0.24.0", "bat=0.26.1", "fd=9.0.0", "fd=10.0.0"]);
     }
 
     [Fact]

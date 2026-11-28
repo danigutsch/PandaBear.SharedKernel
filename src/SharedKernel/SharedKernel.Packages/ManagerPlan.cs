@@ -8,7 +8,7 @@ public sealed class ManagerPlan
     {
         Manager = manager;
         DeclaredCount = declaredCount;
-        Changes = changes;
+        Changes = Array.AsReadOnly(changes.ToArray());
         Error = error;
     }
 

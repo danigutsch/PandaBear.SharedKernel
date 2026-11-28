@@ -191,3 +191,50 @@ SharedKernel.Packages.UpdateSources.UpdateSources(SharedKernel.Packages.IAdvisor
 const SharedKernel.Packages.PackagesConfiguration.RelativePath = ".config/sharedkernel-packages.json" -> string!
 static SharedKernel.Packages.PackagesConfiguration.Read(string! root, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Packages.PackagesConfiguration!>!
 static SharedKernel.Packages.UpdateSources.CreateDefault() -> SharedKernel.Packages.UpdateSources!
+SharedKernel.Packages.IPackageChangeExecutor
+SharedKernel.Packages.IPackageChangeExecutor.Apply(SharedKernel.Packages.PackageManagerKind manager, SharedKernel.Packages.PackageChange! change, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SharedKernel.Results.Result>!
+SharedKernel.Packages.PackageApplyPorts
+SharedKernel.Packages.PackageApplyPorts.PackageApplyPorts(SharedKernel.Packages.IPackageChangeExecutor! unprivileged, System.Func<SharedKernel.Packages.PackageManagerKind, SharedKernel.Packages.PackageChange!, SharedKernel.Packages.PackageChangePrivilege>! classify, SharedKernel.Packages.IPackageChangeExecutor? elevated = null, System.Func<SharedKernel.Packages.PackageManagerKind, SharedKernel.Packages.PackageChange!, bool>? authorizeElevation = null) -> void
+SharedKernel.Packages.PackageChangeExecution
+SharedKernel.Packages.PackageChangeExecution.Change.get -> SharedKernel.Packages.PackageChange!
+SharedKernel.Packages.PackageChangeExecution.Detail.get -> string?
+SharedKernel.Packages.PackageChangeExecution.Manager.get -> SharedKernel.Packages.PackageManagerKind
+SharedKernel.Packages.PackageChangeExecution.Outcome.get -> SharedKernel.Packages.PackageChangeOutcome
+SharedKernel.Packages.PackageChangeExecution.Privilege.get -> SharedKernel.Packages.PackageChangePrivilege?
+SharedKernel.Packages.PackageChangeOutcome
+SharedKernel.Packages.PackageChangeOutcome.Applied = 0 -> SharedKernel.Packages.PackageChangeOutcome
+SharedKernel.Packages.PackageChangeOutcome.Failed = 1 -> SharedKernel.Packages.PackageChangeOutcome
+SharedKernel.Packages.PackageChangeOutcome.Unsupported = 2 -> SharedKernel.Packages.PackageChangeOutcome
+SharedKernel.Packages.PackageChangeOutcome.ElevationUnavailable = 3 -> SharedKernel.Packages.PackageChangeOutcome
+SharedKernel.Packages.PackageChangeOutcome.ElevationDenied = 4 -> SharedKernel.Packages.PackageChangeOutcome
+SharedKernel.Packages.PackageChangePrivilege
+SharedKernel.Packages.PackageChangePrivilege.Unsupported = 0 -> SharedKernel.Packages.PackageChangePrivilege
+SharedKernel.Packages.PackageChangePrivilege.Unprivileged = 1 -> SharedKernel.Packages.PackageChangePrivilege
+SharedKernel.Packages.PackageChangePrivilege.Elevated = 2 -> SharedKernel.Packages.PackageChangePrivilege
+SharedKernel.Packages.PackageConvergence
+SharedKernel.Packages.PackageConvergence.PackageConvergence(SharedKernel.Packages.PackageInventory! inventory) -> void
+SharedKernel.Packages.PackageConvergence.Run(SharedKernel.Packages.DeclaredPackages! desired, bool apply = false, SharedKernel.Packages.PackageApplyPorts? ports = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SharedKernel.Packages.PackageConvergenceReport!>!
+SharedKernel.Packages.PackageConvergenceReport
+SharedKernel.Packages.PackageConvergenceReport.ApplyRequested.get -> bool
+SharedKernel.Packages.PackageConvergenceReport.Changes.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageChangeExecution!>!
+SharedKernel.Packages.PackageConvergenceReport.IsComplete.get -> bool
+SharedKernel.Packages.PackageConvergenceReport.Plan.get -> SharedKernel.Packages.PackagePlanReport!
+SharedKernel.Packages.PackageConvergenceReport.Remaining.get -> SharedKernel.Packages.PackagePlanReport?
+SharedKernel.Packages.Advisory.AffectedRanges.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.AdvisoryVersionRange!>!
+SharedKernel.Packages.AdvisoryVersionRange
+SharedKernel.Packages.AdvisoryVersionRange.FixedVersion.get -> SharedKernel.Packages.PackageVersion?
+SharedKernel.Packages.AdvisoryVersionRange.IntroducedVersion.get -> SharedKernel.Packages.PackageVersion?
+SharedKernel.Packages.DeclaredPackages.SetFor(SharedKernel.Packages.PackageManagerKind manager) -> SharedKernel.Packages.PackageSet!
+SharedKernel.Packages.PackageRequirement.Pin.get -> SharedKernel.Packages.PackagePin?
+SharedKernel.Packages.PackagePin
+SharedKernel.Packages.PackagePin.Checksum.get -> string!
+SharedKernel.Packages.PackagePin.Version.get -> SharedKernel.Packages.PackageVersion!
+SharedKernel.Packages.PackageSet
+SharedKernel.Packages.PackageSet.Requirements.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Packages.PackageRequirement!>!
+static SharedKernel.Packages.Advisory.CreateWithRanges(string? id, SharedKernel.Packages.PackageName! package, SharedKernel.Packages.AdvisorySeverity severity, System.Collections.Generic.IEnumerable<SharedKernel.Packages.PackageVersion!>! affectedVersions, System.Collections.Generic.IEnumerable<SharedKernel.Packages.AdvisoryVersionRange!>! affectedRanges, string! field = "advisory") -> SharedKernel.Results.Result<SharedKernel.Packages.Advisory!>
+static SharedKernel.Packages.AdvisoryVersionRange.Create(SharedKernel.Packages.PackageVersion? introducedVersion, SharedKernel.Packages.PackageVersion? fixedVersion) -> SharedKernel.Results.Result<SharedKernel.Packages.AdvisoryVersionRange!>
+static SharedKernel.Packages.PackagePin.Create(SharedKernel.Packages.PackageVersion? version, string? checksum) -> SharedKernel.Results.Result<SharedKernel.Packages.PackagePin!>
+static SharedKernel.Packages.PackageRequirement.Pinned(SharedKernel.Packages.PackageName! name, SharedKernel.Packages.PackagePin! pin) -> SharedKernel.Packages.PackageRequirement!
+static SharedKernel.Packages.PackageSet.Create(System.Collections.Generic.IEnumerable<SharedKernel.Packages.PackageRequirement!>! requirements, string! field = "packages") -> SharedKernel.Results.Result<SharedKernel.Packages.PackageSet!>
+static SharedKernel.Packages.PackageSet.Empty.get -> SharedKernel.Packages.PackageSet!
+static SharedKernel.Packages.UpdatePolicy.Decide(SharedKernel.Packages.PackageManagerKind manager, SharedKernel.Packages.UpdateCandidate! candidate, System.Collections.Generic.IEnumerable<SharedKernel.Packages.Advisory!>! advisories, SharedKernel.Packages.MinimumReleaseAge! minimumAge, System.DateTimeOffset now, SharedKernel.Packages.PackagePin? pin = null) -> SharedKernel.Packages.UpdateDecision!

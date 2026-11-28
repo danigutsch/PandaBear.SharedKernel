@@ -35,6 +35,7 @@ public sealed class PackageInventory
     public async Task<PackagePlanReport> Plan(DeclaredPackages declared, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(declared);
+        cancellationToken.ThrowIfCancellationRequested();
         var (readers, missing) = Resolve(declared.Managers);
         if (missing.Count > 0)
         {
@@ -44,8 +45,10 @@ public sealed class PackageInventory
         List<ManagerPlan> managers = [];
         foreach (var (manager, reader) in readers)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var requirements = declared.For(manager);
             var installed = await reader.ListInstalled(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             managers.Add(installed.IsFailure
                 ? new ManagerPlan(manager, requirements.Count, [], installed.ErrorDetails?.Detail ?? "could not read the installed packages.")
                 : new ManagerPlan(manager, requirements.Count, PackagePlanner.Plan(requirements, installed.Value), null));

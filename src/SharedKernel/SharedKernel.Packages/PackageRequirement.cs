@@ -16,11 +16,26 @@ public sealed class PackageRequirement : ValueObject
         Version = version;
     }
 
+    private PackageRequirement(PackageName name, PackagePin pin) : this(name, pin.Version) => Pin = pin;
+
     /// <summary>Gets the package name.</summary>
     public PackageName Name { get; }
 
     /// <summary>Gets the exact version that is required, or <see langword="null"/> when any version will do.</summary>
     public PackageVersion? Version { get; }
+
+    /// <summary>Gets the expected artifact pin when a caller supplies a checksum.</summary>
+    public PackagePin? Pin { get; }
+
+    /// <summary>Creates a requirement for the exact version and checksum in <paramref name="pin"/>.</summary>
+    /// <param name="name">The package name.</param>
+    /// <param name="pin">The expected artifact pin.</param>
+    /// <exception cref="ArgumentNullException">The name or pin is <see langword="null"/>.</exception>
+    public static PackageRequirement Pinned(PackageName name, PackagePin pin)
+    {
+        ArgumentNullException.ThrowIfNull(pin);
+        return new PackageRequirement(name, pin);
+    }
 
     /// <inheritdoc />
     public override string ToString() => Version is null ? Name.Value : $"{Name}={Version}";
@@ -30,5 +45,6 @@ public sealed class PackageRequirement : ValueObject
     {
         yield return Name;
         yield return Version;
+        yield return Pin;
     }
 }

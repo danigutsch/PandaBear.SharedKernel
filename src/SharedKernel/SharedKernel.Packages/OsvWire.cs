@@ -41,7 +41,18 @@ internal static class OsvWire
 
     internal sealed record Affected(
         [property: JsonPropertyName("package")] PackageRef? Package,
-        [property: JsonPropertyName("versions")] List<string>? Versions);
+        [property: JsonPropertyName("versions")] List<string>? Versions,
+        [property: JsonPropertyName("ranges")] List<Range>? Ranges);
+
+    internal sealed record Range(
+        [property: JsonPropertyName("type")] string? Type,
+        [property: JsonPropertyName("events")] List<RangeEvent?>? Events);
+
+    internal sealed record RangeEvent(
+        [property: JsonPropertyName("introduced")] string? Introduced,
+        [property: JsonPropertyName("fixed")] string? Fixed,
+        [property: JsonPropertyName("last_affected")] string? LastAffected,
+        [property: JsonPropertyName("limit")] string? Limit);
 
     internal sealed record DatabaseSpecific([property: JsonPropertyName("severity")] JsonElement? Severity);
 }

@@ -97,6 +97,21 @@ public sealed class DeclaredPackagesTests
     }
 
     [Fact]
+    public void Requirements_returned_for_a_manager_preserve_the_validated_owners()
+    {
+        // Arrange
+        var declaration = Declared((PackageManagerKind.Apt, ["git", "wget"]), (PackageManagerKind.Brew, ["curl"]));
+        var requirements = (IList<PackageRequirement>)declaration.For(PackageManagerKind.Apt);
+
+        // Act
+        Action replace = () => requirements[0] = new PackageRequirement(Name("curl"));
+
+        // Assert
+        replace.ShouldThrow<NotSupportedException>();
+        declaration.For(PackageManagerKind.Apt).Select(static requirement => requirement.Name.Value).ShouldBe(["git", "wget"]);
+    }
+
+    [Fact]
     public void A_manager_that_is_not_a_defined_value_is_rejected_as_an_argument_error()
     {
         // Act

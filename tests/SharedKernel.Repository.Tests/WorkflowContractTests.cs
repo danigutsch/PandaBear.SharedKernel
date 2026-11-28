@@ -360,6 +360,95 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
+    public void Candidate_source_verification_runs_only_for_the_canonical_main_push()
+    {
+        // Arrange
+        const string command = "verify-candidate-source-link";
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var candidate = WorkflowJobs.Read(workflow, "candidate");
+        var steps = candidate.Split("\n      - ", StringSplitOptions.None);
+        var pack = steps.ShouldHaveSingleItem(
+            static step => step.Contains("-- create-candidate ", StringComparison.Ordinal));
+        var verification = steps.ShouldHaveSingleItem(
+            step => step.Contains(command, StringComparison.Ordinal));
+        var condition = verification.Split('\n')
+            .Select(static line => line.TrimStart())
+            .ShouldHaveSingleItem(static line => line.StartsWith("if: ", StringComparison.Ordinal));
+        var predicates = condition["if: ".Length..]
+            .Replace("${{", string.Empty, StringComparison.Ordinal)
+            .Replace("}}", string.Empty, StringComparison.Ordinal)
+            .Split("&&", StringSplitOptions.TrimEntries)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        // Assert
+        workflow.Split(command, StringSplitOptions.None).Length.ShouldBe(2);
+        pack.ShouldContain(
+            "RECORD_SYMBOLS: " + condition["if: ".Length..], StringComparison.Ordinal);
+        predicates.ShouldBe([
+            "github.event_name == 'push'",
+            "github.ref == 'refs/heads/main'",
+            "github.repository == 'danigutsch/PandaBear.SharedKernel'"]);
+    }
+
+    [Fact]
+    public void Candidate_source_verification_runs_after_pack_and_before_retaining_archives()
+    {
+        // Arrange
+        const string packCommand = "-- create-candidate --version \"$PACKAGE_VERSION\"";
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var candidate = WorkflowJobs.Read(workflow, "candidate");
+        var steps = candidate.Split("\n      - ", StringSplitOptions.None);
+        var verification = steps.ShouldHaveSingleItem(static step =>
+            step.Contains("verify-candidate-source-link", StringComparison.Ordinal));
+        var packPosition = candidate.IndexOf(packCommand, StringComparison.Ordinal);
+        var inventoryPosition = candidate.IndexOf("test -s \"$candidate_directory/symbols.sha256\"", StringComparison.Ordinal);
+        var verificationPosition = candidate.IndexOf("verify-candidate-source-link", StringComparison.Ordinal);
+        var retainPosition = candidate.IndexOf("name: Retain candidate artifacts", StringComparison.Ordinal);
+
+        // Assert
+        candidate.ShouldContain("if [[ \"$RECORD_SYMBOLS\" == true ]]; then\n", StringComparison.Ordinal);
+        candidate.ShouldContain(packCommand + " --record-symbols\n", StringComparison.Ordinal);
+        candidate.ShouldContain(packCommand + "\n", StringComparison.Ordinal);
+        verification.ShouldContain("--symbols \"$candidate_directory/symbols.sha256\"", StringComparison.Ordinal);
+        verification.ShouldNotContain("sha256sum", StringComparison.Ordinal);
+        packPosition.ShouldBeGreaterThan(-1);
+        inventoryPosition.ShouldBeGreaterThan(packPosition);
+        verificationPosition.ShouldBeGreaterThan(inventoryPosition);
+        retainPosition.ShouldBeGreaterThan(verificationPosition);
+    }
+
+    [Fact]
+    public void Candidate_artifact_retains_exact_version_source_evidence_and_requires_success()
+    {
+        // Arrange
+        const string artifactRoot = "artifacts/api-compat/packages/${{ steps.version.outputs.package_version }}/";
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var candidate = WorkflowJobs.Read(workflow, "candidate");
+        var steps = candidate.Split("\n      - ", StringSplitOptions.None);
+        var retention = steps.ShouldHaveSingleItem(
+            static step => step.Contains("name: candidate-packages\n", StringComparison.Ordinal));
+
+        // Assert
+        retention.ShouldContain($"            {artifactRoot}symbols.sha256\n", StringComparison.Ordinal);
+        retention.ShouldContain($"            {artifactRoot}source-link-report.json\n", StringComparison.Ordinal);
+        retention.ShouldContain("          if-no-files-found: error\n", StringComparison.Ordinal);
+        retention.ShouldNotContain("        if:", StringComparison.Ordinal);
+        candidate.ShouldNotContain("continue-on-error:", StringComparison.Ordinal);
+        candidate.ShouldNotContain("|| true", StringComparison.Ordinal);
+        candidate.ShouldNotContain("set +e", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Published_candidate_dispatch_consumes_exact_artifacts_on_both_platforms_without_repacking()
     {
         // Arrange

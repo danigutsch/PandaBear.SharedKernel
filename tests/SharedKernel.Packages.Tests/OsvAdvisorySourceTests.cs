@@ -31,7 +31,86 @@ public sealed class OsvAdvisorySourceTests
         advisory.Package.ShouldBe(Name("lodash"));
         advisory.Severity.ShouldBe(AdvisorySeverity.High);
         advisory.AffectedVersions.ShouldBe([Version("4.17.15")]);
+        advisory.AffectedRanges.ShouldHaveSingleItem().FixedVersion.ShouldBe(Version("9.9.9"));
         OsvFake.Queries(handler.Requests[0].Body!).ShouldBe([("lodash", "npm", "4.17.15", null)]);
+    }
+
+    [Fact]
+    public async Task The_explicit_fix_reaches_the_planner_through_the_cached_advisory_source()
+    {
+        // Arrange
+        using var handler = OsvFake.Handler((_, version) => version == "1.0.0" ? ["TEST-1"] : null, new()
+        {
+            ["TEST-1"] = OsvAnswers.RangeOnly("TEST-1", "widget", fixedVersion: "2.0.0")
+        });
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = OsvFake.Source(client);
+        var registry = new FakeRegistrySource([], new() { ["widget"] = PlannerFake.Now.AddHours(-1) });
+        var update = new PackageUpdate(Name("widget"), Version("1.0.0"), Version("2.0.0"));
+        var planner = PlannerFake.Planner(source, registry);
+
+        // Act
+        var first = await planner.Plan(PackageManagerKind.Npm, [update], Age(7), NetworkAccess.Allowed, Cancel);
+        var cached = await planner.Plan(PackageManagerKind.Npm, [update], Age(7), NetworkAccess.Allowed, Cancel);
+
+        // Assert
+        var decision = first.ShouldBeSuccess().ShouldHaveSingleItem();
+        decision.Kind.ShouldBe(UpdateDecisionKind.Urgent);
+        decision.Reason.ShouldContain("TEST-1 (fixed in 2.0.0)", StringComparison.Ordinal);
+        cached.ShouldBeSuccess().ShouldHaveSingleItem().ShouldBe(decision);
+        handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Theory]
+    [InlineData("ECOSYSTEM", """[{"introduced":"0"},{"fixed":"2.0.0"}]""")]
+    [InlineData("SEMVER", """[{"introduced":"0"},{"last_affected":"1.9.0"}]""")]
+    [InlineData("SEMVER", """[{"introduced":"0"},{"limit":"2.0.0"}]""")]
+    [InlineData("SEMVER", """[{"fixed":"2.0.0"}]""")]
+    [InlineData("SEMVER", """[{"introduced":"2.0.0"},{"fixed":"1.0.0"}]""")]
+    public async Task An_unsupported_record_range_leaves_exact_membership_without_fix_evidence(string type, string events)
+    {
+        // Arrange
+        var record = $$"""
+            {"id":"TEST-1","affected":[{"package":{"name":"widget","ecosystem":"npm"},"ranges":[{"type":"{{type}}","events":{{events}}}]}]}
+            """;
+        using var handler = OsvFake.Handler((_, _) => ["TEST-1"], new() { ["TEST-1"] = record });
+
+        using var client = new HttpClient(handler, disposeHandler: false);
+
+        // Act
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("widget", "1.0.0")], NetworkAccess.Allowed, Cancel);
+
+        // Assert
+        var advisory = result.ShouldBeSuccess().ShouldHaveSingleItem();
+        advisory.Affects(Version("1.0.0")).ShouldBeTrue();
+        advisory.AffectedRanges.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Multiple_affected_entries_are_scoped_to_the_package_and_ecosystem()
+    {
+        // Arrange
+        const string record = """
+            {"id":"TEST-1","affected":[
+              {"package":{"name":"widget","ecosystem":"npm"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.1.0"}]}]},
+              {"package":{"name":"widget","ecosystem":"crates.io"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}]},
+              {"package":{"name":"other","ecosystem":"npm"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}]},
+              {"package":{"name":"widget","ecosystem":"npm"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.5.0"}]}]}
+            ]}
+            """;
+        using var handler = OsvFake.Handler((_, _) => ["TEST-1"], new() { ["TEST-1"] = record });
+
+        using var client = new HttpClient(handler, disposeHandler: false);
+
+        // Act
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("widget", "1.0.0")], NetworkAccess.Allowed, Cancel);
+
+        // Assert
+        var advisory = result.ShouldBeSuccess().ShouldHaveSingleItem();
+        advisory.AffectedRanges.Count.ShouldBe(2);
+        advisory.Affects(Version("1.3.0")).ShouldBeFalse();
+        advisory.Affects(Version("1.5.0")).ShouldBeTrue();
+        advisory.AffectedRanges[1].FixedVersion.ShouldBeNull();
     }
 
     [Fact]
@@ -59,7 +138,7 @@ public sealed class OsvAdvisorySourceTests
         // Arrange
         using var handler = OsvFake.Handler((_, version) => version == "4.17.15" ? ["GHSA-1"] : null, new()
         {
-            ["GHSA-1"] = OsvAnswers.RangeOnly("GHSA-1", "lodash")
+            ["GHSA-1"] = OsvAnswers.RangeOnly("GHSA-1", "lodash", fixedVersion: "4.18.1")
         });
         using var client = new HttpClient(handler, disposeHandler: false);
 

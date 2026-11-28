@@ -29,6 +29,6 @@ public sealed class PackageUpdatesReport
     /// <summary>Gets how many packages were checked.</summary>
     public int CheckedCount => Managers.Sum(static m => m.CheckedCount);
 
-    /// <summary>Gets how many checked packages have a newer stable version.</summary>
+    /// <summary>Gets the number of registry candidates that received an update decision.</summary>
     public int UpdateCount => Managers.Sum(static m => m.Decisions.Count);
 }

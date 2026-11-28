@@ -2,7 +2,7 @@ using SharedKernel.Domain;
 
 namespace SharedKernel.Packages;
 
-/// <summary>A newer release of an installed package, with the time it was released.</summary>
+/// <summary>A proposed release of an installed package, with the time it was released.</summary>
 public sealed class UpdateCandidate : ValueObject
 {
     /// <summary>Creates a candidate.</summary>

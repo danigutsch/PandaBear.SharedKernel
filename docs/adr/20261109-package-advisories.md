@@ -19,14 +19,11 @@ get `Allow`. This decision adds the sources and makes a failed lookup impossible
   then reads each one from `GET /v1/vulns/{id}` for its severity. Batches hold 100 versions; `next_page_token` is followed for
   at most 20 pages; at most 1000 distinct vulnerabilities are read per call. A result count that differs from the query count,
   a missing or unsafe identifier, any non-200 answer, or a record for another identifier fails the call.
-- **Range-only records.** `Advisory` lists exact versions and the library never compares versions. Real OSV records
-  mostly give only ranges (checked on 2026-11-09: GHSA-p6mc-m468-83gw for lodash has `SEMVER` ranges and no `versions`
-  list). Comparing ranges would need each ecosystem's version order, so the adapter does not. It asks OSV about the exact
-  versions that matter (the installed and the candidate version) and OSV, which knows each ecosystem's order, answers
-  which of them are affected. An advisory therefore lists the versions that were asked about and reported as affected,
-  plus any `affected[].versions` the record lists (at most 1000). A range-only record is exact for every version asked about
-  and never claims a version that was not checked. The cost is that `Advisory.Affects` is only meaningful for versions
-  that were passed to the query; the planner passes both.
+- **Affected versions and fixes.** The planner asks OSV about the installed and candidate versions. The adapter keeps the
+  exact hits, up to 1000 listed versions, and supported `SEMVER` intervals for the matching package and ecosystem. A
+  supported interval starts at `introduced` and ends before its explicit `fixed` version, when present. Other range
+  formats continue to rely on the exact hits. An exact hit describes an affected version. A documented fix requires its
+  own evidence. [OSV affected range specification](https://ossf.github.io/osv-schema/#affectedranges-field)
 - **Severity.** In order: `database_specific.severity` (`CRITICAL`, `HIGH`, `MODERATE` or `MEDIUM`, `LOW`), then the computed
   base score of a `CVSS_V3` vector (bands 9.0, 7.0, 4.0). CVSS v2, CVSS v4, Ubuntu priorities and anything unreadable give
   `High`: not knowing never understates an advisory. Severity does not change the policy's decision today.
@@ -41,8 +38,10 @@ get `Allow`. This decision adds the sources and makes a failed lookup impossible
   gets the in-memory cache.
 - **Release dates and newest versions.** `RegistryReleaseSource` reads crates.io (`/api/v1/crates/<name>` for
   `max_stable_version`, `/api/v1/crates/<name>/<version>` for `created_at`) and the npm registry (`/<name>`, `dist-tags.latest`
-  and the `time` map). apt and Flatpak have no cheap authoritative source and fail with `Invalid`. Without version order, a
-  newest stable version that differs from the installed one is reported as a candidate even if it is older.
+  and the `time` map). apt and Flatpak have no cheap authoritative source and fail with `Invalid`. A different registry
+  version is reported for review. The policy uses SemVer precedence for Cargo and npm and holds candidates whose order
+  cannot be established. A documented fix applies the age exception only for an affected installed interval.
+  [Semantic Versioning precedence](https://semver.org/spec/v2.0.0.html#spec-item-11)
 - **Transport.** All requests go through an injected `HttpClient`; tests use fake handlers and never touch the network. Each
   request is HTTPS-only to a fixed host, has a timeout (30 seconds), and a response cap (8 MiB OSV, 32 MiB registries); a
   redirect, an answer from another host, or an oversized body is an error. `PackageHttp.CreateHandler` disables automatic
@@ -62,5 +61,5 @@ get `Allow`. This decision adds the sources and makes a failed lookup impossible
 
 - Snap, Homebrew and apt release dates.
 - A persistent cache.
-- Version-aware range evaluation.
+- Version-aware evaluation of non-SemVer or unsupported OSV ranges.
 - Spacing of crates.io requests (its crawler policy asks for one a second); the tool looks up a few crates sequentially.

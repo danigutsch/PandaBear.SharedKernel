@@ -7,7 +7,7 @@ namespace SharedKernel.Packages.Tool.Tests;
 public sealed class DocumentedCommandLinesTests
 {
     [Fact]
-    public void Every_readme_command_line_parses_to_the_plan_command()
+    public void Every_readme_command_line_parses_to_a_tool_command()
     {
         // Arrange
         var root = PackagesCommandLine.Create(Path.GetTempPath(), new ExecutableMap(static _ => null), ScriptedProcessRunner.ByFileName([]));

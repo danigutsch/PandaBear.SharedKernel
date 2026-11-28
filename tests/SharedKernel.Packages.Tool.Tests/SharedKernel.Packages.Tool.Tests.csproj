@@ -26,6 +26,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\tools\SharedKernel.Packages.Tool\SharedKernel.Packages.Tool.csproj" />
+        <ProjectReference Include="..\SharedKernel.Terminal.Gui.Testing\SharedKernel.Terminal.Gui.Testing.csproj" />
     </ItemGroup>
 
 </Project>

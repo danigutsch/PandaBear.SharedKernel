@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace SharedKernel.Packages;
 
 /// <summary>The consumer policy in <c>.config/sharedkernel-packages.json</c>.</summary>
@@ -10,4 +12,7 @@ namespace SharedKernel.Packages;
 /// Optional. How many days a release must have been public before <c>updates</c> allows it; 0 to 3650. Absent means
 /// that <c>updates</c> needs <c>--minimum-release-age-days</c>.
 /// </param>
-internal sealed record PackagesConfigurationDocument(int Version, Dictionary<string, string[]> Packages, int? MinimumReleaseAgeDays = null);
+internal sealed record PackagesConfigurationDocument(
+    int Version,
+    Dictionary<string, string[]> Packages,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] int? MinimumReleaseAgeDays = null);

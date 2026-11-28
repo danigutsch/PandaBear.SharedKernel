@@ -25,6 +25,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Packages\SharedKernel.Packages.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Terminal.Gui\SharedKernel.Terminal.Gui.csproj" />
     </ItemGroup>
 
     <ItemGroup>

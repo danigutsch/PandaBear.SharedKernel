@@ -298,6 +298,8 @@ SharedKernel.Versioning.CandidateOptions.Deconstruct(out string! RepoRoot, out s
 SharedKernel.Versioning.CandidateOptions.Equals(SharedKernel.Versioning.CandidateOptions? other) -> bool
 SharedKernel.Versioning.CandidateOptions.NativeAot.get -> bool
 SharedKernel.Versioning.CandidateOptions.NativeAot.init -> void
+SharedKernel.Versioning.CandidateOptions.RecordSymbols.get -> bool
+SharedKernel.Versioning.CandidateOptions.RecordSymbols.init -> void
 SharedKernel.Versioning.CandidateOptions.RepoRoot.get -> string!
 SharedKernel.Versioning.CandidateOptions.RepoRoot.init -> void
 SharedKernel.Versioning.CandidateOptions.Version.get -> string?
@@ -307,6 +309,7 @@ SharedKernel.Versioning.CandidateValidator.CandidateValidator(SharedKernel.Proce
 SharedKernel.Versioning.CandidateValidator.Consume(SharedKernel.Versioning.CandidateConsumptionOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 SharedKernel.Versioning.CandidateValidator.CompareApi(string! baselineManifest, string! candidateManifest, string! apiCompatPath, string! outputPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
 static SharedKernel.Versioning.CandidateValidator.CompareDependencies(string! baselineManifest, string! candidateManifest, string! outputPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+static SharedKernel.Versioning.CandidateValidator.VerifySourceLink(string! candidateManifest, string! symbolInventory, string! sourcePattern, System.Collections.Generic.IReadOnlyList<string!>! toolPackages, string! outputPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
 SharedKernel.Versioning.CandidateValidator.Create(SharedKernel.Versioning.CandidateOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
 SharedKernel.Versioning.CandidateValidator.Validate(SharedKernel.Versioning.CandidateOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
 SharedKernel.Versioning.ConsumerVerificationOptions

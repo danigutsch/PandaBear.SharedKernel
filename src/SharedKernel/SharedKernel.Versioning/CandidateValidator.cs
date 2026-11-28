@@ -1,6 +1,8 @@
 using System.Globalization;
+using System.Text;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
+using SharedKernel.IO;
 using SharedKernel.Processes;
 
 namespace SharedKernel.Versioning;
@@ -72,17 +74,34 @@ public sealed class CandidateValidator
         return manifest;
     }
 
+    /// <summary>Verifies the source provenance of selected packaged portable PDBs and writes separate evidence.</summary>
+    /// <param name="candidateManifest">The candidate manifest that binds the package archive hashes.</param>
+    /// <param name="symbolInventory">The SHA-256 inventory for the selected symbol archives beside the candidate.</param>
+    /// <param name="sourcePattern">An HTTPS source URL pattern with a revision segment and trailing wildcard.</param>
+    /// <param name="toolPackages">Tool package IDs whose own and selected bundled symbols should also be checked.</param>
+    /// <param name="outputPath">A new report path.</param>
+    /// <param name="ct">Cancels reading, verification, and the report write.</param>
+    /// <returns>Whether every selected symbol matched its assembly and the expected source revision.</returns>
+    /// <exception cref="ArgumentException">The package evidence, symbol inventory, or caller pattern is invalid.</exception>
+    /// <exception cref="IOException">An input cannot be read or the report cannot be created.</exception>
+    public static Task<bool> VerifySourceLink(
+        string candidateManifest, string symbolInventory, string sourcePattern, IReadOnlyList<string> toolPackages,
+        string outputPath, CancellationToken ct) =>
+        CandidateSourceLinkVerification.Run(candidateManifest, symbolInventory, sourcePattern, toolPackages, outputPath, ct);
+
     /// <summary>
     /// Requires a clean working tree, packs the candidate with API validation into
     /// <c>artifacts/api-compat/packages/&lt;version&gt;</c>, and writes its <c>candidate.json</c> with the package hashes.
+    /// When requested, records the packed symbol archives in <c>symbols.sha256</c> before writing the manifest.
     /// </summary>
     /// <param name="options">The checkout and versions; <see cref="CandidateOptions.NativeAot"/> is not used.</param>
     /// <param name="output">Receives the API compatibility report line.</param>
     /// <param name="ct">Cancels the run and ends the running process tree.</param>
     /// <returns>The path of the candidate manifest.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> or <paramref name="output"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">The working tree is not clean, the baseline package mapping is not exclusively a local feed, or the pack failed.</exception>
+    /// <exception cref="ArgumentException">The working tree is not clean, the baseline mapping is invalid, the pack failed, or a requested symbol inventory is empty.</exception>
     /// <exception cref="InvalidOperationException"><c>git</c> or <c>dotnet</c> could not start or failed.</exception>
+    /// <exception cref="IOException">The requested symbol inventory cannot be written or already exists.</exception>
     public async Task<string> Create(CandidateOptions options, TextWriter output, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -122,6 +141,11 @@ public sealed class CandidateValidator
             output,
             ct).ConfigureAwait(false);
         var feed = Path.Combine(root, "artifacts/api-compat/packages", version);
+        if (options.RecordSymbols)
+        {
+            await RecordSymbolInventory(feed, ct).ConfigureAwait(false);
+        }
+
         var hashes = new JsonObject();
         foreach (var path in Directory.GetFiles(feed, "*.nupkg").Order(StringComparer.Ordinal))
         {
@@ -144,6 +168,29 @@ public sealed class CandidateValidator
         var manifest = Path.Combine(feed, "candidate.json");
         new CandidateManifest(evidence).Save(manifest);
         return manifest;
+    }
+
+    private static async Task RecordSymbolInventory(string feed, CancellationToken ct)
+    {
+        var archives = Directory.GetFiles(feed, "*.snupkg");
+        if (archives.Length == 0)
+        {
+            throw new ArgumentException("The candidate pack produced no symbol archives.");
+        }
+
+        var inventory = new StringBuilder();
+        foreach (var archive in archives.Order(StringComparer.Ordinal))
+        {
+            var hash = await CandidateManifest.HashPackage(archive, ct).ConfigureAwait(false);
+            inventory.Append(hash).Append("  ./").Append(Path.GetFileName(archive)).Append('\n');
+        }
+
+        var bytes = Encoding.UTF8.GetBytes(inventory.ToString());
+        if (!await AtomicFile.CreateIfAbsent(Path.Combine(feed, "symbols.sha256"),
+                (stream, token) => stream.WriteAsync(bytes.AsMemory(), token), ct).ConfigureAwait(false))
+        {
+            throw new IOException("The candidate symbol inventory already exists.");
+        }
     }
 
     /// <summary>

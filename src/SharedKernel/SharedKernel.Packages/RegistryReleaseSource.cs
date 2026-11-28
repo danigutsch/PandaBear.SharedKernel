@@ -7,8 +7,8 @@ namespace SharedKernel.Packages;
 /// <summary>
 /// Release dates and newest stable versions from the public registries of cargo (crates.io) and npm. apt and Flatpak have
 /// no cheap, authoritative source for either, so those managers fail with an <c>Invalid</c> result that says so.
-/// The newest stable version is the crates.io <c>max_stable_version</c> or the npm <c>latest</c> dist-tag; the library never
-/// compares versions, so it cannot tell whether that version is newer than an installed one, only that it differs.
+/// A registry candidate is the crates.io <c>max_stable_version</c> or the npm <c>latest</c> dist-tag.
+/// The update policy separately compares each candidate's version precedence.
 /// Answers are cached in memory for a limited time; failures are never cached. crates.io asks clients for at most one
 /// request a second; callers that look up many crates should space their calls.
 /// </summary>

@@ -34,8 +34,8 @@ public sealed class UpdatePlanner
 
     /// <summary>
     /// Finds the packages whose newest stable version differs from the installed one, ordered by name. A package whose
-    /// newest version equals the installed version is up to date and left out. Versions are not ordered, so a registry
-    /// whose newest stable version is older than the installed one is reported as a candidate too.
+    /// newest version equals the installed version is up to date and left out. The policy judges precedence so a
+    /// different registry version can be reported with a reason when it is not known to be newer.
     /// </summary>
     /// <param name="manager">The package manager that owns the packages.</param>
     /// <param name="installed">The installed packages.</param>
@@ -122,7 +122,7 @@ public sealed class UpdatePlanner
         }
 
         var now = _time.GetUtcNow();
-        return Result.Ok<IReadOnlyList<UpdateDecision>>([.. candidates.Select(c => UpdatePolicy.Decide(c, advisories.Value, minimumAge, now))]);
+        return Result.Ok<IReadOnlyList<UpdateDecision>>([.. candidates.Select(c => UpdatePolicy.Decide(manager, c, advisories.Value, minimumAge, now))]);
     }
 
     private static ResultError Describe(PackageName package, ResultError error) => new($"{package}: {error.Detail}", error.Code);
