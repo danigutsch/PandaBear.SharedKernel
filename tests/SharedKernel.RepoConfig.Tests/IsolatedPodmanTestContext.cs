@@ -36,6 +36,9 @@ internal sealed class IsolatedPodmanTestContext : IDisposable
     /// <summary>Gets or sets the exact Podman command that returns an error.</summary>
     public string? FailOperation { get; set; }
 
+    /// <summary>Gets or sets whether the fixture removes deliberately retained graph roots on disposal.</summary>
+    public bool DeleteRetainedRoots { get; set; } = true;
+
     /// <summary>Gets the observed Podman operations in invocation order.</summary>
     public List<string> Operations { get; } = [];
 
@@ -96,9 +99,12 @@ internal sealed class IsolatedPodmanTestContext : IDisposable
     public void Dispose()
     {
         RemovePrivateImageLayer();
-        foreach (var root in _privateRoots.Where(Directory.Exists))
+        if (DeleteRetainedRoots)
         {
-            Directory.Delete(root, recursive: true);
+            foreach (var root in _privateRoots.Where(Directory.Exists))
+            {
+                Directory.Delete(root, recursive: true);
+            }
         }
         _directory.Dispose();
     }

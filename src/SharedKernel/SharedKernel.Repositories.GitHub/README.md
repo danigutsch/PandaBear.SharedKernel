@@ -6,8 +6,8 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 GitHub provider for `PandaBear.SharedKernel.Repositories`. It synchronizes repository labels, projects roadmap items
 to GitHub issues and Projects, reconciles and imports issues, runs the integrity-bound roadmap automation steps, links
-sub-issues, and writes and submits dependency snapshots. Every request goes through a `GitHubConnection`, which uses
-the GitHub REST headers of `PandaBear.SharedKernel.GitHub`.
+sub-issues, and writes and submits dependency snapshots. Authenticated operations use a `GitHubConnection`, which
+uses the GitHub REST headers of `PandaBear.SharedKernel.GitHub`.
 
 ## Usage
 
@@ -36,6 +36,10 @@ await RepositoryLabelSync.Run(rootPath, store, force: false, Console.Out, cancel
   reviewed artifacts it reads and writes.
 - `GitHubSubissueLinker` links an issue to a parent through the
   [sub-issues API](https://docs.github.com/rest/issues/sub-issues).
+- `GitHubEnvironmentProtectionVerifier.Verify` reads the exact deployment environment using a caller-owned GitHub
+  client that refuses redirects. It requires an explicit disabled administrator-bypass setting and a configured user
+  or team reviewer. Public metadata can be read anonymously. See the
+  [environment API](https://docs.github.com/en/rest/deployments/environments#get-an-environment).
 - `GitHubDependencySnapshot.TryWrite` writes a
   [dependency submission](https://docs.github.com/rest/dependency-graph/dependency-submission) snapshot from the
   committed NuGet lock files of a reviewed commit, and `GitHubDependencySubmission.Run` submits it.

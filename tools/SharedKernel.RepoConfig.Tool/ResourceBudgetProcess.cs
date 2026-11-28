@@ -13,23 +13,31 @@ internal static class ResourceBudgetProcess
     private static readonly TimeSpan ExitTimeout = TimeSpan.FromSeconds(2);
 
     /// <summary>Returns the natural exit or stops and verifies the observed owned tree after cancellation.</summary>
-    internal static async Task<ChildResult> Run(ProcessStartInfo startInfo, CancellationToken ct)
+    internal static Task<ChildResult> Run(ProcessStartInfo startInfo, CancellationToken ct) =>
+        Run(startInfo, cooperativePodmanCleanup: false, ct);
+
+    /// <summary>Optionally lets the verified nested Podman command complete its own bounded teardown.</summary>
+    internal static async Task<ChildResult> Run(ProcessStartInfo startInfo, bool cooperativePodmanCleanup, CancellationToken ct)
     {
         if (ct.IsCancellationRequested)
         {
             return new ChildResult(null, Started: false);
         }
 
+        ResourceBudgetPodmanAbort? podman = null;
         Process process;
         try
         {
+            podman = cooperativePodmanCleanup ? ResourceBudgetPodmanAbort.Create(startInfo) : null;
             process = ProcessTree.Start(startInfo);
         }
-        catch (Exception exception) when (exception is InvalidOperationException or ArgumentException)
+        catch (Exception exception) when (exception is InvalidOperationException or ArgumentException or IOException or UnauthorizedAccessException)
         {
+            podman?.Dispose();
             return new ChildResult(null, Started: false);
         }
 
+        using (podman)
         using (process)
         {
             var root = ReadProcess(process.Id, out _);
@@ -41,8 +49,17 @@ internal static class ResourceBudgetProcess
             catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
                 var observed = Capture(root);
+                var podmanTeardown = podman is null ? (ResourceBudgetPodmanAbort.Outcome?)null
+                    : await podman.RequestStop(process).ConfigureAwait(false);
+                if (podman is not null && !process.HasExited)
+                {
+                    var latest = Capture(root);
+                    observed = new Observation([.. observed.Identities.Union(latest.Identities)], observed.Complete && latest.Complete);
+                }
+
                 await ProcessTree.Terminate(process, ExitTimeout).ConfigureAwait(false);
-                return new ChildResult(null, await Verify(observed).ConfigureAwait(false));
+                var cleanup = await Verify(observed).ConfigureAwait(false);
+                return new ChildResult(null, cleanup with { PodmanTeardown = podmanTeardown });
             }
         }
     }

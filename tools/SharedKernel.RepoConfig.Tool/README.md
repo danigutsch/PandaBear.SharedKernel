@@ -52,6 +52,7 @@ dotnet repo github reconcile
 dotnet repo github reconcile --force
 dotnet repo github link-subissue --repository owner/repository --parent 10 --child 20
 dotnet repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
+dotnet repo github verify-environment-protection --repository owner/repository --environment production
 dotnet repo github sync-labels --repository owner/repository
 dotnet repo github sync-labels --repository owner/repository --force
 dotnet repo github sync-labels --repository owner/repository --forgejo https://codeberg.org --force
@@ -90,6 +91,7 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `github reconcile` | Reconciles the GitHub snapshot and resolves transferred issue identities. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
 | `github link-subissue` | Previews or creates a native GitHub parent/subissue link between existing issues in the same repository. |
+| `github verify-environment-protection` | Reads the exact environment and verifies that it requires a reviewer and disables administrator bypass. |
 | `github sync-labels` | Creates the configured labels that are missing and updates those that differ, on GitHub or, with `--forgejo <url>`, on a Forgejo instance; see [Repository labels](#repository-labels). |
 | `baseline verify` | Fails when a managed baseline file is missing, outdated, edited by hand, or unmanaged; see [Repository baseline](#repository-baseline). |
 | `baseline apply` | Creates and updates the managed baseline files; previews unless `--force` is given. |
@@ -890,6 +892,25 @@ resource spike between samples. An inherited cgroup cap applies only while proce
 the process tree check cannot account for work that detached or was reparented before observation. Configure
 separately scoped engine services and containers under their owning lifecycle. To include them in a cgroup
 budget, their owner must set the engine's cgroup parent accordingly and retain the host floor.
+
+Use `--cooperative-podman-cleanup` when the guarded command runs
+`run-isolated-podman` directly or through a trusted recipe. Both wrappers need to
+support the cleanup protocol. The guard creates an owner-only rendezvous in
+the writable scratch directory and passes it in the command environment.
+Intermediaries that launch the isolated wrapper preserve that environment.
+At a guard stop, active private engines have five seconds to acknowledge
+cancellation, then up to 140 seconds to complete verified teardown. A later
+isolated step sees the stop before opening a workspace. The guard uses its
+owned process-tree fallback when these windows expire or no engine has enrolled.
+
+The JSON report keeps the original stop reason and exit status. The additional
+`cleanup.isolatedPodmanTeardown` field reports `Completed`, `NoActiveEngine`,
+`Retained`, `Unacknowledged`, `TimedOut` or `Unavailable` separately from the
+process observation. The isolated wrapper's error output identifies retained
+workspaces. Keep the caller-owned scope and its hard memory and swap caps in
+place through cleanup. The caller retires the scope, slice and scratch after
+verifying the owned processes and private runtime paths. An incomplete or
+unverified engine teardown retains the rendezvous for diagnosis.
 
 ## Limits
 

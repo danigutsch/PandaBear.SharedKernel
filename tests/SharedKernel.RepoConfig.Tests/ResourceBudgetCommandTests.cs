@@ -217,8 +217,10 @@ public sealed class ResourceBudgetCommandTests
         report.RootElement.GetProperty("childExitCode").ValueKind.ShouldBe(JsonValueKind.Null);
     }
 
-    [Fact(SkipUnless = nameof(Linux), Skip = "The process-tree fixture requires Linux.")]
-    public async Task Cancelled_command_reports_observed_process_cleanup()
+    [Theory(SkipUnless = nameof(Linux), Skip = "The process-tree fixture requires Linux.")]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Cancelled_command_reports_observed_process_cleanup(bool cooperate)
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -226,7 +228,7 @@ public sealed class ResourceBudgetCommandTests
         var reportPath = Path.Combine(directory.Path, "budget.json");
 
         // Act
-        var exitCode = await ResourceBudgetProcessFixture.RunBudgetCommandUntilDescendantStarts(directory.Path, reportPath, ct);
+        var exitCode = await ResourceBudgetProcessFixture.RunBudgetCommandUntilDescendantStarts(directory.Path, reportPath, cooperate, ct);
 
         // Assert
         exitCode.ShouldBe(130);
@@ -238,6 +240,44 @@ public sealed class ResourceBudgetCommandTests
         cleanup.GetProperty("observationComplete").GetBoolean().ShouldBeTrue();
         cleanup.GetProperty("observedProcesses").GetInt32().ShouldBeGreaterThanOrEqualTo(2);
         cleanup.GetProperty("remainingObservedProcesses").GetInt32().ShouldBe(0);
+        if (cooperate)
+        {
+            cleanup.GetProperty("isolatedPodmanTeardown").GetString().ShouldBe("NoActiveEngine");
+        }
+        else
+        {
+            cleanup.TryGetProperty("isolatedPodmanTeardown", out _).ShouldBeFalse();
+        }
+        Directory.EnumerateDirectories(directory.Path).ShouldBeEmpty();
+    }
+
+    [Theory(SkipUnless = nameof(Linux), Skip = "The executable fixture requires Linux.")]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Executable_preserves_a_natural_exit_with_or_without_cooperative_cleanup(bool cooperate)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var directory = new TemporaryDirectory();
+        var reportPath = Path.Combine(directory.Path, "budget.json");
+        string[] arguments =
+        [
+            typeof(RepoConfigCommandLine).Assembly.Location, "run-with-budget", "--working-directory", directory.Path,
+            "--scratch", directory.Path, "--report", reportPath, "--minimum-host-memory-mib", "1",
+            "--minimum-scratch-mib", "1", "--sample-seconds", "1",
+            .. cooperate ? ["--cooperative-podman-cleanup"] : Array.Empty<string>(),
+            "--", "/bin/true",
+        ];
+
+        // Act
+        var result = await TestProcess.Run("dotnet", directory.Path, arguments, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.StandardError);
+        using var report = JsonDocument.Parse(await File.ReadAllTextAsync(reportPath, ct));
+        report.RootElement.GetProperty("reason").GetString().ShouldBe("None");
+        report.RootElement.GetProperty("cleanup").ValueKind.ShouldBe(JsonValueKind.Null);
+        Directory.EnumerateDirectories(directory.Path).ShouldBeEmpty();
     }
 
     [Fact(SkipUnless = nameof(Linux), Skip = "The process-tree fixture requires Linux.")]

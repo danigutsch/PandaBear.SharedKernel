@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="SharedKernel.DevContainers.Tests" />
+        <InternalsVisibleTo Include="SharedKernel.RepoConfig.Tool" />
     </ItemGroup>
 
     <ItemGroup>

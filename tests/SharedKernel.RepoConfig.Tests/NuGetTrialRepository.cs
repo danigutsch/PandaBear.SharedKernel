@@ -13,6 +13,12 @@ internal sealed class NuGetTrialRepository : IDisposable
     internal const string FileAppPath = "operations/check.cs";
     private const string FeedPath = ".local/packages";
 
+    /// <summary>Lets the fixture's NuGet.Config select the package cache for each checkout.</summary>
+    internal static IReadOnlyDictionary<string, string?> PackageCacheEnvironment { get; } = new Dictionary<string, string?>
+    {
+        ["NUGET_PACKAGES"] = null,
+    };
+
     private readonly TemporaryGitRepository repository = new();
 
     /// <summary>The source checkout root.</summary>
@@ -212,7 +218,7 @@ internal sealed class NuGetTrialRepository : IDisposable
         _ = NuGetPackageBuilder.WritePackage(feed, Partner, "2.0.0");
 
         var restore = await TestProcess.Run("dotnet", Root,
-            ["restore", "Example.slnx", "--force-evaluate", "--disable-build-servers", "-p:NuGetAudit=false"], ct);
+            ["restore", "Example.slnx", "--force-evaluate", "--disable-build-servers", "-p:NuGetAudit=false"], ct, PackageCacheEnvironment);
         if (restore.ExitCode != 0)
         {
             throw new InvalidOperationException(restore.StandardOutput + restore.StandardError);
@@ -221,7 +227,7 @@ internal sealed class NuGetTrialRepository : IDisposable
         if (trackedFileLock)
         {
             var fileRestore = await TestProcess.Run("dotnet", Root,
-                ["restore", FileAppPath, "--force-evaluate", "--disable-build-servers"], ct);
+                ["restore", FileAppPath, "--force-evaluate", "--disable-build-servers"], ct, PackageCacheEnvironment);
             fileRestore.ExitCode.ShouldBe(0, fileRestore.StandardOutput + fileRestore.StandardError);
         }
 
@@ -251,7 +257,8 @@ internal sealed class NuGetTrialRepository : IDisposable
     internal async Task RestoreLocked()
     {
         var restore = await TestProcess.Run("dotnet", Root,
-            ["restore", "Example.slnx", "--locked-mode", "--force", "--disable-build-servers"], TestContext.Current.CancellationToken);
+            ["restore", "Example.slnx", "--locked-mode", "--force", "--disable-build-servers"],
+            TestContext.Current.CancellationToken, PackageCacheEnvironment);
         restore.ExitCode.ShouldBe(0, restore.StandardOutput + restore.StandardError);
     }
 
@@ -275,12 +282,10 @@ internal sealed class NuGetTrialRepository : IDisposable
     /// <summary>Runs a dependency subcommand against the restored Git fixture.</summary>
     internal async Task<TemporaryGitRepository.CommandResult> RunDependency(string command, params string[] arguments)
     {
-        using var output = new InvariantStringWriter();
-        using var error = new InvariantStringWriter();
-        var exitCode = await RepoConfigToolRunner.Run(
-            ["dependency", command, "--root", Root, .. arguments],
-            output, error, Root, TestContext.Current.CancellationToken);
-        return new(exitCode, output.ToString(), error.ToString());
+        var tool = typeof(RepoConfigCommandLine).Assembly.Location;
+        var result = await TestProcess.Run("dotnet", Root, [tool, "dependency", command, "--root", Root, .. arguments],
+            TestContext.Current.CancellationToken, PackageCacheEnvironment);
+        return new(result.ExitCode, result.StandardOutput, result.StandardError);
     }
 
     /// <summary>Checks or applies the reviewed patch in the source fixture.</summary>

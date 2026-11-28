@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Time.Testing;
 using SharedKernel.Processes;
 using static SharedKernel.RepoConfig.Tool.ResourceBudgetGuard;
 
@@ -53,14 +54,37 @@ internal static class ResourceBudgetProcessFixture
         }, ct);
 
     /// <summary>Stops the CLI invocation after the owned shell writes its descendant marker.</summary>
-    internal static Task<int> RunBudgetCommandUntilDescendantStarts(string directory, string reportPath, CancellationToken ct) =>
+    internal static Task<int> RunBudgetCommandUntilDescendantStarts(
+        string directory, string reportPath, bool cooperate, CancellationToken ct) =>
         RunUntilMarker(directory, (ready, token) => RepoConfigToolRunner.Run(
             [
                 "run-with-budget", "--working-directory", directory, "--scratch", directory, "--report", reportPath,
                 "--minimum-host-memory-mib", "1", "--minimum-scratch-mib", "1", "--sample-seconds", "1",
+                .. cooperate ? ["--cooperative-podman-cleanup"] : Array.Empty<string>(),
                 "--", "/bin/sh", "-c", DescendantCommand, "fixture", ready,
             ],
             TextWriter.Null, TextWriter.Null, directory, token), ct);
+
+    /// <summary>Advances a cooperative deadline while retaining an exact owned child for the process boundary.</summary>
+    internal static async Task<(ResourceBudgetPodmanAbort.Outcome Outcome, bool ChildAlive)> TripPodmanDeadline(
+        ResourceBudgetPodmanAbort rendezvous, ProcessStartInfo start, TimeSpan advance, CancellationToken ct)
+    {
+        var child = ProcessTree.Start(start);
+        var time = new FakeTimeProvider();
+        var stop = rendezvous.RequestStop(child, time);
+        try
+        {
+            time.Advance(advance);
+            return (await stop.WaitAsync(ExitTimeout, ct), !child.HasExited);
+        }
+        finally
+        {
+            time.Advance(TimeSpan.FromMinutes(3));
+            await ((Task)stop).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+            await ProcessTree.Terminate(child, ExitTimeout);
+            child.Dispose();
+        }
+    }
 
     private static async Task<T> RunUntilMarker<T>(string directory, Func<string, CancellationToken, Task<T>> start, CancellationToken ct)
     {

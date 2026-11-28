@@ -32,6 +32,23 @@ internal static class GitHubConnections
             Environment.GetEnvironmentVariable("GITHUB_TOKEN"),
             $"Set GITHUB_TOKEN before running authenticated GitHub {operation}.");
 
+    /// <summary>Creates an owned GitHub client for reads that can use the public API without a token.</summary>
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "The returned client owns and disposes the handler.")]
+    public static HttpClient CreateReadClient()
+    {
+        var token = GitHubToken.Find(Environment.GetEnvironmentVariable);
+        var handler = CreateHandler();
+        try
+        {
+            return GitHubApiClient.Create(handler, new ProductInfoHeaderValue("sharedkernel-repo", "1.0"), token);
+        }
+        catch
+        {
+            handler.Dispose();
+            throw;
+        }
+    }
+
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "The returned connection owns and disposes the handler.")]
     private static GitHubConnection Create(HttpClient? client, string? token, string missingTokenMessage)
     {
@@ -40,7 +57,7 @@ internal static class GitHubConnections
             return new GitHubConnection(client);
         }
 
-        var handler = new HttpClientHandler { AllowAutoRedirect = false, CheckCertificateRevocationList = true };
+        var handler = CreateHandler();
         try
         {
             return new GitHubConnection(handler, new ProductInfoHeaderValue("sharedkernel-repo", "1.0"), token, missingTokenMessage);
@@ -51,4 +68,6 @@ internal static class GitHubConnections
             throw;
         }
     }
+
+    private static HttpClientHandler CreateHandler() => new() { AllowAutoRedirect = false, CheckCertificateRevocationList = true };
 }

@@ -299,6 +299,15 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Verifies the exact environment's required-reviewer and administrator-bypass settings.</summary>
+    public static async Task<int> VerifyEnvironmentProtection(string repository, string environment, HttpClient? httpClient, TextWriter output, CancellationToken ct)
+    {
+        using var ownedClient = httpClient is null ? GitHubConnections.CreateReadClient() : null;
+        await GitHubEnvironmentProtectionVerifier.Verify(httpClient ?? ownedClient!, repository, environment, ct).ConfigureAwait(false);
+        await output.WriteLineAsync("GitHub environment protection verified.".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
+    }
+
     /// <summary>Writes the dependency snapshot and returns 0, or reports why it cannot and returns 1.</summary>
     public static async Task<int> WriteDependencySnapshot(DependencySnapshotOptions options, TextWriter output, TextWriter error, CancellationToken ct)
     {

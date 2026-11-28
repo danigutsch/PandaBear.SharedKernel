@@ -67,6 +67,10 @@ internal static class ResourceBudgetCommandLine
         {
             Description = "Reject tmpfs and ramfs for scratch and require a recognized filesystem type.",
         };
+        var cooperativePodmanCleanup = new Option<bool>(ResourceBudgetPodmanAbort.OptionName)
+        {
+            Description = "Allow nested run-isolated-podman commands to retire their verified private engines before forced shutdown.",
+        };
         var child = new Argument<string[]>("command")
         {
             Arity = ArgumentArity.OneOrMore,
@@ -75,7 +79,7 @@ internal static class ResourceBudgetCommandLine
         Command command = new(Name, "Run one trusted Linux command within caller-supplied resource floors.")
         {
             workingDirectory, scratch, report, hostMemory, cgroup, scratchSpace,
-            interval, pressure, streak, rejectMemoryFilesystem, child,
+            interval, pressure, streak, rejectMemoryFilesystem, cooperativePodmanCleanup, child,
         };
         ValidateMiB(hostMemory);
         ValidateMiB(cgroup);
@@ -111,7 +115,8 @@ internal static class ResourceBudgetCommandLine
                 RejectMemoryBackedScratch = parse.GetValue(rejectMemoryFilesystem),
             };
             return Run(parse.GetRequiredValue(workingDirectory), parse.GetRequiredValue(scratch), parse.GetRequiredValue(report),
-                limits, TimeSpan.FromSeconds(parse.GetRequiredValue(interval)), parse.GetRequiredValue(child), ct);
+                limits, TimeSpan.FromSeconds(parse.GetRequiredValue(interval)), parse.GetValue(cooperativePodmanCleanup),
+                parse.GetRequiredValue(child), ct);
         }, ct));
         return command;
     }
@@ -126,7 +131,8 @@ internal static class ResourceBudgetCommandLine
         });
 
     private static async Task<int> Run(
-        string workingDirectory, string scratch, string reportPath, Limits limits, TimeSpan interval, string[] arguments, CancellationToken ct)
+        string workingDirectory, string scratch, string reportPath, Limits limits, TimeSpan interval,
+        bool cooperativePodmanCleanup, string[] arguments, CancellationToken ct)
     {
         if (!OperatingSystem.IsLinux())
         {
@@ -142,7 +148,8 @@ internal static class ResourceBudgetCommandLine
 
         using var reportStream = new FileStream(reportPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
         var result = await ResourceBudgetGuard.Run(limits, () => LinuxResourceBudgetSampler.Measure(scratch),
-            token => Task.Delay(interval, token), token => Start(workingDirectory, scratch, arguments, token), ct).ConfigureAwait(false);
+            token => Task.Delay(interval, token), token => Start(workingDirectory, scratch, cooperativePodmanCleanup, arguments, token),
+            ct).ConfigureAwait(false);
         WriteReport(reportStream, result, limits, interval);
         return result.Reason switch
         {
@@ -152,7 +159,8 @@ internal static class ResourceBudgetCommandLine
         };
     }
 
-    private static Task<ChildResult> Start(string workingDirectory, string scratch, string[] arguments, CancellationToken ct)
+    private static Task<ChildResult> Start(
+        string workingDirectory, string scratch, bool cooperativePodmanCleanup, string[] arguments, CancellationToken ct)
     {
         string executable;
         try
@@ -171,7 +179,7 @@ internal static class ResourceBudgetCommandLine
             startInfo.ArgumentList.Add(argument);
         }
 
-        return ResourceBudgetProcess.Run(startInfo, ct);
+        return ResourceBudgetProcess.Run(startInfo, cooperativePodmanCleanup, ct);
     }
 
     private static void RequireDirectory(string path, string option)
@@ -208,6 +216,10 @@ internal static class ResourceBudgetCommandLine
             json.WriteBoolean("observationComplete", cleanup.ObservationComplete);
             json.WriteNumber("observedProcesses", cleanup.ObservedProcesses);
             json.WriteNumber("remainingObservedProcesses", cleanup.RemainingObservedProcesses);
+            if (cleanup.PodmanTeardown is { } teardown)
+            {
+                json.WriteString("isolatedPodmanTeardown", teardown.ToString());
+            }
             json.WriteEndObject();
         }
         else
