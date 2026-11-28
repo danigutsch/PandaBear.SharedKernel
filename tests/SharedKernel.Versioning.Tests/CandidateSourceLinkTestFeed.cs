@@ -16,6 +16,8 @@ internal sealed class CandidateSourceLinkTestFeed : IDisposable
     internal const string OtherRevision = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
     /// <summary>The package and symbol archive identity.</summary>
     internal const string PackageId = "PandaBear.SharedKernel.Probe";
+    /// <summary>The second library identity used by complete symbol inventory tests.</summary>
+    internal const string OtherPackageId = "PandaBear.SharedKernel.OtherProbe";
 
     /// <summary>The tool archive identity used by embedded symbol cases.</summary>
     internal const string ToolPackageId = PackageId + ".Tool";
@@ -39,7 +41,7 @@ internal sealed class CandidateSourceLinkTestFeed : IDisposable
     /// <summary>Writes the candidate, symbol inventory and paired binaries. A null source revision omits the mapping.</summary>
     internal async Task<(string Manifest, string Symbols)> Write(
         string? sourceRevision, bool mismatchedAssembly, CancellationToken ct, bool includeTool = false,
-        string? duplicateToolMember = null, string? sourceLinkJson = null, string symbolMember = "Probe.pdb")
+        string? duplicateToolMember = null, string? sourceLinkJson = null, string symbolMember = "Probe.pdb", bool includeOtherPackage = false)
     {
         var module = new MetadataBuilder();
         module.AddModule(0, module.GetOrAddString("Probe.dll"),
@@ -71,8 +73,14 @@ internal sealed class CandidateSourceLinkTestFeed : IDisposable
         new ManagedPEBuilder(PEHeaderBuilder.CreateLibraryHeader(), new MetadataRootBuilder(module), new BlobBuilder(),
             debugDirectoryBuilder: debug, deterministicIdProvider: static _ => PairedPdbId).Serialize(image);
 
-        WriteArchive($"{PackageId}.{PackageVersion}.nupkg", "Probe.dll", image);
-        WriteArchive(SymbolFileName, symbolMember, pdb);
+        WriteArchive(PackageId, "nupkg", "Probe.dll", image);
+        WriteArchive(PackageId, "snupkg", symbolMember, pdb);
+        if (includeOtherPackage)
+        {
+            WriteArchive(OtherPackageId, "nupkg", "Probe.dll", image);
+            WriteArchive(OtherPackageId, "snupkg", symbolMember, pdb);
+        }
+
         if (includeTool)
         {
             WriteToolArchive(image, pdb, duplicateToolMember);
@@ -85,10 +93,10 @@ internal sealed class CandidateSourceLinkTestFeed : IDisposable
         return (manifest, inventory);
     }
 
-    private void WriteArchive(string name, string member, BlobBuilder contents)
+    private void WriteArchive(string packageId, string extension, string member, BlobBuilder contents)
     {
-        using var archive = ZipFile.Open(Path.Combine(DirectoryPath, name), ZipArchiveMode.Create);
-        WriteMetadata(archive, PackageId);
+        using var archive = ZipFile.Open(Path.Combine(DirectoryPath, $"{packageId}.{PackageVersion}.{extension}"), ZipArchiveMode.Create);
+        WriteMetadata(archive, packageId);
         WriteContents(archive, $"lib/{TestTargetFramework.Moniker}/{member}", contents);
     }
 

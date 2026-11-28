@@ -58,7 +58,7 @@ public static class VersioningCommandLineTests
     [InlineData("pack-dev", "<project>", "--feed <path> (REQUIRED)", "--version <version>", "--repo-root <path>")]
     [InlineData("prepare-release", "--version <version> (REQUIRED)", "--package-dir <path> (REQUIRED)", "--output-dir <path>", "--source-tag <tag>", "--release-impact <impact>", "--sha <sha>", "--repo-root <path>")]
     [InlineData("verify-lock-coverage", "--repo-root <path>")]
-    [InlineData("create-candidate", "--version <version>", "--baseline-version <version>", "--repo-root <path>")]
+    [InlineData("create-candidate", "--version <version>", "--baseline-version <version>", "--repo-root <path>", "--record-symbols")]
     [InlineData("compare-candidates", "--baseline <path> (REQUIRED)", "--candidate <path> (REQUIRED)", "--apicompat <path> (REQUIRED)", "--output <path> (REQUIRED)")]
     [InlineData("compare-candidate-dependencies", "--baseline <path> (REQUIRED)", "--candidate <path> (REQUIRED)", "--output <path> (REQUIRED)")]
     [InlineData("verify-candidate-source-link", "--candidate <path> (REQUIRED)", "--symbols <path> (REQUIRED)",

@@ -71,7 +71,7 @@ dotnet release check-api-compatibility [--version <version>] [--release-phase al
 dotnet release pack [--version <version>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--skip-restore-check]
 dotnet release pack-dev --feed <path> [--version <version>] [--repo-root <path>] [<project>...]
 dotnet release prepare-release --version <version> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes
-dotnet release create-candidate [--version <version>] [--baseline-version <version>]
+dotnet release create-candidate [--version <version>] [--baseline-version <version>] [--record-symbols]
 dotnet release compare-candidates --baseline <candidate.json> --candidate <candidate.json> --apicompat <path> --output <file>
 dotnet release compare-candidate-dependencies --baseline <candidate.json> --candidate <candidate.json> --output <file>
 dotnet release verify-candidate-source-link --candidate <candidate.json> --symbols <symbols.sha256> --source-url-pattern <url> [--tool-package <id>]... --output <file>
@@ -185,6 +185,11 @@ revision and SHA-256 package hashes. Consumer, platform, and stable-promotion ev
 version core of `ComputedSemVer` in `Directory.Build.props`. It stays short because NuGet rejects a package whose id,
 version and file path together exceed its path limit (NU5123), and the longest package ids already use most of it. `--baseline-version` requires `PandaBear.SharedKernel.*` mapped only
 to an existing local feed in `NuGet.Config`.
+
+Use `--record-symbols` when the candidate needs Source Link verification across every packed symbol archive.
+Creation requires a nonempty symbol set and writes the archive names and SHA-256 hashes to `symbols.sha256`
+beside the manifest. Pass that file to `verify-candidate-source-link` to check the original scope if any archives
+are moved or lost after creation.
 
 `consume-candidate` verifies the hashes and requires the manifest to list the exact file name of every package in its
 directory, and every package to have the candidate version. It first audits the packages that each tool package

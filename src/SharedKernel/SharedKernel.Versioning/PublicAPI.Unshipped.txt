@@ -298,6 +298,8 @@ SharedKernel.Versioning.CandidateOptions.Deconstruct(out string! RepoRoot, out s
 SharedKernel.Versioning.CandidateOptions.Equals(SharedKernel.Versioning.CandidateOptions? other) -> bool
 SharedKernel.Versioning.CandidateOptions.NativeAot.get -> bool
 SharedKernel.Versioning.CandidateOptions.NativeAot.init -> void
+SharedKernel.Versioning.CandidateOptions.RecordSymbols.get -> bool
+SharedKernel.Versioning.CandidateOptions.RecordSymbols.init -> void
 SharedKernel.Versioning.CandidateOptions.RepoRoot.get -> string!
 SharedKernel.Versioning.CandidateOptions.RepoRoot.init -> void
 SharedKernel.Versioning.CandidateOptions.Version.get -> string?

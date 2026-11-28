@@ -370,6 +370,8 @@ public sealed class WorkflowContractTests
         // Act
         var candidate = WorkflowJobs.Read(workflow, "candidate");
         var steps = candidate.Split("\n      - ", StringSplitOptions.None);
+        var pack = steps.ShouldHaveSingleItem(
+            static step => step.Contains("-- create-candidate ", StringComparison.Ordinal));
         var verification = steps.ShouldHaveSingleItem(
             step => step.Contains(command, StringComparison.Ordinal));
         var condition = verification.Split('\n')
@@ -384,6 +386,8 @@ public sealed class WorkflowContractTests
 
         // Assert
         workflow.Split(command, StringSplitOptions.None).Length.ShouldBe(2);
+        pack.ShouldContain(
+            "RECORD_SYMBOLS: " + condition["if: ".Length..], StringComparison.Ordinal);
         predicates.ShouldBe([
             "github.event_name == 'push'",
             "github.ref == 'refs/heads/main'",
@@ -394,21 +398,26 @@ public sealed class WorkflowContractTests
     public void Candidate_source_verification_runs_after_pack_and_before_retaining_archives()
     {
         // Arrange
+        const string packCommand = "-- create-candidate --version \"$PACKAGE_VERSION\"";
         var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
         var candidate = WorkflowJobs.Read(workflow, "candidate");
         var steps = candidate.Split("\n      - ", StringSplitOptions.None);
-        var inventory = steps.ShouldHaveSingleItem(static step =>
-            step.Contains("sha256sum", StringComparison.Ordinal) && step.Contains("symbols.sha256", StringComparison.Ordinal));
-        var packPosition = candidate.IndexOf("-- create-candidate ", StringComparison.Ordinal);
-        var inventoryPosition = candidate.IndexOf(inventory, StringComparison.Ordinal)
-            + inventory.IndexOf("sha256sum", StringComparison.Ordinal);
+        var verification = steps.ShouldHaveSingleItem(static step =>
+            step.Contains("verify-candidate-source-link", StringComparison.Ordinal));
+        var packPosition = candidate.IndexOf(packCommand, StringComparison.Ordinal);
+        var inventoryPosition = candidate.IndexOf("test -s \"$candidate_directory/symbols.sha256\"", StringComparison.Ordinal);
         var verificationPosition = candidate.IndexOf("verify-candidate-source-link", StringComparison.Ordinal);
         var retainPosition = candidate.IndexOf("name: Retain candidate artifacts", StringComparison.Ordinal);
 
         // Assert
+        candidate.ShouldContain("if [[ \"$RECORD_SYMBOLS\" == true ]]; then\n", StringComparison.Ordinal);
+        candidate.ShouldContain(packCommand + " --record-symbols\n", StringComparison.Ordinal);
+        candidate.ShouldContain(packCommand + "\n", StringComparison.Ordinal);
+        verification.ShouldContain("--symbols \"$candidate_directory/symbols.sha256\"", StringComparison.Ordinal);
+        verification.ShouldNotContain("sha256sum", StringComparison.Ordinal);
         packPosition.ShouldBeGreaterThan(-1);
         inventoryPosition.ShouldBeGreaterThan(packPosition);
         verificationPosition.ShouldBeGreaterThan(inventoryPosition);

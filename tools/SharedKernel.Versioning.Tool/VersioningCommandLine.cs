@@ -414,17 +414,22 @@ internal static class VersioningCommandLine
         var version = SemanticVersionOption("--version", "Unique prerelease package version. Default: <base>-alpha.local.t<UTC timestamp>.g<revision>.");
         var baselineVersion = SemanticVersionOption("--baseline-version", BaselineVersionDescription);
         var repoRoot = RepoRootOption();
+        var recordSymbols = new Option<bool>("--record-symbols") { Description = "Requires packed symbol archives and records their SHA-256 inventory beside the candidate manifest." };
         var command = new Command("create-candidate", "Packs and validates a clean committed checkout and writes candidate.json with the package hashes.")
         {
             version,
             baselineVersion,
             repoRoot,
+            recordSymbols,
         };
         SetAction(command, (parseResult, output, ct) => candidates.Create(
             new CandidateOptions(
                 Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
                 parseResult.GetValue(version)?.ToString(),
-                parseResult.GetValue(baselineVersion)?.ToString()),
+                parseResult.GetValue(baselineVersion)?.ToString())
+            {
+                RecordSymbols = parseResult.GetValue(recordSymbols),
+            },
             output,
             ct));
         return command;

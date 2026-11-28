@@ -57,10 +57,12 @@ with `dotnet release verify-consumer --candidate <candidate.json> -- <command>..
 [Versioning tool README](../tools/SharedKernel.Versioning.Tool/README.md#candidates) describes the checks and the evidence.
 Linux and Windows consume the same hashed artifacts before stable promotion. Repository and Source Link metadata target the public repository; candidate validation records source and symbol evidence separately.
 
-The canonical GitHub `main` build verifies Source Link before retaining its candidate. Its artifact includes `symbols.sha256` for the packed
-symbol archives and `source-link-report.json` for the exact manifest. The check also covers the first-party portable PDBs bundled in the
-Packages and Versioning tools. Verify the symbol inventory and its hashes against the downloaded artifact and check the report's manifest
-and revision before the separately authorized prerelease step. The Versioning tool can repeat the archive check offline.
+The canonical GitHub `main` build records every packed symbol archive in `symbols.sha256` during candidate creation.
+Before artifact retention, it verifies Source Link using that inventory so any archive lost after creation fails verification.
+The artifact retains the inventory and `source-link-report.json` for the exact manifest. The check also covers the
+first-party portable PDBs bundled in the Packages and Versioning tools. Verify the symbol inventory and its hashes
+against the downloaded artifact and check the report's manifest and revision before the separately authorized prerelease
+step. The Versioning tool can repeat the archive check offline.
 
 
 ### Lock files

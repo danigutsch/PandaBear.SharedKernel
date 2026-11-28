@@ -15,4 +15,7 @@ public sealed record CandidateOptions(string RepoRoot, string? Version = null, s
 {
     /// <summary>Gets the target frameworks to build the consumers for, each in turn. Default: the frameworks <see cref="RepositoryFrameworks.Read"/> reads from the repository root.</summary>
     public IReadOnlyList<string>? Frameworks { get; init; }
+
+    /// <summary>Gets whether creation requires packed symbol archives and records their hashes in <c>symbols.sha256</c>.</summary>
+    public bool RecordSymbols { get; init; }
 }
