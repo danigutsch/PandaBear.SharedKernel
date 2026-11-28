@@ -536,6 +536,7 @@ public sealed class GitHubRoadmapIntakeTests
                 "repository": {
                   "defaultBranchRef": { "target": { "oid": "1111111111111111111111111111111111111111" } },
                   "issues": {
+                    "totalCount": 2,
                     "nodes": [
                       {
                         "__typename": "Issue",
@@ -1326,6 +1327,7 @@ public sealed class GitHubRoadmapIntakeTests
                 "repository": {
                   "defaultBranchRef": { "target": { "oid": "1111111111111111111111111111111111111111" } },
                   "issues": {
+                    "totalCount": 3,
                     "nodes": [
                       {
                         "__typename": "Issue",
@@ -1435,6 +1437,7 @@ public sealed class GitHubRoadmapIntakeTests
                 "repository": {
                   "defaultBranchRef": { "target": { "oid": "1111111111111111111111111111111111111111" } },
                   "issues": {
+                    "totalCount": 1,
                     "nodes": [
                       {
                         "__typename": "Issue",

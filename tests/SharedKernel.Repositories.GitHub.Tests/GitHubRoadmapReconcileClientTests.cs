@@ -105,12 +105,12 @@ public sealed class GitHubRoadmapReconcileClientTests
             handler.EnqueueJson(
                 HttpStatusCode.OK,
                 """
-                {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"nodes":[],"pageInfo":{"hasNextPage":true,"endCursor":"page-2"}}}}}
+                {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"totalCount":1,"nodes":[],"pageInfo":{"hasNextPage":true,"endCursor":"page-2"}}}}}
                 """);
             handler.EnqueueJson(
                 HttpStatusCode.OK,
                 """
-                {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"2222222222222222222222222222222222222222"}},"issues":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
+                {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"2222222222222222222222222222222222222222"}},"issues":{"totalCount":0,"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
                 """);
         }
 
@@ -138,7 +138,7 @@ public sealed class GitHubRoadmapReconcileClientTests
             handler.EnqueueJson(
                 HttpStatusCode.OK,
                 """
-                {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"nodes":[{"__typename":"Issue","number":100,"title":"Paged relations","state":"OPEN","labels":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}},"parent":null,"subIssues":{"nodes":[],"pageInfo":{"hasNextPage":true,"endCursor":"relations-2"}},"blockedBy":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}},"blocking":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
+                {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"totalCount":1,"nodes":[{"__typename":"Issue","number":100,"title":"Paged relations","state":"OPEN","labels":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}},"parent":null,"subIssues":{"nodes":[],"pageInfo":{"hasNextPage":true,"endCursor":"relations-2"}},"blockedBy":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}},"blocking":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
                 """);
             handler.EnqueueJson(
                 HttpStatusCode.OK,
@@ -174,7 +174,7 @@ public sealed class GitHubRoadmapReconcileClientTests
         handler.EnqueueJson(
             HttpStatusCode.OK,
             """
-            {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
+            {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"totalCount":0,"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
             """);
         handler.EnqueueJson(
             HttpStatusCode.OK,
@@ -184,7 +184,7 @@ public sealed class GitHubRoadmapReconcileClientTests
         handler.EnqueueJson(
             HttpStatusCode.OK,
             """
-            {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"2222222222222222222222222222222222222222"}},"issues":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
+            {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"2222222222222222222222222222222222222222"}},"issues":{"totalCount":0,"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
             """);
         handler.EnqueueJson(
             HttpStatusCode.OK,
@@ -214,7 +214,7 @@ public sealed class GitHubRoadmapReconcileClientTests
             handler.EnqueueJson(
                 HttpStatusCode.OK,
                 """
-                {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"OID"}},"issues":{"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
+                {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"OID"}},"issues":{"totalCount":0,"nodes":[],"pageInfo":{"hasNextPage":false,"endCursor":null}}}}}
                 """.Replace("OID", new string(first, 40), StringComparison.Ordinal));
             handler.EnqueueJson(
                 HttpStatusCode.OK,
@@ -245,12 +245,12 @@ public sealed class GitHubRoadmapReconcileClientTests
         handler.EnqueueJson(
             HttpStatusCode.OK,
             """
-            {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"nodes":[],"pageInfo":{"hasNextPage":true,"endCursor":"repeated"}}}}}
+            {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"totalCount":1,"nodes":[],"pageInfo":{"hasNextPage":true,"endCursor":"repeated"}}}}}
             """);
         handler.EnqueueJson(
             HttpStatusCode.OK,
             """
-            {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"nodes":[],"pageInfo":{"hasNextPage":true,"endCursor":"repeated"}}}}}
+            {"data":{"repository":{"defaultBranchRef":{"target":{"oid":"1111111111111111111111111111111111111111"}},"issues":{"totalCount":1,"nodes":[],"pageInfo":{"hasNextPage":true,"endCursor":"repeated"}}}}}
             """);
         using var httpClient = new HttpClient(handler);
         var client = new GitHubRoadmapReconcileClient(httpClient);

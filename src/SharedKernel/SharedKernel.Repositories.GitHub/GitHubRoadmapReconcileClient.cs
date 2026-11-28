@@ -20,6 +20,7 @@ internal sealed class GitHubRoadmapReconcileClient
           repository(owner:$owner,name:$name){
             defaultBranchRef{target{oid}}
             issues(first:100,after:$after,states:[OPEN],orderBy:{field:CREATED_AT,direction:ASC}){
+              totalCount
               nodes{
                 __typename
                 id
@@ -197,6 +198,7 @@ internal sealed class GitHubRoadmapReconcileClient
     {
         Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber = [];
         string? repositoryCommit = null;
+        int? issueTotal = null;
         var repositoryCommitRead = false;
         HashSet<string> cursors = new(StringComparer.Ordinal);
         var pageCount = 0;
@@ -223,6 +225,18 @@ internal sealed class GitHubRoadmapReconcileClient
             else
             {
                 RequireStableRepositoryCommit(repositoryCommit, page.RepositoryCommit);
+            }
+
+            if (issueTotal is int expected && page.TotalCount != expected)
+            {
+                throw new InvalidOperationException("GitHub reconciliation reported a changed open issue total between pages.");
+            }
+
+            issueTotal = page.TotalCount;
+            var received = issuesByNumber.Count;
+            if (page.HasNextPage ? received >= page.TotalCount : received != page.TotalCount)
+            {
+                throw new InvalidOperationException("GitHub reconciliation open issue total does not match the paginated results.");
             }
 
             if (!page.HasNextPage)
@@ -252,6 +266,14 @@ internal sealed class GitHubRoadmapReconcileClient
         var repositoryElement = GetRepository(document.RootElement);
         var repositoryCommit = ReadRepositoryCommit(repositoryElement);
         var connection = GetRequiredObject(repositoryElement, "issues");
+        if (!connection.TryGetProperty("totalCount", out var totalCount)
+            || totalCount.ValueKind != JsonValueKind.Number
+            || !totalCount.TryGetInt32(out var total)
+            || total < 0)
+        {
+            throw new InvalidOperationException("GitHub reconciliation response is missing a valid open issue total.");
+        }
+
         foreach (var node in GetRequiredArray(connection, "nodes").EnumerateArray())
         {
             var issue = await ReadIssue(node, owner, name, cancellationToken).ConfigureAwait(false);
@@ -261,6 +283,7 @@ internal sealed class GitHubRoadmapReconcileClient
         var pageInfo = GetRequiredObject(connection, "pageInfo");
         return new OpenIssuePage(
             repositoryCommit,
+            total,
             GetRequiredBoolean(pageInfo, "hasNextPage"),
             GetNullableString(pageInfo, "endCursor"));
     }
@@ -425,6 +448,7 @@ internal sealed class GitHubRoadmapReconcileClient
 
     private sealed record OpenIssuePage(
         string? RepositoryCommit,
+        int TotalCount,
         bool HasNextPage,
         string? EndCursor);
 

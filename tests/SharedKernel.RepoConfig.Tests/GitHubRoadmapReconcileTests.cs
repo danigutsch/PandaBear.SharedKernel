@@ -477,6 +477,7 @@ public sealed class GitHubRoadmapReconcileTests
                 "repository": {
                   "defaultBranchRef": { "target": { "oid": "1111111111111111111111111111111111111111" } },
                   "issues": {
+                    "totalCount": 1,
                     "nodes": [
                       {
                         "__typename": "Issue",
@@ -588,6 +589,7 @@ public sealed class GitHubRoadmapReconcileTests
                 "repository": {
                   "defaultBranchRef": { "target": { "oid": "1111111111111111111111111111111111111111" } },
                   "issues": {
+                    "totalCount": 1,
                     "nodes": [
                       {
                         "__typename": "Issue",
@@ -623,6 +625,7 @@ public sealed class GitHubRoadmapReconcileTests
                 "repository": {
                   "defaultBranchRef": { "target": { "oid": "1111111111111111111111111111111111111111" } },
                   "issues": {
+                    "totalCount": 1,
                     "nodes": [
                       {
                         "__typename": "Issue",

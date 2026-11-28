@@ -39,6 +39,53 @@ public sealed class GitHubForgeIssueReaderTests
     }
 
     [Fact]
+    public async Task Accepts_all_pages_when_the_reported_issue_total_matches()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse(
+            [GitHubRoadmapSnapshotTestOperations.Issue(4, "First issue", "OPEN")], totalCount: 2, nextCursor: "second"));
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse(
+            [GitHubRoadmapSnapshotTestOperations.Issue(12, "Second issue", "OPEN")], totalCount: 2));
+        using var http = new HttpClient(handler);
+        var reader = new GitHubForgeIssueReader(http);
+
+        // Act
+        var issues = await reader.ReadOpenIssues("owner/repository", TestContext.Current.CancellationToken);
+
+        // Assert
+        issues.Select(issue => issue.Reference.Number).ShouldBe([4L, 12L]);
+    }
+
+    [Theory]
+    [InlineData(2, null)]
+    [InlineData(2, 1)]
+    [InlineData(-1, null)]
+    public async Task Rejects_an_inconsistent_reported_issue_total(int firstTotal, int? secondTotal)
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse(
+            [GitHubRoadmapSnapshotTestOperations.Issue(4, "First issue", "OPEN")],
+            totalCount: firstTotal, nextCursor: secondTotal.HasValue ? "second" : null));
+        if (secondTotal is { } total)
+        {
+            handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse(
+                [GitHubRoadmapSnapshotTestOperations.Issue(12, "Second issue", "OPEN")], totalCount: total));
+        }
+
+        using var http = new HttpClient(handler);
+        var reader = new GitHubForgeIssueReader(http);
+        Func<Task> read = async () => _ = await reader.ReadOpenIssues("owner/repository", TestContext.Current.CancellationToken);
+
+        // Act
+        var error = await read.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        error.Message.ShouldContain("issue total", StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task Reads_a_closed_issue_by_repository_and_number()
     {
         // Arrange

@@ -53,9 +53,15 @@ internal static class GitHubRoadmapSnapshotTestOperations
     /// <summary>Creates the GraphQL response that lists the open issues of the snapshot.</summary>
     public static HttpResponseMessage CreateOpenIssuesResponse(
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
-        string oid = DefaultOid)
+        string oid = DefaultOid,
+        int? totalCount = null,
+        string? nextCursor = null)
     {
         ArgumentNullException.ThrowIfNull(snapshot);
+        var openIssues = snapshot
+            .Where(issue => string.Equals(issue.State, "OPEN", StringComparison.Ordinal))
+            .OrderBy(issue => issue.Number)
+            .ToArray();
 
         using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(stream))
@@ -74,17 +80,16 @@ internal static class GitHubRoadmapSnapshotTestOperations
             writer.WriteEndObject();
             writer.WritePropertyName("issues");
             writer.WriteStartObject();
+            writer.WriteNumber("totalCount", totalCount ?? openIssues.Length);
             writer.WritePropertyName("nodes");
             writer.WriteStartArray();
-            foreach (var issue in snapshot
-                .Where(issue => string.Equals(issue.State, "OPEN", StringComparison.Ordinal))
-                .OrderBy(issue => issue.Number))
+            foreach (var issue in openIssues)
             {
                 WriteIssue(writer, issue);
             }
 
             writer.WriteEndArray();
-            WritePageInfo(writer);
+            WritePageInfo(writer, nextCursor);
             writer.WriteEndObject();
             writer.WriteEndObject();
             writer.WriteEndObject();
@@ -252,12 +257,12 @@ internal static class GitHubRoadmapSnapshotTestOperations
         writer.WriteEndObject();
     }
 
-    private static void WritePageInfo(Utf8JsonWriter writer)
+    private static void WritePageInfo(Utf8JsonWriter writer, string? nextCursor = null)
     {
         writer.WritePropertyName("pageInfo");
         writer.WriteStartObject();
-        writer.WriteBoolean("hasNextPage", false);
-        writer.WriteNull("endCursor");
+        writer.WriteBoolean("hasNextPage", nextCursor is not null);
+        writer.WriteString("endCursor", nextCursor);
         writer.WriteEndObject();
     }
 }
