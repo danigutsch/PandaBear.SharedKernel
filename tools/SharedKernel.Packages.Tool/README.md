@@ -44,8 +44,9 @@ dotnet syspackages updates --allow-network --root ../machine-config
 
 It sends the package names and versions to `api.osv.dev`, `crates.io` and `registry.npmjs.org` over HTTPS. Without
 `--allow-network` it refuses, says so, and contacts nothing. Each line is `manager: Decision name installed -> newest:
-reason`, where the decision is `Allow`, `Hold` (too new), `Urgent` (the installed version has an advisory that the newest
-does not) or `Block` (the newest has an advisory). If any lookup fails, no decision is printed for that manager and the
+reason`. `Allow` requires a known upgrade meeting the release age. `Hold` explains an unproven upgrade or an age
+delay. `Urgent` names a documented fix for the installed version's affected interval. `Block` names a candidate advisory.
+If any lookup fails, no decision is printed for that manager and the
 exit code is 2. A package that its registry does not know (a git or path crate, a linked npm package) is reported as "not on the registry; not checked", the other packages are still judged, and the exit code is 2. apt, Flatpak and other managers have no release-date source and are reported as unsupported and skipped, also with exit code 2, so exit 0 always means a complete result.
 The age comes from `--minimum-release-age-days` or, without it, `minimumReleaseAgeDays` in the configuration; one of the
 two is required.

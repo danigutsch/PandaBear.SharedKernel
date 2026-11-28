@@ -6,8 +6,8 @@ public sealed class PackagePlanReport
     /// <summary>Creates the report.</summary>
     internal PackagePlanReport(IReadOnlyList<MissingTool> missingTools, IReadOnlyList<ManagerPlan> managers)
     {
-        MissingTools = missingTools;
-        Managers = managers;
+        MissingTools = Array.AsReadOnly(missingTools.ToArray());
+        Managers = Array.AsReadOnly(managers.ToArray());
     }
 
     /// <summary>Gets the programs that were not found. When any is missing, nothing was run and <see cref="Managers"/> is empty.</summary>

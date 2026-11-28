@@ -255,7 +255,8 @@ public sealed class UpdatesCommandTests
         using var repository = CreateRepository("""{"version":1,"packages":{"cargo":["bat","fd-find"]},"minimumReleaseAgeDays":7}""");
         var advisories = Result.Ok<IReadOnlyList<Advisory>>(
         [
-            Advisory.Create("GHSA-urgent", PackageName.Create("bat").Value, AdvisorySeverity.High, [PackageVersion.Create("0.24.0").Value]).Value,
+            Advisory.CreateWithRanges("GHSA-urgent", PackageName.Create("bat").Value, AdvisorySeverity.High, [],
+                [AdvisoryVersionRange.Create(PackageVersion.Create("0.24.0").Value, PackageVersion.Create("0.26.1").Value).Value]).Value,
             Advisory.Create("GHSA-block", PackageName.Create("fd-find").Value, AdvisorySeverity.High, [PackageVersion.Create("10.0.0").Value]).Value,
         ]);
 
@@ -264,7 +265,7 @@ public sealed class UpdatesCommandTests
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ShouldContain("cargo: Urgent bat 0.24.0 -> 0.26.1: The installed version is affected by GHSA-urgent", StringComparison.Ordinal);
+        output.ShouldContain("cargo: Urgent bat 0.24.0 -> 0.26.1: The candidate includes the documented fixes for GHSA-urgent (fixed in 0.26.1).", StringComparison.Ordinal);
         output.ShouldContain("cargo: Block fd-find 9.0.0 -> 10.0.0: The candidate is affected by GHSA-block.", StringComparison.Ordinal);
     }
 

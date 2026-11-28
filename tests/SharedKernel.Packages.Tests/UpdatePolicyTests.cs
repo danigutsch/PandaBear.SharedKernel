@@ -8,6 +8,83 @@ public sealed class UpdatePolicyTests
 {
     private static readonly DateTimeOffset Now = new(2026, 11, 8, 12, 0, 0, TimeSpan.Zero);
 
+    [Theory]
+    [InlineData("1.9.0", UpdateDecisionKind.Hold, "newer than the pinned version")]
+    [InlineData("2.0.0", UpdateDecisionKind.Hold, "newer than the pinned version")]
+    [InlineData("2.1.0", UpdateDecisionKind.Allow, "the minimum is 7 days")]
+    public void A_review_candidate_must_be_newer_than_the_pin(string proposed, UpdateDecisionKind expected, string reason)
+    {
+        // Arrange
+        var pin = PackagePin.Create(Version("2.0.0"), $"sha256:{new string('a', 64)}").ShouldBeSuccess();
+        var candidate = Candidate("bat", "1.0.0", proposed, Now.AddDays(-30));
+
+        // Act
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Npm, candidate, [], Age(7), Now, pin);
+
+        // Assert
+        decision.Kind.ShouldBe(expected);
+        decision.Reason.ShouldContain(reason, StringComparison.Ordinal);
+        pin.Version.Value.ShouldBe("2.0.0");
+    }
+
+    [Theory]
+    [InlineData(false, UpdateDecisionKind.Allow, "the minimum is 7 days")]
+    [InlineData(true, UpdateDecisionKind.Urgent, "The installed version is affected by TEST-EXACT")]
+    public void The_manager_independent_policy_preserves_decisions_for_caller_ordered_versions(
+        bool affected, UpdateDecisionKind expected, string reason)
+    {
+        // Arrange
+        var candidate = Candidate("bat", "1:1.0", "1:2.0", Now.AddDays(-30));
+        IReadOnlyList<Advisory> advisories = affected
+            ? [Advisory.Create("TEST-EXACT", Name("bat"), AdvisorySeverity.High, [Version("1:1.0")]).ShouldBeSuccess()]
+            : [];
+
+        // Act
+        var decision = UpdatePolicy.Decide(candidate, advisories, Age(7), Now);
+
+        // Assert
+        decision.Kind.ShouldBe(expected);
+        decision.Reason.ShouldContain(reason, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("1.0.0", "1.2.0", UpdateDecisionKind.Block, "TEST-RANGE")]
+    [InlineData("1.0.0", "2.0.0", UpdateDecisionKind.Urgent, "fixed in 2.0.0")]
+    [InlineData("1.0.0", "2.1.0", UpdateDecisionKind.Urgent, "fixed in 2.0.0")]
+    [InlineData("2.0.0", "2.1.0", UpdateDecisionKind.Hold, "too new")]
+    public void A_fix_waives_the_age_only_for_the_affected_installed_interval(
+        string installed, string proposed, UpdateDecisionKind expected, string reason)
+    {
+        // Arrange
+        var advisory = AdvisoryFixFor("bat", "TEST-RANGE", "1.0.0", "2.0.0");
+        var candidate = Candidate("bat", installed, proposed, Now.AddHours(-1));
+
+        // Act
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Npm, candidate, [advisory], Age(7), Now);
+
+        // Assert
+        decision.Kind.ShouldBe(expected);
+        decision.Reason.ShouldContain(reason, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("1", "2.0.0")]
+    [InlineData("1.0.0", "invalid")]
+    [InlineData("2.0.0", "1.0.0")]
+    [InlineData("1.0.0+one", "1.0.0+two")]
+    public void A_semantic_range_rejects_unsupported_or_unordered_bounds(string introduced, string fixedVersion)
+    {
+        // Arrange
+        var lower = Version(introduced);
+        var upper = Version(fixedVersion);
+
+        // Act
+        var result = AdvisoryVersionRange.Create(lower, upper);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+    }
+
     [Fact]
     public void A_release_older_than_the_minimum_age_is_allowed()
     {
@@ -15,7 +92,7 @@ public sealed class UpdatePolicyTests
         var candidate = Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-10));
 
         // Act
-        var decision = UpdatePolicy.Decide(candidate, [], Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, candidate, [], Age(7), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Allow);
@@ -26,7 +103,7 @@ public sealed class UpdatePolicyTests
     public void A_release_exactly_as_old_as_the_minimum_age_is_allowed()
     {
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "1", "2", Now.AddDays(-7)), [], Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "1.0.0", "2.0.0", Now.AddDays(-7)), [], Age(7), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Allow);
@@ -36,7 +113,7 @@ public sealed class UpdatePolicyTests
     public void A_release_younger_than_the_minimum_age_is_held_and_says_how_long_to_wait()
     {
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "1", "2", Now.AddDays(-2)), [], Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "1.0.0", "2.0.0", Now.AddDays(-2)), [], Age(7), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Hold);
@@ -47,7 +124,7 @@ public sealed class UpdatePolicyTests
     public void A_release_dated_in_the_future_is_held_until_it_has_been_public_for_the_minimum_age()
     {
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "1", "2", Now.AddDays(3)), [], Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "1.0.0", "2.0.0", Now.AddDays(3)), [], Age(7), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Hold);
@@ -58,7 +135,7 @@ public sealed class UpdatePolicyTests
     public void A_release_a_second_in_the_future_with_no_minimum_age_is_held_for_one_day_in_the_message()
     {
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "1", "2", Now.AddSeconds(1)), [], Age(0), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "1.0.0", "2.0.0", Now.AddSeconds(1)), [], Age(0), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Hold);
@@ -69,20 +146,20 @@ public sealed class UpdatePolicyTests
     public void A_zero_minimum_age_allows_a_release_made_just_now()
     {
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "1", "2", Now), [], Age(0), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "1.0.0", "2.0.0", Now), [], Age(0), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Allow);
     }
 
     [Fact]
-    public void An_advisory_that_affects_the_installed_version_but_not_the_candidate_makes_a_young_release_urgent()
+    public void A_documented_fix_for_the_installed_version_makes_a_young_release_urgent()
     {
         // Arrange
-        var advisory = AdvisoryFor("bat", "GHSA-1", "0.24.0");
+        var advisory = AdvisoryFixFor("bat", "GHSA-1", "0.24.0", "0.26.1");
 
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "0.24.0", "0.26.1", Now.AddHours(-1)), [advisory], Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "0.24.0", "0.26.1", Now.AddHours(-1)), [advisory], Age(7), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Urgent);
@@ -96,7 +173,7 @@ public sealed class UpdatePolicyTests
         var advisory = AdvisoryFor("bat", "GHSA-2", "0.26.1");
 
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-30)), [advisory], Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-30)), [advisory], Age(7), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Block);
@@ -110,7 +187,7 @@ public sealed class UpdatePolicyTests
         var advisory = AdvisoryFor("bat", "GHSA-3", "0.24.0", "0.26.1");
 
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-30)), [advisory], Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-30)), [advisory], Age(7), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Block);
@@ -123,7 +200,7 @@ public sealed class UpdatePolicyTests
         var advisory = AdvisoryFor("curl", "GHSA-4", "0.24.0", "0.26.1");
 
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-30)), [advisory], Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-30)), [advisory], Age(7), Now);
 
         // Assert
         decision.Kind.ShouldBe(UpdateDecisionKind.Allow);
@@ -136,7 +213,7 @@ public sealed class UpdatePolicyTests
         Advisory[] advisories = [AdvisoryFor("bat", "GHSA-b", "0.26.1"), AdvisoryFor("bat", "GHSA-a", "0.26.1")];
 
         // Act
-        var decision = UpdatePolicy.Decide(Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-30)), advisories, Age(7), Now);
+        var decision = UpdatePolicy.Decide(PackageManagerKind.Cargo, Candidate("bat", "0.24.0", "0.26.1", Now.AddDays(-30)), advisories, Age(7), Now);
 
         // Assert
         decision.Reason.ShouldContain("GHSA-a, GHSA-b", StringComparison.Ordinal);
@@ -146,11 +223,11 @@ public sealed class UpdatePolicyTests
     public void The_same_inputs_give_an_equal_decision()
     {
         // Arrange
-        var candidate = Candidate("bat", "1", "2", Now.AddDays(-2));
+        var candidate = Candidate("bat", "1.0.0", "2.0.0", Now.AddDays(-2));
 
         // Act
-        var first = UpdatePolicy.Decide(candidate, [], Age(7), Now);
-        var second = UpdatePolicy.Decide(candidate, [], Age(7), Now);
+        var first = UpdatePolicy.Decide(PackageManagerKind.Cargo, candidate, [], Age(7), Now);
+        var second = UpdatePolicy.Decide(PackageManagerKind.Cargo, candidate, [], Age(7), Now);
 
         // Assert
         first.ShouldBe(second);
@@ -241,11 +318,11 @@ public sealed class UpdatePolicyTests
     public void A_hold_and_an_allow_for_the_same_candidate_are_different_decisions()
     {
         // Arrange
-        var candidate = Candidate("bat", "1", "2", Now.AddDays(-2));
+        var candidate = Candidate("bat", "1.0.0", "2.0.0", Now.AddDays(-2));
 
         // Act
-        var hold = UpdatePolicy.Decide(candidate, [], Age(7), Now);
-        var allow = UpdatePolicy.Decide(candidate, [], Age(1), Now);
+        var hold = UpdatePolicy.Decide(PackageManagerKind.Cargo, candidate, [], Age(7), Now);
+        var allow = UpdatePolicy.Decide(PackageManagerKind.Cargo, candidate, [], Age(1), Now);
 
         // Assert
         hold.Kind.ShouldBe(UpdateDecisionKind.Hold);

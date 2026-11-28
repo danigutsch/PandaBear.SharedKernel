@@ -6,11 +6,8 @@ namespace SharedKernel.Packages;
 
 /// <summary>
 /// An <see cref="IAdvisorySource"/> backed by OSV (https://osv.dev). It asks <c>/v1/querybatch</c> which vulnerabilities
-/// affect each exact package version, then reads each vulnerability from <c>/v1/vulns/{id}</c> for its severity.
-/// OSV matches the version against the record's ranges with the ecosystem's own version order, so this library compares no
-/// versions: an advisory lists the versions that were asked about and OSV reported as affected, plus any
-/// <c>affected[].versions</c> the record lists. A record that gives only ranges is therefore still exact for every version
-/// asked about, and it never claims a version that was not checked.
+/// affect each exact package version, then reads <c>/v1/vulns/{id}</c> for severity, listed versions, and supported
+/// SemVer intervals. The exact query results remain available for ecosystem ranges the library cannot compare.
 /// Any failed, oversized, unreadable, redirected, or partial answer fails the whole call. Withdrawn records are left out.
 /// Answers are cached in memory for a limited time; failures are never cached.
 /// </summary>
@@ -166,7 +163,9 @@ public sealed class OsvAdvisorySource : IAdvisorySource
         List<Advisory> advisories = [];
         foreach (var ((id, name), versions) in affected.OrderBy(static e => e.Key.Id, StringComparer.Ordinal).ThenBy(static e => e.Key.Name.Value, StringComparer.Ordinal))
         {
-            var advisory = Advisory.Create(id, name, records[id].Severity, versions);
+            var record = records[id];
+            var knownRanges = record.RangesByPackage.GetValueOrDefault($"{ecosystem}\n{name.Value}") ?? [];
+            var advisory = Advisory.CreateWithRanges(id, name, record.Severity, versions, knownRanges);
             if (advisory.IsFailure)
             {
                 return Result<IReadOnlyList<Advisory>>.FromError(advisory.ErrorDetails);
@@ -286,16 +285,28 @@ public sealed class OsvAdvisorySource : IAdvisorySource
         }
 
         Dictionary<string, string[]> versions = new(StringComparer.Ordinal);
+        Dictionary<string, AdvisoryVersionRange[]> ranges = new(StringComparer.Ordinal);
         foreach (var affected in vulnerability.Affected ?? [])
         {
-            if (affected?.Package is { } package && affected.Versions is { } listed)
+            if (affected?.Package is not { } package)
             {
-                var key = $"{package.Ecosystem}\n{package.Name}";
+                continue;
+            }
+
+            var key = $"{package.Ecosystem}\n{package.Name}";
+            if (affected.Versions is { } listed)
+            {
                 versions[key] = versions.TryGetValue(key, out var existing) ? [.. existing, .. listed] : [.. listed];
+            }
+
+            var knownRanges = OsvSemVerRanges.Read(affected.Ranges);
+            if (knownRanges.Length > 0)
+            {
+                ranges[key] = ranges.TryGetValue(key, out var previous) ? [.. previous, .. knownRanges] : knownRanges;
             }
         }
 
-        var record = new OsvRecord(!string.IsNullOrEmpty(vulnerability.Withdrawn), OsvSeverity.Map(vulnerability), versions);
+        var record = new OsvRecord(!string.IsNullOrEmpty(vulnerability.Withdrawn), OsvSeverity.Map(vulnerability), versions, ranges);
         _recordCache.Set(id, record);
         return Result.Ok(record);
     }

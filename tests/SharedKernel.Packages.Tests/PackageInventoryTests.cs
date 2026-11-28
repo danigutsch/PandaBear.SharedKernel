@@ -14,6 +14,41 @@ public sealed class PackageInventoryTests
     private static readonly ExecutableMap All = new(static command => "/fake/" + command);
 
     [Fact]
+    public async Task A_canceled_plan_stops_before_any_package_command_runs()
+    {
+        // Arrange
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, CargoList) });
+        var inventory = new PackageInventory(runner, All);
+        var declaration = Declared((PackageManagerKind.Cargo, ["bat"]));
+
+        // Act
+        Func<Task> plan = () => inventory.Plan(declaration, new CancellationToken(canceled: true));
+
+        // Assert
+        await plan.ShouldThrowAssignableTo<OperationCanceledException>();
+        runner.Runs.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task A_returned_plan_preserves_the_manager_records_used_for_audit()
+    {
+        // Arrange
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, CargoList) });
+        var inventory = new PackageInventory(runner, All);
+        var declaration = Declared((PackageManagerKind.Cargo, ["bat", "delta"]));
+
+        // Act
+        var report = await inventory.Plan(declaration, Cancel);
+        var managers = (IList<ManagerPlan>)report.Managers;
+        Action clear = managers.Clear;
+
+        // Assert
+        clear.ShouldThrow<NotSupportedException>();
+        report.Managers.ShouldHaveSingleItem().Manager.ShouldBe(PackageManagerKind.Cargo);
+        report.ChangeCount.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task Plan_runs_each_managers_program_and_returns_the_changes_per_manager()
     {
         // Arrange

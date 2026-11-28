@@ -11,10 +11,11 @@ internal static class OsvAnswers
     public static string Batch(params string[]?[] results) => BatchPaged([.. results.Select(static ids => (ids, (string?)null))]);
 
     /// <summary>A vulnerability record whose package is affected only through a range, like most GHSA records.</summary>
-    public static string RangeOnly(string id, string package, string ecosystem = "npm", string? databaseSeverity = "HIGH") =>
+    public static string RangeOnly(
+        string id, string package, string ecosystem = "npm", string? databaseSeverity = "HIGH", string fixedVersion = "9.9.9") =>
         $$"""
         {"id":"{{id}}","summary":"x","database_specific":{{DatabaseSpecific(databaseSeverity)}},
-         "affected":[{"package":{"name":"{{package}}","ecosystem":"{{ecosystem}}"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"9.9.9"}]}]}]}
+         "affected":[{"package":{"name":"{{package}}","ecosystem":"{{ecosystem}}"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"{{fixedVersion}}"}]}]}]}
         """;
 
     /// <summary>A vulnerability record that also lists exact versions.</summary>

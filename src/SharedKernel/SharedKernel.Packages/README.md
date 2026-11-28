@@ -1,9 +1,9 @@
 # PandaBear.SharedKernel.Packages
 
-A small model of the packages on a machine and the read-only engine behind `dotnet syspackages`: validated names and
-versions, the `.config/sharedkernel-packages.json` declaration, readers for installed packages, a comparison with what
-should be installed, and update decisions against advisories and a minimum release age. Targets .NET 10. It installs,
-removes, and updates nothing.
+A model of the packages on a machine with validated names, versions, checksum pins, and package sets.
+`dotnet syspackages` reads `.config/sharedkernel-packages.json`, compares installed packages with the
+declaration, and checks update candidates against advisories and a minimum release age. A host can also
+reconcile a declaration through execution ports it supplies. Targets .NET 11.
 
 ```csharp
 using SharedKernel.Packages;
@@ -31,8 +31,8 @@ var updates = await inventory.CheckUpdates(
   validates it: version 1, known manager IDs, `name` or `name=version` entries, one owner per package, and an optional
   `minimumReleaseAgeDays` from 0 to 3650. Any problem throws `InvalidOperationException` whose message names the file
   and the JSON path.
-- `PackageInventory` is the engine. It takes an `IProcessRunner` and an `IExecutableResolver` and returns reports, not
-  text: the host decides how to print them and which exit codes they map to. `Plan` finds every manager's listing
+- `PackageInventory` takes an `IProcessRunner` and an `IExecutableResolver`. The host decides how to display its reports
+  and which exit codes they map to. `Plan` finds every manager's listing
   program first and runs nothing when one is missing (`PackagePlanReport.MissingTools`); otherwise each `ManagerPlan`
   carries its changes or the reason its installed list could not be read. `CheckUpdates` judges the declared, installed,
   unpinned cargo and npm packages; other managers are `Unsupported`, pinned packages and packages the registry does not
@@ -46,6 +46,13 @@ var updates = await inventory.CheckUpdates(
 - `PackageName` and `PackageVersion` are value objects. `Create` returns a `Result` with a validation error that never
   repeats the input. Names and versions are kept exactly as written; versions only compare for equality, because
   ordering is specific to each package manager.
+- `PackagePin.Create` takes a `PackageVersion` and an artifact checksum with a `sha256:` or `sha512:` prefix and a
+  hexadecimal digest. `PackageRequirement.Pinned` carries the pin into proposed changes for programmatic callers.
+  Installed-state commands expose versions. A matching version needs no version change and leaves artifact integrity
+  unverified.
+- `PackageSet.Create` snapshots requirements, checks that each package appears once, and orders them by name.
+  `DeclaredPackages.SetFor` returns that immutable set for a manager. The declaration also checks ownership across
+  managers.
 - `IPackageReader` is the read contract. `AptPackageReader` (`dpkg-query`), `CargoPackageReader` (`cargo install --list`),
   `NpmPackageReader` (`npm ls --global --json`), `FlatpakPackageReader` (`flatpak list --app`), `SnapPackageReader` (`snap list`), and
   `BrewPackageReader` (`brew list --versions`) run their tool through
@@ -61,22 +68,25 @@ var updates = await inventory.CheckUpdates(
   exist, real processes.
 - `PackagePlanner.Plan` returns the requirements that the installed packages do not meet, ordered by name: a missing
   package is an `Install`, a different installed version than an exact required one is a `ChangeVersion`. Extra
-  installed packages are not differences. Planning twice after applying the changes yields an empty plan.
+  installed packages are outside the declaration's scope.
 
-- `UpdatePolicy.Decide` judges an `UpdateCandidate` (installed version, newer version, release time) against known
-  `Advisory` values and a `MinimumReleaseAge`: a candidate that an advisory affects is `Block`ed; otherwise an installed
-  version that an advisory affects makes the update `Urgent`, whatever the candidate's age; otherwise the candidate is
-  `Allow`ed once it has been public for the minimum age and `Hold`s until then. Every decision carries its reason. Time is
-  passed in, so decisions are deterministic. An advisory lists its exact affected versions, because this library never
-  compares versions.
+- The manager-specific `UpdatePolicy.Decide` overload blocks affected candidates and holds a candidate until its version
+  is known to be newer than the installed version and any review pin. Cargo and npm use SemVer precedence and ignore build
+  metadata. A documented fix for the affected installed interval waives the release age. Other eligible candidates must
+  meet `MinimumReleaseAge`. The original overload evaluates advisories and age for candidates that callers already
+  ordered. Every result includes its reason and uses the caller's evaluation time.
+- `AdvisoryVersionRange` records a SemVer interval from its introduction, inclusive, to its explicit fix, exclusive.
+  Either bound can be absent. An advisory can also list exact affected versions. Reviewing a pin uses its version as
+  a lower bound for the proposed change. Inventory continues to skip packages with exact declared pins.
 
 - `IAdvisorySource`, `IReleaseDateSource` and `ILatestVersionSource` supply the policy's inputs. A failed, refused,
   oversized, or partial lookup is a failed `Result`, never an empty list, and every call takes a `NetworkAccess` that is
   `Denied` by default. `OsvAdvisorySource` (osv.dev) and `RegistryReleaseSource` (crates.io and npm) implement them over an
   injected `HttpClient` (build its handler with `PackageHttp.CreateHandler()`): HTTPS only, a time limit, a response size
   limit, no redirects, and an in-memory cache with expiry that never stores a failure. OSV matches the exact versions
-  that are asked about against its ranges, so range-only records need no version comparison here; apt needs an OSV release
-  such as `Debian:12`, and Flatpak is unsupported. `UpdatePlanner` finds candidates (a package the registry does not know is
+  that are asked about and contributes supported SemVer introductions and fixes from the matching package record.
+  Other range formats still use exact query membership. apt needs an OSV release such as `Debian:12`, and Flatpak is
+  unsupported. `UpdatePlanner` finds candidates (a package the registry does not know is
   listed in `UpdateSearch.NotOnRegistry` and not checked), queries both versions of each, and returns decisions only when
   every other lookup succeeded. See the
   [advisory ADR](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/adr/20261109-package-advisories.md).
@@ -84,8 +94,31 @@ var updates = await inventory.CheckUpdates(
 The package manager readers and the OSV and registry sources stay in this package rather than in
 `SharedKernel.Packages.<Provider>` libraries: the managers are a closed `PackageManagerKind` set that the configuration
 format names, so a new manager changes this package either way, and none of them adds a package dependency a consumer
-could avoid. Applying changes is a separate issue; see the
-[package management tooling epic](https://github.com/danigutsch/PandaBear.SharedKernel/issues/344).
+could avoid.
+
+## Convergence
+
+`PackageConvergence.Run` previews current differences by default. A host can explicitly enable application and supply
+`PackageApplyPorts` with executors and a privilege policy.
+
+```csharp
+var convergence = new PackageConvergence(inventory);
+var preview = await convergence.Run(configuration.Packages, cancellationToken: ct);
+var result = await convergence.Run(
+    configuration.Packages, apply: true, ports: hostApplyPorts, cancellationToken: ct);
+```
+
+Each run starts with a fresh observation. Application requires a complete initial plan and follows package manager order,
+then ordinal package-name order. An elevated step requires a dedicated executor and approval for its manager and exact
+change. The report records the selected privilege and outcome for each change. A failed, unsupported, or denied change
+leaves later independent changes eligible to run.
+
+After application, the report includes the plan from a fresh installed-state check. The run is complete when every step
+succeeds and that plan is empty. Retrying replans against the state that actually exists. An executor must also recheck
+state at the execution boundary so a change already satisfied at that point is safe to repeat. For an installation with a
+checksum pin, the executor must verify the artifact before installing it. Installed-state readers verify version convergence.
+
+The CLI offers `plan` and `updates`. Manager-specific execution and elevation remain with the host supplying the ports.
 
 ## Limits to know
 
@@ -97,7 +130,7 @@ could avoid. Applying changes is a separate issue; see the
   before it calls the policy; `UpdatePlanner` does that.
 - OSV names Debian and Ubuntu packages by source package, so an installed apt binary package with another name matches
   nothing and looks clean. Map binary names to source names before an apt lookup.
-- The newest stable version is only known to differ from the installed one, not to be newer, because versions are not
-  ordered.
+- A registry's selected version can be older or have the same precedence as the installed version. The planner reports
+  its policy decision for a different version and holds it when precedence does not establish an upgrade.
 - `npm ls` exits non-zero when the global tree has problems such as missing peers, even though it still prints a list; the
   reader reports that as an error.
