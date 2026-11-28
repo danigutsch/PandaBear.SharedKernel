@@ -74,6 +74,7 @@ dotnet release prepare-release --version <version> --package-dir <path> [--outpu
 dotnet release create-candidate [--version <version>] [--baseline-version <version>]
 dotnet release compare-candidates --baseline <candidate.json> --candidate <candidate.json> --apicompat <path> --output <file>
 dotnet release compare-candidate-dependencies --baseline <candidate.json> --candidate <candidate.json> --output <file>
+dotnet release verify-candidate-source-link --candidate <candidate.json> --symbols <symbols.sha256> --source-url-pattern <url> [--tool-package <id>]... --output <file>
 dotnet release validate-candidate [--version <version>] [--baseline-version <version>] [--aot] [--framework <tfm>]...
 dotnet release consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot] [--framework <tfm>]...
 dotnet release consume-packages --feed <path> --version <version> [--aot]
@@ -321,6 +322,20 @@ an exact singleton range. Unexpected versions and ranges retain their original v
 change returns exit 3 with a complete report. Matching dependency metadata returns exit 0.
 An invalid or changed archive returns exit 2 and leaves the report path absent. The command reads the
 two archive directories directly and writes a separate dependency report.
+
+### Verify Source Link in archived candidates
+
+Use the opt-in check when publishing requires Source Link evidence. Supply the immutable candidate and a SHA-256
+inventory of selected `.snupkg` files beside it, in the format written by `sha256sum`.
+
+```sh
+dotnet release verify-candidate-source-link --candidate candidate.json --symbols symbols.sha256 --source-url-pattern 'https://content.example.test/owner/repo/{revision}/*' --output source-link-report.json
+```
+
+The verifier reads the portable PDBs from the selected archives, pairs them with the packaged assemblies, and checks
+their Source Link maps against the supplied URL and the candidate commit. Repeat `--tool-package <id>` to include a
+tool's entry-point symbols and the bundled copies of assemblies represented by the selected symbol archives. It
+returns 3 for provenance differences and writes a separate report. It performs no source-server requests.
 
 ## Output and exit codes
 

@@ -52,6 +52,7 @@ internal static class VersioningCommandLine
             CreateCreateCandidate(candidates),
             CreateCompareCandidates(candidates),
             CreateCompareCandidateDependencies(),
+            CreateVerifyCandidateSourceLink(),
             CreateValidateCandidate(candidates),
             CreateConsumeCandidate(candidates),
             CreateConsumePackages(packager),
@@ -496,6 +497,34 @@ internal static class VersioningCommandLine
             var passed = await CandidateValidator.CompareDependencies(parseResult.GetRequiredValue(baseline),
                 parseResult.GetRequiredValue(candidate), destination, ct).ConfigureAwait(false);
             var summary = passed ? "Candidate dependency comparison passed." : "Candidate dependency comparison found differences.";
+            await output.WriteLineAsync($"{summary} Report: {destination}".AsMemory(), ct).ConfigureAwait(false);
+            return passed ? 0 : ComparisonDifferencesFound;
+        });
+        return command;
+    }
+
+    private static Command CreateVerifyCandidateSourceLink()
+    {
+        var candidate = new Option<string>("--candidate") { Description = "Candidate.json with the packaged archive hashes.", HelpName = "path", Required = true };
+        var symbols = new Option<string>("--symbols") { Description = "SHA-256 inventory of selected symbol archives beside the candidate.", HelpName = "path", Required = true };
+        var pattern = new Option<string>("--source-url-pattern")
+        {
+            Description = "Expected HTTPS Source Link URL with a /{revision}/ segment and trailing wildcard.",
+            HelpName = "url",
+            Required = true,
+        };
+        var tools = new Option<string[]>("--tool-package") { Description = "An optional tool package ID whose bundled symbols should be checked.", HelpName = "id" };
+        var report = new Option<string>("--output") { Description = "New JSON source provenance report path.", HelpName = "path", Required = true };
+        var command = new Command("verify-candidate-source-link", "Verifies source provenance in selected candidate archives offline.")
+        {
+            candidate, symbols, pattern, tools, report,
+        };
+        SetAction(command, async (parseResult, output, ct) =>
+        {
+            var destination = parseResult.GetRequiredValue(report);
+            var passed = await CandidateValidator.VerifySourceLink(parseResult.GetRequiredValue(candidate), parseResult.GetRequiredValue(symbols),
+                parseResult.GetRequiredValue(pattern), parseResult.GetValue(tools) ?? [], destination, ct).ConfigureAwait(false);
+            var summary = passed ? "Candidate Source Link verification passed." : "Candidate Source Link verification found differences.";
             await output.WriteLineAsync($"{summary} Report: {destination}".AsMemory(), ct).ConfigureAwait(false);
             return passed ? 0 : ComparisonDifferencesFound;
         });

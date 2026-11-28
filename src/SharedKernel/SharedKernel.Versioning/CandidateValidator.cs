@@ -72,6 +72,21 @@ public sealed class CandidateValidator
         return manifest;
     }
 
+    /// <summary>Verifies the source provenance of selected packaged portable PDBs and writes separate evidence.</summary>
+    /// <param name="candidateManifest">The candidate manifest that binds the package archive hashes.</param>
+    /// <param name="symbolInventory">The SHA-256 inventory for the selected symbol archives beside the candidate.</param>
+    /// <param name="sourcePattern">An HTTPS source URL pattern with a revision segment and trailing wildcard.</param>
+    /// <param name="toolPackages">Tool package IDs whose own and selected bundled symbols should also be checked.</param>
+    /// <param name="outputPath">A new report path.</param>
+    /// <param name="ct">Cancels reading, verification, and the report write.</param>
+    /// <returns>Whether every selected symbol matched its assembly and the expected source revision.</returns>
+    /// <exception cref="ArgumentException">The package evidence, symbol inventory, or caller pattern is invalid.</exception>
+    /// <exception cref="IOException">An input cannot be read or the report cannot be created.</exception>
+    public static Task<bool> VerifySourceLink(
+        string candidateManifest, string symbolInventory, string sourcePattern, IReadOnlyList<string> toolPackages,
+        string outputPath, CancellationToken ct) =>
+        CandidateSourceLinkVerification.Run(candidateManifest, symbolInventory, sourcePattern, toolPackages, outputPath, ct);
+
     /// <summary>
     /// Requires a clean working tree, packs the candidate with API validation into
     /// <c>artifacts/api-compat/packages/&lt;version&gt;</c>, and writes its <c>candidate.json</c> with the package hashes.

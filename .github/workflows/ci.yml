@@ -219,6 +219,23 @@ jobs:
         env:
           PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
         run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- create-candidate --version "$PACKAGE_VERSION"
+      - name: Verify Source Link for canonical main candidates
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'danigutsch/PandaBear.SharedKernel' }}
+        shell: bash
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
+        run: |
+          candidate_directory="artifacts/api-compat/packages/$PACKAGE_VERSION"
+          (
+            cd "$candidate_directory"
+            export LC_ALL=C
+            shopt -s nullglob
+            symbols=(*.snupkg)
+            test "${#symbols[@]}" -gt 0
+            sha256sum -- "${symbols[@]}" > symbols.sha256
+          )
+          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- verify-candidate-source-link --candidate "$candidate_directory/candidate.json" --symbols "$candidate_directory/symbols.sha256" --source-url-pattern 'https://raw.githubusercontent.com/danigutsch/PandaBear.SharedKernel/{revision}/*' --tool-package PandaBear.SharedKernel.Packages.Tool --tool-package PandaBear.SharedKernel.Versioning.Tool --output "$candidate_directory/source-link-report.json"
+          test -s "$candidate_directory/source-link-report.json"
       - name: Retain candidate artifacts for separate consumer compatibility
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -227,6 +244,8 @@ jobs:
             artifacts/api-compat/packages/*/*.nupkg
             artifacts/api-compat/packages/*/*.snupkg
             artifacts/api-compat/packages/*/candidate.json
+            artifacts/api-compat/packages/${{ steps.version.outputs.package_version }}/symbols.sha256
+            artifacts/api-compat/packages/${{ steps.version.outputs.package_version }}/source-link-report.json
           if-no-files-found: error
           retention-days: 14
 
