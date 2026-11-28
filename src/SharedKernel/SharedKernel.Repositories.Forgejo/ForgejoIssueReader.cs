@@ -97,10 +97,35 @@ public sealed class ForgejoIssueReader : IForgeIssueReader, IDisposable
 
     private async Task<IReadOnlyList<T>> ReadPages<T>(string path, string query, Func<JsonElement, T> parse, CancellationToken cancellationToken)
     {
-        return await ForgejoPager.ReadAll((page, token) => Get(
+        long? advertisedTotal = null;
+        var previousPageHadPagingHeaders = false;
+        var items = await ForgejoPager.ReadAll((page, token) => Get(
             string.Create(CultureInfo.InvariantCulture, $"{path}?{query}limit={ForgejoPager.PageSize}&page={page}"),
-            (root, headers) => ForgejoPager.Page(root.EnumerateArray().Select(parse).ToArray(), headers),
-            token), MaxPages, "Forgejo issue results", cancellationToken).ConfigureAwait(false);
+            (root, headers) =>
+            {
+                var response = ForgejoPager.Page(root.EnumerateArray().Select(parse).ToArray(), headers);
+                // The pager only requests another page after a paging header when the response promises more items.
+                if (previousPageHadPagingHeaders && response.Items.Count == 0)
+                {
+                    throw new InvalidOperationException("Forgejo returned incomplete issue results after advertising another page.");
+                }
+
+                if (advertisedTotal is { } expected && response.TotalCount is { } reported && expected != reported)
+                {
+                    throw new InvalidOperationException("Forgejo returned incomplete issue results with inconsistent total counts.");
+                }
+
+                advertisedTotal ??= response.TotalCount;
+                previousPageHadPagingHeaders = response.Link is not null || response.TotalCount is not null;
+                return response;
+            }, token), MaxPages, "Forgejo issue results", cancellationToken).ConfigureAwait(false);
+
+        if (advertisedTotal is { } total && items.Count != total)
+        {
+            throw new InvalidOperationException("Forgejo returned incomplete issue results for the advertised total count.");
+        }
+
+        return items;
     }
 
     private async Task<T> Get<T>(string path, Func<JsonElement, HttpResponseHeaders, T> parse, CancellationToken cancellationToken)

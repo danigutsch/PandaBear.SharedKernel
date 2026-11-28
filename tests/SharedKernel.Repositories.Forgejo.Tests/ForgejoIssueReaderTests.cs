@@ -61,6 +61,91 @@ public sealed class ForgejoIssueReaderTests
     }
 
     [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task An_empty_open_page_after_advertised_continuation_is_incomplete(bool useCount)
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        var first = "[" + Issue + "]";
+        handler.Enqueue(useCount
+            ? LinkedPages.Counted(first, 2)
+            : LinkedPages.Json(first, """<https://forge.example/api/v1/repos/owner/repository/issues?page=2>; rel="next" """));
+        handler.EnqueueJson(HttpStatusCode.OK, "[]");
+        handler.EnqueueJson(HttpStatusCode.OK, "[]");
+        using var reader = new ForgejoIssueReader(handler, Server, UserAgent, "token");
+
+        // Act
+        Func<Task> read = async () => _ = await reader.ReadOpenIssues("owner/repository", TestContext.Current.CancellationToken);
+        var error = await read.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        error.Message.ShouldContain("owner/repository", StringComparison.Ordinal);
+        error.Message.ShouldContain("incomplete", StringComparison.OrdinalIgnoreCase);
+        handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Blocking_issue_pages_that_change_the_advertised_count_are_incomplete()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, Issue);
+        handler.Enqueue(LinkedPages.Counted("""[{"number":12,"state":"closed","repository":{"full_name":"owner/other"}}]""", 2));
+        handler.Enqueue(LinkedPages.Counted("""[{"number":13,"state":"open","repository":{"full_name":"owner/other"}}]""", 1));
+        using var reader = new ForgejoIssueReader(handler, Server, UserAgent, "token");
+        var reference = new ForgeIssueReference("owner/repository", 4);
+
+        // Act
+        Func<Task> read = async () => _ = await reader.ReadIssue(reference, TestContext.Current.CancellationToken);
+        var error = await read.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        error.Message.ShouldContain("blockers for owner/repository#4", StringComparison.Ordinal);
+        error.Message.ShouldContain("incomplete", StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(2)]
+    public async Task The_open_issue_count_must_match_the_completed_page_sequence(int advertisedCount)
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        var page = LinkedPages.Counted("[" + Issue + "]", advertisedCount);
+        page.Headers.Add("Link", """<https://forge.example/api/v1/repos/owner/repository/issues?page=1>; rel="last" """);
+        handler.Enqueue(page);
+        handler.EnqueueJson(HttpStatusCode.OK, "[]");
+        using var reader = new ForgejoIssueReader(handler, Server, UserAgent, "token");
+
+        // Act
+        Func<Task> read = async () => _ = await reader.ReadOpenIssues("owner/repository", TestContext.Current.CancellationToken);
+        var error = await read.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        error.Message.ShouldContain("incomplete", StringComparison.OrdinalIgnoreCase);
+        handler.Requests.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Listings_without_headers_include_every_page_until_the_empty_page()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, "[" + Issue + "]");
+        handler.EnqueueJson(HttpStatusCode.OK, "[]");
+        handler.EnqueueJson(HttpStatusCode.OK, "[]");
+        using var reader = new ForgejoIssueReader(handler, Server, UserAgent, token: null);
+
+        // Act
+        var issues = await reader.ReadOpenIssues("owner/repository", TestContext.Current.CancellationToken);
+
+        // Assert
+        issues.ShouldHaveSingleItem().Reference.ShouldBe(new ForgeIssueReference("owner/repository", 4));
+        handler.Requests.Count.ShouldBe(3);
+    }
+
+    [Theory]
     [InlineData(HttpStatusCode.NotFound, """{"message":"Not Found"}""")]
     [InlineData(HttpStatusCode.OK, """[{"number":0,"title":"HIDDEN","state":"","repository":null}]""")]
     public async Task Unavailable_blockers_raise_a_diagnostic(HttpStatusCode status, string response)
