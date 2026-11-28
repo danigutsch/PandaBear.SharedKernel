@@ -118,7 +118,8 @@ succeeds and that plan is empty. Retrying replans against the state that actuall
 state at the execution boundary so a change already satisfied at that point is safe to repeat. For an installation with a
 checksum pin, the executor must verify the artifact before installing it. Installed-state readers verify version convergence.
 
-The CLI offers `plan` and `updates`. Manager-specific execution and elevation remain with the host supplying the ports.
+The CLI offers `plan`, `updates`, and a terminal `review` view with confirmed changes to the package declaration.
+Manager-specific execution and elevation remain with the host supplying the ports.
 
 ## Limits to know
 

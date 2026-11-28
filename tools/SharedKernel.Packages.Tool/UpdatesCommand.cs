@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.Globalization;
 using SharedKernel.CommandLine;
 using SharedKernel.InputNormalization;
+using SharedKernel.Results;
 
 namespace SharedKernel.Packages.Tool;
 
@@ -22,12 +23,8 @@ internal static class UpdatesCommand
     public static Command Create(string workingDirectory, PackageInventory inventory, Func<UpdateSources> createSources)
     {
         var rootOption = new RootOption(workingDirectory);
-        var ageOption = new Option<int?>(AgeOptionName)
-        {
-            Description = "Days a release must have been public before it is allowed, 0 to 3650. Defaults to minimumReleaseAgeDays in the configuration; one of the two is required.",
-            HelpName = "days",
-        };
-        var networkOption = new Option<bool>("--allow-network")
+        var ageOption = MinimumAgeOption();
+        var networkOption = new System.CommandLine.Option<bool>("--allow-network")
         {
             Description = "Required. Allows requests to osv.dev, crates.io, and registry.npmjs.org. Without it nothing is contacted and the command refuses.",
         };
@@ -76,29 +73,14 @@ internal static class UpdatesCommand
         }
 
         var configuration = await PackagesConfiguration.Read(root, cancellationToken).ConfigureAwait(false);
-        MinimumReleaseAge minimumAge;
-        if (minimumAgeDays is { } days)
+        var minimumAge = ResolveMinimumAge(configuration, minimumAgeDays);
+        if (minimumAge.IsFailure)
         {
-            var age = MinimumReleaseAge.FromDays(days, AgeOptionName);
-            if (age.IsFailure)
-            {
-                await error.WriteLineAsync(ControlCharacters.Escape(age.ErrorDetails.Detail).AsMemory(), cancellationToken).ConfigureAwait(false);
-                return PlanCommand.FailureExitCode;
-            }
-
-            minimumAge = age.Value;
-        }
-        else if (configuration.MinimumReleaseAge is { } configured)
-        {
-            minimumAge = configured;
-        }
-        else
-        {
-            await error.WriteLineAsync($"Give {AgeOptionName} or set minimumReleaseAgeDays in {PackagesConfiguration.RelativePath}.".AsMemory(), cancellationToken).ConfigureAwait(false);
+            await error.WriteLineAsync(ControlCharacters.Escape(minimumAge.ErrorDetails.Detail).AsMemory(), cancellationToken).ConfigureAwait(false);
             return PlanCommand.FailureExitCode;
         }
 
-        var report = await inventory.CheckUpdates(configuration.Packages, minimumAge, access, createSources, cancellationToken).ConfigureAwait(false);
+        var report = await inventory.CheckUpdates(configuration.Packages, minimumAge.Value, access, createSources, cancellationToken).ConfigureAwait(false);
         foreach (var manager in report.Unsupported)
         {
             await output.WriteLineAsync($"{PackageManagers.Id(manager)}: not supported by updates, which has release dates for cargo and npm only; skipped.".AsMemory(), cancellationToken).ConfigureAwait(false);
@@ -134,6 +116,26 @@ internal static class UpdatesCommand
         }
 
         return 0;
+    }
+
+    /// <summary>Creates the optional release-age override for update review.</summary>
+    internal static System.CommandLine.Option<int?> MinimumAgeOption() => new(AgeOptionName)
+    {
+        Description = "Days a release must have been public before it is allowed, 0 to 3650. Defaults to minimumReleaseAgeDays in the configuration; one of the two is required.",
+        HelpName = "days",
+    };
+
+    /// <summary>Resolves the release-age override or the repository setting required to review updates.</summary>
+    internal static Result<MinimumReleaseAge> ResolveMinimumAge(PackagesConfiguration configuration, int? overrideDays)
+    {
+        if (overrideDays is { } days)
+        {
+            return MinimumReleaseAge.FromDays(days, AgeOptionName);
+        }
+
+        return configuration.MinimumReleaseAge is { } configured
+            ? Result.Ok(configured)
+            : Result.Error<MinimumReleaseAge>($"Give {AgeOptionName} or set minimumReleaseAgeDays in {PackagesConfiguration.RelativePath}.");
     }
 
     private static async Task Write(ManagerUpdates manager, TextWriter output, TextWriter error, CancellationToken cancellationToken)

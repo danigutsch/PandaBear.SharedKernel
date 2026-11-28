@@ -13,8 +13,14 @@ internal static class PackagesCommandLine
     /// <param name="executables">Finds a program by name and returns its absolute path.</param>
     /// <param name="runner">Runs the package tools.</param>
     /// <param name="createUpdateSources">Creates the network sources for <c>updates</c>; the real ones when <see langword="null"/>. Called only after <c>--allow-network</c>.</param>
+    /// <param name="reviewTerminal">The terminal for <c>review</c>; the current process terminal when <see langword="null"/>.</param>
     /// <exception cref="ArgumentNullException">A required argument is <see langword="null"/>.</exception>
-    public static RootCommand Create(string workingDirectory, IExecutableResolver executables, IProcessRunner runner, Func<UpdateSources>? createUpdateSources = null)
+    public static RootCommand Create(
+        string workingDirectory,
+        IExecutableResolver executables,
+        IProcessRunner runner,
+        Func<UpdateSources>? createUpdateSources = null,
+        PackageReviewTerminal? reviewTerminal = null)
     {
         ArgumentNullException.ThrowIfNull(workingDirectory);
         ArgumentNullException.ThrowIfNull(executables);
@@ -41,7 +47,9 @@ internal static class PackagesCommandLine
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(plan);
-        root.Subcommands.Add(UpdatesCommand.Create(workingDirectory, inventory, createUpdateSources ?? UpdateSources.CreateDefault));
+        var updateSources = createUpdateSources ?? UpdateSources.CreateDefault;
+        root.Subcommands.Add(UpdatesCommand.Create(workingDirectory, inventory, updateSources));
+        root.Subcommands.Add(PackageReviewCommand.Create(workingDirectory, inventory, updateSources, reviewTerminal ?? PackageReviewTerminal.Console));
         return root;
     }
 

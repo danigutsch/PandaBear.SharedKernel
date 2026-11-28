@@ -33,8 +33,7 @@ dotnet syspackages --help
 ```
 
 `updates` judges each declared, installed, unpinned cargo and npm package against its registry's newest stable version,
-advisories from [osv.dev](https://osv.dev), and a minimum release age. It is the only command that uses the network, and
-only with `--allow-network`:
+advisories from [osv.dev](https://osv.dev), and a minimum release age. Network lookups require `--allow-network`:
 
 ```text
 dotnet syspackages updates --allow-network
@@ -55,6 +54,26 @@ two is required.
 cargo: Allow bat 0.24.0 -> 0.26.1: The candidate has been public for 30 days; the minimum is 7 days.
 cargo: Hold fd-find 9.0.0 -> 10.0.0: The candidate is too new; it can be installed in 5 days.
 ```
+
+`review` opens a terminal view. Select a manager with the arrow keys, press Tab to focus and scroll its
+details, and press Esc to close. The view shows the declaration and installed differences. With `--allow-network` it also
+shows update decisions, release-age reasons, and packages the policy could not check. The same setting or
+`--minimum-release-age-days` override as `updates` is required for those checks.
+
+```text
+dotnet syspackages review
+dotnet syspackages review --allow-network --minimum-release-age-days 14
+```
+
+If input or output is redirected, `review` uses the existing `plan` output and exit code. With `--allow-network`
+it uses the `updates` output and exit code. On a terminal, exit code 1 means the installed state differs from the
+declaration, and exit code 2 means an observation or update check was incomplete.
+
+Press F2 to edit the selected manager's comma-separated set of `name` or `name=version` entries.
+Ctrl+S validates the whole declaration and asks before saving. The default is Cancel.
+Esc leaves the editor. A confirmed save replaces that manager's set in the repository file and closes review.
+The file must still match the snapshot opened by review. Installed state and evaluated update decisions describe
+the original declaration. Package installation remains with a host that supplies the convergence ports.
 
 `plan` takes `--root <path>`, the repository root, which defaults to the current directory. A relative root resolves from
 the current directory, an empty value is a command-line error, and a root that is not an existing directory fails with `--root is not an existing directory: <path>`. It prints one line for each

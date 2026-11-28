@@ -42,7 +42,9 @@ public sealed class PackagesConfiguration
         return Validate(document);
     }
 
-    private static PackagesConfiguration Validate(PackagesConfigurationDocument document)
+    /// <summary>Validates the complete package declaration and its release policy.</summary>
+    /// <exception cref="InvalidOperationException">A required field, package entry, ownership or policy setting is invalid.</exception>
+    internal static PackagesConfiguration Validate(PackagesConfigurationDocument document)
     {
         if (document.Version != 1)
         {
